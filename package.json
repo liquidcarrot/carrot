@@ -1,0 +1,40 @@
+{
+  "name": "carrot",
+  "version": "1.0.0",
+  "description": "A Node.js Neural Network Library",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liquidcarrot/carrot.git"
+  },
+  "keywords": [
+    "AI",
+    "DL",
+    "ML",
+    "NN",
+    "CNN",
+    "ANN",
+    "RNN",
+    "LSTM",
+    "GRU",
+    "Perceptron",
+    "Sigmoid",
+    "TanH",
+    "ArcTan"
+  ],
+  "contributors": [
+    "Luis Ernesto Carbonell <luis@liquidcarrot.io>",
+    "Christian George Echevarria <chris@liquidcarrot.io>"
+  ],
+  "private": true,
+  "bugs": {
+    "url": "https://github.com/liquidcarrot/carrot/issues"
+  },
+  "homepage": "https://github.com/liquidcarrot/carrot#readme"
+}
