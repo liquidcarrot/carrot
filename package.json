@@ -36,5 +36,15 @@
   "bugs": {
     "url": "https://github.com/liquidcarrot/carrot/issues"
   },
-  "homepage": "https://github.com/liquidcarrot/carrot#readme"
+  "homepage": "https://github.com/liquidcarrot/carrot#readme",
+  "dependencies": {
+    "async": "^2.6.1",
+    "bluebird": "^3.5.3",
+    "lodash": "^4.17.11"
+  },
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.18.7"
+  }
 }
