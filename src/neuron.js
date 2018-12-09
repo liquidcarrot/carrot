@@ -5,7 +5,7 @@ let async = require('async')
 let Promise = require('bluebird')
 let Q = require('q')
 
-let neuron = () => {
+/* let neuron = () => {
   let self = this
   
   self.connections = []
@@ -32,23 +32,77 @@ let neuron = () => {
   }
   
   return self
-} 
+} */
 
-let n0 = neuron()
-let n1 = neuron()
+/**
+* Stateless factory-function
+* Dendrites = Inputs
+* Axons = Outputs
+*
+* CHECK: https://medium.com/javascript-scene/javascript-factory-functions-with-es6-4d224591a8b1
+*/
+const neuron = ({ connections = [], states = [] } = {}) => ({
+  connections,
+  states,
+})
 
-console.log(n0)
-console.log(n1)
+const getInputs = function(neuron, callback) {
+   return new Promise(function(resolve, reject) {
+    return async.filter(neuron.connections, function(connection, callback) {
+      console.log(connection)
+      callback(undefined, connection.to === neuron)
+    }, function(error, inputs) {
+      return callback ? callback(error, inputs) : !error ? resolve(inputs) : reject(error)
+    })
+  })
+}
 
-n0.connections.push({
+const getOutputs = function(neuron, callback) {
+   return new Promise(function(resolve, reject) {
+    return async.filter(neuron.connections, function(connection, callback) {
+      callback(undefined, connection.from === neuron)
+    }, function(error, inputs) {
+      return callback ? callback(error, inputs) : !error ? resolve(inputs) : reject(error)
+    })
+  })
+}
+
+let n0 = neuron({})
+let n1 = neuron({})
+
+n0.connections.push({ // an output
   from: n0,
   to: n1
 })
 
-console.log(n0)
-console.log(n1)
-
-
+getInputs(n0, (err, res)=>{
+  console.log('callback n0 inputs: ')
+  console.log('err', err)
+  console.log('res', res)
+})
+getOutputs(n0, (err, res)=>{
+  console.log('callback n0 outputs: ')
+  console.log('err', err)
+  console.log('res', res) // returns pushed connection
+})
+getInputs(n1, (err, res)=>{
+  console.log('callback n1 inputs: ')
+  console.log('err', err)
+  console.log('res', res) // empty array
+})
+getOutputs(n1, (err, res)=>{
+  console.log('callback n1 outputs: ')
+  console.log('err', err)
+  console.log('res', res) // empty array
+})
+getInputs(n0).then((res)=>{
+  console.log('promise n0 inputs: ')
+  console.log('res', res)
+})
+getOutputs(n0).then((res)=>{
+  console.log('promise n0 outputs: ')
+  console.log('res', res) // returns pushed connection
+})
 
 // module.exports = neuron
 

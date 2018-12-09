@@ -40,7 +40,8 @@
   "dependencies": {
     "async": "^2.6.1",
     "bluebird": "^3.5.3",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.11",
+    "q": "^1.5.1"
   },
   "devDependencies": {
     "chai": "^4.2.0",
