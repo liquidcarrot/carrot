@@ -41,6 +41,7 @@
     "async": "^2.6.1",
     "bluebird": "^3.5.3",
     "lodash": "^4.17.11",
+    "mathjs": "^5.4.0",
     "q": "^1.5.1"
   },
   "devDependencies": {
