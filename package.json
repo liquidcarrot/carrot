@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/mocha"
   },
   "repository": {
     "type": "git",
@@ -42,6 +42,7 @@
     "bluebird": "^3.5.3",
     "lodash": "^4.17.11",
     "mathjs": "^5.4.0",
+    "neo-async": "^2.6.0",
     "q": "^1.5.1"
   },
   "devDependencies": {

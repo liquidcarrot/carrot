@@ -1,6 +1,7 @@
 'use strict'
 
-module.exports = (neuron, weight = null) => ({
-  neuron,
+module.exports = ({ from, to, weight = Math.random() } = {}) => ({
+  from,
+  to,
   weight
 })
