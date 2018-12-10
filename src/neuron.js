@@ -79,7 +79,7 @@ const neuron = ({ connections = [], states = [] } = {}) => ({
 //       states.push(squash(sum))
 //     }
   },
-  propogate: function(feedback, callback) {
+  propagate: function(feedback, callback) {
    let self = this
     return new Promise(function(resolve, reject) {
       return callback ? callback(null, Math.random()) : resolve(Math.random()) 
