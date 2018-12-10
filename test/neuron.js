@@ -6,7 +6,7 @@ describe("Neuron", function() {
   let Neuron = require('../src/neuron')
   
   describe("new Neuron()", function() {
-    it("should create a neuron", function(done) {    
+    it("should create a neuron with default properties", function(done) {    
       let neuron = Neuron()
       
       expect(neuron).to.not.be.null
@@ -36,39 +36,21 @@ describe("Neuron", function() {
     })
   })
   
-  describe.skip("new Neuron(n)", function() {
-    it("should create a neuron", function(done) {    
-      let neuron = Neuron()
-      
-      expect(neuron).to.not.be.null
-      expect(neuron).to.not.be.undefined
-      expect(neuron).to.not.be.NaN
-      expect(neuron).to.exist
-      
-      done()
-    })
-    it("should create neuron with an empty connections array", function(done) {
-      let neuron = Neuron()
-      
-      expect(neuron.connections).to.exist
-      expect(neuron.connections).to.be.an("array")
-      expect(neuron.connections).to.have.lengthOf(0)
-      
-      done()
-    })
-    it("should create neuron with an empty states array", function(done) {
-      let neuron = Neuron()
-      
-      expect(neuron.states).to.exist
-      expect(neuron.states).to.be.an("array")
-      expect(neuron.connections).to.have.lengthOf(0)
+  describe.skip("new Neuron({ inputs: [...], outputs: [...] })", function() {
+    it("should create a neuron with given properties", function(done) {
       
       done()
     })
   })
   
-  describe(".project()", function() {
-    it("should create a connection", function(done) {
+  describe.skip("new Neuron(neuron)", function() {
+    it("should create a similar neuron", function(done) {
+      done()
+    })
+  })
+  
+  describe(".project(neuron[, callback])", function() {
+    it("should create a connection between neurons", function(done) {
       let n0 = Neuron()
       let n1 = Neuron()
       
@@ -108,6 +90,50 @@ describe("Neuron", function() {
         expect(n1.connections[0].from).equal(n0)
         done()
       })
+    })
+  })
+  
+  describe.skip(".project(layer[, callback])", function() {
+    it.skip("should create a connection between source neuron and layer", function(done) {
+      
+      done()
+    })
+  })
+  
+  describe.skip(".project(group[, callback])", function() {
+    it.skip("should create a connection between source neuron and group", function(done) {
+      
+      done()
+    })
+  })
+  
+  describe.skip(".is_input()", function() {
+    it.skip("should return a boolean value", function(done) {
+      
+      done()
+    })
+    it.skip("should return true if neuron has no incoming connections", function(done) {
+      
+      done()
+    })
+    it.skip("should return false if neuron has at least one incoming connection", function(done) {
+      
+      done()
+    })
+  })
+  
+  describe.skip(".is_output()", function() {
+    it.skip("should return a boolean value", function(done) {
+      
+      done()
+    })
+    it.skip("should return true if neuron has no outgoing connections", function(done) {
+      
+      done()
+    })
+    it.skip("should return false if neuron has at least one outgoing connection", function(done) {
+      
+      done()
     })
   })
   

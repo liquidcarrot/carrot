@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "./node_modules/.bin/mocha"
+    "test": "nodemon ./node_modules/.bin/mocha --reporter spec test/"
   },
   "repository": {
     "type": "git",
@@ -40,6 +40,7 @@
   "dependencies": {
     "async": "^2.6.1",
     "bluebird": "^3.5.3",
+    "deepcopy": "^1.0.0",
     "lodash": "^4.17.11",
     "mathjs": "^5.4.0",
     "neo-async": "^2.6.0",
