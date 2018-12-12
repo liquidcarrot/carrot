@@ -105,3 +105,16 @@ const Neuron = (props) => {
 }
 
 module.exports = Neuron
+
+// Function Supprt Type = First Thing Checked
+// Function Flow Depends on Function Type
+
+// No support for synchronous code
+// Will break application due to execution time
+// User education via best practices - only
+
+// Cannot support streams and promise/callback in the same function
+// because streams are objects which would require a promise/callback
+// to be exported/imported
+
+// Need stream, async, and sync function for same actions seperately.
