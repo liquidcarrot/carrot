@@ -9,20 +9,44 @@ let Connection = require('./connection')
 * CHECK: https://robertbeisicht.wordpress.com/2014/07/04/feed-forward-neural-network-in-javascript/
 * CHECK: https://medium.com/javascript-scene/javascript-factory-functions-with-es6-4d224591a8b1
 */
-const Neuron = (props) => {
-  let connections, states
-  
-  if(!props) {
-    connections = []
-    states = []
-  } else {
-    // Check if neuron
-    // Check if I/O Connections
+const Neuron = function(props, options) {
+  let connections = []
+  let states = []
+  let activate = function(inputs, callback) {
+    let self = this
+    return new Promise(function(resolve, reject) {
+      async.auto({
+        "activate": function(callback) {
+          callback(null, Math.random())
+        }
+      }, function(error, results) {
+        return callback ? callback(error, results.activate) : !error ? resolve(results.activate) : reject(error)
+      })
+    })
+  }
+  let learn = function(feedback, callback) {
+    let self = this
+    return new Promise(function(resolve, reject) {
+      async.auto({
+        "learn": function(callback) {
+          callback(null, Math.random())
+        }
+      }, function(error, results) {
+        return callback ? callback(error, results.learn) : !error ? resolve(results.learn) : reject(error)
+      })
+    })
+  }
+
+  if(props) {
+    activate = props.activate || activate
+    learn = props.learn || learn
   }
   
   return {
     connections,
     states,
+    activate,
+    learn,
     is_input: function(callback) {
       let self = this
       return new Promise(function(resolve, reject) {
@@ -50,6 +74,7 @@ const Neuron = (props) => {
       })
     },
     inputs: function(callback) {
+      let self = this
       return new Promise(function(resolve, reject) {
         return async.filter(self.connections, function(connection, callback) {
           callback(undefined, connection.to === self)
@@ -68,7 +93,7 @@ const Neuron = (props) => {
         })
       })
     },
-    project: function(neuron, callback) {
+    connect: function(neuron, callback) {
       let self = this
       return new Promise(function(resolve, reject) {
         return async.auto({
@@ -89,16 +114,40 @@ const Neuron = (props) => {
         })
       })
     },
-    run: function(inputs, callback) {
+    forward: function(value, callback) {
       let self = this
       return new Promise(function(resolve, reject) {
-        return callback ? callback(null, Math.random()) : resolve(Math.random()) 
+        async.auto({
+          "outputs": function(callback) {
+            self.outputs(callback)
+          },
+          "forward": ["outputs", function(results, callback) {
+            async.each(results.outputs, function(output, callback) {
+              output.forward.push(value)
+              callback()
+            }, callback)
+          }]
+        }, function(error, results) {
+          return callback ? callback(error, results.outputs) : !error ? resolve(results.outputs) : reject(error)
+        })
       })
     },
-    propogate: function(feedback, callback) {
-     let self = this
+    backward: function(value, callback) {
+      let self = this
       return new Promise(function(resolve, reject) {
-        return callback ? callback(null, Math.random()) : resolve(Math.random()) 
+        async.auto({
+          "inputs": function(callback) {
+            self.inputs(callback)
+          },
+          "backward": ["inputs", function(results, callback) {
+            async.each(results.inputs, function(input, callback) {
+              input.forward.push(value)
+              callback()
+            }, callback)
+          }]
+        }, function(error, results) {
+          return callback ? callback(error, results.inputs) : !error ? resolve(results.inputs) : reject(error)
+        })
       })
     }
   }

@@ -28,6 +28,7 @@
     "TanH",
     "ArcTan"
   ],
+  "author": "Liquid Carrot <people@liquidcarrot.io>",
   "contributors": [
     "Luis Ernesto Carbonell <luis@liquidcarrot.io>",
     "Christian George Echevarria <chris@liquidcarrot.io>"

@@ -1,5 +1,6 @@
 'use strict'
 
+let async = require('neo-async')
 let expect  = require('chai').expect
 
 describe("Neuron", function() {
@@ -49,12 +50,12 @@ describe("Neuron", function() {
     })
   })
   
-  describe(".project(neuron[, callback])", function() {
+  describe(".connect(neuron[, callback])", function() {
     it("should create a connection between neurons", function(done) {
       let n0 = Neuron()
       let n1 = Neuron()
       
-      n0.project(n1, function(error, connection) {
+      n0.connect(n1, function(error, connection) {
         expect(error).to.not.exist
         expect(error).to.be.null
         expect(connection).to.exist
@@ -71,7 +72,7 @@ describe("Neuron", function() {
       
       expect(n0.connections).to.have.lengthOf(0)
       
-      n0.project(n1, function(error, connection) {
+      n0.connect(n1, function(error, connection) {
         expect(n0.connections).to.have.lengthOf(1)
         expect(n0.connections[0].from).equal(n0)
         expect(n0.connections[0].to).equal(n1)
@@ -84,7 +85,7 @@ describe("Neuron", function() {
       
       expect(n1.connections).to.have.lengthOf(0)
       
-      n0.project(n1, function(error, connection) {
+      n0.connect(n1, function(error, connection) {
         expect(n1.connections).to.have.lengthOf(1)
         expect(n1.connections[0].to).equal(n1)
         expect(n1.connections[0].from).equal(n0)
@@ -93,14 +94,14 @@ describe("Neuron", function() {
     })
   })
   
-  describe.skip(".project(layer[, callback])", function() {
+  describe.skip(".connect(layer[, callback])", function() {
     it.skip("should create a connection between source neuron and layer", function(done) {
       
       done()
     })
   })
   
-  describe.skip(".project(group[, callback])", function() {
+  describe.skip(".connect(group[, callback])", function() {
     it.skip("should create a connection between source neuron and group", function(done) {
       
       done()
@@ -137,29 +138,137 @@ describe("Neuron", function() {
     })
   })
   
-  describe.skip(".run()", function() {
-    it("should take an array of numbers as parameter", function(done) {
+  describe(".inputs()", function() {
+    it("should return an array of neurons", function(done) {
+      let n0 = Neuron()
+      let n1 = Neuron()
       
-      done()
-    })
-    it("should return a number", function(done) {
-      
-      done()
+      n0.connect(n1, function(error, connection) {
+        n1.inputs(function(error, inputs) {
+          expect(error).to.not.exist
+          expect(error).to.be.null
+          expect(inputs).to.exist
+          expect(inputs).to.be.an("array")
+          expect(inputs).to.have.lengthOf(1)
+          done()
+        })
+      })
     })
   })
   
-  describe.skip(".propogate()", function() {
-    it("should take a number as a parameter", function(done) {
+  describe(".outputs()", function() {
+    it("should return an array of neurons", function(done) {
+      let n0 = Neuron()
+      let n1 = Neuron()
       
-      done()
+      n0.connect(n1, function(error, connection) {
+        n0.outputs(function(error, outputs) {
+          expect(error).to.not.exist
+          expect(error).to.be.null
+          expect(outputs).to.exist
+          expect(outputs).to.be.an("array")
+          expect(outputs).to.have.lengthOf(1)
+          done()
+        })
+      })
     })
-    it("should take an array of numbers as a parameter", function(done) {
-      
-      done()
+  })
+  
+  describe(".activate()", function() {
+    it("should take an array of numbers as parameter", function(done) {
+      let n0 = Neuron()
+
+      n0.activate([Math.random(), Math.random()], function(error, result) {
+        expect(error).to.not.exist
+        expect(error).to.be.null
+        done()
+      })
     })
     it("should return a number", function(done) {
+      let n0 = Neuron()
+
+      n0.activate([Math.random(), Math.random()], function(error, result) {
+        expect(result).to.exist
+        expect(result).to.be.a("number")
+        done()
+      })
+    })
+  })
+  
+  describe(".learn()", function() {
+    it("should take an array of numbers as a parameter", function(done) {
+      let n0 = Neuron()
+
+      n0.learn([Math.random(), Math.random()], function(error, result) {
+        expect(error).to.not.exist
+        expect(error).to.be.null
+        done()
+      })
+    })
+    it("should return a number", function(done) {
+      let n0 = Neuron()
+
+      n0.activate([Math.random(), Math.random()], function(error, result) {
+        expect(result).to.exist
+        expect(result).to.be.a("number")
+        done()
+      })
+    })
+  })
+  
+  describe(".forward()", function() {
+    it("should take a number as a parameter", function(done) {
+      let n0 = Neuron()
+      let n1 = Neuron()
       
-      done()
+      n0.connect(n1, function(error, connection) {
+        n0.forward(Math.random(), function(error, outputs) {
+          expect(error).to.not.exist
+          expect(error).to.be.null
+          done()
+        })
+      })
+    })
+    it("should return an array of neurons", function(done) {
+      let n0 = Neuron()
+      let n1 = Neuron()
+      
+      n0.connect(n1, function(error, connection) {
+        n0.forward(Math.random(), function(error, outputs) {
+          expect(outputs).to.exist
+          expect(outputs).to.be.an("array")
+          expect(outputs).to.have.lengthOf(1)
+          done()
+        })
+      })
+    })
+  })
+
+  describe(".backward()", function() {
+    it("should take a number as a parameter", function(done) {
+      let n0 = Neuron()
+      let n1 = Neuron()
+      
+      n0.connect(n1, function(error, connection) {
+        n1.backward(Math.random(), function(error, outputs) {
+          expect(error).to.not.exist
+          expect(error).to.be.null
+          done()
+        })
+      })
+    })
+    it("should return an array of neurons", function(done) {
+      let n0 = Neuron()
+      let n1 = Neuron()
+      
+      n0.connect(n1, function(error, connection) {
+        n1.backward(Math.random(), function(error, outputs) {
+          expect(outputs).to.exist
+          expect(outputs).to.be.an("array")
+          expect(outputs).to.have.lengthOf(1)
+          done()
+        })
+      })
     })
   })
 })
