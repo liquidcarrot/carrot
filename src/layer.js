@@ -11,20 +11,17 @@ const layer = function(props) {
   // CHECK: https://softwareengineering.stackexchange.com/questions/82593/javascript-ternary-operator-vs
   let neurons = []
   
-  async.auto({
-    isLn: (cb) => {
-      _.isLength(props) ? async.times(props, () => { neurons.push(Neuron({})) }) : null
-      cb()
-    },
-    isArr: (cb) => {
-      _.isArray(props) ? neurons = props : null
-      cb()
-    },
-    isObj: (cb) => {
-      _.isPlainObject(props) ? async.times(props.neurons.length, () => { neurons.push(Neuron({})) }) : null
-      cb()
-    }
-  })
+  if(_.isLength(props)) {
+    _.times(props, function() {
+      neurons.push(Neuron())
+    })
+  } else if(_.isArray(props)) {
+    neurons = props
+  } else if(_.isPlainObject(props)) {
+    _times(props.neurons.length, function() {
+      neurons.push(Neuron())
+    })
+  }
   
   return {
        neurons,
