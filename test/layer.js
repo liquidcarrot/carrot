@@ -1,165 +1,250 @@
 'use strict'
 
-let expect  = require('chai').expect
+let expect = require('chai').expect
 
-describe.skip("Layer", function() {
+describe("Layer", function() {
+  let Layer = require('../src/layer')
+  let Neuron = require('../src/neuron')
+  describe("new Layer()", function() {
+    it("should create a layer with default properties", function(done) {
+      let layer = Layer()
 
-  describe("Layer", function() {
-    let Layer = require('../src/layer')
+      expect(layer).to.not.be.null
+      expect(layer).to.not.be.undefined
+      expect(layer).to.not.be.NaN
+      expect(layer).to.exist
 
-    describe("new Layer()", function() {
-      it("should create a layer", function(done) {    
-        let layer = Layer()
-
-        expect(layer).to.not.be.null
-        expect(layer).to.not.be.undefined
-        expect(layer).to.not.be.NaN
-        expect(layer).to.exist
-
-        done()
-      })
-      it("should create layer with an empty neurons array", function(done) {
-        let layer = Layer()
-
-        expect(layer.neurons).to.exist
-        expect(layer.neurons).to.be.an("array")
-        expect(layer.neurons).to.have.lengthOf(0)
-
-        done()
-      })
+      done()
     })
+    it("should create a layer with an empty neurons array", function(done) {
+      let layer = Layer()
 
-    describe.skip("new Layer(n)", function() {
-      it("should create a layer", function(done) {    
-        let layer = Layer()
+      expect(layer.neurons).to.exist
+      expect(layer.neurons).to.be.an("array")
+      expect(layer.neurons).to.have.lengthOf(0)
 
-        expect(layer).to.not.be.null
-        expect(layer).to.not.be.undefined
-        expect(layer).to.not.be.NaN
-        expect(layer).to.exist
-
-        done()
-      })
-      it("should create layer with an empty connections array", function(done) {
-        let layer = Layer()
-
-        expect(layer.connections).to.exist
-        expect(layer.connections).to.be.an("array")
-        expect(layer.connections).to.have.lengthOf(0)
-
-        done()
-      })
-      it("should create layer with an empty states array", function(done) {
-        let layer = Layer()
-
-        expect(layer.states).to.exist
-        expect(layer.states).to.be.an("array")
-        expect(layer.connections).to.have.lengthOf(0)
-
-        done()
-      })
-    })
-
-    describe.skip(".project()", function() {
-      it("should create a connection", function(done) {
-        let n0 = Layer()
-        let n1 = Layer()
-
-        n0.project(n1, function(error, connection) {
-          expect(error).to.not.exist
-          expect(error).to.be.null
-          expect(connection).to.exist
-          expect(connection).to.be.an("object")
-          expect(connection.from).to.exist
-          expect(connection.to).to.exist
-          expect(connection.weight).to.exist
-          done()
-        })
-      })
-      it("should add a connection to source layer", function(done) {
-        let l0 = Layer()
-        let l1 = Layer()
-
-        expect(l0.connections).to.have.lengthOf(0)
-
-        l0.project(l1, function(error, connection) {
-          expect(l0.connections).to.have.lengthOf(1)
-          expect(l0.connections[0].from).equal(l0)
-          expect(l0.connections[0].to).equal(l1)
-          done()
-        })
-      })
-      it("should add a connection to destination layer", function(done) {
-        let l0 = Layer()
-        let l1 = Layer()
-
-        expect(l1.connections).to.have.lengthOf(0)
-
-        l0.project(l1, function(error, connection) {
-          expect(l1.connections).to.have.lengthOf(1)
-          expect(l1.connections[0].to).equal(l1)
-          expect(l1.connections[0].from).equal(l0)
-          done()
-        })
-      })
-    })
-
-    describe.skip(".run()", function() {
-      it("should take an array of numbers as parameter", function(done) {
-
-        done()
-      })
-      it("should return a number", function(done) {
-
-        done()
-      })
-    })
-
-    describe.skip(".propogate()", function() {
-      it("should take a number as a parameter", function(done) {
-
-        done()
-      })
-      it("should take an array of numbers as a parameter", function(done) {
-
-        done()
-      })
-      it("should return a number", function(done) {
-
-        done()
-      })
+      done()
     })
   })
+
+  describe("new Layer(n)", function() {
+    it("should create a layer", function(done) {
+      let layer = Layer(2)
+
+      expect(layer).to.not.be.null
+      expect(layer).to.not.be.undefined
+      expect(layer).to.not.be.NaN
+      expect(layer).to.exist
+
+      done()
+    })
+    it("should create a layer with 'n' blank neurons", function(done) {
+      let layer = Layer(2)
+
+      expect(layer.neurons).to.exist
+      expect(layer.neurons).to.be.an("array")
+      expect(layer.neurons).to.have.lengthOf(2)
+
+      done()
+    })
+  })
+
+  describe("new Layer([neuron, neuron])", function() {
+
+    it("should create a layer with neurons", function(done) {
+      let n0 = new Neuron()
+      let n1 = new Neuron()
+      let layer = Layer([n0, n1])
+
+      expect(layer).to.not.be.null
+      expect(layer).to.not.be.undefined
+      expect(layer).to.not.be.NaN
+      expect(layer).to.exist
+
+      done()
+    })
+    it("should create layer with existing neurons in it", function(done) {
+      let n0 = new Neuron({
+        activate: 'cheese'
+      })
+      let n1 = new Neuron({
+        activate: 'cheese'
+      })
+      let layer = Layer([n0, n1])
+
+      expect(layer.neurons).to.exist
+      expect(layer.neurons).to.be.an("array")
+      expect(layer.neurons).to.have.lengthOf(2)
+      expect(layer.neurons[0]).to.exist
+      expect(layer.neurons[0].activate).to.be.a("string")
+
+      done()
+    })
+  })
+
+  describe("new Layer(layer1)", function() {
+
+    it("should create a new layer using an existing layer", function(done) {
+      let layer1 = Layer(2)
+      let layer2 = Layer(layer1)
+
+      expect(layer2).to.not.be.null
+      expect(layer2).to.not.be.undefined
+      expect(layer2).to.not.be.NaN
+      expect(layer2).to.exist
+
+      done()
+    })
+    it("should create layer with same amount of neurons", function(done) {
+      let layer1 = Layer(2)
+      let layer2 = Layer(layer1)
+
+      expect(layer2.neurons).to.exist
+      expect(layer2.neurons).to.be.an("array")
+      expect(layer2.neurons).to.have.lengthOf(2)
+      expect(layer2.neurons[1]).to.exist
+      expect(layer2.neurons[1]).to.be.an("object")
+
+      done()
+    })
+  })
+
+  describe.skip(".activate()", function() {
+    it("should create a connection", function(done) {
+
+      done()
+    })
+    it("should add a connection to source layer", function(done) {
+
+      done()
+    })
+    it("should add a connection to destination layer", function(done) {
+      done()
+    })
+  })
+
+  describe(".activate([0.7, 0.3, 0.9, ...])", function() {
+    it("should run all neurons", function(done) {
+      let layer = Layer(3)
+      layer.activate([0.7, 0.3, 0.9])
+      
+      done()
+    })
+  })
+
+  describe.skip(".connect()", function() {
+    it("should return an empty params error", function(done) {
+      let l1 = Layer()
+
+      l1.connect()
+
+      done()
+    })
+  })
+
+  describe(".connect(object)", function() {
+    it("should create connections from layer to a neuron", function(done) {
+      let n0 = new Neuron()
+      let l0 = Layer(3)
+
+      l0.connect(n0)
+      expect(n0.connections).to.exist
+      expect(n0.connections).to.be.an("array")
+      expect(n0.connections).to.have.lengthOf(3)
+      expect(n0.connections[1]).to.be.an("object")
+
+      done()
+    })
+    it("should create connections from layer to another layer", function(done) {
+      let l0 = Layer(3)
+      let l1 = Layer(l0)
+
+      l1.connect(l0)
+
+      expect(l0.neurons[0].connections).to.exist
+      expect(l0.neurons[0].connections).to.be.an("array")
+      expect(l0.neurons[0].connections).to.have.lengthOf(3)
+      expect(l0.neurons[0].connections[2]).to.be.an("object")
+
+      expect(l1.neurons[0].connections).to.exist
+      expect(l1.neurons[0].connections).to.be.an("array")
+      expect(l1.neurons[0].connections).to.have.lengthOf(3)
+      expect(l1.neurons[0].connections[2]).to.be.an("object")
+
+      done()
+    })
+    it.skip("should create connections from layer to a group", function(done) {
+      let l1 = Layer()
+
+      l1.connect()
+      done()
+    })
+  })
+
+  describe.skip(".add_neurons()", function() {
+    it("should take a number as a parameter", function(done) {
+
+      done()
+    })
+    it("should take an array of numbers as a parameter", function(done) {
+
+      done()
+    })
+    it("should return a number", function(done) {
+
+      done()
+    })
+  })
+  
+  describe.skip(".get_new Neuron(object)", function() {
+      it("should create connections from layer to a neuron", function(done) {
+        let n0 = new Neuron()
+        let l0 = Layer(3)
+
+        l0.connect(n0)
+        expect(n0.connections).to.exist
+        expect(n0.connections).to.be.an("array")
+        expect(n0.connections).to.have.lengthOf(3)
+        expect(n0.connections[1]).to.be.an("object")
+        
+        done()
+        })
+      it("should create connections from layer to another layer", function(done) {
+        let l0 = Layer(3)
+        let l1 = Layer(l0)
+
+        l1.connect(l0)
+        
+        expect(l0.neurons[0].connections).to.exist
+        expect(l0.neurons[0].connections).to.be.an("array")
+        expect(l0.neurons[0].connections).to.have.lengthOf(3)
+        expect(l0.neurons[0].connections[2]).to.be.an("object")
+        
+        expect(l1.neurons[0].connections).to.exist
+        expect(l1.neurons[0].connections).to.be.an("array")
+        expect(l1.neurons[0].connections).to.have.lengthOf(3)
+        expect(l1.neurons[0].connections[2]).to.be.an("object")
+        
+        done()
+      })
+      it.skip("should create connections from layer to a group", function(done) {
+        let l1 = Layer()
+
+        l1.connect()
+        done()
+      })
+    })
+  
+  describe.skip(".get_best()", function() {
+    it("should return the neuron with the highest axon value in a layer", function(done) {
+      let l0 = Layer(3)
+
+      let best = l0.get_best()
+      expect(best).to.exist
+      expect(best).to.be.an("object")
+
+      done()
+    })
+  })
+  
 })
-
-/*
-// TESTS
-
-const n0 = Neuron({ connections: ['input'], states: [0.01] })
-const n1 = Neuron({ connections: ['input'], states: [0.01] })
-const n2 = Neuron({ connections: ['input'], states: [0.01] })
-const n3 = Neuron({ connections: [n0, n1, n2], states: [0.01] })
-
-console.log('\n' + 'neuron (to be connected) connections:')
-async.times(n3.connections.length, (i)=>{ console.log(n3.connections[i]) }) 
-
-const l0 = layer({})
-
-l0.createNeurons(3, [0.02,0.9,0.8])
-
-console.log('\n' + 'layer neurons (to be connected) connections:')
-async.times(l0.neurons.length, (i)=>{ console.log(l0.neurons[i].connections) }) 
-
-l0.connectNeuron(n3)
-
-console.log('\n' + 'neuron (post-connection) connections:') // neuron should have 3 connections from itself to neurons within layer
-async.times(n3.connections.length, (i)=>{ console.log(n3.connections[i]) }) 
-
-console.log('\n' + 'layer (post-connection) connections:') // each layer neurons should have 1 connection from n3 to itself
-async.times(l0.neurons.length, (i)=>{ console.log(l0.neurons[i].connections) })
-
-l0.run([0.2,0.2,0.2], (err, res)=>{console.log(err, res)})
-
-l0.bestGuess((err, res)=>{ console.log(res) })
-
-*/

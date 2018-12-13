@@ -6,8 +6,13 @@ let Promise = require('bluebird')
 let Connection = require('./connection')
 
 /**
+* Represents a Neuron.
+* @constructor
+* @param { object } props
+* @param { array } options
 * CHECK: https://robertbeisicht.wordpress.com/2014/07/04/feed-forward-neural-network-in-javascript/
 * CHECK: https://medium.com/javascript-scene/javascript-factory-functions-with-es6-4d224591a8b1
+* CHECK: https://softwareengineering.stackexchange.com/questions/82593/javascript-ternary-operator-vs
 */
 let Neuron = function(props, options) {
   let self = this

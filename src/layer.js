@@ -1,81 +1,138 @@
 `use strict`
 
 let _ = require('lodash')
-let os = require('os')
 let async = require('neo-async')
 let Promise = require('bluebird')
 let Neuron = require('./neuron')
 let Connection = require('./connection')
 
-const layer = function(props) {
-  // CHECK: https://softwareengineering.stackexchange.com/questions/82593/javascript-ternary-operator-vs
+/**
+* Represents a Layer of Neurons.
+* @constructor
+* @param { object } props
+* @param { array } options
+*/
+let Layer = function(props, options) {
   let neurons = []
   
   if(_.isLength(props)) {
     _.times(props, function() {
-      neurons.push(Neuron())
+      neurons.push(new Neuron())
     })
   } else if(_.isArray(props)) {
     neurons = props
   } else if(_.isPlainObject(props)) {
-    _times(props.neurons.length, function() {
-      neurons.push(Neuron())
+    _.times(props.neurons.length, function() {
+      neurons.push(new Neuron())
     })
   }
   
   return {
        neurons,
-       // create generic neurons, with an optional states parameter 
-       createNeurons: (neuronCount, states) => {
-         async.times(neuronCount, () => {
-           neurons.push(Neuron({
-             states
-           }))
+       // Make all neurons in the Layer generate an output value
+       activate: function(inputs, callback) {
+         let self = this
+         return new Promise(function(resolve, reject) {
+           return async.auto({
+             "valid_array": function(callback) {
+               _.isArray(inputs) && inputs.length === neurons.length ? callback(null, inputs) : inputs ? callback('Error at Layer.activate(): Invalid Parameter Received', null) : callback(null, false) 
+             },
+             "activate_neurons": ["valid_array", function(results, callback) {
+               if(results.valid_array) {
+                 async.eachOf(neurons, function(neuron, i, callback) {
+                   neuron.activate(inputs[i])
+                   callback()
+                 }, callback)
+               } else {
+                 async.each(neurons, function(neuron, callback) {
+                   neuron.activate()
+                   callback()
+                 }, callback)
+               }
+             }]
+           }, function(error, results) {
+             return callback ? callback(error, results.activate_neurons) : !error ? resolve(results.activate_neurons) : reject(error)
+           })
          })
        },
-       //make all neurons in the layer generate an output value
-       run: function(inputs, callback) {
+       // Connects neurons in this Layer to an object's neuron(s)
+       connect: function(object, callback) {
          let self = this
-         async.each(neurons, (neuron) => {
-           neuron.run(inputs, callback)
+         return new Promise(function(resolve, reject) {
+           return async.auto({
+             "neuron": function(callback) {
+               _.isArray(object.connections) ? callback(null, object) : callback(null, false)
+             },
+             "layer": function(callback) {
+               _.isArray(object.neurons) ? callback(null, object.neurons) : callback(null, false)
+             },
+             "group": function(callback) {
+               _.isPlainObject(object.neurons) ? callback(null, object.neurons) : callback(null, false)
+             },
+             "connect_neurons": ["neuron", "layer", "group", function(results, callback){    
+              if(results.neuron) {
+                async.each(self.neurons, function(self_neuron, callback) {
+                 self_neuron.connect(results.neuron)
+                 callback()
+               }, callback)
+              } else if(results.layer) {
+                async.each(results.layer, function(target_neuron, callback) {
+                  async.each(self.neurons, function(self_neuron, callback) {
+                    self_neuron.connect(target_neuron)
+                    callback()
+                  }, callback)
+                }, callback)
+              } else if(results.group) {
+                async.each(results.group, function(target_neuron, callback) {
+                  async.each(self.neurons, function(self_neuron, callback) {
+                    self_neuron.connect(target_neuron)
+                    callback()
+                  }, callback)
+                }, callback)
+              } else {
+                callback('Error at Layer.connect(): Unsupported Parameter Received', null)
+              }
+             }],
+           }, function(error, results) {
+             return callback ? callback(error, self.neurons) : !error ? resolve(self.neurons) : reject(error)
+           })
          })
        },
-       //connects a neuron with all the neurons in this layer 
-       connectNeuron: function(neuron, callback) {
+       // Add neurons to the layer
+       add_neurons: function(neuronCount, callback) {
          let self = this
-         async.each(neurons, (n) => {
-           neuron.project(n, callback)
+         return new Promise(function(resolve, reject) {
+           return async.times(neuronCount, function(n, next) {
+             next(null, neurons.push(new Neuron()))
+           }, function(error, neurons){
+             return callback ? callback(error, neurons) : !error ? resolve(neurons) : reject(neurons)
+           })
          })
        },
-       //conditionally connects neurons in this layer to a neuron
-       project: function(neuron, callback) {
+       // Search for neurons with the supplied name
+       get_neuron: function(name, callback) {
          let self = this
-         async.each(neurons, (n) => {
-           n.project(neuron, callback)
+         return new Promise(function(resolve, reject) {
+           return async.filter(neurons, function(neuron, callback) {
+              callback(null, neuron.Name.toUpperCase() === name.toUpperCase())
+           }, function(error, neurons) {
+             return callback ? callback(error, neurons) : !error ? resolve(neurons) : reject(error)
+           })
          })
        },
-       //search for a neuron with the supplied name
-       getNeuron: function(name, callback) {
+       // Returns the neuron with the highest axon value in this layer
+       get_best: function(callback) {
          let self = this
-         name = name.toUpperCase();
-
-         async.filter(neurons, (neuron, callback) => {
-           neuron.Name.toUpperCase() === name ? callback(null, neuron) : null
-         }, (err, res) => callback(res))
-       },
-       //returns the neuron with the highest axon value in this layer
-       bestGuess: function(callback) {
-         let self = this
-         //find index of the neuron with heighest axon value
-         async.reduce(neurons, {
-           states: [0]
-         }, (memo, neuron, callback) => {
-           _.last(neuron.states) > _.last(memo.states) ? callback(null, neuron) : callback(null, memo)
-         }, (err, res) => {
-           return callback(null, res)
+         return new Promise(function(resolve, reject) {
+           // Find neuron with heighest axon value
+           return async.reduce(neurons, { "connections": [{ "forward": { "states": [0] } }] }, function(best, neuron, callback) {
+             _.last(neuron.connections.forward.states) > _.last(best.connections.forward.states) ? callback(null, neuron) : callback(null, best)
+           }, function(error, neuron) {
+             return callback ? callback(error, neuron) : !error ? resolve(neuron) : reject(error)
+           })
          })
        },
      }  
 }
 
-module.exports = layer
+module.exports = Layer
