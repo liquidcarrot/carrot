@@ -1,21 +1,23 @@
 'use strict'
 
-module.exports = function(props, options) {
-  let from = []
-  let to = []
-  let weight = Math.random()
+let Connection = function(props, options) {
+  this.from
+  this.to
+  this.weight = Math.random()
+  this.forward = {
+    queue: [],
+    done: []
+  }
+  this.backward = {
+    queue: [],
+    done: []
+  }
   
   if(props) {
-    from = props.from || from
-    to = props.to || to
-    weight = props.weight || weight
-  }
-  
-  return {
-    from,
-    to,
-    weight,
-    forward: [],
-    backward: [],
+    this.from = props.from || this.from
+    this.to = props.to || this.to
+    this.weight = props.weight || this.weight
   }
 }
+
+module.exports = Connection
