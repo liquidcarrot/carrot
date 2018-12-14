@@ -1,11 +1,8 @@
 {
-  "name": "carrot",
-  "version": "1.0.0",
+  "name": "@liquid-carrot/carrot",
+  "version": "0.0.1",
   "description": "A Node.js Neural Network Library",
   "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
   "scripts": {
     "test": "nodemon ./node_modules/.bin/mocha --reporter spec test/"
   },
@@ -28,12 +25,12 @@
     "TanH",
     "ArcTan"
   ],
-  "author": "Liquid Carrot <people@liquidcarrot.io>",
+  "author": "Luis Carbonell <luiscarbonell5683@gmail.com>",
   "contributors": [
     "Luis Ernesto Carbonell <luis@liquidcarrot.io>",
     "Christian George Echevarria <chris@liquidcarrot.io>"
   ],
-  "private": true,
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/liquidcarrot/carrot/issues"
   },
@@ -41,11 +38,9 @@
   "dependencies": {
     "async": "^2.6.1",
     "bluebird": "^3.5.3",
-    "deepcopy": "^1.0.0",
     "lodash": "^4.17.11",
     "mathjs": "^5.4.0",
-    "neo-async": "^2.6.0",
-    "q": "^1.5.1"
+    "neo-async": "^2.6.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",
