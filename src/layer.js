@@ -9,7 +9,7 @@ let Connection = require('./connection')
 /**
 * Represents a Layer of Neurons.
 * @constructor
-* @param { object } props
+* @param {  } props
 * @param { array } options
 */
 let Layer = function(props, options) {
@@ -59,7 +59,7 @@ let Layer = function(props, options) {
       return new Promise(function(resolve, reject){
         return async.auto({
           "valid_array": function(callback) {
-            _.isArray(values) && values.length === neurons.length ? callback(null, values) : values ? callback('Error at Layer.activate(): Invalid Parameter Received', null) : callback(null, false)
+            _.isArray(values) && values.length === neurons.length ? callback(null, values) : values ? callback('Error at Layer.forward(): Invalid Parameter Received', null) : callback(null, false)
           },
           "values_forward": ["valid_array", function(results, callback) {
             if (results.valid_array) {
@@ -88,7 +88,7 @@ let Layer = function(props, options) {
       return new Promise(function(resolve, reject){
         return async.auto({
           "valid_array": function(callback) {
-            _.isArray(values) && values.length === neurons.length ? callback(null, values) : values ? callback('Error at Layer.activate(): Invalid Parameter Received', null) : callback(null, false)
+            _.isArray(values) && values.length === neurons.length ? callback(null, values) : values ? callback('Error at Layer.backward(): Invalid Parameter Received', null) : callback(null, false)
           },
           "values_backward": ["valid_array", function(results, callback) {
             if (results.valid_array) {
@@ -150,6 +150,10 @@ let Layer = function(props, options) {
           return callback ? callback(error, self.neurons) : !error ? resolve(self.neurons) : reject(error)
         })
       })
+    },
+    // Gate
+    gate: function(callback) {
+      
     },
     // Add neurons to this layer
     add_neurons: function(new_neurons, callback) {
