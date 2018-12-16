@@ -7,23 +7,37 @@ let Connection = require('./connection')
 
 /**
 * Represents a Neuron.
-* @constructor
-* @param { object } props
-* @param { array } options
+*
 * CHECK: https://robertbeisicht.wordpress.com/2014/07/04/feed-forward-neural-network-in-javascript/
 * CHECK: https://medium.com/javascript-scene/javascript-factory-functions-with-es6-4d224591a8b1
 * CHECK: https://softwareengineering.stackexchange.com/questions/82593/javascript-ternary-operator-vs
+*
+* @constructor
+* @param { object } props
+* @param { array } options
 */
 let Neuron = function(props, options) {
   let self = this
   
+  // Intra-Neuron Structure
+  self.bias = Math.random() 
+  self.learning_rate = 0.3
+  
+  // Inter-Neuron Structure
   self.connections = []
+  
+  // Inter-Neuron Actions
   self.activate = Neuron.activation.SIGMOID
   self.learn = Neuron.update.SIGMOID
+  
+  // Intra-Neuron Memory
+  self.actions = []
   
   if(props) {
     self.activate = props.activate || self.activate
     self.learn = props.learn || self.learn
+    self.bias = props.bias || self.bias
+    self.learning_rate = props.learning_rate || self.learning_rate
   }
   
   self.is = {
@@ -104,18 +118,24 @@ let Neuron = function(props, options) {
       })
     })
   }
-  self.connect = function(neuron, callback) {
+  self.connect = function(neuron, weight, callback) {
+    if(!callback && _.isFunction(weight)) {
+      callback = weight
+      weight = null
+    }
+    
     return new Promise(function(resolve, reject) {
       return async.auto({
         "connection": function(callback) {
           callback(null, new Connection({
+            weight,
             from: self,
-            to: neuron
+            to: neuron,
           }))
         },
         "neurons": ["connection", function(results, callback) {
           async.each([self, neuron], function(neuron, callback) {
-            neuron.connections = _.concat(neuron.connections, results.connection)
+            neuron.connections.push(results.connection)
             callback()
           }, callback)
         }],
@@ -158,152 +178,19 @@ let Neuron = function(props, options) {
       })
     })
   }
-    
-  /**
-    let connections = []
-    let states = []
-    let activate = function(inputs, callback) {
-      let self = this
-      return new Promise(function(resolve, reject) {
-        async.auto({
-          "activate": function(callback) {
-            callback(null, Math.random())
-          }
-        }, function(error, results) {
-          return callback ? callback(error, results.activate) : !error ? resolve(results.activate) : reject(error)
-        })
-      })
-    }
-    let learn = function(feedback, callback) {
-      let self = this
-      return new Promise(function(resolve, reject) {
-        async.auto({
-          "learn": function(callback) {
-            callback(null, Math.random())
-          }
-        }, function(error, results) {
-          return callback ? callback(error, results.learn) : !error ? resolve(results.learn) : reject(error)
-        })
-      })
-    }
-
-    return {
-      connections,
-      states,
-      activate,
-      learn,
-      is_input: function(callback) {
-        let self = this
-        return new Promise(function(resolve, reject) {
-          return async.auto({
-            "inputs": self.inputs,
-            "is_input": ["inputs", function(results, callback) {
-              callback(null, results.inputs.length === 0)
-            }]
-          }, function(error, results) {
-            return callback ? callback(error, results.is_input) : !error ? resolve(results.is_input) : reject(error)
-          })
-        })
-      },
-      is_output: function(callback) {
-        let self = this
-        return new Promise(function(resolve, reject) {
-          return async.auto({
-            "outputs": self.outputs,
-            "is_output": ["outputs", function(results, callback) {
-              callback(null, results.outputs.length === 0)
-            }]
-          }, function(error, results) {
-            return callback ? callback(error, results.is_output) : !error ? resolve(results.is_output) : reject(error)
-          })
-        })
-      },
-      inputs: function(callback) {
-        let self = this
-        return new Promise(function(resolve, reject) {
-          return async.filter(self.connections, function(connection, callback) {
-            callback(undefined, connection.to === self)
-          }, function(error, inputs) {
-            return callback ? callback(error, inputs) : !error ? resolve(inputs) : reject(error)
-          })
-        })
-      },
-      outputs: function(callback) {
-        let self = this
-        return new Promise(function(resolve, reject) {
-          return async.filter(self.connections, function(connection, callback) {
-            callback(undefined, connection.from === self)
-          }, function(error, inputs) {
-            return callback ? callback(error, inputs) : !error ? resolve(inputs) : reject(error)
-          })
-        })
-      },
-      connect: function(neuron, callback) {
-        let self = this
-        return new Promise(function(resolve, reject) {
-          return async.auto({
-            "connection": function(callback) {
-              callback(null, Connection({
-                from: self,
-                to: neuron
-              }))
-            },
-            "neurons": ["connection", function(results, callback) {
-              async.each([self, neuron], function(neuron, callback) {
-                neuron.connections = _.concat(neuron.connections, results.connection)
-                callback()
-              }, callback)
-            }],
-          }, function(error, results) {
-            return callback ? callback(error, results.connection) : !error ? resolve(results.connection) : reject(error)
-          })
-        })
-      },
-      forward: function(value, callback) {
-        let self = this
-        return new Promise(function(resolve, reject) {
-          async.auto({
-            "outputs": function(callback) {
-              self.outputs(callback)
-            },
-            "forward": ["outputs", function(results, callback) {
-              async.each(results.outputs, function(output, callback) {
-                output.forward.push(value)
-                callback()
-              }, callback)
-            }]
-          }, function(error, results) {
-            return callback ? callback(error, results.outputs) : !error ? resolve(results.outputs) : reject(error)
-          })
-        })
-      },
-      backward: function(value, callback) {
-        let self = this
-        return new Promise(function(resolve, reject) {
-          async.auto({
-            "inputs": function(callback) {
-              self.inputs(callback)
-            },
-            "backward": ["inputs", function(results, callback) {
-              async.each(results.inputs, function(input, callback) {
-                input.forward.push(value)
-                callback()
-              }, callback)
-            }]
-          }, function(error, results) {
-            return callback ? callback(error, results.inputs) : !error ? resolve(results.inputs) : reject(error)
-          })
-        })
-      }
-    }
-  */
 }
 
 Neuron.activation = {
   SIGMOID: function(input, callback) {
     let self = this
+    
+    if(!callback && _.isFunction(input)) {
+      callback = input
+      input = null
+    }
+    
     return new Promise(function(resolve, reject) {
-      async.auto({
+      return async.auto({
         "is_input": function(callback) {
           self.is.input(callback)
         },
@@ -318,7 +205,14 @@ Neuron.activation = {
             if(input === undefined || input === null || input === NaN) {
               callback(new Error("\"input\" is required for input neurons"))
             } else {
-              callback(null, input)
+              async.auto({
+                "encode": function(callback) {
+                  self.actions.push(input)
+                  callback()
+                }
+              }, function(error, results) {
+                callback(error, input)
+              })
             } 
           } else if(results.can_activate) {
             async.auto({
@@ -327,11 +221,20 @@ Neuron.activation = {
               },
               "sum": ["inputs", function(results, callback) {
                 async.map(results.inputs, function(input, callback) {
-                  callback(null, input.forward.queue.shift() * input.weight)
-                }, callback)
+                  let signal = input.forward.queue.shift()
+                  input.forward.states.push(signal)
+                  
+                  callback(null, signal * input.weight)
+                }, function(error, results) {
+                  callback(null, _.sum(results) + self.bias)
+                })
               }],
               "squash": ["sum", function(results, callback) {
                 callback(null, 1 / (1 + Math.exp(-results.sum)))
+              }],
+              "encode": ["squash", function(results, callback) {
+                self.actions.push(results.squash)
+                callback()
               }]
             }, function(error, results) {
               callback(error, results.squash)
@@ -359,11 +262,63 @@ Neuron.activation = {
 Neuron.update = {
   SIGMOID: function(feedback, callback) {
     let self = this
+    
+    if(!callback && _.isFunction(feedback)) {
+      callback = feedback
+      feedback = null
+    }
+    
     return new Promise(function(resolve, reject) {
-      async.auto({
-        "learn": function(callback) {
-          callback(null, Math.random())
-        }
+      return async.auto({
+        "is_output": function(callback) {
+          self.is.output(callback)
+        },
+        "is_input": function(callback) {
+          self.is.input(callback)
+        },
+        "can_learn": function(callback) {
+          self.can.learn(callback)
+        },
+        "learn": ["is_output", "is_input", "can_learn", function(results, callback) {
+          if(results.is_output) {
+            if(feedback === undefined || feedback === null || feedback === NaN) {
+              callback(new Error("\"input\" is required for input neurons"))
+            } else {
+              let last_action = _.last(self.actions)
+              callback(null, feedback * (last_action * (1 - last_action)))
+            }
+          } else if(results.can_learn) {
+            async.auto({
+              "outputs": function(callbacks) {
+                self.outputs(callbacks)
+              },
+              "feedback": ["outputs", function(results, callback) {
+                async.map(results.outputs, function(output, callback) {
+                  let critique = output.backward.queue.shift()
+                  output.backward.states.push(critique)
+                  callback(null, critique)
+                }, callback)
+              }],
+              "critiques": ["outputs", "feedback", function(results, callback) {
+                async.transform(results.feedback, function(errors, critique, index, callback) {
+                  errors.push(critique * results.outputs[index].weight)
+                  callback()
+                }, callback)
+              }],
+              "error": ["critiques", function(results, callback) {
+                callback(null, _.sum(results.critiques))
+              }],
+              "weights": ["outputs", "error", function(results, callback) {
+                async.each(results.outputs, function(output, callback) {
+                  output.weight = output.weight - self.learning_rate * _.last(output.backward.states) * _.last(self.actions)
+                  callback()
+                }, callback)
+              }]
+            }, function(error, results) {
+              callback(error, results.error)
+            })
+          } else callback()
+        }]
       }, function(error, results) {
         return callback ? callback(error, results.learn) : !error ? resolve(results.learn) : reject(error)
       })
