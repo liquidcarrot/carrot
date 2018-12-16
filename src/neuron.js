@@ -113,8 +113,8 @@ let Neuron = function(props, options) {
     return new Promise(function(resolve, reject) {
       return async.filter(self.connections, function(connection, callback) {
         callback(undefined, connection.from === self)
-      }, function(error, inputs) {
-        return callback ? callback(error, inputs) : !error ? resolve(inputs) : reject(error)
+      }, function(error, outputs) {
+        return callback ? callback(error, outputs) : !error ? resolve(outputs) : reject(error)
       })
     })
   }
