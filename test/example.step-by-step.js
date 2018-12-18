@@ -395,7 +395,7 @@ describe("Step by Step Example", function() {
   })
   
   describe("Building Networks with Layers", function() {
-    this.timeout(50000)
+    this.timeout(1000)
     
     let data = [{
       inputs: [0.05, 0.1],

@@ -57,6 +57,12 @@ let Layer = function(props, options) {
   // Make all neurons in the Layer generate an output value
   self.activate = function(inputs, callback) {
     let self = this
+    
+    if(!callback && _.isFunction(inputs)) {
+      callback = inputs
+      inputs = null
+    }
+    
     return new Promise(function(resolve, reject) {
       return async.auto({
         "valid_array": function(callback) {
