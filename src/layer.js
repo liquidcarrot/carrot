@@ -219,7 +219,7 @@ let Layer = function(props, options) {
   }
   // Gate
   self.gate = function(callback) {
-
+    callback(null, "Gate!")
   }
   // Add neurons to this layer
   self.add_neurons = function(new_neurons, callback) {

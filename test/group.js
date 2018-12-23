@@ -75,7 +75,7 @@ describe("Group", function() {
         expect(group.neurons).to.be.an("array")
         expect(group.neurons).to.have.lengthOf(2)
         expect(group.neurons[0]).to.exist
-        expect(group.neurons[0].activate).to.be.a("string")
+        expect(group.neurons[0].activate).to.be.a("function")
 
         done()
       })

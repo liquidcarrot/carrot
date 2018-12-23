@@ -76,7 +76,7 @@ describe("Layer", function() {
         expect(layer.neurons).to.be.an("array")
         expect(layer.neurons).to.have.lengthOf(2)
         expect(layer.neurons[0]).to.exist
-        expect(layer.neurons[0].activate).to.be.a("string")
+        expect(layer.neurons[0].activate).to.be.a("function")
 
         done()
       })
