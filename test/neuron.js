@@ -1,14 +1,15 @@
 'use strict'
 
+let faker = require("faker")
 let expect  = require('chai').expect
 
 describe("Neuron", function() {
   let Neuron = require('../src/neuron')
   
   describe("new Neuron()", function() {
-    it("should create a neuron with default properties", function(done) {    
-      let neuron = new Neuron()
-      
+    let neuron = new Neuron()
+    
+    it("should create a neuron", function(done) {    
       expect(neuron).to.not.be.null
       expect(neuron).to.not.be.undefined
       expect(neuron).to.not.be.NaN
@@ -16,23 +17,132 @@ describe("Neuron", function() {
       
       done()
     })
-    it("should create neuron with an empty connections array", function(done) {
-      let neuron = new Neuron()
-      
-      expect(neuron.connections).to.exist
-      expect(neuron.connections).to.be.an("array")
-      expect(neuron.connections).to.have.lengthOf(0)
+    it("should create a neuron with a learning rate", function(done) {
+      expect(neuron.rate).to.exist
+      expect(neuron.rate).to.be.a("number")
       
       done()
     })
-    describe.skip("new Neuron({ inputs: [...], outputs: [...] })", function() {
-      it("should create a neuron with given properties", function(done) {
+    it("should create a neuron with a bias", function(done) {
+      expect(neuron.bias).to.exist
+      expect(neuron.bias).to.be.a("number")
+      
+      done()
+    })
+    it("should create a neuron with an activation function", function(done) {
+      expect(neuron.activation).to.exist
+      expect(neuron.activation).to.be.a("function")
+      
+      done()
+    })
+    it("should create neuron with empty connections", function(done) {
+      expect(neuron.connections).to.exist
+      expect(neuron.connections.incoming).to.exist
+      expect(neuron.connections.incoming).to.be.an("array")
+      expect(neuron.connections.incoming).to.have.lengthOf(0)
+      expect(neuron.connections.outgoing).to.exist
+      expect(neuron.connections.outgoing).to.be.an("array")
+      expect(neuron.connections.outgoing).to.have.lengthOf(0)
+      
+      done()
+    })
+    
+    describe("new Neuron({...})", function() {
+      let options = {
+        bias: Math.random(),
+        rate: Math.random(),
+        activation: faker.random.arrayElement(["sigmoid", "sigmoidal", "logistic", "logistics", "relu", "tanh", "linear", "identity", function(x, derivative) {
+          return !derivative ? Math.atan(x) : (1 / (Math.pow(x, 2) + 1))
+        }])
+      }
+      let neuron = new Neuron(options)
+      
+      it("should create a neuron", function(done) {    
+        expect(neuron).to.not.be.null
+        expect(neuron).to.not.be.undefined
+        expect(neuron).to.not.be.NaN
+        expect(neuron).to.exist
+
+        done()
+      })
+      it("should create a neuron with the same learning rate", function(done) {
+        expect(neuron.rate).to.exist
+        expect(neuron.rate).to.equal(options.rate)
+
+        done()
+      })
+      it("should create a neuron with the same bias", function(done) {
+        expect(neuron.bias).to.exist
+        expect(neuron.bias).to.equal(options.bias)
+
+        done()
+      })
+      it("should create a neuron with an activation function", function(done) {
+        expect(neuron.activation).to.exist
+        expect(neuron.activation).to.be.a("function")
+
+        done()
+      })
+      it("should create neuron with empty connections", function(done) {
+        expect(neuron.connections).to.exist
+        expect(neuron.connections.incoming).to.exist
+        expect(neuron.connections.incoming).to.be.an("array")
+        expect(neuron.connections.incoming).to.have.lengthOf(0)
+        expect(neuron.connections.outgoing).to.exist
+        expect(neuron.connections.outgoing).to.be.an("array")
+        expect(neuron.connections.outgoing).to.have.lengthOf(0)
 
         done()
       })
     })
-    describe.skip("new Neuron(neuron)", function() {
-      it("should create a similar neuron", function(done) {
+    describe("new Neuron(neuron)", function() {
+      let options = {
+        bias: Math.random(),
+        rate: Math.random(),
+        activation: faker.random.arrayElement(["sigmoid", "sigmoidal", "logistic", "logistics", "relu", "tanh", "linear", "identity", function(x, derivative) {
+          return !derivative ? Math.atan(x) : (1 / (Math.pow(x, 2) + 1))
+        }])
+      }
+      let other_neuron = new Neuron(options)
+      let neuron = new Neuron(other_neuron)
+      
+      it("should create a neuron", function(done) {    
+        expect(neuron).to.not.be.null
+        expect(neuron).to.not.be.undefined
+        expect(neuron).to.not.be.NaN
+        expect(neuron).to.exist
+
+        done()
+      })
+      it("should create a neuron with the same learning rate", function(done) {
+        expect(neuron.rate).to.exist
+        expect(neuron.rate).to.equal(other_neuron.rate)
+
+        done()
+      })
+      it("should create a neuron with the same bias", function(done) {
+        expect(neuron.bias).to.exist
+        expect(neuron.bias).to.equal(other_neuron.bias)
+
+        done()
+      })
+      it("should create a neuron with an activation function", function(done) {
+        expect(neuron.activation).to.exist
+        expect(neuron.activation).to.be.a("function")
+        expect(neuron.activation).to.equal(other_neuron.activation)
+        expect(neuron.activation).to.eql(other_neuron.activation)
+
+        done()
+      })
+      it("should create neuron with empty connections", function(done) {
+        expect(neuron.connections).to.exist
+        expect(neuron.connections.incoming).to.exist
+        expect(neuron.connections.incoming).to.be.an("array")
+        expect(neuron.connections.incoming).to.have.lengthOf(0)
+        expect(neuron.connections.outgoing).to.exist
+        expect(neuron.connections.outgoing).to.be.an("array")
+        expect(neuron.connections.outgoing).to.have.lengthOf(0)
+
         done()
       })
     })
@@ -40,11 +150,11 @@ describe("Neuron", function() {
 
   describe(".connect()", function() {
     describe(".connect(neuron[, callback])", function() {
-      it("should create a connection between neurons", function(done) {
-        let n0 = new Neuron()
-        let n1 = new Neuron()
+      let n0 = new Neuron()
+      let n1 = new Neuron()
 
-        n0.connect(n1, function(error, connection) {
+      n0.project(n1, function(error, connection) {
+        it("should create a connection between neurons", function(done) {
           expect(error).to.not.exist
           expect(error).to.be.null
           expect(connection).to.exist
@@ -52,33 +162,24 @@ describe("Neuron", function() {
           expect(connection.from).to.exist
           expect(connection.to).to.exist
           expect(connection.weight).to.exist
+
           done()
         })
-      })
-      it("should add a connection to source neuron", function(done) {
-        let n0 = new Neuron()
-        let n1 = new Neuron()
-
-        expect(n0.connections).to.have.lengthOf(0)
-
-        n0.connect(n1, function(error, connection) {
-          expect(n0.connections).to.have.lengthOf(1)
-          expect(n0.connections[0].from).equal(n0)
-          expect(n0.connections[0].to).equal(n1)
-          done()
+        it("should add a connection to source neuron", function(done) {
+            expect(n0.connections.outgoing).to.exist
+            expect(n0.connections.outgoing).to.have.lengthOf(1)
+            expect(n0.connections.outgoing[0].from).equal(n0)
+            expect(n0.connections.outgoing[0].to).equal(n1)
+          
+            done()
         })
-      })
-      it("should add a connection to destination neuron", function(done) {
-        let n0 = new Neuron()
-        let n1 = new Neuron()
-
-        expect(n1.connections).to.have.lengthOf(0)
-
-        n0.connect(n1, function(error, connection) {
-          expect(n1.connections).to.have.lengthOf(1)
-          expect(n1.connections[0].to).equal(n1)
-          expect(n1.connections[0].from).equal(n0)
-          done()
+        it("should add a connection to destination neuron", function(done) {
+            expect(n1.connections.incoming).to.exist
+            expect(n1.connections.incoming).to.have.lengthOf(1)
+            expect(n1.connections.incoming[0].to).equal(n1)
+            expect(n1.connections.incoming[0].from).equal(n0)
+          
+            done()
         })
       })
     })
@@ -100,171 +201,102 @@ describe("Neuron", function() {
   
   describe(".is.input()", function() {
     it("should return a boolean value", function(done) {
-      let n0 = new Neuron()
-      n0.is.input(function(error, is_input) {
-        expect(error).to.not.exist
-        expect(error).to.be.null
-        expect(is_input).to.exist
-        expect(is_input).to.be.a("boolean")
+      let neuron = new Neuron()
+      
+      expect(neuron.is.input()).to.be.a("boolean")
+      
+      done()
+    })
+    it("should return true if neuron has no incoming connections", function(done) {
+      let neuron = new Neuron()
+      
+      expect(neuron.is.input()).to.equal(true)
+      
+      done()
+    })
+    it("should return false if neuron has at least one incoming connection", function(done) {
+      let other_neuron = new Neuron()
+      let neuron = new Neuron()
+      
+      other_neuron.project(neuron, function(error, connection) {
+        expect(neuron.is.input()).to.equal(false)
+        
         done()
       })
     })
-    it.skip("should return true if neuron has no incoming connections", function(done) {
-      
-      done()
-    })
-    it.skip("should return false if neuron has at least one incoming connection", function(done) {
-      
-      done()
-    })
   })
   
-  describe.skip(".is.output()", function() {
-    it.skip("should return a boolean value", function(done) {
+  describe(".is.output()", function() {
+    it("should return a boolean value", function(done) {
+      let neuron = new Neuron()
+      
+      expect(neuron.is.output()).to.be.a("boolean")
       
       done()
     })
-    it.skip("should return true if neuron has no outgoing connections", function(done) {
+    it("should return true if neuron has no outgoing connections", function(done) {
+      let neuron = new Neuron()
+      
+      expect(neuron.is.output()).to.equal(true)
       
       done()
     })
-    it.skip("should return false if neuron has at least one outgoing connection", function(done) {
+    it("should return false if neuron has at least one outgoing connection", function(done) {
+      let other_neuron = new Neuron()
+      let neuron = new Neuron()
       
-      done()
-    })
-  })
-  
-  describe(".inputs()", function() {
-    it("should return an array of neurons", function(done) {
-      let n0 = new Neuron()
-      let n1 = new Neuron()
-      
-      n0.connect(n1, function(error, connection) {
-        n1.inputs(function(error, inputs) {
-          expect(error).to.not.exist
-          expect(error).to.be.null
-          expect(inputs).to.exist
-          expect(inputs).to.be.an("array")
-          expect(inputs).to.have.lengthOf(1)
-          done()
-        })
-      })
-    })
-  })
-  
-  describe(".outputs()", function() {
-    it("should return an array of neurons", function(done) {
-      let n0 = new Neuron()
-      let n1 = new Neuron()
-      
-      n0.connect(n1, function(error, connection) {
-        n0.outputs(function(error, outputs) {
-          expect(error).to.not.exist
-          expect(error).to.be.null
-          expect(outputs).to.exist
-          expect(outputs).to.be.an("array")
-          expect(outputs).to.have.lengthOf(1)
-          done()
-        })
+      neuron.project(other_neuron, function(error, connection) {
+        expect(neuron.is.output()).to.equal(false)
+        
+        done()
       })
     })
   })
   
   describe(".activate()", function() {
-    this.timeout(50000)
-    it("should take a number as a parameter", function(done) {
-      let n0 = new Neuron()
-
-      n0.activate(Math.random(), function(error, result) {
-        expect(error).to.not.exist
-        expect(error).to.be.null
+    let neuron = new Neuron()
+    
+    it("should accept a number as a parameter", function(done) {
+      neuron.activate(Math.random(), function(error, result) {
+        expect(result).to.exist
+        expect(result).to.be.a("number")
+        
         done()
       })
     })
     it("should return a number", function(done) {
-      let n0 = new Neuron()
-
-      n0.activate(Math.random(), function(error, result) {
+      neuron.activate(Math.random(), function(error, result) {
         expect(result).to.exist
         expect(result).to.be.a("number")
+        
         done()
       })
     })
   })
   
-  describe(".learn()", function() {
-    it("should take an array of numbers as a parameter", function(done) {
-      let n0 = new Neuron()
-
-      n0.learn([Math.random(), Math.random()], function(error, result) {
-        expect(error).to.not.exist
-        expect(error).to.be.null
+  describe(".propagate()", function() {
+    let neuron = new Neuron()
+    
+    beforeEach(function(done) {
+      neuron.activate(Math.random(), function(error, result) {
+        done()
+      })
+    })
+    
+    it("should accept a number as a parameter", function(done) {
+      neuron.propagate(Math.random(), function(error, result) {
+        expect(result).to.exist
+        expect(result).to.be.a("number")
+        
         done()
       })
     })
     it("should return a number", function(done) {
-      let n0 = new Neuron()
-
-      n0.learn([Math.random(), Math.random()], function(error, result) {
+      neuron.propagate(Math.random(), function(error, result) {
         expect(result).to.exist
         expect(result).to.be.a("number")
+        
         done()
-      })
-    })
-  })
-  
-  describe(".forward()", function() {
-    it("should take a number as a parameter", function(done) {
-      let n0 = new Neuron()
-      let n1 = new Neuron()
-      
-      n0.connect(n1, function(error, connection) {
-        n0.forward(Math.random(), function(error, outputs) {
-          expect(error).to.not.exist
-          expect(error).to.be.null
-          done()
-        })
-      })
-    })
-    it("should return an array of neurons", function(done) {
-      let n0 = new Neuron()
-      let n1 = new Neuron()
-      
-      n0.connect(n1, function(error, connection) {
-        n0.forward(Math.random(), function(error, outputs) {
-          expect(outputs).to.exist
-          expect(outputs).to.be.an("array")
-          expect(outputs).to.have.lengthOf(1)
-          done()
-        })
-      })
-    })
-  })
-
-  describe(".backward()", function() {
-    it("should take a number as a parameter", function(done) {
-      let n0 = new Neuron()
-      let n1 = new Neuron()
-      
-      n0.connect(n1, function(error, connection) {
-        n1.backward(Math.random(), function(error, outputs) {
-          expect(error).to.not.exist
-          expect(error).to.be.null
-          done()
-        })
-      })
-    })
-    it("should return an array of neurons", function(done) {
-      let n0 = new Neuron()
-      let n1 = new Neuron()
-      
-      n0.connect(n1, function(error, connection) {
-        n1.backward(Math.random(), function(error, outputs) {
-          expect(outputs).to.exist
-          expect(outputs).to.be.an("array")
-          expect(outputs).to.have.lengthOf(1)
-          done()
-        })
       })
     })
   })

@@ -4,6 +4,7 @@
   "description": "A Node.js Neural Network Library",
   "main": "index.js",
   "scripts": {
+    "build": "./node_modules/.bin/documentation build src/** -f md > DOCUMENTATION.md",
     "test": "nodemon ./node_modules/.bin/mocha --reporter spec test/"
   },
   "repository": {
@@ -44,6 +45,8 @@
   },
   "devDependencies": {
     "chai": "^4.2.0",
+    "documentation": "^9.1.1",
+    "faker": "^4.1.0",
     "mocha": "^5.2.0",
     "nodemon": "^1.18.7"
   }

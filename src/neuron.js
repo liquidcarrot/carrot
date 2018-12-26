@@ -1,151 +1,122 @@
 'use strict'
 
 let _ = require('lodash')
+let math = require('mathjs')
 let async = require('neo-async')
 let Promise = require('bluebird')
 let Connection = require('./connection')
 
 /**
-* Represents a Neuron.
+* >Neuron Factory Function
 *
-* CHECK: https://robertbeisicht.wordpress.com/2014/07/04/feed-forward-neural-network-in-javascript/
-* CHECK: https://medium.com/javascript-scene/javascript-factory-functions-with-es6-4d224591a8b1
-* CHECK: https://softwareengineering.stackexchange.com/questions/82593/javascript-ternary-operator-vs
+* * CHECK: https://robertbeisicht.wordpress.com/2014/07/04/feed-forward-neural-network-in-javascript/
+* * CHECK: https://medium.com/javascript-scene/javascript-factory-functions-with-es6-4d224591a8b1
+* * CHECK: https://softwareengineering.stackexchange.com/questions/82593/javascript-ternary-operator-vs
 *
-* @constructor
-* @param { object } props
-* @param { array } options
+* @constructs Neuron
+* @param {Object} [props] - Neuron's Properties
+* @param {number} [props.bias=Math.random()] - Neuron's Synaptic Weight Constant AKA Bias
+* @param {ActivationFunction} [props.activation=Neuron.activations.SIGMOID] - Neuron's Activation Function
+* @param {number} [props.rate=0.3] - Neuron's Learning Rate AKA Gradient Descent Step Size
+* @param {Object} [props.connections] - Neuron's Connections
+* @param {[Connection]} [props.connections.incoming=[]] - Neuron's Incoming Connections
+* @param {[Connection]} [props.connections.outgoing=[]] - Neuron's Outgoing Connections
 */
-let Neuron = function(props, options) {
+let Neuron = function(props) {
   let self = this
   
-  // Intra-Neuron Structure
-  self.bias = Math.random() 
-  self.learning_rate = 0.3
+  self.bias = Math.random() // Neuron bias
+  self.activation = Neuron.activations.SIGMOID // Neuron's Squash Function
+  self.connections = {
+    // Incoming Connections
+    incoming: [],
+    // Outgoing Connections
+    outgoing: []
+  }
   
-  // Inter-Neuron Structure
-  self.connections = []
-  
-  self.activation = Neuron.activations.SIGMOID
-  
-  /*
-    // Inter-Neuron Actions
-    self.activate = Neuron.activation.SIGMOID
-    self.learn = Neuron.update.SIGMOID
-  */
-  
-  // Intra-Neuron Memory
-  self.actions = []
+  // For Backpropagation
+  self.rate = 0.3 // Learning rate
+  self.last // Last Squashed Sum
+  self.error // Last Error of Synaptic Weighted Sums (Not with respect to individual weights)
   
   if(props) {
-    self.activation = props.activation || self.activation
-    self.learn = props.learn || self.learn
     self.bias = props.bias || self.bias
-    self.learning_rate = props.learning_rate || self.learning_rate
+    self.rate = props.rate || self.rate
+    
+    // Connections
+    if(props.connections) {
+      self.connections.incoming = props.connections.incoming || self.connections.incoming
+      self.connections.outgoing = props.connections.outgoing || self.connections.outgoing
+    }
+    
+    // Activation Functions Using Class Defaults
+    if(props.activation && typeof props.activation === "string") {
+      // Sigmoid Activation Function
+      if(props.activation.toLowerCase() === "sigmoid" || 
+         props.activation.toLowerCase() === "sigmoidal" ||
+         props.activation.toLowerCase() === "logistic" ||
+         props.activation.toLowerCase() === "logistics") {
+        self.activation = Neuron.activations.SIGMOID
+      }
+      // Rectified Linear Unit Activation Function
+      else if(props.activation.toLowerCase() === "relu") {
+        self.activation = Neuron.activations.RELU
+      }
+      // Hyperbolic Tangent Activation Function
+      else if(props.activation.toLowerCase() === "tanh") {
+        self.activation = Neuron.activation.TANH
+      }
+      // Linear Activation Function
+      else if(props.activation.toLowerCase() === "linear" ||
+                props.activation.toLowerCase() === "identity") {
+        self.activation = Neuron.activations.LINEAR
+      }
+      // Unsupported Activation Function
+      else {
+        throw new Error(props.activation + " is not a valid - or is an unsupported - activation function.\n\n" + 
+                        "If you would like to create support for it, please open a up pull request on GitHub for it: https://github.com/liquidcarrot/carrot/pulls\n\n" +
+                        "If you would like one of our core contributors to take a look into it, please open up an issue on GitHub describing this function in further detail: https://github.com/liquidcarrot/carrot/issues")
+      }
+    }
+    // Activation Functions Using Custom Functions
+    else if(props.activation && typeof props.activation === "function") {
+      self.activation = props.activation
+    }
+    // Unsupported Activation Function Construction
+    else {
+      throw new Error("Activation function must be a 'function' or a 'string'")
+    }
   }
   
   self.is = {
-    input: function(callback) {
-      return new Promise(function(resolve, reject) {
-        return async.auto({
-          "inputs": function(callback) {
-            self.inputs(callback)
-          },
-          "is_input": ["inputs", function(results, callback) {
-            callback(null, results.inputs.length === 0)
-          }]
-        }, function(error, results) {
-          return callback ? callback(error, results.is_input) : !error ? resolve(results.is_input) : reject(error)
-        })
-      })
+    // No Incoming Connections
+    input: function() {
+      return self.connections.incoming.length === 0
     },
-    output: function(callback) {
-      return new Promise(function(resolve, reject) {
-        return async.auto({
-          "outputs": function(callback) {
-            self.outputs(callback)
-          },
-          "is_output": ["outputs", function(results, callback) {
-            callback(null, results.outputs.length === 0)
-          }]
-        }, function(error, results) {
-          return callback ? callback(error, results.is_output) : !error ? resolve(results.is_output) : reject(error)
-        })
-      })
+    // No Outgoing Connections
+    output: function() {
+      return self.connections.outgoing.length === 0
     }
   }
-  self.can = {
-    activate: function(callback) {
-      async.auto({
-        "inputs": function(callback) {
-          self.inputs(callback)
-        },
-        "can_activate": ["inputs", function(results, callback) {
-          async.every(results.inputs, function(input, callback) {
-            callback(null, input.forward.queue.length > 0)
-          }, callback)
-        }]
-      }, function(error, results) {
-        callback(error, results.can_activate)
-      })
-    },
-    learn: function(callback) {
-      async.auto({
-        "outputs": function(callback) {
-          self.outputs(callback)
-        },
-        "can_learn": ["outputs", function(results, callback) {
-          async.every(results.outputs, function(output, callback) {
-            callback(null, output.backward.queue.length > 0)
-          }, callback)
-        }]
-      }, function(error, results) {
-        callback(error, results.can_learn)
-      })
-    }
-  }
-  self.inputs = function(callback) {
-    return new Promise(function(resolve, reject) {
-      return async.filter(self.connections, function(connection, callback) {
-        callback(undefined, connection.to === self)
-      }, function(error, inputs) {
-        return callback ? callback(error, inputs) : !error ? resolve(inputs) : reject(error)
-      })
-    })
-  }
-  self.outputs = function(callback) {
-    return new Promise(function(resolve, reject) {
-      return async.filter(self.connections, function(connection, callback) {
-        callback(undefined, connection.from === self)
-      }, function(error, outputs) {
-        return callback ? callback(error, outputs) : !error ? resolve(outputs) : reject(error)
-      })
-    })
-  }
-  self.connect = function(neuron, weight, callback) {
+  self.project = function(neuron, weight, callback) {
     if(!callback && _.isFunction(weight)) {
       callback = weight
       weight = null
     }
     
     return new Promise(function(resolve, reject) {
-      return async.auto({
-        "connection": function(callback) {
-          callback(null, new Connection({
-            weight,
-            from: self,
-            to: neuron,
-          }))
-        },
-        "neurons": ["connection", function(results, callback) {
-          async.each([self, neuron], function(neuron, callback) {
-            neuron.connections.push(results.connection)
-            callback()
-          }, callback)
-        }],
-      }, function(error, results) {
-        return callback ? callback(error, results.connection) : !error ? resolve(results.connection) : reject(error)
+      // Creates a Connection Between Neurons
+      let connection = new Connection({
+        from: self,
+        to: neuron,
+        weight: weight
       })
+
+      // Adds Connection to both Neurons
+      self.connections.outgoing.push(connection)
+      neuron.connections.incoming.push(connection)
+      
+      return callback ? callback(null, connection) : resolve(connection)
     })
   }
   self.activate = function(input, callback) { 
@@ -155,172 +126,87 @@ let Neuron = function(props, options) {
     }
     
     return new Promise(function(resolve, reject) {
-      return async.auto({
-        "is_input": function(callback) {
-          self.is.input(callback)
-        },
-        "is_output": function(callback) {
-          self.is.output(callback)
-        },
-        "can_activate": function(callback) {
-          self.can.activate(callback)
-        },
-        "activate": ["is_input", "is_output", "can_activate", function(results, callback) {
-          // No Incoming Connections
-          if(results.is_input) {
-            if(input === undefined || input === null || input === NaN) {
-              callback(new Error("\"input\" is required for input neurons"))
-            } else {
-              async.auto({
-                // Store Input as Action
-                "encode": function(callback) {
-                  self.actions.push(input)
-                  callback()
-                }
-              }, function(error, results) {
-                // Forward Input
-                callback(error, input)
-              })
-            } 
-          }
-          // Some Incoming Connections; All have fired
-          else if(results.can_activate) {
-            async.auto({
-              // All Incoming Connections
-              "inputs": function(callback) {
-                self.inputs(callback)
-              },
-              // Synaptic Weights
-              "sum": ["inputs", function(results, callback) {
-                async.map(results.inputs, function(input, callback) {
-                  let signal = input.forward.queue.shift()
-                  input.forward.states.push(signal)
-                  
-                  callback(null, signal * input.weight)
-                }, function(error, results) {
-                  callback(null, _.sum(results) + self.bias)
-                })
-              }],
-              // Squash
-              "squash": ["sum", function(results, callback) {
-                callback(null, self.activation(results.sum))
-              }],
-              // Store Squashed Output as Action
-              "encode": ["squash", function(results, callback) {
-                self.actions.push(results.squash)
-                callback()
-              }]
-            }, function(error, results) {
-              // Forward Squashed Output
-              callback(error, results.squash)
-            })
-          } else callback()
-        }]
-      }, function(error, results) {
-        return callback ? callback(error, results.activate) : !error ? resolve(results.activate) : reject(error)
-      })
+      // Forward Environment Input through the Network
+      if(self.is.input()) {
+        self.last = input
+      }
+      // Calculate Input, Produce Results, Propagate Results Forward through the Network
+      else {
+        // Incoming Connection Weights
+        let weights = _.map(self.connections.incoming, function(connection) {
+          return connection.weight
+        })
+        // Incoming Connection Inputs
+        let inputs = _.map(self.connections.incoming, function(connection) {
+          return connection.from.last
+        })
+
+        console.log("Incoming Weights: " + weights)
+        console.log("Incoming Inputs: " + inputs)
+
+        // Synaptic Weight Function
+        let sum = math.parse("dot(w,i)").eval({
+          w: weights,
+          i: inputs
+        })
+
+        // Activation Function
+        self.last = self.activation(sum)
+      }
+      
+      return callback ? callback(null, self.last) : resolve(self.last)
     })
   }
-  self.learn = function(feedback, callback) {
+  self.propagate = function(feedback, callback) {
      if(!callback && _.isFunction(feedback)) {
       callback = feedback
       feedback = null
     }
     
     return new Promise(function(resolve, reject) {
-      return async.auto({
-        "is_output": function(callback) {
-          self.is.output(callback)
-        },
-        "is_input": function(callback) {
-          self.is.input(callback)
-        },
-        "can_learn": function(callback) {
-          self.can.learn(callback)
-        },
-        "learn": ["is_output", "is_input", "can_learn", function(results, callback) {
-          // No Outgoing Connections
-          if(results.is_output) {
-            if(feedback === undefined || feedback === null || feedback === NaN) {
-              callback(new Error("\"input\" is required for input neurons"))
-            } else {
-              let last_action = _.last(self.actions)
-              callback(null, feedback * (last_action * (1 - last_action)))
-//               feed*last - feed *last*last
-            }
-          } else if(results.can_learn) {
-            async.auto({
-              "outputs": function(callbacks) {
-                self.outputs(callbacks)
-              },
-              "feedback": ["outputs", function(results, callback) {
-                async.map(results.outputs, function(output, callback) {
-                  let critique = output.backward.queue.shift()
-                  output.backward.states.push(critique)
-                  callback(null, critique)
-                }, callback)
-              }],
-              "critiques": ["outputs", "feedback", function(results, callback) {
-                async.transform(results.feedback, function(errors, critique, index, callback) {
-                  errors.push(critique * results.outputs[index].weight)
-                  callback()
-                }, callback)
-              }],
-              "error": ["critiques", function(results, callback) {
-                callback(null, _.sum(results.critiques))
-              }],
-              "weights": ["outputs", "error", function(results, callback) {
-                async.each(results.outputs, function(output, callback) {
-                  output.weight = output.weight - self.learning_rate * _.last(output.backward.states) * _.last(self.actions)
-                  callback()
-                }, callback)
-              }]
-            }, function(error, results) {
-              callback(error, results.error)
-            })
-          } else callback()
-        }]
-      }, function(error, results) {
-        return callback ? callback(error, results.learn) : !error ? resolve(results.learn) : reject(error)
-      })
-    })
-  }
-  self.forward = function(value, callback) {
-    return new Promise(function(resolve, reject) {
-      async.auto({
-        "outputs": function(callback) {
-          self.outputs(callback)
-        },
-        "forward": ["outputs", function(results, callback) {
-          async.each(results.outputs, function(output, callback) {
-            output.forward.queue.push(value)
-            callback()
-          }, callback)
-        }]
-      }, function(error, results) {
-        return callback ? callback(error, results.outputs) : !error ? resolve(results.outputs) : reject(error)
-      })
-    })
-  }
-  self.backward = function(value, callback) {
-    return new Promise(function(resolve, reject) {
-      async.auto({
-        "inputs": function(callback) {
-          self.inputs(callback)
-        },
-        "backward": ["inputs", function(results, callback) {
-          async.each(results.inputs, function(input, callback) {
-            input.backward.queue.push(value)
-            callback()
-          }, callback)
-        }]
-      }, function(error, results) {
-        return callback ? callback(error, results.inputs) : !error ? resolve(results.inputs) : reject(error)
-      })
+      // Forward Environment Error through the Network
+      if(self.is.output()) {
+        self.error = feedback * self.activation(self.last, true)
+      }
+      // Calculate Erro, Update Weights, Propagate Error Backward through the Network
+      else {
+        // Outgoing Connection Weights
+        let weights = _.map(self.connections.outgoing, function(connection) {
+          return connection.weight
+        })
+        // All Incoming Critiques from Outgoing Connections
+        let critiques = _.map(self.connections.outgoing, function(connection) {
+          return connection.to.error
+        })
+
+        // Net Critique (Dot Product of All Incoming Critiques and their Importance)
+        let sum = math.parse("dot(w,c)").eval({
+          w: weights,
+          c: critiques
+        })
+
+        // Net Neuron Error
+        self.error = sum * self.activation(self.last, true)
+
+        // Update Weights; Return Update Weights
+        let new_weights = _.map(self.connections.outgoing, function(connection, index, connections) {
+          connection.weight = connections[index].weight = connections[index].weight - self.rate * connections[index].to.error * self.last
+          return connection.weight
+        })
+      }
+      
+      return callback ? callback(null, self.error) : resolve(self.error)
     })
   }
 }
 
+
+/**
+* @memberof Neuron
+* @function ActivationFunction
+* @param {number} x - Real Number Input
+* @param {boolean} derivative - Return partial derivative of `ActivationFunction` at `x`
+*/
 Neuron.activations = {
   SIGMOID: function(x, derivative) {
     let sigmoid = 1 / (1 + Math.exp(-x))
@@ -336,165 +222,6 @@ Neuron.activations = {
     return derivative ? 1 : x
   }
 }
-
-// Neuron.activation = {
-//   SIGMOID: function(input, callback) {
-//     let self = this
-    
-//     if(!callback && _.isFunction(input)) {
-//       callback = input
-//       input = null
-//     }
-    
-//     return new Promise(function(resolve, reject) {
-//       return async.auto({
-//         "is_input": function(callback) {
-//           self.is.input(callback)
-//         },
-//         "is_output": function(callback) {
-//           self.is.output(callback)
-//         },
-//         "can_activate": function(callback) {
-//           self.can.activate(callback)
-//         },
-//         "activate": ["is_input", "is_output", "can_activate", function(results, callback) {
-//           if(results.is_input) {
-//             if(input === undefined || input === null || input === NaN) {
-//               callback(new Error("\"input\" is required for input neurons"))
-//             } else {
-//               async.auto({
-//                 "encode": function(callback) {
-//                   self.actions.push(input)
-//                   callback()
-//                 }
-//               }, function(error, results) {
-//                 callback(error, input)
-//               })
-//             } 
-//           } else if(results.can_activate) {
-//             async.auto({
-//               "inputs": function(callback) {
-//                 self.inputs(callback)
-//               },
-//               "sum": ["inputs", function(results, callback) {
-//                 async.map(results.inputs, function(input, callback) {
-//                   let signal = input.forward.queue.shift()
-//                   input.forward.states.push(signal)
-                  
-//                   callback(null, signal * input.weight)
-//                 }, function(error, results) {
-//                   callback(null, _.sum(results) + self.bias)
-//                 })
-//               }],
-//               "squash": ["sum", function(results, callback) {
-//                 callback(null, 1 / (1 + Math.exp(-results.sum)))
-//               }],
-//               "encode": ["squash", function(results, callback) {
-//                 self.actions.push(results.squash)
-//                 callback()
-//               }]
-//             }, function(error, results) {
-//               callback(error, results.squash)
-//             })
-//           } else callback()
-//         }]
-//       }, function(error, results) {
-//         return callback ? callback(error, results.activate) : !error ? resolve(results.activate) : reject(error)
-//       })
-//     })
-//   },
-//   ReLU: function(inputs, callback) {
-    
-//   },
-//   TANH: function(inputs, callback) {
-    
-//   },
-//   IDENTITY: function(inputs, callback) {
-    
-//   },
-//   PERCEPTRON: function(inputs, callback) {
-    
-//   }
-// }
-// Neuron.update = {
-//   SIGMOID: function(feedback, callback) {
-//     let self = this
-    
-//     if(!callback && _.isFunction(feedback)) {
-//       callback = feedback
-//       feedback = null
-//     }
-    
-//     return new Promise(function(resolve, reject) {
-//       return async.auto({
-//         "is_output": function(callback) {
-//           self.is.output(callback)
-//         },
-//         "is_input": function(callback) {
-//           self.is.input(callback)
-//         },
-//         "can_learn": function(callback) {
-//           self.can.learn(callback)
-//         },
-//         "learn": ["is_output", "is_input", "can_learn", function(results, callback) {
-//           if(results.is_output) {
-//             if(feedback === undefined || feedback === null || feedback === NaN) {
-//               callback(new Error("\"input\" is required for input neurons"))
-//             } else {
-//               let last_action = _.last(self.actions)
-//               callback(null, feedback * (last_action * (1 - last_action)))
-//             }
-//           } else if(results.can_learn) {
-//             async.auto({
-//               "outputs": function(callbacks) {
-//                 self.outputs(callbacks)
-//               },
-//               "feedback": ["outputs", function(results, callback) {
-//                 async.map(results.outputs, function(output, callback) {
-//                   let critique = output.backward.queue.shift()
-//                   output.backward.states.push(critique)
-//                   callback(null, critique)
-//                 }, callback)
-//               }],
-//               "critiques": ["outputs", "feedback", function(results, callback) {
-//                 async.transform(results.feedback, function(errors, critique, index, callback) {
-//                   errors.push(critique * results.outputs[index].weight)
-//                   callback()
-//                 }, callback)
-//               }],
-//               "error": ["critiques", function(results, callback) {
-//                 callback(null, _.sum(results.critiques))
-//               }],
-//               "weights": ["outputs", "error", function(results, callback) {
-//                 async.each(results.outputs, function(output, callback) {
-//                   output.weight = output.weight - self.learning_rate * _.last(output.backward.states) * _.last(self.actions)
-//                   callback()
-//                 }, callback)
-//               }]
-//             }, function(error, results) {
-//               callback(error, results.error)
-//             })
-//           } else callback()
-//         }]
-//       }, function(error, results) {
-//         return callback ? callback(error, results.learn) : !error ? resolve(results.learn) : reject(error)
-//       })
-//     })
-//   },
-//   ReLU: function(feedback, callback) {
-    
-//   },
-//   TANH: function(feedback, callback) {
-    
-//   },
-//   IDENTITY: function(feedback, callback) {
-    
-//   },
-//   PERCEPTRON: function(feedback, callback) {
-    
-//   }
-// }
-
 
 module.exports = Neuron
 
