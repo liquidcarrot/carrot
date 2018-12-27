@@ -2,7 +2,7 @@
 
 let expect = require('chai').expect
 
-describe("Group", function() {
+describe.skip("Group", function() {
   let Group = require('../src/group')
   let Neuron = require('../src/neuron')
   describe("new Group()", function() {

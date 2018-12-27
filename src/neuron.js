@@ -44,12 +44,6 @@ let Neuron = function(props) {
     self.bias = props.bias || self.bias
     self.rate = props.rate || self.rate
     
-    // Connections
-    if(props.connections) {
-      self.connections.incoming = props.connections.incoming || self.connections.incoming
-      self.connections.outgoing = props.connections.outgoing || self.connections.outgoing
-    }
-    
     // Activation Functions Using Class Defaults
     if(props.activation && typeof props.activation === "string") {
       // Sigmoid Activation Function
@@ -65,7 +59,7 @@ let Neuron = function(props) {
       }
       // Hyperbolic Tangent Activation Function
       else if(props.activation.toLowerCase() === "tanh") {
-        self.activation = Neuron.activation.TANH
+        self.activation = Neuron.activations.TANH
       }
       // Linear Activation Function
       else if(props.activation.toLowerCase() === "linear" ||
@@ -87,6 +81,12 @@ let Neuron = function(props) {
     else {
       throw new Error("Activation function must be a 'function' or a 'string'")
     }
+    
+//     // Connections
+//     if(props.connections) {
+//       self.connections.incoming = props.connections.incoming || self.connections.incoming
+//       self.connections.outgoing = props.connections.outgoing || self.connections.outgoing
+//     }
   }
 
   /**
@@ -243,7 +243,6 @@ let Neuron = function(props) {
     })
   }
 }
-
 
 /**
 * @namespace Neuron.activations

@@ -103,53 +103,58 @@ describe("Neuron", function() {
           return !derivative ? Math.atan(x) : (1 / (Math.pow(x, 2) + 1))
         }])
       }
+      let another_neuron = new Neuron()
       let other_neuron = new Neuron(options)
-      let neuron = new Neuron(other_neuron)
+
+      another_neuron.project(other_neuron, function(error, connection) {
+        let neuron = new Neuron(other_neuron)
+        
+        it("should create a neuron", function(done) {    
+          expect(neuron).to.not.be.null
+          expect(neuron).to.not.be.undefined
+          expect(neuron).to.not.be.NaN
+          expect(neuron).to.exist
+
+          done()
+        })
+        it("should create a neuron with the same learning rate", function(done) {
+          expect(neuron.rate).to.exist
+          expect(neuron.rate).to.equal(other_neuron.rate)
+
+          done()
+        })
+        it("should create a neuron with the same bias", function(done) {
+          expect(neuron.bias).to.exist
+          expect(neuron.bias).to.equal(other_neuron.bias)
+
+          done()
+        })
+        it("should create a neuron with an activation function", function(done) {
+          expect(neuron.activation).to.exist
+          expect(neuron.activation).to.be.a("function")
+          expect(neuron.activation).to.equal(other_neuron.activation)
+          expect(neuron.activation).to.eql(other_neuron.activation)
+
+          done()
+        })
+        it("should create neuron with empty connections", function(done) {
+          expect(neuron.connections).to.exist
+          expect(neuron.connections.incoming).to.exist
+          expect(neuron.connections.incoming).to.be.an("array")
+          expect(neuron.connections.incoming).to.have.lengthOf(0)
+          expect(neuron.connections.outgoing).to.exist
+          expect(neuron.connections.outgoing).to.be.an("array")
+          expect(neuron.connections.outgoing).to.have.lengthOf(0)
+
+          done()
+        })
+      })
       
-      it("should create a neuron", function(done) {    
-        expect(neuron).to.not.be.null
-        expect(neuron).to.not.be.undefined
-        expect(neuron).to.not.be.NaN
-        expect(neuron).to.exist
-
-        done()
-      })
-      it("should create a neuron with the same learning rate", function(done) {
-        expect(neuron.rate).to.exist
-        expect(neuron.rate).to.equal(other_neuron.rate)
-
-        done()
-      })
-      it("should create a neuron with the same bias", function(done) {
-        expect(neuron.bias).to.exist
-        expect(neuron.bias).to.equal(other_neuron.bias)
-
-        done()
-      })
-      it("should create a neuron with an activation function", function(done) {
-        expect(neuron.activation).to.exist
-        expect(neuron.activation).to.be.a("function")
-        expect(neuron.activation).to.equal(other_neuron.activation)
-        expect(neuron.activation).to.eql(other_neuron.activation)
-
-        done()
-      })
-      it("should create neuron with empty connections", function(done) {
-        expect(neuron.connections).to.exist
-        expect(neuron.connections.incoming).to.exist
-        expect(neuron.connections.incoming).to.be.an("array")
-        expect(neuron.connections.incoming).to.have.lengthOf(0)
-        expect(neuron.connections.outgoing).to.exist
-        expect(neuron.connections.outgoing).to.be.an("array")
-        expect(neuron.connections.outgoing).to.have.lengthOf(0)
-
-        done()
-      })
     })
   })
 
-  describe(".connect()", function() {
-    describe(".connect(neuron[, callback])", function() {
+  describe(".project()", function() {
+    describe(".project(neuron[, callback])", function() {
       let n0 = new Neuron()
       let n1 = new Neuron()
 
@@ -184,14 +189,14 @@ describe("Neuron", function() {
       })
     })
     
-    describe.skip(".connect(layer[, callback])", function() {
+    describe.skip(".project(layer[, callback])", function() {
       it.skip("should create a connection between source neuron and layer", function(done) {
 
         done()
       })
     })
     
-    describe.skip(".connect(group[, callback])", function() {
+    describe.skip(".project(group[, callback])", function() {
       it.skip("should create a connection between source neuron and group", function(done) {
 
         done()

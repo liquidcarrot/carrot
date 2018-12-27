@@ -18,15 +18,31 @@ let Layer = function(props, options) {
   self.neurons = []
   
   if(props) {
+    // Contructing with new Layer(n)
     if(_.isLength(props)) {
-      _.times(props, function() { self.neurons.push(new Neuron()) })
-    } else if(_.isPlainObject(props)) {
+      _.times(props, function() { 
+        self.neurons.push(new Neuron(options))
+      })
+    }
+    // Constructing with new Layer([Neuron])
+    else if(_.isArray(props)) {
+      self.neurons = _.map(props, function(neuron) {
+        return new Neuron(neuron)
+      })
+    }
+    // Constructing with new Layer(Layer)
+    else if(props instanceof Layer) {
+      self.neurons = _.map(props.neurons, function(neuron) {
+        return new Neuron(neuron)
+      })
+//       self.neurons = props.neurons
+    } 
+    else if(_.isPlainObject(props)) {
       _.times(options || 1, function() {
         self.neurons.push(new Neuron(props))
       })
-    } else if(_.isArray(props)) {
-      self.neurons = props
-    } else if(_.isArray(props.neurons)) {
+    } 
+    else if(_.isArray(props.neurons)) {
       _.times(props.neurons.length, function() {
         self.neurons.push(new Neuron())
       })

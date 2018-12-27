@@ -1,25 +1,27 @@
 'use strict'
 
+let _ = require('lodash')
+let faker = require('faker')
 let expect = require('chai').expect
 
 describe("Layer", function() {
   let Layer = require('../src/layer')
   let Neuron = require('../src/neuron')
   let Connection = require('../src/connection')
+  
   describe("new Layer()", function() {
-    it("should create a layer with default properties", function(done) {
-      let layer = new Layer()
-
+    let layer = new Layer()
+    
+    it("should create a layer", function(done) {
       expect(layer).to.not.be.null
       expect(layer).to.not.be.undefined
       expect(layer).to.not.be.NaN
       expect(layer).to.exist
+      expect(layer).to.be.an.instanceof(Layer)
 
       done()
     })
-    it("should create a layer with an empty neurons array", function(done) {
-      let layer = new Layer()
-
+    it("should create a layer no neurons", function(done) {
       expect(layer.neurons).to.exist
       expect(layer.neurons).to.be.an("array")
       expect(layer.neurons).to.have.lengthOf(0)
@@ -28,112 +30,231 @@ describe("Layer", function() {
     })
     
     describe("new Layer(n)", function() {
-    it("should create a layer", function(done) {
-      let layer = new Layer(2)
-
-      expect(layer).to.not.be.null
-      expect(layer).to.not.be.undefined
-      expect(layer).to.not.be.NaN
-      expect(layer).to.exist
-
-      done()
-    })
-    it("should create a layer with 'n' blank neurons", function(done) {
-      let layer = new Layer(2)
-
-      expect(layer.neurons).to.exist
-      expect(layer.neurons).to.be.an("array")
-      expect(layer.neurons).to.have.lengthOf(2)
-
-      done()
-    })
-  })
-    
-    describe("new Layer([neuron, neuron])", function() {
-
-      it("should create a layer with neurons", function(done) {
-        let n0 = new Neuron()
-        let n1 = new Neuron()
-        let layer = new Layer([n0, n1])
-
+      let neurons = Math.round(Math.random() * 10)
+      let layer = new Layer(neurons)
+      
+      it("should create a layer", function(done) {
         expect(layer).to.not.be.null
         expect(layer).to.not.be.undefined
         expect(layer).to.not.be.NaN
         expect(layer).to.exist
+        expect(layer).to.be.an.instanceof(Layer)
 
         done()
       })
-      it("should create layer with existing neurons in it", function(done) {
-        let n0 = new Neuron({
-          activate: 'cheese'
-        })
-        let n1 = new Neuron({
-          activate: 'cheese'
-        })
-        let layer = new Layer([n0, n1])
-
+      it("should create a layer with 'n' neurons", function(done) {
         expect(layer.neurons).to.exist
         expect(layer.neurons).to.be.an("array")
-        expect(layer.neurons).to.have.lengthOf(2)
-        expect(layer.neurons[0]).to.exist
-        expect(layer.neurons[0].activate).to.be.a("function")
+        expect(layer.neurons).to.have.lengthOf(neurons)
+
+        done()
+      })
+      
+      describe("new Layer(n, options)", function() {
+        let neurons = Math.round(Math.random() * 10)
+        let options = {
+          bias: Math.random(),
+          rate: Math.random(),
+          activation: faker.random.arrayElement(["sigmoid", "sigmoidal", "logistic", "logistics", "relu", "tanh", "linear", "identity", function(x, derivative) {
+            return !derivative ? Math.atan(x) : (1 / (Math.pow(x, 2) + 1))
+          }])
+        }
+        let layer = new Layer(neurons, options)
+        
+        it("should create a layer", function(done) {
+          expect(layer).to.not.be.null
+          expect(layer).to.not.be.undefined
+          expect(layer).to.not.be.NaN
+          expect(layer).to.exist
+          expect(layer).to.be.an.instanceof(Layer)
+          
+          done()
+        })
+        it("should create a layer with 'n' neurons", function(done) {
+          expect(layer.neurons).to.exist
+          expect(layer.neurons).to.be.an("array")
+          expect(layer.neurons).to.have.lengthOf(neurons)
+          
+          done()
+        })
+        it("every neurons gets constructed with 'options'", function(done) {
+          // Check `bias` Matches
+          expect(_.every(layer.neurons, function(neuron) {
+            return neuron.bias === options.bias
+          })).to.equal(true)
+          // Check `rate` Matches
+          expect(_.every(layer.neurons, function(neuron) {
+            return neuron.rate === options.rate
+          })).to.equal(true)
+          // Check `activation` Matches
+          expect(_.every(layer.neurons, function(neuron) {
+            if(options.activation && typeof options.activation === "string") {
+              if(options.activation.toLowerCase() === "sigmoid" || 
+                 options.activation.toLowerCase() === "sigmoidal" ||
+                 options.activation.toLowerCase() === "logistic" ||
+                 options.activation.toLowerCase() === "logistics") {
+                return neuron.activation === Neuron.activations.SIGMOID
+              } else if(options.activation.toLowerCase() === "relu") {
+                return neuron.activation === Neuron.activations.RELU
+              } else if(options.activation.toLowerCase() === "tanh") {
+                return neuron.activation === Neuron.activations.TANH
+              } else if(options.activation.toLowerCase() === "linear" ||
+                        options.activation.toLowerCase() === "identity") {
+                return neuron.activation === Neuron.activations.LINEAR
+              } else {
+                return false
+              }
+            } else if(options.activation && typeof options.activation === "function") {
+              return neuron.activation === options.activation
+            } else {
+              return false
+            }
+          })).to.equal(true)
+          
+          done()
+        })
+      })
+    })
+    
+    describe("new Layer([Neuron])", function() {
+      let neurons = _.times(Math.round(Math.random() * 10), function() {
+        return new Neuron({
+          bias: Math.random(),
+          rate: Math.random(),
+          activation: faker.random.arrayElement(["sigmoid", "sigmoidal", "logistic", "logistics", "relu", "tanh", "linear", "identity", function(x, derivative) {
+            return !derivative ? Math.atan(x) : (1 / (Math.pow(x, 2) + 1))
+          }])
+        })
+      })
+      
+      let layer = new Layer(neurons)
+
+      it("should create a layer", function(done) {
+        expect(layer).to.not.be.null
+        expect(layer).to.not.be.undefined
+        expect(layer).to.not.be.NaN
+        expect(layer).to.exist
+        expect(layer).to.be.an.instanceof(Layer)
+
+        done()
+      })
+      it("should create a layer with an equal number of neurons", function(done) {
+        expect(layer.neurons).to.exist
+        expect(layer.neurons).to.be.an("array")
+        expect(layer.neurons).to.have.lengthOf(neurons.length)
+        
+        done()
+      })
+      it("all neuron properties should match - except connections", function(done) {
+        // Check `bias` Matches
+        expect(_.every(layer.neurons, function(neuron, index) {
+          return neuron.bias === neurons[index].bias
+        })).to.equal(true)
+        // Check `rate` Matches
+        expect(_.every(layer.neurons, function(neuron, index) {
+          return neuron.rate === neurons[index].rate
+        })).to.equal(true)
+        // Check `activation` Matches
+        expect(_.every(layer.neurons, function(neuron, index) {
+          if(neurons[index].activation && typeof neurons[index].activation === "string") {
+            if(neurons[index].activation.toLowerCase() === "sigmoid" || 
+               neurons[index].activation.toLowerCase() === "sigmoidal" ||
+               neurons[index].activation.toLowerCase() === "logistic" ||
+               neurons[index].activation.toLowerCase() === "logistics") {
+              return neuron.activation === Neuron.activations.SIGMOID
+            } else if(neurons[index].activation.toLowerCase() === "relu") {
+              return neuron.activation === Neuron.activations.RELU
+            } else if(neurons[index].activation.toLowerCase() === "tanh") {
+              return neuron.activation === Neuron.activations.TANH
+            } else if(neurons[index].activation.toLowerCase() === "linear" ||
+                      neurons[index].activation.toLowerCase() === "identity") {
+              return neuron.activation === Neuron.activations.LINEAR
+            } else {
+              return false
+            }
+          } else if(neurons[index].activation && typeof neurons[index].activation === "function") {
+            return neuron.activation === neurons[index].activation
+          } else {
+            return false
+          }
+        })).to.equal(true)
 
         done()
       })
     })
     
-    describe("new Layer(layer1)", function() {
-
-      it("should create a new layer using an existing layer", function(done) {
-        let layer1 = new Layer(2)
-        let layer2 = new Layer(layer1)
-
-        expect(layer2).to.not.be.null
-        expect(layer2).to.not.be.undefined
-        expect(layer2).to.not.be.NaN
-        expect(layer2).to.exist
+    describe("new Layer(layer)", function() {
+      let neurons = _.times(Math.round(Math.random() * 10), function() {
+        return new Neuron({
+          bias: Math.random(),
+          rate: Math.random(),
+          activation: faker.random.arrayElement(["sigmoid", "sigmoidal", "logistic", "logistics", "relu", "tanh", "linear", "identity", function(x, derivative) {
+            return !derivative ? Math.atan(x) : (1 / (Math.pow(x, 2) + 1))
+          }])
+        })
+      })
+      
+      let other_layer = new Layer(neurons)
+      let layer = new Layer(other_layer)
+      
+      it("should create a layer", function(done) {
+        expect(layer).to.not.be.null
+        expect(layer).to.not.be.undefined
+        expect(layer).to.not.be.NaN
+        expect(layer).to.exist
+        expect(layer).to.be.an.instanceof(Layer)
 
         done()
       })
-      it("should create layer with same amount of neurons", function(done) {
-        let layer1 = new Layer(2)
-        let layer2 = new Layer(layer1)
-
-        expect(layer2.neurons).to.exist
-        expect(layer2.neurons).to.be.an("array")
-        expect(layer2.neurons).to.have.lengthOf(2)
-        expect(layer2.neurons[1]).to.exist
-        expect(layer2.neurons[1]).to.be.an("object")
+      it("should create a layer with equal number of neurons", function(done) {
+        expect(layer.neurons).to.exist
+        expect(layer.neurons).to.be.an("array")
+        expect(layer.neurons).to.have.lengthOf(other_layer.neurons.length)
 
         done()
       })
-    })
-  })
-
-  describe(".activate()", function() {
-    it("should take an array as a parameter", function(done) {
-      let layer = new Layer(3)
-      layer.activate([Math.random(), Math.random(), Math.random()], function(error, results) {
-        expect(error).to.not.exist
-        expect(error).to.be.null
-        done()
-      })
-    })
-    it("should return an invalid input error", function(done) {
-      let layer = new Layer(3)
-      layer.activate('cheese', function(error, results) {
-        expect(error).to.exist
-        expect(error).to.not.be.null
-        expect(results).to.not.exist
-        expect(results).to.be.undefined
+      it("all neurons should be identical - except connections", function(done) {
+        // Check `bias` Matches
+        expect(_.every(layer.neurons, function(neuron, index) {
+          return neuron.bias === other_layer.neurons[index].bias
+        })).to.equal(true)
+        // Check `rate` Matches
+        expect(_.every(layer.neurons, function(neuron, index) {
+          return neuron.rate === other_layer.neurons[index].rate
+        })).to.equal(true)
+        // Check `activation` Matches
+        expect(_.every(layer.neurons, function(neuron, index) {
+          if(other_layer.neurons[index].activation && typeof other_layer.neurons[index].activation === "string") {
+            if(other_layer.neurons[index].activation.toLowerCase() === "sigmoid" || 
+               other_layer.neurons[index].activation.toLowerCase() === "sigmoidal" ||
+               other_layer.neurons[index].activation.toLowerCase() === "logistic" ||
+               other_layer.neurons[index].activation.toLowerCase() === "logistics") {
+              return neuron.activation === Neuron.activations.SIGMOID
+            } else if(other_layer.neurons[index].activation.toLowerCase() === "relu") {
+              return neuron.activation === Neuron.activations.RELU
+            } else if(other_layer.neurons[index].activation.toLowerCase() === "tanh") {
+              return neuron.activation === Neuron.activations.TANH
+            } else if(other_layer.neurons[index].activation.toLowerCase() === "linear" ||
+                      other_layer.neurons[index].activation.toLowerCase() === "identity") {
+              return neuron.activation === Neuron.activations.LINEAR
+            } else {
+              return false
+            }
+          } else if(other_layer.neurons[index].activation && typeof other_layer.neurons[index].activation === "function") {
+            return neuron.activation === other_layer.neurons[index].activation
+          } else {
+            return false
+          }
+        })).to.equal(true)
+        
         done()
       })
     })
   })
   
-  describe(".connect()", function() {
+  describe.skip(".project()", function() {
     
-    describe(".connect(neuron[, callback])", function() {
+    describe.skip(".connect(neuron[, callback])", function() {
       it("should create a connection between layer and neuron", function(done) {
         let n0 = new Neuron()
         let l0 = new Layer(3)
@@ -176,7 +297,7 @@ describe("Layer", function() {
     })
     })
 
-    describe(".connect(layer[, callback])", function() {
+    describe.skip(".connect(layer[, callback])", function() {
       it("should create a connection between layers", function(done) {
         let n0 = new Neuron()
         let n1 = new Neuron()
@@ -241,7 +362,40 @@ describe("Layer", function() {
     })
   })
   
-  describe(".forward()", function() {
+  describe.skip(".is.input()", function() {
+    
+  })
+  
+  describe.skip(".is.output()", function() {
+    
+  })
+
+  describe.skip(".activate()", function() {
+    it("should take an array as a parameter", function(done) {
+      let layer = new Layer(3)
+      layer.activate([Math.random(), Math.random(), Math.random()], function(error, results) {
+        expect(error).to.not.exist
+        expect(error).to.be.null
+        done()
+      })
+    })
+    it("should return an invalid input error", function(done) {
+      let layer = new Layer(3)
+      layer.activate('cheese', function(error, results) {
+        expect(error).to.exist
+        expect(error).to.not.be.null
+        expect(results).to.not.exist
+        expect(results).to.be.undefined
+        done()
+      })
+    })
+  })
+  
+  describe.skip(".propagate()", function() {
+    
+  })
+  
+  describe.skip(".forward()", function() {
     it("should take an array of numbers as a parameter", function(done) {
       let l0 = new Layer(4)
       let l1 = new Layer(l0)
@@ -257,7 +411,7 @@ describe("Layer", function() {
     })
   })
   
-  describe(".backward()", function() {
+  describe.skip(".backward()", function() {
     it("should take an array of numbers as a parameter", function(done) {
       let l0 = new Layer(4)
       let l1 = new Layer(l0)
@@ -273,7 +427,7 @@ describe("Layer", function() {
     })
   })
 
-  describe(".add_neurons()", function() {
+  describe.skip(".add_neurons()", function() {
     it("should take a number as a parameter", function(done) {
       let l0 = new Layer(2)
       
