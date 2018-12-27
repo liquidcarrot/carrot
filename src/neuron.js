@@ -13,6 +13,7 @@ let Connection = require('./connection')
 * * CHECK: https://medium.com/javascript-scene/javascript-factory-functions-with-es6-4d224591a8b1
 * * CHECK: https://softwareengineering.stackexchange.com/questions/82593/javascript-ternary-operator-vs
 *
+* 
 * @constructs Neuron
 * @param {Object} [props] - Neuron's Properties
 * @param {number} [props.bias=Math.random()] - Neuron's Synaptic Weight Constant AKA Bias
@@ -87,17 +88,42 @@ let Neuron = function(props) {
       throw new Error("Activation function must be a 'function' or a 'string'")
     }
   }
-  
+
+  /**
+  * @namespace Neuron#is
+  * @memberof Neuron.prototype
+  * @instance
+  */
   self.is = {
-    // No Incoming Connections
+    /**
+    * @function Neuron#is.input
+    * @memberof Neuron.prototype
+    * @instance
+    * @returns {boolean} Returns `true` if this neuron has no incoming connections
+    */
     input: function() {
       return self.connections.incoming.length === 0
     },
-    // No Outgoing Connections
+    /**
+    * @function Neuron#is.ouput
+    * @memberof Neuron.prototype
+    * @instance
+    * @returns {boolean} Returns `true` if this neuron has no outgoing connections
+    */
     output: function() {
       return self.connections.outgoing.length === 0
     }
   }
+  /**
+  * Projects this neuron to given neuron.
+  *
+  * @function Neuron#project
+  * @memberof Neuron.prototype
+  * @instance
+  * @param {Neuron} neuron - Destination `neuron`
+  * @param {number} [weight] - Connection `weight`
+  * @param {ConnectionCallback} [callback] - Callback invoked with _(error, connection)_
+  */
   self.project = function(neuron, weight, callback) {
     if(!callback && _.isFunction(weight)) {
       callback = weight
@@ -119,6 +145,15 @@ let Neuron = function(props) {
       return callback ? callback(null, connection) : resolve(connection)
     })
   }
+  /**
+  * Activates this neuron and returns squashed results
+  *
+  * @function Neuron#activate
+  * @memberof Neuron.prototype
+  * @instance
+  * @param {number} [input] - Real number (-∞, ∞)
+  * @param {NumberCallback} [callback] - Callback invoked with _(error, result)_
+  */
   self.activate = function(input, callback) { 
     if(!callback && _.isFunction(input)) {
       callback = input
@@ -157,6 +192,15 @@ let Neuron = function(props) {
       return callback ? callback(null, self.last) : resolve(self.last)
     })
   }
+  /**
+  * Updates this neurons weight and returns error
+  *
+  * @function Neuron#propagate
+  * @memberof Neuron.prototype
+  * @instance
+  * @param {number} [feedback] - Real number (-∞, ∞)
+  * @param {NumberCallback} [callback] - Callback invoked with _(error, result)_
+  */
   self.propagate = function(feedback, callback) {
      if(!callback && _.isFunction(feedback)) {
       callback = feedback
@@ -202,22 +246,49 @@ let Neuron = function(props) {
 
 
 /**
+* @namespace Neuron.activations
 * @memberof Neuron
-* @function ActivationFunction
-* @param {number} x - Real Number Input
-* @param {boolean} derivative - Return partial derivative of `ActivationFunction` at `x`
+* @static
 */
 Neuron.activations = {
+  /**
+  * @name Neuron.activations.SIGMOID
+  * @memberof Neuron
+  * @static
+  * @param {number} x - Real Number Input
+  * @param {boolean} derivative - Return partial derivative
+  */
   SIGMOID: function(x, derivative) {
     let sigmoid = 1 / (1 + Math.exp(-x))
     return derivative ? sigmoid * (1 - sigmoid) : sigmoid
   },
+  /**
+  * @name Neuron.activations.RELU
+  * @memberof Neuron
+  * @static
+  * @param {number} x - Real Number Input
+  * @param {boolean} derivative - Return partial derivative
+  */
   RELU: function(x, derivative) {
     return derivative ? (x > 0 ? 1 : 0) : (x > 0 ? x : 0) 
   },
+  /**
+  * @name Neuron.activations.TANH
+  * @memberof Neuron
+  * @static
+  * @param {number} x - Real Number Input
+  * @param {boolean} derivative - Return partial derivative
+  */
   TANH: function(x, derivative) {
     return derivative ? 1 - Math.pow(Math.tanh(x), 2) : Math.tanh(x)
   },
+  /**
+  * @name Neuron.activations.LINEAR
+  * @memberof Neuron
+  * @static
+  * @param {number} x - Real Number Input
+  * @param {boolean} derivative - Return partial derivative
+  */
   LINEAR: function(x, derivative) {
     return derivative ? 1 : x
   }
