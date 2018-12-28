@@ -2,7 +2,10 @@
 
 let _ = require('lodash')
 let faker = require('faker')
-let expect = require('chai').expect
+let chai = require('chai')
+chai.use(require('chai-each'))
+
+let expect = chai.expect
 
 describe("Layer", function() {
   let Layer = require('../src/layer')
@@ -252,101 +255,78 @@ describe("Layer", function() {
     })
   })
   
-  describe.skip(".project()", function() {
-    
-    describe.skip(".connect(neuron[, callback])", function() {
-      it("should create a connection between layer and neuron", function(done) {
-        let n0 = new Neuron()
-        let l0 = new Layer(3)
-
-        l0.connect(n0, function(error, results) {
-          expect(error).to.not.exist
-          expect(error).to.be.null
-          expect(results).to.exist
-          expect(results).to.be.an("array")
-          expect(results[0]).to.exist
-          expect(results[0]).to.be.an.instanceOf(Connection)
-          expect(results[2].to).to.deep.equal(n0)
+  describe(".project()", function() {
+    describe(".project(neuron[, callback])", function() {
+      let neurons = Math.round(Math.random() * 10)
+      let layer = new Layer(neurons)
+      let neuron = new Neuron()
+      
+      layer.project(neuron, function(error, connections) {
+        it("should create one connection for every neuron in layer", function(done) {
+          expect(connections).to.exist
+          expect(connections).to.be.an("array")
+          expect(connections).to.have.lengthOf(layer.neurons.length)
+          expect(_.every(connections, function(connection) {
+            return connection instanceof Connection
+          })).to.equal(true)
+          
+          done()
         })
-
-        done()
-      })  
-      it("should add connections to destination neuron", function(done) {
-        let n0 = new Neuron()
-        let l0 = new Layer(3)
-
-        l0.connect(n0)
-        expect(n0.connections).to.exist
-        expect(n0.connections).to.be.an("array")
-        expect(n0.connections).to.have.lengthOf(3)
-        expect(n0.connections[0]).to.be.an("object")
-
-        done()
-      })
-      it("should add connections to layer neurons", function(done) {
-        let n0 = new Neuron()
-        let l0 = new Layer(3)
-
-        l0.connect(n0)
-
-        expect(l0.neurons[0].connections).to.exist
-        expect(l0.neurons[0].connections).to.be.an("array")
-        expect(l0.neurons[0].connections).to.have.lengthOf(1)
-        expect(l0.neurons[0].connections[0]).to.be.an("object")
-        done()
-    })
-    })
-
-    describe.skip(".connect(layer[, callback])", function() {
-      it("should create a connection between layers", function(done) {
-        let n0 = new Neuron()
-        let n1 = new Neuron()
-        let l0 = new Layer([n0, n1])
-        let l1 = new Layer(l0)
-
-        l0.connect(l1, function(error, results) {
-          expect(error).to.not.exist
-          expect(error).to.be.null
-          expect(results).to.exist
-          expect(results).to.not.be.null
-          expect(results).to.be.an("array")
-          expect(n0.connections).to.exist
-          expect(n0.connections).to.be.an("array")
-          expect(n0.connections).to.have.lengthOf(2)
-          expect(n0.connections[1]).to.be.an("object")
+        it("should add a connection from every neuron in the layer to destination neuron's incoming connections", function(done) {
+          expect(neuron.connections.incoming).to.exist
+          expect(neuron.connections.incoming).to.be.an("array")
+          expect(neuron.connections.incoming).to.have.lengthOf(layer.neurons.length)
+          expect(_.map(neuron.connections.incoming, function(connection) {
+            return connection.from
+          })).to.have.all.deep.members(layer.neurons)
+          
+          done()
         })
-
-        done()
-      })
-      it("should add connections to source layer neurons", function(done) {
-        let l0 = new Layer(3)
-        let l1 = new Layer(l0)
-
-        l1.connect(l0)
-
-        expect(l0.neurons[0].connections).to.exist
-        expect(l0.neurons[0].connections).to.be.an("array")
-        expect(l0.neurons[0].connections).to.have.lengthOf(3)
-        expect(l0.neurons[0].connections[2]).to.be.an("object")
-
-        done()
-      })
-      it("should add connections to destination layer neurons", function(done) {
-        let l0 = new Layer(3)
-        let l1 = new Layer(l0)
-
-        l1.connect(l0)
-
-        expect(l1.neurons[0].connections).to.exist
-        expect(l1.neurons[0].connections).to.be.an("array")
-        expect(l1.neurons[0].connections).to.have.lengthOf(3)
-        expect(l1.neurons[0].connections[2]).to.be.an("object")
-
-        done()
+        it("should add an outgoing connection, to the desitination neuron, to every neuron in the layer", function(done) {
+          expect(layer.neurons).to.each.satisfy(function(layer_neuron) {
+            return layer_neuron.connections.outgoing[0].to === neuron
+          })
+          
+          done()
+        })
       })
     })
 
-    describe.skip(".connect(group[, callback])", function() {
+    describe(".project(layer[, callback])", function() {
+      let layer = new Layer(Math.round(Math.random() * 10))
+      let other_layer = new Layer(Math.round(Math.random() * 10))
+      
+      layer.project(other_layer, function(error, connections) {
+        it("should create a connection from every neuron in one layer towards every neuron in another layer", function(done) {
+          expect(connections).to.exist
+          expect(connections).to.be.an("array")
+          expect(connections).to.each.be.an.instanceof(Connection)
+          expect(connections).to.have.lengthOf(layer.neurons.length * other_layer.neurons.length)
+          
+          done()
+        })
+        it("should add an outgoing connection to every neuron in the source layer for every neuron in the destination layer", function(done) {
+          expect(_.map(layer.neurons, function(neuron) {
+            return _.map(neuron.connections.outgoing, function(connection) {
+              return connection.to
+            })
+          })).to.each.have.all.deep.members(other_layer.neurons)
+          
+          done()
+        })
+        it("should add an incoming connection to every neuron in the destination layer for every neuron in the source layer", function(done) {
+          expect(_.map(other_layer.neurons, function(neuron) {
+            return _.map(neuron.connections.incoming, function(connection) {
+              return connection.from
+            })
+          })).to.each.have.all.deep.members(layer.neurons)
+          
+          done()
+        })
+      })
+    })
+
+    describe.skip(".project(group[, callback])", function() {
       it.skip("should create a connection between layer and group", function(done) {
 
         done()

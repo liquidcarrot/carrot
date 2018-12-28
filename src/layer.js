@@ -35,17 +35,8 @@ let Layer = function(props, options) {
       self.neurons = _.map(props.neurons, function(neuron) {
         return new Neuron(neuron)
       })
-//       self.neurons = props.neurons
-    } 
-    else if(_.isPlainObject(props)) {
-      _.times(options || 1, function() {
-        self.neurons.push(new Neuron(props))
-      })
-    } 
-    else if(_.isArray(props.neurons)) {
-      _.times(props.neurons.length, function() {
-        self.neurons.push(new Neuron())
-      })
+    } else {
+      throw new Error("Invalid parameter: " + prop + "\n'props' must be a 'number', '[Neuron]`, or `Layer`.")
     }
   }
   
@@ -69,6 +60,40 @@ let Layer = function(props, options) {
         })
       })
     }
+  }
+  // Projects neurons to `object`
+  self.project = function(object, callback) {
+    let self = this
+    
+    return new Promise(function(resolve, reject) {
+      // Project to Neuron
+      if(object instanceof Neuron) {
+        return async.map(self.neurons, function(neuron, callback) {
+          neuron.project(object, callback)
+        }, function(error, connections) {
+          return callback ? callback(error, connections) : !error ? resolve(connections) : reject(error)
+        })
+      }
+      // Project to Layer
+      else if(object instanceof Layer) {
+        return async.map(self.neurons, function(neuron, callback) {
+          async.map(object.neurons, function(other_neuron, callback) {
+            neuron.project(other_neuron, callback)
+          }, callback)
+        }, function(error, connections) {
+          return callback ? callback(error, _.flattenDeep(connections)) : !error ? resolve(_.flattenDeep(connections)) : reject(error)
+        })
+      }
+      // Project to Group
+      else if(object instanceof Group) {
+        return callback ? callback(null, "Connections") : resolve("Connections")
+      }
+      // Can't Project to Unrecognized Object
+      else {
+        let error = new Error(object + " is not a valid object\nObject must be a 'Neuron', 'Layer', or 'Group'")
+        return callback ? callback(error) : reject(error)
+      }
+    })
   }
   // Make all neurons in the Layer generate an output value
   self.activate = function(inputs, callback) {
@@ -170,66 +195,6 @@ let Layer = function(props, options) {
         }]
       }, function(error, results) {
         return callback ? callback(error, results.values_backward) : !error ? resolve(results.values_backward) : reject(error)
-      })
-    })
-  }
-  // Connects neurons in this Layer to an object's neuron(s)
-  self.connect = function(object, weights, callback) {
-    let self = this
-    
-    if(!callback && _.isFunction(weights)) {
-      callback = weights
-      weights = null
-    }
-    
-    return new Promise(function(resolve, reject) {
-      return async.auto({
-        "neuron": function(callback) {
-          _.isArray(object.connections) ? callback(null, object) : callback(null, false)
-        },
-        "layer": function(callback) {
-          _.isArray(object.neurons) ? callback(null, object.neurons) : callback(null, false)
-        },
-        "group": function(callback) {
-          _.isPlainObject(object.neurons) ? callback(null, object.neurons) : callback(null, false)
-        },
-        "connect_neurons": ["neuron", "layer", "group", function(results, callback) {
-          if (results.neuron) {
-            async.map(Object.keys(self.neurons), function(index, callback) {
-              self.neurons[index].connect(results.neuron, callback)
-            }, callback)
-          } else if (results.layer) {
-            if(_.isArray(weights) && weights.length === self.neurons.length) {
-              async.map(Object.keys(self.neurons), function(index1, callback) {
-                async.map(Object.keys(results.layer), function(index2, callback) {
-                  self.neurons[index1].connect(results.layer[index2], weights[index1][index2], callback)
-                }, callback)
-              }, callback)
-            } else {
-              async.map(Object.keys(self.neurons), function(index1, callback) {
-                async.map(Object.keys(results.layer), function(index2, callback) {
-                  self.neurons[index1].connect(results.layer[index2], callback)
-                }, callback)
-              }, callback)
-            }
-          } else if (results.group) {
-            if(_.isArray(weights) && weights.length === self.neurons.length) {
-              async.map(Object.keys(self.neurons), function(index1, callback) {
-                async.map(Object.keys(results.group), function(index2, callback) {
-                  self.neurons[index1].connect(results.group[index2], weights[index1][index2], callback)
-                }, callback)
-              }, callback)
-            } else {
-              async.map(Object.keys(self.neurons), function(index1, callback) {
-                async.map(Object.keys(results.group), function(index2, callback) {
-                  self.neurons[index1].connect(results.group[index2], callback)
-                }, callback)
-              }, callback)
-            }
-          }
-        }],
-      }, function(error, results) {
-        return callback ? callback(error, _.flattenDeep(results.connect_neurons)) : !error ? resolve(_.flattenDeep(results.connect_neurons)) : reject(error)
       })
     })
   }

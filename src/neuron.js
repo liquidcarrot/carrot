@@ -81,12 +81,6 @@ let Neuron = function(props) {
     else {
       throw new Error("Activation function must be a 'function' or a 'string'")
     }
-    
-//     // Connections
-//     if(props.connections) {
-//       self.connections.incoming = props.connections.incoming || self.connections.incoming
-//       self.connections.outgoing = props.connections.outgoing || self.connections.outgoing
-//     }
   }
 
   /**
