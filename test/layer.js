@@ -33,7 +33,7 @@ describe("Layer", function() {
     })
     
     describe("new Layer(n)", function() {
-      let neurons = Math.round(Math.random() * 10)
+      let neurons = Math.round(Math.random() * 10 + 1)
       let layer = new Layer(neurons)
       
       it("should create a layer", function(done) {
@@ -54,7 +54,7 @@ describe("Layer", function() {
       })
       
       describe("new Layer(n, options)", function() {
-        let neurons = Math.round(Math.random() * 10)
+        let neurons = Math.round(Math.random() * 10 + 1)
         let options = {
           bias: Math.random(),
           rate: Math.random(),
@@ -120,7 +120,7 @@ describe("Layer", function() {
     })
     
     describe("new Layer([Neuron])", function() {
-      let neurons = _.times(Math.round(Math.random() * 10), function() {
+      let neurons = _.times(Math.round(Math.random() * 10 + 1), function() {
         return new Neuron({
           bias: Math.random(),
           rate: Math.random(),
@@ -187,7 +187,7 @@ describe("Layer", function() {
     })
     
     describe("new Layer(layer)", function() {
-      let neurons = _.times(Math.round(Math.random() * 10), function() {
+      let neurons = _.times(Math.round(Math.random() * 10 + 1), function() {
         return new Neuron({
           bias: Math.random(),
           rate: Math.random(),
@@ -257,7 +257,7 @@ describe("Layer", function() {
   
   describe(".project()", function() {
     describe(".project(neuron[, callback])", function() {
-      let neurons = Math.round(Math.random() * 10)
+      let neurons = Math.round(Math.random() * 10 + 1)
       let layer = new Layer(neurons)
       let neuron = new Neuron()
       
@@ -293,8 +293,8 @@ describe("Layer", function() {
     })
 
     describe(".project(layer[, callback])", function() {
-      let layer = new Layer(Math.round(Math.random() * 10))
-      let other_layer = new Layer(Math.round(Math.random() * 10))
+      let layer = new Layer(Math.round(Math.random() * 10 + 1))
+      let other_layer = new Layer(Math.round(Math.random() * 10 + 1))
       
       layer.project(other_layer, function(error, connections) {
         it("should create a connection from every neuron in one layer towards every neuron in another layer", function(done) {
@@ -342,37 +342,127 @@ describe("Layer", function() {
     })
   })
   
-  describe.skip(".is.input()", function() {
+  describe(".is.input()", function() {
+    let layer = new Layer(Math.round(Math.random() * 10 + 1))
     
-  })
-  
-  describe.skip(".is.output()", function() {
-    
-  })
-
-  describe.skip(".activate()", function() {
-    it("should take an array as a parameter", function(done) {
-      let layer = new Layer(3)
-      layer.activate([Math.random(), Math.random(), Math.random()], function(error, results) {
-        expect(error).to.not.exist
-        expect(error).to.be.null
+    it("should return a boolean value", function(done) {
+      expect(layer.is.input()).to.be.a("boolean")
+      
+      done()
+    })
+    it("should return true if all neurons in layer have no incoming connections", function(done) {
+      expect(layer.neurons).to.each.satisfy(function(neuron) {
+        return neuron.is.input()
+      })
+      expect(layer.is.input()).to.equal(true)
+      
+      done()
+    })
+    it("should return false is at least one neuron has an incoming connection", function(done) {
+      let neuron = new Neuron()
+      
+      neuron.project(layer.neurons[0], function(error, connection) {
+        expect(layer.is.input()).to.equal(false)
+        
         done()
       })
     })
-    it("should return an invalid input error", function(done) {
-      let layer = new Layer(3)
-      layer.activate('cheese', function(error, results) {
-        expect(error).to.exist
-        expect(error).to.not.be.null
-        expect(results).to.not.exist
-        expect(results).to.be.undefined
+  })
+  
+  describe(".is.output()", function() {
+    let layer = new Layer(Math.round(Math.random() * 10 + 1))
+    
+    it("should return a boolean value", function(done) {
+      expect(layer.is.output()).to.be.a("boolean")
+      
+      done()
+    })
+    it("should return true if all neurons in layer have no outgoing connections", function(done) {
+      expect(layer.neurons).to.each.satisfy(function(neuron) {
+        return neuron.is.output()
+      })
+      expect(layer.is.output()).to.equal(true)
+      
+      done()
+    })
+    it("should return false is at least one neuron has an incoming connection", function(done) {
+      let neuron = new Neuron()
+      
+      layer.neurons[0].project(neuron, function(error, connection) {
+        expect(layer.is.output()).to.equal(false)
+        
         done()
       })
+    })
+  })
+
+  describe(".activate()", function() {
+    describe(".activate([inputs][, callback])", function() {
+      let layer_size = Math.round(Math.random() * 10 + 1)
+      let inputs = _.times(layer_size, function() {
+        return Math.random()
+      })
+      let layer = new Layer(layer_size)
+      
+      it("should take an array of real numbers as a parameter", function(done) {
+        layer.activate(inputs, function(error, outputs) {
+          expect(error).to.not.exist
+          expect(error).to.be.null
+          
+          done()
+        })
+      })
+      it("should return an array of real numbers with a length equal to the number of neurons in the layer", function(done) {
+        layer.activate(inputs, function(error, outputs) {
+          expect(outputs).to.exist
+          expect(outputs).to.be.an("array")
+          expect(outputs.length).to.equal(layer.neurons.length)
+          expect(outputs).to.each.satisfy(function(number) {
+            return typeof number === "number"
+          })
+          
+          done()
+        })
+      })
+    })
+    describe(".activate([,callback])", function() {
+      let other_layer = new Layer(Math.round(Math.random() * 10 + 1))
+      let layer = new Layer(Math.round(Math.random() * 10 + 1))
+      
+      let inputs = _.times(other_layer.neurons.length, function() {
+        return Math.random()
+      })
+      
+      it("should return an array of real numbers with a length equal to the number of neurons in the layer", function(done) {
+        other_layer.project(layer, function(error, connections) {
+          other_layer.activate(inputs, function(error, outputs) {
+            layer.activate(function(error, outputs) {
+              expect(error).to.not.exist
+              expect(error).to.be.null
+              expect(outputs).to.exist
+              expect(outputs).to.be.an("array")
+              expect(outputs.length).to.equal(layer.neurons.length)
+              expect(outputs).to.each.satisfy(function(number) {
+                return typeof number === "number"
+              })
+              
+              done()
+            })
+          })
+        })
+        
+      })
+      
     })
   })
   
   describe.skip(".propagate()", function() {
-    
+    describe(".propagate([feedback][, callback])", function() {
+      
+    })
+    describe(".propagate([callback])", function() {
+      
+    })
   })
   
   describe.skip(".forward()", function() {

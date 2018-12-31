@@ -43,21 +43,13 @@ let Layer = function(props, options) {
   // Internal checks for layer characteristics
   self.is = {
     input: function(callback) {
-      return new Promise(function(resolve, reject) {
-        return async.every(self.neurons, function(neuron, callback) {
-          neuron.is.input(callback)
-        }, function(error, result) {
-          return callback ? callback(error, result) : !error ? resolve(result) : reject(error)
-        })
+      return _.every(self.neurons, function(neuron) {
+        return neuron.is.input()
       })
     },
     output: function(callback) {
-      return new Promise(function(resolve, reject) {
-        return async.every(self.neurons, function(neuron, callback) {
-          neuron.is.output(callback)
-        }, function(error, result) {
-          return callback ? callback(error, result) : !error ? resolve(result) : reject(error)
-        })
+      return _.every(self.neurons, function(neuron) {
+        return neuron.is.output()
       })
     }
   }
@@ -103,29 +95,26 @@ let Layer = function(props, options) {
       callback = inputs
       inputs = null
     }
-    
     return new Promise(function(resolve, reject) {
-      return async.auto({
-        "valid_array": function(callback) {
-          _.isArray(inputs) && inputs.length === self.neurons.length ? callback(null, inputs) : inputs ? callback('Error at Layer.activate(): Invalid Parameter Received', null) : callback(null, false)
-        },
-        "is_input": function(callback) {
-          self.is.input(callback)
-        },
-        "activate_neurons": ["valid_array", "is_input", function(results, callback) {
-          if (results.is_input && results.valid_array) {
-            async.map(Object.keys(self.neurons), function(index, callback) {
-              self.neurons[index].activate(inputs[index], callback)
-            }, callback)
-          } else {
-            async.map(self.neurons, function(neuron, callback) {
-              neuron.activate(callback)
-            }, callback)
+      
+      if(inputs && inputs.length !== self.neurons.length) {
+        let error = new Error("'inputs.length' !== 'layer.neurons'\nInput size must be equal to the number of neurons in the layer.")
+        return callback ? callback(error) : reject(error)
+      } else {
+        return async.mapValues(self.neurons, function(neuron, index, callback) {
+          // Activate Input Layer
+          if(inputs) {
+            neuron.activate(inputs[index], callback)
           }
-        }]
-      }, function(error, results) {
-        return callback ? callback(error, results.activate_neurons) : !error ? resolve(results.activate_neurons) : reject(error)
-      })
+          // Activate Hidden/Output Layer
+          else {
+            neuron.activate(callback)
+          }
+        }, function(error, results) {
+          let output = Object.values(results)
+          return callback ? callback(error, output) : !error ? resolve(output) : reject(error)
+        })
+      }
     })
   }
   // Adjust neuron weights

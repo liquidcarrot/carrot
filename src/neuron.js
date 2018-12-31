@@ -169,10 +169,7 @@ let Neuron = function(props) {
         let inputs = _.map(self.connections.incoming, function(connection) {
           return connection.from.last
         })
-
-        console.log("Incoming Weights: " + weights)
-        console.log("Incoming Inputs: " + inputs)
-
+        
         // Synaptic Weight Function
         let sum = math.parse("dot(w,i)").eval({
           w: weights,

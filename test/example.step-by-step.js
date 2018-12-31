@@ -9,7 +9,7 @@ let Connection = require('../src/connection')
 let Layer = require('../src/layer')
 let Network = require('../src/network')
 
-describe("Step by Step Example", function() {
+describe.skip("Step by Step Example", function() {
   console.log("Step by Step Example: https://mattmazur.com/2015/03/17/a-step-by-step-backpropagation-example/")
   
   describe("Building Networks with Neurons", function() {
