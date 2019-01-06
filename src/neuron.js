@@ -69,8 +69,8 @@ let Neuron = function(props) {
       // Unsupported Activation Function
       else {
         throw new Error(props.activation + " is not a valid - or is an unsupported - activation function.\n\n" + 
-                        "If you would like to create support for it, please open a up pull request on GitHub for it: https://github.com/liquidcarrot/carrot/pulls\n\n" +
-                        "If you would like one of our core contributors to take a look into it, please open up an issue on GitHub describing this function in further detail: https://github.com/liquidcarrot/carrot/issues")
+                        "If you would like to create support for a new activation function please open a pull request for it on GitHub: https://github.com/liquidcarrot/carrot/pulls\n\n" +
+                        "If you would like one of our core contributors to review your activation function, please open an issue on GitHub describing the function in further detail: https://github.com/liquidcarrot/carrot/issues")
       }
     }
     // Activation Functions Using Custom Functions
@@ -203,7 +203,7 @@ let Neuron = function(props) {
       if(self.is.output()) {
         self.error = feedback * self.activation(self.last, true)
       }
-      // Calculate Erro, Update Weights, Propagate Error Backward through the Network
+      // Calculate Error, Update Weights, Propagate Error Backward through the Network
       else {
         // Outgoing Connection Weights
         let weights = _.map(self.connections.outgoing, function(connection) {
