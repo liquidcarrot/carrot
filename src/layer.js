@@ -3,8 +3,6 @@
 let _ = require('lodash')
 let async = require('neo-async')
 let Promise = require('bluebird')
-let Neuron = require('./neuron')
-let Connection = require('./connection')
 
 /**
 * Represents a Layer of Neurons.
@@ -15,12 +13,15 @@ let Connection = require('./connection')
 let Layer = function(props, options) {
   let self = this
   
+  let Neuron = require('./neuron')
+  let Connection = require('./connection')
+  
   self.neurons = []
   
   if(props) {
     // Contructing with new Layer(n)
     if(_.isLength(props)) {
-      _.times(props, function() { 
+      _.times(props, function() {
         self.neurons.push(new Neuron(options))
       })
     }

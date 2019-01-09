@@ -4,7 +4,6 @@ let _ = require('lodash')
 let math = require('mathjs')
 let async = require('neo-async')
 let Promise = require('bluebird')
-let Connection = require('./connection')
 
 /**
 * >Neuron Factory Function
@@ -26,6 +25,9 @@ let Connection = require('./connection')
 let Neuron = function(props) {
   let self = this
   
+  let Layer = require('./layer')
+  let Connection = require('./connection')
+  
   self.bias = Math.random() // Neuron bias
   self.activation = Neuron.activations.SIGMOID // Neuron's Squash Function
   self.connections = {
@@ -44,43 +46,98 @@ let Neuron = function(props) {
     self.bias = props.bias || self.bias
     self.rate = props.rate || self.rate
     
-    // Activation Functions Using Class Defaults
-    if(props.activation && typeof props.activation === "string") {
-      // Sigmoid Activation Function
-      if(props.activation.toLowerCase() === "sigmoid" || 
-         props.activation.toLowerCase() === "sigmoidal" ||
-         props.activation.toLowerCase() === "logistic" ||
-         props.activation.toLowerCase() === "logistics") {
-        self.activation = Neuron.activations.SIGMOID
+    if(props.activation) {
+      // Activation Functions Using Class Defaults
+      if(typeof props.activation === "string") {
+        // Sigmoid Activation Function
+        if(props.activation.toLowerCase() === "sigmoid" || 
+           props.activation.toLowerCase() === "sigmoidal" ||
+           props.activation.toLowerCase() === "logistic" ||
+           props.activation.toLowerCase() === "logistics") {
+          self.activation = Neuron.activations.SIGMOID
+        }
+        // Rectified Linear Unit Activation Function
+        else if(props.activation.toLowerCase() === "relu") {
+          self.activation = Neuron.activations.RELU
+        }
+        // Hyperbolic Tangent Activation Function
+        else if(props.activation.toLowerCase() === "tanh") {
+          self.activation = Neuron.activations.TANH
+        }
+        // Linear Activation Function
+        else if(props.activation.toLowerCase() === "linear" ||
+                  props.activation.toLowerCase() === "identity") {
+          self.activation = Neuron.activations.LINEAR
+        }
+        // Unsupported Activation Function
+        else {
+          throw new Error(props.activation + " is not a valid - or is an unsupported - activation function.\n\n" + 
+                          "If you would like to create support for it, please open a up pull request on GitHub for it: https://github.com/liquidcarrot/carrot/pulls\n\n" +
+                          "If you would like one of our core contributors to take a look into it, please open up an issue on GitHub describing this function in further detail: https://github.com/liquidcarrot/carrot/issues")
+        }
       }
-      // Rectified Linear Unit Activation Function
-      else if(props.activation.toLowerCase() === "relu") {
-        self.activation = Neuron.activations.RELU
+      // Activation Functions Using Custom Functions
+      else if(typeof props.activation === "function") {
+        self.activation = props.activation
       }
-      // Hyperbolic Tangent Activation Function
-      else if(props.activation.toLowerCase() === "tanh") {
-        self.activation = Neuron.activations.TANH
-      }
-      // Linear Activation Function
-      else if(props.activation.toLowerCase() === "linear" ||
-                props.activation.toLowerCase() === "identity") {
-        self.activation = Neuron.activations.LINEAR
-      }
-      // Unsupported Activation Function
-      else {
-        throw new Error(props.activation + " is not a valid - or is an unsupported - activation function.\n\n" + 
-                        "If you would like to create support for it, please open a up pull request on GitHub for it: https://github.com/liquidcarrot/carrot/pulls\n\n" +
-                        "If you would like one of our core contributors to take a look into it, please open up an issue on GitHub describing this function in further detail: https://github.com/liquidcarrot/carrot/issues")
+      // Unsupported Activation Function Construction
+      else{
+        throw new Error("Activation function must be a 'function' or a 'string'")
       }
     }
-    // Activation Functions Using Custom Functions
-    else if(props.activation && typeof props.activation === "function") {
-      self.activation = props.activation
+    
+    if(props.connections) {
+      if(props.connections.incoming) {
+        let incoming = props.connections.incoming
+        
+        // Constructing Incoming Connections with an Array of Neurons
+        if(_.isArray(incoming) && _.every(incoming, neuron => neuron instanceof Neuron)) {
+          _.each(incoming, function(neuron, index) {
+            let connection = new Connection({
+              from: neuron,
+              to: self,
+            })
+            
+            neuron.connections.outgoing.push(connection)
+            self.connections.incoming.push(connection)
+          })
+        }
+        // Constructing Incoming Connections with a Layer
+        else if(incoming instanceof Layer) {
+          _.each(incoming.neurons, function(neuron, index) {
+            let connection = new Connection({
+              from: neuron,
+              to: self,
+            })
+
+            neuron.connections.outgoing.push(connection)
+            self.connections.incoming.push(connection)
+          })
+        }
+        // Unsupported Incoming Connection Construction
+        else {
+          throw new Error("Incoming Connections must be a 'layer' or a '[neuron]'")
+        }
+      }
+      if(props.connections.outgoing) {
+        let outgoing = props.connections.outgoing
+        
+        // Constructing Outgoing Connections with an Array of Neurons
+        if(_.isArray(outgoing) && _.every(outgoing, neuron => neuron instanceof Neuron)) {
+          _.each(outgoing, function(neuron, index) {
+            let connection = new Connection({
+              from: neuron,
+              to: self,
+            })
+            
+            neuron.connections.incoming.push(connection)
+            self.connections.outgoing.push(connection)
+          })
+        }
+      }
     }
-    // Unsupported Activation Function Construction
-    else {
-      throw new Error("Activation function must be a 'function' or a 'string'")
-    }
+    
+//     if() {}
   }
 
   /**

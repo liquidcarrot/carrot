@@ -1,10 +1,12 @@
 'use strict'
 
+let _ = require('lodash')
 let faker = require("faker")
 let expect  = require('chai').expect
 
 describe("Neuron", function() {
   let Neuron = require('../src/neuron')
+  let Connection = require('../src/connection')
   
   describe("new Neuron()", function() {
     let neuron = new Neuron()
@@ -83,7 +85,7 @@ describe("Neuron", function() {
 
         done()
       })
-      it("should create neuron with empty connections", function(done) {
+      it("should create a neuron with an empty connections object", function(done) {
         expect(neuron.connections).to.exist
         expect(neuron.connections.incoming).to.exist
         expect(neuron.connections.incoming).to.be.an("array")
@@ -91,9 +93,55 @@ describe("Neuron", function() {
         expect(neuron.connections.outgoing).to.exist
         expect(neuron.connections.outgoing).to.be.an("array")
         expect(neuron.connections.outgoing).to.have.lengthOf(0)
-
+        
         done()
       })
+      
+      describe("new Neuron({ 'connections': { 'incoming': [Neuron], 'outgoing': [Neuron] }})", function() {
+        let options = {
+          connections: {
+            incoming: _.times(Math.round(Math.random() * 10 + 1), function(n) {
+              return new Neuron()
+            }),
+            outgoing: _.times(Math.round(Math.random() * 10 + 1), function(n) {
+              return new Neuron()
+            })
+          }
+        }
+        let neuron = new Neuron(options)
+        
+        it("should create neuron with the given incoming neurons", function(done) {
+          expect(neuron.connections).to.exist
+          expect(neuron.connections.incoming).to.exist
+          expect(neuron.connections.incoming).to.be.an("array")
+          expect(neuron.connections.incoming).to.have.lengthOf(options.connections.incoming.length)
+          expect(neuron.connections.incoming).to.each.satisfy(function(connection) {
+            return connection instanceof Connection
+          })
+
+          done()
+        })
+        it.skip("should add connections to incoming neurons", function(done) {
+          
+          done()
+        })
+        it("should create a neuron witht the given outgoing neurons", function(done) {
+          expect(neuron.connections).to.exist
+          expect(neuron.connections.outgoing).to.exist
+          expect(neuron.connections.outgoing).to.be.an("array")
+          expect(neuron.connections.outgoing).to.have.lengthOf(options.connections.outgoing.length)
+          expect(neuron.connections.outgoing).to.each.satisfy(function(connection) {
+            return connection instanceof Connection
+          })
+
+          done()
+        })
+        it.skip("should add connections to outgoing neurons", function(done) {
+          
+          done()
+        })
+      })
+      
     })
     describe("new Neuron(neuron)", function() {
       let options = {
