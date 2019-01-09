@@ -260,7 +260,7 @@ let Neuron = function(props) {
       if(self.is.output()) {
         self.error = feedback * self.activation(self.last, true)
       }
-      // Calculate Erro, Update Weights, Propagate Error Backward through the Network
+      // Calculate Error, Update Weights, Propagate Error Backward through the Network
       else {
         // Outgoing Connection Weights
         let weights = _.map(self.connections.outgoing, function(connection) {
