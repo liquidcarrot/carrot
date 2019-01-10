@@ -90,7 +90,7 @@ let Neuron = function(props) {
       if(props.connections.incoming) {
         let incoming = props.connections.incoming
         
-        // Constructing Incoming Connections with an Array of Neurons
+        // Constructing Incoming Connections with an Array of Neurons 
         if(_.isArray(incoming) && _.every(incoming, neuron => neuron instanceof Neuron)) {
           _.each(incoming, function(neuron, index) {
             let connection = new Connection({
@@ -99,6 +99,19 @@ let Neuron = function(props) {
             })
             
             neuron.connections.outgoing.push(connection)
+            self.connections.incoming.push(connection)
+          })
+        }
+        // Constructing Incoming Connections with an Array of Connections 
+        // AKA Constructing Incoming Connections from another Neuron
+        else if(_.isArray(incoming) && _.every(incoming, connection => connection instanceof Connection)) {
+          _.each(incoming, function(incoming_connection, index) {
+            let connection = new Connection({
+              from: incoming_connection.from,
+              to: self
+            })
+            
+            incoming_connection.from.connections.outgoing.push(connection)
             self.connections.incoming.push(connection)
           })
         }
@@ -134,10 +147,37 @@ let Neuron = function(props) {
             self.connections.outgoing.push(connection)
           })
         }
+        // Constructing Outgoing Connections with an Array of Connections 
+        // AKA Constructing Outgoing Connections from another Neuron
+        else if(_.isArray(outgoing) && _.every(outgoing, connection => connection instanceof Connection)) {
+          _.each(outgoing, function(outgoing_connection, index) {
+            let connection = new Connection({
+              from: outgoing_connection.from,
+              to: self
+            })
+            
+            outgoing_connection.from.connections.incoming.push(connection)
+            self.connections.outgoing.push(connection)
+          })
+        }
+        // Constructing Outgoing Connections with a Layer
+        else if(outgoing instanceof Layer) {
+          _.each(outgoing.neurons, function(neuron, index) {
+            let connection = new Connection({
+              from: neuron,
+              to: self,
+            })
+
+            neuron.connections.incoming.push(connection)
+            self.connections.outgoing.push(connection)
+          })
+        }
+        // Unsupported Outgoing Connection Construction
+        else {
+          throw new Error("Outgoing Connections must be a 'layer' or a '[neuron]'")
+        }
       }
     }
-    
-//     if() {}
   }
 
   /**
