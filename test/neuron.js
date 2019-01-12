@@ -2,7 +2,11 @@
 
 let _ = require('lodash')
 let faker = require("faker")
-let expect  = require('chai').expect
+let chai = require('chai')
+
+chai.use(require('chai-each'))
+
+let expect = chai.expect
 
 describe("Neuron", function() {
   let Neuron = require('../src/neuron')
@@ -239,7 +243,8 @@ describe("Neuron", function() {
       }
       let other_neuron = new Neuron(options)
       let neuron = new Neuron(other_neuron)
-
+      
+      
       it("should create a neuron", function(done) {    
         expect(neuron).to.not.be.null
         expect(neuron).to.not.be.undefined
@@ -268,14 +273,35 @@ describe("Neuron", function() {
 
         done()
       })
-      it.skip("should create a neuron with the same incoming connections as the given neuron", function(done) {
+      it("should create a neuron with the same incoming connections as the given neuron", function(done) {
         expect(neuron.connections.incoming).to.exist
         expect(neuron.connections.incoming).to.be.an("array")
         expect(neuron.connections.incoming).to.have.lengthOf(other_neuron.connections.incoming.length)
         expect(neuron.connections.incoming).to.each.be.an.instanceOf(Connection)
+        _.each(neuron.connections.incoming, function(connection, index) {
+          // Incoming Connection Source Neurons Should Match Given Neuron
+          expect(neuron.connections.incoming[index].from).to.eql(other_neuron.connections.incoming[index].from)
+          // Incoming Connection Destination Neurons Should Not Match Given Neuron
+          expect(neuron.connections.incoming[index].to).to.not.eql(other_neuron.connections.incoming[index].to)
+          // Incoming Connection Destination Neurons Should Be The Created Neuron
+          expect(neuron.connections.incoming[index].to).to.equal(neuron)
+        })
+        
         done()
       })
-      it.skip("should create a neuron with the same outgoing connections as the given neuron", function(done) {
+      it("should create a neuron with the same outgoing connections as the given neuron", function(done) {
+        expect(neuron.connections.outgoing).to.exist
+        expect(neuron.connections.outgoing).to.be.an("array")
+        expect(neuron.connections.outgoing).to.have.lengthOf(other_neuron.connections.outgoing.length)
+        expect(neuron.connections.outgoing).to.each.be.an.instanceOf(Connection)
+        _.each(neuron.connections.outgoing, function(connection, index) {
+          // Outgoing Connection Destination Neurons Should Match Given Neuron
+          expect(neuron.connections.outgoing[index].to).to.eql(other_neuron.connections.outgoing[index].to)
+          // Outgoing Connection Source Neurons Should Not Match Given Neuron
+          expect(neuron.connections.outgoing[index].from).to.not.eql(other_neuron.connections.outgoing[index].from)
+          // Outgoing Connection Source Neurons Should Be The Created Neuron
+          expect(neuron.connections.outgoing[index].from).to.equal(neuron)
+        })
         
         done()
       })

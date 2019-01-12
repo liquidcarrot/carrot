@@ -156,7 +156,7 @@ let Neuron = function(props) {
               to: outgoing_connection.to
             })
             
-            outgoing_connection.from.connections.incoming.push(connection)
+            outgoing_connection.to.connections.incoming.push(connection)
             self.connections.outgoing.push(connection)
           })
         }
