@@ -139,8 +139,8 @@ let Neuron = function(props) {
         if(_.isArray(outgoing) && _.every(outgoing, neuron => neuron instanceof Neuron)) {
           _.each(outgoing, function(neuron, index) {
             let connection = new Connection({
-              from: neuron,
-              to: self,
+              from: self,
+              to: neuron,
             })
             
             neuron.connections.incoming.push(connection)
@@ -152,8 +152,8 @@ let Neuron = function(props) {
         else if(_.isArray(outgoing) && _.every(outgoing, connection => connection instanceof Connection)) {
           _.each(outgoing, function(outgoing_connection, index) {
             let connection = new Connection({
-              from: outgoing_connection.from,
-              to: self
+              from: self,
+              to: outgoing_connection.to
             })
             
             outgoing_connection.from.connections.incoming.push(connection)
@@ -164,8 +164,8 @@ let Neuron = function(props) {
         else if(outgoing instanceof Layer) {
           _.each(outgoing.neurons, function(neuron, index) {
             let connection = new Connection({
-              from: neuron,
-              to: self,
+              from: self,
+              to: neuron
             })
 
             neuron.connections.incoming.push(connection)
