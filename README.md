@@ -3,6 +3,14 @@
 
 [![Carrot's Weekly Download](https://img.shields.io/npm/dw/@liquid-carrot/carrot.svg)](https://www.npmjs.com/package/@liquid-carrot/carrot) [![Carrot's License](https://img.shields.io/badge/License-MIT-blue.svg)](/LICENSE) [![Carrot's Love](https://img.shields.io/badge/Made%20with%20%E2%99%A5%20by-Liquid%20Carrot-ff1414.svg)](https://github.com/liquidcarrot/carrot/issues)
 
+<details>
+  <summary><strong>Table of Contents</strong></summary>
+  
+  * [Contributing](#contributing)
+  * [Support](#support)
+  * [Contributors](#contributors)
+</details>
+
 ## Contributing
 [![Carrot's GitHub Issues](https://img.shields.io/github/issues/liquidcarrot/carrot.svg)](https://github.com/liquidcarrot/carrot/issues)
 
@@ -12,6 +20,32 @@ and pull requests!
 If you're new to the project, and feel free to open up a pull request to address one of the open issues. It would be super appreciated! 🤗
 
 When adding or changing a service please add tests.
+
+<details>
+  <summary><strong>TODO</strong></summary>
+  
+  * [ ] Architecture Support
+      * [x] Neurons
+          * [x] Tests
+          * [x] Documentation
+      * [x] Layers
+          * [x] Tests
+          * [ ] Documentation
+      * [ ] Networks
+          * [ ] Tests
+          * [ ] Documentation
+  * [ ] Performance Echancements
+      * [ ] GPU Acceleration
+          * [ ] Tests
+          * [ ] Benchmarks
+      * [ ] Matrix Multiplications
+          * [ ] Tests
+          * [ ] Benchmarks
+      * [ ] Clustering | Multi-Threading
+          * [ ] Tests
+          * [ ] Benchmarks
+
+</details>
 
 ## Support
 [![Carrot's Patrons](https://img.shields.io/badge/Patrons-0-yellow.svg)](https://github.com/liquidcarrot/carrot/issues)
