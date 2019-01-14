@@ -32,7 +32,18 @@ let Network = function(props, options) {
     }
     // Constructing with new Network([Layer])
     else if(_.every(props, prop => prop instanceof Layer)) {
-      
+      _.each(_.slice(props, 1), function(layer, index) {
+        let other_layer = new Layer(layer, {
+          connections: {
+            incoming: props[index]
+          }
+        })
+        
+        self.neurons = _.concat(self.neurons, other_layer.neurons)
+      })
+//       _.reduce(_.slice(props, 1), function(_.first(props), layer, index) {
+        
+//       })
     }
     // Constructing with new Network([Neuron])
     else if(_.every(props, prop => prop instanceof Neuron)) {

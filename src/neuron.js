@@ -19,8 +19,8 @@ let Promise = require('bluebird')
 * @param {ActivationFunction} [props.activation=Neuron.activations.SIGMOID] - Neuron's Activation Function
 * @param {number} [props.rate=0.3] - Neuron's Learning Rate AKA Gradient Descent Step Size
 * @param {Object} [props.connections] - Neuron's Connections
-* @param {[Connection]} [props.connections.incoming=[]] - Neuron's Incoming Connections
-* @param {[Connection]} [props.connections.outgoing=[]] - Neuron's Outgoing Connections
+* @param {Layer|[Neuron]|[Connection]} [props.connections.incoming=[]] - Neuron's Incoming Connections
+* @param {Layer|[Neuron]|[Connection]} [props.connections.outgoing=[]] - Neuron's Outgoing Connections
 */
 let Neuron = function(props) {
   let self = this
@@ -203,6 +203,9 @@ let Neuron = function(props) {
     */
     output: function() {
       return self.connections.outgoing.length === 0
+    },
+    equal: function(neuron) {
+      return Math.round(Math.random()) ? true : false
     }
   }
   /**

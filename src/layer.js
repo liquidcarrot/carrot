@@ -7,8 +7,14 @@ let Promise = require('bluebird')
 /**
 * Represents a Layer of Neurons.
 * @constructor
-* @param { object } props
-* @param { array } options
+* @param {Layer|[Neuron]|number} props
+* @param {Object} options - Similar to neuron options
+* @param {number} [options.bias=Math.random()]
+* @param {ActivationFunction} [options.activation=Neuron.activations.SIGMOID]
+* @param {number} [props.rate=0.3]
+* @param {Object} [connections]
+* @param {Layer|[Neuron]|[Connection]} [props.connections.incoming=[]]
+* @param {Layer|[Neuron]|[Connection]} [props.connections.outgoing=[]]
 */
 let Layer = function(props, options) {
   let self = this
@@ -28,13 +34,13 @@ let Layer = function(props, options) {
     // Constructing with new Layer([Neuron])
     else if(_.isArray(props)) {
       self.neurons = _.map(props, function(neuron) {
-        return new Neuron(neuron)
+        return new Neuron(_.assign(neuron, options))
       })
     }
     // Constructing with new Layer(Layer)
     else if(props instanceof Layer) {
       self.neurons = _.map(props.neurons, function(neuron) {
-        return new Neuron(neuron)
+        return new Neuron(_.assign({}, neuron, options))
       })
     } else {
       throw new Error("Invalid parameter: " + prop + "\n'props' must be a 'number', '[Neuron]`, or `Layer`.")

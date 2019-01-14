@@ -3,6 +3,7 @@
 let _ = require('lodash')
 let faker = require('faker')
 let chai = require('chai')
+
 chai.use(require('chai-each'))
 
 let expect = chai.expect
@@ -53,14 +54,22 @@ describe("Layer", function() {
         done()
       })
       
-      describe("new Layer(n, options)", function() {
+      describe("new Layer(n, {...})", function() {
         let neurons = Math.round(Math.random() * 10 + 1)
         let options = {
           bias: Math.random(),
           rate: Math.random(),
           activation: faker.random.arrayElement(["sigmoid", "sigmoidal", "logistic", "logistics", "relu", "tanh", "linear", "identity", function(x, derivative) {
             return !derivative ? Math.atan(x) : (1 / (Math.pow(x, 2) + 1))
-          }])
+          }]),
+          connections: {
+            incoming: _.times(Math.round(Math.random() * 10 + 1), function(n) {
+              return new Neuron()
+            }),
+            outgoing: _.times(Math.round(Math.random() * 10 + 1), function(n) {
+              return new Neuron()
+            })
+          }
         }
         let layer = new Layer(neurons, options)
         
@@ -81,40 +90,177 @@ describe("Layer", function() {
           done()
         })
         it("every neurons gets constructed with 'options'", function(done) {
-          // Check `bias` Matches
-          expect(_.every(layer.neurons, function(neuron) {
-            return neuron.bias === options.bias
-          })).to.equal(true)
-          // Check `rate` Matches
-          expect(_.every(layer.neurons, function(neuron) {
-            return neuron.rate === options.rate
-          })).to.equal(true)
-          // Check `activation` Matches
-          expect(_.every(layer.neurons, function(neuron) {
-            if(options.activation && typeof options.activation === "string") {
-              if(options.activation.toLowerCase() === "sigmoid" || 
-                 options.activation.toLowerCase() === "sigmoidal" ||
-                 options.activation.toLowerCase() === "logistic" ||
-                 options.activation.toLowerCase() === "logistics") {
-                return neuron.activation === Neuron.activations.SIGMOID
-              } else if(options.activation.toLowerCase() === "relu") {
-                return neuron.activation === Neuron.activations.RELU
-              } else if(options.activation.toLowerCase() === "tanh") {
-                return neuron.activation === Neuron.activations.TANH
-              } else if(options.activation.toLowerCase() === "linear" ||
-                        options.activation.toLowerCase() === "identity") {
-                return neuron.activation === Neuron.activations.LINEAR
+          _.each(layer.neurons, function(neuron, neuron_index) {
+            expect(neuron.bias).to.equal(options.bias)
+            expect(neuron.rate).to.equal(options.rate)
+            expect(neuron.activation).to.satisfy(function(activation) {
+              if(options.activation && typeof options.activation === "string") {
+                if(options.activation.toLowerCase() === "sigmoid" || 
+                   options.activation.toLowerCase() === "sigmoidal" ||
+                   options.activation.toLowerCase() === "logistic" ||
+                   options.activation.toLowerCase() === "logistics") {
+                  return activation === Neuron.activations.SIGMOID
+                } else if(options.activation.toLowerCase() === "relu") {
+                  return activation === Neuron.activations.RELU
+                } else if(options.activation.toLowerCase() === "tanh") {
+                  return activation === Neuron.activations.TANH
+                } else if(options.activation.toLowerCase() === "linear" ||
+                          options.activation.toLowerCase() === "identity") {
+                  return activation === Neuron.activations.LINEAR
+                } else {
+                  return false
+                }
+              } else if(options.activation && typeof options.activation === "function") {
+                return activation === options.activation
               } else {
                 return false
               }
-            } else if(options.activation && typeof options.activation === "function") {
-              return neuron.activation === options.activation
-            } else {
-              return false
-            }
-          })).to.equal(true)
+            })
+            _.each(neuron.connections.incoming, function(connection, connection_index) {
+              expect(connection.from).to.eql(options.connections.incoming[connection_index])
+              expect(connection.to).to.equal(neuron)
+            })
+            _.each(neuron.connections.outgoing, function(connection, connection_index) {
+              expect(connection.to).to.eql(options.connections.outgoing[connection_index])
+              expect(connection.from).to.equal(neuron)
+            })
+          })
           
           done()
+        })
+        
+        describe("new Layer(n, { 'connections': { 'incoming': Layer, 'outgoing': Layer } })", function() {
+          let options = {
+            connections: {
+              incoming: new Layer(Math.round(Math.random() * 10 + 1)),
+              outgoing: new Layer(Math.round(Math.random() * 10 + 1))
+            }
+          }
+          let layer = new Layer(Math.round(Math.random() * 10 + 1), options)
+          
+          it("should create a connection from every neuron in the incoming layer to every neuron in the created layer", function(done) {
+            _.each(layer.neurons, function(neuron, index) {
+              expect(neuron.connections).to.exist
+              expect(neuron.connections.incoming).to.exist
+              expect(neuron.connections.incoming).to.be.an("array")
+              expect(neuron.connections.incoming).to.have.lengthOf(options.connections.incoming.neurons.length)
+              expect(neuron.connections.incoming).to.each.satisfy(function(connection) {
+                return connection instanceof Connection
+              })
+            })
+            
+            done()
+          })
+          it("should create a connection to every neuron in the outgoing layer from every neuron in the created layer", function(done) {
+            _.each(layer.neurons, function(neuron, index) {
+              expect(neuron.connections).to.exist
+              expect(neuron.connections.outgoing).to.exist
+              expect(neuron.connections.outgoing).to.be.an("array")
+              expect(neuron.connections.outgoing).to.have.lengthOf(options.connections.outgoing.neurons.length)
+              expect(neuron.connections.outgoing).to.each.satisfy(function(connection) {
+                return connection instanceof Connection
+              })
+            })
+            
+            done()
+          })
+          it("should add an outgoing connection to every neuron in the incoming layer for every neuron in the created layer", function(done) {
+            expect(options.connections.incoming).to.exist
+            expect(options.connections.incoming).to.be.an.instanceOf(Layer)
+            expect(options.connections.incoming.neurons).to.exist
+            expect(options.connections.incoming.neurons).to.be.an("array")
+            expect(options.connections.incoming.neurons).to.each.be.an.instanceOf(Neuron)
+            // For every incoming neuron, its outgoing connections point to, at least, all the created layer neurons
+            _.each(options.connections.incoming.neurons, function(neuron, index) {
+              expect(_.map(neuron.connections.outgoing, function(connection) {
+                return connection.to
+              })).to.have.all.members(layer.neurons)
+            })
+            
+            done()
+          })
+          it("should add an incoming connection to every neuron in the outgoing layer for every neuron in the created layer", function(done) {
+            expect(options.connections.outgoing).to.exist
+            expect(options.connections.outgoing).to.be.an.instanceOf(Layer)
+            expect(options.connections.outgoing.neurons).to.exist
+            expect(options.connections.outgoing.neurons).to.be.an("array")
+            expect(options.connections.outgoing.neurons).to.each.be.an.instanceOf(Neuron)
+            // For every outgoing neuron, its incoming connections point to, at least, all the created layer neurons
+            _.each(options.connections.outgoing.neurons, function(neuron, index) {
+              expect(_.map(neuron.connections.incoming, function(connection) {
+                return connection.from
+              })).to.have.all.members(layer.neurons)
+            })
+            
+            done()
+          })
+        })
+        
+        describe("new Layer(n, { 'connections': { 'incoming': [Neuron], 'outgoing': [Neuron] } })", function() {
+          let options = {
+            connections: {
+              incoming: _.times(Math.round(Math.random() * 10 + 1), function() {
+                return new Neuron()
+              }),
+              outgoing: _.times(Math.round(Math.random() * 10 + 1), function() {
+                return new Neuron()
+              })
+            }
+          }
+          let layer = new Layer(Math.round(Math.random() * 10 + 1), options)
+          
+          it("should create a connection from every given neuron to every neuron in the created layer", function(done) {
+            _.each(layer.neurons, function(neuron, index) {
+              expect(neuron.connections).to.exist
+              expect(neuron.connections.incoming).to.exist
+              expect(neuron.connections.incoming).to.be.an("array")
+              expect(neuron.connections.incoming).to.have.lengthOf(options.connections.incoming.length)
+              expect(neuron.connections.incoming).to.each.satisfy(function(connection) {
+                return connection instanceof Connection
+              })
+            })
+            
+            done()
+          })
+          it("should create a connection to every given neuron from every neuron in the created layer", function(done) {
+            _.each(layer.neurons, function(neuron, index) {
+              expect(neuron.connections).to.exist
+              expect(neuron.connections.outgoing).to.exist
+              expect(neuron.connections.outgoing).to.be.an("array")
+              expect(neuron.connections.outgoing).to.have.lengthOf(options.connections.outgoing.length)
+              expect(neuron.connections.outgoing).to.each.satisfy(function(connection) {
+                return connection instanceof Connection
+              })
+            })
+            
+            done()
+          })
+          it("should add an outgoing connection to every given neuron for every neuron in the created layer", function(done) {
+            expect(options.connections.incoming).to.exist
+            expect(options.connections.incoming).to.be.an("array")
+            expect(options.connections.incoming).to.each.be.an.instanceOf(Neuron)
+            // For every incoming neuron, its outgoing connections point to, at least, all the created layer neurons
+            _.each(options.connections.incoming, function(neuron, index) {
+              expect(_.map(neuron.connections.outgoing, function(connection) {
+                return connection.to
+              })).to.have.all.members(layer.neurons)
+            })
+            
+            done()
+          })
+          it("should add an incoming connection to every given neuron for every neuron in the created layer", function(done) {
+            expect(options.connections.outgoing).to.exist
+            expect(options.connections.outgoing).to.be.an("array")
+            expect(options.connections.outgoing).to.each.be.an.instanceOf(Neuron)
+            // For every outgoing neuron, its incoming connections point to, at least, all the created layer neurons
+            _.each(options.connections.outgoing, function(neuron, index) {
+              expect(_.map(neuron.connections.incoming, function(connection) {
+                return connection.from
+              })).to.have.all.members(layer.neurons)
+            })
+            
+            done()
+          })
         })
       })
     })
@@ -126,10 +272,17 @@ describe("Layer", function() {
           rate: Math.random(),
           activation: faker.random.arrayElement(["sigmoid", "sigmoidal", "logistic", "logistics", "relu", "tanh", "linear", "identity", function(x, derivative) {
             return !derivative ? Math.atan(x) : (1 / (Math.pow(x, 2) + 1))
-          }])
+          }]),
+          connections: {
+            incoming: _.times(Math.round(Math.random() * 10 + 1), function(n) {
+              return new Neuron()
+            }),
+            outgoing: _.times(Math.round(Math.random() * 10 + 1), function(n) {
+              return new Neuron()
+            })
+          }
         })
       })
-      
       let layer = new Layer(neurons)
 
       it("should create a layer", function(done) {
@@ -141,48 +294,270 @@ describe("Layer", function() {
 
         done()
       })
-      it("should create a layer with an equal number of neurons", function(done) {
+      it("should create a layer with the same number of neurons as the given array", function(done) {
         expect(layer.neurons).to.exist
         expect(layer.neurons).to.be.an("array")
         expect(layer.neurons).to.have.lengthOf(neurons.length)
         
         done()
       })
-      it("all neuron properties should match - except connections", function(done) {
-        // Check `bias` Matches
-        expect(_.every(layer.neurons, function(neuron, index) {
-          return neuron.bias === neurons[index].bias
-        })).to.equal(true)
-        // Check `rate` Matches
-        expect(_.every(layer.neurons, function(neuron, index) {
-          return neuron.rate === neurons[index].rate
-        })).to.equal(true)
-        // Check `activation` Matches
-        expect(_.every(layer.neurons, function(neuron, index) {
-          if(neurons[index].activation && typeof neurons[index].activation === "string") {
-            if(neurons[index].activation.toLowerCase() === "sigmoid" || 
-               neurons[index].activation.toLowerCase() === "sigmoidal" ||
-               neurons[index].activation.toLowerCase() === "logistic" ||
-               neurons[index].activation.toLowerCase() === "logistics") {
-              return neuron.activation === Neuron.activations.SIGMOID
-            } else if(neurons[index].activation.toLowerCase() === "relu") {
-              return neuron.activation === Neuron.activations.RELU
-            } else if(neurons[index].activation.toLowerCase() === "tanh") {
-              return neuron.activation === Neuron.activations.TANH
-            } else if(neurons[index].activation.toLowerCase() === "linear" ||
-                      neurons[index].activation.toLowerCase() === "identity") {
-              return neuron.activation === Neuron.activations.LINEAR
-            } else {
-              return false
-            }
-          } else if(neurons[index].activation && typeof neurons[index].activation === "function") {
-            return neuron.activation === neurons[index].activation
-          } else {
-            return false
-          }
-        })).to.equal(true)
+      it("should create a layer whose neuron's properties match the properties of the given neurons", function(done) {
+        _.each(layer.neurons, function(neuron, neuron_index) {
+          expect(neuron.bias).to.equal(neurons[neuron_index].bias)
+          expect(neuron.rate).to.equal(neurons[neuron_index].rate)
+          expect(neuron.activation).to.equal(neurons[neuron_index].activation)
+          expect(neuron.activation).to.eql(neurons[neuron_index].activation)
+          _.each(neuron.connections.incoming, function(connection, connection_index) {
+            expect(neuron.connections.incoming[connection_index].from).to.eql(neurons[neuron_index].connections.incoming[connection_index].from)
+            expect(neuron.connections.incoming[connection_index].to).to.not.eql(neurons[neuron_index].connections.incoming[connection_index].to)
+            expect(neuron.connections.incoming[connection_index].to).to.equal(neuron)
+          })
+          _.each(neuron.connections.outgoing, function(connection, connection_index) {
+            expect(neuron.connections.outgoing[connection_index].to).to.eql(neurons[neuron_index].connections.outgoing[connection_index].to)
+            expect(neuron.connections.outgoing[connection_index].from).to.not.eql(neurons[neuron_index].connections.outgoing[connection_index].from)
+            expect(neuron.connections.outgoing[connection_index].from).to.equal(neuron)
+          })
+        })
 
         done()
+      })
+      
+      describe("new Layer([Neuron], {...})", function() {
+        let neurons = _.times(Math.round(Math.random() * 10 + 1), function() {
+          return new Neuron({
+            bias: Math.random(),
+            rate: Math.random(),
+            activation: faker.random.arrayElement(["sigmoid", "sigmoidal", "logistic", "logistics", "relu", "tanh", "linear", "identity", function(x, derivative) {
+              return !derivative ? Math.atan(x) : (1 / (Math.pow(x, 2) + 1))
+            }]),
+            connections: {
+              incoming: _.times(Math.round(Math.random() * 10 + 1), function(n) {
+                return new Neuron()
+              }),
+              outgoing: _.times(Math.round(Math.random() * 10 + 1), function(n) {
+                return new Neuron()
+              })
+            }
+          })
+        })
+        let options = {
+          bias: Math.random(),
+          rate: Math.random(),
+          activation: faker.random.arrayElement(["sigmoid", "sigmoidal", "logistic", "logistics", "relu", "tanh", "linear", "identity", function(x, derivative) {
+            return !derivative ? Math.atan(x) : (1 / (Math.pow(x, 2) + 1))
+          }]),
+          connections: {
+            incoming: _.times(Math.round(Math.random() * 10 + 1), function(n) {
+              return new Neuron()
+            }),
+            outgoing: _.times(Math.round(Math.random() * 10 + 1), function(n) {
+              return new Neuron()
+            })
+          }
+        }
+        let layer = new Layer(neurons, options)
+        
+        it("should create a layer", function(done) {
+          expect(layer).to.not.be.null
+          expect(layer).to.not.be.undefined
+          expect(layer).to.not.be.NaN
+          expect(layer).to.exist
+          expect(layer).to.be.an.instanceof(Layer)
+          
+          done()
+        })
+        it("should create a layer with the same number of neurons as the given array", function(done) {
+          expect(layer.neurons).to.exist
+          expect(layer.neurons).to.be.an("array")
+          expect(layer.neurons).to.have.lengthOf(neurons.length)
+          
+          done()
+        })
+        it("should overwrite given neuron properties with `options`", function(done) {
+          _.each(layer.neurons, function(neuron, neuron_index) {
+            expect(neuron.bias).to.equal(options.bias)
+            expect(neuron.rate).to.equal(options.rate)
+            expect(neuron.activation).to.satisfy(function(activation) {
+              if(options.activation && typeof options.activation === "string") {
+                if(options.activation.toLowerCase() === "sigmoid" || 
+                   options.activation.toLowerCase() === "sigmoidal" ||
+                   options.activation.toLowerCase() === "logistic" ||
+                   options.activation.toLowerCase() === "logistics") {
+                  return activation === Neuron.activations.SIGMOID
+                } else if(options.activation.toLowerCase() === "relu") {
+                  return activation === Neuron.activations.RELU
+                } else if(options.activation.toLowerCase() === "tanh") {
+                  return activation === Neuron.activations.TANH
+                } else if(options.activation.toLowerCase() === "linear" ||
+                          options.activation.toLowerCase() === "identity") {
+                  return activation === Neuron.activations.LINEAR
+                } else {
+                  return false
+                }
+              } else if(options.activation && typeof options.activation === "function") {
+                return activation === options.activation
+              } else {
+                return false
+              }
+            })
+            _.each(neuron.connections.incoming, function(connection, connection_index) {
+              expect(connection.from).to.eql(options.connections.incoming[connection_index])
+              expect(connection.to).to.equal(neuron)
+            })
+            _.each(neuron.connections.outgoing, function(connection, connection_index) {
+              expect(connection.to).to.eql(options.connections.outgoing[connection_index])
+              expect(connection.from).to.equal(neuron)
+            })
+          })
+          
+          done()
+        })
+        
+        /**
+        * Connections passed through options should not overwrite connections of the given neurons.
+        * New layer could have more connections than those passed through options.
+        *
+        * WARNING: We are not currently testing for this OR supporting this behavior
+        */
+        describe("new Layer([Neuron], { 'connections': { 'incoming': Layer, 'outgoing': Layer } })", function() {
+          let neurons = _.times(Math.round(Math.random() * 10 + 1), function() {
+            return new Neuron()
+          })
+          let options = {
+            connections: {
+              incoming: new Layer(Math.round(Math.random() * 10 + 1)),
+              outgoing: new Layer(Math.round(Math.random() * 10 + 1))
+            }
+          }
+          let layer = new Layer(neurons, options)
+          
+          it("should create a connection from every neuron in the incoming layer to every neuron in the created layer", function(done) {
+            _.each(layer.neurons, function(neuron, index) {
+              expect(neuron.connections).to.exist
+              expect(neuron.connections.incoming).to.exist
+              expect(neuron.connections.incoming).to.be.an("array")
+              expect(neuron.connections.incoming).to.have.lengthOf(options.connections.incoming.neurons.length)
+              expect(neuron.connections.incoming).to.each.satisfy(function(connection) {
+                return connection instanceof Connection
+              })
+            })
+            
+            done()
+          })
+          it("should create a connection from every neuron in the outgoing layer to every neuron in the created layer", function(done) {
+            _.each(layer.neurons, function(neuron, index) {
+              expect(neuron.connections).to.exist
+              expect(neuron.connections.outgoing).to.exist
+              expect(neuron.connections.outgoing).to.be.an("array")
+              expect(neuron.connections.outgoing).to.have.lengthOf(options.connections.outgoing.neurons.length)
+              expect(neuron.connections.outgoing).to.each.satisfy(function(connection) {
+                return connection instanceof Connection
+              })
+            })
+            
+            done()
+          })
+          it("should add an outgoing connection to every neuron in the incoming layer for every neuron in the created layer", function(done) {
+            expect(options.connections.incoming).to.exist
+            expect(options.connections.incoming).to.be.an.instanceOf(Layer)
+            expect(options.connections.incoming.neurons).to.exist
+            expect(options.connections.incoming.neurons).to.be.an("array")
+            expect(options.connections.incoming.neurons).to.each.be.an.instanceOf(Neuron)
+            // For every incoming neuron, its outgoing connections point to, at least, all the created layer neurons
+            _.each(options.connections.incoming.neurons, function(neuron, index) {
+              expect(_.map(neuron.connections.outgoing, function(connection) {
+                return connection.to
+              })).to.have.all.members(layer.neurons)
+            })
+            
+            done()
+          })
+          it("should add an incoming connection to every neuron in the outgoing layer for every neuron in the created layer", function(done) {
+            expect(options.connections.outgoing).to.exist
+            expect(options.connections.outgoing).to.be.an.instanceOf(Layer)
+            expect(options.connections.outgoing.neurons).to.exist
+            expect(options.connections.outgoing.neurons).to.be.an("array")
+            expect(options.connections.outgoing.neurons).to.each.be.an.instanceOf(Neuron)
+            // For every outgoing neuron, its incoming connections point to, at least, all the created layer neurons
+            _.each(options.connections.outgoing.neurons, function(neuron, index) {
+              expect(_.map(neuron.connections.incoming, function(connection) {
+                return connection.from
+              })).to.have.all.members(layer.neurons)
+            })
+            
+            done()
+          })
+        })
+        
+        describe("new Layer([Neuron], { 'connections': { 'incoming': [Neuron], 'outgoing': [Neuron] } })", function() {
+          let neurons = _.times(Math.round(Math.random() * 10 + 1), function() {
+            return new Neuron()
+          })
+          let options = {
+            connections: {
+              incoming: _.times(Math.round(Math.random() * 10 + 1), function() {
+                return new Neuron()
+              }),
+              outgoing: _.times(Math.round(Math.random() * 10 + 1), function() {
+                return new Neuron()
+              })
+            }
+          }
+          let layer = new Layer(neurons, options)
+          
+          it("should create a connection from every given neuron to every neuron in the created layer", function(done) {
+            _.each(layer.neurons, function(neuron, index) {
+              expect(neuron.connections).to.exist
+              expect(neuron.connections.incoming).to.exist
+              expect(neuron.connections.incoming).to.be.an("array")
+              expect(neuron.connections.incoming).to.have.lengthOf(options.connections.incoming.length)
+              expect(neuron.connections.incoming).to.each.satisfy(function(connection) {
+                return connection instanceof Connection
+              })
+            })
+            
+            done()
+          })
+          it("should create a connection to every given neuron from every neuron in the created layer", function(done) {
+            _.each(layer.neurons, function(neuron, index) {
+              expect(neuron.connections).to.exist
+              expect(neuron.connections.outgoing).to.exist
+              expect(neuron.connections.outgoing).to.be.an("array")
+              expect(neuron.connections.outgoing).to.have.lengthOf(options.connections.outgoing.length)
+              expect(neuron.connections.outgoing).to.each.satisfy(function(connection) {
+                return connection instanceof Connection
+              })
+            })
+            
+            done()
+          })
+          it("should add an outgoing connection to every given neuron for every neuron in the created layer", function(done) {
+            expect(options.connections.incoming).to.exist
+            expect(options.connections.incoming).to.be.an("array")
+            expect(options.connections.incoming).to.each.be.an.instanceOf(Neuron)
+            // For every incoming neuron, its outgoing connections point to, at least, all the created layer neurons
+            _.each(options.connections.incoming, function(neuron, index) {
+              expect(_.map(neuron.connections.outgoing, function(connection) {
+                return connection.to
+              })).to.have.all.members(layer.neurons)
+            })
+            
+            done()
+          })
+          it("should add an incoming connection to every given neuron for every neuron in the created layer", function(done) {
+            expect(options.connections.outgoing).to.exist
+            expect(options.connections.outgoing).to.be.an("array")
+            expect(options.connections.outgoing).to.each.be.an.instanceOf(Neuron)
+            // For every outgoing neuron, its incoming connections point to, at least, all the created layer neurons
+            _.each(options.connections.outgoing, function(neuron, index) {
+              expect(_.map(neuron.connections.incoming, function(connection) {
+                return connection.from
+              })).to.have.all.members(layer.neurons)
+            })
+            
+            done()
+          })
+        })
       })
     })
     
@@ -209,56 +584,258 @@ describe("Layer", function() {
 
         done()
       })
-      it("should create a layer with equal number of neurons", function(done) {
+      it("should create a layer with the same number of neurons as the given layer", function(done) {
         expect(layer.neurons).to.exist
         expect(layer.neurons).to.be.an("array")
         expect(layer.neurons).to.have.lengthOf(other_layer.neurons.length)
 
         done()
       })
-      it("all neurons should be identical - except connections", function(done) {
-        // Check `bias` Matches
-        expect(_.every(layer.neurons, function(neuron, index) {
-          return neuron.bias === other_layer.neurons[index].bias
-        })).to.equal(true)
-        // Check `rate` Matches
-        expect(_.every(layer.neurons, function(neuron, index) {
-          return neuron.rate === other_layer.neurons[index].rate
-        })).to.equal(true)
-        // Check `activation` Matches
-        expect(_.every(layer.neurons, function(neuron, index) {
-          if(other_layer.neurons[index].activation && typeof other_layer.neurons[index].activation === "string") {
-            if(other_layer.neurons[index].activation.toLowerCase() === "sigmoid" || 
-               other_layer.neurons[index].activation.toLowerCase() === "sigmoidal" ||
-               other_layer.neurons[index].activation.toLowerCase() === "logistic" ||
-               other_layer.neurons[index].activation.toLowerCase() === "logistics") {
-              return neuron.activation === Neuron.activations.SIGMOID
-            } else if(other_layer.neurons[index].activation.toLowerCase() === "relu") {
-              return neuron.activation === Neuron.activations.RELU
-            } else if(other_layer.neurons[index].activation.toLowerCase() === "tanh") {
-              return neuron.activation === Neuron.activations.TANH
-            } else if(other_layer.neurons[index].activation.toLowerCase() === "linear" ||
-                      other_layer.neurons[index].activation.toLowerCase() === "identity") {
-              return neuron.activation === Neuron.activations.LINEAR
-            } else {
-              return false
-            }
-          } else if(other_layer.neurons[index].activation && typeof other_layer.neurons[index].activation === "function") {
-            return neuron.activation === other_layer.neurons[index].activation
-          } else {
-            return false
-          }
-        })).to.equal(true)
-        
+      it("should create a layer whose neuron's properties match the properties of the given layer's neurons", function(done) {
+        _.each(layer.neurons, function(neuron, neuron_index) {
+          expect(neuron.bias).to.equal(other_layer.neurons[neuron_index].bias)
+          expect(neuron.rate).to.equal(other_layer.neurons[neuron_index].rate)
+          expect(neuron.activation).to.equal(other_layer.neurons[neuron_index].activation)
+          expect(neuron.activation).to.eql(other_layer.neurons[neuron_index].activation)
+          _.each(neuron.connections.incoming, function(connection, connection_index) {
+            expect(neuron.connections.incoming[connection_index].from).to.eql(other_layer.neurons[neuron_index].connections.incoming[connection_index].from)
+            expect(neuron.connections.incoming[connection_index].to).to.not.eql(other_layer.neurons[neuron_index].connections.incoming[connection_index].to)
+            expect(neuron.connections.incoming[connection_index].to).to.equal(neuron)
+          })
+          _.each(neuron.connections.outgoing, function(connection, connection_index) {
+            expect(neuron.connections.outgoing[connection_index].to).to.eql(other_layer.neurons[neuron_index].connections.outgoing[connection_index].to)
+            expect(neuron.connections.outgoing[connection_index].from).to.not.eql(other_layer.neurons[neuron_index].connections.outgoing[connection_index].from)
+            expect(neuron.connections.outgoing[connection_index].from).to.equal(neuron)
+          })
+        })
+
         done()
+      })
+      
+      describe("new Layer(layer, {...})", function() {
+        let other_layer = new Layer(Math.round(Math.random() * 10 + 1))
+        let options = {
+          bias: Math.random(),
+          rate: Math.random(),
+          activation: faker.random.arrayElement(["sigmoid", "sigmoidal", "logistic", "logistics", "relu", "tanh", "linear", "identity", function(x, derivative) {
+            return !derivative ? Math.atan(x) : (1 / (Math.pow(x, 2) + 1))
+          }]),
+          connections: {
+            incoming: _.times(Math.round(Math.random() * 10 + 1), function(n) {
+              return new Neuron()
+            }),
+            outgoing: _.times(Math.round(Math.random() * 10 + 1), function(n) {
+              return new Neuron()
+            })
+          }
+        }
+        let layer = new Layer(other_layer, options)
+
+        
+        it("should create a layer", function(done) {
+          expect(layer).to.not.be.null
+          expect(layer).to.not.be.undefined
+          expect(layer).to.not.be.NaN
+          expect(layer).to.exist
+          expect(layer).to.be.an.instanceof(Layer)
+          
+          done()
+        })
+        it("should create a layer with the same number of neurons as the given layer", function(done) {
+          expect(layer.neurons).to.exist
+          expect(layer.neurons).to.be.an("array")
+          expect(layer.neurons).to.have.lengthOf(other_layer.neurons.length)
+          
+          done()
+        })
+        it("should overwrite the properties of the given layer's neurons with `options`", function(done) {
+          _.each(layer.neurons, function(neuron, neuron_index) {
+            expect(neuron.bias).to.equal(options.bias)
+            expect(neuron.rate).to.equal(options.rate)
+            expect(neuron.activation).to.satisfy(function(activation) {
+              if(options.activation && typeof options.activation === "string") {
+                if(options.activation.toLowerCase() === "sigmoid" || 
+                   options.activation.toLowerCase() === "sigmoidal" ||
+                   options.activation.toLowerCase() === "logistic" ||
+                   options.activation.toLowerCase() === "logistics") {
+                  return activation === Neuron.activations.SIGMOID
+                } else if(options.activation.toLowerCase() === "relu") {
+                  return activation === Neuron.activations.RELU
+                } else if(options.activation.toLowerCase() === "tanh") {
+                  return activation === Neuron.activations.TANH
+                } else if(options.activation.toLowerCase() === "linear" ||
+                          options.activation.toLowerCase() === "identity") {
+                  return activation === Neuron.activations.LINEAR
+                } else {
+                  return false
+                }
+              } else if(options.activation && typeof options.activation === "function") {
+                return activation === options.activation
+              } else {
+                return false
+              }
+            })
+            _.each(neuron.connections.incoming, function(connection, connection_index) {
+              expect(connection.from).to.eql(options.connections.incoming[connection_index])
+              expect(connection.to).to.equal(neuron)
+            })
+            _.each(neuron.connections.outgoing, function(connection, connection_index) {
+              expect(connection.to).to.eql(options.connections.outgoing[connection_index])
+              expect(connection.from).to.equal(neuron)
+            })
+          })
+          
+          done()
+        })
+        
+        /**
+        * Connections passed through options should not overwrite connections of the given layer.
+        * New layer could have more connections than those passed through options.
+        *
+        * WARNING: We are not currently testing for this OR supporting this behavior
+        */
+        describe("new Layer(layer, { 'connections': { 'incoming': Layer, 'outgoing': Layer } })", function() {
+          let other_layer = new Layer(Math.round(Math.random() * 10 + 1)) 
+          let options = {
+            connections: {
+              incoming: new Layer(Math.round(Math.random() * 10 + 1)),
+              outgoing: new Layer(Math.round(Math.random() * 10 + 1))
+            }
+          }
+          let layer = new Layer(other_layer, options)
+          
+          it("should create a connection from every neuron in the incoming layer to every neuron in the created layer", function(done) {
+            _.each(layer.neurons, function(neuron, index) {
+              expect(neuron.connections).to.exist
+              expect(neuron.connections.incoming).to.exist
+              expect(neuron.connections.incoming).to.be.an("array")
+              expect(neuron.connections.incoming).to.have.lengthOf(options.connections.incoming.neurons.length)
+              expect(neuron.connections.incoming).to.each.satisfy(function(connection) {
+                return connection instanceof Connection
+              })
+            })
+            
+            done()
+          })
+          it("should create a connection from every neuron in the outgoing layer to every neuron in the created layer", function(done) {
+            _.each(layer.neurons, function(neuron, index) {
+              expect(neuron.connections).to.exist
+              expect(neuron.connections.outgoing).to.exist
+              expect(neuron.connections.outgoing).to.be.an("array")
+              expect(neuron.connections.outgoing).to.have.lengthOf(options.connections.outgoing.neurons.length)
+              expect(neuron.connections.outgoing).to.each.satisfy(function(connection) {
+                return connection instanceof Connection
+              })
+            })
+            
+            done()
+          })
+          it("should add an outgoing connection to every neuron in the incoming layer for every neuron in the created layer", function(done) {
+            expect(options.connections.incoming).to.exist
+            expect(options.connections.incoming).to.be.an.instanceOf(Layer)
+            expect(options.connections.incoming.neurons).to.exist
+            expect(options.connections.incoming.neurons).to.be.an("array")
+            expect(options.connections.incoming.neurons).to.each.be.an.instanceOf(Neuron)
+            // For every incoming neuron, its outgoing connections point to, at least, all the created layer neurons
+            _.each(options.connections.incoming.neurons, function(neuron, index) {
+              expect(_.map(neuron.connections.outgoing, function(connection) {
+                return connection.to
+              })).to.have.all.members(layer.neurons)
+            })
+            
+            done()
+          })
+          it("should add an incoming connection to every neuron in the outgoing layer for every neuron in the created layer", function(done) {
+            expect(options.connections.outgoing).to.exist
+            expect(options.connections.outgoing).to.be.an.instanceOf(Layer)
+            expect(options.connections.outgoing.neurons).to.exist
+            expect(options.connections.outgoing.neurons).to.be.an("array")
+            expect(options.connections.outgoing.neurons).to.each.be.an.instanceOf(Neuron)
+            // For every outgoing neuron, its incoming connections point to, at least, all the created layer neurons
+            _.each(options.connections.outgoing.neurons, function(neuron, index) {
+              expect(_.map(neuron.connections.incoming, function(connection) {
+                return connection.from
+              })).to.have.all.members(layer.neurons)
+            })
+            
+            done()
+          })
+        })
+        
+        describe("new Layer(layer, { 'connections': { 'incoming': [Neuron], 'outgoing': [Neuron] } })", function() {
+          let other_layer = new Layer(Math.round(Math.random() * 10 + 1)) 
+          let options = {
+            connections: {
+              incoming: _.times(Math.round(Math.random() * 10 + 1), function() {
+                return new Neuron()
+              }),
+              outgoing: _.times(Math.round(Math.random() * 10 + 1), function() {
+                return new Neuron()
+              })
+            }
+          }
+          let layer = new Layer(other_layer, options)
+          
+          it("should create a connection from every given neuron to every neuron in the created layer", function(done) {
+            _.each(layer.neurons, function(neuron, index) {
+              expect(neuron.connections).to.exist
+              expect(neuron.connections.incoming).to.exist
+              expect(neuron.connections.incoming).to.be.an("array")
+              expect(neuron.connections.incoming).to.have.lengthOf(options.connections.incoming.length)
+              expect(neuron.connections.incoming).to.each.satisfy(function(connection) {
+                return connection instanceof Connection
+              })
+            })
+            
+            done()
+          })
+          it("should create a connection to every given neuron from every neuron in the created layer", function(done) {
+            _.each(layer.neurons, function(neuron, index) {
+              expect(neuron.connections).to.exist
+              expect(neuron.connections.outgoing).to.exist
+              expect(neuron.connections.outgoing).to.be.an("array")
+              expect(neuron.connections.outgoing).to.have.lengthOf(options.connections.outgoing.length)
+              expect(neuron.connections.outgoing).to.each.satisfy(function(connection) {
+                return connection instanceof Connection
+              })
+            })
+            
+            done()
+          })
+          it("should add an outgoing connection to every given neuron for every neuron in the created layer", function(done) {
+            expect(options.connections.incoming).to.exist
+            expect(options.connections.incoming).to.be.an("array")
+            expect(options.connections.incoming).to.each.be.an.instanceOf(Neuron)
+            // For every incoming neuron, its outgoing connections point to, at least, all the created layer neurons
+            _.each(options.connections.incoming, function(neuron, index) {
+              expect(_.map(neuron.connections.outgoing, function(connection) {
+                return connection.to
+              })).to.have.all.members(layer.neurons)
+            })
+            
+            done()
+          })
+          it("should add an incoming connection to every given neuron for every neuron in the created layer", function(done) {
+            expect(options.connections.outgoing).to.exist
+            expect(options.connections.outgoing).to.be.an("array")
+            expect(options.connections.outgoing).to.each.be.an.instanceOf(Neuron)
+            // For every outgoing neuron, its incoming connections point to, at least, all the created layer neurons
+            _.each(options.connections.outgoing, function(neuron, index) {
+              expect(_.map(neuron.connections.incoming, function(connection) {
+                return connection.from
+              })).to.have.all.members(layer.neurons)
+            })
+            
+            done()
+          })
+        })
       })
     })
   })
   
   describe(".project()", function() {
     describe(".project(neuron[, callback])", function() {
-      let neurons = Math.round(Math.random() * 10 + 1)
-      let layer = new Layer(neurons)
+      let layer = new Layer(Math.round(Math.random() * 10 + 1))
       let neuron = new Neuron()
       
       layer.project(neuron, function(error, connections) {
@@ -278,7 +855,7 @@ describe("Layer", function() {
           expect(neuron.connections.incoming).to.have.lengthOf(layer.neurons.length)
           expect(_.map(neuron.connections.incoming, function(connection) {
             return connection.from
-          })).to.have.all.deep.members(layer.neurons)
+          })).to.have.all.members(layer.neurons)
           
           done()
         })
@@ -310,7 +887,7 @@ describe("Layer", function() {
             return _.map(neuron.connections.outgoing, function(connection) {
               return connection.to
             })
-          })).to.each.have.all.deep.members(other_layer.neurons)
+          })).to.each.have.all.members(other_layer.neurons)
           
           done()
         })
@@ -319,7 +896,7 @@ describe("Layer", function() {
             return _.map(neuron.connections.incoming, function(connection) {
               return connection.from
             })
-          })).to.each.have.all.deep.members(layer.neurons)
+          })).to.each.have.all.members(layer.neurons)
           
           done()
         })
@@ -597,7 +1174,7 @@ describe("Layer", function() {
         expect(results).to.exist
         expect(results).to.be.an("array")
         expect(results).to.have.lengthOf(3)
-        expect(results.neurons[2]).to.deep.equal(n0)
+        expect(results.neurons[2]).to.eql(n0)
       })
       
       done()
