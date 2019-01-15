@@ -15,39 +15,47 @@ let Network = function(props, options) {
   if(props) {
     // Constructing with new Network([n, n, n])
     if(_.every(props, prop => _.isLength(prop))) {
-      let layers = _.map(props, prop => new Layer(prop))
+      props = Array.from(props)
       
-      _.times(layers.length - 1,  index => {
-        _.every(layers[index].neurons, (source_neuron, i, source_neurons) => {
-          _.every(layers[index + 1].neurons, (destination_neuron, j, destination_neurons) => {
-            let connection = new Connection({
-              from: source_neuron,
-              to: destination_neuron,
-            })
-            
-            source_neuron.connections
+      self.neurons = _.flatten(_.map(props, function(length, index, layers) {
+        if(index === 0) {
+          props[index] = new Layer(length)
+          return props[index].neurons
+        } else {
+          props[index] = new Layer(length, {
+            connections: {
+              incoming: layers[index - 1]
+            }
           })
-        })
-      })
+          return props[index].neurons
+        }
+      }))
     }
     // Constructing with new Network([Layer])
     else if(_.every(props, prop => prop instanceof Layer)) {
-      _.each(_.slice(props, 1), function(layer, index) {
-        let other_layer = new Layer(layer, {
-          connections: {
-            incoming: props[index]
-          }
-        })
-        
-        self.neurons = _.concat(self.neurons, other_layer.neurons)
-      })
-//       _.reduce(_.slice(props, 1), function(_.first(props), layer, index) {
-        
-//       })
+      props = Array.from(props)
+      
+      self.neurons = _.flatten(_.map(props, function(layer, index, layers) {
+        if(index === 0) {
+          props[index] = new Layer(layer)
+          return props[index].neurons
+        } else {
+          props[index] = new Layer(layer, {
+            connections: {
+              incoming: layers[index - 1]
+            }
+          })
+          return props[index].neurons
+        }
+      }))
     }
     // Constructing with new Network([Neuron])
     else if(_.every(props, prop => prop instanceof Neuron)) {
+      props = Array.from(props)
       
+      self.neurons = _.map(props, function(neuron) {
+        return new Neuron(neuron)
+      })
     }
   }
   
