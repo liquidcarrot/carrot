@@ -9,6 +9,7 @@
   * [Contributing](#contributing)
   * [Support](#support)
   * [Contributors](#contributors)
+  * [Documentation](/DOCUMENTATION.md)
 </details>
 
 ## Contributing
@@ -30,7 +31,7 @@ When adding or changing a service please add tests.
           * [x] Documentation
       * [x] Layers
           * [x] Tests
-          * [ ] Documentation
+          * [x] Documentation
       * [ ] Networks
           * [ ] Tests
           * [ ] Documentation

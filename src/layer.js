@@ -5,16 +5,19 @@ let async = require('neo-async')
 let Promise = require('bluebird')
 
 /**
-* Represents a Layer of Neurons.
-* @constructor
-* @param {Layer|[Neuron]|number} props
+* >Neural Layer Factory Function
+*
+* CHECK: https://www.youtube.com/watch?v=FK77zZxaBoI
+*
+* @constructs Layer
+* @param {number|Layer|[Neuron]} props - A `Layer`, `Number`, or array of `Neuron`
 * @param {Object} options - Similar to neuron options
-* @param {number} [options.bias=Math.random()]
-* @param {ActivationFunction} [options.activation=Neuron.activations.SIGMOID]
-* @param {number} [props.rate=0.3]
-* @param {Object} [connections]
-* @param {Layer|[Neuron]|[Connection]} [props.connections.incoming=[]]
-* @param {Layer|[Neuron]|[Connection]} [props.connections.outgoing=[]]
+* @param {number} [options.bias=Math.random()] - Synaptic Weight Formula's Constant AKA Bias
+* @param {ActivationFunction} [options.activation=Neuron.activations.SIGMOID] - Activation Function
+* @param {number} [props.rate=0.3] - Learning rate
+* @param {Object} [connections] - Connections
+* @param {Layer|[Neuron]|[Connection]} [props.connections.incoming=[]] - Incoming Connections
+* @param {Layer|[Neuron]|[Connection]} [props.connections.outgoing=[]] - Outgoing Connections
 */
 let Layer = function(props, options) {
   let self = this
@@ -47,20 +50,45 @@ let Layer = function(props, options) {
     }
   }
   
-  // Internal checks for layer characteristics
+  /**
+  * @namespace Layer#is
+  * @memberof Layer.prototype
+  * @instance
+  */
   self.is = {
+    /**
+    * @function Layer#is.input
+    * @memberof Layer.prototype
+    * @instance
+    * @returns {boolean} Returns `true` if all neurons in this layer have no incoming connections 
+    */
     input: function(callback) {
       return _.every(self.neurons, function(neuron) {
         return neuron.is.input()
       })
     },
+    /**
+    * @function Layer#is.output
+    * @memberof Layer.prototype
+    * @instance
+    * @return {boolean} Return `true` if all neurons in this layer have no outgoing connections
+    */
     output: function(callback) {
       return _.every(self.neurons, function(neuron) {
         return neuron.is.output()
       })
     }
   }
-  // Projects neurons to `object`
+  
+  /**
+  * Projects all the neurons in this layer to all the neurons in the given layer - or neuron.
+  *
+  * @function Layer#project
+  * @memberof Layer.prototype
+  * @instance
+  * @param {Neuron|Layer|Group} object - Destination `neuron`, `layer`, or `group`
+  * @param {ConnectionsCallback} [callback] - Callback invoked with _(error, connections)_
+  */
   self.project = function(object, callback) {
     let self = this
     
@@ -94,7 +122,15 @@ let Layer = function(props, options) {
       }
     })
   }
-  // Make all neurons in the Layer generate an output value
+  /**
+  * Activates every neuron in this layer and returns squashed results
+  *
+  * @function Layer#activate
+  * @memberof Layer.prototype
+  * @instance
+  * @param {[number]} [inputs] - Array of real numbers (-∞, ∞)
+  * @param {NumbersCallback} [callback] - Callback invoked with _(error, results)_
+  */
   self.activate = function(inputs, callback) {
     if(!callback && _.isFunction(inputs)) {
       callback = inputs
@@ -122,7 +158,15 @@ let Layer = function(props, options) {
       }
     })
   }
-  // Adjust neuron weights
+  /**
+  * Updates the weights of every neuron in this layer and returns their mathematical errors
+  *
+  * @function Layer#propagate
+  * @memberof Layer.prototype
+  * @instance
+  * @param {[number]} [feedback] - Array of real numbers (-∞, ∞)
+  * @param {NumbersCallback} [callback] - Callback invoked with _(error, results)_
+  */
   self.propagate = function(feedback, callback) {
     if(!callback && _.isFunction(feedback)) {
       callback = feedback
