@@ -233,7 +233,25 @@ describe("Network", function() {
         
         done()
       })
-      it.skip("should create a network whose neurons have the same properties as the given neurons", function(done) {
+      it("should create a network whose neurons have the same properties as the given neurons", function(done) {
+        _.each(network.neurons, function(neuron, index) {
+          expect(neuron.bias).to.equal(neurons[index].bias)
+          expect(neuron.bias).to.eql(neurons[index].bias)
+          expect(neuron.rate).to.equal(neurons[index].rate)
+          expect(neuron.rate).to.eql(neurons[index].rate)
+          expect(neuron.activation).to.equal(neurons[index].activation)
+          expect(neuron.activation).to.eql(neurons[index].activation)
+          _.each(neuron.connections.incoming, function(connection, connection_index) {
+            expect(connection.from).to.equal(neurons[index].connections.incoming[connection_index])
+            expect(connection.from).to.eql(neurons[index].connections.incoming[connection_index])
+            expect(connection.to).to.equal(neuron)
+          })
+          _.each(neuron.connections.outgoing, function(connection, connection_index) {
+            expect(connection.to).to.equal(neurons[index].connections.outgoing[connection_index])
+            expect(connection.to).to.eql(neurons[index].connections.outgoing[connection_index])
+            expect(connection.from).to.equal(neuron)
+          })
+        })
         
         done()
       })
