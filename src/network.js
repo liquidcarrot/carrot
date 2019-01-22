@@ -19,14 +19,14 @@ let Network = function(props, options) {
       
       self.neurons = _.flatten(_.map(props, function(length, index, layers) {
         if(index === 0) {
-          props[index] = new Layer(length)
+          props[index] = new Layer(length, options)
           return props[index].neurons
         } else {
-          props[index] = new Layer(length, {
+          props[index] = new Layer(length, _.assign(options, {
             connections: {
               incoming: layers[index - 1]
             }
-          })
+          }))
           return props[index].neurons
         }
       }))
@@ -37,14 +37,14 @@ let Network = function(props, options) {
       
       self.neurons = _.flatten(_.map(props, function(layer, index, layers) {
         if(index === 0) {
-          props[index] = new Layer(layer)
+          props[index] = new Layer(layer, options)
           return props[index].neurons
         } else {
-          props[index] = new Layer(layer, {
+          props[index] = new Layer(layer, _.assign(options, {
             connections: {
               incoming: layers[index - 1]
             }
-          })
+          }))
           return props[index].neurons
         }
       }))
@@ -54,7 +54,7 @@ let Network = function(props, options) {
       props = Array.from(props)
       
       self.neurons = _.map(props, function(neuron) {
-        return new Neuron(neuron)
+        return new Neuron(_.assign(neuron, options))
       })
     }
   }
