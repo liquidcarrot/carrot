@@ -13,6 +13,13 @@ describe("Layer", function() {
   let Neuron = require('../src/neuron')
   let Connection = require('../src/connection')
   
+  let random = {
+    size: () => Math.round(Math.random() * 10 + 1),
+    neurons: () => _.times(Math.round(Math.random() * 10 + 1), index => new Neuron()),
+    inputs: (n) => _.times((n || Math.round(Math.random() * 10 + 1)), index => Math.round(Math.random() * 10 + 1)),
+    feedback: (n) => _.times((n || Math.round(Math.random() * 10 + 1)), index => Math.round(Math.random() * 10 + 1))
+  }
+  
   describe("new Layer()", function() {
     let layer = new Layer()
     
@@ -1187,4 +1194,288 @@ describe("Layer", function() {
       done()
     })
   })
+  
+  describe("Layer.next()", function() {
+    let other_layer = new Layer(random.size())
+    let layer = new Layer(random.size(), {
+      connections: {
+        outgoing: other_layer
+      }
+    })
+    
+    
+    it("should accept a layer as a parameter", function(done) {
+      Layer.next(layer, function(error, neurons) {
+        expect(error).to.not.exist
+        expect(error).to.be.null
+        
+        done()
+      })
+    })
+    
+    it("should accept an array of neurons as a parameter", function(done) {
+      Layer.next(layer.neurons, function(error, neurons) {
+        expect(error).to.not.exist
+        expect(error).to.be.null
+        
+        done()
+      })
+    })
+
+    it("should return an array of neurons", function(done) {
+      Layer.next(layer, function(error, neurons) {
+        expect(neurons).to.exist
+        expect(neurons).to.be.an("array")
+        expect(neurons).to.each.be.an.instanceOf(Neuron)
+        
+        done()
+      })
+    })
+    
+    it("should return an array of " + other_layer.neurons.length + " neurons", function(done) {
+      Layer.next(layer, function(error, neurons) {
+        expect(neurons.length).to.equal(other_layer.neurons.length)
+        expect(neurons.length).to.eql(other_layer.neurons.length)
+        
+        done()
+      })
+    })
+  })
+  
+  describe("Layer.previous()", function() {
+    let other_layer = new Layer(random.size())
+    let layer = new Layer(random.size(), {
+      connections: {
+        incoming: other_layer
+      }
+    })
+    
+    
+    it("should accept a layer as a parameter", function(done) {
+      Layer.previous(layer, function(error, neurons) {
+        expect(error).to.not.exist
+        expect(error).to.be.null
+        
+        done()
+      })
+    })
+    
+    it("should accept a neuron-array as a parameter", function(done) {
+      Layer.previous(layer.neurons, function(error, neurons) {
+        expect(error).to.not.exist
+        expect(error).to.be.null
+        
+        done()
+      })
+    })
+
+    it("should return an array of neurons", function(done) {
+      Layer.previous(layer, function(error, neurons) {
+        expect(neurons).to.exist
+        expect(neurons).to.be.an("array")
+        expect(neurons).to.each.be.an.instanceOf(Neuron)
+        
+        done()
+      })
+    })
+    
+    it("should return an array of " + other_layer.neurons.length + " neurons", function(done) {
+      Layer.previous(layer, function(error, neurons) {
+        expect(neurons.length).to.equal(other_layer.neurons.length)
+        expect(neurons.length).to.eql(other_layer.neurons.length)
+        
+        done()
+      })
+    })
+  })
+  
+  describe("Layer.activate()", function() {
+    let feeds = function(layer, inputs) {
+      it("should require parameter #1", function(done) {
+        try {
+          Layer.activate()
+        } catch(error) {
+          expect(error).to.exist
+
+          done()
+        }
+      })
+
+      it("should accept a layer as parameter #1", function(done) {
+        Layer.activate(layer, function(error, neurons) {
+          expect(error).to.not.exist
+          expect(error).to.be.null
+
+          done()
+        })
+      })
+
+      it("should accept an array of neurons as a parameter #1", function(done) {
+        Layer.activate(layer.neurons, function(error, neurons) {
+          expect(error).to.not.exist
+          expect(error).to.be.null
+
+          done()
+        })
+      })
+
+      it("should accept an array of numbers as parameter #2", function(done) {
+        Layer.activate(layer, inputs, function(error, results) {
+          expect(error).to.not.exist
+          expect(error).to.not.exist
+
+          done()
+        })
+      })
+
+      it("should return an array of numbers", function(done) {
+        Layer.activate(layer, inputs, function(error, results) {
+          expect(results).to.exist
+          expect(results).to.be.an("array")
+          _.each(results, result => {
+            expect(result).to.be.a("number")
+          })
+
+          done()
+        })
+      })
+
+      it("should return an array of " + layer.neurons.length + " numbers", function(done) {
+        Layer.activate(layer, inputs, function(error, results) {
+          console.log(results)
+          
+          expect(results.length).to.equal(layer.neurons.length)
+          expect(results.length).to.eql(layer.neurons.length)
+
+          done()
+        })
+      })
+    }
+    
+    context("Lone Layer", function() {
+      let layer = new Layer(random.size())
+      
+      feeds(layer, random.inputs(layer.neurons.length))
+    })
+    
+    context("Input Layer", function() {
+      let layer = new Layer(random.size(), {
+        connections: {
+          outgoing: new Layer(random.size())
+        }
+      })
+      
+      feeds(layer, random.inputs(layer.neurons.length))
+    })
+    
+    context.skip("Output Layer", function() {
+      let incoming = new Layer(random.size())
+      let layer = new Layer(random.size(), {
+        connections: {
+          incoming
+        }
+      })
+      
+      feeds(layer, random.inputs(layer.neurons.length))
+      
+      let inputs = random.inputs(incoming.neurons.length)
+      
+    })
+    
+    context.skip("Hidden Layer", function() {
+      let incoming = new Layer(random.size())
+      let outgoing = new Layer(random.size())
+      let layer = new Layer(random.size(), {
+        connections: {
+          incoming,
+          outgoing
+        }
+      })
+      
+      feeds(layer, random.inputs(layer.neurons.length))
+      
+      let inputs = random.inputs(incoming.neurons.length)
+    })
+  })
+  
+  describe("Layer.propagate()", function() {
+    let size = random.size()
+    let layer = new Layer(size)
+    let feedback = random.feedback(size)
+    
+    it("should require parameter #1", function(done) {
+      try {
+        Layer.activate()
+      } catch(error) {
+        expect(error).to.exist
+        
+        done()
+      }
+    })
+    
+    it("should accept a layer as parameter #1", function(done) {
+      Layer.activate(layer, function(error, neurons) {
+        expect(error).to.not.exist
+        expect(error).to.be.null
+        
+        done()
+      })
+    })
+    
+    it("should accept an array of neurons as a parameter #1", function(done) {
+      Layer.activate(layer.neurons, function(error, neurons) {
+        expect(error).to.not.exist
+        expect(error).to.be.null
+        
+        done()
+      })
+    })
+    
+    it("should accept an array of numbers as parameter #2", function(done) {
+      Layer.activate(layer, feedback, function(error, results) {
+        expect(error).to.not.exist
+        expect(error).to.not.exist
+      
+        done()
+      })
+    })
+    
+    it("should return an array of numbers", function(done) {
+      Layer.activate(layer, feedback, function(error, results) {
+        expect(results).to.exist
+        expect(results).to.be.an("array")
+        _.each(results, result => {
+          expect(result).to.be.a("number")
+        })
+      
+        done()
+      })
+    })
+    
+    it("should return an array of " + layer.neurons.length + " numbers", function(done) {
+      Layer.activate(layer, feedback, function(error, results) {
+        expect(results.length).to.equal(layer.neurons.length)
+        expect(results.length).to.eql(layer.neurons.length)
+      
+        done()
+      })
+    })
+  })
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -4,6 +4,8 @@ let _ = require('lodash')
 let async = require('neo-async')
 let Promise = require('bluebird')
 
+let Neuron = require('./neuron')
+
 /**
 * >Neural Layer Factory Function
 *
@@ -246,6 +248,149 @@ let Layer = function(props, options) {
       })
     })
   }
+}
+
+/**
+* @param {Layer} layer
+* @param {[number]} inputs
+* @param {NumbersCallback} callback
+*/
+Layer.activate = function(layer, inputs, callback) {
+  
+  if(!layer) {
+     throw new Error("No `layer` was provided")
+  } else if(!(layer instanceof Layer || (_.isArray(layer) && _.every(layer, neuron => neuron instanceof Neuron)))) {
+    throw new Error("`layer` must be a \"Layer\" or an \"Array of Neurons\"")
+  }
+  
+  if(!callback && _.isFunction(inputs)) {
+    callback = inputs
+    inputs = null
+  } 
+    
+  return new Promise(function(resolve, reject) {
+    if(inputs && inputs.length !== (layer instanceof Layer ? layer.neurons.length : layer.length)) {
+      let error = new Error("'inputs.length' !== 'layer.neurons'\nInput size must be equal to the number of neurons in the layer.")
+      return callback ? callback(error) : reject(error)
+    } else {
+      return async.mapValues(layer.neurons, function(neuron, index, callback) {
+        // Activate Input Layer
+        if(inputs) {
+          neuron.activate(inputs[index], callback)
+        }
+        // Activate Hidden/Output Layer
+        else {
+          neuron.activate(callback)
+        }
+      }, function(error, results) {
+        let output = Object.values(results)
+        return callback ? callback(error, output) : !error ? resolve(output) : reject(error)
+      })
+    }
+  })
+}
+
+/**
+* @param {Layer} layer
+* @param {[number]} feedback
+* @param {NumbersCallback} callback
+*/
+Layer.propagate = function(layer, feedback, callback) {
+  if(!callback && _.isFunction(feedback)) {
+    callback = feedback
+    feedback = null
+  }
+    
+  return new Promise(function(resolve, reject) {
+    if(feedback && feedback.length !== (layer instanceof Layer ? layer.neurons.length : layer.length)) {
+      let error = new Error("'inputs.length' !== 'layer.neurons'\nInput size must be equal to the number of neurons in the layer.")
+      return callback ? callback(error) : reject(error)
+    } else {
+      return async.mapValues(layer.neurons, function(neuron, index, callback) {
+        // Activate Output Layer
+        if(feedback) {
+          neuron.propagate(feedback[index], callback)
+        }
+        // Activate Hidden/Input Layer
+        else {
+          neuron.propagate(callback)
+        }
+      }, function(error, results) {
+        let output = Object.values(results)
+        return callback ? callback(error, output) : !error ? resolve(output) : reject(error)
+      })
+    }
+  })
+}
+
+/**
+* Given a layer or array of neurons, returns a unique array of outgoing connections
+* 
+* @param {Layer|[Neuron]} neurons - Layer or array of neurons
+* @param {NeuronsCallback} callback - Invoked _(error, neurons)_
+*/
+Layer.next = function(neurons, callback) {
+  if(neurons instanceof Layer) {
+    neurons = neurons.neurons
+  }
+  
+  return new Promise(function(resolve, reject) {
+    return async.auto({
+      "all_connections": function(callback) {
+        async.map(neurons, function(neuron, callback) {
+          callback(null, neuron.connections.outgoing)
+        }, callback)
+      },
+      "connections": ["all_connections", function(results, callback) {
+        callback(null, _.uniq(_.flatten(results.all_connections)))
+      }],
+      "all_neurons": ["connections", function(results, callback) {
+        async.map(results.connections, function(connection, callback) {
+          callback(null, connection.to)
+        }, callback)
+      }],
+      "neurons": ["all_neurons", function(results, callback) {
+        callback(null, _.uniq(_.flatten(results.all_neurons)))
+      }]
+    }, function(error, results) {
+      return callback ? callback(error, results.neurons) : !error ? resolve(results.neurons) : reject(error)
+    })
+  })
+}
+
+/**
+* Given a layer or array of neurons, returns a unique array of incoming connections
+* 
+* @param {Layer|[Neuron]} neurons - Layer or array of neurons
+* @param {NeuronsCallback} callback - Invoked _(error, neurons)_
+*/
+Layer.previous = function(neurons, callback) {
+  if(neurons instanceof Layer) {
+    neurons = neurons.neurons
+  }
+  
+  return new Promise(function(resolve, reject) {
+    return async.auto({
+      "all_connections": function(callback) {
+        async.map(neurons, function(neuron, callback) {
+          callback(null, neuron.connections.incoming)
+        }, callback)
+      },
+      "connections": ["all_connections", function(results, callback) {
+        callback(null, _.uniq(_.flatten(results.all_connections)))
+      }],
+      "all_neurons": ["connections", function(results, callback) {
+        async.map(results.connections, function(connection, callback) {
+          callback(null, connection.from)
+        }, callback)
+      }],
+      "neurons": ["all_neurons", function(results, callback) {
+        callback(null, _.uniq(_.flatten(results.all_neurons)))
+      }]
+    }, function(error, results) {
+      return callback ? callback(error, results.neurons) : !error ? resolve(results.neurons) : reject(error)
+    })
+  })
 }
 
 module.exports = Layer
