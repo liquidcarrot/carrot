@@ -1,6 +1,7 @@
 'use strict'
 
 let _ = require('lodash')
+let async = require('async')
 let faker = require('faker')
 let chai = require('chai')
 
@@ -12,6 +13,13 @@ describe("Network", function() {
   let Layer = require('../src/layer')
   let Neuron = require('../src/neuron')
   let Network = require('../src/network')
+  
+  let random = {
+    sizes: () => _.times(Math.round(Math.random() * 10 + 1), index => Math.round(Math.random() * 10 + 1)),
+    layers: () => _.times(Math.round(Math.random() * 10 + 1), index => new Layer(Math.round(Math.random() * 10 + 1))),
+    neurons: () => _.times(Math.round(Math.random() * 10 + 1), index => new Neuron()),
+    inputs: (n) => _.times((n || Math.round(Math.random() * 10 + 1)), index => Math.round(Math.random() * 10 + 1))
+  }
   
   describe("new Network()", function() {
     let network = new Network()
@@ -313,6 +321,155 @@ describe("Network", function() {
           
           done()
         })
+      })
+    })
+  })
+  
+  describe(".weights()", function() {
+    let sizes = random.sizes()
+    let network = new Network(sizes)
+    
+    it("should accept no parameters", function(done) {
+      network.weights(function(error, weights) {
+        expect(error).to.not.exist
+        expect(error).to.be.null
+        
+        done()
+      })
+    })
+    
+    it("should return an array of numbers", function(done) {
+      network.weights(function(error, weights) {
+        expect(weights).to.exist
+        expect(weights).to.be.an("array")
+        _.each(weights, weight => {
+          expect(weight).to.be.a("number")
+        })
+        
+        done()
+      })
+    })
+    
+    it("shoud return the sum of `sizes[i] * sizes[i - 1]`, where `sizes > 1`; otherwise return `0`", function(done) {
+      network.weights(function(error, weights) {
+        expect(weights.length).to.equal(sizes.length > 1 ? _.sum(_.map(_.slice(sizes, 1), (size, index) => size * sizes[index])) : 0)
+        
+        done()
+      })
+    })
+  })
+  
+  describe.skip(".inputs()", function() {
+    
+  })
+  
+  describe.skip(".outputs()", function() {
+    
+  })
+  
+  describe.skip(".activate()", function() {
+    let sizes = random.sizes()
+    let network = new Network(sizes)
+    let inputs = random.inputs(_.first(sizes))
+    
+    it("should accept an array of numbers as a parameter", function(done) {
+      network.activate(inputs, function(error, outputs) {
+        expect(error).to.not.exist
+        expect(error).to.be.null
+        
+        done()
+      })
+    })
+    
+    it("should return an array of numbers", function(done) {
+      network.activate(inputs, function(error, outputs) {
+        expect(outputs).to.exist
+        expect(outputs).to.be.an("array")
+        _.each(outputs, output => {
+          expect(output).to.be.a("number")
+        })
+        
+        done()
+      })
+    })
+    
+    it("should return an of " + _.last(sizes) + " numbers", function(done) {
+      network.activate(inputs, function(error, outputs) {
+        console.log("Sizes: ", sizes)
+        console.log("# of Outputs: ", outputs.length)
+        
+        expect(outputs.length).to.equal(_.last(sizes))
+        expect(outputs.length).to.eql(_.last(sizes))
+        
+        done()
+      })
+    })
+  })
+  
+  describe.skip(".propagate()", function() {
+    let sizes = random.sizes()
+    let network = new Network(sizes)
+    let inputs = random.inputs(_.first(sizes))
+    let feedback = random.inputs(_.last(sizes))
+    
+    it.skip("should accept an array of numbers as a parameter", function(done) {
+      async.auto({
+        "activate": function(callback) {
+          network.activate(inputs, callback)
+        },
+        "propagate": ["activate", function(results, callback) {
+          network.propagate(feedback, function(error, results) {
+            expect(error).to.not.exist
+            expect(error).to.be.null
+
+            callback()
+          })
+        }]
+      }, function(error, results) {
+        done()
+      })
+    })
+    
+    it.skip("should return an array of numbers", function(done) {
+      async.auto({
+        "activate": function(callback) {
+          network.activate(inputs, callback)
+        },
+        "propagate": ["activate", function(results, callback) {
+          network.propagate(feedback, function(error, results) {
+            expect(results).to.exist
+            expect(results).to.be.an("array")
+            expect(results).to.each.be.a("number")
+
+            callback()
+          })
+        }]
+      }, function(error, results) {
+        done()
+      })
+    })
+    
+    it.skip("should update weights", function(done) {
+      async.auto({
+        "weights": function(callback) {
+          network.weights(callback)
+        },
+        "activate": function(callback) {
+          network.activate(inputs, callback)
+        },
+        "propagate": ["activate", function(results, callback) {
+          network.propagate(feedback, callback)
+        }],
+        "new_weights": ["weights", "propagate", function(results, callback) {
+          network.weights(function(error, weights) {
+            expect(_.sortedBy(weights)).to.not.equal(_.sortedBy(results.weights))
+            expect(_.sortedBy(weights)).to.not.eql(_.sortedBy(results.weights))
+            
+            callback()
+          })
+        }]
+      }, function(error, results) {
+        done()
       })
     })
   })
