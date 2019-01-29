@@ -88,94 +88,82 @@ let Neuron = function(props) {
     
     if(props.connections) {
       if(props.connections.incoming) {
-        let incoming = props.connections.incoming
+        let incoming;
         
-        // Constructing Incoming Connections with an Array of Neurons 
-        if(_.isArray(incoming) && _.every(incoming, neuron => neuron instanceof Neuron)) {
-          _.each(incoming, function(neuron, index) {
-            let connection = new Connection({
-              from: neuron,
-              to: self,
-            })
-            
-            neuron.connections.outgoing.push(connection)
-            self.connections.incoming.push(connection)
-          })
-        }
-        // Constructing Incoming Connections with an Array of Connections 
-        // AKA Constructing Incoming Connections from another Neuron
-        else if(_.isArray(incoming) && _.every(incoming, connection => connection instanceof Connection)) {
-          _.each(incoming, function(incoming_connection, index) {
-            let connection = new Connection({
-              from: incoming_connection.from,
-              to: self
-            })
-            
-            incoming_connection.from.connections.outgoing.push(connection)
-            self.connections.incoming.push(connection)
-          })
-        }
-        // Constructing Incoming Connections with a Layer
-        else if(incoming instanceof Layer) {
-          _.each(incoming.neurons, function(neuron, index) {
-            let connection = new Connection({
-              from: neuron,
-              to: self,
-            })
-
-            neuron.connections.outgoing.push(connection)
-            self.connections.incoming.push(connection)
-          })
-        }
-        // Unsupported Incoming Connection Construction
+        // new Neuron({ 'connections': [Neuron] }) || new Neuron(neuron)
+        if(_.isArray(props.connections.incoming)) {
+          // new Neuron({ 'connections': [Neuron] })
+          if(_.every(props.connections.incoming, neuron => neuron instanceof Neuron)) {
+            incoming = props.connections.incoming
+          } 
+          // new Neuron(neuron)
+          else if(_.every(props.connections.incoming, connection => connection instanceof Connection)) {
+            // new Neuron(neuron) -> new Neuron({ 'connections': [Neuron] })
+            incoming = _.map(props.connections.incoming, connection => connection.from)
+          }
+          // Unsupported Construction
+          else {
+            throw new Error("Incoming Connections must be a 'layer', '[Neuron]', or '[Connection]'")
+          }
+        } 
+        // new Neuron({ 'connections': Layer })
+        else if(props.connections.incoming instanceof Layer) {
+          // new Neuron({ 'connections': Layer }) -> new Neuron({ 'connections': [Neuron] })
+          incoming = props.connections.incoming.neurons
+        } 
+        // Unsupported Construction
         else {
-          throw new Error("Incoming Connections must be a 'layer' or a '[neuron]'")
+          throw new Error("'connections.incoming' must be a 'layer', '[Neuron]', or '[Connection]'")
         }
+
+        _.each(incoming, function(neuron, index) {
+          let connection = new Connection({
+            from: neuron,
+            to: self,
+          })
+
+          neuron.connections.outgoing.push(connection)
+          self.connections.incoming.push(connection)
+        })
       }
       if(props.connections.outgoing) {
-        let outgoing = props.connections.outgoing
+        let outgoing;
         
-        // Constructing Outgoing Connections with an Array of Neurons
-        if(_.isArray(outgoing) && _.every(outgoing, neuron => neuron instanceof Neuron)) {
-          _.each(outgoing, function(neuron, index) {
-            let connection = new Connection({
-              from: self,
-              to: neuron,
-            })
-            
-            neuron.connections.incoming.push(connection)
-            self.connections.outgoing.push(connection)
-          })
-        }
-        // Constructing Outgoing Connections with an Array of Connections 
-        // AKA Constructing Outgoing Connections from another Neuron
-        else if(_.isArray(outgoing) && _.every(outgoing, connection => connection instanceof Connection)) {
-          _.each(outgoing, function(outgoing_connection, index) {
-            let connection = new Connection({
-              from: self,
-              to: outgoing_connection.to
-            })
-            
-            outgoing_connection.to.connections.incoming.push(connection)
-            self.connections.outgoing.push(connection)
-          })
-        }
-        // Constructing Outgoing Connections with a Layer
-        else if(outgoing instanceof Layer) {
-          _.each(outgoing.neurons, function(neuron, index) {
-            let connection = new Connection({
-              from: self,
-              to: neuron
-            })
-
-            neuron.connections.incoming.push(connection)
-            self.connections.outgoing.push(connection)
-          })
-        }
-        // Unsupported Outgoing Connection Construction
+        // new Neuron({ 'connections': [Neuron] }) || new Neuron(neuron)
+        if(_.isArray(props.connections.outgoing)) {
+          // new Neuron({ 'connections': [Neuron] })
+          if(_.every(props.connections.outgoing, neuron => neuron instanceof Neuron)) {
+            outgoing = props.connections.outgoing
+          } 
+          // new Neuron(neuron)
+          else if(_.every(props.connections.outgoing, connection => connection instanceof Connection)) {
+            // new Neuron(neuron) -> new Neuron({ 'connections': [Neuron] })
+            outgoing = _.map(props.connections.outgoing, connection => connection.to)
+          }
+          // Unsupported Construction
+          else {
+            throw new Error("Incoming Connections must be a 'layer', '[Neuron]', or '[Connection]'")
+          }
+        } 
+        // new Neuron({ 'connections': Layer })
+        else if(props.connections.outgoing instanceof Layer) {
+          // new Neuron({ 'connections': Layer }) -> new Neuron({ 'connections': [Neuron] })
+          outgoing = props.connections.outgoing.neurons
+        } 
+        // Unsupported Construction
         else {
-          throw new Error("Outgoing Connections must be a 'layer' or a '[neuron]'")
+          throw new Error("Incoming Connections must be a 'layer', '[Neuron]', or '[Connection]'")
         }
+        
+        _.each(outgoing, function(neuron, index) {
+          let connection = new Connection({
+            from: self,
+            to: neuron,
+          })
+
+          neuron.connections.incoming.push(connection)
+          self.connections.outgoing.push(connection)
+        })
       }
     }
   }
@@ -208,6 +196,38 @@ let Neuron = function(props) {
       return Math.round(Math.random()) ? true : false
     }
   }
+  
+  self.can = {
+    activate: function() {
+      if(self.is.input()) {
+        return true
+      } else {
+        return _.every(self.connections.incoming, function(connection) {
+          return !_.isNil(connection.from.last)
+        })
+      }
+    },
+    propagate: function() {
+      if(self.is.output()) {
+        return true
+      } else {
+        return _.every(self.connections.outgoing, function(connection) {
+          return !_.isNil(connection.to.error)
+        })
+      }
+    }
+  }
+  
+  self.has = {
+    activated: function() {
+      if(!self.last) {
+        return false
+      } else {
+        return true
+      }
+    }
+  }
+  
   /**
   * Projects this neuron to given neuron.
   *
@@ -249,38 +269,55 @@ let Neuron = function(props) {
   * @param {NumberCallback} [callback] - Callback invoked with _(error, result)_
   */
   self.activate = function(input, callback) { 
-    if(!callback && _.isFunction(input)) {
-      callback = input
-      input = null
-    }
-    
     return new Promise(function(resolve, reject) {
-      // Forward Environment Input through the Network
-      if(self.is.input()) {
-        self.last = input
-      }
-      // Calculate Input, Produce Results, Propagate Results Forward through the Network
-      else {
-        // Incoming Connection Weights
-        let weights = _.map(self.connections.incoming, function(connection) {
-          return connection.weight
-        })
-        // Incoming Connection Inputs
-        let inputs = _.map(self.connections.incoming, function(connection) {
-          return connection.from.last
-        })
-        
-        // Synaptic Weight Function
-        let sum = math.parse("dot(w,i)").eval({
-          w: weights,
-          i: inputs
-        })
-
-        // Activation Function
-        self.last = self.activation(sum)
+      if(!callback && _.isFunction(input)) {
+        callback = input
+        input = null
       }
       
-      return callback ? callback(null, self.last) : resolve(self.last)
+      // Input Neuron
+      if(self.is.input()) {
+        if(!input) {
+          let error = new Error("'input' is not defined")
+          return callback ? callback(error) : reject(error)
+        } else if(!_.isNumber(input)) {
+          let error = new Error("'input' must be a 'number'")
+          return callback ? callback(error) : reject(error)
+        } else {
+          self.last = input
+          return callback(null, self.last)
+        }
+      }
+      // Hidden/Output Neuron
+      else {
+        if(input) {
+          let error = new Error("Can't pass 'input' to a hidden/output neuron")
+          return callback ? callback(error) : reject(error)
+        } else if(!self.can.activate()) {
+          let error = new Error("Incoming neurons have not been activated")
+          return callback ? callback(error) : reject(error)
+        } else {
+          // Incoming Weights
+          let weights = _.map(self.connections.incoming, function(connection) {
+            return connection.weight
+          })
+          // Incoming Outputs (i.e. Inputs)
+          let inputs = _.map(self.connections.incoming, function(connection) {
+            return connection.from.last
+          })
+
+          // Synaptic Weight Function
+          let sum = math.parse("dot(w,i)").eval({
+            w: weights,
+            i: inputs
+          })
+
+          // Activation Function
+          self.last = self.activation(sum)
+
+          return callback ? callback(null, self.last) : resolve(self.last)
+        }
+      }
     })
   }
   /**
@@ -293,12 +330,68 @@ let Neuron = function(props) {
   * @param {NumberCallback} [callback] - Callback invoked with _(error, result)_
   */
   self.propagate = function(feedback, callback) {
-     if(!callback && _.isFunction(feedback)) {
-      callback = feedback
-      feedback = null
-    }
-    
     return new Promise(function(resolve, reject) {
+      if(!callback && _.isFunction(feedback)) {
+        callback = feedback
+        feedback = null
+      }
+      
+
+      if(!self.has.activated()) {
+        let error = new Error("Neuron has not been activated")
+        return callback ? callback(error) : reject(error)
+      }
+      // Output Neuron
+      else if(self.is.output()) {
+        if(!feedback) {
+          let error = new Error("'feedback' is not defined")
+          return callback ? callback(error) : reject(error)
+        } else if(!_.isNumber(feedback)) {
+          let error = new Error("'feedback' must be a 'number'")
+          return callback ? callback(error) : reject(error)
+        } else {
+          self.error = feedback
+          return callback(null, self.error)
+        }
+      }
+      // Hidden/Input Neuron
+      else {
+        if(feedback) {
+          let error = new Error("Can't pass 'feedback' to a hidden/input neuron")
+          return callback ? callback(error) : reject(error)
+        } else if(!self.can.propagate()) {
+          let error = new Error("Outgoing neurons have not been updated")
+          return callback ? callback(error) : reject(error)
+        } else {
+          // Outgoing Connection Weights
+          let weights = _.map(self.connections.outgoing, function(connection) {
+            return connection.weight
+          })
+          // All Incoming Critiques from Outgoing Connections
+          let critiques = _.map(self.connections.outgoing, function(connection) {
+            return connection.to.error
+          })
+
+          // Net Critique (Dot Product of All Incoming Critiques and their Importance)
+          let sum = math.parse("dot(w,c)").eval({
+            w: weights,
+            c: critiques
+          })
+
+          // Net Neuron Error
+          self.error = sum * self.activation(self.last, true)
+          
+          // Update Weights; Return Update Weights
+          let new_weights = _.map(self.connections.outgoing, function(connection, index, connections) {
+            connection.weight = connections[index].weight = connections[index].weight - self.rate * connections[index].to.error * self.last
+            return connection.weight
+          })
+
+          return callback ? callback(null, self.error) : resolve(self.error)
+        }
+      }
+      
+      /*
       // Forward Environment Error through the Network
       if(self.is.output()) {
         self.error = feedback * self.activation(self.last, true)
@@ -331,6 +424,7 @@ let Neuron = function(props) {
       }
       
       return callback ? callback(null, self.error) : resolve(self.error)
+      */
     })
   }
 }
@@ -381,6 +475,38 @@ Neuron.activations = {
   */
   LINEAR: function(x, derivative) {
     return derivative ? 1 : x
+  }
+}
+
+Neuron.toActivation = function(object) {
+  if(typeof object === "string") {
+    if(object.toLowerCase() === "sigmoid" || 
+       object.toLowerCase() === "sigmoidal" ||
+       object.toLowerCase() === "logistic" ||
+       object.toLowerCase() === "logistics") {
+      return Neuron.activations.SIGMOID
+    }
+    else if(object.toLowerCase() === "relu") {
+      return Neuron.activations.RELU
+    }
+    else if(object.toLowerCase() === "tanh") {
+      return Neuron.activations.TANH
+    }
+    else if(object.toLowerCase() === "linear" ||
+              object.toLowerCase() === "identity") {
+      return Neuron.activations.LINEAR
+    }
+    else {
+      throw new Error(object + " is not a valid - or is an unsupported - activation function.\n\n" + 
+                      "If you would like to create support for it, please open a up pull request on GitHub for it: https://github.com/liquidcarrot/carrot/pulls\n\n" +
+                      "If you would like one of our core contributors to take a look into it, please open up an issue on GitHub describing this function in further detail: https://github.com/liquidcarrot/carrot/issues")
+    }
+  }
+  else if(typeof object === "function") {
+    return object
+  }
+  else{
+    throw new Error("Activation function must be a 'function' or a 'string'")
   }
 }
 

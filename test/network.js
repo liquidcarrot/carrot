@@ -9,7 +9,7 @@ chai.use(require('chai-each'))
 
 let expect = chai.expect
 
-describe("Network", function() {
+describe.skip("Network", function() {
   let Layer = require('../src/layer')
   let Neuron = require('../src/neuron')
   let Network = require('../src/network')

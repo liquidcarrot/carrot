@@ -134,7 +134,6 @@ let Network = function(props, options) {
         "activate": ["inputs", function(results, callback) {
           
           let activate = function(layer, inputs, callback) {
-            
             if(!callback && _.isFunction(inputs)) {
               callback = inputs
               inputs = null
@@ -144,12 +143,12 @@ let Network = function(props, options) {
               "activate": function(callback) {
                 if(_.isEqual(layer, results.inputs)) {
                   Layer.activate(layer, inputs, function(error, results) {
-                    console.log("Sent Partial Results: ", results)
+                    console.log("Input Layer - Sent Partial Results: ", results)
                     callback(error, results)
                   })
                 } else {
                   Layer.activate(layer, function(error, results) {
-                    console.log("Sent Partial Results: ", results)
+                    console.log("Hidden/Output Layer - Sent Partial Results: ", results)
                     callback(error, results)
                   })
                 }

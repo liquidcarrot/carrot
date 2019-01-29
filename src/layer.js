@@ -1,4 +1,4 @@
-`use strict`
+'use strict'
 
 let _ = require('lodash')
 let async = require('neo-async')
@@ -48,7 +48,7 @@ let Layer = function(props, options) {
         return new Neuron(_.assign({}, neuron, options))
       })
     } else {
-      throw new Error("Invalid parameter: " + prop + "\n'props' must be a 'number', '[Neuron]`, or `Layer`.")
+      throw new Error("Invalid parameter: " + props + "\n'props' must be a 'number', '[Neuron]`, or `Layer`.")
     }
   }
   
@@ -256,11 +256,10 @@ let Layer = function(props, options) {
 * @param {NumbersCallback} callback
 */
 Layer.activate = function(layer, inputs, callback) {
-  
   if(!layer) {
      throw new Error("No `layer` was provided")
   } else if(!(layer instanceof Layer || (_.isArray(layer) && _.every(layer, neuron => neuron instanceof Neuron)))) {
-    throw new Error("`layer` must be a \"Layer\" or an \"Array of Neurons\"")
+    throw new Error("`layer` must be a 'Layer' or an '[Neurons]'")
   }
   
   if(!callback && _.isFunction(inputs)) {
@@ -273,17 +272,22 @@ Layer.activate = function(layer, inputs, callback) {
       let error = new Error("'inputs.length' !== 'layer.neurons'\nInput size must be equal to the number of neurons in the layer.")
       return callback ? callback(error) : reject(error)
     } else {
+      console.log("Inputs", inputs)
       return async.mapValues(layer.neurons, function(neuron, index, callback) {
+        console.log("odsfoijasodijfoiasdfjoia")
         // Activate Input Layer
         if(inputs) {
+          console.log("\tInput Layer")
           neuron.activate(inputs[index], callback)
         }
         // Activate Hidden/Output Layer
         else {
+          console.log("\tOther Layer")
           neuron.activate(callback)
         }
       }, function(error, results) {
         let output = Object.values(results)
+        console.log("Outputs: ", output)
         return callback ? callback(error, output) : !error ? resolve(output) : reject(error)
       })
     }

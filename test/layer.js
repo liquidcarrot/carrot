@@ -8,7 +8,7 @@ chai.use(require('chai-each'))
 
 let expect = chai.expect
 
-describe("Layer", function() {
+describe.skip("Layer", function() {
   let Layer = require('../src/layer')
   let Neuron = require('../src/neuron')
   let Connection = require('../src/connection')
@@ -1368,7 +1368,7 @@ describe("Layer", function() {
       feeds(layer, random.inputs(layer.neurons.length))
     })
     
-    context.skip("Output Layer", function() {
+    context("Output Layer", function() {
       let incoming = new Layer(random.size())
       let layer = new Layer(random.size(), {
         connections: {
@@ -1376,13 +1376,12 @@ describe("Layer", function() {
         }
       })
       
-      feeds(layer, random.inputs(layer.neurons.length))
-      
-      let inputs = random.inputs(incoming.neurons.length)
-      
+      incoming.activate(random.inputs(incoming.neurons.length), function(error, outputs) {
+        feeds(layer)
+      })
     })
     
-    context.skip("Hidden Layer", function() {
+    context("Hidden Layer", function() {
       let incoming = new Layer(random.size())
       let outgoing = new Layer(random.size())
       let layer = new Layer(random.size(), {
@@ -1392,9 +1391,9 @@ describe("Layer", function() {
         }
       })
       
-      feeds(layer, random.inputs(layer.neurons.length))
-      
-      let inputs = random.inputs(incoming.neurons.length)
+      incoming.activate(random.inputs(incoming.neurons.length), function(error, outputs) {
+        feeds(layer)
+      })
     })
   })
   
