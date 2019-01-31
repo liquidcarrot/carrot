@@ -9,7 +9,7 @@ chai.use(require('chai-each'))
 
 let expect = chai.expect
 
-describe.skip("Network", function() {
+describe("Network", function() {
   let Layer = require('../src/layer')
   let Neuron = require('../src/neuron')
   let Network = require('../src/network')
@@ -367,7 +367,7 @@ describe.skip("Network", function() {
     
   })
   
-  describe.skip(".activate()", function() {
+  describe(".activate()", function() {
     let sizes = random.sizes()
     let network = new Network(sizes)
     let inputs = random.inputs(_.first(sizes))
@@ -393,7 +393,7 @@ describe.skip("Network", function() {
       })
     })
     
-    it("should return an of " + _.last(sizes) + " numbers", function(done) {
+    it("should return an array of " + _.last(sizes) + " numbers", function(done) {
       network.activate(inputs, function(error, outputs) {
         console.log("Sizes: ", sizes)
         console.log("# of Outputs: ", outputs.length)

@@ -8,7 +8,7 @@ chai.use(require('chai-each'))
 
 let expect = chai.expect
 
-describe.skip("Layer", function() {
+describe("Layer", function() {
   let Layer = require('../src/layer')
   let Neuron = require('../src/neuron')
   let Connection = require('../src/connection')
@@ -1302,7 +1302,7 @@ describe.skip("Layer", function() {
       })
 
       it("should accept a layer as parameter #1", function(done) {
-        Layer.activate(layer, function(error, neurons) {
+        Layer.activate(layer, inputs, function(error, neurons) {
           expect(error).to.not.exist
           expect(error).to.be.null
 
@@ -1311,7 +1311,7 @@ describe.skip("Layer", function() {
       })
 
       it("should accept an array of neurons as a parameter #1", function(done) {
-        Layer.activate(layer.neurons, function(error, neurons) {
+        Layer.activate(layer.neurons, inputs, function(error, neurons) {
           expect(error).to.not.exist
           expect(error).to.be.null
 
@@ -1342,8 +1342,6 @@ describe.skip("Layer", function() {
 
       it("should return an array of " + layer.neurons.length + " numbers", function(done) {
         Layer.activate(layer, inputs, function(error, results) {
-          console.log(results)
-          
           expect(results.length).to.equal(layer.neurons.length)
           expect(results.length).to.eql(layer.neurons.length)
 
@@ -1413,7 +1411,7 @@ describe.skip("Layer", function() {
     })
     
     it("should accept a layer as parameter #1", function(done) {
-      Layer.activate(layer, function(error, neurons) {
+      Layer.activate(layer, random.feedback(size), function(error, neurons) {
         expect(error).to.not.exist
         expect(error).to.be.null
         
@@ -1422,7 +1420,7 @@ describe.skip("Layer", function() {
     })
     
     it("should accept an array of neurons as a parameter #1", function(done) {
-      Layer.activate(layer.neurons, function(error, neurons) {
+      Layer.activate(layer.neurons, random.feedback(size), function(error, neurons) {
         expect(error).to.not.exist
         expect(error).to.be.null
         

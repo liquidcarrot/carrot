@@ -110,6 +110,9 @@ let Network = function(props, options) {
         "inputs": function(callback) {
           self.inputs(callback)
         },
+        "outputs": function(callback) {
+          self.outputs(callback)
+        },
         /**
           // Output Neurons
           "outputs": function(callback) {
@@ -131,6 +134,33 @@ let Network = function(props, options) {
             })
           }],
         */
+        "activate": ["inputs", "outputs", function(results, callback) {
+          let layer = results.inputs
+          async.until(function() {
+            return layer.length === 0
+          }, function(callback) {
+            async.auto({
+              "activate": function(callback) {
+                if(_.isEqual(layer, results.inputs)) {
+                  Layer.activate(layer, inputs, callback)
+                } else {
+                  Layer.activate(layer, callback)
+                }
+              },
+              "next": ["activate", function(results, callback) {
+                Layer.next(layer, function(error, neurons) {
+                  layer = neurons
+                  callback(error, neurons)
+                })
+              }]
+            }, function(error, results) {
+              callback(error, results.activate)
+            })
+          }, function(error, results) {
+            callback(error, results)
+          })
+        }],
+        /*
         "activate": ["inputs", function(results, callback) {
           
           let activate = function(layer, inputs, callback) {
@@ -168,6 +198,7 @@ let Network = function(props, options) {
           
           activate(results.inputs, inputs, callback)
         }],
+        */
         /**
           "activate_inputs": ["inputs", function(results, callback) {
 
@@ -187,8 +218,6 @@ let Network = function(props, options) {
           }]
         */
       }, function(error, results) {
-        console.log("Final Results: ", results.activate)
-        
         return callback ? callback(error, results.activate) : !error ? resolve(results.activate) : reject(error)
       })
     })
