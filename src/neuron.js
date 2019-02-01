@@ -351,6 +351,7 @@ let Neuron = function(props) {
           return callback ? callback(error) : reject(error)
         } else {
           self.error = feedback
+          
           return callback(null, self.error)
         }
       }
@@ -386,7 +387,7 @@ let Neuron = function(props) {
             connection.weight = connections[index].weight = connections[index].weight - self.rate * connections[index].to.error * self.last
             return connection.weight
           })
-
+          
           return callback ? callback(null, self.error) : resolve(self.error)
         }
       }

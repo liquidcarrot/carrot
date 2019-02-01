@@ -1396,10 +1396,53 @@ describe("Layer", function() {
   })
   
   describe("Layer.propagate()", function() {
+    /*
     let size = random.size()
     let layer = new Layer(size)
     let feedback = random.feedback(size)
+    */
     
+    context.skip("Lone Layer", function() {
+      let layer = new Layer(random.size())
+      
+      
+    })
+    
+    context.skip("Output Layer", function() {
+      let incoming = new Layer(random.size())
+      
+      console.log(incoming)
+      
+      let layer = new Layer(null, {
+        connections: {
+          incoming
+        }
+      })
+      
+    })
+    
+    context.skip("Input Layer", function() {
+      let outgoing = new Layer(random.size())
+      let layer = new Layer(null, {
+        connections: {
+          outgoing
+        }
+      })
+      
+    })
+    
+    context.skip("Hidden Layer", function() {
+      let incoming = new Layer(random.size())
+      let outgoing = new Layer(random.size())
+      let layer = new Layer(null, {
+        connections: {
+          incoming,
+          outgoing
+        }
+      })
+    })
+    
+    /*
     it("should require parameter #1", function(done) {
       try {
         Layer.activate()
@@ -1457,6 +1500,7 @@ describe("Layer", function() {
         done()
       })
     })
+    */
   })
 })
 

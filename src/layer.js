@@ -48,6 +48,10 @@ let Layer = function(props, options) {
         return new Neuron(_.assign({}, neuron, options))
       })
     } else {
+      console.log("Bad Stuff")
+      
+      console.log(props)
+      
       throw new Error("Invalid parameter: " + props + "\n'props' must be a 'number', '[Neuron]`, or `Layer`.")
     }
   }
@@ -256,7 +260,6 @@ let Layer = function(props, options) {
 * @param {NumbersCallback} callback
 */
 Layer.activate = function(layer, inputs, callback) {
-  
   if(!callback && _.isFunction(inputs)) {
     callback = inputs
     inputs = null
@@ -301,8 +304,13 @@ Layer.propagate = function(layer, feedback, callback) {
     callback = feedback
     feedback = null
   }
+  
+  if(layer instanceof Layer) {
+    layer = layer.neurons
+  }
     
   return new Promise(function(resolve, reject) {
+    
     if(feedback && feedback.length !== (layer instanceof Layer ? layer.neurons.length : layer.length)) {
       let error = new Error("'inputs.length' !== 'layer.neurons'\nInput size must be equal to the number of neurons in the layer.")
       return callback ? callback(error) : reject(error)
@@ -318,6 +326,7 @@ Layer.propagate = function(layer, feedback, callback) {
         }
       }, function(error, results) {
         let output = Object.values(results)
+        
         return callback ? callback(error, output) : !error ? resolve(output) : reject(error)
       })
     }

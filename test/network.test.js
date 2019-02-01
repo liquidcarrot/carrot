@@ -406,13 +406,13 @@ describe("Network", function() {
     })
   })
   
-  describe.skip(".propagate()", function() {
+  describe(".propagate()", function() {
     let sizes = random.sizes()
     let network = new Network(sizes)
     let inputs = random.inputs(_.first(sizes))
     let feedback = random.inputs(_.last(sizes))
     
-    it.skip("should accept an array of numbers as a parameter", function(done) {
+    it("should accept an array of numbers as a parameter", function(done) {
       async.auto({
         "activate": function(callback) {
           network.activate(inputs, callback)
@@ -430,7 +430,7 @@ describe("Network", function() {
       })
     })
     
-    it.skip("should return an array of numbers", function(done) {
+    it("should return an array of numbers", function(done) {
       async.auto({
         "activate": function(callback) {
           network.activate(inputs, callback)
@@ -439,7 +439,9 @@ describe("Network", function() {
           network.propagate(feedback, function(error, results) {
             expect(results).to.exist
             expect(results).to.be.an("array")
-            expect(results).to.each.be.a("number")
+            _.each(results, result => {
+              expect(result).to.be.a("number")
+            })
 
             callback()
           })
@@ -462,8 +464,15 @@ describe("Network", function() {
         }],
         "new_weights": ["weights", "propagate", function(results, callback) {
           network.weights(function(error, weights) {
-            expect(_.sortedBy(weights)).to.not.equal(_.sortedBy(results.weights))
-            expect(_.sortedBy(weights)).to.not.eql(_.sortedBy(results.weights))
+            expect(weights.length).to.equal(results.weights.length)
+//             expect(weights).to.not.have.all.members(results.weights)
+//             expect(_.sortedUniq(weights)).to.not.eql(_.sortedUniq(results.weights))
+            expect(_.sortBy(weights)).to.not.equal(_.sortBy(results.weights))
+            
+            console.log("Old weights: " + _.sortBy(results.weights))
+            console.log("New weights: " + _.sortBy(weights))
+            
+            expect(_.sortBy(weights)).to.not.eql(_.sortBy(results.weights))
             
             callback()
           })

@@ -69,7 +69,7 @@ let Network = function(props, options) {
   
   self.outputs = function(callback) {
     return new Promise(function(resolve, reject) {
-      async.map(self.neurons, function(neuron, callback) {
+      async.filter(self.neurons, function(neuron, callback) {
         callback(null, neuron.is.output())
       }, callback)
     })
@@ -104,7 +104,6 @@ let Network = function(props, options) {
   
   self.activate = function(inputs, callback) {
     return new Promise(function(resolve, reject) {
-      
       return async.auto({
         // Input Neurons
         "inputs": function(callback) {
@@ -226,8 +225,47 @@ let Network = function(props, options) {
   /**
   * Given expected values, uses "mean squared equation" to calculate error; Propagate individual neural error through network and udpates weights.
   */
-  self.propogate = function(feedback, callback) {
+  self.propagate = function(feedback, callback) {
     return new Promise(function(resolve, reject) {
+      return async.auto({
+        // Output Neurons
+        "outputs": function(callback) {
+          self.outputs(callback)
+        },
+        "propagate": ["outputs", function(results, callback) {
+          let layer = results.outputs
+          
+          console.log("Output Size: " + layer.length)
+          
+          async.until(function() {
+            return layer.length === 0
+          }, function(callback) {
+            async.auto({
+              "propagate": function(callback) {
+                if(_.isEqual(layer, results.outputs)) {
+                  Layer.propagate(layer, feedback, callback)
+                } else {
+                  Layer.propagate(layer, callback)
+                }
+              },
+              "previous": ["propagate", function(results, callback) {
+                Layer.previous(layer, function(error, neurons) {
+                  layer = neurons
+                  callback(error, neurons)
+                })
+              }]
+            }, function(error, results) {
+              callback(error, results.propagate)
+            })
+          }, function(error, results) {
+            callback(error, results)
+          })
+        }],
+      }, function(error, results) {
+        return callback ? callback(error, results.propagate) : !error ? resolve(results.propagate) : reject(error)
+      })
+      
+      /*
       return async.auto({
         // Output Neurons
         "outputs": function(callback) {
@@ -265,6 +303,7 @@ let Network = function(props, options) {
       }, function(error, results) {
         return callback ? callback(error, results.propagate) : !error ? resolve(results.propagate) : reject(error)
       })
+      */
     })
   }
 }

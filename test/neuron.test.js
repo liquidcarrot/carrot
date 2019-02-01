@@ -1,12 +1,14 @@
-'use strict'
+ 'use strict'
 
 let _ = require('lodash')
+let async = require('async')
 let faker = require("faker")
 let chai = require('chai')
 
 chai.use(require('chai-each'))
 
 let expect = chai.expect
+
 
 describe("Neuron", function() {
   let Neuron = require('../src/neuron')
@@ -545,6 +547,45 @@ describe("Neuron", function() {
 
       it("should save the number returned as `.error`", function(done) {
         neuron.propagate(random.number(), function(error, result) {
+          expect(neuron.error).to.exist
+          expect(neuron.error).to.equal(result)
+
+          done()
+        })
+      })
+      
+      /*
+      should.propagate.solo(neuron)
+      */
+    })
+    
+    context("Output Neuron", function() {
+      let incoming = random.layer()
+      let neuron = new Neuron({
+        connections: {
+          incoming
+        }
+      })
+      
+      beforeEach(function(done) {
+        Layer.activate(incoming, random.inputs(incoming.neurons.length), function(error, result) {
+          neuron.activate(function(error, results) { 
+            done()
+          })
+        })
+      })
+      
+      it("should accept a number as parameter #1", function(done) {
+        neuron.propagate(random.number(), function(error, result) {
+          expect(error).to.not.exist
+          expect(error).to.be.null
+
+          done()
+        })
+      })
+      
+      it("should return a number", function(done) {
+        neuron.propagate(random.number(), function(error, result) {
           expect(result).to.exist
           expect(result).to.be.a("number")
 
@@ -552,17 +593,108 @@ describe("Neuron", function() {
         })
       })
       
+      it("should save the number returned as `.error`", function(done) {
+        neuron.propagate(random.number(), function(error, result) {
+          expect(neuron.error).to.exist
+          expect(neuron.error).to.equal(result)
+
+          done()
+        })
+      })
       
       /*
-      should.propagate.solo(neuron)
+      should.propagate.afterOutgoing(neuron)
       */
     })
     
     context("Input Neuron", function() {
+      let outgoing = random.layer()
       let neuron = new Neuron({
         connections: {
-          outgoing: random.layer()
+          outgoing
         }
+      })
+      
+      beforeEach(function(done) {
+        neuron.activate(Math.random(), function(error, result) {
+          Layer.activate(outgoing, function(error, results) { 
+            done()
+          })
+        })
+      })
+      
+      it("should not accept a number as parameter #1", function(done) {
+        Layer.propagate(outgoing, random.feedback(outgoing.neurons.length), function(error, results) {
+          neuron.propagate(random.number(), function(error, result) {
+            expect(error).to.exist
+            expect(error).to.be.an.instanceof(Error)
+
+            done()
+          })
+        })
+      })
+      
+      it("should require outgoing neurons to propagate", function(done) {
+//         Layer.propagate(outgoing, random.feedback(outgoing.neurons.length), function(error, results) {
+          neuron.propagate(random.number(), function(error, result) {
+            expect(error).to.exist
+            expect(error).to.be.an.instanceof(Error)
+
+            done()
+          })
+//         })
+      })
+      
+      it("should return a number", function(done) {
+        outgoing.propagate(random.feedback(outgoing.neurons.length), function(error, results) {
+          neuron.propagate(function(error, result) {
+            expect(result).to.exist
+            expect(result).to.be.a("number")
+
+            done()
+          })
+        })
+      })
+      
+      it("should save the number returned as `.error`", function(done) {
+        outgoing.propagate(random.feedback(outgoing.neurons.length), function(error, results) {
+          neuron.propagate(function(error, result) {
+            expect(neuron.error).to.exist
+            expect(neuron.error).to.equal(result)
+
+            done()
+          })
+        })
+      })
+      
+      it("should update weights", function(done) {
+        async.auto({
+          "weights": function(callback) {
+            async.map(neuron.connections.outgoing, function(connection, callback) {
+              callback(null, connection.weight)
+            }, callback)
+          },
+          "propagate": ["weights", function(result, callback) {
+            outgoing.propagate(random.feedback(outgoing.neurons.length), function(error, results) {
+              neuron.propagate(function(error, result) {
+                expect(neuron.error).to.exist
+                expect(neuron.error).to.equal(result)
+
+                callback()
+              })
+            })
+          }],
+          "new_weights": ["propagate", function(results, callback) {
+            async.map(neuron.connections.outgoing, function(connection, callback) {
+              callback(null, connection.weight)
+            }, callback)
+          }] 
+        }, function(error, results) {
+          expect(_.sortBy(results.weights)).to.not.have.all.members(_.sortBy(results.new_weights))
+          expect(_.sortBy(results.weights)).to.not.have.all.deep.members(_.sortBy(results.new_weights))
+          
+          done()
+        })
       })
       
       /*
@@ -580,17 +712,88 @@ describe("Neuron", function() {
         }
       })
       
-      /*
-      should.propagate.afterOutgoing(neuron)
-      */
-    })
-    
-    context("Output Neuron", function() {
-      let incoming = random.layer()
-      let neuron = new Neuron({
-        connections: {
-          incoming
-        }
+      beforeEach(function(done) {
+        Layer.activate(incoming, random.inputs(incoming.neurons.length), function(error, results) {
+          neuron.activate(function(error, result) {
+            Layer.activate(outgoing, function(error, results) { 
+              done()
+            })
+          })
+        })
+      })
+      
+      it("should not accept a number as parameter #1", function(done) {
+        Layer.propagate(outgoing, random.feedback(outgoing.neurons.length), function(error, results) {
+          neuron.propagate(random.number(), function(error, result) {
+            expect(error).to.exist
+            expect(error).to.be.an.instanceof(Error)
+
+            done()
+          })
+        })
+      })
+      
+      it("should require outgoing neurons to propagate", function(done) {
+//         Layer.propagate(outgoing, random.feedback(outgoing.neurons.length), function(error, results) {
+          neuron.propagate(random.number(), function(error, result) {
+            expect(error).to.exist
+            expect(error).to.be.an.instanceof(Error)
+
+            done()
+          })
+//         })
+      })
+      
+      it("should return a number", function(done) {
+        outgoing.propagate(random.feedback(outgoing.neurons.length), function(error, results) {
+          neuron.propagate(function(error, result) {
+            expect(result).to.exist
+            expect(result).to.be.a("number")
+
+            done()
+          })
+        })
+      })
+      
+      it("should save the number returned as `.error`", function(done) {
+        outgoing.propagate(random.feedback(outgoing.neurons.length), function(error, results) {
+          neuron.propagate(function(error, result) {
+            expect(neuron.error).to.exist
+            expect(neuron.error).to.equal(result)
+
+            done()
+          })
+        })
+      })
+      
+      it("should update weights", function(done) {
+        async.auto({
+          "weights": function(callback) {
+            async.map(neuron.connections.outgoing, function(connection, callback) {
+              callback(null, connection.weight)
+            }, callback)
+          },
+          "propagate": ["weights", function(result, callback) {
+            outgoing.propagate(random.feedback(outgoing.neurons.length), function(error, results) {
+              neuron.propagate(function(error, result) {
+                expect(neuron.error).to.exist
+                expect(neuron.error).to.equal(result)
+
+                callback()
+              })
+            })
+          }],
+          "new_weights": ["propagate", function(results, callback) {
+            async.map(neuron.connections.outgoing, function(connection, callback) {
+              callback(null, connection.weight)
+            }, callback)
+          }] 
+        }, function(error, results) {
+          expect(_.sortBy(results.weights)).to.not.have.all.members(_.sortBy(results.new_weights))
+          expect(_.sortBy(results.weights)).to.not.have.all.deep.members(_.sortBy(results.new_weights))
+          
+          done()
+        })
       })
       
       /*
