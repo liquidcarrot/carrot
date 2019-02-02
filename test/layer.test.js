@@ -1,6 +1,7 @@
 'use strict'
 
 let _ = require('lodash')
+let async = require('neo-async')
 let faker = require('faker')
 let chai = require('chai')
 
@@ -1402,43 +1403,253 @@ describe("Layer", function() {
     let feedback = random.feedback(size)
     */
     
-    context.skip("Lone Layer", function() {
+    
+    context("Lone Layer", function() {
       let layer = new Layer(random.size())
       
+      it("should accept a layer as parameter #1 and an array of numbers as parameter #2", function(done) {
+        layer.activate(random.inputs(layer.neurons.length), function(error, results) {
+          Layer.propagate(layer, random.feedback(layer.neurons.length), function(error, results) {
+            expect(error).to.not.exist
+            expect(error).to.be.null
+            
+            done()
+          })
+        })
+      })
       
+      it("should return an array of numbers", function(done) {
+        layer.activate(random.inputs(layer.neurons.length), function(error, results) {
+          Layer.propagate(layer, random.feedback(layer.neurons.length), function(error, results) {
+            expect(results).to.exist
+            expect(results).to.be.an("array")
+            _.each(results, result => {
+              expect(result).to.be.a("number")
+            })
+            
+            done()
+          })
+        })
+      })
+      
+      it("should return an array of " + layer.neurons.length + " numbers", function(done) {
+        layer.activate(random.inputs(layer.neurons.length), function(error, results) {
+          Layer.propagate(layer, random.feedback(layer.neurons.length), function(error, results) {
+            expect(results).to.have.lengthOf(layer.neurons.length)
+            
+            done()
+          })
+        })
+      })
     })
     
-    context.skip("Output Layer", function() {
+    context("Output Layer", function() {
       let incoming = new Layer(random.size())
-      
-      console.log(incoming)
-      
-      let layer = new Layer(null, {
+      let layer = new Layer(random.size(), {
         connections: {
           incoming
         }
       })
       
+      it("should accept a layer as parameter #1 and an array of numbers as parameter #2", function(done) {
+        incoming.activate(random.inputs(incoming.neurons.length), function(error, results) {
+          layer.activate(function(error, results) {
+            Layer.propagate(layer, random.feedback(layer.neurons.length), function(error, results) {
+              expect(error).to.not.exist
+              expect(error).to.be.null
+
+              done()
+            })
+          })
+        })
+      })
+      
+      it("should return an array of numbers", function(done) {
+        incoming.activate(random.inputs(incoming.neurons.length), function(error, results) {
+          layer.activate(function(error, results) {
+            Layer.propagate(layer, random.feedback(layer.neurons.length), function(error, results) {
+              expect(results).to.exist
+              expect(results).to.be.an("array")
+              _.each(results, result => {
+                expect(result).to.be.a("number")
+              })
+
+              done()
+            })
+          })
+        })
+      })
+      
+      it("should return an array of " + layer.neurons.length + " numbers", function(done) {
+        incoming.activate(random.inputs(incoming.neurons.length), function(error, results) {
+          layer.activate(function(error, results) {
+            Layer.propagate(layer, random.feedback(layer.neurons.length), function(error, results) {
+              expect(results).to.have.lengthOf(layer.neurons.length)
+
+              done()
+            })
+          })
+        })
+      })
     })
     
-    context.skip("Input Layer", function() {
+    context("Input Layer", function() {
       let outgoing = new Layer(random.size())
-      let layer = new Layer(null, {
+      let layer = new Layer(random.size(), {
         connections: {
           outgoing
         }
       })
       
+      it("should accept a layer as parameter #1", function(done) {
+        layer.activate(random.inputs(layer.neurons.length), function(error, results) {
+          outgoing.activate(function(error, results) {
+            outgoing.propagate(random.feedback(outgoing.neurons.length), function(error, results) {
+              Layer.propagate(layer, function(error, results) {
+                expect(error).to.not.exist
+                expect(error).to.be.null
+
+                done()
+              })
+            })
+          })
+        })
+      })
+      
+      it("should return an array of numbers", function(done) {
+        layer.activate(random.inputs(layer.neurons.length), function(error, results) {
+          outgoing.activate(function(error, results) {
+            outgoing.propagate(random.feedback(outgoing.neurons.length), function(error, results) {
+              Layer.propagate(layer, function(error, results) {
+                expect(results).to.exist
+                expect(results).to.be.an("array")
+                _.each(results, result => {
+                  expect(result).to.be.a("number")
+                })
+
+                done()
+              })
+            })
+          })
+        })
+      })
+      
+      it("should return an array of " + layer.neurons.length + " numbers", function(done) {
+        layer.activate(random.inputs(layer.neurons.length), function(error, results) {
+          outgoing.activate(function(error, results) {
+            outgoing.propagate(random.feedback(outgoing.neurons.length), function(error, results) {
+              Layer.propagate(layer, function(error, results) {
+                expect(results).to.have.lengthOf(layer.neurons.length)
+
+                done()
+              })
+            })
+          })
+        })
+      })
+      
+      it("should update weights", function(done) {
+        layer.weights(function(error, weights) {
+          layer.activate(random.inputs(layer.neurons.length), function(error, results) {
+            outgoing.activate(function(error, results) {
+              outgoing.propagate(random.feedback(outgoing.neurons.length), function(error, results) {
+                Layer.propagate(layer, function(error, results) {
+                  layer.weights(function(error, new_weights) {
+                    expect(weights).to.not.have.all.members(new_weights)
+                    expect(weights).to.not.have.all.deep.members(new_weights)
+
+                    done()
+                  })
+                })
+              })
+            })
+          })
+        })
+      })
     })
     
-    context.skip("Hidden Layer", function() {
+    context("Hidden Layer", function() {
       let incoming = new Layer(random.size())
       let outgoing = new Layer(random.size())
-      let layer = new Layer(null, {
+      let layer = new Layer(random.size(), {
         connections: {
           incoming,
           outgoing
         }
+      })
+      
+      it("should accept a layer as parameter #1", function(done) {
+        incoming.activate(random.inputs(incoming.neurons.length), function(error, results) {
+          layer.activate(function(error, results) {
+            outgoing.activate(function(error, results) {
+              outgoing.propagate(random.feedback(outgoing.neurons.length), function(error, results) {
+                Layer.propagate(layer, function(error, results) {
+                  expect(error).to.not.exist
+                  expect(error).to.be.null
+
+                  done()
+                })
+              })
+            })
+          })
+        })
+      })
+      
+      it("should return an array of numbers", function(done) {
+        incoming.activate(random.inputs(incoming.neurons.length), function(error, results) {
+          layer.activate(function(error, results) {
+            outgoing.activate(function(error, results) {
+              outgoing.propagate(random.feedback(outgoing.neurons.length), function(error, results) {
+                Layer.propagate(layer, function(error, results) {
+                  expect(results).to.exist
+                  expect(results).to.be.an("array")
+                  _.each(results, result => {
+                    expect(result).to.be.a("number")
+                  })
+
+                  done()
+                })
+              })
+            })
+          })
+        })
+      })
+      
+      it("should return an array of " + layer.neurons.length + " numbers", function(done) {
+        incoming.activate(random.inputs(incoming.neurons.length), function(error, results) {
+          layer.activate(function(error, results) {
+            outgoing.activate(function(error, results) {
+              outgoing.propagate(random.feedback(outgoing.neurons.length), function(error, results) {
+                Layer.propagate(layer, function(error, results) {
+                  expect(results).to.have.lengthOf(layer.neurons.length)
+
+                  done()
+                })
+              })
+            })
+          })
+        })
+      })
+      
+      it("should update weights", function(done) {
+        layer.weights(function(error, weights) {
+          incoming.activate(random.inputs(incoming.neurons.length), function(error, results) {
+            layer.activate(function(error, results) {
+              outgoing.activate(function(error, results) {
+                outgoing.propagate(random.feedback(outgoing.neurons.length), function(error, results) {
+                  Layer.propagate(layer, function(error, results) {
+                    layer.weights(function(error, new_weights) {
+                      expect(weights).to.not.have.all.members(new_weights)
+                      expect(weights).to.not.have.all.deep.members(new_weights)
+
+                      done()
+                    })
+                  })
+                })
+              })
+            })
+          })
+        })
       })
     })
     

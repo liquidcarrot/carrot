@@ -282,6 +282,59 @@ describe("Neuron", function() {
       afterOutgoing: function(outgoing, neuron) {
         
       }
+    },
+    feed: {
+      /**
+      * Runs the following forward propagation tests on the `target` neural object for forward-feeding
+      *
+      * @param {[Neuron|Layer]} objects - An array of sequentially connected neural objects (i.e. `neurons`, `layers`, `groups`, `networks`)
+      * @param {Neuron|Layer} target - Target object on which to run tests
+      * @param {[number]} inputs - Input(s) for the first neural object in `objects` 
+      */
+      forward: (objects, target, inputs) => {
+        // Lone Neuron
+        if(objects.length === 1) {
+          
+        }
+        // Input Neuron
+        else if(_.isEqual(_.first(objects), target)) {
+          
+        }
+        // Output Neuron
+        else if(_.isEqual(_.last(objects), target)) {
+          
+        }
+        // Hidden Neuron
+        else if(!_.isEmpty(_.filter(objects, object => _.isEqual(object, target)))) {
+          
+        }
+      },
+      /**
+      * Activates the following neural objects.
+      * Runs the following backward propagation tests on the `target` neural object for backward-feeding
+      *
+      * @param {[Neuron|Layer]} objects - An array of sequentially connected neural objects (i.e. `neurons`, `layers`, `groups`, `networks`)
+      * @param {Neuron|Layer} target - Target object on which to run tests
+      * @param {[number]} inputs - Input(s) for the first neural object in `objects` 
+      */
+      backward: (objects, target, inputs, feedback) => {
+        // Lone Neuron
+        if(objects.length === 1) {
+          
+        }
+        // Input Neuron
+        else if(_.isEqual(_.first(objects), target)) {
+          
+        }
+        // Output Neuron
+        else if(_.isEqual(_.last(objects), target)) {
+          
+        }
+        // Hidden Neuron
+        else if(!_.isEmpty(_.filter(objects, object => _.isEqual(object, target)))) {
+          
+        }
+      }
     }
   }
   
@@ -457,6 +510,34 @@ describe("Neuron", function() {
   })
   
   describe(".activate()", function() {
+    context.skip("⬤", function() {
+      it.skip("should work", function(done) {
+        
+        done()
+      })
+    })
+    
+    context.skip("⬤ -> ◯", function() {
+      it.skip("should work", function(done) {
+        
+        done()
+      })
+    })
+    
+    context.skip("◯ -> ⬤", function() {
+      it.skip("should work", function(done) {
+        
+        done()
+      })
+    })
+    
+    context.skip("◯ -> ⬤ -> ◯", function() {
+      it.skip("should work", function(done) {
+        
+        done()
+      })
+    })
+    
     context("Lone Neuron", function() {
       let neuron = new Neuron()
       

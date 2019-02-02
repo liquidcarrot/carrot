@@ -86,6 +86,33 @@ let Layer = function(props, options) {
     }
   }
   
+  self.weights = function(callback) {
+    return new Promise(function(resolve, reject) {
+      return async.auto({
+        "incoming": function(callback) {
+          async.map(self.neurons, function(neuron, callback) {
+            callback(null, neuron.connections.incoming)
+          }, callback)
+        },
+        "outgoing": function(callback) {
+          async.map(self.neurons, function(neuron, callback) {
+            callback(null, neuron.connections.outgoing)
+          }, callback)
+        },
+        "all": ["incoming", "outgoing", function(results, callback) {
+          callback(null, _.uniq(_.concat(_.flatten(results.incoming), _.flatten(results.outgoing))))
+        }],
+        "weights": ["all", function(results, callback) {
+          async.map(results.all, function(connection, callback) {
+            callback(null, connection.weight)
+          }, callback)
+        }]
+      }, function(error, results) {
+        return callback ? callback(error, results.weights) : !error ? resolve(results.weights) : reject(error)
+      })
+    })
+  }
+  
   /**
   * Projects all the neurons in this layer to all the neurons in the given layer - or neuron.
   *
@@ -265,15 +292,21 @@ Layer.activate = function(layer, inputs, callback) {
     inputs = null
   }
   
+  /*
   if(layer instanceof Layer) {
     layer = layer.neurons
   }
+  */
   
   if(!layer) {
-     throw new Error("No `layer` was provided")
+    throw new Error("No `layer` was provided")
   } else if(!(layer instanceof Layer || (_.isArray(layer) && _.every(layer, neuron => neuron instanceof Neuron)))) {
     throw new Error("`layer` must be a 'Layer' or an '[Neurons]'")
-  } else if(inputs && inputs.length !== (layer instanceof Layer ? layer.neurons.length : layer.length)) {
+  } else if(layer instanceof Layer) {
+    layer = layer.neurons
+  }
+  
+  if(inputs && inputs.length !== layer.length) {
     throw new Error("'inputs.length' !== 'layer.neurons'\nInput size must be equal to the number of neurons in the layer.")
   }
   
@@ -305,31 +338,32 @@ Layer.propagate = function(layer, feedback, callback) {
     feedback = null
   }
   
-  if(layer instanceof Layer) {
+  if(!layer) {
+    throw new Error("No `layer` was provided")
+  } else if(!(layer instanceof Layer || (_.isArray(layer) && _.every(layer, neuron => neuron instanceof Neuron)))) {
+    throw new Error("`layer` must be a 'Layer' or an '[Neurons]'")
+  } else if(layer instanceof Layer) {
     layer = layer.neurons
+  }
+  
+  if(feedback && feedback.length !== layer.length) {
+    throw new Error("'inputs.length' !== 'layer.neurons'\nInput size must be equal to the number of neurons in the layer.")
   }
     
   return new Promise(function(resolve, reject) {
-    
-    if(feedback && feedback.length !== (layer instanceof Layer ? layer.neurons.length : layer.length)) {
-      let error = new Error("'inputs.length' !== 'layer.neurons'\nInput size must be equal to the number of neurons in the layer.")
-      return callback ? callback(error) : reject(error)
-    } else {
-      return async.mapValues(layer.neurons, function(neuron, index, callback) {
-        // Activate Output Layer
-        if(feedback) {
-          neuron.propagate(feedback[index], callback)
-        }
-        // Activate Hidden/Input Layer
-        else {
-          neuron.propagate(callback)
-        }
-      }, function(error, results) {
-        let output = Object.values(results)
-        
-        return callback ? callback(error, output) : !error ? resolve(output) : reject(error)
-      })
-    }
+    return async.mapValues(layer, function(neuron, index, callback) {
+      // Propagate Output Layer
+      if(feedback) {
+        neuron.propagate(feedback[index], callback)
+      }
+      // Propagate Hidden/Input Layer
+      else {
+        neuron.propagate(callback)
+      }
+    }, function(error, results) {
+      let output = Object.values(results)
+      return callback ? callback(error, output) : !error ? resolve(output) : reject(error)
+    })
   })
 }
 
