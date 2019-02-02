@@ -15,7 +15,8 @@ describe("Network", function() {
   let Network = require('../src/network')
   
   let random = {
-    sizes: () => _.times(Math.round(Math.random() * 10 + 1), index => Math.round(Math.random() * 10 + 1)),
+    size: () => Math.round(Math.random() * 10 + 1),
+    sizes: () => _.times(random.size(), index => random.size()),
     layers: () => _.times(Math.round(Math.random() * 10 + 1), index => new Layer(Math.round(Math.random() * 10 + 1))),
     neurons: () => _.times(Math.round(Math.random() * 10 + 1), index => new Neuron()),
     inputs: (n) => _.times((n || Math.round(Math.random() * 10 + 1)), index => Math.round(Math.random() * 10 + 1))
@@ -395,9 +396,6 @@ describe("Network", function() {
     
     it("should return an array of " + _.last(sizes) + " numbers", function(done) {
       network.activate(inputs, function(error, outputs) {
-        console.log("Sizes: ", sizes)
-        console.log("# of Outputs: ", outputs.length)
-        
         expect(outputs.length).to.equal(_.last(sizes))
         expect(outputs.length).to.eql(_.last(sizes))
         
@@ -451,7 +449,24 @@ describe("Network", function() {
       })
     })
     
-    it.skip("should update weights", function(done) {
+    it("should return an array of " + _.first(sizes) + " numbers", function(done) {
+      async.auto({
+        "activate": function(callback) {
+          network.activate(inputs, callback)
+        },
+        "propagate": ["activate", function(results, callback) {
+          network.propagate(feedback, function(error, results) {
+            expect(results).to.have.lengthOf(_.first(sizes))
+            
+            callback()
+          })
+        }]
+      }, function(error, results) {
+        done()
+      })
+    })
+    
+    it("should update weights", function(done) {
       async.auto({
         "weights": function(callback) {
           network.weights(callback)
@@ -463,16 +478,11 @@ describe("Network", function() {
           network.propagate(feedback, callback)
         }],
         "new_weights": ["weights", "propagate", function(results, callback) {
-          network.weights(function(error, weights) {
-            expect(weights.length).to.equal(results.weights.length)
-//             expect(weights).to.not.have.all.members(results.weights)
-//             expect(_.sortedUniq(weights)).to.not.eql(_.sortedUniq(results.weights))
-            expect(_.sortBy(weights)).to.not.equal(_.sortBy(results.weights))
-            
-            console.log("Old weights: " + _.sortBy(results.weights))
-            console.log("New weights: " + _.sortBy(weights))
-            
-            expect(_.sortBy(weights)).to.not.eql(_.sortBy(results.weights))
+          network.weights(function(error, new_weights) {
+            if(!_.isEmpty(results.weights)) {
+              expect(results.weights).to.not.have.all.members(new_weights)
+              expect(results.weights).to.not.have.all.deep.members(new_weights)
+            }
             
             callback()
           })

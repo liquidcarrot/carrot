@@ -217,6 +217,7 @@ let Network = function(props, options) {
           }]
         */
       }, function(error, results) {
+        
         return callback ? callback(error, results.activate) : !error ? resolve(results.activate) : reject(error)
       })
     })
@@ -228,14 +229,16 @@ let Network = function(props, options) {
   self.propagate = function(feedback, callback) {
     return new Promise(function(resolve, reject) {
       return async.auto({
+        // Input Neurons
+        "inputs": function(callback) {
+          self.inputs(callback)
+        },
         // Output Neurons
         "outputs": function(callback) {
           self.outputs(callback)
         },
-        "propagate": ["outputs", function(results, callback) {
+        "propagate": ["inputs", "outputs", function(results, callback) {
           let layer = results.outputs
-          
-          console.log("Output Size: " + layer.length)
           
           async.until(function() {
             return layer.length === 0
@@ -251,7 +254,8 @@ let Network = function(props, options) {
               "previous": ["propagate", function(results, callback) {
                 Layer.previous(layer, function(error, neurons) {
                   layer = neurons
-                  callback(error, neurons)
+                  
+                  callback(error, layer)
                 })
               }]
             }, function(error, results) {

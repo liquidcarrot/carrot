@@ -48,10 +48,6 @@ let Layer = function(props, options) {
         return new Neuron(_.assign({}, neuron, options))
       })
     } else {
-      console.log("Bad Stuff")
-      
-      console.log(props)
-      
       throw new Error("Invalid parameter: " + props + "\n'props' must be a 'number', '[Neuron]`, or `Layer`.")
     }
   }

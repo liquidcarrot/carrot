@@ -220,7 +220,7 @@ let Neuron = function(props) {
   
   self.has = {
     activated: function() {
-      if(!self.last) {
+      if(_.isNil(self.last)) {
         return false
       } else {
         return true
