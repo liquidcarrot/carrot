@@ -19,8 +19,8 @@ describe("Neuron", function() {
     number: () => Math.round(Math.random() * 10 + 1),
     size: () => random.number(),
     neurons: () => _.times(random.size(), index => new Neuron()),
-    inputs: (n) => _.times((n || Math.round(Math.random() * 10 + 1)), index => Math.round(Math.random() * 10 + 1)),
-    feedback: (n) => _.times((n || Math.round(Math.random() * 10 + 1)), index => Math.round(Math.random() * 10 + 1)),
+    inputs: (n) => _.times((n || random.number()), index => random.number()),
+    feedback: (n) => _.times((n || random.number()), index => random.number()),
     layer: () => new Layer(random.size()),
     bias: () => Math.random(),
     rate: () => Math.random(),
@@ -318,10 +318,417 @@ describe("Neuron", function() {
       * @param {[number]} inputs - Input(s) for the first neural object in `objects` 
       */
       backward: (objects, target, inputs, feedback) => {
-        // Lone Neuron
-        if(objects.length === 1) {
+        // All Neurons
+        it("should require neuron to have activated", done => {
+          let test = (error, result) => {
+            expect(error).to.exist
+            expect(error).to.be.an.instanceof(Error)
+
+            done()
+          }
+          
+          if(target.is.output()) {
+            target.propagate(feedback, test)
+          } else {
+            target.propagate(test)
+          }
+        })
+          
+          /*
+          it("should require outgoing neurons to propagate", function(done) {
+            target.propagate(function(error, result) {
+              expect(error).to.exist
+              expect(error).to.be.an.instanceof(Error)
+
+              done()
+            })
+          })
+          */
+        
+        context("[State]: Activated", function() {
+          // Activate Neurons
+          beforeEach(function(done) {
+            async.eachOfSeries(objects, (object, index, callback) => {
+              if(index === 0) {
+                object.activate(inputs, callback)
+              } else {
+                object.activate(callback)
+              }
+            }, (error, results) => done())
+          })
+
+          // Hidden/Input Neurons
+          if(!target.is.output()) {
+            it("should require outgoing neurons to propagate", function(done) {
+              target.propagate(function(error, result) {
+                expect(error).to.exist
+                expect(error).to.be.an.instanceof(Error)
+
+                done()
+              })
+            })
+          }
+
+          context("[State]: Can Propagate", function() {
+            let weights;
+
+            let getWeights = callback => async.map(target.connections.outgoing, (connection, callback) => {
+              callback(null, connection.weight)
+            }, callback)
+
+            // Propagate Neurons
+            beforeEach(function(done) {
+              let object = _.last(objects)
+              let index = _.size(objects)
+
+              async.until(() => object === target || index < 0, callback => {
+                let iterate = (error, results) => {
+                  --index
+                  object = objects[index]
+                  callback(error, results)
+                }
+
+                if(index === _.size(objects)) {
+                  object.propagate(feedback, iterate)
+                } else {
+                  object.propagate(iterate)
+                }
+              }, (error, results) => done())
+            })
+
+            // Get Outgoing Weights
+            beforeEach(done => getWeights((error, results) => {
+              weights = results
+              done()
+            }))
+
+            // Lone/Output Neurons
+            if(target.is.output()) {
+              it("should require parameter #1", function(done) {
+                target.propagate(function(error, result) {
+                  expect(error).to.exist
+                  expect(error).to.be.an.instanceof(Error)
+
+                  done()
+                })
+              })
+              it("should accept a number as parameter #1", function(done) {
+                target.propagate(random.number(), function(error, result) {
+                  expect(error).to.not.exist
+                  expect(error).to.be.null
+
+                  done()
+                })
+              })
+            } 
+            // Hidden/Input Neurons
+            else {
+              it("should not accept a number as parameter #1", function(done) {
+                target.propagate(random.number(), function(error, result) {
+                  expect(error).to.exist
+                  expect(error).to.be.an.instanceof(Error)
+
+                  done()
+                })
+              })
+              it("should update weights", function(done) {
+                async.auto({
+                  "propagate": callback => target.propagate(callback),
+                  "weights": ["propagate", (results, callback) => getWeights(callback)] 
+                }, function(error, results) {
+                  expect(weights).to.not.have.all.members(results.weights)
+                  expect(weights).to.not.have.all.deep.members(results.weights)
+
+                  done()
+                })
+              })
+            }
+
+            // All Neurons
+            it("should return a number", function(done) {
+              let test = (error, result) => {
+                expect(result).to.exist
+                expect(result).to.be.a("number")
+
+                done()
+              }
+              
+              if(target.is.output()) {
+                target.propagate(feedback, test)
+              } else {
+                target.propagate(test)
+              }
+            })
+            it("should save the number returned as `.error`", function(done) {
+              let test = (error, result) => {
+                expect(target.error).to.exist
+                expect(target.error).to.equal(result)
+
+                done()
+              }
+              
+              if(target.is.output()) {
+                target.propagate(feedback, test)
+              } else {
+                target.propagate(test)
+              }
+            })
+          })
+        })
+        
+        /*
+        // Hidden/Input Neurons
+        if(!target.is.output()) {
+          context("[State]: Activated", function() {
+            // Activate Neurons
+            beforeEach(function(done) {
+              async.eachOfSeries(objects, (object, index, callback) => {
+                if(index === 0) {
+                  object.activate(inputs, callback)
+                } else {
+                  object.activate(callback)
+                }
+              }, (error, results) => done())
+            })
+            
+            it("should require outgoing neurons to propagate", function(done) {
+              target.propagate(function(error, result) {
+                expect(error).to.exist
+                expect(error).to.be.an.instanceof(Error)
+
+                done()
+              })
+            })
+            
+            context("[State]: Can Propagate", function() {
+              let weights;
+              
+              let getWeights = callback => async.map(target.connections.outgoing, (connection, callback) => {
+                callback(null, connection.weight)
+              }, callback)
+              
+              // Propagate Neurons
+              beforeEach(function(done) {
+                let object = _.last(objects)
+                let index = _.size(objects)
+
+                async.until(() => object === target || index < 0, callback => {
+                  let iterate = (error, results) => {
+                    --index
+                    object = objects[index]
+                    callback(error, results)
+                  }
+
+                  if(index === _.size(objects)) {
+                    object.propagate(feedback, iterate)
+                  } else {
+                    object.propagate(iterate)
+                  }
+                }, (error, results) => done())
+              })
+              
+              // Get Outgoing Weights
+              beforeEach(function(done) {
+                getWeights((error, results) => {
+                  weights = results
+                  done()
+                })
+              })
+              
+              it("should not accept a number as parameter #1", function(done) {
+                target.propagate(random.number(), function(error, result) {
+                  expect(error).to.exist
+                  expect(error).to.be.an.instanceof(Error)
+
+                  done()
+                })
+              })
+      
+              it("should return a number", function(done) {
+                target.propagate(function(error, result) {
+                  expect(result).to.exist
+                  expect(result).to.be.a("number")
+
+                  done()
+                })
+              })
+
+              it("should save the number returned as `.error`", function(done) {
+                target.propagate(function(error, result) {
+                  expect(target.error).to.exist
+                  expect(target.error).to.equal(result)
+
+                  done()
+                })
+              })
+
+              it("should update weights", function(done) {
+                async.auto({
+                  "propagate": callback => target.propagate(callback),
+                  "weights": ["propagate", (results, callback) => getWeights(callback)] 
+                }, function(error, results) {
+                  expect(weights).to.not.have.all.members(results.weights)
+                  expect(weights).to.not.have.all.deep.members(results.weights)
+
+                  done()
+                })
+              })
+            })
+          })
+        }
+        // Lone/Output Neurons
+        else {
+          context("Activated; Propagated", function() {
+            // Activate & Propagate
+            beforeEach(function(done) {
+              async.auto({
+                "activate": callback => {
+                  async.eachOfSeries(objects, (object, index, callback) => {
+                    if(index === 0) {
+                      object.activate(inputs, callback)
+                    } else {
+                      object.activate(callback)
+                    }
+                  }, callback)
+                },
+                "propagate": ["activate", (results, callback) => {
+                  let object = _.last(objects)
+                  let index = _.size(objects)
+
+                  async.until(() => object === target || index < 0, callback => {
+                    let iterate = (error, results) => {
+                      --index
+                      object = objects[index]
+                      callback(error, results)
+                    }
+
+                    if(index === _.size(objects)) {
+                      object.propagate(feedback, iterate)
+                    } else {
+                      object.propagate(iterate)
+                    }
+                  }, callback)
+                }]
+              }, (error, results) => done())
+            })
+            
+            it("should require parameter #1", function(done) {
+              target.propagate(function(error, result) {
+                expect(error).to.exist
+                expect(error).to.be.an.instanceof(Error)
+
+                done()
+              })
+            })
+
+            it("should accept a number as parameter #1", function(done) {
+              target.propagate(random.number(), function(error, result) {
+                expect(error).to.not.exist
+                expect(error).to.be.null
+
+                done()
+              })
+            })
+
+            it("should return a number", function(done) {
+              target.propagate(random.number(), function(error, result) {
+                expect(result).to.exist
+                expect(result).to.be.a("number")
+
+                done()
+              })
+            })
+
+            it("should save the number returned as `.error`", function(done) {
+              target.propagate(random.number(), function(error, result) {
+                expect(target.error).to.exist
+                expect(target.error).to.equal(result)
+
+                done()
+              })
+            })
+          })
+        }
+        */
+              
+        /*
+        // Lone/Output Neuron
+        if(target.is.output()) {
+          it("should require parameter #1", function(done) {
+            target.propagate(function(error, result) {
+              expect(error).to.exist
+              expect(error).to.be.an.instanceof(Error)
+
+              done()
+            })
+          })
+          
+          it("should accept a number as parameter #1", function(done) {
+            target.propagate(random.number(), function(error, result) {
+              expect(error).to.not.exist
+              expect(error).to.be.null
+
+              done()
+            })
+          })
+          
+          it("should return a number", function(done) {
+            target.propagate(random.number(), function(error, result) {
+              expect(result).to.exist
+              expect(result).to.be.a("number")
+
+              done()
+            })
+          })
+
+          it("should save the number returned as `.error`", function(done) {
+            target.propagate(random.number(), function(error, result) {
+              expect(target.error).to.exist
+              expect(target.error).to.equal(result)
+
+              done()
+            })
+          })
+        } else {
           
         }
+        */
+        
+        /*
+        beforeEach(function(done) {
+          async.auto({
+            "activate": callback => {
+              async.eachOfSeries(objects, (object, index, callback) => {
+                if(index === 0) {
+                  object.activate(inputs, callback)
+                } else {
+                  object.activate(callback)
+                }
+              }, callback)
+            },
+            "propagate": ["activate", (results, callback) => {
+              let object = _.last(objects)
+              let index = _.size(objects)
+              
+              async.until(() => object === target || index < 0, callback => {
+                let iterate = (error, results) => {
+                  --index
+                  object = objects[index]
+                  callback(error, results)
+                }
+                
+                if(index === _.size(objects)) {
+                  object.propagate(feedback, iterate)
+                } else {
+                  object.propagate(iterate)
+                }
+              }, callback)
+            }]
+          }, (error, results) => done())
+        })
+        */
+        
+        /*
         // Input Neuron
         else if(_.isEqual(_.first(objects), target)) {
           
@@ -334,6 +741,7 @@ describe("Neuron", function() {
         else if(!_.isEmpty(_.filter(objects, object => _.isEqual(object, target)))) {
           
         }
+        */ 
       }
     }
   }
@@ -510,6 +918,7 @@ describe("Neuron", function() {
   })
   
   describe(".activate()", function() {
+    /*
     context.skip("⬤", function() {
       it.skip("should work", function(done) {
         
@@ -537,6 +946,7 @@ describe("Neuron", function() {
         done()
       })
     })
+    */
     
     context("Lone Neuron", function() {
       let neuron = new Neuron()
@@ -582,6 +992,7 @@ describe("Neuron", function() {
   describe(".propagate()", function() {
     let neuron = new Neuron()
 
+    /*
     it("should require parameter #1", function(done) {
       neuron.propagate(function(error, result) {
         expect(error).to.exist
@@ -599,9 +1010,14 @@ describe("Neuron", function() {
         done()
       })
     })
-    
+    */
     
     context("Lone Neuron", function() {
+      let neuron = new Neuron()
+      
+      should.feed.backward([neuron], neuron, random.number(), random.number())
+      
+      /*
       beforeEach(function(done) {
         neuron.activate(Math.random(), function(error, result) {
           done()
@@ -634,6 +1050,7 @@ describe("Neuron", function() {
           done()
         })
       })
+      */
       
       /*
       should.propagate.solo(neuron)
@@ -648,6 +1065,9 @@ describe("Neuron", function() {
         }
       })
       
+      should.feed.backward([incoming, neuron], neuron, random.inputs(incoming.neurons.length), random.number())
+      
+      /*
       beforeEach(function(done) {
         Layer.activate(incoming, random.inputs(incoming.neurons.length), function(error, result) {
           neuron.activate(function(error, results) { 
@@ -682,6 +1102,7 @@ describe("Neuron", function() {
           done()
         })
       })
+      */
       
       /*
       should.propagate.afterOutgoing(neuron)
@@ -696,6 +1117,9 @@ describe("Neuron", function() {
         }
       })
       
+      should.feed.backward([neuron, outgoing], neuron, random.number(), random.feedback(outgoing.neurons.length))
+      
+      /*
       beforeEach(function(done) {
         neuron.activate(Math.random(), function(error, result) {
           Layer.activate(outgoing, function(error, results) { 
@@ -777,6 +1201,7 @@ describe("Neuron", function() {
           done()
         })
       })
+      */
       
       /*
       should.propagate.solo(neuron)
@@ -793,6 +1218,9 @@ describe("Neuron", function() {
         }
       })
       
+      should.feed.backward([incoming, neuron, outgoing], neuron, random.inputs(incoming.neurons.length), random.feedback(outgoing.neurons.length))
+      
+      /*
       beforeEach(function(done) {
         Layer.activate(incoming, random.inputs(incoming.neurons.length), function(error, results) {
           neuron.activate(function(error, result) {
@@ -824,6 +1252,7 @@ describe("Neuron", function() {
           })
 //         })
       })
+      
       
       it("should return a number", function(done) {
         outgoing.propagate(random.feedback(outgoing.neurons.length), function(error, results) {
@@ -876,6 +1305,7 @@ describe("Neuron", function() {
           done()
         })
       })
+      */
       
       /*
       should.propagate.afterOutgoing(neuron)
