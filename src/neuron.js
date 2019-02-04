@@ -357,7 +357,8 @@ let Neuron = function(props) {
           let error = new Error("'feedback' must be a 'number'")
           return callback ? callback(error) : reject(error)
         } else {
-          self.error = feedback
+          // Mean Squared Error Cost Function
+          self.error = (self.last - feedback) * self.activation(self.last, true)
           
           return callback(null, self.error)
         }
@@ -390,9 +391,10 @@ let Neuron = function(props) {
           self.error = sum * self.activation(self.last, true)
           
           // Update Weights; Return Update Weights
-          let new_weights = _.map(self.connections.outgoing, function(connection, index, connections) {
-            connection.weight = connections[index].weight = connections[index].weight - self.rate * connections[index].to.error * self.last
-            return connection.weight
+          self.connections.outgoing = _.map(self.connections.outgoing, function(connection, index, connections) {
+            connection.weight = connection.weight - self.rate * connection.to.error * self.last
+            
+            return connection
           })
           
           return callback ? callback(null, self.error) : resolve(self.error)
