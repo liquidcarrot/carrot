@@ -225,6 +225,13 @@ let Neuron = function(props) {
       } else {
         return true
       }
+    },
+    propagated: function() {
+      if(_.isNil(self.error)) {
+        return false
+      } else {
+        return true
+      }
     }
   }
   

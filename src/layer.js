@@ -82,6 +82,48 @@ let Layer = function(props, options) {
     }
   }
   
+  self.can = {
+    activate: function() {
+      if(self.is.input()) {
+        return true
+      } else {
+        return _.every(self.neurons, function(neuron) {
+          return _.every(neuron.connections.incoming, function(connection) {
+            return !_.isNil(connection.from.last)
+          })
+        })
+      }
+    },
+    propagate: function() {
+      if(self.is.output()) {
+        return true
+      } else {
+        return _.every(self.neurons, function(neuron) {
+          return _.every(neuron.connections.outgoing, function(connection) {
+            return !_.isNil(connection.to.error)
+          })
+        })
+      }
+    }
+  }
+  
+  self.has = {
+    activated: function() {
+      if(_.isNil(self.last)) {
+        return false
+      } else {
+        return true
+      }
+    },
+    propagated: function() {
+      if(_.isNil(self.error)) {
+        return false
+      } else {
+        return true
+      }
+    }
+  }
+  
   self.weights = function(callback) {
     return new Promise(function(resolve, reject) {
       return async.auto({
@@ -161,12 +203,54 @@ let Layer = function(props, options) {
   * @param {NumbersCallback} [callback] - Callback invoked with _(error, results)_
   */
   self.activate = function(inputs, callback) {
-    if(!callback && _.isFunction(inputs)) {
-      callback = inputs
-      inputs = null
-    }
-    
     return new Promise(function(resolve, reject) {
+      if(!callback && _.isFunction(inputs)) {
+        callback = inputs
+        inputs = null
+      }
+      
+      let activate = function() {
+        return async.mapValues(self.neurons, function(neuron, index, callback) {
+          // Activate Input Layer
+          if(inputs) {
+            neuron.activate(inputs[index], callback)
+          }
+          // Activate Hidden/Output Layer
+          else {
+            neuron.activate(callback)
+          }
+        }, function(error, results) {
+          let output = Object.values(results)
+          return callback ? callback(error, output) : !error ? resolve(output) : reject(error)
+        })
+      }
+      
+      if(self.is.input()) {
+        if(!inputs) {
+          let error = new Error("'inputs' is not defined")
+          return callback ? callback(error) : reject(error)
+        } else if(inputs.length !== self.neurons.length) {
+          let error = new Error("'inputs.length' !== 'layer.neurons'\nInput size must be equal to the number of neurons in the layer.")
+          return callback ? callback(error) : reject(error)
+        } else if(!_.every(inputs, input => _.isNumber(input))) {
+          let error = new Error("All 'inputs' must be a 'number'")
+          return callback ? callback(error) : reject(error)
+        } else {
+          activate()
+        }
+      } else {
+        if(inputs) {
+          let error = new Error("Can't pass 'inputs' to a hidden/output layer")
+          return callback ? callback(error) : reject(error)
+        } else if(!self.can.activate()) {
+          let error = new Error("Incoming neurons have not been activated")
+          return callback ? callback(error) : reject(error)
+        } else {
+          activate()
+        }
+      }
+      
+      /*
       if(inputs && inputs.length !== self.neurons.length) {
         let error = new Error("'inputs.length' !== 'layer.neurons'\nInput size must be equal to the number of neurons in the layer.")
         return callback ? callback(error) : reject(error)
@@ -185,6 +269,7 @@ let Layer = function(props, options) {
           return callback ? callback(error, output) : !error ? resolve(output) : reject(error)
         })
       }
+      */
     })
   }
   /**

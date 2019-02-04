@@ -367,7 +367,7 @@ describe("Neuron", function() {
                 })
               })
               it("should accept a number as parameter #1", function(done) {
-                target.propagate(random.number(), function(error, result) {
+                target.propagate(feedback, function(error, result) {
                   expect(error).to.not.exist
                   expect(error).to.be.null
 
