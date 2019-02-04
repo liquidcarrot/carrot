@@ -350,7 +350,7 @@ let Neuron = function(props) {
       }
       // Output Neuron
       else if(self.is.output()) {
-        if(!feedback) {
+        if(_.isNil(feedback)) {
           let error = new Error("'feedback' is not defined")
           return callback ? callback(error) : reject(error)
         } else if(!_.isNumber(feedback)) {
