@@ -284,7 +284,7 @@ let Neuron = function(props) {
       
       // Input Neuron
       if(self.is.input()) {
-        if(!input) {
+        if(_.isNil(input)) {
           let error = new Error("'input' is not defined")
           return callback ? callback(error) : reject(error)
         } else if(!_.isNumber(input)) {
