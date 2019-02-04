@@ -1,8 +1,8 @@
 {
   "name": "@liquid-carrot/carrot",
-  "version": "0.0.20",
+  "version": "0.0.19",
   "description": "A Node.js Neural Network Library",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "build": "./node_modules/.bin/documentation build src/** -f md > DOCUMENTATION.md",
     "test": "nodemon ./node_modules/.bin/mocha --reporter spec test/"
