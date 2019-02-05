@@ -312,12 +312,11 @@ let Neuron = function(props) {
           let inputs = _.map(self.connections.incoming, function(connection) {
             return connection.from.last
           })
-
           // Synaptic Weight Function
-          let sum = math.parse("dot(w,i)").eval({
+          let sum = _.sum([math.parse("dot(w,i)").eval({
             w: weights,
             i: inputs
-          })
+          }), self.bias])
 
           // Activation Function
           self.last = self.activation(sum)
@@ -343,7 +342,6 @@ let Neuron = function(props) {
         feedback = null
       }
       
-
       if(!self.has.activated()) {
         let error = new Error("Neuron has not been activated")
         return callback ? callback(error) : reject(error)
@@ -380,20 +378,17 @@ let Neuron = function(props) {
           let critiques = _.map(self.connections.outgoing, function(connection) {
             return connection.to.error
           })
-
           // Net Critique (Dot Product of All Incoming Critiques and their Importance)
           let sum = math.parse("dot(w,c)").eval({
             w: weights,
             c: critiques
           })
-
           // Net Neuron Error
           self.error = sum * self.activation(self.last, true)
           
           // Update Weights; Return Update Weights
           self.connections.outgoing = _.map(self.connections.outgoing, function(connection, index, connections) {
             connection.weight = connection.weight - self.rate * connection.to.error * self.last
-            
             return connection
           })
           
