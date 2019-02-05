@@ -362,6 +362,41 @@ let Layer = function(props, options) {
   }
 }
 
+Layer.weights = function(layer, callback) {
+  return new Promise(function(resolve, reject) {
+    if(_.isNil(layer)) {
+      throw new Error("No `layer` was provided")
+    } else if(!(layer instanceof Layer || (_.isArray(layer) && _.every(layer, neuron => neuron instanceof Neuron)))) {
+      throw new Error("`layer` must be a 'Layer' or an '[Neurons]'")
+    } else if(layer instanceof Layer) {
+      layer = layer.neurons
+    }
+    
+    return async.auto({
+      "incoming": function(callback) {
+        async.map(layer, function(neuron, callback) {
+          callback(null, neuron.connections.incoming)
+        }, callback)
+      },
+      "outgoing": function(callback) {
+        async.map(layer, function(neuron, callback) {
+          callback(null, neuron.connections.outgoing)
+        }, callback)
+      },
+      "all": ["incoming", "outgoing", function(results, callback) {
+        callback(null, _.uniq(_.concat(_.flatten(results.incoming), _.flatten(results.outgoing))))
+      }],
+      "weights": ["all", function(results, callback) {
+        async.map(results.all, function(connection, callback) {
+          callback(null, connection.weight)
+        }, callback)
+      }]
+    }, function(error, results) {
+      return callback ? callback(error, results.weights) : !error ? resolve(results.weights) : reject(error)
+    })
+  })
+}
+
 /**
 * @param {Layer} layer
 * @param {[number]} inputs
@@ -388,6 +423,7 @@ Layer.activate = function(layer, inputs, callback) {
   }
   
   if(inputs && inputs.length !== layer.length) {
+//     console.log(inputs)
     throw new Error("'inputs.length' !== 'layer.neurons'\nInput size must be equal to the number of neurons in the layer.")
   }
   
