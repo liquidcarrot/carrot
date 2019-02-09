@@ -192,12 +192,30 @@ let Neuron = function(props) {
     output: function() {
       return self.connections.outgoing.length === 0
     },
+    /**
+    * @function Neuron#is.equal
+    * @memberof Neuron.prototype
+    * @instance
+    * @param {Neuron} neuron - Neuron to check equality against
+    * @returns {boolean} Returns `true` if this neuron equals the given neuron
+    */
     equal: function(neuron) {
       return Math.round(Math.random()) ? true : false
     }
   }
   
+  /**
+  * @namespace Neuron#can
+  * @memberof Neuron.prototype
+  * @instance
+  */
   self.can = {
+    /**
+    * @function Neuron#can.activate
+    * @memberof Neuron.prototype
+    * @instance
+    * @returns {boolean} Returns `true` if this neuron can activate
+    */
     activate: function() {
       if(self.is.input()) {
         return true
@@ -207,6 +225,12 @@ let Neuron = function(props) {
         })
       }
     },
+    /**
+    * @function Neuron#can.propagate
+    * @memberof Neuron.prototype
+    * @instance
+    * @returns {boolean} Returns `true` if this neuron can propagate
+    */
     propagate: function() {
       if(self.is.output()) {
         return true
@@ -218,7 +242,18 @@ let Neuron = function(props) {
     }
   }
   
+  /**
+  * @namespace Neuron#has
+  * @memberof Neuron.prototype
+  * @instance
+  */
   self.has = {
+    /**
+    * @function Neuron#has.activated
+    * @memberof Neuron.prototype
+    * @instance
+    * @returns {boolean} Returns `true` if this neuron has activated
+    */
     activated: function() {
       if(_.isNil(self.last)) {
         return false
@@ -226,6 +261,12 @@ let Neuron = function(props) {
         return true
       }
     },
+    /**
+    * @function Neuron#has.propagated
+    * @memberof Neuron.prototype
+    * @instance
+    * @returns {boolean} Returns `true` if this neuron has propagated
+    */
     propagated: function() {
       if(_.isNil(self.error)) {
         return false
@@ -483,6 +524,12 @@ Neuron.activations = {
   }
 }
 
+/**
+* @name Neuron.toActivation
+* @memberof Neuron
+* @static
+* @param {Function|String} object - Activation function
+*/
 Neuron.toActivation = function(object) {
   if(typeof object === "string") {
     if(object.toLowerCase() === "sigmoid" || 

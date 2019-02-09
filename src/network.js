@@ -7,6 +7,19 @@ let Neuron = require('./neuron')
 let Connection = require('./connection')
 let Layer = require('./layer')
 
+/**
+* >Network Factory Function
+*
+* @constructs Network
+* @param {Network|[Layer]|[Neuron]|[number]} props - A `Network`, `[Layer]`, `[Neuron]`, or `[number]`
+* @param {Object} props - Similar to neuron props
+* @param {number} [props.bias=Math.random()] - Synaptic Weight Formula's Constant AKA Bias
+* @param {ActivationFunction} [props.activation=Neuron.activations.SIGMOID] - Activation Function
+* @param {number} [props.rate=0.3] - Learning rate
+* @param {Object} [props.connections] - Connections
+* @param {Layer|[Neuron]|[Connection]} [props.connections.incoming=[]] - Incoming Connections
+* @param {Layer|[Neuron]|[Connection]} [props.connections.outgoing=[]] - Outgoing Connections
+*/
 let Network = function(props, options) {
   let self = this
   
@@ -59,6 +72,12 @@ let Network = function(props, options) {
     }
   }
   
+  /**
+  * @namespace Network#inputs
+  * @memberof Network.prototype
+  * @instance
+  * @param {NeuronsCallback} callback - Invoked with _(error, neurons)_ 
+  */
   self.inputs = function(callback) {
     return new Promise(function(resolve, reject) {
       async.filter(self.neurons, function(neuron, callback) {
@@ -66,7 +85,12 @@ let Network = function(props, options) {
       }, callback)
     })
   }
-  
+  /**
+  * @namespace Network#outputs
+  * @memberof Network.prototype
+  * @instance
+  * @param {NeuronsCallback} callback - Invoked with _(error, neurons)_ 
+  */
   self.outputs = function(callback) {
     return new Promise(function(resolve, reject) {
       async.filter(self.neurons, function(neuron, callback) {
@@ -74,7 +98,12 @@ let Network = function(props, options) {
       }, callback)
     })
   }
-  
+  /**
+  * @namespace Network#weights
+  * @memberof Network.prototype
+  * @instance
+  * @param {NumbersCallback} callback - Invoked with _(error, weights)_ 
+  */
   self.weights = function(callback) {
     return new Promise(function(resolve, reject) {
       return async.auto({
@@ -101,7 +130,13 @@ let Network = function(props, options) {
       })
     })
   }
-  
+  /**
+  * @namespace Network#activate
+  * @memberof Network.prototype
+  * @instance
+  * @param {[number]} [inputs]
+  * @param {NumbersCallback} callback - Invoked with _(error, outputs)_ 
+  */
   self.activate = function(inputs, callback) {
     return new Promise(function(resolve, reject) {
       return async.auto({
@@ -224,7 +259,11 @@ let Network = function(props, options) {
   }
   
   /**
-  * Given expected values, uses "mean squared equation" to calculate error; Propagate individual neural error through network and udpates weights.
+  * @namespace Network#propagate
+  * @memberof Network.prototype
+  * @instance
+  * @param {[number]} [feedback]
+  * @param {NumbersCallback} callback - Invoked with _(error, outputs)_ 
   */
   self.propagate = function(feedback, callback) {
     return new Promise(function(resolve, reject) {

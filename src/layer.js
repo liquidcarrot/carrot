@@ -17,7 +17,7 @@ let Neuron = require('./neuron')
 * @param {number} [options.bias=Math.random()] - Synaptic Weight Formula's Constant AKA Bias
 * @param {ActivationFunction} [options.activation=Neuron.activations.SIGMOID] - Activation Function
 * @param {number} [props.rate=0.3] - Learning rate
-* @param {Object} [connections] - Connections
+* @param {Object} [props.connections] - Connections
 * @param {Layer|[Neuron]|[Connection]} [props.connections.incoming=[]] - Incoming Connections
 * @param {Layer|[Neuron]|[Connection]} [props.connections.outgoing=[]] - Outgoing Connections
 */
@@ -80,9 +80,19 @@ let Layer = function(props, options) {
         return neuron.is.output()
       })
     }
-  }
-  
+  } 
+  /**
+  * @namespace Layer#can
+  * @memberof Layer.prototype
+  * @instance
+  */
   self.can = {
+    /**
+    * @function Layer#can.activate
+    * @memberof Layer.prototype
+    * @instance
+    * @returns {boolean} Returns `true` if all neurons can activate
+    */
     activate: function() {
       if(self.is.input()) {
         return true
@@ -94,6 +104,12 @@ let Layer = function(props, options) {
         })
       }
     },
+    /**
+    * @function Layer#can.propagate
+    * @memberof Layer.prototype
+    * @instance
+    * @return {boolean} Return `true` if all neurons can propagate
+    */
     propagate: function() {
       if(self.is.output()) {
         return true
@@ -106,8 +122,18 @@ let Layer = function(props, options) {
       }
     }
   }
-  
+  /**
+  * @namespace Layer#has
+  * @memberof Layer.prototype
+  * @instance
+  */
   self.has = {
+    /**
+    * @function Layer#has.activated
+    * @memberof Layer.prototype
+    * @instance
+    * @returns {boolean} Returns `true` if all neurons have activated
+    */
     activated: function() {
       if(_.isNil(self.last)) {
         return false
@@ -115,6 +141,12 @@ let Layer = function(props, options) {
         return true
       }
     },
+    /**
+    * @function Layer#has.propagated
+    * @memberof Layer.prototype
+    * @instance
+    * @return {boolean} Return `true` if all neurons have propagated
+    */
     propagated: function() {
       if(_.isNil(self.error)) {
         return false
@@ -123,7 +155,12 @@ let Layer = function(props, options) {
       }
     }
   }
-  
+  /**
+  * @function Layer#weights
+  * @memberof Layer.prototype
+  * @instance
+  * @param {NumbersCallback} [callback] - Callback invoked with _(error, weights)_
+  */
   self.weights = function(callback) {
     return new Promise(function(resolve, reject) {
       return async.auto({
@@ -150,7 +187,6 @@ let Layer = function(props, options) {
       })
     })
   }
-  
   /**
   * Projects all the neurons in this layer to all the neurons in the given layer - or neuron.
   *
@@ -308,7 +344,13 @@ let Layer = function(props, options) {
       }
     })
   }
-  // Adds a neuron to this layer
+  /**
+  * @function Layer#add
+  * @memberof Layer.prototype
+  * @instance
+  * @param {Neuron} neuron - Neuron to add to the this layer
+  * @param {NumbersCallback} [callback] - Callback invoked with _(error)_
+  */
   self.add = function(neuron, callback) {
     let self = this
     
@@ -342,7 +384,12 @@ let Layer = function(props, options) {
 //       })
     })
   }
-  // Returns the neuron with the highest axon value in this layer
+  /**
+  * @function Layer#best
+  * @memberof Layer.prototype
+  * @instance
+  * @param {NumberCallback} [callback] - Callback invoked with _(error, best)_
+  */
   self.best = function(callback) {
     let self = this
     return new Promise(function(resolve, reject) {
@@ -362,6 +409,13 @@ let Layer = function(props, options) {
   }
 }
 
+/**
+* @name Layer.weights
+* @memberof Layer
+* @static
+* @param {Layer} layer
+* @param {NumbersCallback} callback
+*/
 Layer.weights = function(layer, callback) {
   return new Promise(function(resolve, reject) {
     if(_.isNil(layer)) {
@@ -398,6 +452,9 @@ Layer.weights = function(layer, callback) {
 }
 
 /**
+* @name Layer.activate
+* @memberof Layer
+* @static
 * @param {Layer} layer
 * @param {[number]} inputs
 * @param {NumbersCallback} callback
@@ -445,6 +502,9 @@ Layer.activate = function(layer, inputs, callback) {
 }
 
 /**
+* @name Layer.propagate
+* @memberof Layer
+* @static
 * @param {Layer} layer
 * @param {[number]} feedback
 * @param {NumbersCallback} callback
@@ -487,6 +547,9 @@ Layer.propagate = function(layer, feedback, callback) {
 /**
 * Given a layer or array of neurons, returns a unique array of outgoing connections
 * 
+* @name Layer.next
+* @memberof Layer
+* @static
 * @param {Layer|[Neuron]} neurons - Layer or array of neurons
 * @param {NeuronsCallback} callback - Invoked _(error, neurons)_
 */
@@ -522,6 +585,9 @@ Layer.next = function(neurons, callback) {
 /**
 * Given a layer or array of neurons, returns a unique array of incoming connections
 * 
+* @name Layer.previous
+* @memberof Layer
+* @static
 * @param {Layer|[Neuron]} neurons - Layer or array of neurons
 * @param {NeuronsCallback} callback - Invoked _(error, neurons)_
 */
