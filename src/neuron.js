@@ -28,23 +28,59 @@ let Neuron = function(props) {
   let Layer = require('./layer')
   let Connection = require('./connection')
   
-  self.bias = Math.random() // Neuron bias
-  self.activation = Neuron.activations.SIGMOID // Neuron's Squash Function
+  //================================
+  // State Information =============
+  //================================
+  self.bias = props ? (props.bias || Math.random()) : Math.random()
+  self.alpha = props ? (props.alpha || Math.random()) : Math.random()
+  self.beta = props ? (props.beta || Math.random()) : Math.random()
+  self.delta = props ? (props.delta || Math.random()) : Math.random()
+  self.learning_rate = props ? (props.learning_rate || 0.3) : 0.3
   self.connections = {
-    // Incoming Connections
     incoming: [],
-    // Outgoing Connections
     outgoing: []
   }
+  //================================
+  // END State Information =========
+  //================================
+  
+  
+  
+  
+  self.activation = Neuron.activations.SIGMOID // Neuron's Squash Function
   
   // For Backpropagation
   self.rate = 0.3 // Learning rate
   self.last // Last Squashed Sum
   self.error // Last Error of Synaptic Weighted Sums (Not with respect to individual weights)
   
+  
+  //================================
+  // Stored Information ============
+  //================================
+  self.historic =  {
+    activation: {
+      outputs: [],
+      sums: [],
+    },
+    propagation: {
+      output_errors: [],
+      sum_errors: [],
+      errors: []
+    },
+    outputs: [],
+    feedback: []
+  }
+  //================================
+  // END Stored Information ========
+  //================================
+  
+  //================================
+  // Construction ==================
+  //================================
   if(props) {
-    self.bias = props.bias || self.bias
-    self.rate = props.rate || self.rate
+//     self.bias = props.bias || self.bias
+//     self.rate = props.rate || self.rate
     
     if(props.activation) {
       // Activation Functions Using Class Defaults
@@ -167,7 +203,14 @@ let Neuron = function(props) {
       }
     }
   }
-
+  //================================
+  // END Construction ==============
+  //================================
+  
+  
+  //================================
+  // Utility Functions =============
+  //================================
   /**
   * @namespace Neuron#is
   * @memberof Neuron.prototype
@@ -203,7 +246,6 @@ let Neuron = function(props) {
       return Math.round(Math.random()) ? true : false
     }
   }
-  
   /**
   * @namespace Neuron#can
   * @memberof Neuron.prototype
@@ -241,7 +283,6 @@ let Neuron = function(props) {
       }
     }
   }
-  
   /**
   * @namespace Neuron#has
   * @memberof Neuron.prototype
@@ -274,6 +315,129 @@ let Neuron = function(props) {
         return true
       }
     }
+  }
+  self.latest = {}
+  self.latest.activation = {
+    output: _.last(self.historic.activation.outputs),
+    sum: _.last(self.historic.activation.sums),
+  },
+  self.latest.propagation = {
+    output_error: _.last(self.historic.propagation.output_errors),
+    sum_error: _.last(self.historic.propagation.sum_errors)
+  },
+  self.latest.output = self.latest.activation.output,
+  self.latest.error = self.latest.propagation.output_error * self.latest.propagation.sum_error
+  self.incoming = {
+    inputs: (callback) => self.incoming.neurons((error, neurons) => {
+      async.map(neurons, (neuron, callback) => {
+        callback(null, neuron.last.output())
+      }, callback)
+    }),
+    feedback: (callback) => self.outgoing.neurons((error, neurons) => {
+      async.map(neurons, (neuron, callback) => {
+        callback(null, neuron.last.error())
+      }, callback)
+    }),
+    weights: (callback) => async.map(self.connections.incoming, (connection, callback) => {
+      callback(null, connection.weight)
+    }, callback),
+    connections: (callback) => callback(null, self.connections.incoming),
+    neurons: (callback) => async.map(self.connections.incoming, (connections, callback) => {
+      callback(null, connections.from)
+    }, callback)
+  }
+  self.outgoing = {
+    inputs: (callback) => callback(null, self.historic.outputs),
+    feedback: (callback) => callback(null, self.historic.feedback),
+    weights: (callback) => async.map(self.connections.outgoing, (connection, callback) => {
+      callback(null, connection.weight)
+    }, callback),
+    connections: (callback) => callback(null, self.connections.outgoing),
+    neurons: (callback) => async.map(self.connections.outgoing, (connections, callback) => {
+      callback(null, connections.to)
+    }, callback)
+  }
+  self.all = {
+    inputs: (callback) => async.concat([self.incoming, self.outgoing], (group, callback) => {
+      group.inputs(callback)
+    }, callback),
+    feedback: (callback) => async.concat([self.incoming, self.outgoing], (group, callback) => {
+      group.feedback(callback)
+    }, callback),
+    weights: (callback) => async.concat([self.incoming, self.outgoing], (group, callback) => {
+      group.weights(callback)
+    }, callback),
+    connections: (callback) => async.concat([self.incoming, self.outgoing], (group, callback) => {
+      group.connections(callback)
+    }, callback),
+    neurons: (callback) => async.concat([self.incoming, self.outgoing], (group, callback) => {
+      group.neurons(callback)
+    }, callback)
+  }
+  //================================
+  // END Utility Functions =========
+  //================================
+  
+  
+  self.weights = {
+    all: (callback) => async.concat([self.connections.incoming, self.connections.outgoing], (connections, callback) => {
+      async.map(connections, (connection, callback) => callback(null, connection.weight), callback)
+    }, callback),
+    length: (callback) => {
+      self.weights.all((error, weights) => {
+        callback(null, weights.length)
+      })
+    },
+    get: (index, callback) => {
+      self.weights.all((error, weights) => {
+        callback(null, weights[index])
+      })
+    },
+    set: (index, value, callback) => {
+      self.weights.incoming.length((error, length) => {
+        if(index < length) {
+          self.connections.incoming[index].weight = value
+          self.weights.get(index, callback)
+        } else {
+          self.connections.outgoing[index - length].weight = value
+          self.weights.get(index, callback)
+        }
+      })
+    },
+    incoming: {
+      all: (callback) => async.map(self.incoming, (connection, callback) => callback(null, connection.weight), callback),
+      length: (callback) => {
+        self.weights.incoming.all((error, weights) => {
+          callback(null, weights.length)
+        })
+      },
+      get: (index, callback) => {
+        self.weights.incoming.all((error, weights) => {
+          callback(null, weights[index])
+        })
+      },
+      set: (index, value, callback) => {
+        self.connections.incoming[index].weight = value
+        self.weights.get(index, callback)
+      },
+    },
+    outgoing: {
+      all: (callback) => async.map(self.outgoing, (connection, callback) => callback(null, connection.weight), callback),
+      length: (callback) => {
+        self.weights.outgoing.all((error, weights) => {
+          callback(null, weights.length)
+        })
+      },
+      get: (index, callback) => {
+        self.weights.outgoing.all((error, weights) => {
+          callback(null, weights[index])
+        })
+      },
+      set: (index, value, callback) => {
+        self.connections.outgoing[index].weight = value
+        self.weights.get(index, callback)
+      },
+    },
   }
   
   /**
