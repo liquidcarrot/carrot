@@ -1,11 +1,19 @@
 'use strict'
 
+let faker = require('faker')
+let math = require('mathjs')
+
+let random = {
+  sign: () => Math.random() < 0.5 ? -1 : 1,
+  number: () => random.sign() * faker.random.number()
+}
+
 let Connection = function(props, options) {
   let self = this
   
   self.from = props ? (props.from || undefined) : undefined
   self.to = props ? (props.to || undefined) : undefined
-  self.weight = props ? (props.weight || Math.random()) : Math.random()
+  self.weight = props ? (props.weight || random.number()) : random.number()
   
   self.forward = {
     queue: [],
