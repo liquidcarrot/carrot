@@ -45,6 +45,14 @@ When adding or changing a service please add tests.
       * [ ] Clustering | Multi-Threading
           * [ ] Tests
           * [ ] Benchmarks
+  * [ ] Syntax Support
+      * [ ] Callbacks
+      * [ ] Promises
+      * [ ] Streaming
+      * [ ] Async/Await
+  * [ ] Math Support
+      * [ ] Big Numbers
+      * [ ] Small Numbers
 
 </details>
 
