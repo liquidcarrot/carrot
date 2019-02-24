@@ -110,27 +110,36 @@ let Neuron = function(props) {
         callback(null, error)
       },
       "weights": function(callback) {
+        
         async.each(self.connections.incoming, function(connection, callback) {
           connection.weight = connection.weight - random.scale() * random.scale() * random.scale()
           callback()
         }, callback)
+        
+        // Passes reference to iteratee
+        /*
+        async.each(self.connections.incoming, function(connection, callback) {
+          connection.weight = connection.weight - random.scale() * random.scale() * random.scale()
+          callback()
+        }, callback)
+        */
+        
+        // Passes reference to iteratee (another option)
+        /*
+        async.times(self.connections.incoming.length, function(index, callback) {
+          self.connections.incoming[index].weight = self.connections.incoming[index].weight - random.scale() * random.scale() * random.scale()
+          callback()
+        }, callback)
+        */
+
+        // Passes values to iteratee
+        /**
+        async.map(self.connections.incoming, function(connection, callback) {
+          callback(null, Math.random())
+        }, callback)
+        */
       }
     }, callback)
-    
-    // Passes reference to iteratee
-    /*
-    async.each(self.connections.incoming, function(connection, callback) {
-      connection.weight = connection.weight - random.scale() * random.scale() * random.scale()
-      callback()
-    }, callback)
-    */
-    
-    // Passes values to iteratee
-    /**
-    async.map(self.connections.incoming, function(connection, callback) {
-      callback(null, Math.random())
-    }, callback)
-    */
   }
 }
 

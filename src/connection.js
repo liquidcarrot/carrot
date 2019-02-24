@@ -5,7 +5,7 @@ let math = require('mathjs')
 
 let random = {
   sign: () => Math.random() < 0.5 ? -1 : 1,
-  number: () => random.sign() * faker.random.number()
+  number: () => math.bignumber(random.sign() * faker.random.number())
 }
 
 let Connection = function(props, options) {
@@ -13,8 +13,10 @@ let Connection = function(props, options) {
   
   self.from = props ? (props.from || undefined) : undefined
   self.to = props ? (props.to || undefined) : undefined
-  self.weight = props ? (props.weight || random.number()) : random.number()
+  self.weight = math.bignumber(props ? (props.weight || random.number()) : random.number())
   
+  // For aynchronous/non-blocking networks
+  /*
   self.forward = {
     queue: [],
     states: []
@@ -27,7 +29,7 @@ let Connection = function(props, options) {
   if(props) {
     self.forward = props.forward || self.forward
     self.backward = props.backward || self.backward
-  }
+  }*/
 }
 
 module.exports = Connection

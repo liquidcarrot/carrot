@@ -10,11 +10,19 @@ chai.use(require('chai-each'))
 
 let expect = chai.expect
 
+
+/**
+* REQUIREMENTS:
+* - Should work with 'mathjs.bignumber''s
+* - Should have a weight initialization range of (-∞, ∞)
+* - Should have an output neuron for every possible "class" in a classifier (e.g. XOR -> 1: true, 2: false)
+*/
+
 describe("XOR", function() {
   this.timeout(50000)
   
   context("Cleaning", function() {
-    let Neuron = require('../src/neuron.simple')
+    let Neuron = require('../src/neuron')
     
     let data = [{
       inputs: [-10, -10],
