@@ -2,88 +2,87 @@
 
 ### Table of Contents
 
--   [Group][1]
+-   [Connection][1]
     -   [Parameters][2]
--   [Layer][3]
+-   [Group][3]
     -   [Parameters][4]
-    -   [Layer#is][5]
-    -   [Layer#can][6]
-    -   [Layer#is.input][7]
-    -   [Layer#is.output][8]
-    -   [Layer#has][9]
-    -   [Layer#can.activate][10]
-    -   [Layer#can.propagate][11]
-    -   [Layer#weights][12]
-        -   [Parameters][13]
-    -   [Layer#has.activated][14]
-    -   [Layer#has.propagated][15]
-    -   [Layer#project][16]
-        -   [Parameters][17]
-    -   [Layer#activate][18]
+-   [Layer][5]
+    -   [Parameters][6]
+    -   [Layer#can][7]
+    -   [Layer#is][8]
+    -   [Layer#is.input][9]
+    -   [Layer#is.output][10]
+    -   [Layer#has][11]
+    -   [Layer#can.activate][12]
+    -   [Layer#can.propagate][13]
+    -   [Layer#weights][14]
+        -   [Parameters][15]
+    -   [Layer#has.activated][16]
+    -   [Layer#has.propagated][17]
+    -   [Layer#project][18]
         -   [Parameters][19]
-    -   [Layer#propagate][20]
+    -   [Layer#activate][20]
         -   [Parameters][21]
-    -   [Layer#add][22]
+    -   [Layer#propagate][22]
         -   [Parameters][23]
-    -   [Layer#best][24]
+    -   [Layer#add][24]
         -   [Parameters][25]
-    -   [Layer.weights][26]
+    -   [Layer#best][26]
         -   [Parameters][27]
-    -   [Layer.activate][28]
+    -   [Layer.weights][28]
         -   [Parameters][29]
-    -   [Layer.propagate][30]
+    -   [Layer.activate][30]
         -   [Parameters][31]
-    -   [Layer.next][32]
+    -   [Layer.propagate][32]
         -   [Parameters][33]
-    -   [Layer.previous][34]
+    -   [Layer.next][34]
         -   [Parameters][35]
--   [Network][36]
-    -   [Parameters][37]
-    -   [Network#inputs][38]
-        -   [Parameters][39]
-    -   [Network#outputs][40]
+    -   [Layer.previous][36]
+        -   [Parameters][37]
+-   [Network][38]
+    -   [Parameters][39]
+    -   [Network#inputs][40]
         -   [Parameters][41]
-    -   [Network#weights][42]
+    -   [Network#outputs][42]
         -   [Parameters][43]
-    -   [Network#activate][44]
+    -   [Network#weights][44]
         -   [Parameters][45]
-    -   [Network#propagate][46]
+    -   [Network#activate][46]
         -   [Parameters][47]
--   [activate][48]
--   [Neuron][49]
-    -   [Parameters][50]
-    -   [Neuron#can][51]
-    -   [Neuron#is][52]
-    -   [Neuron#is.input][53]
-    -   [Neuron#is.ouput][54]
-    -   [Neuron#is.equal][55]
+    -   [Network#propagate][48]
+        -   [Parameters][49]
+-   [activate][50]
+-   [Neuron][51]
+    -   [Parameters][52]
+    -   [Neuron#activate][53]
+        -   [Parameters][54]
+    -   [Neuron#activate][55]
         -   [Parameters][56]
-    -   [Neuron#has][57]
-    -   [Neuron#can.activate][58]
-    -   [Neuron#can.propagate][59]
-    -   [Neuron#project][60]
+    -   [Neuron#propagate][57]
+        -   [Parameters][58]
+    -   [Neuron.squash][59]
+    -   [Neuron.squash.LOGISTIC][60]
         -   [Parameters][61]
-    -   [Neuron#has.activated][62]
-    -   [Neuron#has.propagated][63]
-    -   [Neuron#activate][64]
+    -   [Neuron.squash.TANH][62]
+        -   [Parameters][63]
+    -   [Neuron.squash.IDENTITY][64]
         -   [Parameters][65]
-    -   [Neuron#propagate][66]
+    -   [Neuron.squash.HLIM][66]
         -   [Parameters][67]
-    -   [Neuron.activations][68]
-    -   [Neuron.toActivation][69]
-        -   [Parameters][70]
-    -   [Neuron.activations.SIGMOID][71]
-        -   [Parameters][72]
-    -   [Neuron.activations.RELU][73]
-        -   [Parameters][74]
-    -   [Neuron.activations.TANH][75]
-        -   [Parameters][76]
-    -   [Neuron.activations.LINEAR][77]
-        -   [Parameters][78]
--   [propagate][79]
-    -   [Parameters][80]
--   [project][81]
-    -   [Parameters][82]
+    -   [Neuron.squash.RELU][68]
+        -   [Parameters][69]
+
+## Connection
+
+### Parameters
+
+-   `$0` **[Object][70]**  (optional, default `{}`)
+    -   `$0.from`  
+    -   `$0.to`  
+    -   `$0.weight`   (optional, default `Math.random()*2-1`)
+-   `from` **[Neuron][71]** 
+-   `to` **[Neuron][71]** 
+-   `weight` **[number][72]?** 
 
 ## Group
 
@@ -92,46 +91,46 @@ Represents a Group of Neurons.
 ### Parameters
 
 -   `props`  
--   `options` **[array][83]** 
+-   `options` **[array][73]** 
 
 ## Layer
 
 > Neural Layer Factory Function
 
-CHECK: [https://www.youtube.com/watch?v=FK77zZxaBoI][84]
+CHECK: [https://www.youtube.com/watch?v=FK77zZxaBoI][74]
 
 ### Parameters
 
--   `props` **([number][85] \| [Layer][86] | \[[Neuron][87]])** A `Layer`, `Number`, or array of `Neuron`
-    -   `props.rate` **[number][85]** Learning rate (optional, default `0.3`)
-    -   `props.connections` **[Object][88]?** Connections
-        -   `props.connections.incoming` **([Layer][86] | \[[Neuron][87]] | \[Connection])** Incoming Connections (optional, default `[]`)
-        -   `props.connections.outgoing` **([Layer][86] | \[[Neuron][87]] | \[Connection])** Outgoing Connections (optional, default `[]`)
--   `options` **[Object][88]** Similar to neuron options
-    -   `options.bias` **[number][85]** Synaptic Weight Formula's Constant AKA Bias (optional, default `Math.random()`)
+-   `props` **([number][72] \| [Layer][75] | \[[Neuron][71]])** A `Layer`, `Number`, or array of `Neuron`
+    -   `props.rate` **[number][72]** Learning rate (optional, default `0.3`)
+    -   `props.connections` **[Object][70]?** Connections
+        -   `props.connections.incoming` **([Layer][75] | \[[Neuron][71]] | \[[Connection][76]])** Incoming Connections (optional, default `[]`)
+        -   `props.connections.outgoing` **([Layer][75] | \[[Neuron][71]] | \[[Connection][76]])** Outgoing Connections (optional, default `[]`)
+-   `options` **[Object][70]** Similar to neuron options
+    -   `options.bias` **[number][72]** Synaptic Weight Formula's Constant AKA Bias (optional, default `Math.random()`)
     -   `options.activation` **ActivationFunction** Activation Function (optional, default `Neuron.activations.SIGMOID`)
-
-### Layer#is
 
 ### Layer#can
 
+### Layer#is
+
 ### Layer#is.input
 
-Returns **[boolean][89]** Returns `true` if all neurons in this layer have no incoming connections
+Returns **[boolean][77]** Returns `true` if all neurons in this layer have no incoming connections
 
 ### Layer#is.output
 
-Returns **[boolean][89]** Return `true` if all neurons in this layer have no outgoing connections
+Returns **[boolean][77]** Return `true` if all neurons in this layer have no outgoing connections
 
 ### Layer#has
 
 ### Layer#can.activate
 
-Returns **[boolean][89]** Returns `true` if all neurons can activate
+Returns **[boolean][77]** Returns `true` if all neurons can activate
 
 ### Layer#can.propagate
 
-Returns **[boolean][89]** Return `true` if all neurons can propagate
+Returns **[boolean][77]** Return `true` if all neurons can propagate
 
 ### Layer#weights
 
@@ -141,11 +140,11 @@ Returns **[boolean][89]** Return `true` if all neurons can propagate
 
 ### Layer#has.activated
 
-Returns **[boolean][89]** Returns `true` if all neurons have activated
+Returns **[boolean][77]** Returns `true` if all neurons have activated
 
 ### Layer#has.propagated
 
-Returns **[boolean][89]** Return `true` if all neurons have propagated
+Returns **[boolean][77]** Return `true` if all neurons have propagated
 
 ### Layer#project
 
@@ -153,7 +152,7 @@ Projects all the neurons in this layer to all the neurons in the given layer - o
 
 #### Parameters
 
--   `object` **([Neuron][87] \| [Layer][86] \| [Group][90])** Destination `neuron`, `layer`, or `group`
+-   `object` **([Neuron][71] \| [Layer][75] \| [Group][78])** Destination `neuron`, `layer`, or `group`
 -   `callback` **ConnectionsCallback?** Callback invoked with _(error, connections)_
 
 ### Layer#activate
@@ -162,7 +161,7 @@ Activates every neuron in this layer and returns squashed results
 
 #### Parameters
 
--   `inputs` **\[[number][85]]?** Array of real numbers (-∞, ∞)
+-   `inputs` **\[[number][72]]?** Array of real numbers (-∞, ∞)
 -   `callback` **NumbersCallback?** Callback invoked with _(error, results)_
 
 ### Layer#propagate
@@ -171,14 +170,14 @@ Updates the weights of every neuron in this layer and returns their mathematical
 
 #### Parameters
 
--   `feedback` **\[[number][85]]?** Array of real numbers (-∞, ∞)
+-   `feedback` **\[[number][72]]?** Array of real numbers (-∞, ∞)
 -   `callback` **NumbersCallback?** Callback invoked with _(error, results)_
 
 ### Layer#add
 
 #### Parameters
 
--   `neuron` **[Neuron][87]** Neuron to add to the this layer
+-   `neuron` **[Neuron][71]** Neuron to add to the this layer
 -   `callback` **NumbersCallback?** Callback invoked with _(error)_
 
 ### Layer#best
@@ -191,23 +190,23 @@ Updates the weights of every neuron in this layer and returns their mathematical
 
 #### Parameters
 
--   `layer` **[Layer][86]** 
+-   `layer` **[Layer][75]** 
 -   `callback` **NumbersCallback** 
 
 ### Layer.activate
 
 #### Parameters
 
--   `layer` **[Layer][86]** 
--   `inputs` **\[[number][85]]** 
+-   `layer` **[Layer][75]** 
+-   `inputs` **\[[number][72]]** 
 -   `callback` **NumbersCallback** 
 
 ### Layer.propagate
 
 #### Parameters
 
--   `layer` **[Layer][86]** 
--   `feedback` **\[[number][85]]** 
+-   `layer` **[Layer][75]** 
+-   `feedback` **\[[number][72]]** 
 -   `callback` **NumbersCallback** 
 
 ### Layer.next
@@ -216,7 +215,7 @@ Given a layer or array of neurons, returns a unique array of outgoing connection
 
 #### Parameters
 
--   `neurons` **([Layer][86] | \[[Neuron][87]])** Layer or array of neurons
+-   `neurons` **([Layer][75] | \[[Neuron][71]])** Layer or array of neurons
 -   `callback` **NeuronsCallback** Invoked _(error, neurons)_
 
 ### Layer.previous
@@ -225,7 +224,7 @@ Given a layer or array of neurons, returns a unique array of incoming connection
 
 #### Parameters
 
--   `neurons` **([Layer][86] | \[[Neuron][87]])** Layer or array of neurons
+-   `neurons` **([Layer][75] | \[[Neuron][71]])** Layer or array of neurons
 -   `callback` **NeuronsCallback** Invoked _(error, neurons)_
 
 ## Network
@@ -234,7 +233,7 @@ Given a layer or array of neurons, returns a unique array of incoming connection
 
 ### Parameters
 
--   `props` **[Object][88]** Similar to neuron props
+-   `props` **[Object][70]** Similar to neuron props
 -   `options`  
 
 ### Network#inputs
@@ -259,14 +258,14 @@ Given a layer or array of neurons, returns a unique array of incoming connection
 
 #### Parameters
 
--   `inputs` **\[[number][85]]?** 
+-   `inputs` **\[[number][72]]?** 
 -   `callback` **NumbersCallback** Invoked with _(error, outputs)_
 
 ### Network#propagate
 
 #### Parameters
 
--   `feedback` **\[[number][85]]?** 
+-   `feedback` **\[[number][72]]?** 
 -   `callback` **NumbersCallback** Invoked with _(error, outputs)_
 
 ## activate
@@ -312,340 +311,248 @@ neuron.activate(callback)
 
 ## Neuron
 
-> Neuron Factory Function
-
--   CHECK: [https://robertbeisicht.wordpress.com/2014/07/04/feed-forward-neural-network-in-javascript/][91]
--   CHECK: [https://medium.com/javascript-scene/javascript-factory-functions-with-es6-4d224591a8b1][92]
--   CHECK: [https://softwareengineering.stackexchange.com/questions/82593/javascript-ternary-operator-vs][93]
-
 ### Parameters
 
--   `props` **[Object][88]?** Neuron's Properties
-    -   `props.bias` **[number][85]** Neuron's Synaptic Weight Constant AKA Bias (optional, default `Math.random()`)
-    -   `props.activation` **ActivationFunction** Neuron's Activation Function (optional, default `Neuron.activations.SIGMOID`)
-    -   `props.rate` **[number][85]** Neuron's Learning Rate AKA Gradient Descent Step Size (optional, default `0.3`)
-    -   `props.connections` **[Object][88]?** Neuron's Connections
-        -   `props.connections.incoming` **([Layer][86] | \[[Neuron][87]] | \[Connection])** Neuron's Incoming Connections (optional, default `[]`)
-        -   `props.connections.outgoing` **([Layer][86] | \[[Neuron][87]] | \[Connection])** Neuron's Outgoing Connections (optional, default `[]`)
-
-### Neuron#can
-
-### Neuron#is
-
-### Neuron#is.input
-
-Returns **[boolean][89]** Returns `true` if this neuron has no incoming connections
-
-### Neuron#is.ouput
-
-Returns **[boolean][89]** Returns `true` if this neuron has no outgoing connections
-
-### Neuron#is.equal
-
-#### Parameters
-
--   `neuron` **[Neuron][87]** Neuron to check equality against
-
-Returns **[boolean][89]** Returns `true` if this neuron equals the given neuron
-
-### Neuron#has
-
-### Neuron#can.activate
-
-Returns **[boolean][89]** Returns `true` if this neuron can activate
-
-### Neuron#can.propagate
-
-Returns **[boolean][89]** Returns `true` if this neuron can propagate
-
-### Neuron#project
-
-Projects this neuron to given neuron.
-
-#### Parameters
-
--   `neuron` **[Neuron][87]** Destination `neuron`
--   `weight` **[number][85]?** Connection `weight`
--   `callback` **ConnectionCallback?** Callback invoked with _(error, connection)_
-
-### Neuron#has.activated
-
-Returns **[boolean][89]** Returns `true` if this neuron has activated
-
-### Neuron#has.propagated
-
-Returns **[boolean][89]** Returns `true` if this neuron has propagated
+-   `$0` **[Object][70]**  (optional, default `{}`)
+    -   `$0.connections`   (optional, default `{incoming:[],outgoing:[]}`)
+    -   `$0.error`   (optional, default `0`)
+    -   `$0.activation`   (optional, default `0`)
+    -   `$0.derivative`   (optional, default `0`)
+    -   `$0.rate`   (optional, default `0.3`)
+    -   `$0.bias`   (optional, default `Math.random()*2-1`)
+    -   `$0.squash`   (optional, default `Neuron.squash.LOGISTIC`)
+-   `options` **[Object][70]?** 
+    -   `options.squash` **SquashFunction?** 
+    -   `options.rate` **[number][72]**  (optional, default `0.3`)
+    -   `options.bias` **[number][72]?** 
+-   `connections` **[Object][70]?** 
+    -   `connections.incoming` **[Array][73]&lt;[Connection][76]>?** 
+    -   `connections.outgoing` **[Array][73]&lt;[Connection][76]>?** 
 
 ### Neuron#activate
 
-Activates this neuron and returns squashed results
+#### Parameters
+
+-   `input` **[number][72]?** 
+
+Returns **[number][72]** 
+
+### Neuron#activate
 
 #### Parameters
 
--   `input` **[number][85]?** Real number (-∞, ∞)
--   `callback` **NumberCallback?** Callback invoked with _(error, result)_
+-   `neuron` **[Neuron][71]** 
+-   `weight` **[number][72]?** 
+
+Returns **[Connection][76]** 
 
 ### Neuron#propagate
 
-Updates this neurons weight and returns error
+#### Parameters
+
+-   `target` **[number][72]?** 
+
+Returns **[number][72]** 
+
+### Neuron.squash
+
+### Neuron.squash.LOGISTIC
 
 #### Parameters
 
--   `feedback` **[number][85]?** Real number (-∞, ∞)
--   `callback` **NumberCallback?** Callback invoked with _(error, result)_
+-   `x` **[number][72]** 
+-   `derivative` **[boolean][77]?** 
 
-### Neuron.activations
+Returns **[number][72]** 
 
-### Neuron.toActivation
-
-#### Parameters
-
--   `object` **([Function][94] \| [String][95])** Activation function
-
-### Neuron.activations.SIGMOID
+### Neuron.squash.TANH
 
 #### Parameters
 
--   `x` **[number][85]** Real Number Input
--   `derivative` **[boolean][89]** Return partial derivative
+-   `x` **[number][72]** 
+-   `derivative` **[boolean][77]?** 
 
-### Neuron.activations.RELU
+Returns **[number][72]** 
 
-#### Parameters
-
--   `x` **[number][85]** Real Number Input
--   `derivative` **[boolean][89]** Return partial derivative
-
-### Neuron.activations.TANH
+### Neuron.squash.IDENTITY
 
 #### Parameters
 
--   `x` **[number][85]** Real Number Input
--   `derivative` **[boolean][89]** Return partial derivative
+-   `x` **[number][72]** 
+-   `derivative` **[boolean][77]?** 
 
-### Neuron.activations.LINEAR
+Returns **[number][72]** 
+
+### Neuron.squash.HLIM
 
 #### Parameters
 
--   `x` **[number][85]** Real Number Input
--   `derivative` **[boolean][89]** Return partial derivative
+-   `x` **[number][72]** 
+-   `derivative` **[boolean][77]?** 
 
-## 
+Returns **[number][72]** 
 
-[x] Case "Input Neuron": Forward Input; Return Input
-[x] Case "Hiddent/Output Neuron": Sum Inputs; Squash Sum; Store Squashed Sum; Return Squashed Sum
+### Neuron.squash.RELU
 
-## propagate
+#### Parameters
 
-Assumes `feedback` is the Net Error with respect to this neuron
+-   `x` **[number][72]** 
+-   `derivative` **[boolean][77]?** 
 
-[ ] Learn How to Cleanly Set This Up
-[ ] Case "Output Neuron": Multiply `feedback` by Activation Derivative; Return Chained Expression
-[ ] Case "Hidden/Input": Sum Net Errrors; Multiply Net Error by Activation Derivative; Update Weights; Return Chained Expression
+Returns **[number][72]** 
 
-### Parameters
-
--   `feedback`  
--   `callback`  
-
-## project
-
-[x] Create a new Connection
-[x] Add Connection to both Neurons
-[x] Return Connection
-
-### Parameters
-
--   `neuron`  
--   `weight`  
--   `callback`  
-
-[1]: #group
+[1]: #connection
 
 [2]: #parameters
 
-[3]: #layer
+[3]: #group
 
 [4]: #parameters-1
 
-[5]: #layeris
+[5]: #layer
 
-[6]: #layercan
+[6]: #parameters-2
 
-[7]: #layerisinput
+[7]: #layercan
 
-[8]: #layerisoutput
+[8]: #layeris
 
-[9]: #layerhas
+[9]: #layerisinput
 
-[10]: #layercanactivate
+[10]: #layerisoutput
 
-[11]: #layercanpropagate
+[11]: #layerhas
 
-[12]: #layerweights
+[12]: #layercanactivate
 
-[13]: #parameters-2
+[13]: #layercanpropagate
 
-[14]: #layerhasactivated
+[14]: #layerweights
 
-[15]: #layerhaspropagated
+[15]: #parameters-3
 
-[16]: #layerproject
+[16]: #layerhasactivated
 
-[17]: #parameters-3
+[17]: #layerhaspropagated
 
-[18]: #layeractivate
+[18]: #layerproject
 
 [19]: #parameters-4
 
-[20]: #layerpropagate
+[20]: #layeractivate
 
 [21]: #parameters-5
 
-[22]: #layeradd
+[22]: #layerpropagate
 
 [23]: #parameters-6
 
-[24]: #layerbest
+[24]: #layeradd
 
 [25]: #parameters-7
 
-[26]: #layerweights-1
+[26]: #layerbest
 
 [27]: #parameters-8
 
-[28]: #layeractivate-1
+[28]: #layerweights-1
 
 [29]: #parameters-9
 
-[30]: #layerpropagate-1
+[30]: #layeractivate-1
 
 [31]: #parameters-10
 
-[32]: #layernext
+[32]: #layerpropagate-1
 
 [33]: #parameters-11
 
-[34]: #layerprevious
+[34]: #layernext
 
 [35]: #parameters-12
 
-[36]: #network
+[36]: #layerprevious
 
 [37]: #parameters-13
 
-[38]: #networkinputs
+[38]: #network
 
 [39]: #parameters-14
 
-[40]: #networkoutputs
+[40]: #networkinputs
 
 [41]: #parameters-15
 
-[42]: #networkweights
+[42]: #networkoutputs
 
 [43]: #parameters-16
 
-[44]: #networkactivate
+[44]: #networkweights
 
 [45]: #parameters-17
 
-[46]: #networkpropagate
+[46]: #networkactivate
 
 [47]: #parameters-18
 
-[48]: #activate
+[48]: #networkpropagate
 
-[49]: #neuron
+[49]: #parameters-19
 
-[50]: #parameters-19
+[50]: #activate
 
-[51]: #neuroncan
+[51]: #neuron
 
-[52]: #neuronis
+[52]: #parameters-20
 
-[53]: #neuronisinput
+[53]: #neuronactivate
 
-[54]: #neuronisouput
+[54]: #parameters-21
 
-[55]: #neuronisequal
+[55]: #neuronactivate-1
 
-[56]: #parameters-20
+[56]: #parameters-22
 
-[57]: #neuronhas
+[57]: #neuronpropagate
 
-[58]: #neuroncanactivate
+[58]: #parameters-23
 
-[59]: #neuroncanpropagate
+[59]: #neuronsquash
 
-[60]: #neuronproject
+[60]: #neuronsquashlogistic
 
-[61]: #parameters-21
+[61]: #parameters-24
 
-[62]: #neuronhasactivated
+[62]: #neuronsquashtanh
 
-[63]: #neuronhaspropagated
+[63]: #parameters-25
 
-[64]: #neuronactivate
+[64]: #neuronsquashidentity
 
-[65]: #parameters-22
+[65]: #parameters-26
 
-[66]: #neuronpropagate
+[66]: #neuronsquashhlim
 
-[67]: #parameters-23
+[67]: #parameters-27
 
-[68]: #neuronactivations
+[68]: #neuronsquashrelu
 
-[69]: #neurontoactivation
+[69]: #parameters-28
 
-[70]: #parameters-24
+[70]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
 
-[71]: #neuronactivationssigmoid
+[71]: #neuron
 
-[72]: #parameters-25
+[72]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
 
-[73]: #neuronactivationsrelu
+[73]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
 
-[74]: #parameters-26
+[74]: https://www.youtube.com/watch?v=FK77zZxaBoI
 
-[75]: #neuronactivationstanh
+[75]: #layer
 
-[76]: #parameters-27
+[76]: #connection
 
-[77]: #neuronactivationslinear
+[77]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
 
-[78]: #parameters-28
-
-[79]: #propagate
-
-[80]: #parameters-29
-
-[81]: #project
-
-[82]: #parameters-30
-
-[83]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
-
-[84]: https://www.youtube.com/watch?v=FK77zZxaBoI
-
-[85]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
-
-[86]: #layer
-
-[87]: #neuron
-
-[88]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
-
-[89]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean
-
-[90]: #group
-
-[91]: https://robertbeisicht.wordpress.com/2014/07/04/feed-forward-neural-network-in-javascript/
-
-[92]: https://medium.com/javascript-scene/javascript-factory-functions-with-es6-4d224591a8b1
-
-[93]: https://softwareengineering.stackexchange.com/questions/82593/javascript-ternary-operator-vs
-
-[94]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Statements/function
-
-[95]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[78]: #group

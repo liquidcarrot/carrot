@@ -1,14 +1,11 @@
 'use strict'
 
 let _ = require('lodash')
-let faker = require('faker')
-let chalk = require('chalk')
-let async = require('neo-async')
-let Promise = require('bluebird')
 
 let Connection = require('./connection')
 
 /**
+* @constructs Neuron
 * @param {Object} [options]
 * @param {Object} [connections]
 * @param {Connection[]} [connections.incoming]
