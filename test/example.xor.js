@@ -11,6 +11,111 @@ chai.use(require('chai-each'))
 let expect = chai.expect
 
 
+describe("XOR", function() {
+  
+  describe("w/ Neurons", function() {
+    let Neuron = require('../src/neuron')
+
+    it("should work with neurons", function() {
+      let i0 = new Neuron()
+      let i1 = new Neuron()
+      let h0 = new Neuron()
+      let h1 = new Neuron()
+      let o0 = new Neuron()
+
+      i0.project(h0)
+      i0.project(h1)
+      i1.project(h0)
+      i1.project(h1)
+      h0.project(o0)
+      h1.project(o0)
+
+      // train the network
+      var learningRate = .3;
+
+      for (var index = 0; index < 20000; index++) {
+        // 0,0 => 0
+        i0.activate(0)
+        i1.activate(0)
+        h0.activate()
+        h1.activate()
+        o0.activate()
+        o0.propagate(0)
+        h1.propagate()
+        h0.propagate()
+        i1.propagate()
+        i0.propagate()
+
+        // 0,1 => 1
+        i0.activate(0)
+        i1.activate(1)
+        h0.activate()
+        h1.activate()
+        o0.activate()
+        o0.propagate(1)
+        h1.propagate()
+        h0.propagate()
+        i1.propagate()
+        i0.propagate()
+
+        // 1,0 => 1
+        i0.activate(1)
+        i1.activate(0)
+        h0.activate()
+        h1.activate()
+        o0.activate()
+        o0.propagate(1)
+        h1.propagate()
+        h0.propagate()
+        i1.propagate()
+        i0.propagate()
+
+        // 1,1 => 0
+        i0.activate(1)
+        i1.activate(1)
+        h0.activate()
+        h1.activate()
+        o0.activate()
+        o0.propagate(0)
+        h1.propagate()
+        h0.propagate()
+        i1.propagate()
+        i0.propagate()
+      }
+
+
+      // test the network
+      i0.activate(0)
+      i1.activate(0)
+      h0.activate()
+      h1.activate()
+      console.log(o0.activate()); // [0.015020775950893527]
+
+      i0.activate(0)
+      i1.activate(1)
+      h0.activate()
+      h1.activate()
+      console.log(o0.activate()); // [0.9815816381088985]
+
+      i0.activate(1)
+      i1.activate(0)
+      h0.activate()
+      h1.activate()
+      console.log(o0.activate()); // [0.9871822457132193]
+
+      i0.activate(1)
+      i1.activate(1)
+      h0.activate()
+      h1.activate()
+      console.log(o0.activate()); // [0.012950087641929467]
+    })
+  })
+  
+  describe.skip("", function() {
+    
+  })
+})
+
 /**
 * REQUIREMENTS:
 * - Should work with 'mathjs.bignumber''s
@@ -18,7 +123,7 @@ let expect = chai.expect
 * - Should have an output neuron for every possible "class" in a classifier (e.g. XOR -> 1: true, 2: false)
 */
 
-describe("XOR", function() {
+describe.skip("XOR.old", function() {
   this.timeout(50000)
   
   context("Cleaning", function() {
