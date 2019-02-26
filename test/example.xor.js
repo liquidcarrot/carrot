@@ -31,8 +31,6 @@ describe("XOR", function() {
       h1.project(o0)
 
       // train the network
-      var learningRate = .3;
-
       for (var index = 0; index < 20000; index++) {
         // 0,0 => 0
         i0.activate(0)
@@ -83,7 +81,6 @@ describe("XOR", function() {
         i0.propagate()
       }
 
-
       // test the network
       i0.activate(0)
       i1.activate(0)
@@ -111,8 +108,69 @@ describe("XOR", function() {
     })
   })
   
-  describe.skip("", function() {
+  describe("w/ Layers", function() {
+    let Layer = require('../src/layer')
     
+    it("should work with layers", function() {
+      let i = new Layer(2)
+      let h = new Layer(2)
+      let o = new Layer(1)
+      
+      i.project(h)
+      h.project(o)
+      
+      // train the network
+      for (var index = 0; index < 20000; index++) {
+        // 0,0 => 0
+        i.activate([0,0])
+        h.activate()
+        o.activate()
+        o.propagate([0])
+        h.propagate()
+        i.propagate()
+
+        // 0,1 => 1
+        i.activate([0,1])
+        h.activate()
+        o.activate()
+        o.propagate([1])
+        h.propagate()
+        i.propagate()
+
+        // 1,0 => 1
+        i.activate([1,0])
+        h.activate()
+        o.activate()
+        o.propagate([1])
+        h.propagate()
+        i.propagate()
+
+        // 1,1 => 0
+        i.activate([1,1])
+        h.activate()
+        o.activate()
+        o.propagate([0])
+        h.propagate()
+        i.propagate()
+      }
+
+      // test the network
+      i.activate([0, 0])
+      h.activate()
+      console.log(o.activate()); // [0.015020775950893527]
+
+      i.activate([0, 1])
+      h.activate()
+      console.log(o.activate()); // [0.9815816381088985]
+
+      i.activate([1, 0])
+      h.activate()
+      console.log(o.activate()); // [0.9871822457132193]
+
+      i.activate([1, 1])
+      h.activate()
+      console.log(o.activate()); // [0.012950087641929467]
+    })
   })
 })
 
@@ -123,6 +181,7 @@ describe("XOR", function() {
 * - Should have an output neuron for every possible "class" in a classifier (e.g. XOR -> 1: true, 2: false)
 */
 
+/*
 describe.skip("XOR.old", function() {
   this.timeout(50000)
   
@@ -386,127 +445,6 @@ describe.skip("XOR.old", function() {
         callback(error, _.first(results))
       })
       
-      /*
-      async.mapValuesSeries(_.reverse(neurons), (neuron, index, callback) => {
-        if(neuron.is.output()) {
-          neuron.propagate(feedback[index], callback)
-        } else {
-          neuron.propagate(callback)
-        }
-      }, (error, results) => {
-        callback(error, _.first(results))
-      })
-      */
-    }
-    
-    
-    it("should improve with training", function(done) {
-      let start = new Date()
-      
-      async.auto({
-        "default": callback => async.mapSeries(data, (datum, callback) => activate(datum.inputs, callback), callback),
-        "train": ["default", (results, callback) => {
-          async.timesSeries(100, (n, callback) => {
-            async.mapSeries(data, (datum, callback) => {
-              async.auto({
-                "activate": callback => activate(datum.inputs, callback),
-                "propagate": ["activate", (results, callback) => propagate(datum.outputs, callback)],
-              }, (error, results) => {
-                callback(error, results.activate)
-              })
-            }, callback)
-          }, callback)
-        }]
-      }, (error, results) => {
-        async.mapValuesSeries(data, (datum, index, callback) => activate(datum.inputs, (error, result) => {
-          let default_error = 0.5 * Math.pow(datum.outputs[0] - results.default[index], 2)
-          let trained_error = 0.5 * Math.pow(datum.outputs[0] - result, 2)
-          let improvement = default_error > trained_error
-          
-          console.log("\t" + chalk.green("Case: ") + datum.inputs +
-                     chalk.green("; Untrained: ") + results.default[index] +
-                     chalk.green("; Trained: ") + result +
-                     chalk.green("; Expected: ") + datum.outputs)
-          console.log("\t" + chalk.green("Improvement: ") + (improvement ? chalk.green("Yes") : chalk.red("No")))
-          console.log()
-          
-          callback(error, improvement)
-        }), (error, results) => {
-          let improvements = Object.values(results)
-          
-          _.each(improvements, improvement => {
-            expect(improvement).to.equal(true)
-          })
-          
-          done()
-        })
-      })
-      
-    })
-  })
-  
-  context.skip("Using Neurons (New)", function() {
-//     let Neuron = require('../src/neuron.new')
-    
-    /*
-    let i0 = new Neuron()
-    let i1 = new Neuron()
-    let h0 = new Neuron({
-      connections: {
-        incoming: [i0, i1]
-      }
-    })
-    let h1 = new Neuron({
-      connections: {
-        incoming: [i0, i1]
-      }
-    })
-    let o0 = new Neuron({
-      connections: {
-        incoming: [h0, h1]
-      }
-    })
-    
-    let neurons = [i0, i1, h0, h1, o0]
-    
-    let data = [{
-      inputs: [0, 0],
-      outputs: [0]
-    }, {
-      inputs: [0, 1],
-      outputs: [1]
-    }, {
-      inputs: [1, 0],
-      outputs: [1]
-    }, {
-      inputs: [1, 1],
-      outputs: [0]
-    }]
-    
-    let activate = (inputs, callback) => {
-      async.mapValuesSeries(neurons, (neuron, index, callback) => {
-        if(neuron.is.input()) {
-          neuron.activate(inputs[index], callback)
-        } else {
-          neuron.activate(callback)
-        }
-      }, (error, results) => {
-        callback(error, _.last(Object.values(results)))
-      })
-    }
-    
-    let propagate = (feedback, callback) => {
-      async.timesSeries(neurons.length, (n, callback) => {
-        let index = neurons.length - n - 1
-        if(neurons[index].is.output()) {
-          neurons[index].propagate(feedback[n], callback)
-        } else {
-          neurons[index].propagate(callback)
-        }
-      }, (error, results) => {
-        callback(error, _.first(results))
-      })
-      
       
 //       async.mapValuesSeries(_.reverse(neurons), (neuron, index, callback) => {
 //         if(neuron.is.output()) {
@@ -564,7 +502,128 @@ describe.skip("XOR.old", function() {
       })
       
     })
-    */
+  })
+  
+  context.skip("Using Neurons (New)", function() {
+//     let Neuron = require('../src/neuron.new')
+    
+    
+//     let i0 = new Neuron()
+//     let i1 = new Neuron()
+//     let h0 = new Neuron({
+//       connections: {
+//         incoming: [i0, i1]
+//       }
+//     })
+//     let h1 = new Neuron({
+//       connections: {
+//         incoming: [i0, i1]
+//       }
+//     })
+//     let o0 = new Neuron({
+//       connections: {
+//         incoming: [h0, h1]
+//       }
+//     })
+    
+//     let neurons = [i0, i1, h0, h1, o0]
+    
+//     let data = [{
+//       inputs: [0, 0],
+//       outputs: [0]
+//     }, {
+//       inputs: [0, 1],
+//       outputs: [1]
+//     }, {
+//       inputs: [1, 0],
+//       outputs: [1]
+//     }, {
+//       inputs: [1, 1],
+//       outputs: [0]
+//     }]
+    
+//     let activate = (inputs, callback) => {
+//       async.mapValuesSeries(neurons, (neuron, index, callback) => {
+//         if(neuron.is.input()) {
+//           neuron.activate(inputs[index], callback)
+//         } else {
+//           neuron.activate(callback)
+//         }
+//       }, (error, results) => {
+//         callback(error, _.last(Object.values(results)))
+//       })
+//     }
+    
+//     let propagate = (feedback, callback) => {
+//       async.timesSeries(neurons.length, (n, callback) => {
+//         let index = neurons.length - n - 1
+//         if(neurons[index].is.output()) {
+//           neurons[index].propagate(feedback[n], callback)
+//         } else {
+//           neurons[index].propagate(callback)
+//         }
+//       }, (error, results) => {
+//         callback(error, _.first(results))
+//       })
+      
+      
+// //       async.mapValuesSeries(_.reverse(neurons), (neuron, index, callback) => {
+// //         if(neuron.is.output()) {
+// //           neuron.propagate(feedback[index], callback)
+// //         } else {
+// //           neuron.propagate(callback)
+// //         }
+// //       }, (error, results) => {
+// //         callback(error, _.first(results))
+// //       })
+      
+//     }
+    
+    
+//     it("should improve with training", function(done) {
+//       let start = new Date()
+      
+//       async.auto({
+//         "default": callback => async.mapSeries(data, (datum, callback) => activate(datum.inputs, callback), callback),
+//         "train": ["default", (results, callback) => {
+//           async.timesSeries(100, (n, callback) => {
+//             async.mapSeries(data, (datum, callback) => {
+//               async.auto({
+//                 "activate": callback => activate(datum.inputs, callback),
+//                 "propagate": ["activate", (results, callback) => propagate(datum.outputs, callback)],
+//               }, (error, results) => {
+//                 callback(error, results.activate)
+//               })
+//             }, callback)
+//           }, callback)
+//         }]
+//       }, (error, results) => {
+//         async.mapValuesSeries(data, (datum, index, callback) => activate(datum.inputs, (error, result) => {
+//           let default_error = 0.5 * Math.pow(datum.outputs[0] - results.default[index], 2)
+//           let trained_error = 0.5 * Math.pow(datum.outputs[0] - result, 2)
+//           let improvement = default_error > trained_error
+          
+//           console.log("\t" + chalk.green("Case: ") + datum.inputs +
+//                      chalk.green("; Untrained: ") + results.default[index] +
+//                      chalk.green("; Trained: ") + result +
+//                      chalk.green("; Expected: ") + datum.outputs)
+//           console.log("\t" + chalk.green("Improvement: ") + (improvement ? chalk.green("Yes") : chalk.red("No")))
+//           console.log()
+          
+//           callback(error, improvement)
+//         }), (error, results) => {
+//           let improvements = Object.values(results)
+          
+//           _.each(improvements, improvement => {
+//             expect(improvement).to.equal(true)
+//           })
+          
+//           done()
+//         })
+//       })
+      
+//     })
+    
   })
   
   context.skip("Using Layers", function() {
@@ -607,3 +666,4 @@ describe.skip("NAND", function() {
 describe.skip("NOR", function() {
   
 })
+*/
