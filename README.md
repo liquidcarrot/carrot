@@ -12,6 +12,32 @@
   * [Documentation](/DOCUMENTATION.md)
 </details>
 
+## Getting Started
+
+### Installing
+
+```bash
+$ npm i @liquid-carrot/carrot
+```
+
+### Introduction
+
+Making your first neuron.
+
+```javascript
+let Neuron = require('@liquid-carrot/carrot').Neuron
+
+let neuron = new Neuron()
+```
+
+Making your first neural network.
+
+```javascript
+let Network = require('@liquid-carrot/carrot').Network
+
+let network = new Network([2, 2, 1]) // Builds a neural network with 5 neurons: 2 + 2 + 1
+```
+
 ## Contributing
 [![Carrot's GitHub Issues](https://img.shields.io/github/issues/liquidcarrot/carrot.svg)](https://github.com/liquidcarrot/carrot/issues)
 
