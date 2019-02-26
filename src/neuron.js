@@ -53,7 +53,6 @@ let Neuron = function({
   * @memberof Neuron.prototype
   * @function Neuron#propagate
   * @param {number} [target]
-  * @returns {number}
   */
   self.propagate = function(target) {
     if(!_.isNil(target)) self.error = target - self.activation;
@@ -82,6 +81,32 @@ let Neuron = function({
     neuron.connections.incoming.push(connection)
 
     return connection
+  }
+  
+  
+  /**
+  * @memberof Neuron.prototype
+  * @namespace Neuron#is
+  */
+  self.is = {}
+  
+  /**
+  * @memberof Neuron.prototype
+  * @function Neuron#is.connected
+  * @param {Neuron} neuron
+  * @returns {'self'|'outgoing'|'incoming'|boolean}
+  */
+  self.is.connected = function(neuron) {
+    if(_.isEqual(self, neuron)) return "self";
+
+    _.each(self.connections, function(type,) {
+      _.each(type, function(connection) {
+        if(_.isEqual(connection.to, neuron)) return type; 
+        else if(_.isEqual(connection.from, neuron)) return type;
+      })
+    })
+    
+    return false;
   }
 }
 /**
