@@ -38,6 +38,10 @@ let Network = require('@liquid-carrot/carrot').Network
 let network = new Network([2, 2, 1]) // Builds a neural network with 5 neurons: 2 + 2 + 1
 ```
 
+## Built With
+
+* [Lodash](https://lodash.com/) - A JavaScript utility library
+
 ## Contributing
 [![Carrot's GitHub Issues](https://img.shields.io/github/issues/liquidcarrot/carrot.svg)](https://github.com/liquidcarrot/carrot/issues)
 
@@ -92,3 +96,9 @@ This project exists thanks to all the people who contribute. We can't do it with
 
 * [Luis Carbonell](https://twitter.com/luis_carbnell)
 * [Christian Echevarria](https://twitter.com/chrisgereina)
+
+## Acknoledgements
+
+A special thanks to [Neataptic](https://github.com/wagenaartje/neataptic/), [Synaptic](https://github.com/cazala/synaptic/), and [Brain.js](https://github.com/BrainJS/brain.js)! 
+
+Carrot™ was largely brought about by inspiration from these great libraries.
