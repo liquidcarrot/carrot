@@ -1,6 +1,6 @@
 {
   "name": "@liquid-carrot/carrot",
-  "version": "0.0.35",
+  "version": "0.0.36",
   "description": "A Node.js Neural Network Library",
   "main": "src/index.js",
   "scripts": {
