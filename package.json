@@ -1,7 +1,7 @@
 {
   "name": "@liquid-carrot/carrot",
   "version": "0.0.39",
-  "description": "A Node.js Neural Network Library",
+  "description": "A Simple Node.js AI Library for Neural Network",
   "main": "src/index.js",
   "scripts": {
     "build": "./node_modules/.bin/documentation build src/** -f md > DOCUMENTATION.md",

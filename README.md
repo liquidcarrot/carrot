@@ -1,5 +1,5 @@
 # Carrot™
->A Simple Node.js Neural Network Library
+>A Simple Node.js AI Library for Neural Network
 
 [![Carrot's Weekly Download](https://img.shields.io/npm/dm/@liquid-carrot/carrot.svg)](https://www.npmjs.com/package/@liquid-carrot/carrot) [![Carrot's License](https://img.shields.io/badge/License-MIT-blue.svg)](/LICENSE) [![Carrot's Love](https://img.shields.io/badge/Made%20with%20%E2%99%A5%20by-Liquid%20Carrot-ff1414.svg)](https://github.com/liquidcarrot/carrot/issues)
 
