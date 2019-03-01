@@ -11,6 +11,51 @@ let Trainer = function(network, {
   _.assignIn(this, { network, rate, iterations, error, cost, crossValidate, schedule });
   
   /**
+  * Trains a network on the given set
+  *
+  * @param {Object[]} set
+  * @param {Object} [options]
+  * @param {Network} [options.network]
+  * @param {number} [options.rate]
+  * @param {number} [options.iterations]
+  * @param {number} [options.error]
+  */
+  this.train = function(set, options) {
+    _.assignIn(this, options)
+    
+    let error = 1;
+    let iterations = -1;
+    let start = new Date();
+
+    while (++iterations < this.iterations && error > this.error) {
+      error = this._trainSet(set, this.rate, cost) / set.length;
+    }
+
+    return { error, iterations, time: Date.now() - start };
+  }
+
+  /** 
+  * Returns the error of one training epoch
+  *
+  * @param {Object[]} set
+  * @param {number} currentRate
+  * @param {CostFunction} costFunction
+  */
+  this._trainSet = function(set, currentRate, costFunction) {
+    let self = this;
+    let error = 0;
+    
+    _.each(set, function(target) {
+      let output = self.network.activate(target.input);
+      self.network.propagate(currentRate, target.output);
+      
+      error += costFunction(target.output, output);
+    });
+    
+    return error;
+  }
+  
+  /**
   * Trains an XOR network
   * 
   * @param {number} [iterations]
