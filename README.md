@@ -97,7 +97,7 @@ This project exists thanks to all the people who contribute. We can't do it with
 * [Luis Carbonell](https://twitter.com/luis_carbnell)
 * [Christian Echevarria](https://twitter.com/chrisgereina)
 
-## Acknoledgements
+## Acknowledgements
 
 A special thanks to [Neataptic](https://github.com/wagenaartje/neataptic/), [Synaptic](https://github.com/cazala/synaptic/), and [Brain.js](https://github.com/BrainJS/brain.js)! 
 
