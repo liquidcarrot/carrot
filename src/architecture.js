@@ -3,8 +3,34 @@ let _ = require('lodash')
 let Network = require('./network');
 let Layer = require('./layer');
 
+/**
+* Create a perceptron network
+*/
 let Perceptron = function() {
+  Network.call(this)
   
+  let args = Array.from(arguments) // convert arguments to Array
+  
+  if(args.length < 3) throw new Error('not enough layers (minimum 3) !!');
+  
+  let input = new Layer(args.shift());
+  let output = new Layer(args.pop());
+  
+  var hidden = [];
+
+  var previous = input;
+  
+  // generate hidden layers
+  _.each(args, function(size) {
+    let layer = new Layer(size);
+    hidden.push(layer);
+    previous.project(layer);
+    previous = layer;
+  })
+  previous.project(output);
+
+  // set layers of the neural network
+  this.set({ input, hidden, output });
 }
 
 let Liquid = function(inputs, hidden, outputs, connections, gates) {
