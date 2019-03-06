@@ -11,6 +11,24 @@ let Network = function({
   this.layers = { input, hidden, output };
   this.optimized = null;
   
+  /** 
+  * Feed-activate activate the network
+  *
+  * @param {number[]} input
+  * @returns {number[]}
+  */
+  this.activate = function(input) {
+    if(this.optimized === false) {
+      this.layers.input.activate(input);
+      _.each(this.layers.hidden, function(layer) { layer.activate() })
+      return this.layers.output.activate();
+    }
+    else {
+      if(this.optimized == null) this.optimize();
+      return this.optimized.activate(input);
+    }
+  }
+  
   /**
   * Returns all the neurons in the network
   *
