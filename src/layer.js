@@ -39,18 +39,17 @@ let LayerConnection = function({ from, to, weight = Math.random() * 2 - 1 } = {}
 * @param {number} [options.weight]
 * @param {SquashFunction} [options.squash]
 */
-let Layer = function(size, options) {
-  let self = this
-  
-  this.size = size | 0;
-  this.neurons = [];
-  
-  this.connections = {
-    incoming: [],
-    outgoing: []
-  }
+let Layer = function(size = 0, {
+  list = [],
+  connectedTo = [],
+} = {}) {
+  _.assignIn(this, { list, connectedTo })
+  this.size = size;
 
-  while(size--) { self.neurons.push(new Neuron(options)); }
+  while (size--) {
+    let neuron = new Neuron();
+    this.list.push(neuron);
+  }
 
   /**
   * @param {number[]} [input]
