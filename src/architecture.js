@@ -16,9 +16,9 @@ let Perceptron = function() {
   let input = new Layer(args.shift());
   let output = new Layer(args.pop());
   
-  var hidden = [];
+  let hidden = [];
 
-  var previous = input;
+  let previous = input;
   
   // generate hidden layers
   _.each(args, function(size) {
