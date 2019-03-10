@@ -15,20 +15,20 @@ let Connection = require('./connection')
 * @param {number} [options.bias]
 */
 let Neuron = function({
-  connections = {
-    incoming: [],
-    outgoing: []
-  },
-  error = 0,
+  ID = Neuron.uid(),
+  connections = { inputs: {}, projected: {}, gated: {} },
+  error = { responsibility: 0, projected: 0, gated: 0 },
+  trace = { elegibility: {}, extended: {}, influences: {} },
+  state = 0,
+  old = 0,
   activation = 0,
-  derivative = 0,
-  rate = 0.3,
+  squash = Neuron.squash.LOGISTIC,
+  neighboors = {},
   bias = Math.random() * 2 - 1,
-  squash = Neuron.squash.LOGISTIC
 } = {}) {
-  _.assignIn(this, { connections, error, activation, derivative, rate, bias, squash });
+  _.assignIn(this, { ID, connections, error, trace, state, old, activation, squash, neighboors, bias })
   
-  let self = this;
+  this.selfconnection = new Connection(this, this, 0); // weight = 0 -> not connected
   
   /**
   * @memberof Neuron.prototype
