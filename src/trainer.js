@@ -41,15 +41,15 @@ let Trainer = function(network, {
   * @param {number} currentRate
   * @param {CostFunction} costFunction
   */
-  this._trainSet = function(set, currentRate, costFunction) {
+  this._trainSet = function(set, rate, cost) {
     let self = this;
     let error = 0;
     
     _.each(set, function(target) {
       let output = self.network.activate(target.input);
-      self.network.propagate(currentRate, target.output);
+      self.network.propagate(rate, target.output);
       
-      error += costFunction(target.output, output);
+      error += cost(target.output, output);
     });
     
     return error;
