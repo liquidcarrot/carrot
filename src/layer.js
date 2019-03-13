@@ -2,6 +2,7 @@
 
 let _ = require('lodash')
 
+let Network = require('./network')
 let Neuron = require('./neuron')
 
 /**
@@ -96,13 +97,19 @@ let Layer = function(size = 0, {
     })
   }
 
-  /**
-  * @param {Layer} layer
-  * @param {number} [weight]
-  * @returns {LayerConnection}
+  /** 
+  * Projects this layer to given layer
+  *
+  * @param {Layer|Network} layer
+  * @param {String} [type]
+  * @param {number[]} [weights]
   */
-  self.project = function(layer, weight) {
-    return new LayerConnection({ from: self, to: layer, weight});
+  this.project = function(layer, type, weights) {
+    if(layer instanceof Network) layer = layer.layers.input;
+
+    if(layer instanceof Layer) {
+      if(!this.connected(layer)) return new LayerConnection(this, layer, type, weights);
+    } else throw new Error('Invalid argument, you can only project connections to LAYERS and NETWORKS!');
   }
   
   /** 
@@ -127,6 +134,7 @@ let Layer = function(size = 0, {
     })
     if(connections == this.size) return Layer.connectionType.ONE_TO_ONE;
   }
+  
 }
 
 module.exports = Layer
