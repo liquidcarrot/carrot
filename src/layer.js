@@ -135,6 +135,12 @@ let Layer = function(size = 0, {
     if(connections == this.size) return Layer.connectionType.ONE_TO_ONE;
   }
   
+  /** 
+  * Resets all connection weights to/from the layer
+  */
+  this.reset = function() {
+    _.each(this.list, function(neuron) { neuron.reset() })
+  }
 }
 
 module.exports = Layer
