@@ -82,6 +82,11 @@ let Neuron = function({
 
     return connection
   }
+
+  /**
+  * Returns true iff the neuron is self-connected
+  */
+  this.selfconnected = function() { return this.selfconnection.weight !== 0; }
   
   
   /**
