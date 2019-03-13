@@ -129,6 +129,20 @@ let Neuron = function({
   }
   
   /**
+  * Resets connection weights
+  */
+  this.reset = function() {
+    this.clear();
+
+    _.each(this.connections, function(type) {
+      _.each(type, function(connection) { connection = Math.random() * 2 - 1; })
+    })
+
+    this.bias = Math.random() * 2 - 1;
+    this.old = this.state = this.activation = 0;
+  }
+  
+  /**
   * @memberof Neuron.prototype
   * @namespace Neuron#is
   */
