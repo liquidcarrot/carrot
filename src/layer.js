@@ -104,6 +104,29 @@ let Layer = function(size = 0, {
   self.project = function(layer, weight) {
     return new LayerConnection({ from: self, to: layer, weight});
   }
+  
+  /** 
+  * Return true iff this layer is connected to given layer
+  */
+  this.connected = function(layer) {
+    // Check if ALL to ALL connection
+    let connections = 0;
+    _.each(this.list, function(from) {
+      _.each(layer.list, function(to) {
+        let connected = from.connected(to);
+        if(connected.type == 'projected') connections++;
+      })
+    })
+    if(connections == this.size * layer.size) return Layer.connectionType.ALL_TO_ALL;
+
+    // Check if ONE to ONE connection
+    connections = 0;
+    _.each(this.list, function(from, index) {
+      let connected = from.connected(layer.list[index]);
+      if(connected.type == 'projected') connections++;
+    })
+    if(connections == this.size) return Layer.connectionType.ONE_TO_ONE;
+  }
 }
 
 module.exports = Layer
