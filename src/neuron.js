@@ -115,6 +115,18 @@ let Neuron = function({
     return false;
   }
   
+  /**
+  * Clears neuron's traces
+  */
+  this.clear = function() {
+    _.each(this.trace.elegibility, function(trace) { trace = 0; })
+
+    _.each(this.trace.extended, function(extension) {
+      _.each(extension, function(trace) { trace = 0; })
+    })
+
+    this.error.responsibility = this.error.projected = this.error.gated = 0;
+  }
   
   /**
   * @memberof Neuron.prototype
