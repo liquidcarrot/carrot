@@ -5,29 +5,53 @@ let _ = require('lodash')
 let Neuron = require('./neuron')
 
 /**
-* @constructs LayerConnection
+* @param {Neuron} from
+* @param {Neuron} to
+* @param {string} type
+* @param {number} weight
 * @param {Object} options
-* @param {Neuron} options.from
-* @param {Neuron} options.to
-* @param {number} options.weight
+* @param {number} options.ID
+* @param {Object} options.connections
+* @param {Neuron[]} options.list
+* @param {number} options.size
+* @param {Neuron[]} options.gatedfrom
 */
-let LayerConnection = function({ from, to, weight = Math.random() * 2 - 1 } = {}) {
-  let self = this
+let LayerConnection = function(from, to, type = Layer.connectionType.ALL_TO_ALL, weights, {
+  ID = LayerConnection.uid(),
+  connections = {},
+  list = [],
+  size = 0,
+  gatedfrom = [],
+} = {}) {
+  let self = this;
   
-  _.assignIn(self, { from, to })
+  _.assignIn(self, { ID, from, to, type, connections, list, size, gatedfrom });
   
-  self.connections = [];
-  self.size = 0;
-  
-  _.each(self.from.neurons, function(source) {
-    _.each(self.to.neurons, function(destination) {
-      let connection = source.project(destination, weight)
-      self.size = self.connections.push(connection)
+  self.selfconnection = to == from;
+
+  if(from == to) self.type = Layer.connectionType.ONE_TO_ONE;
+
+  if(self.type == Layer.connectionType.ALL_TO_ALL || self.type == Layer.connectionType.ALL_TO_ELSE) {
+    _.each(self.from.list, function(from) {
+      _.each(self.to.list, function(to) {
+        if(self.type == Layer.connectionType.ALL_TO_ELSE && from == to) return;
+
+        let connection = from.project(to, weights);
+
+        self.connections[connection.ID] = connection;
+        self.size = self.list.push(connection);
+      })
     })
-  })
-  
-  from.connections.outgoing.push(self)
-  to.connections.incoming.push(self)
+  } else if(this.type == Layer.connectionType.ONE_TO_ONE) {
+    _.each(self.from.list, function(from, index) {
+      let connection = from.project(self.to.list[index], weights);
+      
+      this.connections[connection.ID] = connection;
+      this.size = this.list.push(connection);
+    })
+  }
+
+  from.connectedTo.push(this);
 }
 
 /**
