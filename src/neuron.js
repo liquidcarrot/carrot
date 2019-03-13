@@ -88,6 +88,33 @@ let Neuron = function({
   */
   this.selfconnected = function() { return this.selfconnection.weight !== 0; }
   
+  /** 
+  * Returns true iff this neuron connected to given neuron
+  */
+  this.connected = function(neuron) {
+    let result = { type: null, connection: false };
+
+    if(this == neuron) {
+      if(this.selfconnected()) {
+        result.type = 'selfconnection';
+        result.connection = this.selfconnection;
+        return result;
+      } else return false;
+    }
+
+    _.each(this.connections, function(type) {
+      _.each(type, function(connection) {
+        if(connection.to == neuron || connection.from == neuron) {
+          result.type = type;
+          result.connection = connection;
+          return result;
+        }
+      })
+    })
+
+    return false;
+  }
+  
   
   /**
   * @memberof Neuron.prototype
