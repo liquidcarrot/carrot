@@ -83,6 +83,57 @@ let Network = function({
     this.layers = { input, hidden, output };
     if(this.optimized) this.optimized.reset();
   }
+
+  /**
+  * Restores network values (de-optimizes) - done to edit network
+  */
+  this.restore = function() {
+    if(!this.optimized) return;
+
+    let optimized = this.optimized;
+
+    let getValue = function () {
+      let args = Array.prototype.slice.call(arguments);
+
+      let unit = args.shift();
+      let prop = args.pop();
+
+      let id = prop + '_';
+      for(let property in args) id += args[property] + '_';
+      id += unit.ID;
+
+      let memory = optimized.memory;
+      let variables = optimized.data.variables;
+
+      if(id in variables) return memory[variables[id].id];
+      return 0;
+    }
+
+    let list = this.neurons();
+
+    // link id's to positions in the array
+    _.each(list, function(neuron) {
+      while(neuron.neuron) neuron = neuron.neuron;
+
+      neuron.state = getValue(neuron, 'state');
+      neuron.old = getValue(neuron, 'old');
+      neuron.activation = getValue(neuron, 'activation');
+      neuron.bias = getValue(neuron, 'bias');
+
+      for (let input in neuron.trace.elegibility)
+        neuron.trace.elegibility[input] = getValue(neuron, 'trace', 'elegibility', input);
+
+      for (let gated in neuron.trace.extended)
+        for (let input in neuron.trace.extended[gated])
+          neuron.trace.extended[gated][input] = getValue(neuron, 'trace', 'extended', gated, input);
+
+      // get connections
+      _.each(neuron.connections.projected, function(connection) {
+        connection.weight = getValue(connection, 'weight');
+        connection.gain = getValue(connection, 'gain');
+      })
+    })
+  }
 }
 
 module.exports = Network
