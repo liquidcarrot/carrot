@@ -141,6 +141,15 @@ let Layer = function(size = 0, {
   this.reset = function() {
     _.each(this.list, function(neuron) { neuron.reset() })
   }
+  
+  /**
+  * Returns all layer neurons
+  *
+  * @returns {Neuron[]}
+  */
+  this.neurons = function() {
+    return this.list;
+  }
 }
 
 module.exports = Layer

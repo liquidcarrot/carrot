@@ -5,6 +5,8 @@ let Layer = require('./layer');
 
 /**
 * Create a perceptron network
+*
+* @todo Could probably use something like an array's reduce function to be able to accelerate the process of projecting layers to each other.
 */
 let Perceptron = function() {
   Network.call(this)
@@ -12,7 +14,7 @@ let Perceptron = function() {
   let args = Array.from(arguments) // convert arguments to Array
   
   if(args.length < 3) throw new Error('not enough layers (minimum 3) !!');
-  
+
   let input = new Layer(args.shift());
   let output = new Layer(args.pop());
   
