@@ -134,6 +134,19 @@ let Network = function({
       })
     })
   }
+  
+  /**
+  * Reset all weights and clear all traces
+  */
+  this.reset = function() {
+    this.restore();
+
+    this.layers.input.reset();
+    _.each(this.layers.hidden, function(layer) { layer.reset(); })
+    this.layers.output.reset();
+
+    if(this.optimized) this.optimized.reset();
+  }
 }
 
 module.exports = Network
