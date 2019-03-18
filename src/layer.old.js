@@ -12,14 +12,6 @@ let Neuron = require('./neuron')
 * CHECK: https://www.youtube.com/watch?v=FK77zZxaBoI
 *
 * @constructs Layer
-* @param {number|Layer|[Neuron]} props - A `Layer`, `Number`, or array of `Neuron`
-* @param {Object} options - Similar to neuron options
-* @param {number} [options.bias=Math.random()] - Synaptic Weight Formula's Constant AKA Bias
-* @param {ActivationFunction} [options.activation=Neuron.activations.SIGMOID] - Activation Function
-* @param {number} [props.rate=0.3] - Learning rate
-* @param {Object} [props.connections] - Connections
-* @param {Layer|[Neuron]|[Connection]} [props.connections.incoming=[]] - Incoming Connections
-* @param {Layer|[Neuron]|[Connection]} [props.connections.outgoing=[]] - Outgoing Connections
 */
 let Layer = function(props, options) {
   let self = this
@@ -159,7 +151,6 @@ let Layer = function(props, options) {
   * @function Layer#weights
   * @memberof Layer.prototype
   * @instance
-  * @param {NumbersCallback} [callback] - Callback invoked with _(error, weights)_
   */
   self.weights = function(callback) {
     return new Promise(function(resolve, reject) {
@@ -193,8 +184,6 @@ let Layer = function(props, options) {
   * @function Layer#project
   * @memberof Layer.prototype
   * @instance
-  * @param {Neuron|Layer|Group} object - Destination `neuron`, `layer`, or `group`
-  * @param {ConnectionsCallback} [callback] - Callback invoked with _(error, connections)_
   */
   self.project = function(object, callback) {
     let self = this
@@ -235,8 +224,6 @@ let Layer = function(props, options) {
   * @function Layer#activate
   * @memberof Layer.prototype
   * @instance
-  * @param {[number]} [inputs] - Array of real numbers (-∞, ∞)
-  * @param {NumbersCallback} [callback] - Callback invoked with _(error, results)_
   */
   self.activate = function(inputs, callback) {
     return new Promise(function(resolve, reject) {
@@ -314,8 +301,6 @@ let Layer = function(props, options) {
   * @function Layer#propagate
   * @memberof Layer.prototype
   * @instance
-  * @param {[number]} [feedback] - Array of real numbers (-∞, ∞)
-  * @param {NumbersCallback} [callback] - Callback invoked with _(error, results)_
   */
   self.propagate = function(feedback, callback) {
     if(!callback && _.isFunction(feedback)) {
@@ -348,8 +333,6 @@ let Layer = function(props, options) {
   * @function Layer#add
   * @memberof Layer.prototype
   * @instance
-  * @param {Neuron} neuron - Neuron to add to the this layer
-  * @param {NumbersCallback} [callback] - Callback invoked with _(error)_
   */
   self.add = function(neuron, callback) {
     let self = this
@@ -388,7 +371,6 @@ let Layer = function(props, options) {
   * @function Layer#best
   * @memberof Layer.prototype
   * @instance
-  * @param {NumberCallback} [callback] - Callback invoked with _(error, best)_
   */
   self.best = function(callback) {
     let self = this
@@ -413,8 +395,6 @@ let Layer = function(props, options) {
 * @name Layer.weights
 * @memberof Layer
 * @static
-* @param {Layer} layer
-* @param {NumbersCallback} callback
 */
 Layer.weights = function(layer, callback) {
   return new Promise(function(resolve, reject) {
@@ -455,9 +435,6 @@ Layer.weights = function(layer, callback) {
 * @name Layer.activate
 * @memberof Layer
 * @static
-* @param {Layer} layer
-* @param {[number]} inputs
-* @param {NumbersCallback} callback
 */
 Layer.activate = function(layer, inputs, callback) {
   if(!callback && _.isFunction(inputs)) {
@@ -505,9 +482,6 @@ Layer.activate = function(layer, inputs, callback) {
 * @name Layer.propagate
 * @memberof Layer
 * @static
-* @param {Layer} layer
-* @param {[number]} feedback
-* @param {NumbersCallback} callback
 */
 Layer.propagate = function(layer, feedback, callback) {
   if(!callback && _.isFunction(feedback)) {
@@ -550,8 +524,6 @@ Layer.propagate = function(layer, feedback, callback) {
 * @name Layer.next
 * @memberof Layer
 * @static
-* @param {Layer|[Neuron]} neurons - Layer or array of neurons
-* @param {NeuronsCallback} callback - Invoked _(error, neurons)_
 */
 Layer.next = function(neurons, callback) {
   if(neurons instanceof Layer) {
@@ -588,8 +560,6 @@ Layer.next = function(neurons, callback) {
 * @name Layer.previous
 * @memberof Layer
 * @static
-* @param {Layer|[Neuron]} neurons - Layer or array of neurons
-* @param {NeuronsCallback} callback - Invoked _(error, neurons)_
 */
 Layer.previous = function(neurons, callback) {
   if(neurons instanceof Layer) {
