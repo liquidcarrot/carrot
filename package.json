@@ -4,7 +4,7 @@
   "description": "A Simple Node.js AI Library for Neural Network",
   "main": "src/index.js",
   "scripts": {
-    "build": "node_modules/.bin/jsdoc -c jsdoc.json && git add . && git stash && git checkout gh-pages && git merge --strategy-option=theirs stash && git push && git checkout master",
+    "build": "node_modules/.bin/jsdoc -c jsdoc.json && git add . && git stash && git checkout gh-pages && git merge --squash --strategy-option=theirs stash && git stash drop && git commit -m 'Auto-build' && git push && git checkout master",
     "test": "nodemon ./node_modules/.bin/mocha --reporter spec test/"
   },
   "repository": {
