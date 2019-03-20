@@ -2,7 +2,10 @@
 >A Simple Node.js AI Library for Neural Network
 
 [![Build Status via Travis CI](https://travis-ci.org/liquidcarrot/carrot.svg?branch=master)](https://travis-ci.org/liquidcarrot/carrot)
-[![Carrot's Weekly Download](https://img.shields.io/npm/dm/@liquid-carrot/carrot.svg)](https://www.npmjs.com/package/@liquid-carrot/carrot) [![Carrot's License](https://img.shields.io/badge/License-MIT-blue.svg)](/LICENSE) [![Carrot's Love](https://img.shields.io/badge/Made%20with%20%E2%99%A5%20by-Liquid%20Carrot-ff1414.svg)](https://github.com/liquidcarrot/carrot/issues)
+[![Carrot's Weekly Download](https://img.shields.io/npm/dm/@liquid-carrot/carrot.svg)](https://www.npmjs.com/package/@liquid-carrot/carrot)
+[![Coverage Status](https://coveralls.io/repos/github/liquidcarrot/carrot/badge.svg?branch=master)](https://coveralls.io/github/liquidcarrot/carrot?branch=master)
+[![Carrot's License](https://img.shields.io/badge/License-MIT-blue.svg)](/LICENSE)
+[![Carrot's Love](https://img.shields.io/badge/Made%20with%20%E2%99%A5%20by-Liquid%20Carrot-ff1414.svg)](https://github.com/liquidcarrot/carrot/issues)
 
 <details>
   <summary><strong>Table of Contents</strong></summary>
