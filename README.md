@@ -4,9 +4,10 @@
 [![Build Status via Travis CI](https://travis-ci.org/liquidcarrot/carrot.svg?branch=master)](https://travis-ci.org/liquidcarrot/carrot)
 [![Carrot's Weekly Download](https://img.shields.io/npm/dm/@liquid-carrot/carrot.svg)](https://www.npmjs.com/package/@liquid-carrot/carrot)
 [![Coverage Status](https://coveralls.io/repos/github/liquidcarrot/carrot/badge.svg?branch=master)](https://coveralls.io/github/liquidcarrot/carrot?branch=master)
-[![Gitter](https://badges.gitter.im/carrot-ai/community.svg)](https://gitter.im/carrot-ai/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
+[![Join the chat at https://gitter.im/carrot-ai/community](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/carrot-ai?utm_source=badge&utm_medium=badge&utm_campaign=pr-badgee&utm_content=badge)
 [![Carrot's License](https://img.shields.io/badge/License-MIT-blue.svg)](/LICENSE)
 [![Carrot's Love](https://img.shields.io/badge/Made%20with%20%E2%99%A5%20by-Liquid%20Carrot-ff1414.svg)](https://github.com/liquidcarrot/carrot/issues)
+
 
 <details>
   <summary><strong>Table of Contents</strong></summary>
