@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "build": "node_modules/.bin/jsdoc -c jsdoc.json && git add . && git stash && git checkout gh-pages && git merge --squash --strategy-option=theirs stash && git stash drop && git commit -m 'Auto-build' && git push && git checkout master",
-    "test": "nyc --reporter=lcov ./node_modules/.bin/mocha -R spec test/ | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage",
+    "test": "nyc --reporter=lcov ./node_modules/.bin/mocha -R spec test/ | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./src-cov",
     "test:forever": "nodemon ./node_modules/.bin/mocha --reporter spec test/"
   },
   "repository": {
@@ -63,7 +63,6 @@
     "chai": "^4.2.0",
     "chai-each": "0.0.1",
     "coveralls": "^3.0.3",
-    "docdash": "^1.0.3",
     "faker": "^4.1.0",
     "jsdoc": "^3.5.5",
     "mocha": "^5.2.0",
