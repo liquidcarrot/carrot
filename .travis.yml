@@ -3,7 +3,7 @@ node_js:
   - "node"
 
 before_script:  
-  - cd ./nodejs
+  - cd ./node_modules
 
 script:  
   - npm install
