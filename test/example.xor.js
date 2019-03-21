@@ -172,6 +172,51 @@ describe("XOR", function() {
       console.log(o.activate()); // [0.012950087641929467]
     })
   })
+  
+  describe("w/ Network", function() {
+    let Layer = require('../src/layer')
+    let Network = require('../src/network')
+    
+    it("should work with networks", function() {
+      let i = new Layer(2)
+      let h = new Layer(2)
+      let o = new Layer(1)
+      
+      i.project(h)
+      h.project(o)
+      
+      let net = new Network({
+        input: i,
+        hidden: [h],
+        output: o
+      })
+      
+      // train the network
+      for (var index = 0; index < 20000; index++) {
+        // 0,0 => 0
+        net.activate([0,0])
+        net.propagate([0])
+
+        // 0,1 => 1
+        net.activate([0,1])
+        net.propagate([1])
+
+        // 1,0 => 1
+        net.activate([1,0])
+        net.propagate([1])
+
+        // 1,1 => 0
+        net.activate([1,1])
+        net.propagate([0])
+      }
+
+      // test the network
+      console.log(net.activate([0,0])); // [0.015020775950893527]
+      console.log(net.activate([0,1])); // [0.9815816381088985]
+      console.log(net.activate([1,0])); // [0.9871822457132193]
+      console.log(net.activate([1,1])); // [0.012950087641929467]
+    })
+  })
 })
 
 /**
