@@ -68,6 +68,7 @@ let Layer = function(size = 0, {
   list = [],
   connectedTo = [],
 } = {}) {
+  let self = this;
   _.assignIn(this, { list, connectedTo })
   this.size = size;
 

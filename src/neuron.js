@@ -26,6 +26,8 @@ let Neuron = function({
   neighboors = {},
   bias = Math.random() * 2 - 1,
 } = {}) {
+  let self = this;
+  
   _.assignIn(this, { ID, connections, error, trace, state, old, activation, squash, neighboors, bias })
   
   this.selfconnection = new Connection(this, this, 0); // weight = 0 -> not connected
@@ -166,6 +168,9 @@ let Neuron = function({
     
     return false;
   }
+}
+Neuron.uid = function() {
+  return Math.random();
 }
 /**
 * @memberof Neuron
