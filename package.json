@@ -5,8 +5,8 @@
   "main": "src/neataptic",
   "scripts": {
     "build": "node_modules/.bin/jsdoc -c jsdoc.json && git add . && git stash && git checkout gh-pages && git merge --squash --strategy-option=theirs stash && git stash drop && git commit -m 'Auto-build' && git push && git checkout master",
-    "test": "./node_modules/.bin/mocha -R spec test/src.js test",
-    "coveralls": "nyc --reporter=lcov ./node_modules/.bin/mocha -R spec test/ | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./src-cov",
+    "test": "nyc --reporter=html --reporter=text mocha test/",
+    "coverage": "nyc report --reporter=text-lcov | coveralls && rm -rf ./src-cov",
     "test:forever": "nodemon ./node_modules/.bin/mocha --reporter spec test/"
   },
   "repository": {
