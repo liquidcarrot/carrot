@@ -1,6 +1,6 @@
 {
   "name": "@liquid-carrot/carrot",
-  "version": "0.0.62",
+  "version": "0.1.0",
   "description": "A Simple Node.js AI Library for Neural Network",
   "main": "src/neataptic",
   "scripts": {
