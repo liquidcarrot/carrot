@@ -5,7 +5,7 @@
   "main": "src/neataptic",
   "scripts": {
     "build": "node_modules/.bin/jsdoc -c jsdoc.json && git add . && git stash && git checkout gh-pages && git merge --squash --strategy-option=theirs stash && git stash drop && git commit -m 'Auto-build' && git push && git checkout master",
-    "test": "nyc --reporter=html --reporter=text mocha test/",
+    "test": "nyc --reporter=html --reporter=text mocha test/src.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls && rm -rf ./src-cov",
     "test:forever": "nodemon ./node_modules/.bin/mocha --reporter spec test/"
   },
