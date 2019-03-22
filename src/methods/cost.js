@@ -10,6 +10,10 @@ var cost = {
   /** 
   * Cross entropy error
   *
+  * @todo Add `@param` tag description
+  * @todo Add `@returns` tag type
+  * @todo Add `@returns` tag description
+  * 
   * @param {number} target
   * @param {number} output
   */
@@ -21,7 +25,16 @@ var cost = {
     }
     return error / output.length;
   },
-  // Mean Squared Error
+  /*
+  * Mean Squared Erro
+  *
+  * @todo Add `@param` tag description
+  * @todo Add `@returns` tag type
+  * @todo Add `@returns` tag description
+  *
+  * @param {number} target
+  * @param {number} output
+  */
   MSE: function (target, output) {
     var error = 0;
     for (var i = 0; i < output.length; i++) {
@@ -30,7 +43,16 @@ var cost = {
 
     return error / output.length;
   },
-  // Binary error
+  /*
+  * Binary Error
+  *
+  * @todo Add `@param` tag description
+  * @todo Add `@returns` tag type
+  * @todo Add `@returns` tag description
+  *
+  * @param {number} target
+  * @param {number} output
+  */
   BINARY: function (target, output) {
     var misses = 0;
     for (var i = 0; i < output.length; i++) {
@@ -39,7 +61,16 @@ var cost = {
 
     return misses;
   },
-  // Mean Absolute Error
+  /*
+  * Mean Absolute Error
+  *
+  * @todo Add `@param` tag description
+  * @todo Add `@returns` tag type
+  * @todo Add `@returns` tag description
+  *
+  * @param {number} target
+  * @param {number} output
+  */
   MAE: function (target, output) {
     var error = 0;
     for (var i = 0; i < output.length; i++) {
@@ -48,7 +79,16 @@ var cost = {
 
     return error / output.length;
   },
-  // Mean Absolute Percentage Error
+  /*
+  * Mean Absolute Percentage Error
+  *
+  * @todo Add `@param` tag description
+  * @todo Add `@returns` tag type
+  * @todo Add `@returns` tag description
+  *
+  * @param {number} target
+  * @param {number} output
+  */
   MAPE: function (target, output) {
     var error = 0;
     for (var i = 0; i < output.length; i++) {
@@ -57,7 +97,16 @@ var cost = {
 
     return error / output.length;
   },
-  // Mean Squared Logarithmic Error
+  /*
+  * Mean Squared Logarithmic Error
+  *
+  * @todo Add `@param` tag description
+  * @todo Add `@returns` tag type
+  * @todo Add `@returns` tag description
+  *
+  * @param {number} target
+  * @param {number} output
+  */
   MSLE: function (target, output) {
     var error = 0;
     for (var i = 0; i < output.length; i++) {
@@ -66,7 +115,16 @@ var cost = {
 
     return error;
   },
-  // Hinge loss, for classifiers
+  /*
+  * Hinge loss, for classifiers
+  *
+  * @todo Add `@param` tag description
+  * @todo Add `@returns` tag type
+  * @todo Add `@returns` tag description
+  *
+  * @param {number} target
+  * @param {number} output
+  */
   HINGE: function (target, output) {
     var error = 0;
     for (var i = 0; i < output.length; i++) {
