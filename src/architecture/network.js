@@ -9,13 +9,16 @@ var config = require('../config');
 var Neat = require('../neat');
 var Node = require('./node');
 
-/* Easier variable naming */
+// Easier variable naming
 var mutation = methods.mutation;
 
-/*******************************************************************************
-                                 NETWORK
-*******************************************************************************/
-
+/**
+*  Create a neural network
+*
+* @constructs Network
+* @param {number} input
+* @param {number} output
+*/
 function Network (input, output) {
   if (typeof input === 'undefined' || typeof output === 'undefined') {
     throw new Error('No input or output size given');
