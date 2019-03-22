@@ -1,7 +1,3 @@
-/* Export */
-module.exports = Node;
-
-/* Import */
 var methods = require('../methods/methods');
 var Connection = require('./connection');
 var config = require('../config');
@@ -9,7 +5,11 @@ var config = require('../config');
 /*******************************************************************************
                                          NODE
 *******************************************************************************/
-
+/*
+* @todo Add `@param` tag types
+* @todo Add `@param` tag defaults
+* @todo Add `@param` tag descriptions
+*/
 function Node (type) {
   this.bias = (type === 'input') ? 0 : Math.random() * 0.2 - 0.1;
   this.squash = methods.activation.LOGISTIC;
@@ -43,9 +43,17 @@ function Node (type) {
   };
 }
 
+/*
+* @namespace
+*/
 Node.prototype = {
   /**
    * Activates the node
+   * @todo Add `@param` tag types
+   * @todo Add `@param` tag defaults
+   * @todo Add `@param` tag descriptions
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
    */
   activate: function (input) {
     // Check if an input is given
@@ -121,6 +129,11 @@ Node.prototype = {
 
   /**
    * Activates the node without calculating elegibility traces and such
+   * @todo Add `@param` tag types
+   * @todo Add `@param` tag defaults
+   * @todo Add `@param` tag descriptions
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
    */
   noTraceActivate: function (input) {
     // Check if an input is given
@@ -151,6 +164,10 @@ Node.prototype = {
 
   /**
    * Back-propagate the error, aka learn
+   * @todo Add `@param` tag types
+   * @todo Add `@param` tag defaults
+   * @todo Add `@param` tag descriptions
+   *  
    */
   propagate: function (rate, momentum, update, target) {
     momentum = momentum || 0;
@@ -232,6 +249,11 @@ Node.prototype = {
 
   /**
    * Creates a connection from this node to the given node
+   * @todo Add `@param` tag types
+   * @todo Add `@param` tag defaults
+   * @todo Add `@param` tag descriptions
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
    */
   connect: function (target, weight) {
     var connections = [];
@@ -268,6 +290,10 @@ Node.prototype = {
 
   /**
    * Disconnects this node from the other node
+   * @todo Add `@param` tag types
+   * @todo Add `@param` tag defaults
+   * @todo Add `@param` tag descriptions
+   *  
    */
   disconnect: function (node, twosided) {
     if (this === node) {
@@ -293,6 +319,10 @@ Node.prototype = {
 
   /**
    * Make this node gate a connection
+   * @todo Add `@param` tag types
+   * @todo Add `@param` tag defaults
+   * @todo Add `@param` tag descriptions
+   *  
    */
   gate: function (connections) {
     if (!Array.isArray(connections)) {
@@ -309,6 +339,10 @@ Node.prototype = {
 
   /**
    * Removes the gates from this node from the given connection(s)
+   * @todo Add `@param` tag types
+   * @todo Add `@param` tag defaults
+   * @todo Add `@param` tag descriptions
+   *  
    */
   ungate: function (connections) {
     if (!Array.isArray(connections)) {
@@ -350,6 +384,10 @@ Node.prototype = {
 
   /**
    * Mutates the node with the given method
+   * @todo Add `@param` tag types
+   * @todo Add `@param` tag defaults
+   * @todo Add `@param` tag descriptions
+   *  
    */
   mutate: function (method) {
     if (typeof method === 'undefined') {
@@ -373,6 +411,10 @@ Node.prototype = {
 
   /**
    * Checks if this node is projecting to the given node
+   * @todo Add `@param` tag types
+   * @todo Add `@param` tag defaults
+   * @todo Add `@param` tag descriptions
+   *  
    */
   isProjectingTo: function (node) {
     if (node === this && this.connections.self.weight !== 0) return true;
@@ -388,6 +430,10 @@ Node.prototype = {
 
   /**
    * Checks if the given node is projecting to this node
+   * @todo Add `@param` tag types
+   * @todo Add `@param` tag defaults
+   * @todo Add `@param` tag descriptions
+   *  
    */
   isProjectedBy: function (node) {
     if (node === this && this.connections.self.weight !== 0) return true;
@@ -404,6 +450,8 @@ Node.prototype = {
 
   /**
    * Converts the node to a json object
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
    */
   toJSON: function () {
     var json = {
@@ -419,6 +467,11 @@ Node.prototype = {
 
 /**
  * Convert a json object to a node
+ * @todo Add `@param` tag types
+ * @todo Add `@param` tag defaults
+ * @todo Add `@param` tag descriptions
+ * @todo Add `@returns` tag type
+ * @todo Add `@returns` tag description
  */
 Node.fromJSON = function (json) {
   var node = new Node();
@@ -429,3 +482,5 @@ Node.fromJSON = function (json) {
 
   return node;
 };
+
+module.exports = Node;
