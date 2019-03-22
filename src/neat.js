@@ -6,13 +6,41 @@ var Network = require('./architecture/network');
 var methods = require('./methods/methods');
 var config = require('./config');
 
-/* Easier variable naming */
+// Easier variable naming
 var selection = methods.selection;
 
 /*******************************************************************************
                                          NEAT
 *******************************************************************************/
 
+/**
+* Runs the NEAT algorithm on group of neural networks.
+* @todo Add `@param` tag types
+* @todo Add `@param` tag defaults
+* @todo Add `@param` tag descriptions
+*  
+*
+* @param {number} input - The input size of the networks.
+* @param {number} output - The output size of the networks
+* @param {Function} fitness - The fitness function to evaluate the networks
+* @param {Object} options - Configuration options
+* @param {boolean} [equal=false] - 
+* @param {number} [clear=false] - 
+* @param {number} [popsize=50] - 
+* @param {number} [elitism=0] - 
+* @param {number} [provenance=0] - 
+* @param {number} [mutationRate=0] - 
+* @param {number} [mutationAmount=1] - 
+* @param {boolean} [fitnessPopulation=false] - 
+* @param [selection=] - 
+* @param [crossover=] - 
+* @param [mutation=] - 
+* @param [network=false] - 
+* @param {number} [maxNodes=Infinity] - 
+* @param {number} [maxConns=Infinity] - 
+* @param {number} [maxGates=Infinity] - 
+* @param [mutationSelection=] - 
+*/
 function Neat (input, output, fitness, options) {
   this.input = input; // The input size of the networks
   this.output = output; // The output size of the networks
@@ -55,6 +83,9 @@ function Neat (input, output, fitness, options) {
   this.createPool(this.template);
 }
 
+/*
+* @namespace NEAT
+*/
 Neat.prototype = {
   /**
    * Create the initial pool of genomes
@@ -76,7 +107,9 @@ Neat.prototype = {
 
   /**
    * Evaluates, selects, breeds and mutates population
-   */
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
+  */
   evolve: async function () {
     // Check if evaluated, sort the population
     if (typeof this.population[this.population.length - 1].score === 'undefined') {
@@ -123,6 +156,8 @@ Neat.prototype = {
 
   /**
    * Breeds two parents into an offspring, population MUST be surted
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
    */
   getOffspring: function () {
     var parent1 = this.getParent();
@@ -133,7 +168,7 @@ Neat.prototype = {
 
   /**
    * Selects a random mutation method for a genome according to the parameters
-   */
+  */
   selectMutationMethod: function (genome) {
     var mutationMethod = this.mutation[Math.floor(Math.random() * this.mutation.length)];
 
@@ -193,7 +228,7 @@ Neat.prototype = {
 
   /**
    * Sorts the population by score
-   */
+  */
   sort: function () {
     this.population.sort(function (a, b) {
       return b.score - a.score;
@@ -202,7 +237,9 @@ Neat.prototype = {
 
   /**
    * Returns the fittest genome of the current population
-   */
+   * @todo Add `@returns` tag types
+   * @todo Add `@returns` tag descriptions
+  */
   getFittest: function () {
     // Check if evaluated
     if (typeof this.population[this.population.length - 1].score === 'undefined') {
@@ -217,6 +254,8 @@ Neat.prototype = {
 
   /**
    * Returns the average fitness of the current population
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
    */
   getAverage: function () {
     if (typeof this.population[this.population.length - 1].score === 'undefined') {
@@ -234,6 +273,7 @@ Neat.prototype = {
   /**
    * Gets a genome based on the selection function
    * @return {Network} genome
+   * @todo Add `@returns` tag description
    */
   getParent: function () {
     var i;
@@ -298,6 +338,8 @@ Neat.prototype = {
 
   /**
    * Export the current population to a json object
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
    */
   export: function () {
     var json = [];
@@ -311,7 +353,10 @@ Neat.prototype = {
 
   /**
    * Import population from a json object
-   */
+   * @todo Add `@param` tag type
+   * @todo Add `@param` tag name
+   * @todo Add `@param` tag description
+  */
   import: function (json) {
     var population = [];
     for (var i = 0; i < json.length; i++) {

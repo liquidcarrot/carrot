@@ -2,9 +2,17 @@
                                     COST FUNCTIONS
 *******************************************************************************/
 
-// https://en.wikipedia.org/wiki/Loss_function
+/**
+* @tutorial https://en.wikipedia.org/wiki/Loss_function
+* @namespace cost
+*/
 var cost = {
-  // Cross entropy error
+  /** 
+  * Cross entropy error
+  *
+  * @param {number} target
+  * @param {number} output
+  */
   CROSS_ENTROPY: function (target, output) {
     var error = 0;
     for (var i = 0; i < output.length; i++) {
@@ -69,5 +77,4 @@ var cost = {
   }
 };
 
-/* Export */
 module.exports = cost;
