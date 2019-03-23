@@ -1,3 +1,3 @@
 if (typeof global.neataptic === 'undefined') {
-  global.neataptic = require('../src/neataptic');
+  global.neataptic = require('../src/carrot');
 }
