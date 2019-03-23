@@ -1,7 +1,3 @@
-/* Export */
-module.exports = Network;
-
-/* Import */
 var multi = require('../multithreading/multi');
 var methods = require('../methods/methods');
 var Connection = require('./connection');
@@ -53,9 +49,18 @@ function Network (input, output) {
   }
 }
 
+/*
+* @namespace
+*/
 Network.prototype = {
   /**
    * Activates the network
+   * @todo Add `@param` tag descriptions
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
+   *
+   * @param input
+   * @param training
    */
   activate: function (input, training) {
     var output = [];
@@ -78,6 +83,11 @@ Network.prototype = {
 
   /**
    * Activates the network without calculating elegibility traces and such
+   * @todo Add `@param` tag descriptions
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
+   *
+   * @param input
    */
   noTraceActivate: function (input) {
     var output = [];
@@ -99,6 +109,13 @@ Network.prototype = {
 
   /**
    * Backpropagate the network
+   * @todo Add `@param` tag type
+   * @todo Add `@param` tag descriptions
+   *
+   * @param rate
+   * @param momentum
+   * @param update
+   * @param target
    */
   propagate: function (rate, momentum, update, target) {
     if (typeof target === 'undefined' || target.length !== this.output) {
@@ -130,6 +147,14 @@ Network.prototype = {
 
   /**
    * Connects the from node to the to node
+   * @todo Add `@param` tag type
+   * @todo Add `@param` tag descriptions
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
+   *
+   * @param from
+   * @param to
+   * @param weight
    */
   connect: function (from, to, weight) {
     var connections = from.connect(to, weight);
@@ -148,6 +173,11 @@ Network.prototype = {
 
   /**
    * Disconnects the from node from the to node
+   * @todo Add `@param` tag type
+   * @todo Add `@param` tag descriptions
+   *
+   * @param from
+   * @param to
    */
   disconnect: function (from, to) {
     // Delete the connection in the network's connection array
@@ -168,6 +198,11 @@ Network.prototype = {
 
   /**
    * Gate a connection with a node
+   * @todo Add `@param` tag type
+   * @todo Add `@param` tag descriptions
+   *
+   * @param node
+   * @param connection
    */
   gate: function (node, connection) {
     if (this.nodes.indexOf(node) === -1) {
@@ -181,7 +216,11 @@ Network.prototype = {
   },
 
   /**
-   *  Remove the gate of a connection
+   * Remove the gate of a connection
+   * @todo Add `@param` tag type
+   * @todo Add `@param` tag descriptions
+   *
+   * @param connection
    */
   ungate: function (connection) {
     var index = this.gates.indexOf(connection);
@@ -194,7 +233,11 @@ Network.prototype = {
   },
 
   /**
-   *  Removes a node from the network
+   * Removes a node from the network
+   * @todo Add `@param` tag type
+   * @todo Add `@param` tag descriptions
+   *
+   * @param node
    */
   remove: function (node) {
     var index = this.nodes.indexOf(node);
@@ -270,6 +313,10 @@ Network.prototype = {
 
   /**
    * Mutates the network with the given method
+   * @todo Add `@param` tag type
+   * @todo Add `@param` tag descriptions
+   *
+   * @param method
    */
   mutate: function (method) {
     if (typeof method === 'undefined') {
@@ -510,6 +557,13 @@ Network.prototype = {
 
   /**
    * Train the given set to this network
+   * @todo Add `@param` tag type
+   * @todo Add `@param` tag descriptions
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
+   *
+   * @param set
+   * @param options
    */
   train: function (set, options) {
     if (set[0].input.length !== this.input || set[0].output.length !== this.output) {
@@ -615,6 +669,16 @@ Network.prototype = {
   /**
    * Performs one training epoch and returns the error
    * private function used in this.train
+   * @todo Add `@param` tag type
+   * @todo Add `@param` tag descriptions
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
+   *
+   * @param set
+   * @param batchSize
+   * @param currentRate
+   * @param momentum
+   * @param costFunction
    */
   _trainSet: function (set, batchSize, currentRate, momentum, costFunction) {
     var errorSum = 0;
@@ -634,6 +698,13 @@ Network.prototype = {
 
   /**
    * Tests a set and returns the error and elapsed time
+   * @todo Add `@param` tag type
+   * @todo Add `@param` tag descriptions
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
+   *
+   * @param set
+   * @param cost [Function=]
    */
   test: function (set, cost = methods.cost.MSE) {
     // Check if dropout is enabled, set correct mask
@@ -668,6 +739,12 @@ Network.prototype = {
 
   /**
    * Creates a json that can be used to create a graph with d3 and webcola
+   * @todo Add `@param` tag descriptions
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
+   *
+   * @param {number} width
+   * @param {number} height
    */
   graph: function (width, height) {
     var input = 0;
@@ -774,6 +851,8 @@ Network.prototype = {
 
   /**
    * Convert the network to a json object
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
    */
   toJSON: function () {
     var json = {
@@ -822,6 +901,8 @@ Network.prototype = {
 
   /**
    * Sets the value of a property for every node in this network
+   * @todo Add `@param` tag type
+   * @todo Add `@param` tag description
    */
   set: function (values) {
     for (var i = 0; i < this.nodes.length; i++) {
@@ -832,6 +913,13 @@ Network.prototype = {
 
   /**
    * Evolves the network to reach a lower error on a dataset
+   * @todo Add `@param` tag type
+   * @todo Add `@param` tag descriptions
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
+   *
+   * @param set
+   * @param options
    */
   evolve: async function (set, options) {
     if (set[0].input.length !== this.input || set[0].output.length !== this.output) {
@@ -1108,6 +1196,13 @@ Network.prototype = {
 
 /**
  * Convert a json object to a network
+ * @constructor
+ * @todo Add `@param` tag type
+ * @todo Add `@param` tag descriptions
+ * @todo Add `@returns` tag description
+ *
+ * @param json
+ * @returns {Network} Network
  */
 Network.fromJSON = function (json) {
   var network = new Network(json.input, json.output);
@@ -1136,6 +1231,14 @@ Network.fromJSON = function (json) {
 
 /**
  * Merge two networks into one
+ * @todo Add `@param` tag type
+ * @todo Add `@param` tag descriptions
+ * @todo Add `@returns` tag type
+ * @todo Add `@returns` tag description
+ *
+ * @param Network1
+ * @param Network2
+ * @returns {Network} Network 
  */
 Network.merge = function (network1, network2) {
   // Create a copy of the networks
@@ -1178,6 +1281,14 @@ Network.merge = function (network1, network2) {
 
 /**
  * Create an offspring from two parent networks
+ * @todo Add `@param` tag types
+ * @todo Add `@param` tag descriptions
+ * @todo Add `@returns` tag type
+ * @todo Add `@returns` tag description
+ *
+ * @param Network1
+ * @param Network2
+ * @param equal
  */
 Network.crossOver = function (network1, network2, equal) {
   if (network1.input !== network2.input || network1.output !== network2.output) {
@@ -1342,3 +1453,5 @@ Network.crossOver = function (network1, network2, equal) {
 
   return offspring;
 };
+
+module.exports = Network;
