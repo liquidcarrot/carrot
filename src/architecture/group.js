@@ -11,7 +11,7 @@ var Node = require('./node');
 * @todo Add `@prop` tag descriptions
 * @todo Add `@prop` tag defaults
 *
-* @contructs Group
+* @constructs Group
 * @prop nodes
 * @prop {object} connections
 * @prop connections.in
