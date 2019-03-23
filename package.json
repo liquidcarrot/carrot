@@ -4,7 +4,9 @@
   "description": "A Simple Node.js AI Library for Neural Network",
   "main": "src/carrot",
   "scripts": {
-    "build": "node_modules/.bin/jsdoc -r -c jsdoc.json && git add . && git stash && git checkout gh-pages && git pull && git merge --squash --strategy-option=theirs stash && git stash drop && git commit -m 'Auto-build' && git push && git checkout master",
+    "jsdoc": "node_modules/.bin/jsdoc -r -c jsdoc.json",
+    "deploy:docs": "gh-pages-deploy -- 'Auto Build'",
+    "build": "npm run jsdoc && npm run deploy:docs",
     "test": "nyc --reporter=html --reporter=text mocha test/src.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls && rm -rf ./src-cov",
     "test:forever": "nodemon ./node_modules/.bin/mocha --reporter spec test/"
@@ -65,6 +67,7 @@
     "chai-each": "0.0.1",
     "coveralls": "^3.0.3",
     "faker": "^4.1.0",
+    "gh-pages-deploy": "^0.5.1",
     "jsdoc": "^3.5.5",
     "mocha": "^5.2.0",
     "nodemon": "^1.18.7",
@@ -75,5 +78,8 @@
       "test",
       "util"
     ]
+  },
+  "gh-pages-deploy": {
+    "staticpath": "docs"
   }
 }

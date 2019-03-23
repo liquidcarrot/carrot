@@ -15,7 +15,7 @@
     "opts": {
         "template": "theme/",
         "encoding": "utf8",
-        "destination": ".",
+        "destination": "./docs",
         "recurse": true,
         "verbose": true
     },
