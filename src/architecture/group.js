@@ -1,16 +1,23 @@
-/* Export */
 module.exports = Group;
 
-/* Import */
 var methods = require('../methods/methods');
 var config = require('../config');
 var Layer = require('./layer');
 var Node = require('./node');
 
-/*******************************************************************************
-                                         Group
-*******************************************************************************/
-
+/**
+* @todo Create a class description
+* @todo Add `@prop` tag types
+* @todo Add `@prop` tag descriptions
+* @todo Add `@prop` tag defaults
+*
+* @contructs Group
+* @prop nodes
+* @prop {object} connections
+* @prop connections.in
+* @prop connections.out
+* @prop connections.self
+*/
 function Group (size) {
   this.nodes = [];
   this.connections = {
@@ -26,8 +33,16 @@ function Group (size) {
 
 Group.prototype = {
   /**
-   * Activates all the nodes in the group
-   */
+  * Activates all the nodes in the group
+  *
+  * @todo Create `@returns` tag
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  *
+  * @param value
+  */
   activate: function (value) {
     var values = [];
 
@@ -50,8 +65,17 @@ Group.prototype = {
   },
 
   /**
-   * Propagates all the node in the group
-   */
+  * Propagates all the node in the group
+  * 
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  *
+  * @param rate
+  * @param momentum
+  * @param target
+  */
   propagate: function (rate, momentum, target) {
     if (typeof target !== 'undefined' && target.length !== this.nodes.length) {
       throw new Error('Array with values should be same as the amount of nodes!');
@@ -67,8 +91,18 @@ Group.prototype = {
   },
 
   /**
-   * Connects the nodes in this group to nodes in another group or just a node
-   */
+  * Connects the nodes in this group to nodes in another group or just a node
+  *
+  * @todo Create `@returns` tag
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  *
+  * @param target
+  * @param method
+  * @param weight
+  */
   connect: function (target, method, weight) {
     var connections = [];
     var i, j;
@@ -117,8 +151,16 @@ Group.prototype = {
   },
 
   /**
-   * Make nodes from this group gate the given connection(s)
-   */
+  * Make nodes from this group gate the given connection(s)
+  * 
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  *
+  * @param connections
+  * @param method
+  */
   gate: function (connections, method) {
     if (typeof method === 'undefined') {
       throw new Error('Please specify Gating.INPUT, Gating.OUTPUT');
@@ -178,8 +220,15 @@ Group.prototype = {
   },
 
   /**
-   * Sets the value of a property for every node
-   */
+  * Sets the value of a property for every node
+  *
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  *
+  * @param values
+  */
   set: function (values) {
     for (var i = 0; i < this.nodes.length; i++) {
       if (typeof values.bias !== 'undefined') {
@@ -192,8 +241,16 @@ Group.prototype = {
   },
 
   /**
-   * Disconnects all nodes from this group from another given group/node
-   */
+  * Disconnects all nodes from this group from another given group/node
+  *
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  *
+  * @param target
+  * @param twosided
+  */
   disconnect: function (target, twosided) {
     twosided = twosided || false;
 
@@ -253,8 +310,13 @@ Group.prototype = {
   },
 
   /**
-   * Clear the context of this group
-   */
+  * Clear the context of this group
+  *
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  */
   clear: function () {
     for (var i = 0; i < this.nodes.length; i++) {
       this.nodes[i].clear();
