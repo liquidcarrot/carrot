@@ -1,18 +1,26 @@
-/* Import */
 var methods = require('../methods/methods');
 var Network = require('./network');
 var Group = require('./group');
 var Layer = require('./layer');
 var Node = require('./node');
 
-/*******************************************************************************
-                                        architect
-*******************************************************************************/
-
+/**
+* @todo Create a namespace description
+*
+* @namespace
+*/
 var architect = {
   /**
-   * Constructs a network from a given array of connected nodes
-   */
+  * Constructs a network from a given array of connected nodes
+  *
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  *
+  * @param list
+  * 
+  * @returns {Network}
+  */
   Construct: function (list) {
     // Create a network
     var network = new Network(0, 0);
@@ -81,8 +89,16 @@ var architect = {
   },
 
   /**
-   * Creates a multilayer perceptron (MLP)
-   */
+  * Creates a multilayer perceptron (MLP)
+  *
+  * @todo Create `@param` tags
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  * 
+  * @returns {Network}
+  */
   Perceptron: function () {
     // Convert arguments to Array
     var layers = Array.prototype.slice.call(arguments);
@@ -106,8 +122,20 @@ var architect = {
   },
 
   /**
-   * Creates a randomly connected network
-   */
+  * Creates a randomly connected network
+  *
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  *
+  * @param input
+  * @param hidden
+  * @param output
+  * @param options
+  * 
+  * @returns {Network}
+  */
   Random: function (input, hidden, output, options) {
     options = options || {};
 
@@ -143,8 +171,16 @@ var architect = {
   },
 
   /**
-   * Creates a long short-term memory network
-   */
+  * Creates a long short-term memory network
+  *
+  * @todo Create `@param` tags
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  * 
+  * @returns {Network}
+  */
   LSTM: function () {
     var args = Array.prototype.slice.call(arguments);
     if (args.length < 3) {
@@ -264,8 +300,16 @@ var architect = {
   },
 
   /**
-   * Creates a gated recurrent unit network
-   */
+  * Creates a gated recurrent unit network
+  *
+  * @todo Create `@param` tags
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  * 
+  * @returns {Network}
+  */
   GRU: function () {
     var args = Array.prototype.slice.call(arguments);
     if (args.length < 3) {
@@ -295,8 +339,17 @@ var architect = {
   },
 
   /**
-   * Creates a hopfield network of the given size
-   */
+  * Creates a hopfield network of the given size
+  *
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  * 
+  * @param size
+  * 
+  * @returns {Network}
+  */
   Hopfield: function (size) {
     var input = new Group(size);
     var output = new Group(size);
@@ -317,8 +370,21 @@ var architect = {
   },
 
   /**
-   * Creates a NARX network (remember previous inputs/outputs)
-   */
+  * Creates a NARX network (remember previous inputs/outputs)
+  *
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  * 
+  * @param inputSize
+  * @param hiddenLayers
+  * @param outputSize
+  * @param previousInput
+  * @param previousOutput
+  * 
+  * @returns {Network}
+  */
   NARX: function (inputSize, hiddenLayers, outputSize, previousInput, previousOutput) {
     if (!Array.isArray(hiddenLayers)) {
       hiddenLayers = [hiddenLayers];
@@ -365,5 +431,4 @@ var architect = {
   }
 };
 
-/* Export */
 module.exports = architect;

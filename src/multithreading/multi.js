@@ -1,12 +1,22 @@
-/*******************************************************************************
-                                MULTITHREADING
-*******************************************************************************/
-
+/**
+* @namespace multi
+* @todo Add `@borrows` tags
+*/
 var multi = {
-  /** Workers */
+  // Workers
   workers: require('./workers/workers'),
 
-  /** Serializes a dataset */
+  /**
+  * Serializes a dataset
+  * 
+  * @todo Add `@returns` tag
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  * 
+  * @param dataSet
+  */
   serializeDataSet: function (dataSet) {
     var serialized = [dataSet[0].input.length, dataSet[0].output.length];
 
@@ -23,7 +33,21 @@ var multi = {
     return serialized;
   },
 
-  /** Activate a serialized network */
+  /**
+  * Activate a serialized network
+  * 
+  * @todo Add `@returns` tag
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  *
+  * @param input
+  * @param A
+  * @param S
+  * @param data
+  * @param F
+  */
   activateSerializedNetwork: function (input, A, S, data, F) {
     for (var i = 0; i < data[0]; i++) A[i] = input[i];
     for (i = 2; i < data.length; i++) {
@@ -46,7 +70,17 @@ var multi = {
     return output;
   },
 
-  /** Deserializes a dataset to an array of arrays */
+  /**
+  * Deserializes a dataset to an array of arrays
+  * 
+  * @todo Add `@returns` tag
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  *
+  * @param serializedSet
+  */
   deserializeDataSet: function (serializedSet) {
     var set = [];
 
@@ -67,7 +101,12 @@ var multi = {
     return set;
   },
 
-  /** A list of compiled activation functions in a certain order */
+  /**
+  * A list of compiled activation functions in a certain order.
+  *
+  * @todo Create an `ActivationFunction` class or type
+  * @todo Document this array using `ArrayFunction`
+  */
   activations: [
     function (x) { return 1 / (1 + Math.exp(-x)); },
     function (x) { return Math.tanh(x); },
@@ -90,6 +129,22 @@ var multi = {
   ]
 };
 
+/**
+* Tests a serialized data set
+* 
+* @todo Add `@returns` tag
+* @todo Add `@param` tag types
+* @todo Add `@param` tag descriptions
+* @todo Add `@param` tag defaults
+* @todo Document `@param` tag "optional" or "required"
+*
+* @param set
+* @param cost
+* @param A
+* @param S
+* @param data
+* @param F
+*/
 multi.testSerializedSet = function (set, cost, A, S, data, F) {
   // Calculate how much samples are in the set
   var error = 0;
@@ -101,7 +156,4 @@ multi.testSerializedSet = function (set, cost, A, S, data, F) {
   return error / (set.length / 2);
 };
 
-/* Export */
-for (var i in multi) {
-  module.exports[i] = multi[i];
-}
+for(var i in multi) { module.exports[i] = multi[i]; }

@@ -1,7 +1,9 @@
-/*******************************************************************************
-                                  METHODS
-*******************************************************************************/
-
+/**
+* @todo Create a namespace description
+*
+* @namespace
+* @todo Add `@borrows` tags.
+*/
 var methods = {
   activation: require('./activation'),
   mutation: require('./mutation'),
@@ -13,5 +15,4 @@ var methods = {
   rate: require('./rate')
 };
 
-/** Export */
 module.exports = methods;

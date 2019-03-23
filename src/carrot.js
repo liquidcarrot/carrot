@@ -1,4 +1,9 @@
-var Neataptic = {
+/**
+* @module Carrot
+* @todo Add `@borrows` tags.
+* @todo Add `@prop` tags.
+*/
+var Carrot = {
   methods: require('./methods/methods'),
   Connection: require('./architecture/connection'),
   architect: require('./architecture/architect'),
@@ -13,23 +18,23 @@ var Neataptic = {
 
 // CommonJS & AMD
 if (typeof define !== 'undefined' && define.amd) {
-  define([], function () { return Neataptic; });
+  define([], function () { return Carrot; });
 }
 
 // Node.js
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = Neataptic;
+  module.exports = Carrot;
 }
 
 // Browser
 if (typeof window === 'object') {
   (function () {
-    var old = window['neataptic'];
-    Neataptic.ninja = function () {
-      window['neataptic'] = old;
-      return Neataptic;
+    var old = window['carrot'];
+    Carrot.ninja = function () {
+      window['carrot'] = old;
+      return Carrot;
     };
   })();
 
-  window['neataptic'] = Neataptic;
+  window['carrot'] = Carrot;
 }

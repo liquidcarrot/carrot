@@ -1,8 +1,14 @@
-/*******************************************************************************
-                                    CONNECTION
-*******************************************************************************/
-
-// Specifies in what manner two groups are connected
+/**
+* Specifies in what manner two groups are connected
+*
+* @namespace
+* @prop {object} ALL_TO_ALL
+* @prop {string} ALL_TO_ALL.name="OUTPUT"
+* @prop {object} ALL_TO_ELSE
+* @prop {string} ALL_TO_ELSE.name="INPUT"
+* @prop {object} ONE_TO_ONE
+* @prop {string} ONE_TO_ONE.name="SELF"
+*/
 var connection = {
   ALL_TO_ALL: {
     name: 'OUTPUT'
@@ -15,5 +21,4 @@ var connection = {
   }
 };
 
-/* Export */
 module.exports = connection;

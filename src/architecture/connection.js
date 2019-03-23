@@ -1,10 +1,34 @@
-/* Export */
 module.exports = Connection;
 
 /*******************************************************************************
                                       CONNECTION
 *******************************************************************************/
 
+/**
+* @todo Create a class description
+* @todo Add `@prop` tag types
+* @todo Add `@prop` tag descriptions
+* @todo Add `@prop` tag defaults
+* @todo Add `@param` tag types
+* @todo Add `@param` tag descriptions
+* @todo Add `@param` tag defaults
+*
+* @class Connection
+* @param from
+* @param to
+* @param [weight]
+* @prop from
+* @prop to
+* @prop gain
+* @prop weight
+* @prop gater
+* @prop elegibility
+* @prop previousDeltaWeight
+* @prop totalDeltaWeight
+* @prop xtrace
+* @prop xtrace.nodes
+* @prop xtrace.values
+*/
 function Connection (from, to, weight) {
   this.from = from;
   this.to = to;
@@ -30,6 +54,10 @@ function Connection (from, to, weight) {
 Connection.prototype = {
   /**
    * Converts the connection to a json object
+   *
+   * @memberof Connection
+   *
+   * @returns {object}
    */
   toJSON: function () {
     var json = {
@@ -41,9 +69,20 @@ Connection.prototype = {
 };
 
 /**
- * Returns an innovation ID
- * https://en.wikipedia.org/wiki/Pairing_function (Cantor pairing function)
- */
+* Returns an innovation ID
+*
+* @todo Add `@param` tag types
+* @todo Add `@param` tag descriptions
+* @todo Add `@param` tag defaults
+* @todo Document `@param` tag "optional" or "required"
+*
+* @see {@link https://en.wikipedia.org/wiki/Pairing_function (Cantor pairing function)|Pairing function (Cantor pairing function)}
+*
+* @param a
+* @param b
+*
+* @return {number}
+*/
 Connection.innovationID = function (a, b) {
   return 1 / 2 * (a + b) * (a + b + 1) + b;
 };

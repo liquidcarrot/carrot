@@ -2,7 +2,7 @@
   "name": "@liquid-carrot/carrot",
   "version": "0.1.0",
   "description": "A Simple Node.js AI Library for Neural Network",
-  "main": "src/neataptic",
+  "main": "src/carrot",
   "scripts": {
     "build": "node_modules/.bin/jsdoc -r -c jsdoc.json && git add . && git stash && git checkout gh-pages && git merge --squash --strategy-option=theirs stash && git stash drop && git commit -m 'Auto-build' && git push && git checkout master",
     "test": "nyc --reporter=html --reporter=text mocha test/src.js",

@@ -1,13 +1,21 @@
-/* Export */
 module.exports = TestWorker;
 
-/* Import */
 var multi = require('../../multi');
 
-/*******************************************************************************
-                                WEBWORKER
-*******************************************************************************/
-
+/**
+* Creates a web worker process for running tests
+*
+* @todo Create a `Webworker` `@class`
+* @todo Add `@prop` tags
+* @todo Add `@param` tag types
+* @todo Add `@param` tag descriptions
+* @todo Add `@param` tag defaults
+* @todo Document `@param` tag "optional" or "required"
+*
+* @constructs TestWorker
+* @param dataSet
+* @param cost
+*/
 function TestWorker (dataSet, cost) {
   var blob = new Blob([this._createBlobString(cost)]);
   this.url = window.URL.createObjectURL(blob);
@@ -18,6 +26,16 @@ function TestWorker (dataSet, cost) {
 }
 
 TestWorker.prototype = {
+  /**
+  * @todo Create a function description
+  * @todo Add `@returns` tag
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  *
+  * @param network
+  */
   evaluate: function (network) {
     return new Promise((resolve, reject) => {
       var serialized = network.serialize();
@@ -37,11 +55,24 @@ TestWorker.prototype = {
     });
   },
 
+  /**
+  * @todo Create a function description
+  */
   terminate: function () {
     this.worker.terminate();
     window.URL.revokeObjectURL(this.url);
   },
 
+  /**
+  * @todo Create a function description
+  * @todo Add `@returns` tag
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  *
+  * @param cost
+  */
   _createBlobString: function (cost) {
     var source = `
       var F = [${multi.activations.toString()}];

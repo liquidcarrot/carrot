@@ -1,11 +1,10 @@
-/*******************************************************************************
-                                      CONFIG
-*******************************************************************************/
-
-// Config
+/**
+* @global
+* @name config
+* @prop {boolean} warnings=false
+*/
 var config = {
   warnings: false
 };
 
-/* Export */
 module.exports = config;
