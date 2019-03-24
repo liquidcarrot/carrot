@@ -2,13 +2,38 @@ var methods = require('../methods/methods');
 var Connection = require('./connection');
 var config = require('../config');
 
-/*******************************************************************************
-                                         NODE
-*******************************************************************************/
 /*
+* @todo Create a class description
 * @todo Add `@param` tag types
 * @todo Add `@param` tag defaults
 * @todo Add `@param` tag descriptions
+* @todo Add `@prop` tag types
+* @todo Add `@prop` tag defaults
+* @todo Add `@prop` tag descriptions
+*
+* @constructs Node
+*
+* @param type
+*
+* @prop {number} bias
+* @prop squash
+* @prop type
+* @prop activation
+* @prop state
+* @prop old
+* @prop mask
+* @prop previousDeltaBias
+* @prop totalDeltaBias
+* @prop {object} connections
+* @prop connections.
+* @prop connections.in
+* @prop connections.out
+* @prop connections.gated
+* @prop connections.self
+* @prop {object} error
+* @prop error.responsibility
+* @prop error.projected
+* @prop error.gated
 */
 function Node (type) {
   this.bias = (type === 'input') ? 0 : Math.random() * 0.2 - 0.1;
@@ -43,18 +68,23 @@ function Node (type) {
   };
 }
 
-/*
+/**
 * @namespace
 */
 Node.prototype = {
   /**
-   * Activates the node
-   * @todo Add `@param` tag types
-   * @todo Add `@param` tag defaults
-   * @todo Add `@param` tag descriptions
-   * @todo Add `@returns` tag type
-   * @todo Add `@returns` tag description
-   */
+  * Activates the node
+  *
+  * @todo Create `@returns` tag
+  * @todo Add `@returns` tag type
+  * @todo Add `@returns` tag description
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  *
+  * @param input
+  */
   activate: function (input) {
     // Check if an input is given
     if (typeof input !== 'undefined') {
@@ -128,13 +158,18 @@ Node.prototype = {
   },
 
   /**
-   * Activates the node without calculating elegibility traces and such
-   * @todo Add `@param` tag types
-   * @todo Add `@param` tag defaults
-   * @todo Add `@param` tag descriptions
-   * @todo Add `@returns` tag type
-   * @todo Add `@returns` tag description
-   */
+  * Activates the node without calculating elegibility traces and such
+  *
+  * @todo Create `@returns` tag
+  * @todo Add `@returns` tag type
+  * @todo Add `@returns` tag description
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  *
+  * @param input
+  */
   noTraceActivate: function (input) {
     // Check if an input is given
     if (typeof input !== 'undefined') {
@@ -163,12 +198,21 @@ Node.prototype = {
   },
 
   /**
-   * Back-propagate the error, aka learn
-   * @todo Add `@param` tag types
-   * @todo Add `@param` tag defaults
-   * @todo Add `@param` tag descriptions
-   *  
-   */
+  * Back-propagate the error, aka learn
+  *
+  * @todo Create `@returns` tag
+  * @todo Add `@returns` tag type
+  * @todo Add `@returns` tag description
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  *  
+  * @param rate
+  * @param momentum
+  * @param update
+  * @param target
+  */
   propagate: function (rate, momentum, update, target) {
     momentum = momentum || 0;
     rate = rate || 0.3;
@@ -248,13 +292,19 @@ Node.prototype = {
   },
 
   /**
-   * Creates a connection from this node to the given node
-   * @todo Add `@param` tag types
-   * @todo Add `@param` tag defaults
-   * @todo Add `@param` tag descriptions
-   * @todo Add `@returns` tag type
-   * @todo Add `@returns` tag description
-   */
+  * Creates a connection from this node to the given node
+  *
+  * @todo Create `@returns` tag
+  * @todo Add `@returns` tag type
+  * @todo Add `@returns` tag description
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
+  *
+  * @param target
+  * @param weight
+  */
   connect: function (target, weight) {
     var connections = [];
     if (typeof target.bias !== 'undefined') { // must be a node!
@@ -290,10 +340,17 @@ Node.prototype = {
 
   /**
    * Disconnects this node from the other node
-   * @todo Add `@param` tag types
-   * @todo Add `@param` tag defaults
-   * @todo Add `@param` tag descriptions
+  *
+  * @todo Create `@returns` tag
+  * @todo Add `@returns` tag type
+  * @todo Add `@returns` tag description
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
    *  
+   * @param node
+   * @param twosided
    */
   disconnect: function (node, twosided) {
     if (this === node) {
@@ -319,10 +376,16 @@ Node.prototype = {
 
   /**
    * Make this node gate a connection
-   * @todo Add `@param` tag types
-   * @todo Add `@param` tag defaults
-   * @todo Add `@param` tag descriptions
+  *
+  * @todo Create `@returns` tag
+  * @todo Add `@returns` tag type
+  * @todo Add `@returns` tag description
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
    *  
+   * @param connections
    */
   gate: function (connections) {
     if (!Array.isArray(connections)) {
@@ -339,10 +402,16 @@ Node.prototype = {
 
   /**
    * Removes the gates from this node from the given connection(s)
-   * @todo Add `@param` tag types
-   * @todo Add `@param` tag defaults
-   * @todo Add `@param` tag descriptions
+  *
+  * @todo Create `@returns` tag
+  * @todo Add `@returns` tag type
+  * @todo Add `@returns` tag description
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
    *  
+   * @param connections
    */
   ungate: function (connections) {
     if (!Array.isArray(connections)) {
@@ -384,10 +453,16 @@ Node.prototype = {
 
   /**
    * Mutates the node with the given method
-   * @todo Add `@param` tag types
-   * @todo Add `@param` tag defaults
-   * @todo Add `@param` tag descriptions
+  *
+  * @todo Create `@returns` tag
+  * @todo Add `@returns` tag type
+  * @todo Add `@returns` tag description
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
    *  
+   * @param method
    */
   mutate: function (method) {
     if (typeof method === 'undefined') {
@@ -411,10 +486,16 @@ Node.prototype = {
 
   /**
    * Checks if this node is projecting to the given node
-   * @todo Add `@param` tag types
-   * @todo Add `@param` tag defaults
-   * @todo Add `@param` tag descriptions
+  *
+  * @todo Create `@returns` tag
+  * @todo Add `@returns` tag type
+  * @todo Add `@returns` tag description
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
    *  
+   * @param node
    */
   isProjectingTo: function (node) {
     if (node === this && this.connections.self.weight !== 0) return true;
@@ -430,10 +511,16 @@ Node.prototype = {
 
   /**
    * Checks if the given node is projecting to this node
-   * @todo Add `@param` tag types
-   * @todo Add `@param` tag defaults
-   * @todo Add `@param` tag descriptions
+  *
+  * @todo Create `@returns` tag
+  * @todo Add `@returns` tag type
+  * @todo Add `@returns` tag description
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@param` tag defaults
+  * @todo Document `@param` tag "optional" or "required"
    *  
+   * @param node
    */
   isProjectedBy: function (node) {
     if (node === this && this.connections.self.weight !== 0) return true;
@@ -449,10 +536,10 @@ Node.prototype = {
   },
 
   /**
-   * Converts the node to a json object
-   * @todo Add `@returns` tag type
-   * @todo Add `@returns` tag description
-   */
+  * Converts the node to a json object
+  *
+  * @returns {object} Returns a JSON Object of the node
+  */
   toJSON: function () {
     var json = {
       bias: this.bias,
@@ -466,13 +553,12 @@ Node.prototype = {
 };
 
 /**
- * Convert a json object to a node
- * @todo Add `@param` tag types
- * @todo Add `@param` tag defaults
- * @todo Add `@param` tag descriptions
- * @todo Add `@returns` tag type
- * @todo Add `@returns` tag description
- */
+* Convert a json object to a node
+*
+* @param {object} json - JSON Object of node
+*
+* @returns {Node} Returns a Node created from the given JSON Object
+*/
 Node.fromJSON = function (json) {
   var node = new Node();
   node.bias = json.bias;

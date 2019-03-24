@@ -11,12 +11,21 @@ var Node = require('./node');
 * @todo Add `@prop` tag descriptions
 * @todo Add `@prop` tag defaults
 *
+*
+* @constructs Layer
+* @prop output
+* @prop nodes
+* @prop {object} connections
+* @prop connections.in
+* @prop connections.out
+* @prop connections.self
 */
 function Layer() {
   this.output = null;
 
   this.nodes = [];
-  this.connections = { in: [],
+  this.connections = {
+    in: [],
     out: [],
     self: []
   };

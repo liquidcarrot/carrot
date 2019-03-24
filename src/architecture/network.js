@@ -9,7 +9,7 @@ var Node = require('./node');
 var mutation = methods.mutation;
 
 /**
-*  Create a neural network
+* Create a neural network
 *
 * @constructs Network
 * @param {number} input
@@ -1236,8 +1236,8 @@ Network.fromJSON = function (json) {
  * @todo Add `@returns` tag type
  * @todo Add `@returns` tag description
  *
- * @param Network1
- * @param Network2
+ * @param network1
+ * @param network2
  * @returns {Network} Network 
  */
 Network.merge = function (network1, network2) {
@@ -1286,8 +1286,8 @@ Network.merge = function (network1, network2) {
  * @todo Add `@returns` tag type
  * @todo Add `@returns` tag description
  *
- * @param Network1
- * @param Network2
+ * @param network1
+ * @param network2
  * @param equal
  */
 Network.crossOver = function (network1, network2, equal) {
