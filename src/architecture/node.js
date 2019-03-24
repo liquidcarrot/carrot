@@ -2,38 +2,15 @@ var methods = require('../methods/methods');
 var Connection = require('./connection');
 var config = require('../config');
 
-/*
-* @todo Create a class description
-* @todo Add `@param` tag types
-* @todo Add `@param` tag defaults
-* @todo Add `@param` tag descriptions
-* @todo Add `@prop` tag types
-* @todo Add `@prop` tag defaults
-* @todo Add `@prop` tag descriptions
-*
+/**
+* Creates a new neuron/node
+* 
 * @constructs Node
 *
 * @param type
 *
 * @prop {number} bias
 * @prop squash
-* @prop type
-* @prop activation
-* @prop state
-* @prop old
-* @prop mask
-* @prop previousDeltaBias
-* @prop totalDeltaBias
-* @prop {object} connections
-* @prop connections.
-* @prop connections.in
-* @prop connections.out
-* @prop connections.gated
-* @prop connections.self
-* @prop {object} error
-* @prop error.responsibility
-* @prop error.projected
-* @prop error.gated
 */
 function Node (type) {
   this.bias = (type === 'input') ? 0 : Math.random() * 0.2 - 0.1;
@@ -73,15 +50,9 @@ function Node (type) {
 */
 Node.prototype = {
   /**
-  * Activates the node
+  * Activates node
   *
-  * @todo Create `@returns` tag
-  * @todo Add `@returns` tag type
-  * @todo Add `@returns` tag description
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
+  * @todo Something
   *
   * @param input
   */
@@ -157,19 +128,6 @@ Node.prototype = {
     return this.activation;
   },
 
-  /**
-  * Activates the node without calculating elegibility traces and such
-  *
-  * @todo Create `@returns` tag
-  * @todo Add `@returns` tag type
-  * @todo Add `@returns` tag description
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
-  *
-  * @param input
-  */
   noTraceActivate: function (input) {
     // Check if an input is given
     if (typeof input !== 'undefined') {
@@ -197,22 +155,6 @@ Node.prototype = {
     return this.activation;
   },
 
-  /**
-  * Back-propagate the error, aka learn
-  *
-  * @todo Create `@returns` tag
-  * @todo Add `@returns` tag type
-  * @todo Add `@returns` tag description
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
-  *  
-  * @param rate
-  * @param momentum
-  * @param update
-  * @param target
-  */
   propagate: function (rate, momentum, update, target) {
     momentum = momentum || 0;
     rate = rate || 0.3;
@@ -291,20 +233,6 @@ Node.prototype = {
     }
   },
 
-  /**
-  * Creates a connection from this node to the given node
-  *
-  * @todo Create `@returns` tag
-  * @todo Add `@returns` tag type
-  * @todo Add `@returns` tag description
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
-  *
-  * @param target
-  * @param weight
-  */
   connect: function (target, weight) {
     var connections = [];
     if (typeof target.bias !== 'undefined') { // must be a node!
@@ -338,20 +266,6 @@ Node.prototype = {
     return connections;
   },
 
-  /**
-   * Disconnects this node from the other node
-  *
-  * @todo Create `@returns` tag
-  * @todo Add `@returns` tag type
-  * @todo Add `@returns` tag description
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
-   *  
-   * @param node
-   * @param twosided
-   */
   disconnect: function (node, twosided) {
     if (this === node) {
       this.connections.self.weight = 0;
@@ -374,19 +288,6 @@ Node.prototype = {
     }
   },
 
-  /**
-   * Make this node gate a connection
-  *
-  * @todo Create `@returns` tag
-  * @todo Add `@returns` tag type
-  * @todo Add `@returns` tag description
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
-   *  
-   * @param connections
-   */
   gate: function (connections) {
     if (!Array.isArray(connections)) {
       connections = [connections];
@@ -400,19 +301,6 @@ Node.prototype = {
     }
   },
 
-  /**
-   * Removes the gates from this node from the given connection(s)
-  *
-  * @todo Create `@returns` tag
-  * @todo Add `@returns` tag type
-  * @todo Add `@returns` tag description
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
-   *  
-   * @param connections
-   */
   ungate: function (connections) {
     if (!Array.isArray(connections)) {
       connections = [connections];
@@ -428,9 +316,6 @@ Node.prototype = {
     }
   },
 
-  /**
-   * Clear the context of the node
-   */
   clear: function () {
     for (var i = 0; i < this.connections.in.length; i++) {
       var connection = this.connections.in[i];
@@ -451,19 +336,6 @@ Node.prototype = {
     this.old = this.state = this.activation = 0;
   },
 
-  /**
-   * Mutates the node with the given method
-  *
-  * @todo Create `@returns` tag
-  * @todo Add `@returns` tag type
-  * @todo Add `@returns` tag description
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
-   *  
-   * @param method
-   */
   mutate: function (method) {
     if (typeof method === 'undefined') {
       throw new Error('No mutate method given!');
@@ -484,19 +356,6 @@ Node.prototype = {
     }
   },
 
-  /**
-   * Checks if this node is projecting to the given node
-  *
-  * @todo Create `@returns` tag
-  * @todo Add `@returns` tag type
-  * @todo Add `@returns` tag description
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
-   *  
-   * @param node
-   */
   isProjectingTo: function (node) {
     if (node === this && this.connections.self.weight !== 0) return true;
 
@@ -509,19 +368,6 @@ Node.prototype = {
     return false;
   },
 
-  /**
-   * Checks if the given node is projecting to this node
-  *
-  * @todo Create `@returns` tag
-  * @todo Add `@returns` tag type
-  * @todo Add `@returns` tag description
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
-   *  
-   * @param node
-   */
   isProjectedBy: function (node) {
     if (node === this && this.connections.self.weight !== 0) return true;
 
@@ -535,11 +381,6 @@ Node.prototype = {
     return false;
   },
 
-  /**
-  * Converts the node to a json object
-  *
-  * @returns {object} Returns a JSON Object of the node
-  */
   toJSON: function () {
     var json = {
       bias: this.bias,
@@ -553,13 +394,10 @@ Node.prototype = {
 };
 
 /**
-* Convert a json object to a node
+* Creates a new node from the given JSON Object
 *
-* @constructor
-*
-* @param {object} json - JSON Object of node
-*
-* @returns {Node} Returns a Node created from the given JSON Object
+* @param {object} json - Node as a JSON Object
+* @returns {Node} Returns a new Node
 */
 Node.fromJSON = function (json) {
   var node = new Node();
