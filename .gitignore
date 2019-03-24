@@ -1,3 +1,6 @@
+# Liquid Carrot's Auto Build - Garbage Collection
+.temp
+
 # Logs
 logs
 *.log
