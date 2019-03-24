@@ -60,9 +60,6 @@ function Node (type) {
   };
 }
 
-/**
-* @namespace
-*/
 Node.prototype = {
   /**
   * Activates node
