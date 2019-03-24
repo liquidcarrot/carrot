@@ -61,6 +61,87 @@ function Node (type) {
 
 Node.prototype = {
   /**
+  * Activates the node
+  *
+  * @todo Add `@returns` tag description
+  * @todo Add `@param` tag descriptions
+  *
+  * @param {number} [input]
+  * @returns {number}
+  */
+  activate: function (input) {
+    // Check if an input is given
+    if (typeof input !== 'undefined') {
+      this.activation = input;
+      return this.activation;
+    }
+
+    this.old = this.state;
+
+    // All activation sources coming from the node itself
+    this.state = this.connections.self.gain * this.connections.self.weight * this.state + this.bias;
+
+    // Activation sources coming from connections
+    var i;
+    for (i = 0; i < this.connections.in.length; i++) {
+      var connection = this.connections.in[i];
+      this.state += connection.from.activation * connection.weight * connection.gain;
+    }
+
+    // Squash the values received
+    this.activation = this.squash(this.state) * this.mask;
+    this.derivative = this.squash(this.state, true);
+
+    // Update traces
+    var nodes = [];
+    var influences = [];
+
+    for (i = 0; i < this.connections.gated.length; i++) {
+      let conn = this.connections.gated[i];
+      let node = conn.to;
+
+      let index = nodes.indexOf(node);
+      if (index > -1) {
+        influences[index] += conn.weight * conn.from.activation;
+      } else {
+        nodes.push(node);
+        influences.push(conn.weight * conn.from.activation +
+          (node.connections.self.gater === this ? node.old : 0));
+      }
+
+      // Adjust the gain to this nodes' activation
+      conn.gain = this.activation;
+    }
+
+    for (i = 0; i < this.connections.in.length; i++) {
+      let connection = this.connections.in[i];
+
+      // Elegibility trace
+      connection.elegibility = this.connections.self.gain * this.connections.self.weight *
+        connection.elegibility + connection.from.activation * connection.gain;
+
+      // Extended trace
+      for (var j = 0; j < nodes.length; j++) {
+        let node = nodes[j];
+        let influence = influences[j];
+
+        let index = connection.xtrace.nodes.indexOf(node);
+
+        if (index > -1) {
+          connection.xtrace.values[index] = node.connections.self.gain * node.connections.self.weight *
+            connection.xtrace.values[index] + this.derivative * connection.elegibility * influence;
+        } else {
+          // Does not exist there yet, might be through mutation
+          connection.xtrace.nodes.push(node);
+          connection.xtrace.values.push(this.derivative * connection.elegibility * influence);
+        }
+      }
+    }
+
+    return this.activation;
+  },
+
+  /**
   * Activates the node without calculating elegibility traces and such
   *
   * @todo Add `@returns` tag description
@@ -185,6 +266,13 @@ Node.prototype = {
     }
   },
 
+  /**
+  * Creates a connection from this node to the given node
+  *
+  * @param {Node} target
+  * @param {number} weight
+  * @returns {Connection[]}
+  */
   connect: function (target, weight) {
     var connections = [];
     if (typeof target.bias !== 'undefined') { // must be a node!
@@ -218,6 +306,14 @@ Node.prototype = {
     return connections;
   },
 
+  /**
+  * Disconnects this node from the other node
+  *
+  * @todo Add `@param` tag descriptions
+  *
+  * @param {Node} node
+  * @param {boolean} [twosided]
+  */
   disconnect: function (node, twosided) {
     if (this === node) {
       this.connections.self.weight = 0;
@@ -240,6 +336,13 @@ Node.prototype = {
     }
   },
 
+  /**
+  * Make this node gate a connection
+  *
+  * @todo Add `@param` tag descriptions
+  *
+  * @param {Connection[]|Connection} connections
+  */
   gate: function (connections) {
     if (!Array.isArray(connections)) {
       connections = [connections];
@@ -253,6 +356,13 @@ Node.prototype = {
     }
   },
 
+  /**
+  * Removes the gates from this node from the given connection(s)
+  *
+  * @todo Add `@param` tag descriptions
+  *
+  * @param {Connection[]|Connection} connections
+  */
   ungate: function (connections) {
     if (!Array.isArray(connections)) {
       connections = [connections];
@@ -268,6 +378,9 @@ Node.prototype = {
     }
   },
 
+  /**
+  * Clear the context of the node
+  */
   clear: function () {
     for (var i = 0; i < this.connections.in.length; i++) {
       var connection = this.connections.in[i];
@@ -288,6 +401,14 @@ Node.prototype = {
     this.old = this.state = this.activation = 0;
   },
 
+  /**
+  * Mutates the node with the given method
+  *
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  *
+  * @param method
+  */
   mutate: function (method) {
     if (typeof method === 'undefined') {
       throw new Error('No mutate method given!');
@@ -308,6 +429,14 @@ Node.prototype = {
     }
   },
 
+  /**
+  * Checks if this node is projecting to the given node
+  *
+  * @todo Add `@param` tag descriptions
+  * 
+  * @param {Node} node
+  * @returns {boolean}
+  */
   isProjectingTo: function (node) {
     if (node === this && this.connections.self.weight !== 0) return true;
 
@@ -320,6 +449,14 @@ Node.prototype = {
     return false;
   },
 
+  /**
+  * Checks if the given node is projecting to this node
+  *
+  * @todo Add `@param` tag descriptions
+  * 
+  * @param {Node} node
+  * @returns {boolean}
+  */
   isProjectedBy: function (node) {
     if (node === this && this.connections.self.weight !== 0) return true;
 
@@ -333,6 +470,11 @@ Node.prototype = {
     return false;
   },
 
+  /**
+  * Converts the node to a json object
+  *
+  * @returns {object}
+  */
   toJSON: function () {
     var json = {
       bias: this.bias,
@@ -346,90 +488,9 @@ Node.prototype = {
 };
 
 /**
-* Activates the node
+* Convert a json object to a node
 *
-* @todo Add `@returns` tag description
-* @todo Add `@param` tag descriptions
-*
-* @param {number} [input]
-* @returns {number}
-*/
-Node.prototype.activate = function (input) {
-  // Check if an input is given
-  if (typeof input !== 'undefined') {
-    this.activation = input;
-    return this.activation;
-  }
-
-  this.old = this.state;
-
-  // All activation sources coming from the node itself
-  this.state = this.connections.self.gain * this.connections.self.weight * this.state + this.bias;
-
-  // Activation sources coming from connections
-  var i;
-  for (i = 0; i < this.connections.in.length; i++) {
-    var connection = this.connections.in[i];
-    this.state += connection.from.activation * connection.weight * connection.gain;
-  }
-
-  // Squash the values received
-  this.activation = this.squash(this.state) * this.mask;
-  this.derivative = this.squash(this.state, true);
-
-  // Update traces
-  var nodes = [];
-  var influences = [];
-
-  for (i = 0; i < this.connections.gated.length; i++) {
-    let conn = this.connections.gated[i];
-    let node = conn.to;
-
-    let index = nodes.indexOf(node);
-    if (index > -1) {
-      influences[index] += conn.weight * conn.from.activation;
-    } else {
-      nodes.push(node);
-      influences.push(conn.weight * conn.from.activation +
-        (node.connections.self.gater === this ? node.old : 0));
-    }
-
-    // Adjust the gain to this nodes' activation
-    conn.gain = this.activation;
-  }
-
-  for (i = 0; i < this.connections.in.length; i++) {
-    let connection = this.connections.in[i];
-
-    // Elegibility trace
-    connection.elegibility = this.connections.self.gain * this.connections.self.weight *
-      connection.elegibility + connection.from.activation * connection.gain;
-
-    // Extended trace
-    for (var j = 0; j < nodes.length; j++) {
-      let node = nodes[j];
-      let influence = influences[j];
-
-      let index = connection.xtrace.nodes.indexOf(node);
-
-      if (index > -1) {
-        connection.xtrace.values[index] = node.connections.self.gain * node.connections.self.weight *
-          connection.xtrace.values[index] + this.derivative * connection.elegibility * influence;
-      } else {
-        // Does not exist there yet, might be through mutation
-        connection.xtrace.nodes.push(node);
-        connection.xtrace.values.push(this.derivative * connection.elegibility * influence);
-      }
-    }
-  }
-
-  return this.activation;
-}
-
-/**
-* Creates a new node from the given JSON Object
-*
-* @param {object} json - Node as a JSON Object
+* @param {object} json - json object of node
 * @returns {Node}
 */
 Node.fromJSON = function (json) {
