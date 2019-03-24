@@ -5,7 +5,7 @@
   "main": "src/carrot",
   "scripts": {
     "jsdoc": "node_modules/.bin/jsdoc -r -c jsdoc.json",
-    "deploy:docs": "git add . && git stash && git branch -f gh-pages && git checkout gh-pages && git reset --hard origin/master && git merge --squash --strategy-option=theirs stash && git stash drop && git commit -m 'Auto-build' && git push && git checkout master",
+    "deploy:docs": "git add . && git stash && git branch -f gh-pages && git checkout gh-pages && git reset --hard origin/master && git merge --squash --strategy-option=theirs stash && git stash drop && git commit -m 'Auto-build' && git push origin gh-pages -f && git checkout master",
     "build": "git stash && npm run jsdoc && npm run deploy:docs && git stash pop",
     "test": "nyc --reporter=html --reporter=text mocha test/src.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls && rm -rf ./src-cov",
