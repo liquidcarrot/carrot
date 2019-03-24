@@ -555,6 +555,8 @@ Node.prototype = {
 /**
 * Convert a json object to a node
 *
+* @constructor
+*
 * @param {object} json - JSON Object of node
 *
 * @returns {Node} Returns a Node created from the given JSON Object
