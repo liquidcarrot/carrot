@@ -1196,7 +1196,7 @@ Network.prototype = {
 
 /**
  * Convert a json object to a network
- * @constructor
+ *
  * @todo Add `@param` tag type
  * @todo Add `@param` tag descriptions
  * @todo Add `@returns` tag description

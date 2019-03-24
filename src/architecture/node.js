@@ -11,6 +11,21 @@ var config = require('../config');
 *
 * @prop {number} bias
 * @prop squash
+* @prop type
+* @prop activation
+* @prop state
+* @prop old
+* @prop mask
+* @prop previousDeltaBias
+* @prop totalDeltaBias
+* @prop {object} connections
+* @prop connections.in
+* @prop connections.out
+* @prop connections.gated
+* @prop connections.self
+* @prop error.responsibility
+* @prop error.projected
+* @prop error.gated
 */
 function Node (type) {
   this.bias = (type === 'input') ? 0 : Math.random() * 0.2 - 0.1;
