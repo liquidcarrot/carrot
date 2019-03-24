@@ -18,7 +18,6 @@ var config = require('../config');
 * @prop mask
 * @prop previousDeltaBias
 * @prop totalDeltaBias
-* @prop {object} connections
 * @prop connections.in
 * @prop connections.out
 * @prop connections.gated
@@ -62,11 +61,13 @@ function Node (type) {
 
 Node.prototype = {
   /**
-  * Activates node
+  * Activates the node
   *
-  * @todo Something
+  * @todo Add `@returns` tag description
+  * @todo Add `@param` tag descriptions
   *
-  * @param input
+  * @param {number} [input]
+  * @returns {number}
   */
   activate: function (input) {
     // Check if an input is given
@@ -140,6 +141,15 @@ Node.prototype = {
     return this.activation;
   },
 
+  /**
+  * Activates the node without calculating elegibility traces and such
+  *
+  * @todo Add `@returns` tag description
+  * @todo Add `@param` tag descriptions
+  *
+  * @param {number} [input]
+  * @returns {number}
+  */
   noTraceActivate: function (input) {
     // Check if an input is given
     if (typeof input !== 'undefined') {
@@ -167,6 +177,17 @@ Node.prototype = {
     return this.activation;
   },
 
+  /**
+  * Back-propagate the error, aka learn
+  *
+  * @todo Add `@param` tag types
+  * @todo Add `@param` tag descriptions
+  *
+  * @param {number} rate=0.3
+  * @param {number} momentum=0
+  * @param update
+  * @param target
+  */
   propagate: function (rate, momentum, update, target) {
     momentum = momentum || 0;
     rate = rate || 0.3;
