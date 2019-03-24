@@ -4,6 +4,9 @@ var config = require('../config');
 
 /**
 * Creates a new neuron/node
+*
+* @todo Add `@param` tag types
+* @todo Add `@param` tag descriptions
 * 
 * @constructs Node
 *
