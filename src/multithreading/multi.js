@@ -1,6 +1,7 @@
 /**
 * @namespace multi
 * @todo Add `@borrows` tags
+* @borrows workers as workers
 */
 var multi = {
   // Workers
@@ -15,7 +16,8 @@ var multi = {
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
   * 
-  * @param dataSet
+  * @param {number[]} dataSet
+  * @returns {number[]}
   */
   serializeDataSet: function (dataSet) {
     var serialized = [dataSet[0].input.length, dataSet[0].output.length];
@@ -132,7 +134,6 @@ var multi = {
 /**
 * Tests a serialized data set
 * 
-* @todo Add `@returns` tag
 * @todo Add `@param` tag types
 * @todo Add `@param` tag descriptions
 * @todo Add `@param` tag defaults
@@ -144,6 +145,7 @@ var multi = {
 * @param S
 * @param data
 * @param F
+* @returns {number}
 */
 multi.testSerializedSet = function (set, cost, A, S, data, F) {
   // Calculate how much samples are in the set
