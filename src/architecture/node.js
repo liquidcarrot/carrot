@@ -271,6 +271,8 @@ Node.prototype = {
 
   /**
   * Creates a connection from this node to the given node
+  * 
+  * @todo Add `@param` tag descriptions
   *
   * @param {Node} target
   * @param {number} weight
