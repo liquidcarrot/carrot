@@ -1,6 +1,5 @@
 /**
 * @namespace multi
-* @todo Add `@borrows` tags
 * @borrows workers as workers
 */
 var multi = {
@@ -9,13 +8,7 @@ var multi = {
 
   /**
   * Serializes a dataset
-  * 
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @param {number[]} dataSet
   * @returns {number[]}
   */
@@ -37,18 +30,18 @@ var multi = {
 
   /**
   * Activate a serialized network
-  * 
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
+  *
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
   *
-  * @param input
-  * @param A
-  * @param S
-  * @param data
-  * @param F
+  * @param {number[]} input
+  * @param {number[]} A
+  * @param {number[]} S
+  * @param {number[]} data
+  * @param {number[]} F
+  *
+  * @returns {number[]} An output array
   */
   activateSerializedNetwork: function (input, A, S, data, F) {
     for (var i = 0; i < data[0]; i++) A[i] = input[i];
@@ -74,14 +67,10 @@ var multi = {
 
   /**
   * Deserializes a dataset to an array of arrays
-  * 
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
-  * @param serializedSet
+  * @param {number[]} serializedSet - A dataset serialzed by serializeDataSet
+  *
+  * @returns {Array[]} - An array with 2 entries, input data and output data -- each being an array themselves.
   */
   deserializeDataSet: function (serializedSet) {
     var set = [];
@@ -133,19 +122,17 @@ var multi = {
 
 /**
 * Tests a serialized data set
-* 
-* @todo Add `@param` tag types
-* @todo Add `@param` tag descriptions
-* @todo Add `@param` tag defaults
-* @todo Document `@param` tag "optional" or "required"
 *
-* @param set
-* @param cost
-* @param A
-* @param S
-* @param data
-* @param F
-* @returns {number}
+* @todo Add `@param` tag descriptions
+* @todo Add `@returns` tag description
+*
+* @param {number[]} set - A dataset serialized by serializeDataSet
+* @param {Function} cost
+* @param {number[]} A
+* @param {number[]} S
+* @param {number[]} data
+* @param {number[]} F
+* @returns {number} - Error
 */
 multi.testSerializedSet = function (set, cost, A, S, data, F) {
   // Calculate how much samples are in the set
