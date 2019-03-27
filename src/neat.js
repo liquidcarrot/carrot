@@ -18,28 +18,29 @@ var selection = methods.selection;
 * @todo Add `@param` tag types
 * @todo Add `@param` tag defaults
 * @todo Add `@param` tag descriptions
-*  
+*
+* @private
 *
 * @param {number} input - The input size of the networks.
 * @param {number} output - The output size of the networks
 * @param {Function} fitness - The fitness function to evaluate the networks
 * @param {Object} options - Configuration options
-* @param {boolean} [equal=false] - 
-* @param {number} [clear=false] - 
-* @param {number} [popsize=50] - 
-* @param {number} [elitism=0] - 
-* @param {number} [provenance=0] - 
-* @param {number} [mutationRate=0] - 
-* @param {number} [mutationAmount=1] - 
-* @param {boolean} [fitnessPopulation=false] - 
-* @param [selection=] - 
-* @param [crossover=] - 
-* @param [mutation=] - 
-* @param [network=false] - 
-* @param {number} [maxNodes=Infinity] - 
-* @param {number} [maxConns=Infinity] - 
-* @param {number} [maxGates=Infinity] - 
-* @param [mutationSelection=] - 
+* @param {boolean} [equal=false] -
+* @param {number} [clear=false] -
+* @param {number} [popsize=50] -
+* @param {number} [elitism=0] -
+* @param {number} [provenance=0] -
+* @param {number} [mutationRate=0] -
+* @param {number} [mutationAmount=1] -
+* @param {boolean} [fitnessPopulation=false] -
+* @param [selection=] -
+* @param [crossover=] -
+* @param [mutation=] -
+* @param [network=false] -
+* @param {number} [maxNodes=Infinity] -
+* @param {number} [maxConns=Infinity] -
+* @param {number} [maxGates=Infinity] -
+* @param [mutationSelection=] -
 */
 function Neat (input, output, fitness, options) {
   this.input = input; // The input size of the networks

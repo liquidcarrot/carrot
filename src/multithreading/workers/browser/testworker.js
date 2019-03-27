@@ -12,6 +12,8 @@ var multi = require('../../multi');
 * @todo Add `@param` tag defaults
 * @todo Document `@param` tag "optional" or "required"
 *
+* @private
+*
 * @constructs TestWorker
 * @param dataSet
 * @param cost
