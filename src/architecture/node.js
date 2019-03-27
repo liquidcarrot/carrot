@@ -66,10 +66,11 @@ Node.prototype = {
   /**
   * Activates the node
   *
-  * @todo Add `@returns` tag description
   * @todo Add `@param` tag descriptions
+  * @todo Add `@returns` tag description
   *
   * @param {number} [input]
+  * 
   * @returns {number}
   */
   activate: function (input) {
@@ -188,8 +189,8 @@ Node.prototype = {
   *
   * @param {number} rate=0.3
   * @param {number} momentum=0
-  * @param update
-  * @param target
+  * @param {boolean} update=false
+  * @param {number} target
   */
   propagate: function (rate, momentum, update, target) {
     momentum = momentum || 0;
