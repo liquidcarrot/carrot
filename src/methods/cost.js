@@ -3,37 +3,38 @@
 *******************************************************************************/
 
 /**
-* @tutorial https://en.wikipedia.org/wiki/Loss_function
+* @see {@link https://en.wikipedia.org/wiki/Loss_function|Loss Function on Wikipedia}
 * @namespace cost
 */
 var cost = {
-  /** 
+  /**
   * Cross entropy error
   *
   * @todo Add `@param` tag description
   * @todo Add `@returns` tag type
   * @todo Add `@returns` tag description
-  * 
+  *
+  * @see {@link http://bit.ly/2p5W29A|Cross-entropy Error Function}
   * @param {number} target
-  * @param {number} output
+  * @param {number[]} output
+  *
+  * @returns {number} - Mean squared error
   */
   CROSS_ENTROPY: function (target, output) {
     var error = 0;
     for (var i = 0; i < output.length; i++) {
-      // Avoid negative and zero numbers, use 1e-15 http://bit.ly/2p5W29A
+      // Avoid negative and zero numbers, use 1e-15
       error -= target[i] * Math.log(Math.max(output[i], 1e-15)) + (1 - target[i]) * Math.log(1 - Math.max(output[i], 1e-15));
     }
     return error / output.length;
   },
-  /*
-  * Mean Squared Erro
+  /**
+  * Mean Squared Error
   *
-  * @todo Add `@param` tag description
-  * @todo Add `@returns` tag type
-  * @todo Add `@returns` tag description
+  * @param {number} target - Ideal value
+  * @param {number[]} output - Actual values
   *
-  * @param {number} target
-  * @param {number} output
+  * @returns {number} - Mean squared error
   */
   MSE: function (target, output) {
     var error = 0;
@@ -43,15 +44,13 @@ var cost = {
 
     return error / output.length;
   },
-  /*
+  /**
   * Binary Error
   *
-  * @todo Add `@param` tag description
-  * @todo Add `@returns` tag type
-  * @todo Add `@returns` tag description
+  * @param {number} target - Ideal value
+  * @param {number[]} output - Actual values
   *
-  * @param {number} target
-  * @param {number} output
+  * @returns {number} misses - Times target value was missed
   */
   BINARY: function (target, output) {
     var misses = 0;
@@ -61,15 +60,13 @@ var cost = {
 
     return misses;
   },
-  /*
+  /**
   * Mean Absolute Error
   *
-  * @todo Add `@param` tag description
-  * @todo Add `@returns` tag type
-  * @todo Add `@returns` tag description
+  * @param {number} target - Ideal value
+  * @param {number[]} output - Actual values
   *
-  * @param {number} target
-  * @param {number} output
+  * @returns {number} - Mean absoulte error
   */
   MAE: function (target, output) {
     var error = 0;
@@ -79,15 +76,13 @@ var cost = {
 
     return error / output.length;
   },
-  /*
+  /**
   * Mean Absolute Percentage Error
   *
-  * @todo Add `@param` tag description
-  * @todo Add `@returns` tag type
-  * @todo Add `@returns` tag description
+  * @param {number} target - Ideal value
+  * @param {number[]} output - Actual values
   *
-  * @param {number} target
-  * @param {number} output
+  * @returns {number} - Mean absolute percentage error
   */
   MAPE: function (target, output) {
     var error = 0;
@@ -97,15 +92,13 @@ var cost = {
 
     return error / output.length;
   },
-  /*
+  /**
   * Mean Squared Logarithmic Error
   *
-  * @todo Add `@param` tag description
-  * @todo Add `@returns` tag type
-  * @todo Add `@returns` tag description
+  * @param {number} target - Ideal value
+  * @param {number[]} output - Actual values
   *
-  * @param {number} target
-  * @param {number} output
+  * @returns {number} - Mean squared logarithmic error
   */
   MSLE: function (target, output) {
     var error = 0;
@@ -115,15 +108,13 @@ var cost = {
 
     return error;
   },
-  /*
+  /**
   * Hinge loss, for classifiers
   *
-  * @todo Add `@param` tag description
-  * @todo Add `@returns` tag type
-  * @todo Add `@returns` tag description
+  * @param {number} target - Ideal value
+  * @param {number[]} output - Actual values
   *
-  * @param {number} target
-  * @param {number} output
+  * @returns {number} - Hinge loss
   */
   HINGE: function (target, output) {
     var error = 0;
