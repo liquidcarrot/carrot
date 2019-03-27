@@ -11,12 +11,14 @@
 
 <details>
   <summary><strong>Table of Contents</strong></summary>
-  
+
   * [Contributing](#contributing)
   * [Support](#support)
   * [Contributors](#contributors)
   * [Documentation](/DOCUMENTATION.md)
 </details>
+
+For Documentation, visit [https://liquidcarrot.github.io/carrot](https://liquidcarrot.github.io/carrot)
 
 ## Getting Started
 
@@ -60,7 +62,7 @@ When adding or changing a service please add tests.
 
 <details>
   <summary><strong>TODO</strong></summary>
-  
+
   * [ ] Architecture Support
       * [x] Neurons
           * [x] Tests
@@ -105,6 +107,6 @@ This project exists thanks to all the people who contribute. We can't do it with
 
 ## Acknowledgements
 
-A special thanks to [Neataptic](https://github.com/wagenaartje/neataptic/), [Synaptic](https://github.com/cazala/synaptic/), and [Brain.js](https://github.com/BrainJS/brain.js)! 
+A special thanks to [Neataptic](https://github.com/wagenaartje/neataptic/), [Synaptic](https://github.com/cazala/synaptic/), and [Brain.js](https://github.com/BrainJS/brain.js)!
 
 Carrot™ was largely brought about by inspiration from these great libraries.

@@ -1,3 +1,10 @@
+
+/*
+ *
+ * @private
+ *
+ */
+
 var { multi, methods } = require('../../../neataptic');
 
 var set = [];
