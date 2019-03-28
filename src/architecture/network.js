@@ -733,7 +733,7 @@ Network.prototype = {
    * @todo Add `@param` tag descriptions
    * @todo Add `@returns` tag description
    *
-   * @param {{input:{number}[],output:{number}[]}[]} set
+   * @param {Array<{input:Array<number>,output:Array<number>}>} set
    * @param {cost} [cost=methods.cost.MSE]
    * 
    * @returns {{error:{number},time:{number}}}
@@ -778,7 +778,7 @@ Network.prototype = {
    * @param {number} width
    * @param {number} height
    * 
-   * @returns {{nodes:{id:{number},name:{string},activation:{activation},bias:{number}}[],links:{{source:{number},target:{number},weight:{number},gate:{boolean}}}[],constraints:{{type:{string},axis:{string},offsets:{node:{number},offset:{number}}}[]}}}
+   * @returns {{nodes:Array<{id:{number},name:{string},activation:{activation},bias:{number}}>,links:Array<{{source:{number},target:{number},weight:{number},gate:{boolean}}}>,constraints:{Array<{type:{string},axis:{string},offsets:{node:{number},offset:{number}}}>}}}
    */
   graph: function (width, height) {
     var input = 0;
@@ -956,7 +956,7 @@ Network.prototype = {
    * @todo Add `@param` tag descriptions
    * @todo Add `@returns` tag description
    *
-   * @param {{input:{number}[],output:{number}[]}[]} set
+   * @param {Array<{input:Array<number>,output:Array<number>}>} set
    * @param {number} [options.error=0.05]
    * @param {number} [options.growth=0.0001]
    * @param {cost} [options.cost=cost.MSE]
@@ -1257,7 +1257,7 @@ Network.prototype = {
  * @todo Add `@param` tag descriptions
  * @todo Add `@returns` tag description
  *
- * @param {{input:{number},output:{number},dropout:{number},nodes:{object}[],connections:{object}[]}} json
+ * @param {{input:{number},output:{number},dropout:{number},nodes:Array<object>,connections:Array<object>}} json
  * 
  * @returns {Network} Network
  */
