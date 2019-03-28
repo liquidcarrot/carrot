@@ -18,7 +18,7 @@
   * [Documentation](/DOCUMENTATION.md)
 </details>
 
-For Documentation, visit https://liquidcarrot.github.io/carrot
+For Documentation, visit [https://liquidcarrot.github.io/carrot](https://liquidcarrot.github.io/carrot)
 
 ## Getting Started
 

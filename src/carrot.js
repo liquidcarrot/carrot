@@ -1,5 +1,8 @@
 /**
 * @module Carrot
+*
+* @private
+*
 * @todo Add `@borrows` tags.
 * @todo Add `@prop` tags.
 */

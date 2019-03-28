@@ -1,8 +1,11 @@
 /**
-* @module Carrot
 *
-* @todo Add `@borrows` tags.
-* @todo Add `@prop` tags.
+* @namespace
+*
+* @private
+*
+* @borrows ./node/testworker as workers.node.TestWorker
+* @borrows ./browser/testworker as workers.browser.TestWorker
 */
 var workers = {
   node: {

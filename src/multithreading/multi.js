@@ -1,6 +1,9 @@
 /**
-* @namespace multi
-* @borrows workers as workers
+ *
+ * @private
+ *
+ * @namespace multi
+ * @borrows workers as workers
 */
 var multi = {
   // Workers

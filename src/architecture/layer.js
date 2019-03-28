@@ -239,7 +239,7 @@ Layer.prototype = {
 * @todo Create a function description
 * @todo Add `@param size` tag description
 * @todo Add `@param size` tag default
-  * @todo Document `@param` tag "optional" or "required"
+* @todo Document `@param` tag "optional" or "required"
 *
 * @param {number} size
 */
@@ -266,7 +266,7 @@ Layer.Dense = function(size) {
 * @todo Create a function description
 * @todo Add `@param size` tag description
 * @todo Add `@param size` tag default
-  * @todo Document `@param` tag "optional" or "required"
+* @todo Document `@param` tag "optional" or "required"
 *
 * @param {number} size
 */
@@ -332,7 +332,7 @@ Layer.LSTM = function(size) {
 * @todo Create a function description
 * @todo Add `@param size` tag description
 * @todo Add `@param size` tag default
-  * @todo Document `@param` tag "optional" or "required"
+* @todo Document `@param` tag "optional" or "required"
 *
 * @param {number} size
 */
@@ -418,7 +418,7 @@ Layer.GRU = function(size) {
 * @todo Add `@param memory` tag type
 * @todo Add `@param memory` tag description
 * @todo Add `@param memory` tag default
-  * @todo Document `@param` tag "optional" or "required"
+* @todo Document `@param` tag "optional" or "required"
 *
 * @param {number} size
 * @param memory
