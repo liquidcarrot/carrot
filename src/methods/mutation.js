@@ -10,6 +10,8 @@ var activation = require('./activation');
 * @todo Add `@prop FFW` tag defaults
 * @todo Add `@prop` tag descriptions
 *
+* @namespace mutation
+* 
 * @see {@link https://en.wikipedia.org/wiki/mutation_(genetic_algorithm)|Mutation (genetic algorithm)}
 *
 * @prop {object} ADD_NODE

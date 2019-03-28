@@ -277,6 +277,7 @@ Node.prototype = {
   *
   * @param {Node} target
   * @param {number} weight
+  * 
   * @returns {Connection[]}
   */
   connect: function (target, weight) {
@@ -410,12 +411,11 @@ Node.prototype = {
   /**
   * Mutates the node with the given method
   *
-  * @todo Add `@param` tag types
   * @todo Add `@param` tag descriptions
   *
-  * @param method
+  * @param {mutation} method
   */
-  mutate: function (method) {
+  mutate: function(method) {
     if (typeof method === 'undefined') {
       throw new Error('No mutate method given!');
     } else if (!(method.name in methods.mutation)) {
