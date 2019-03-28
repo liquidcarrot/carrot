@@ -1255,14 +1255,14 @@ Network.prototype = {
 /**
  * Convert a json object to a network
  *
- * @todo Add `@param` tag type
  * @todo Add `@param` tag descriptions
  * @todo Add `@returns` tag description
  *
- * @param json
+ * @param {{input:{number},output:{number},dropout:{number},nodes:{object}[],connections:{object}[]}} json
+ * 
  * @returns {Network} Network
  */
-Network.fromJSON = function (json) {
+Network.fromJSON = function(json) {
   var network = new Network(json.input, json.output);
   network.dropout = json.dropout;
   network.nodes = [];
@@ -1289,13 +1289,12 @@ Network.fromJSON = function (json) {
 
 /**
  * Merge two networks into one
- * @todo Add `@param` tag type
+ * 
  * @todo Add `@param` tag descriptions
- * @todo Add `@returns` tag type
  * @todo Add `@returns` tag description
  *
- * @param network1
- * @param network2
+ * @param {Network} network1
+ * @param {Network} network2
  * @returns {Network} Network 
  */
 Network.merge = function (network1, network2) {
@@ -1339,14 +1338,15 @@ Network.merge = function (network1, network2) {
 
 /**
  * Create an offspring from two parent networks
- * @todo Add `@param` tag types
+ * 
  * @todo Add `@param` tag descriptions
- * @todo Add `@returns` tag type
  * @todo Add `@returns` tag description
  *
- * @param network1
- * @param network2
- * @param equal
+ * @param {Network} network1
+ * @param {Network} network2
+ * @param {boolean} equal
+ * 
+ * @returns {Network}
  */
 Network.crossOver = function (network1, network2, equal) {
   if (network1.input !== network2.input || network1.output !== network2.output) {
@@ -1364,11 +1364,11 @@ Network.crossOver = function (network1, network2, equal) {
 
   // Determine offspring node size
   var size;
-  if (equal || score1 === score2) {
+  if(equal || score1 === score2) {
     let max = Math.max(network1.nodes.length, network2.nodes.length);
     let min = Math.min(network1.nodes.length, network2.nodes.length);
     size = Math.floor(Math.random() * (max - min + 1) + min);
-  } else if (score1 > score2) {
+  } else if(score1 > score2) {
     size = network1.nodes.length;
   } else {
     size = network2.nodes.length;
