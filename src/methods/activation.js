@@ -1,6 +1,8 @@
 /**
 * Activation functions
-* 
+*
+* @module
+*
 * @see {@link https://en.wikipedia.org/wiki/Activation_function|Activation Function}
 * @see {@link https://stats.stackexchange.com/questions/115258/comprehensive-list-of-activation-functions-in-neural-networks-with-pros-cons|Comprehensive list of activation functions in neural networks with pros/cons}
 *
@@ -14,7 +16,7 @@ var activation = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @member
   * @function
   * @param x
@@ -32,7 +34,7 @@ var activation = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @member
   * @function
   * @param x
@@ -49,7 +51,7 @@ var activation = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @member
   * @function
   * @param x
@@ -65,7 +67,7 @@ var activation = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @member
   * @function
   * @param x
@@ -81,7 +83,7 @@ var activation = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @member
   * @function
   * @param x
@@ -98,7 +100,7 @@ var activation = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @member
   * @function
   * @param x
@@ -116,7 +118,7 @@ var activation = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @member
   * @function
   * @param x
@@ -133,7 +135,7 @@ var activation = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @member
   * @function
   * @param x
@@ -151,7 +153,7 @@ var activation = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @member
   * @function
   * @param x
@@ -169,7 +171,7 @@ var activation = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @member
   * @function
   * @param x
@@ -185,7 +187,7 @@ var activation = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @member
   * @function
   * @param x
@@ -203,7 +205,7 @@ var activation = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @member
   * @function
   * @param x
@@ -220,7 +222,7 @@ var activation = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @member
   * @function
   * @param x
@@ -237,7 +239,7 @@ var activation = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @member
   * @function
   * @param x
@@ -254,7 +256,7 @@ var activation = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @see {@link https://arxiv.org/pdf/1706.02515.pdf|Self-Normalizing Neural Networks}
   *
   * @member

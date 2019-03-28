@@ -1,6 +1,8 @@
 /**
 * @todo Create a namespace description
 *
+* @module
+*
 * @see {@link https://en.wikipedia.org/wiki/Crossover_(genetic_algorithm)|Crossover (genetic algorithm)}
 *
 * @namespace
