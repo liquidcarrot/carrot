@@ -1,5 +1,7 @@
 /**
 * Specifies how to gate a connection between two groups of multiple neurons
+*
+* @module
 * 
 * @namespace
 * @prop {object} OUTPUT
