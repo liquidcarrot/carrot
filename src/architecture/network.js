@@ -11,11 +11,24 @@ var mutation = methods.mutation;
 /**
 * Create a neural network
 *
+* @todo Add `@param` tag types
+* @todo Add `@param` tag descriptions
+* 
 * @constructs Network
+* 
 * @param {number} input
 * @param {number} output
+* 
+*
+* @prop {number} input
+* @prop {number} output
+* @prop {Node[]} nodes
+* @prop {Connection[]} connections
+* @prop {Node[]} gates
+* @prop {Connection[]} selfconns
+* @prop {number} dropout
 */
-function Network (input, output) {
+function Network(input, output) {
   if (typeof input === 'undefined' || typeof output === 'undefined') {
     throw new Error('No input or output size given');
   }
@@ -49,18 +62,17 @@ function Network (input, output) {
   }
 }
 
-/*
-* @namespace
-*/
 Network.prototype = {
   /**
    * Activates the network
+   * 
    * @todo Add `@param` tag descriptions
-   * @todo Add `@returns` tag type
    * @todo Add `@returns` tag description
    *
-   * @param input
-   * @param training
+   * @param {number[]} [input]
+   * @param {boolean} training
+   * 
+   * @returns {number[]}
    */
   activate: function (input, training) {
     var output = [];
@@ -83,11 +95,13 @@ Network.prototype = {
 
   /**
    * Activates the network without calculating elegibility traces and such
+   * 
    * @todo Add `@param` tag descriptions
-   * @todo Add `@returns` tag type
    * @todo Add `@returns` tag description
    *
-   * @param input
+   * @param {number[]} input
+   * 
+   * @returns {number[]} output
    */
   noTraceActivate: function (input) {
     var output = [];
@@ -109,13 +123,13 @@ Network.prototype = {
 
   /**
    * Backpropagate the network
-   * @todo Add `@param` tag type
+   * 
    * @todo Add `@param` tag descriptions
    *
-   * @param rate
-   * @param momentum
-   * @param update
-   * @param target
+   * @param {number} rate=0.3
+   * @param {number} momentum=0
+   * @param {boolean} update=false
+   * @param {number} target
    */
   propagate: function (rate, momentum, update, target) {
     if (typeof target === 'undefined' || target.length !== this.output) {
@@ -147,14 +161,15 @@ Network.prototype = {
 
   /**
    * Connects the from node to the to node
-   * @todo Add `@param` tag type
+   * 
    * @todo Add `@param` tag descriptions
-   * @todo Add `@returns` tag type
    * @todo Add `@returns` tag description
    *
-   * @param from
-   * @param to
-   * @param weight
+   * @param {Node} from
+   * @param {Node} to
+   * @param {number} weight
+   * 
+   * @returns {Connection}
    */
   connect: function (from, to, weight) {
     var connections = from.connect(to, weight);
@@ -173,11 +188,11 @@ Network.prototype = {
 
   /**
    * Disconnects the from node from the to node
-   * @todo Add `@param` tag type
+   * 
    * @todo Add `@param` tag descriptions
    *
-   * @param from
-   * @param to
+   * @param {Node} from
+   * @param {Node} to
    */
   disconnect: function (from, to) {
     // Delete the connection in the network's connection array
@@ -198,11 +213,11 @@ Network.prototype = {
 
   /**
    * Gate a connection with a node
-   * @todo Add `@param` tag type
+   * 
    * @todo Add `@param` tag descriptions
    *
-   * @param node
-   * @param connection
+   * @param {Node} node
+   * @param {Connection[]|Connection} connection
    */
   gate: function (node, connection) {
     if (this.nodes.indexOf(node) === -1) {
@@ -217,12 +232,12 @@ Network.prototype = {
 
   /**
    * Remove the gate of a connection
-   * @todo Add `@param` tag type
+   * 
    * @todo Add `@param` tag descriptions
    *
-   * @param connection
+   * @param {Connection} connection
    */
-  ungate: function (connection) {
+  ungate: function(connection) {
     var index = this.gates.indexOf(connection);
     if (index === -1) {
       throw new Error('This connection is not gated!');
@@ -234,10 +249,10 @@ Network.prototype = {
 
   /**
    * Removes a node from the network
-   * @todo Add `@param` tag type
+   * 
    * @todo Add `@param` tag descriptions
    *
-   * @param node
+   * @param {Node} node
    */
   remove: function (node) {
     var index = this.nodes.indexOf(node);
@@ -313,12 +328,12 @@ Network.prototype = {
 
   /**
    * Mutates the network with the given method
-   * @todo Add `@param` tag type
+   * 
    * @todo Add `@param` tag descriptions
    *
-   * @param method
+   * @param {mutation} method
    */
-  mutate: function (method) {
+  mutate: function(method) {
     if (typeof method === 'undefined') {
       throw new Error('No (correct) mutate method given!');
     }
@@ -557,13 +572,28 @@ Network.prototype = {
 
   /**
    * Train the given set to this network
-   * @todo Add `@param` tag type
+   * 
    * @todo Add `@param` tag descriptions
-   * @todo Add `@returns` tag type
    * @todo Add `@returns` tag description
    *
-   * @param set
-   * @param options
+   * @param {{ input: {number}[], output: {number}[] }[]} set
+   * @param {number} [options.rate=0.3]
+   * @param {number} [options.iterations]
+   * @param {number} [options.error=0.05]
+   * @param {cost} [options.cost=cost.MSE]
+   * @param {number} [options.dropout=0]
+   * @param {number} [options.momentum=0]
+   * @param {number} [options.batchSize=1]
+   * @param {rate} [options.ratePolicy=rate.FIXED]
+   * @param {number} [options.crossValidate.testSize]
+   * @param {number} [options.crossValidate.testError]
+   * @param {boolean} [options.clear=false]
+   * @param {boolean} [options.shuffle=false]
+   * @param {boolean} [options.log=false]
+   * @param {number} [options.schedule.iterations]
+   * @param {schedule} [options.schedule.function]
+   * 
+   * @returns {error:{number},iterations:{number},time:{number}}
    */
   train: function (set, options) {
     if (set[0].input.length !== this.input || set[0].output.length !== this.output) {
@@ -667,18 +697,20 @@ Network.prototype = {
   },
 
   /**
-   * Performs one training epoch and returns the error
-   * private function used in this.train
-   * @todo Add `@param` tag type
+   * Performs one training epoch and returns the error - this is a private function used in `this.train`
+   * 
    * @todo Add `@param` tag descriptions
-   * @todo Add `@returns` tag type
    * @todo Add `@returns` tag description
+   * 
+   * @private
    *
-   * @param set
-   * @param batchSize
-   * @param currentRate
-   * @param momentum
-   * @param costFunction
+   * @param {{ input: {number}[], output: {number}[] }[]} set
+   * @param {number} batchSize
+   * @param {number} currentRate
+   * @param {number} momentum
+   * @param {cost} costFunction
+   * 
+   * @returns {number}
    */
   _trainSet: function (set, batchSize, currentRate, momentum, costFunction) {
     var errorSum = 0;
@@ -698,13 +730,14 @@ Network.prototype = {
 
   /**
    * Tests a set and returns the error and elapsed time
-   * @todo Add `@param` tag type
+   * 
    * @todo Add `@param` tag descriptions
-   * @todo Add `@returns` tag type
    * @todo Add `@returns` tag description
    *
-   * @param set
-   * @param cost [Function=]
+   * @param {{input:{number}[],output:{number}[]}[]} set
+   * @param {cost} [cost=methods.cost.MSE]
+   * 
+   * @returns {{error:{number},time:{number}}}
    */
   test: function (set, cost = methods.cost.MSE) {
     // Check if dropout is enabled, set correct mask
@@ -739,12 +772,14 @@ Network.prototype = {
 
   /**
    * Creates a json that can be used to create a graph with d3 and webcola
+   * 
    * @todo Add `@param` tag descriptions
-   * @todo Add `@returns` tag type
    * @todo Add `@returns` tag description
    *
    * @param {number} width
    * @param {number} height
+   * 
+   * @returns {{nodes:{id:{number},name:{string},activation:{activation},bias:{number}}[],links:{{source:{number},target:{number},weight:{number},gate:{boolean}}}[],constraints:{{type:{string},axis:{string},offsets:{node:{number},offset:{number}}}[]}}}
    */
   graph: function (width, height) {
     var input = 0;
@@ -851,8 +886,10 @@ Network.prototype = {
 
   /**
    * Convert the network to a json object
-   * @todo Add `@returns` tag type
+   * 
    * @todo Add `@returns` tag description
+   * 
+   * @returns {{node:{object},connections:{object},input:{number},output:{number},dropout:{number}}}
    */
   toJSON: function () {
     var json = {
@@ -901,10 +938,13 @@ Network.prototype = {
 
   /**
    * Sets the value of a property for every node in this network
-   * @todo Add `@param` tag type
+   * 
    * @todo Add `@param` tag description
+   * 
+   * @param {number} values.bias
+   * @param {activation} values.squash
    */
-  set: function (values) {
+  set: function(values) {
     for (var i = 0; i < this.nodes.length; i++) {
       this.nodes[i].bias = values.bias || this.nodes[i].bias;
       this.nodes[i].squash = values.squash || this.nodes[i].squash;
@@ -913,16 +953,27 @@ Network.prototype = {
 
   /**
    * Evolves the network to reach a lower error on a dataset
-   * @todo Add `@param` tag type
+   * 
    * @todo Add `@param` tag descriptions
-   * @todo Add `@returns` tag type
    * @todo Add `@returns` tag description
    *
-   * @param set
-   * @param options
+   * @param {{input:{number}[],output:{number}[]}[]} set
+   * @param {number} [options.error=0.05]
+   * @param {number} [options.growth=0.0001]
+   * @param {cost} [options.cost=cost.MSE]
+   * @param {number} [options.amount=1]
+   * @param {number} [options.threads]
+   * @param {number} [options.iterations=0]
+   * @param {Network} [options.network]
+   * @param {boolean} [options.log=false]
+   * @param {number} [options.schedule.iterations]
+   * @param {schedule} [options.schedule.function]
+   * @param {boolean} [options.clear=false]
+   * 
+   * @returns {{error:{number},iterations:{number},time:{number}}}
    */
-  evolve: async function (set, options) {
-    if (set[0].input.length !== this.input || set[0].output.length !== this.output) {
+  evolve: async function(set, options) {
+    if(set[0].input.length !== this.input || set[0].output.length !== this.output) {
       throw new Error('Dataset input/output size should be same as network input/output size!');
     }
 
@@ -1042,17 +1093,17 @@ Network.prototype = {
       }
     }
 
-    if (threads > 1) {
+    if(threads > 1) {
       for (var i = 0; i < workers.length; i++) workers[i].terminate();
     }
 
-    if (typeof bestGenome !== 'undefined') {
+    if(typeof bestGenome !== 'undefined') {
       this.nodes = bestGenome.nodes;
       this.connections = bestGenome.connections;
       this.selfconns = bestGenome.selfconns;
       this.gates = bestGenome.gates;
 
-      if (options.clear) this.clear();
+      if(options.clear) this.clear();
     }
 
     return {
@@ -1063,8 +1114,11 @@ Network.prototype = {
   },
 
   /**
-   * Creates a standalone function of the network which can be run without the
-   * need of a library
+   * Creates a standalone function of the network which can be run without the need of a library
+   * 
+   * @todo Add `@returns` tag description
+   * 
+   * @returns {string}
    */
   standalone: function () {
     var present = [];
@@ -1148,6 +1202,10 @@ Network.prototype = {
 
   /**
    * Serialize to send to workers efficiently
+   * 
+   * @todo Add `@returns` tag description
+   * 
+   * @returns {Array<Array<number>>}
    */
   serialize: function () {
     var activations = [];
