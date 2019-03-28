@@ -12,11 +12,11 @@ var Node = require('./node');
 * @todo Add `@prop` tag defaults
 *
 * @constructs Group
-* @prop nodes
-* @prop {object} connections
-* @prop connections.in
-* @prop connections.out
-* @prop connections.self
+* 
+* @prop {number} nodes
+* @prop {connection} connections.in
+* @prop {connection} connections.out
+* @prop {connection} connections.self
 */
 function Group (size) {
   this.nodes = [];
@@ -34,14 +34,13 @@ function Group (size) {
 Group.prototype = {
   /**
   * Activates all the nodes in the group
-  *
-  * @todo Create `@returns` tag
-  * @todo Add `@param` tag types
+  * 
   * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
+  * @todo Add `@returns` tag description
   *
-  * @param value
+  * @param {number[]} value
+  * 
+  * @returns {number[]}
   */
   activate: function (value) {
     var values = [];
@@ -67,16 +66,13 @@ Group.prototype = {
   /**
   * Propagates all the node in the group
   * 
-  * @todo Add `@param` tag types
   * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
-  * @param rate
-  * @param momentum
-  * @param target
+  * @param {number} rate
+  * @param {number} momentum
+  * @param {number} target
   */
-  propagate: function (rate, momentum, target) {
+  propagate: function(rate, momentum, target) {
     if (typeof target !== 'undefined' && target.length !== this.nodes.length) {
       throw new Error('Array with values should be same as the amount of nodes!');
     }
@@ -92,18 +88,17 @@ Group.prototype = {
 
   /**
   * Connects the nodes in this group to nodes in another group or just a node
-  *
-  * @todo Create `@returns` tag
-  * @todo Add `@param` tag types
+  * 
+  * @todo Add `@returns` tag descriptions
   * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
-  * @param target
-  * @param method
-  * @param weight
+  * @param {Group|Layer|Node} target
+  * @param {connection} method
+  * @param {number} weight
+  * 
+  * @returns {Connection[]}
   */
-  connect: function (target, method, weight) {
+  connect: function(target, method, weight) {
     var connections = [];
     var i, j;
     if (target instanceof Group) {
@@ -153,15 +148,12 @@ Group.prototype = {
   /**
   * Make nodes from this group gate the given connection(s)
   * 
-  * @todo Add `@param` tag types
   * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
-  * @param connections
-  * @param method
+  * @param {Connection[]|Connection} connections
+  * @param {gating} method
   */
-  gate: function (connections, method) {
+  gate: function(connections, method) {
     if (typeof method === 'undefined') {
       throw new Error('Please specify Gating.INPUT, Gating.OUTPUT');
     }
@@ -221,17 +213,16 @@ Group.prototype = {
 
   /**
   * Sets the value of a property for every node
-  *
-  * @todo Add `@param` tag types
+  * 
   * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
-  * @param values
+  * @param {number} values.bias
+  * @param {activation} values.squash
+  * @param {string} values.type
   */
-  set: function (values) {
-    for (var i = 0; i < this.nodes.length; i++) {
-      if (typeof values.bias !== 'undefined') {
+  set: function(values) {
+    for(var i = 0; i < this.nodes.length; i++) {
+      if(typeof values.bias !== 'undefined') {
         this.nodes[i].bias = values.bias;
       }
 
@@ -243,15 +234,12 @@ Group.prototype = {
   /**
   * Disconnects all nodes from this group from another given group/node
   *
-  * @todo Add `@param` tag types
   * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
-  * @param target
-  * @param twosided
+  * @param {Group|Node} target
+  * @param {boolean} [twosided=false]
   */
-  disconnect: function (target, twosided) {
+  disconnect: function(target, twosided) {
     twosided = twosided || false;
 
     // In the future, disconnect will return a connection so indexOf can be used
@@ -311,11 +299,6 @@ Group.prototype = {
 
   /**
   * Clear the context of this group
-  *
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   */
   clear: function () {
     for (var i = 0; i < this.nodes.length; i++) {

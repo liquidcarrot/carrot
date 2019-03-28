@@ -11,7 +11,6 @@ var mutation = methods.mutation;
 /**
 * Create a neural network
 *
-* @todo Add `@param` tag types
 * @todo Add `@param` tag descriptions
 * 
 * @constructs Network
