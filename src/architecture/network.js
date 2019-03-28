@@ -575,7 +575,7 @@ Network.prototype = {
    * @todo Add `@param` tag descriptions
    * @todo Add `@returns` tag description
    *
-   * @param {{ input: {number}[], output: {number}[] }[]} set
+   * @param {Array<{input:Array<number>,output:Array<number>}>} set
    * @param {number} [options.rate=0.3]
    * @param {number} [options.iterations]
    * @param {number} [options.error=0.05]
