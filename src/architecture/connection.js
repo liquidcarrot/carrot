@@ -13,17 +13,17 @@
 *
 * @class Connection
 *
-* @param {Node} from
-* @param {Node} to
-* @param {number} [weight=]
+* @param {Node} from - Connection origin node (neuron)
+* @param {Node} to - Connection destination node (neuron)
+* @param {number} [weight=] - Weight of the connection
 * @prop {Node} from
 * @prop {Node} to
-* @prop {number} gain
-* @prop {number} weight
-* @prop {null} gater
-* @prop {number} elegibility
-* @prop {number} previousDeltaWeight
-* @prop {number} totalDeltaWeight
+* @prop {number} [weight=]
+* @prop {Node} [gater=] - The node gating this connection
+* @prop {number} [gain=] - Used for gating, gets multiplied with weight
+* @prop {number} [elegibility=]
+* @prop {number} [previousDeltaWeight=]
+* @prop {number} [totalDeltaWeight=]
 *
 * @typedef xtrace
 * @type {object}
@@ -31,6 +31,8 @@
 * @property {number[]} values
 *
 * @prop {xtrace} xtrace
+*
+* @see {@link methods.connection}
 */
 function Connection (from, to, weight) {
   this.from = from;

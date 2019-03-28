@@ -1,5 +1,3 @@
-module.exports = Layer;
-
 var methods = require('../methods/methods');
 var Group = require('./group');
 var Node = require('./node');
@@ -14,7 +12,7 @@ var Node = require('./node');
 *
 * @constructs Layer
 * @prop output
-* @prop nodes
+* @prop {Node[]} nodes
 * @prop {object} connections
 * @prop connections.in
 * @prop connections.out
@@ -473,3 +471,5 @@ Layer.Memory = function(size, memory) {
 
   return layer;
 };
+
+module.exports = Layer;

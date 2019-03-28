@@ -1,7 +1,8 @@
 /**
 * Specifies in what manner two groups are connected
 *
-* @namespace
+* @namespace methods.connection
+* 
 * @prop {object} ALL_TO_ALL
 * @prop {string} ALL_TO_ALL.name="OUTPUT"
 * @prop {object} ALL_TO_ELSE
