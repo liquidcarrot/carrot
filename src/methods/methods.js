@@ -1,9 +1,8 @@
 /**
-* @todo Create a namespace description
 *
 * @module
 *
-* @namespace
+* @namespace - Built in methods
 *
 * @borrows @module activation as activation
 * @borrows @module mutation as mutation
