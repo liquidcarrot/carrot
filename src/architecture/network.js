@@ -576,14 +576,14 @@ Network.prototype = {
    * @todo Add `@returns` tag description
    *
    * @param {Array<{input:Array<number>,output:Array<number>}>} set
+   * @param {cost} [options.cost=cost.MSE]
+   * @param {rate} [options.ratePolicy=rate.FIXED]
    * @param {number} [options.rate=0.3]
    * @param {number} [options.iterations]
    * @param {number} [options.error=0.05]
-   * @param {cost} [options.cost=cost.MSE]
    * @param {number} [options.dropout=0]
    * @param {number} [options.momentum=0]
    * @param {number} [options.batchSize=1]
-   * @param {rate} [options.ratePolicy=rate.FIXED]
    * @param {number} [options.crossValidate.testSize]
    * @param {number} [options.crossValidate.testError]
    * @param {boolean} [options.clear=false]
@@ -703,7 +703,7 @@ Network.prototype = {
    * 
    * @private
    *
-   * @param {{ input: {number}[], output: {number}[] }[]} set
+   * @param {Array<{input:Array<number>, output: Array<number>}>} set
    * @param {number} batchSize
    * @param {number} currentRate
    * @param {number} momentum
