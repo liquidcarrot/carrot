@@ -1,5 +1,3 @@
-module.exports = Connection;
-
 /*******************************************************************************
                                       CONNECTION
 *******************************************************************************/
@@ -14,20 +12,25 @@ module.exports = Connection;
 * @todo Add `@param` tag defaults
 *
 * @class Connection
-* @param from
-* @param to
-* @param [weight]
-* @prop from
-* @prop to
-* @prop gain
-* @prop weight
-* @prop gater
-* @prop elegibility
-* @prop previousDeltaWeight
-* @prop totalDeltaWeight
-* @prop xtrace
-* @prop xtrace.nodes
-* @prop xtrace.values
+*
+* @param {Node} from
+* @param {Node} to
+* @param {number} [weight=]
+* @prop {Node} from
+* @prop {Node} to
+* @prop {number} gain
+* @prop {number} weight
+* @prop {null} gater
+* @prop {number} elegibility
+* @prop {number} previousDeltaWeight
+* @prop {number} totalDeltaWeight
+*
+* @typedef xtrace
+* @type {object}
+* @property {Node[]} nodes
+* @property {number[]} values
+*
+* @prop {xtrace} xtrace
 */
 function Connection (from, to, weight) {
   this.from = from;
@@ -71,18 +74,15 @@ Connection.prototype = {
 /**
 * Returns an innovation ID
 *
-* @todo Add `@param` tag types
-* @todo Add `@param` tag descriptions
-* @todo Add `@param` tag defaults
-* @todo Document `@param` tag "optional" or "required"
-*
 * @see {@link https://en.wikipedia.org/wiki/Pairing_function (Cantor pairing function)|Pairing function (Cantor pairing function)}
 *
-* @param a
-* @param b
+* @param {number} a - An Integer >= 0 (Natural number)
+* @param {number} b - An Integer >= 0 (Natural number)
 *
-* @return {number}
+* @returns {number} - An Integer that uniquely represents a pair of Integers
 */
 Connection.innovationID = function (a, b) {
   return 1 / 2 * (a + b) * (a + b + 1) + b;
 };
+
+module.exports = Connection;
