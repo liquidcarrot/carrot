@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>neat.js - Documentation</title>
+    
+    
+    
+    
+    
+    <meta property="og:title" content=""/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content=""/>
+    
+    <meta property="og:url" content=""/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Connection.html">Connection</a><ul class='methods'><li data-type='method'><a href="Connection.html#.innovationID">innovationID</a></li><li data-type='method'><a href="Connection.html#.toJSON">toJSON</a></li></ul></li><li><a href="Group.html">Group</a><ul class='methods'><li data-type='method'><a href="Group.html#activate">activate</a></li><li data-type='method'><a href="Group.html#clear">clear</a></li><li data-type='method'><a href="Group.html#connect">connect</a></li><li data-type='method'><a href="Group.html#disconnect">disconnect</a></li><li data-type='method'><a href="Group.html#gate">gate</a></li><li data-type='method'><a href="Group.html#propagate">propagate</a></li><li data-type='method'><a href="Group.html#set">set</a></li></ul></li><li><a href="Layer.html">Layer</a><ul class='methods'><li data-type='method'><a href="Layer.html#.Dense">Dense</a></li><li data-type='method'><a href="Layer.html#.GRU">GRU</a></li><li data-type='method'><a href="Layer.html#.LSTM">LSTM</a></li><li data-type='method'><a href="Layer.html#.Memory">Memory</a></li><li data-type='method'><a href="Layer.html#activate">activate</a></li><li data-type='method'><a href="Layer.html#clear">clear</a></li><li data-type='method'><a href="Layer.html#connect">connect</a></li><li data-type='method'><a href="Layer.html#disconnect">disconnect</a></li><li data-type='method'><a href="Layer.html#gate">gate</a></li><li data-type='method'><a href="Layer.html#propagate">propagate</a></li><li data-type='method'><a href="Layer.html#set">set</a></li></ul></li><li><a href="Network.html">Network</a><ul class='methods'><li data-type='method'><a href="Network.html#.crossOver">crossOver</a></li><li data-type='method'><a href="Network.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Network.html#.merge">merge</a></li><li data-type='method'><a href="Network.html#activate">activate</a></li><li data-type='method'><a href="Network.html#clear">clear</a></li><li data-type='method'><a href="Network.html#connect">connect</a></li><li data-type='method'><a href="Network.html#disconnect">disconnect</a></li><li data-type='method'><a href="Network.html#evolve">evolve</a></li><li data-type='method'><a href="Network.html#gate">gate</a></li><li data-type='method'><a href="Network.html#graph">graph</a></li><li data-type='method'><a href="Network.html#mutate">mutate</a></li><li data-type='method'><a href="Network.html#noTraceActivate">noTraceActivate</a></li><li data-type='method'><a href="Network.html#propagate">propagate</a></li><li data-type='method'><a href="Network.html#remove">remove</a></li><li data-type='method'><a href="Network.html#serialize">serialize</a></li><li data-type='method'><a href="Network.html#set">set</a></li><li data-type='method'><a href="Network.html#standalone">standalone</a></li><li data-type='method'><a href="Network.html#test">test</a></li><li data-type='method'><a href="Network.html#toJSON">toJSON</a></li><li data-type='method'><a href="Network.html#train">train</a></li><li data-type='method'><a href="Network.html#ungate">ungate</a></li></ul></li><li><a href="Node.html">Node</a><ul class='methods'><li data-type='method'><a href="Node.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Node.html#activate">activate</a></li><li data-type='method'><a href="Node.html#clear">clear</a></li><li data-type='method'><a href="Node.html#connect">connect</a></li><li data-type='method'><a href="Node.html#disconnect">disconnect</a></li><li data-type='method'><a href="Node.html#gate">gate</a></li><li data-type='method'><a href="Node.html#isProjectedBy">isProjectedBy</a></li><li data-type='method'><a href="Node.html#isProjectingTo">isProjectingTo</a></li><li data-type='method'><a href="Node.html#mutate">mutate</a></li><li data-type='method'><a href="Node.html#noTraceActivate">noTraceActivate</a></li><li data-type='method'><a href="Node.html#propagate">propagate</a></li><li data-type='method'><a href="Node.html#toJSON">toJSON</a></li><li data-type='method'><a href="Node.html#ungate">ungate</a></li></ul></li></ul><h3>Namespaces</h3><ul><li><a href="activation.html">activation</a><ul class='methods'><li data-type='method'><a href="activation.html#.ABSOLUTE">ABSOLUTE</a></li><li data-type='method'><a href="activation.html#.BENT_IDENTITY">BENT_IDENTITY</a></li><li data-type='method'><a href="activation.html#.BIPOLAR">BIPOLAR</a></li><li data-type='method'><a href="activation.html#.BIPOLAR_SIGMOID">BIPOLAR_SIGMOID</a></li><li data-type='method'><a href="activation.html#.GAUSSIAN">GAUSSIAN</a></li><li data-type='method'><a href="activation.html#.HARD_TANH">HARD_TANH</a></li><li data-type='method'><a href="activation.html#.IDENTITY">IDENTITY</a></li><li data-type='method'><a href="activation.html#.INVERSE">INVERSE</a></li><li data-type='method'><a href="activation.html#.LOGISTIC">LOGISTIC</a></li><li data-type='method'><a href="activation.html#.RELU">RELU</a></li><li data-type='method'><a href="activation.html#.SELU">SELU</a></li><li data-type='method'><a href="activation.html#.SINUSOID">SINUSOID</a></li><li data-type='method'><a href="activation.html#.SOFTSIGN">SOFTSIGN</a></li><li data-type='method'><a href="activation.html#.STEP">STEP</a></li><li data-type='method'><a href="activation.html#.TANH">TANH</a></li></ul></li><li><a href="architect.html">architect</a><ul class='methods'><li data-type='method'><a href="architect.html#.Construct">Construct</a></li><li data-type='method'><a href="architect.html#.GRU">GRU</a></li><li data-type='method'><a href="architect.html#.Hopfield">Hopfield</a></li><li data-type='method'><a href="architect.html#.LSTM">LSTM</a></li><li data-type='method'><a href="architect.html#.NARX">NARX</a></li><li data-type='method'><a href="architect.html#.Perceptron">Perceptron</a></li><li data-type='method'><a href="architect.html#.Random">Random</a></li></ul></li><li><a href="connection_.html">connection</a></li><li><a href="cost.html">cost</a><ul class='methods'><li data-type='method'><a href="cost.html#.BINARY">BINARY</a></li><li data-type='method'><a href="cost.html#.CROSS_ENTROPY">CROSS_ENTROPY</a></li><li data-type='method'><a href="cost.html#.HINGE">HINGE</a></li><li data-type='method'><a href="cost.html#.MAE">MAE</a></li><li data-type='method'><a href="cost.html#.MAPE">MAPE</a></li><li data-type='method'><a href="cost.html#.MSE">MSE</a></li><li data-type='method'><a href="cost.html#.MSLE">MSLE</a></li></ul></li><li><a href="crossover.html">crossover</a></li><li><a href="gating.html">gating</a></li><li><a href="methods.html">methods</a></li><li><a href="mutation.html">mutation</a></li><li><a href="rate.html">rate</a><ul class='methods'><li data-type='method'><a href="rate.html#.EXP">EXP</a></li><li data-type='method'><a href="rate.html#.FIXED">FIXED</a></li><li data-type='method'><a href="rate.html#.INV">INV</a></li><li data-type='method'><a href="rate.html#.STEP">STEP</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#config">config</a></li><li><a href="global.html#selection">selection</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">neat.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/* Export */
+module.exports = Neat;
+
+/* Import */
+var Network = require('./architecture/network');
+var methods = require('./methods/methods');
+var config = require('./config');
+
+// Easier variable naming
+var selection = methods.selection;
+
+/*******************************************************************************
+                                         NEAT
+*******************************************************************************/
+
+/**
+* Runs the NEAT algorithm on group of neural networks.
+* @todo Add `@param` tag types
+* @todo Add `@param` tag defaults
+* @todo Add `@param` tag descriptions
+*
+* @private
+*
+* @param {number} input - The input size of the networks.
+* @param {number} output - The output size of the networks
+* @param {Function} fitness - The fitness function to evaluate the networks
+* @param {Object} options - Configuration options
+* @param {boolean} [equal=false] -
+* @param {number} [clear=false] -
+* @param {number} [popsize=50] -
+* @param {number} [elitism=0] -
+* @param {number} [provenance=0] -
+* @param {number} [mutationRate=0] -
+* @param {number} [mutationAmount=1] -
+* @param {boolean} [fitnessPopulation=false] -
+* @param [selection=] -
+* @param [crossover=] -
+* @param [mutation=] -
+* @param [network=false] -
+* @param {number} [maxNodes=Infinity] -
+* @param {number} [maxConns=Infinity] -
+* @param {number} [maxGates=Infinity] -
+* @param [mutationSelection=] -
+*/
+function Neat (input, output, fitness, options) {
+  this.input = input; // The input size of the networks
+  this.output = output; // The output size of the networks
+  this.fitness = fitness; // The fitness function to evaluate the networks
+
+  // Configure options
+  options = options || {};
+  this.equal = options.equal || false;
+  this.clear = options.clear || false;
+  this.popsize = options.popsize || 50;
+  this.elitism = options.elitism || 0;
+  this.provenance = options.provenance || 0;
+  this.mutationRate = options.mutationRate || 0.3;
+  this.mutationAmount = options.mutationAmount || 1;
+
+  this.fitnessPopulation = options.fitnessPopulation || false;
+
+  this.selection = options.selection || methods.selection.POWER;
+  this.crossover = options.crossover || [
+    methods.crossover.SINGLE_POINT,
+    methods.crossover.TWO_POINT,
+    methods.crossover.UNIFORM,
+    methods.crossover.AVERAGE
+  ];
+  this.mutation = options.mutation || methods.mutation.FFW;
+
+  this.template = options.network || false;
+
+  this.maxNodes = options.maxNodes || Infinity;
+  this.maxConns = options.maxConns || Infinity;
+  this.maxGates = options.maxGates || Infinity;
+
+  // Custom mutation selection function if given
+  this.selectMutationMethod = typeof options.mutationSelection === 'function' ? options.mutationSelection.bind(this) : this.selectMutationMethod;
+
+  // Generation counter
+  this.generation = 0;
+
+  // Initialise the genomes
+  this.createPool(this.template);
+}
+
+/*
+* @namespace NEAT
+*/
+Neat.prototype = {
+  /**
+   * Create the initial pool of genomes
+   */
+  createPool: function (network) {
+    this.population = [];
+
+    for (var i = 0; i &lt; this.popsize; i++) {
+      var copy;
+      if (this.template) {
+        copy = Network.fromJSON(network.toJSON());
+      } else {
+        copy = new Network(this.input, this.output);
+      }
+      copy.score = undefined;
+      this.population.push(copy);
+    }
+  },
+
+  /**
+   * Evaluates, selects, breeds and mutates population
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
+  */
+  evolve: async function () {
+    // Check if evaluated, sort the population
+    if (typeof this.population[this.population.length - 1].score === 'undefined') {
+      await this.evaluate();
+    }
+    this.sort();
+
+    var fittest = Network.fromJSON(this.population[0].toJSON());
+    fittest.score = this.population[0].score;
+
+    var newPopulation = [];
+
+    // Elitism
+    var elitists = [];
+    for (var i = 0; i &lt; this.elitism; i++) {
+      elitists.push(this.population[i]);
+    }
+
+    // Provenance
+    for (i = 0; i &lt; this.provenance; i++) {
+      newPopulation.push(Network.fromJSON(this.template.toJSON()));
+    }
+
+    // Breed the next individuals
+    for (i = 0; i &lt; this.popsize - this.elitism - this.provenance; i++) {
+      newPopulation.push(this.getOffspring());
+    }
+
+    // Replace the old population with the new population
+    this.population = newPopulation;
+    this.mutate();
+
+    this.population.push(...elitists);
+
+    // Reset the scores
+    for (i = 0; i &lt; this.population.length; i++) {
+      this.population[i].score = undefined;
+    }
+
+    this.generation++;
+
+    return fittest;
+  },
+
+  /**
+   * Breeds two parents into an offspring, population MUST be surted
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
+   */
+  getOffspring: function () {
+    var parent1 = this.getParent();
+    var parent2 = this.getParent();
+
+    return Network.crossOver(parent1, parent2, this.equal);
+  },
+
+  /**
+   * Selects a random mutation method for a genome according to the parameters
+  */
+  selectMutationMethod: function (genome) {
+    var mutationMethod = this.mutation[Math.floor(Math.random() * this.mutation.length)];
+
+    if (mutationMethod === methods.mutation.ADD_NODE &amp;&amp; genome.nodes.length >= this.maxNodes) {
+      if (config.warnings) console.warn('maxNodes exceeded!');
+      return;
+    }
+
+    if (mutationMethod === methods.mutation.ADD_CONN &amp;&amp; genome.connections.length >= this.maxConns) {
+      if (config.warnings) console.warn('maxConns exceeded!');
+      return;
+    }
+
+    if (mutationMethod === methods.mutation.ADD_GATE &amp;&amp; genome.gates.length >= this.maxGates) {
+      if (config.warnings) console.warn('maxGates exceeded!');
+      return;
+    }
+
+    return mutationMethod;
+  },
+
+  /**
+   * Mutates the given (or current) population
+   */
+  mutate: function () {
+    // Elitist genomes should not be included
+    for (var i = 0; i &lt; this.population.length; i++) {
+      if (Math.random() &lt;= this.mutationRate) {
+        for (var j = 0; j &lt; this.mutationAmount; j++) {
+          var mutationMethod = this.selectMutationMethod(this.population[i]);
+          this.population[i].mutate(mutationMethod);
+        }
+      }
+    }
+  },
+
+  /**
+   * Evaluates the current population
+   */
+  evaluate: async function () {
+    var i;
+    if (this.fitnessPopulation) {
+      if (this.clear) {
+        for (i = 0; i &lt; this.population.length; i++) {
+          this.population[i].clear();
+        }
+      }
+      await this.fitness(this.population);
+    } else {
+      for (i = 0; i &lt; this.population.length; i++) {
+        var genome = this.population[i];
+        if (this.clear) genome.clear();
+        genome.score = await this.fitness(genome);
+      }
+    }
+  },
+
+  /**
+   * Sorts the population by score
+  */
+  sort: function () {
+    this.population.sort(function (a, b) {
+      return b.score - a.score;
+    });
+  },
+
+  /**
+   * Returns the fittest genome of the current population
+   * @todo Add `@returns` tag types
+   * @todo Add `@returns` tag descriptions
+  */
+  getFittest: function () {
+    // Check if evaluated
+    if (typeof this.population[this.population.length - 1].score === 'undefined') {
+      this.evaluate();
+    }
+    if (this.population[0].score &lt; this.population[1].score) {
+      this.sort();
+    }
+
+    return this.population[0];
+  },
+
+  /**
+   * Returns the average fitness of the current population
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
+   */
+  getAverage: function () {
+    if (typeof this.population[this.population.length - 1].score === 'undefined') {
+      this.evaluate();
+    }
+
+    var score = 0;
+    for (var i = 0; i &lt; this.population.length; i++) {
+      score += this.population[i].score;
+    }
+
+    return score / this.population.length;
+  },
+
+  /**
+   * Gets a genome based on the selection function
+   * @return {Network} genome
+   * @todo Add `@returns` tag description
+   */
+  getParent: function () {
+    var i;
+    switch (this.selection) {
+      case selection.POWER:
+        if (this.population[0].score &lt; this.population[1].score) this.sort();
+
+        var index = Math.floor(Math.pow(Math.random(), this.selection.power) * this.population.length);
+        return this.population[index];
+      case selection.FITNESS_PROPORTIONATE:
+        // As negative fitnesses are possible
+        // https://stackoverflow.com/questions/16186686/genetic-algorithm-handling-negative-fitness-values
+        // this is unnecessarily run for every individual, should be changed
+
+        var totalFitness = 0;
+        var minimalFitness = 0;
+        for (i = 0; i &lt; this.population.length; i++) {
+          var score = this.population[i].score;
+          minimalFitness = score &lt; minimalFitness ? score : minimalFitness;
+          totalFitness += score;
+        }
+
+        minimalFitness = Math.abs(minimalFitness);
+        totalFitness += minimalFitness * this.population.length;
+
+        var random = Math.random() * totalFitness;
+        var value = 0;
+
+        for (i = 0; i &lt; this.population.length; i++) {
+          let genome = this.population[i];
+          value += genome.score + minimalFitness;
+          if (random &lt; value) return genome;
+        }
+
+        // if all scores equal, return random genome
+        return this.population[Math.floor(Math.random() * this.population.length)];
+      case selection.TOURNAMENT:
+        if (this.selection.size > this.popsize) {
+          throw new Error('Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size');
+        }
+
+        // Create a tournament
+        var individuals = [];
+        for (i = 0; i &lt; this.selection.size; i++) {
+          let random = this.population[Math.floor(Math.random() * this.population.length)];
+          individuals.push(random);
+        }
+
+        // Sort the tournament individuals by score
+        individuals.sort(function (a, b) {
+          return b.score - a.score;
+        });
+
+        // Select an individual
+        for (i = 0; i &lt; this.selection.size; i++) {
+          if (Math.random() &lt; this.selection.probability || i === this.selection.size - 1) {
+            return individuals[i];
+          }
+        }
+    }
+  },
+
+  /**
+   * Export the current population to a json object
+   * @todo Add `@returns` tag type
+   * @todo Add `@returns` tag description
+   */
+  export: function () {
+    var json = [];
+    for (var i = 0; i &lt; this.population.length; i++) {
+      var genome = this.population[i];
+      json.push(genome.toJSON());
+    }
+
+    return json;
+  },
+
+  /**
+   * Import population from a json object
+   * @todo Add `@param` tag type
+   * @todo Add `@param` tag name
+   * @todo Add `@param` tag description
+  */
+  import: function (json) {
+    var population = [];
+    for (var i = 0; i &lt; json.length; i++) {
+      var genome = json[i];
+      population.push(Network.fromJSON(genome));
+    }
+    this.population = population;
+    this.popsize = population.length;
+  }
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Mar 28 2019 12:47:16 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/jquery-3.1.1.min.js"></script>
+
+<script src="scripts/search.js"></script>
+
+
+
+
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+  heap.load("1195922815");
+</script>
+</body>
+</html>
