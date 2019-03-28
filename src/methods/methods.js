@@ -2,7 +2,7 @@
 *
 * @module
 *
-* @namespace - Built in methods
+* @namespace Methods
 *
 * @borrows @module activation as activation
 * @borrows @module mutation as mutation
@@ -12,6 +12,15 @@
 * @borrows @module gating as gating
 * @borrows @module connection as connection
 * @borrows @module rate as rate
+*
+* @prop activation
+* @prop mutation
+* @prop selection
+* @prop crossover
+* @prop cost
+* @prop gating
+* @prop connection
+* @prop rate
 */
 var methods = {
   activation: require('./activation'),
