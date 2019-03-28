@@ -21,11 +21,11 @@ var mutation = methods.mutation;
 *
 * @prop {number} input
 * @prop {number} output
-* @prop {Node[]} nodes
-* @prop {Connection[]} connections
-* @prop {Node[]} gates
-* @prop {Connection[]} selfconns
 * @prop {number} dropout
+* @prop {Array<Node>} nodes
+* @prop {Array<Node>} gates
+* @prop {Array<Connection>} connections
+* @prop {Array<Connection>} selfconns
 */
 function Network(input, output) {
   if (typeof input === 'undefined' || typeof output === 'undefined') {
@@ -68,7 +68,7 @@ Network.prototype = {
    * @todo Add `@param` tag descriptions
    * @todo Add `@returns` tag description
    *
-   * @param {number[]} [input]
+   * @param {Array<number>} [input]
    * @param {boolean} training
    * 
    * @returns {number[]}
@@ -98,9 +98,9 @@ Network.prototype = {
    * @todo Add `@param` tag descriptions
    * @todo Add `@returns` tag description
    *
-   * @param {number[]} input
+   * @param {Array<number>} input
    * 
-   * @returns {number[]} output
+   * @returns {Array<number>} output
    */
   noTraceActivate: function (input) {
     var output = [];
@@ -216,7 +216,7 @@ Network.prototype = {
    * @todo Add `@param` tag descriptions
    *
    * @param {Node} node
-   * @param {Connection[]|Connection} connection
+   * @param {Array<Connection>|Connection} connection
    */
   gate: function (node, connection) {
     if (this.nodes.indexOf(node) === -1) {
