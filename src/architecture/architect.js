@@ -123,6 +123,13 @@ var architect = {
   *
   * @param {...number} layerNeurons
   *
+  * @example
+  * // Input layer: 2 neurons, Hidden layer: 3 neurons, Output layer: 1 neuron
+  * let myPerceptron = new architect.Perceptron(2,3,1);
+  *
+  * // Deep multilayer perceptron | Input: 2 neurons, 4 Hidden layers: 10 neurons, Output: 1 neuron
+  * let myPerceptron = new architect.Perceptron(2, 10, 10, 10, 10, 1);
+  *
   * @returns {Network} Feed forward neural network
   */
   Perceptron: function () {
