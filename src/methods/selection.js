@@ -2,6 +2,8 @@
  *
  * @module
  *
+ * @namespace
+ *
  * @todo Create a namespace description
  * @todo Add `@prop` tag descriptions
  *
