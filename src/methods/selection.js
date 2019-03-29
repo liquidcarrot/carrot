@@ -9,9 +9,6 @@
  *
  * @see {@link https://en.wikipedia.org/wiki/Selection_(genetic_algorithm)|Selection (genetic algorithm)}
  *
- * @typedef selection_method
- * @type {object}
- *
  * @prop {object} FITNESS_PROPORTIONATE
  * @prop {string} FITNESS_PROPORTIONATE.name="FITNESS_PROPORTIONATE"
  * @prop {object} POWER
