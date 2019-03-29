@@ -13,11 +13,22 @@ var architect = {
   /**
   * Constructs a network from a given array of connected nodes
   *
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  *
   * @param {Group[]|Layer[]|Node[]} list A list of Groups, Layers, and Nodes to combine into a Network
+  *
+  * @example <caption>Example of a square network.</caption>
+  * var A = new Node();
+  * var B = new Node();
+  * var C = new Node();
+  * var D = new Node();
+  *
+  * // Create connections
+  * A.connect(B);
+  * A.connect(C);
+  * B.connect(D);
+  * C.connect(D);
+  *
+  * // Construct a network
+  * var network = architect.Construct([A, B, C, D]);
   *
   * @returns {Network}
   */
