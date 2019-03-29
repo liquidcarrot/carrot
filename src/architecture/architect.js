@@ -115,7 +115,7 @@ var architect = {
   /**
   * Creates a multilayer perceptron (MLP)
   *
-  * @param {...number} layerNeurons At least 3 numbers: input layer, hidden layer(s), output layer
+  * @param {...number} layerNeurons Number of neurons in input layer, hidden layer(s), and output layer (min 3 arguments)
   *
   * @example
   * // Input 2 neurons, Hidden layer: 3 neurons, Output: 1 neuron
@@ -151,15 +151,18 @@ var architect = {
   /**
   * Creates a randomly connected network
   *
-  * @todo Add `@param` tag types
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
   *
-  * @param input
-  * @param hidden
-  * @param output
-  * @param options
+  * @param {number} input
+  * @param {number} hidden
+  * @param {number} output
+  * @param {object} options
+  * @param {number} [options.connections=hidden*2]
+  * @param {number} [options.backconnections=0]
+  * @param {number} [options.selfconnections=0]
+  * @param {number} [options.gates=0]
   *
   * @returns {Network}
   */
