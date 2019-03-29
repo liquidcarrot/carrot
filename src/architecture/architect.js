@@ -30,7 +30,7 @@ var architect = {
   * // Construct a network
   * var network = architect.Construct([A, B, C, D]);
   *
-  * @example <caption>A Network build with Groups</caption>
+  * @example <caption>A Network built with Groups</caption>
   * var A = new Group(4);
   * var B = new Group(2);
   * var C = new Group(6);
@@ -121,7 +121,9 @@ var architect = {
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
   *
-  * @returns {Network}
+  * @param {...number} layerNeurons
+  *
+  * @returns {Network} Feed forward neural network
   */
   Perceptron: function () {
     // Convert arguments to Array
