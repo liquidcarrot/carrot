@@ -7,7 +7,7 @@ var config = require('../config');
 *
 * @todo Add `@param` tag types
 * @todo Add `@param` tag descriptions
-* 
+*
 * @constructs Node
 *
 * @param type
@@ -70,7 +70,7 @@ Node.prototype = {
   * @todo Add `@returns` tag description
   *
   * @param {number} [input]
-  * 
+  *
   * @returns {number}
   */
   activate: function (input) {
@@ -133,7 +133,7 @@ Node.prototype = {
 
         if (index > -1) {
           connection.xtrace.values[index] = node.connections.self.gain * node.connections.self.weight *
-            connection.xtrace.values[index] + this.derivative * connection.elegibility * influence;
+          connection.xtrace.values[index] + this.derivative * connection.elegibility * influence;
         } else {
           // Does not exist there yet, might be through mutation
           connection.xtrace.nodes.push(node);
@@ -272,12 +272,12 @@ Node.prototype = {
 
   /**
   * Creates a connection from this node to the given node
-  * 
+  *
   * @todo Add `@param` tag descriptions
   *
   * @param {Node} target
   * @param {number} weight
-  * 
+  *
   * @returns {Connection[]}
   */
   connect: function (target, weight) {
@@ -439,7 +439,7 @@ Node.prototype = {
   * Checks if this node is projecting to the given node
   *
   * @todo Add `@param` tag descriptions
-  * 
+  *
   * @param {Node} node
   * @returns {boolean}
   */
@@ -459,7 +459,7 @@ Node.prototype = {
   * Checks if the given node is projecting to this node
   *
   * @todo Add `@param` tag descriptions
-  * 
+  *
   * @param {Node} node
   * @returns {boolean}
   */

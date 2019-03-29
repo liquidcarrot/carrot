@@ -6,17 +6,14 @@ var Node = require('./node');
 /**
 * @todo Create a class description
 * @todo Add `@prop` tag types
-* @todo Add `@prop` tag descriptions
-* @todo Add `@prop` tag defaults
-*
 *
 * @constructs Layer
 * @prop output
 * @prop {Node[]} nodes
 * @prop {object} connections
-* @prop connections.in
-* @prop connections.out
-* @prop connections.self
+* @prop {Group[]|Node[]} connections.in
+* @prop {Group[]|Node[]} connections.out
+* @prop {Group[]|Node[]} connections.self
 */
 function Layer() {
   this.output = null;
@@ -33,13 +30,8 @@ Layer.prototype = {
   /**
   * Activates all the nodes in the group
   *
-  * @todo Create `@returns` tag
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
-  *
-  * @param value
+  * @param {object[]} value - Array with length equal to amount of nodes
+  * @returns {number[]} - Layer output values
   */
   activate: function(value) {
     var values = [];
@@ -65,14 +57,11 @@ Layer.prototype = {
   /**
   * Propagates all the node in the group
   *
-  * @todo Add `@param` tag types
   * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
-  * @param rate
-  * @param momentum
-  * @param target
+  * @param {number} rate=0.3
+  * @param {number} momentum=0
+  * @param {number[]} target Target (Ideal) values
   */
   propagate: function(rate, momentum, target) {
     if (typeof target !== 'undefined' && target.length !== this.nodes.length) {
@@ -91,15 +80,13 @@ Layer.prototype = {
   /**
   * Connects the nodes in this group to nodes in another group or just a node
   *
-  * @todo Create `@returns` tag
-  * @todo Add `@param` tag types
   * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
-  * @param target
-  * @param method
-  * @param weight
+  * @param {Group|Node|Layer} target
+  * @param {connection_method} method
+  * @param {number} weight
+  *
+  * @returns {Connection[]} An array of connections between the nodes in this layer and target
   */
   connect: function(target, method, weight) {
     var connections;
@@ -115,13 +102,12 @@ Layer.prototype = {
   /**
   * Make nodes from this group gate the given connection(s)
   *
-  * @todo Add `@param` tag types
   * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
-  * @param connections
-  * @param method
+  * @see {@link https://en.wikipedia.org/wiki/Synaptic_gating|Synaptic Gating on Wikipedia}
+  *
+  * @param {Connection[]} connections
+  * @param {gating_method} method
   */
   gate: function(connections, method) {
     this.output.gate(connections, method);
@@ -130,12 +116,7 @@ Layer.prototype = {
   /**
   * Sets the value of a property for every node
   *
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
-  *
-  * @param value
+  * @param {object[]} values - An object with optional bias, squash, and type properties
   */
   set: function(values) {
     for (var i = 0; i < this.nodes.length; i++) {
@@ -157,13 +138,8 @@ Layer.prototype = {
   /**
   * Disconnects all nodes from this group from another given group/node
   *
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
-  *
-  * @param target
-  * @param twosided
+  * @param {Group|Node|Layer} target A Group, Node, or Layer to disconnect from
+  * @param {boolean} [twosided=false] Flag indicating incoming connections
   */
   disconnect: function(target, twosided) {
     twosided = twosided || false;
