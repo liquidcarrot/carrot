@@ -5,7 +5,6 @@
 *
 * @namespace
 *
-* @typedef gating_method
 * @prop {object} OUTPUT
 * @prop {string} OUTPUT.name="OUTPUT"
 * @prop {object} INPUT

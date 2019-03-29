@@ -1,5 +1,4 @@
 /**
- *
  * Genetic Algorithm Selection Methods (Genetic Operator)
  *
  * @module

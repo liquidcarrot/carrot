@@ -17,8 +17,8 @@ var architect = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   *
-  * @param list
-  * 
+  * @param {...Group|...Layer|...Node} list - A list of Groups, Layers, and Nodes to combine into a Network
+  *
   * @returns {Network}
   */
   Construct: function (list) {
@@ -96,7 +96,7 @@ var architect = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @returns {Network}
   */
   Perceptron: function () {
@@ -133,7 +133,7 @@ var architect = {
   * @param hidden
   * @param output
   * @param options
-  * 
+  *
   * @returns {Network}
   */
   Random: function (input, hidden, output, options) {
@@ -178,7 +178,7 @@ var architect = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @returns {Network}
   */
   LSTM: function () {
@@ -307,7 +307,7 @@ var architect = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @returns {Network}
   */
   GRU: function () {
@@ -345,9 +345,9 @@ var architect = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @param size
-  * 
+  *
   * @returns {Network}
   */
   Hopfield: function (size) {
@@ -376,13 +376,13 @@ var architect = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
-  * 
+  *
   * @param inputSize
   * @param hiddenLayers
   * @param outputSize
   * @param previousInput
   * @param previousOutput
-  * 
+  *
   * @returns {Network}
   */
   NARX: function (inputSize, hiddenLayers, outputSize, previousInput, previousOutput) {
