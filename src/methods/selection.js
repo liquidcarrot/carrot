@@ -20,7 +20,9 @@
  * @prop {number} TOURNAMENT.probability=0.5
 */
 var selection = {
-  // @see {@link https://en.wikipedia.org/wiki/Fitness_proportionate_selection|Fitness Proportionate Selection / Roulette Wheel Selection}
+  /**
+   * @see {@link https://en.wikipedia.org/wiki/Fitness_proportionate_selection|Fitness Proportionate Selection / Roulette Wheel Selection}
+   */
   FITNESS_PROPORTIONATE: {
     name: 'FITNESS_PROPORTIONATE'
   },
@@ -28,7 +30,9 @@ var selection = {
     name: 'POWER',
     power: 4
   },
-  // @see {@link https://en.wikipedia.org/wiki/Tournament_selection|Tournament Selection}
+  /**
+   * @see {@link https://en.wikipedia.org/wiki/Tournament_selection|Tournament Selection}
+   */
   TOURNAMENT: {
     name: 'TOURNAMENT',
     size: 5,
