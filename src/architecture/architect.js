@@ -17,7 +17,7 @@ var architect = {
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   *
-  * @param {...Group|...Layer|...Node} list - A list of Groups, Layers, and Nodes to combine into a Network
+  * @param {Group[]|Layer[]|Node[]} list A list of Groups, Layers, and Nodes to combine into a Network
   *
   * @returns {Network}
   */
