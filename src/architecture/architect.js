@@ -15,7 +15,7 @@ var architect = {
   *
   * @param {Group[]|Layer[]|Node[]} list A list of Groups, Layers, and Nodes to combine into a Network
   *
-  * @example <caption>Example of a square network.</caption>
+  * @example <caption>A square-looking network built with Nodes</caption>
   * var A = new Node();
   * var B = new Node();
   * var C = new Node();
@@ -26,6 +26,19 @@ var architect = {
   * A.connect(C);
   * B.connect(D);
   * C.connect(D);
+  *
+  * // Construct a network
+  * var network = architect.Construct([A, B, C, D]);
+  *
+  * @example <caption>A Network build with Groups</caption>
+  * var A = new Group(4);
+  * var B = new Group(2);
+  * var C = new Group(6);
+  *
+  * // Create connections between the groups
+  * A.connect(B);
+  * A.connect(C);
+  * B.connect(C);
   *
   * // Construct a network
   * var network = architect.Construct([A, B, C, D]);
