@@ -115,19 +115,13 @@ var architect = {
   /**
   * Creates a multilayer perceptron (MLP)
   *
-  * @todo Create `@param` tags
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
-  *
-  * @param {...number} layerNeurons
+  * @param {...number} layerNeurons At least 3 numbers: input layer, hidden layer(s), output layer
   *
   * @example
-  * // Input layer: 2 neurons, Hidden layer: 3 neurons, Output layer: 1 neuron
+  * // Input 2 neurons, Hidden layer: 3 neurons, Output: 1 neuron
   * let myPerceptron = new architect.Perceptron(2,3,1);
   *
-  * // Deep multilayer perceptron | Input: 2 neurons, 4 Hidden layers: 10 neurons, Output: 1 neuron
+  * // Input: 2 neurons, 4 Hidden layers: 10 neurons, Output: 1 neuron
   * let myPerceptron = new architect.Perceptron(2, 10, 10, 10, 10, 1);
   *
   * @returns {Network} Feed forward neural network
