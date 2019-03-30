@@ -3,8 +3,18 @@
 *
 * @private
 *
-* @todo Add `@borrows` tags.
-* @todo Add `@prop` tags.
+*
+* @borrows methods/methods as methods
+* @borrows Connection as Connection
+* @borrows architecture/architect as architect
+* @borrows Network as Network
+* @borrows config as config
+* @borrows Layer as Group
+* @borrows Layer as Layer
+* @borrows Node as Node
+* @borrows neat as Neat
+* @borrows multi as multi
+*
 */
 var Carrot = {
   methods: require('./methods/methods'),

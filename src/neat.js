@@ -1,7 +1,3 @@
-/* Export */
-module.exports = Neat;
-
-/* Import */
 var Network = require('./architecture/network');
 var methods = require('./methods/methods');
 var config = require('./config');
@@ -15,9 +11,11 @@ var selection = methods.selection;
 
 /**
 * Runs the NEAT algorithm on group of neural networks.
+*
 * @todo Add `@param` tag types
-* @todo Add `@param` tag defaults
 * @todo Add `@param` tag descriptions
+*
+* @name NEAT
 *
 * @private
 *
@@ -25,22 +23,24 @@ var selection = methods.selection;
 * @param {number} output - The output size of the networks
 * @param {Function} fitness - The fitness function to evaluate the networks
 * @param {Object} options - Configuration options
-* @param {boolean} [equal=false] -
-* @param {number} [clear=false] -
-* @param {number} [popsize=50] -
-* @param {number} [elitism=0] -
-* @param {number} [provenance=0] -
-* @param {number} [mutationRate=0] -
-* @param {number} [mutationAmount=1] -
-* @param {boolean} [fitnessPopulation=false] -
-* @param [selection=] -
-* @param [crossover=] -
-* @param [mutation=] -
-* @param [network=false] -
-* @param {number} [maxNodes=Infinity] -
-* @param {number} [maxConns=Infinity] -
-* @param {number} [maxGates=Infinity] -
-* @param [mutationSelection=] -
+* @param {boolean} [options.equal=false]
+* @param {number} [options.clear=false]
+* @param {number} [options.popsize=50] Population size of each generation.
+* @param {number} [options.elitism=0] Elitism of every evolution loop. {@link https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm|Q&A: What is Elitism in Genetic Algortihtms}
+* @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
+* @param {number} [options.mutationRate=0] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.3.
+* @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
+* @param {boolean} [options.fitnessPopulation=false] When true, requires fitness function that takes an array of genomes as input and sets their .score property
+* @param {string} [options.selection=Selection.FITNESS_PROPORTIONATE] Selection method for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
+* @param {Array} [options.crossover=] Sets allowed crossover methods for evolution.
+* @param {Array} [mutation=] Sets allowed mutation methods for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
+* @param {Network} [options.network=false] Network to start evolution from
+* @param {number} [options.maxNodes=Infinity]
+* @param {number} [options.maxConns=Infinity]
+* @param {number} [options.maxGates=Infinity]
+* @param [options.mutationSelection=]
+*
+* @prop {number} generation A count of the generations
 */
 function Neat (input, output, fitness, options) {
   this.input = input; // The input size of the networks
@@ -90,6 +90,8 @@ function Neat (input, output, fitness, options) {
 Neat.prototype = {
   /**
    * Create the initial pool of genomes
+   *
+   * @param {Network} network
    */
   createPool: function (network) {
     this.population = [];
@@ -110,6 +112,8 @@ Neat.prototype = {
    * Evaluates, selects, breeds and mutates population
    * @todo Add `@returns` tag type
    * @todo Add `@returns` tag description
+   *
+   * @returns {object}
   */
   evolve: async function () {
     // Check if evaluated, sort the population
@@ -156,7 +160,7 @@ Neat.prototype = {
   },
 
   /**
-   * Breeds two parents into an offspring, population MUST be surted
+   * Breeds two parents into an offspring, population MUST be sorted
    * @todo Add `@returns` tag type
    * @todo Add `@returns` tag description
    */
@@ -169,6 +173,7 @@ Neat.prototype = {
 
   /**
    * Selects a random mutation method for a genome according to the parameters
+   * @param genome
   */
   selectMutationMethod: function (genome) {
     var mutationMethod = this.mutation[Math.floor(Math.random() * this.mutation.length)];
@@ -368,3 +373,5 @@ Neat.prototype = {
     this.popsize = population.length;
   }
 };
+
+module.exports = Neat;
