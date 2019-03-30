@@ -462,16 +462,31 @@ var architect = {
   /**
   * Creates a NARX network (remember previous inputs/outputs)
   *
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
-  *
-  * @param inputSize
-  * @param hiddenLayers
-  * @param outputSize
-  * @param previousInput
-  * @param previousOutput
+  * @param {number} inputSize Number of input nodes
+  * @param {number[]|number} hiddenLayers Array of hidden layer sizes, e.g. [10,20,10] If only one hidden layer, can be a number (of nodes)
+  * @param {number} outputSize Number of output nodes
+  * @param {number} previousInput Number of previous inputs to remember
+  * @param {number} previousOutput Number of previous outputs to remember
+  * 
+  * @example
+  * let narx = new architect.NARX(1, 5, 1, 3, 3);
+  * 
+  * // Training a sequence
+  * let trainingData = [
+  *   { input: [0], output: [0] },
+  *   { input: [0], output: [0] },
+  *   { input: [0], output: [1] },
+  *   { input: [1], output: [0] },
+  *   { input: [0], output: [0] },
+  *   { input: [0], output: [0] },
+  *   { input: [0], output: [1] },
+  * ];
+  * narx.train(trainingData, {
+  *   log: 1,
+  *   iterations: 3000,
+  *   error: 0.03,
+  *   rate: 0.05
+  * });
   *
   * @returns {Network}
   */
