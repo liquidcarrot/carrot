@@ -15,7 +15,7 @@ var architect = {
   *
   * @param {Group[]|Layer[]|Node[]} list A list of Groups, Layers, and Nodes to combine into a Network
   *
-  * @example <caption>A square-looking network built with Nodes</caption>
+  * @example <caption>A Network built with Nodes</caption>
   * var A = new Node();
   * var B = new Node();
   * var C = new Node();
@@ -40,7 +40,7 @@ var architect = {
   * A.connect(C);
   * B.connect(C);
   *
-  * // Construct a network
+  * // Construct a square-looking network
   * var network = architect.Construct([A, B, C, D]);
   *
   * @returns {Network}
@@ -115,7 +115,7 @@ var architect = {
   /**
   * Creates a multilayer perceptron (MLP)
   *
-  * @param {...number} layerNeurons Number of neurons in input layer, hidden layer(s), and output layer (min 3 arguments)
+  * @param {...number} layerNeurons Number of neurons in input layer, hidden layer(s), and output layer as a series of numbers (min 3 arguments)
   *
   * @example
   * // Input 2 neurons, Hidden layer: 3 neurons, Output: 1 neuron
@@ -151,18 +151,21 @@ var architect = {
   /**
   * Creates a randomly connected network
   *
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
-  *
-  * @param {number} input
-  * @param {number} hidden
-  * @param {number} output
+  * @param {number} input Number of input nodes
+  * @param {number} hidden Number of nodes inbetween input and output
+  * @param {number} output Number of output nodes
   * @param {object} options
-  * @param {number} [options.connections=hidden*2]
-  * @param {number} [options.backconnections=0]
-  * @param {number} [options.selfconnections=0]
-  * @param {number} [options.gates=0]
+  * @param {number} [options.connections=hidden*2] Number of connections (Larger than hidden)
+  * @param {number} [options.backconnections=0] Number of recurrent connections
+  * @param {number} [options.selfconnections=0] Number of self connections
+  * @param {number} [options.gates=0] Number of gates
+  *
+  * @example
+  * var network = architect.Random(1, 20, 2, {
+  *   connections: 40,
+  *   gates: 4,
+  *   selfconnections: 4
+  * });
   *
   * @returns {Network}
   */
