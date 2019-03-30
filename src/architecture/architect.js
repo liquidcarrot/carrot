@@ -161,7 +161,7 @@ var architect = {
   * @param {number} [options.gates=0] Number of gates
   *
   * @example
-  * var network = architect.Random(1, 20, 2, {
+  * let network = architect.Random(1, 20, 2, {
   *   connections: 40,
   *   gates: 4,
   *   selfconnections: 4
@@ -206,11 +206,40 @@ var architect = {
   /**
   * Creates a long short-term memory network
   *
+  * @see {@link https://en.wikipedia.org/wiki/Long_short-term_memory|LSTM on Wikipedia}
   * @todo Create `@param` tags
   * @todo Add `@param` tag types
   * @todo Add `@param` tag descriptions
   * @todo Add `@param` tag defaults
   * @todo Document `@param` tag "optional" or "required"
+  *
+  * @param {number} input Number of input nodes
+  * @param {...number} memory Number of memory block assemblies (input gate, memory cell, forget gate, and output gate)
+  * @param {number} output Number of output nodes
+  * @param {object} [options] Configuration options
+  * @param {boolean} [options.memoryToMemory=false]
+  * @param {boolean} [options.outputToMemory=false]
+  * @param {boolean} [options.outputToGates=false]
+  * @param {boolean} [options.inputToOutput=true]
+  * @param {boolean} [options.inputToDeep=true]
+  *
+  * @example <caption>While training sequences or timeseries prediction, set the clear option to true in training</caption>
+  * // Input, memory block layer, output
+  * let myLSTM = new architect.LSTM(2,6,1);
+  *
+  * // with multiple memory block layers
+  * let myLSTM = new architect.LSTM(2, 4, 4, 4, 1);
+  *
+  * // with options
+  * var options = {
+  *   memoryToMemory: false,    // default
+  *   outputToMemory: false,    // default
+  *   outputToGates: false,     // default
+  *   inputToOutput: true,      // default
+  *   inputToDeep: true         // default
+  * };
+  *
+  * let myLSTM = new architect.LSTM(2, 4, 4, 4, 1, options);
   *
   * @returns {Network}
   */
