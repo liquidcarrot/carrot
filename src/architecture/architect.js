@@ -364,7 +364,7 @@ var architect = {
   * @param {...number} units Number of gated recurrent units per layer
   * @param {number} output Number of output nodes
   *
-  * @example <caption>GRU is being tested, may not always work for your dataset.</caption>
+  * @example <caption>GRU is being tested, and may not always work for your dataset.</caption>
   * // Input, gated recurrent unit layer, output
   * let myLSTM = new architect.GRU(2,6,1);
   *
@@ -424,13 +424,20 @@ var architect = {
   /**
   * Creates a hopfield network of the given size
   *
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
-  *
-  * @param size
-  *
+  * @param {number} size Number of inputs and outputs (which is the same number)
+  * 
+  * @example <caption>Output will always be binary due to `Activation.STEP` function.</caption>
+  * var network = architect.Hopfield(10);
+  * var trainingSet = [
+  *   { input: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1], output: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1] },
+  *   { input: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0], output: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0] }
+  * ];
+  * 
+  * network.train(trainingSet);
+  * 
+  * network.activate([0,1,0,1,0,1,0,1,1,1]); // [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+  * network.activate([1,1,1,1,1,0,0,1,0,0]); // [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]
+  * 
   * @returns {Network}
   */
   Hopfield: function (size) {
