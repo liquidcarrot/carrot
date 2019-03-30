@@ -207,14 +207,10 @@ var architect = {
   * Creates a long short-term memory network
   *
   * @see {@link https://en.wikipedia.org/wiki/Long_short-term_memory|LSTM on Wikipedia}
-  * @todo Create `@param` tags
-  * @todo Add `@param` tag types
   * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
   * @param {number} input Number of input nodes
-  * @param {...number} memory Number of memory block assemblies (input gate, memory cell, forget gate, and output gate)
+  * @param {...number} memory Number of memory block assemblies (input gate, memory cell, forget gate, and output gate) per layer
   * @param {number} output Number of output nodes
   * @param {object} [options] Configuration options
   * @param {boolean} [options.memoryToMemory=false]
@@ -364,11 +360,36 @@ var architect = {
   /**
   * Creates a gated recurrent unit network
   *
-  * @todo Create `@param` tags
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
+  * @param {number} input Number of input nodes
+  * @param {...number} units Number of gated recurrent units per layer
+  * @param {number} output Number of output nodes
+  *
+  * @example <caption>GRU is being tested, may not always work for your dataset.</caption>
+  * // Input, gated recurrent unit layer, output
+  * let myLSTM = new architect.GRU(2,6,1);
+  *
+  * // with multiple layers of gated recurrent units
+  * let myLSTM = new architect.GRU(2, 4, 4, 4, 1);
+  *
+  * @example <caption>Training XOR gate</caption>
+  * var trainingSet = [
+  *   { input: [0], output: [0]},
+  *   { input: [1], output: [1]},
+  *   { input: [1], output: [0]},
+  *   { input: [0], output: [1]},
+  *   { input: [0], output: [0]}
+  * ];
+  *
+  * var network = new architect.GRU(1,1,1);
+  *
+  * // Train a sequence: 00100100..
+  * network.train(trainingSet, {
+  *   log: 1,
+  *   rate: 0.1, // lower rates work best
+  *   error: 0.005,
+  *   iterations: 3000,
+  *   clear: true // set to true while training
+  * });
   *
   * @returns {Network}
   */
