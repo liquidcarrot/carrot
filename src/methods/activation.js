@@ -1,8 +1,6 @@
 /**
 * Activation functions
 *
-* @module
-*
 * @see {@link https://en.wikipedia.org/wiki/Activation_function|Activation Function}
 * @see {@link https://stats.stackexchange.com/questions/115258/comprehensive-list-of-activation-functions-in-neural-networks-with-pros-cons|Comprehensive list of activation functions in neural networks with pros/cons}
 *

@@ -2,8 +2,6 @@ var activation = require('./activation');
 
 /**
  *
- * @module
- *
  * @todo Create a namespace description
  * @todo Add `@prop MOD_ACTIVATION.allowed` tag type
  * @todo Add `@prop MOD_ACTIVATION.allowed` tag defaults

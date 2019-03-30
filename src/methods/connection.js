@@ -1,8 +1,6 @@
 /**
 * Specifies in what manner two groups are connected
 *
-* @module
-*
 * @namespace methods.connection
 *
 * @typedef connection_method
