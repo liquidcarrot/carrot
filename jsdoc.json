@@ -45,7 +45,7 @@
           "url": ""                   // Main canonical URL for the main page of the site
       },
       "meta": {                       // Meta information options (mostly for search engines that have not indexed your site yet)
-          "title": "Liquid Carrot",                // Also will be used as postfix to actualy page title, prefixed with object/document name
+          "title": "",                // Also will be used as postfix to actualy page title, prefixed with object/document name
           "description": "",          // Description of overal contents of your website
           "keyword": ""               // Keywords for search engines
       },
