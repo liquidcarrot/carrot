@@ -15,12 +15,12 @@ var mutation = methods.mutation;
 * 
 * @constructs Network
 * 
-* @param {number} input
-* @param {number} output
+* @param {number} input - Size of input layer AKA neurons in input layer
+* @param {number} output - Size of output layer AKA neurons in output layer
 * 
 *
-* @prop {number} input
-* @prop {number} output
+* @prop {number} input - Size of input layer AKA neurons in input layer
+* @prop {number} output - Size of output layer AKA neurons in output layer
 * @prop {number} dropout
 * @prop {Array<Node>} nodes
 * @prop {Array<Node>} gates
