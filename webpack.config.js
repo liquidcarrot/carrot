@@ -7,7 +7,9 @@ module.exports = {
 	},
 	output: {
 		path: path.resolve(__dirname, 'dist'),
-		filename: '[name].dist.js' // Creates "carrot.dist.js"; Gets `name` from Object.keys(entry);
+		filename: '[name].dist.js', // Creates "carrot.dist.js"; Gets `name` from Object.keys(entry);
+		library: 'carrot',
+		libraryTarget: 'umd'
 	},
   externals: [
     'child_process',
