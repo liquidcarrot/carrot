@@ -1,8 +1,6 @@
 /**
 * @todo Create a namespace description
 *
-* @module
-*
 * @see {@link https://stackoverflow.com/questions/30033096/what-is-lr-policy-in-caffe/30045244|Learning rate policy}
 *
 * @namespace

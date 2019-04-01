@@ -1,7 +1,5 @@
 /**
 *
-* @module
-*
 * @namespace Methods
 *
 * @borrows @module activation as activation

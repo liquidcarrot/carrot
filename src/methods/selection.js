@@ -1,8 +1,6 @@
 /**
  * Genetic Algorithm Selection Methods (Genetic Operator)
  *
- * @module
- *
  * @namespace
  *
  * @todo Add `@prop` tag descriptions

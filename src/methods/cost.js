@@ -3,7 +3,6 @@
 *******************************************************************************/
 
 /**
- * @module
  *
  * @see {@link https://en.wikipedia.org/wiki/Loss_function|Loss Function on Wikipedia}
  * @namespace cost
