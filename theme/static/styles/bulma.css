@@ -244,30 +244,6 @@ fieldset[disabled] .pagination-ellipsis {
 }
 
 /*! minireset.css v0.0.4 | MIT License | github.com/jgthms/minireset.css */
-html,
-p,
-ol,
-ul,
-li,
-dl,
-dt,
-dd,
-blockquote,
-figure,
-fieldset,
-legend,
-textarea,
-iframe,
-hr,
-h1,
-h2,
-h3,
-h5,
-h6 {
-  margin: 0;
-  padding: 0;
-}
-
 ul {
   list-style: none;
 }
@@ -307,12 +283,6 @@ iframe {
 table {
   border-collapse: collapse;
   border-spacing: 0;
-}
-
-td,
-th {
-  padding: 0;
-  text-align: left;
 }
 
 html {
@@ -374,16 +344,6 @@ strong {
 
 fieldset {
   border: none;
-}
-
-table td,
-table th {
-  text-align: left;
-  vertical-align: top;
-}
-
-table th {
-  color: #363636;
 }
 
 .is-clearfix::after {
