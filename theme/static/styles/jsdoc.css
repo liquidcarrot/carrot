@@ -88,12 +88,11 @@ h4 {
 
 h4.name {
   color: #fff;
-  background: #6d426d;
-  box-shadow: 0 .25em .5em #d3d3d3;
-  border-top: 1px solid #d3d3d3;
-  border-bottom: 1px solid #d3d3d3;
-  margin: 1.5em 0 0.5em;
-  padding: .75em 0 .75em 10px;
+  margin-top: 120px !important;
+  padding-top: 0;
+  padding-left: 16px;
+  margin-left: -16px;
+  border-left: 2px solid #FF7518;
 }
 
 h4.name a {
@@ -217,7 +216,10 @@ nav ul a:active {
   font-size: 12px;
 }
 
-nav a:hover,
+nav a:hover{
+  background-color: #eee;
+}
+
 nav a:active {
   color: #FF7518;
 }
@@ -461,7 +463,6 @@ thead tr, thead tr {
 }
 
 span.param-type, .params td .param-type, .param-type dd {
-   color: #FF7518;
   font-family: Consolas, Monaco, 'Andale Mono', monospace
 }
 
