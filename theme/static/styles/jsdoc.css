@@ -22,7 +22,7 @@ img {
 
 a,
 a:active {
-  color: #606;
+  color: #FF7518;
   text-decoration: none;
 }
 
@@ -166,7 +166,6 @@ nav {
   display: block;
   width: 250px;
   background: #FAFAFA;
-  padding-left: 12px;
   box-shadow: 1px 0 rgba(0, 0, 0, 0.1);
   overflow: auto;
   position: fixed;
@@ -220,7 +219,7 @@ nav ul a:active {
 
 nav a:hover,
 nav a:active {
-  color: #606;
+  color: #FF7518;
 }
 
 nav > ul {
@@ -228,7 +227,7 @@ nav > ul {
 }
 
 nav > ul > li > a {
-  color: #606;
+  color: #000;
   margin-top: 10px;
 }
 
@@ -250,7 +249,7 @@ nav h2 {
 
 nav > h2 > a {
    margin: 10px 0 -10px;
-   color: #606 !important;
+   color: #FF7518 !important;
 }
 
 footer {
@@ -462,7 +461,7 @@ thead tr, thead tr {
 }
 
 span.param-type, .params td .param-type, .param-type dd {
-   color: #606;
+   color: #FF7518;
   font-family: Consolas, Monaco, 'Andale Mono', monospace
 }
 
