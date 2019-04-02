@@ -65,7 +65,7 @@ var mutation = {
    * @default
    *
    * @prop {number} min=-1
-   * @prop {number max=1
+   * @prop {number} max=1
    */
   MOD_WEIGHT: {
     name: 'MOD_WEIGHT',
@@ -93,7 +93,7 @@ var mutation = {
    * @default
    * 
    * @prop {boolean} mutateOutput=true
-   * @prop {activation[]} allowed=
+   * @prop {activation[]} allowed=[]
    */
   MOD_ACTIVATION: {
     name: 'MOD_ACTIVATION',
