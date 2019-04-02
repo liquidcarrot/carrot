@@ -51,7 +51,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  color: #000;
+  color: #565656;
   font-weight: 400;
   margin: 0;
 }
@@ -64,9 +64,10 @@ h1 {
 
 h1.page-title {
   font-size: 48px;
-  margin: 1em 30px;
+  margin-top: 100px;
   line-height: 100%;
   word-wrap: break-word;
+  border-left: 2px solid #FF7518;
 }
 
 h2 {
@@ -142,10 +143,10 @@ header {
   display: block
 }
 
-section {
+section, h1 {
   display: block;
   background-color: #fff;
-  padding: 0 0 0 30px;
+  padding: 2em 30px 0;
 }
 
 .variation {
