@@ -62,7 +62,6 @@ var mutation = {
    * @constant
    * @type {object}
    * @description Modifies the weight of a connection
-   * @default
    *
    * @prop {number} min=-1
    * @prop {number} max=1
@@ -80,6 +79,11 @@ var mutation = {
    *
    * @prop {number} min=-1
    * @prop {number} max=1
+   *
+   * @example
+   * let myNode = new Node();
+   *
+   * myNode.mutate(methods.mutation.MOD_BIAS);
    */
   MOD_BIAS: {
     name: 'MOD_BIAS',
@@ -94,6 +98,11 @@ var mutation = {
    *
    * @prop {boolean} mutateOutput=true
    * @prop {activation[]} allowed=[]
+   *
+   * @example
+   * let myNode = new Node();
+   *
+   * myNode.mutate(methods.mutation.MOD_ACTIVATION);
    */
   MOD_ACTIVATION: {
     name: 'MOD_ACTIVATION',
@@ -184,6 +193,23 @@ var mutation = {
   }
 };
 
+/**
+ *
+ * Array of all mutation methods
+ *
+ * @constant
+ * @type {array}
+ *
+ * @example
+ * network.evolve(trainingset, {
+ *  mutation: methods.mutation.ALL // all mutation methods
+ * }
+ *
+ * network.evolve(trainingset, {
+ *  mutation: methods.mutation.FFW// all feedforward mutation methods
+ * }
+ *
+ */
 mutation.ALL = [
   mutation.ADD_NODE,
   mutation.SUB_NODE,
@@ -201,6 +227,23 @@ mutation.ALL = [
   mutation.SWAP_NODES
 ];
 
+/**
+ *
+ * Array of all feedforwad mutation methods
+ *
+ * @constant
+ * @type {array}
+ *
+ * @example
+ * network.evolve(trainingset, {
+ *  mutation: methods.mutation.ALL // all mutation methods
+ * }
+ *
+ * network.evolve(trainingset, {
+ *  mutation: methods.mutation.FFW// all feedforward mutation methods
+ * }
+ *
+ */
 mutation.FFW = [
   mutation.ADD_NODE,
   mutation.SUB_NODE,
