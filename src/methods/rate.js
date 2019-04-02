@@ -1,29 +1,41 @@
 /**
-* @todo Create a namespace description
+* Built-in learning rate policies, which allow for a dynamic learning rate during neural network training.
 *
 * @see {@link https://stackoverflow.com/questions/30033096/what-is-lr-policy-in-caffe/30045244|Learning rate policy}
+*
+* @example
+* network.train(trainingSet, {
+*   rate: 0.3,
+*   ratePolicy: methods.rate.METHOD(options), // replace METHOD with your choice
+* });
 *
 * @namespace
 */
 var rate = {
   /**
-  * @todo Create a function description
-  * @todo Add `@returns` tag
+  * Default rate policy. Using this will make learning rate static (no change). Useful as a way to update a previous rate policy.
+  *
+  * @returns {function}
   */
   FIXED: function () {
     var func = function (baseRate, iteration) { return baseRate; };
     return func;
   },
   /**
-  * @todo Create a function description
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
+  * The rate will 'step down' every `n` iterations.
   *
-  * @param gamma
-  * @param stepSize
+  * @todo Add `@param` tag descriptions
+  *
+  * @param {number} [gamma=0.9]
+  * @param {number} [stepSize=100]
+  *
+  * @example
+  * network.train(trainingSet, {
+  *   rate: 0.3,
+  *   ratePolicy: methods.rate.STEP(gamma, stepSize),
+  * });
+  *
+  * @returns {function}
   */
   STEP: function (gamma, stepSize) {
     gamma = gamma || 0.9;
@@ -37,13 +49,17 @@ var rate = {
   },
   /**
   * @todo Create a function description
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
   * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
-  * @param gamma
+  * @param {number} [gamma=0.999]
+  *
+  * @example
+  * network.train(trainingSet, {
+  *   rate: 0.3,
+  *   ratePolicy: methods.rate.EXP(gamma),
+  * });
+  *
+  * @returns {function}
   */
   EXP: function (gamma) {
     gamma = gamma || 0.999;
@@ -56,14 +72,18 @@ var rate = {
   },
   /**
   * @todo Create a function description
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
   * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
-  * @param gamma
-  * @param power
+  * @param {number} [gamma=0.001]
+  * @param {number} [power=2]
+  *
+  * @example
+  * network.train(trainingSet, {
+  *   rate: 0.3,
+  *   ratePolicy: methods.rate.INV(gamma, power),
+  * });
+  *
+  * @returns {function}
   */
   INV: function (gamma, power) {
     gamma = gamma || 0.001;
