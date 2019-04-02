@@ -95,7 +95,7 @@ h4.name {
 }
 
 h4.name a {
-  color: #fc83ff;
+  color: #FF7518;
 }
 
 h4.name a:hover {
@@ -289,7 +289,7 @@ footer {
 }
 
 .type-signature:last-child {
-  color: #999;
+  color: #888;
 }
 
 .name, .signature {
