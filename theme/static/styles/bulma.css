@@ -352,21 +352,6 @@ section {
   display: block;
 }
 
-code,
-pre {
-  -moz-osx-font-smoothing: auto;
-  -webkit-font-smoothing: auto;
-  font-family: monospace;
-}
-
-code {
-  background-color: whitesmoke;
-  color: #ff3860;
-  font-size: 0.875em;
-  font-weight: normal;
-  padding: 0.25em 0.5em 0.25em;
-}
-
 hr {
   background-color: whitesmoke;
   border: none;
@@ -412,13 +397,6 @@ pre {
   padding: 1.25rem 1.5rem;
   white-space: pre;
   word-wrap: normal;
-}
-
-pre code {
-  background-color: transparent;
-  color: currentColor;
-  font-size: 1em;
-  padding: 0;
 }
 
 table td,
