@@ -15,8 +15,19 @@ var activation = require('./activation');
  * @see {@link https://en.wikipedia.org/wiki/mutation_(genetic_algorithm)|Mutation (genetic algorithms) on Wikipedia}
  * @see {@link https://en.wikipedia.org/wiki/Genetic_algorithm#Selection|Selection (genetic algorithms) on Wikipedia}
  *
- * @example <caption>Using a mutation method with a network</caption>
+ * @example <caption>Mutation methods with networks</caption>
+ * // Setting a mutation method for a network
  * myNetwork.mutate(methods.mutation.ADD_NODE);
+ *
+ * // specifying a list of network mutation methods to use during evolution
+ * myNetwork.evolve(trainingset, {
+ *  mutation: [methods.mutation.MOD_BIAS, methods.mutation.ADD_NODE]
+ * }
+ *
+ * @example <caption>Using a mutation method with a neuron</caption>
+ * myNode.mutate(methods.mutation.MOD_BIAS);
+ *
+ *
  */
 var mutation = {
   /**
@@ -34,7 +45,8 @@ var mutation = {
    * @description Removes a node
    * @default
    *
-   * @prop {boolean} keep_gates=true
+   * @prop {boolean} keep_gates=true Ensures replacement node has gated connections if the removed node did.
+
    */
   SUB_NODE: {
     name: 'SUB_NODE',
@@ -62,9 +74,10 @@ var mutation = {
    * @constant
    * @type {object}
    * @description Modifies the weight of a connection
+   * @default
    *
-   * @prop {number} min=-1
-   * @prop {number} max=1
+   * @prop {number} min=-1 lower bound for weight modification
+   * @prop {number} max=1 higher bound for weight modification
    */
   MOD_WEIGHT: {
     name: 'MOD_WEIGHT',
@@ -77,8 +90,8 @@ var mutation = {
    * @description Modifies the bias of a node
    * @default
    *
-   * @prop {number} min=-1
-   * @prop {number} max=1
+   * @prop {number} min=-1 lower bound for modification of a neuron's bias
+   * @prop {number} max=1 higher bound for modification of a neuron's bias
    *
    * @example
    * let myNode = new Node();
@@ -96,7 +109,7 @@ var mutation = {
    * @description Modifies the activation function of a node
    * @default
    *
-   * @prop {boolean} mutateOutput=true
+   * @prop {boolean} mutateOutput=true Change activation function of network output neurons. Disable this to keep output of a neural network normalized.
    * @prop {activation[]} allowed=[]
    *
    * @example
@@ -185,7 +198,7 @@ var mutation = {
    * @description Swaps the bias and squash function between two nodes
    * @default
    *
-   * @prop {boolean} mutateOutput=true
+   * @prop {boolean} mutateOutput=true Swap bias and activation function of network output neurons too. Disable this to keep output of a neural network normalized.
    */
   SWAP_NODES: {
     name: 'SWAP_NODES',
@@ -199,16 +212,12 @@ var mutation = {
  *
  * @constant
  * @type {array}
+ * @default
  *
- * @example
+ * @example <caption>A group of mutation methods for evolution</caption>
  * network.evolve(trainingset, {
  *  mutation: methods.mutation.ALL // all mutation methods
  * }
- *
- * network.evolve(trainingset, {
- *  mutation: methods.mutation.FFW// all feedforward mutation methods
- * }
- *
  */
 mutation.ALL = [
   mutation.ADD_NODE,
@@ -233,16 +242,12 @@ mutation.ALL = [
  *
  * @constant
  * @type {array}
+ * @default
  *
- * @example
- * network.evolve(trainingset, {
- *  mutation: methods.mutation.ALL // all mutation methods
- * }
- *
+ * @example <caption>A group of mutation methods for evolution</caption>
  * network.evolve(trainingset, {
  *  mutation: methods.mutation.FFW// all feedforward mutation methods
  * }
- *
  */
 mutation.FFW = [
   mutation.ADD_NODE,
