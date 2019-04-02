@@ -2,14 +2,7 @@
 *
 * @namespace Methods
 *
-* @borrows @module activation as activation
-* @borrows @module mutation as mutation
-* @borrows @module selection as selection
-* @borrows @module crossover as crossover
-* @borrows @module cost as cost
-* @borrows @module gating as gating
-* @borrows @module connection as connection
-* @borrows @module rate as rate
+* @private
 *
 * @prop activation
 * @prop mutation
