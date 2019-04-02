@@ -2,7 +2,7 @@ var activation = require('./activation');
 
 /**
  *
- * Genetic algorithm mutation methods, used to create entropy which can lead to better neural networks.
+ * Genetic algorithm mutation methods. Creates variations (mutations) in neural networks which are then selected for better performance.
  * @todo Add `@prop MOD_ACTIVATION.allowed` tag type
  * @todo Add `@prop MOD_ACTIVATION.allowed` tag defaults
  * @todo Add `@prop ALL` tag type
@@ -91,7 +91,7 @@ var mutation = {
    * @type {object}
    * @description Modifies the activation function of a node
    * @default
-   * 
+   *
    * @prop {boolean} mutateOutput=true
    * @prop {activation[]} allowed=[]
    */
@@ -175,7 +175,7 @@ var mutation = {
    * @type {object}
    * @description Swaps the bias and squash function between two nodes
    * @default
-   * 
+   *
    * @prop {boolean} mutateOutput=true
    */
   SWAP_NODES: {
