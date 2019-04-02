@@ -11,7 +11,6 @@ body {
   color: #4d4e53;
   background-color: white;
   margin: 0 auto;
-  padding: 0 20px;
   font-family: 'Helvetica Neue', Helvetica, sans-serif;
   font-size: 16px;
 }
@@ -169,6 +168,7 @@ nav {
   overflow: auto;
   position: fixed;
   height: 100%;
+  padding-left: 12px;
 }
 
 nav #nav-search{
