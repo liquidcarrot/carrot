@@ -66,6 +66,7 @@ h1.page-title {
   font-size: 48px;
   margin-top: 100px;
   line-height: 100%;
+  padding-top: 0;
   word-wrap: break-word;
   border-left: 2px solid #FF7518;
 }
