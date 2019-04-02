@@ -79,7 +79,7 @@ var mutation = {
    * @default
    *
    * @prop {number} min=-1
-   * @prop {number max=1
+   * @prop {number} max=1
    */
   MOD_BIAS: {
     name: 'MOD_BIAS',
