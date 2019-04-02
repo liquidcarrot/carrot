@@ -5,29 +5,28 @@ var config = require('../config');
 /**
 * Creates a new neuron/node
 *
-* @todo Add `@param` tag types
 * @todo Add `@param` tag descriptions
 *
 * @constructs Node
 *
-* @param type
+* @param {string} [type="hidden"] - "input", "hidden", or "output"
 *
 * @prop {number} bias
-* @prop squash
-* @prop type
-* @prop activation
-* @prop state
-* @prop old
-* @prop mask
-* @prop previousDeltaBias
-* @prop totalDeltaBias
-* @prop connections.in
-* @prop connections.out
-* @prop connections.gated
-* @prop connections.self
-* @prop error.responsibility
-* @prop error.projected
-* @prop error.gated
+* @prop {activation} squash
+* @prop {string} type
+* @prop {number} activation
+* @prop {number} state
+* @prop {number} old
+* @prop {number} mask
+* @prop {number} previousDeltaBias
+* @prop {number} totalDeltaBias
+* @prop {Array<Connection>} connections.in
+* @prop {Array<Connection>} connections.out
+* @prop {Array<Connection>} connections.gated
+* @prop {Connection} connections.self
+* @prop {number} error.responsibility
+* @prop {number} error.projected
+* @prop {number} error.gated
 */
 function Node (type) {
   this.bias = (type === 'input') ? 0 : Math.random() * 0.2 - 0.1;
@@ -66,8 +65,8 @@ Node.prototype = {
   /**
   * Activates the node
   *
-  * @todo Add `@param` tag descriptions
   * @todo Add `@returns` tag description
+  * @todo Add `@param` tag descriptions
   *
   * @param {number} [input]
   *
