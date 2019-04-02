@@ -88,7 +88,6 @@ h4 {
 }
 
 h4.name {
-  color: #fff;
   margin-top: 120px !important;
   padding-top: 0;
   padding-left: 16px;
@@ -156,7 +155,7 @@ section {
 
 .signature-attributes {
   font-size: 60%;
-  color: #eee;
+  color: #aaa;
   font-style: italic;
   font-weight: lighter;
 }
@@ -295,10 +294,6 @@ footer {
 
 .name, .signature {
   font-family: Consolas, Monaco, 'Andale Mono', monospace
-}
-
-.signature {
-    color: #fc83ff;
 }
 
 .details {
