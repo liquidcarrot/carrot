@@ -26,31 +26,68 @@ var mutation = {
   /**
    * @constant
    * @type {object}
+   * @description Adds a node
    * @default
    */
   ADD_NODE: {
     name: 'ADD_NODE'
   },
+  /**
+   * @constant
+   * @type {object}
+   * @description Removes a node
+   * @default
+   */
   SUB_NODE: {
     name: 'SUB_NODE',
     keep_gates: true
   },
+  /**
+   * @constant
+   * @type {object}
+   * @description Adds a connection between two nodes
+   * @default
+   */
   ADD_CONN: {
     name: 'ADD_CONN'
   },
+  /**
+   * @constant
+   * @type {object}
+   * @description Removes a connection between two nodes
+   * @default
+   */
   SUB_CONN: {
     name: 'REMOVE_CONN'
   },
+  /**
+   * @constant
+   * @type {object}
+   * @description Modifies the weight of a connection
+   * @default
+   */
   MOD_WEIGHT: {
     name: 'MOD_WEIGHT',
     min: -1,
     max: 1
   },
+  /**
+   * @constant
+   * @type {object}
+   * @description Modifies the bias of a node
+   * @default
+   */
   MOD_BIAS: {
     name: 'MOD_BIAS',
     min: -1,
     max: 1
   },
+  /**
+   * @constant
+   * @type {object}
+   * @description Modifies the activation function of a node
+   * @default
+   */
   MOD_ACTIVATION: {
     name: 'MOD_ACTIVATION',
     mutateOutput: true,
@@ -72,24 +109,66 @@ var mutation = {
       activation.SELU
     ]
   },
+  /**
+   * @constant
+   * @type {object}
+   * @description Adds a self-connection to a node
+   * @default
+   */
   ADD_SELF_CONN: {
     name: 'ADD_SELF_CONN'
   },
+  /**
+   * @constant
+   * @type {object}
+   * @description Removes a self-connection from a node
+   * @default
+   */
   SUB_SELF_CONN: {
     name: 'SUB_SELF_CONN'
   },
+  /**
+   * @constant
+   * @type {object}
+   * @description Makes a node gate a connection
+   * @default
+   */
   ADD_GATE: {
     name: 'ADD_GATE'
   },
+  /**
+   * @constant
+   * @type {object}
+   * @description Removes a gate from a connection
+   * @default
+   */
   SUB_GATE: {
     name: 'SUB_GATE'
   },
+  /**
+   * @constant
+   * @type {object}
+   * @description Adds a recurrent connection
+   * @default
+   */
   ADD_BACK_CONN: {
     name: 'ADD_BACK_CONN'
   },
+  /**
+   * @constant
+   * @type {object}
+   * @description Removes a recurrent connection
+   * @default
+   */
   SUB_BACK_CONN: {
     name: 'SUB_BACK_CONN'
   },
+  /**
+   * @constant
+   * @type {object}
+   * @description Swaps the bias and squash function between two nodes
+   * @default
+   */
   SWAP_NODES: {
     name: 'SWAP_NODES',
     mutateOutput: true
