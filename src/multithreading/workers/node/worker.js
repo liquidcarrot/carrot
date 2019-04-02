@@ -5,7 +5,7 @@
  *
  */
 
-var { multi, methods } = require('../../../neataptic');
+var { multi, methods } = require('../../../carrot');
 
 var set = [];
 var cost;

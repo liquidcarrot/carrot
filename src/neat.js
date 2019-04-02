@@ -5,9 +5,6 @@ var config = require('./config');
 // Easier variable naming
 var selection = methods.selection;
 
-/*******************************************************************************
-                                         NEAT
-*******************************************************************************/
 
 /**
 * Runs the NEAT algorithm on group of neural networks.
