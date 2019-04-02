@@ -3,12 +3,6 @@ var activation = require('./activation');
 /**
  *
  * Genetic algorithm mutation methods. Creates variations (mutations) in neural networks which are then selected for better performance.
- * @todo Add `@prop MOD_ACTIVATION.allowed` tag type
- * @todo Add `@prop MOD_ACTIVATION.allowed` tag defaults
- * @todo Add `@prop ALL` tag type
- * @todo Add `@prop ALL` tag defaults
- * @todo Add `@prop FFW` tag type
- * @todo Add `@prop FFW` tag defaults
  *
  * @namespace mutation
  *
