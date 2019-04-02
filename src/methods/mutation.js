@@ -2,24 +2,20 @@ var activation = require('./activation');
 
 /**
  *
- * @todo Create a namespace description
+ * Genetic algorithm mutation methods, used to create entropy which can lead to better neural networks.
  * @todo Add `@prop MOD_ACTIVATION.allowed` tag type
  * @todo Add `@prop MOD_ACTIVATION.allowed` tag defaults
  * @todo Add `@prop ALL` tag type
  * @todo Add `@prop ALL` tag defaults
  * @todo Add `@prop FFW` tag type
  * @todo Add `@prop FFW` tag defaults
- * @todo Add `@prop` tag descriptions
  *
  * @namespace mutation
  *
  * @see {@link https://en.wikipedia.org/wiki/mutation_(genetic_algorithm)|Mutation (genetic algorithms) on Wikipedia}
  * @see {@link https://en.wikipedia.org/wiki/Genetic_algorithm#Selection|Selection (genetic algorithms) on Wikipedia}
  *
- * @example
- * myNetwork.mutate(methods.mutation.<MUTATION_METHOD>);
- *
- * // eg.
+ * @example <caption>Using a mutation method with a network</caption>
  * myNetwork.mutate(methods.mutation.ADD_NODE);
  */
 var mutation = {
@@ -37,6 +33,8 @@ var mutation = {
    * @type {object}
    * @description Removes a node
    * @default
+   *
+   * @prop {boolean} keep_gates=true
    */
   SUB_NODE: {
     name: 'SUB_NODE',
@@ -65,6 +63,9 @@ var mutation = {
    * @type {object}
    * @description Modifies the weight of a connection
    * @default
+   *
+   * @prop {number} min=-1
+   * @prop {number max=1
    */
   MOD_WEIGHT: {
     name: 'MOD_WEIGHT',
@@ -76,6 +77,9 @@ var mutation = {
    * @type {object}
    * @description Modifies the bias of a node
    * @default
+   *
+   * @prop {number} min=-1
+   * @prop {number max=1
    */
   MOD_BIAS: {
     name: 'MOD_BIAS',
@@ -87,6 +91,9 @@ var mutation = {
    * @type {object}
    * @description Modifies the activation function of a node
    * @default
+   * 
+   * @prop {boolean} mutateOutput=true
+   * @prop {activation[]} allowed=
    */
   MOD_ACTIVATION: {
     name: 'MOD_ACTIVATION',
@@ -168,6 +175,8 @@ var mutation = {
    * @type {object}
    * @description Swaps the bias and squash function between two nodes
    * @default
+   * 
+   * @prop {boolean} mutateOutput=true
    */
   SWAP_NODES: {
     name: 'SWAP_NODES',
