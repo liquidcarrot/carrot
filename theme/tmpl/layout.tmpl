@@ -47,24 +47,32 @@
 </nav>
 
 <div id="main">
-    <?js if (title != 'Home') { ?>
-    <h1 class="page-title"><?js= title ?></h1>
-    <?js } ?>
+    <div class="columns">
+        <div class="column"></div>
+        <div class="column is-8-desktop">
 
-    <?js= content ?>
+            <?js if (title != 'Home') { ?>
+                <h1 class="page-title"><?js= title ?></h1>
+            <?js } ?>
 
-    <?js if (env.conf.docdash.disqus) { ?>
-    <div id="disqus_thread"></div>
-    <script>
-    (function() { // DON'T EDIT BELOW THIS LINE
-    var d = document, s = d.createElement('script');
-    s.src = '//<?js= env.conf.docdash.disqus ?>.disqus.com/embed.js';
-    s.setAttribute('data-timestamp', +new Date());
-    (d.head || d.body).appendChild(s);
-    })();
-    </script>
-    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-    <?js } ?>
+            <?js= content ?>
+
+            <?js if (env.conf.docdash.disqus) { ?>
+                <div id="disqus_thread"></div>
+                <script>
+                    (function() { // DON'T EDIT BELOW THIS LINE
+                    var d = document, s = d.createElement('script');
+                    s.src = '//<?js= env.conf.docdash.disqus ?>.disqus.com/embed.js';
+                    s.setAttribute('data-timestamp', +new Date());
+                    (d.head || d.body).appendChild(s);
+                    })();
+                </script>
+                <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+            <?js } ?>
+
+        </div>
+        <div class="column"></div>
+    </div>
 </div>
 
 <br class="clear">
