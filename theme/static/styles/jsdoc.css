@@ -165,7 +165,9 @@ nav {
   float: left;
   display: block;
   width: 250px;
-  background: #fff;
+  background: #FAFAFA;
+  padding-left: 12px;
+  box-shadow: 1px 0 rgba(0, 0, 0, 0.1);
   overflow: auto;
   position: fixed;
   height: 100%;
