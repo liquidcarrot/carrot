@@ -22,13 +22,18 @@ var self = this;
     <?js } ?>
 <?js } ?>
 
-<?js= this.partial('details.tmpl', data) ?>
-
 <?js if (data.kind !== 'module' && data.description) { ?>
 <div class="description">
     <?js= data.description ?>
 </div>
 <?js } ?>
+
+<?js if (data.params && params.length) { ?>
+    <h5>Parameters:</h5>
+    <?js= this.partial('params.tmpl', params) ?>
+<?js } ?>
+
+<?js= this.partial('details.tmpl', data) ?>
 
 <?js if (data.augments && data.alias && data.alias.indexOf('module:') === 0) { ?>
     <h5>Extends:</h5>
@@ -52,11 +57,6 @@ var self = this;
 <?js if (data.examples && examples.length) { ?>
     <h5>Example<?js= examples.length > 1? 's':'' ?></h5>
     <?js= this.partial('examples.tmpl', examples) ?>
-<?js } ?>
-
-<?js if (data.params && params.length) { ?>
-    <h5>Parameters:</h5>
-    <?js= this.partial('params.tmpl', params) ?>
 <?js } ?>
 
 <?js if (data.kind !== 'module' && data.requires && data.requires.length) { ?>
@@ -87,16 +87,16 @@ var self = this;
 <?js }); ?></ul>
 <?js } ?>
 
-<?js if (data.modifies && modifies.length) {?>		
-<h5>Modifies:</h5>		
-<?js if (modifies.length > 1) { ?><ul><?js		
-    modifies.forEach(function(m) { ?>		
-        <li><?js= self.partial('modifies.tmpl', m) ?></li>		
-    <?js });		
-?></ul><?js } else {		
-    modifies.forEach(function(m) { ?>		
-        <?js= self.partial('modifies.tmpl', m) ?>		
-    <?js });		
+<?js if (data.modifies && modifies.length) {?>
+<h5>Modifies:</h5>
+<?js if (modifies.length > 1) { ?><ul><?js
+    modifies.forEach(function(m) { ?>
+        <li><?js= self.partial('modifies.tmpl', m) ?></li>
+    <?js });
+?></ul><?js } else {
+    modifies.forEach(function(m) { ?>
+        <?js= self.partial('modifies.tmpl', m) ?>
+    <?js });
 } } ?>
 
 <?js if (data.exceptions && exceptions.length) { ?>
@@ -123,14 +123,14 @@ var self = this;
     <?js });
 } } ?>
 
-<?js if (data.yields && yields.length) { ?>		
-<h5>Yields:</h5>		
-<?js if (yields.length > 1) { ?><ul><?js		
-    yields.forEach(function(r) { ?>		
-        <li><?js= self.partial('returns.tmpl', r) ?></li>		
-    <?js });		
-?></ul><?js } else {		
-    yields.forEach(function(r) { ?>		
-        <?js= self.partial('returns.tmpl', r) ?>		
-    <?js });		
+<?js if (data.yields && yields.length) { ?>
+<h5>Yields:</h5>
+<?js if (yields.length > 1) { ?><ul><?js
+    yields.forEach(function(r) { ?>
+        <li><?js= self.partial('returns.tmpl', r) ?></li>
+    <?js });
+?></ul><?js } else {
+    yields.forEach(function(r) { ?>
+        <?js= self.partial('returns.tmpl', r) ?>
+    <?js });
 } } ?>
