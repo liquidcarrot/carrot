@@ -1,6 +1,6 @@
 /**
 * Activation functions
-*
+* @see {@link https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0|Understanding activation function in neural networks}
 * @see {@link https://en.wikipedia.org/wiki/Activation_function|Activation Function}
 * @see {@link https://stats.stackexchange.com/questions/115258/comprehensive-list-of-activation-functions-in-neural-networks-with-pros-cons|Comprehensive list of activation functions in neural networks with pros/cons}
 *
@@ -18,16 +18,11 @@
 var activation = {
   /**
   * @todo Create a function description
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
   * @member
   * @function
-  * @param x
-  * @param derivate
+  * @param {number} x Input value to activation function
+  * @param {boolean} [derivate] A flag that selects the derivative function
   */
   LOGISTIC: function (x, derivate) {
     var fx = 1 / (1 + Math.exp(-x));
@@ -36,16 +31,11 @@ var activation = {
   },
   /**
   * @todo Create a function description
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
   * @member
   * @function
-  * @param x
-  * @param derivate
+  * @param {number} x Input value to activation function
+  * @param {boolean} [derivate] A flag that selects the derivative function
   */
   TANH: function (x, derivate) {
     if (derivate) return 1 - Math.pow(Math.tanh(x), 2);
@@ -53,48 +43,33 @@ var activation = {
   },
   /**
   * @todo Create a function description
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
   * @member
   * @function
-  * @param x
-  * @param derivate
+  * @param {number} x Input value to activation function
+  * @param {boolean} [derivate] A flag that selects the derivative function
   */
   IDENTITY: function (x, derivate) {
     return derivate ? 1 : x;
   },
   /**
   * @todo Create a function description
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
   * @member
   * @function
-  * @param x
-  * @param derivate
+  * @param {number} x Input value to activation function
+  * @param {boolean} [derivate] A flag that selects the derivative function
   */
   STEP: function (x, derivate) {
     return derivate ? 0 : x > 0 ? 1 : 0;
   },
   /**
   * @todo Create a function description
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
   * @member
   * @function
-  * @param x
-  * @param derivate
+  * @param {number} x Input value to activation function
+  * @param {boolean} [derivate] A flag that selects the derivative function
   */
   RELU: function (x, derivate) {
     if (derivate) return x > 0 ? 1 : 0;
@@ -102,16 +77,11 @@ var activation = {
   },
   /**
   * @todo Create a function description
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
   * @member
   * @function
-  * @param x
-  * @param derivate
+  * @param {number} x Input value to activation function
+  * @param {boolean} [derivate] A flag that selects the derivative function
   */
   SOFTSIGN: function (x, derivate) {
     var d = 1 + Math.abs(x);
@@ -120,16 +90,11 @@ var activation = {
   },
   /**
   * @todo Create a function description
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
   * @member
   * @function
-  * @param x
-  * @param derivate
+  * @param {number} x Input value to activation function
+  * @param {boolean} [derivate] A flag that selects the derivative function
   */
   SINUSOID: function (x, derivate) {
     if (derivate) return Math.cos(x);
@@ -137,16 +102,11 @@ var activation = {
   },
   /**
   * @todo Create a function description
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
   * @member
   * @function
-  * @param x
-  * @param derivate
+  * @param {number} x Input value to activation function
+  * @param {boolean} [derivate] A flag that selects the derivative function
   */
   GAUSSIAN: function (x, derivate) {
     var d = Math.exp(-Math.pow(x, 2));
@@ -155,16 +115,11 @@ var activation = {
   },
   /**
   * @todo Create a function description
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
   * @member
   * @function
-  * @param x
-  * @param derivate
+  * @param {number} x Input value to activation function
+  * @param {boolean} [derivate] A flag that selects the derivative function
   */
   BENT_IDENTITY: function (x, derivate) {
     var d = Math.sqrt(Math.pow(x, 2) + 1);
@@ -173,32 +128,22 @@ var activation = {
   },
   /**
   * @todo Create a function description
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
   * @member
   * @function
-  * @param x
-  * @param derivate
+  * @param {number} x Input value to activation function
+  * @param {boolean} [derivate] A flag that selects the derivative function
   */
   BIPOLAR: function (x, derivate) {
     return derivate ? 0 : x > 0 ? 1 : -1;
   },
   /**
   * @todo Create a function description
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
   * @member
   * @function
-  * @param x
-  * @param derivate
+  * @param {number} x Input value to activation function
+  * @param {boolean} [derivate] A flag that selects the derivative function
   */
   BIPOLAR_SIGMOID: function (x, derivate) {
     var d = 2 / (1 + Math.exp(-x)) - 1;
@@ -207,16 +152,11 @@ var activation = {
   },
   /**
   * @todo Create a function description
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
   * @member
   * @function
-  * @param x
-  * @param derivate
+  * @param {number} x Input value to activation function
+  * @param {boolean} [derivate] A flag that selects the derivative function
   */
   HARD_TANH: function (x, derivate) {
     if (derivate) return x > -1 && x < 1 ? 1 : 0;
@@ -224,16 +164,11 @@ var activation = {
   },
   /**
   * @todo Create a function description
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
   * @member
   * @function
-  * @param x
-  * @param derivate
+  * @param {number} x Input value to activation function
+  * @param {boolean} [derivate] A flag that selects the derivative function
   */
   ABSOLUTE: function (x, derivate) {
     if (derivate) return x < 0 ? -1 : 1;
@@ -241,16 +176,11 @@ var activation = {
   },
   /**
   * @todo Create a function description
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
   * @member
   * @function
-  * @param x
-  * @param derivate
+  * @param {number} x Input value to activation function
+  * @param {boolean} [derivate] A flag that selects the derivative function
   */
   INVERSE: function (x, derivate) {
     if (derivate) return -1;
@@ -258,18 +188,13 @@ var activation = {
   },
   /**
   * @todo Create a function description
-  * @todo Add `@returns` tag
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@param` tag defaults
-  * @todo Document `@param` tag "optional" or "required"
   *
   * @see {@link https://arxiv.org/pdf/1706.02515.pdf|Self-Normalizing Neural Networks}
   *
   * @member
   * @function
-  * @param x
-  * @param derivate
+  * @param {number} x Input value to activation function
+  * @param {boolean} [derivate] A flag that selects the derivative function
   */
   SELU: function (x, derivate) {
     var alpha = 1.6732632423543772848170429916717;
