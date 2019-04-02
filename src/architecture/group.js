@@ -7,16 +7,17 @@ var Node = require('./node');
 
 /**
 * @todo Create a class description
-* @todo Add `@prop` tag types
+* 
 * @todo Add `@prop` tag descriptions
-* @todo Add `@prop` tag defaults
 *
 * @constructs Group
 * 
-* @prop {number} nodes
-* @prop {connection} connections.in
-* @prop {connection} connections.out
-* @prop {connection} connections.self
+* @param {number} size
+* 
+* @prop {number} nodes=[]
+* @prop {connection} connections.in=[]
+* @prop {connection} connections.out=[]
+* @prop {connection} connections.self=[]
 */
 function Group (size) {
   this.nodes = [];
