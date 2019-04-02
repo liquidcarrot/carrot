@@ -432,10 +432,6 @@ thead tr, thead tr {
    border-bottom: 1px solid #ddd;
 }
 
-.params .type {
-  white-space: nowrap;
-}
-
 .params code {
   white-space: pre;
 }
