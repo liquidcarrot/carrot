@@ -96,6 +96,10 @@ h4.name {
   border-left: 2px solid #FF7518;
 }
 
+h4.name:first {
+  margin-top:0;
+}
+
 h4.name a {
   color: #FF7518;
 }
@@ -107,7 +111,7 @@ h4.name a:hover {
 h5, .container-overview .subsection-title {
   font-size: 120%;
   letter-spacing: -0.01em;
-  margin: 8px 0 3px 0;
+  margin: 120px 0 3px 0;
 }
 
 h6 {
@@ -437,9 +441,10 @@ thead tr, thead tr {
 }
 
 .params td, .params .name, .props .name, .name code {
-   color: #4D4E53;
-   font-family: Consolas, Monaco, 'Andale Mono', monospace;
-   font-size: 100%;
+
+  color: #8f8f8f;
+  font-family: Consolas, Monaco, 'Andale Mono', monospace;
+  font-size: 100%;
 }
 
 .params td {
