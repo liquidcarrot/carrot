@@ -14,6 +14,17 @@ if (data.defaultvalue && (data.defaultvaluetype === 'object' || data.defaultvalu
 }
 ?>
 
+<?js
+    var properties = data.properties;
+    if (properties && properties.length && properties.forEach) {
+?>
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    <?js= this.partial('properties.tmpl', data) ?>
+
+<?js } ?>
+
 <dl class="details">
 
     <?js if (data.meta && self.outputSourceFiles) {?>
@@ -135,14 +146,3 @@ if (data.defaultvalue && (data.defaultvaluetype === 'object' || data.defaultvalu
     </dd>
     <?js } ?>
 </dl>
-
-<?js
-    var properties = data.properties;
-    if (properties && properties.length && properties.forEach) {
-?>
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    <?js= this.partial('properties.tmpl', data) ?>
-
-<?js } ?>
