@@ -317,6 +317,7 @@ footer {
    width: auto;
    float: left;
    padding-left: 10px;
+   font-weight: 700;
 }
 
 .details dd {
