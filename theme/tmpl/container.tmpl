@@ -47,12 +47,10 @@
         <?js } else if (doc.kind === 'class') { ?>
             <?js= self.partial('method.tmpl', doc) ?>
         <?js } else { ?>
-            <?js= self.partial('details.tmpl', doc) ?>
-
             <?js if (doc.description) { ?>
                 <div class="description"><?js= doc.description ?></div>
             <?js } ?>
-
+            <?js= self.partial('details.tmpl', doc) ?>
             <?js if (doc.examples && doc.examples.length) { ?>
                 <h3>Example<?js= doc.examples.length > 1? 's':'' ?></h3>
                 <?js= self.partial('examples.tmpl', doc.examples) ?>
