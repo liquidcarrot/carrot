@@ -441,8 +441,6 @@ thead tr, thead tr {
 }
 
 .params td, .params .name, .props .name, .name code {
-
-  color: #8f8f8f;
   font-family: Consolas, Monaco, 'Andale Mono', monospace;
   font-size: 100%;
 }
