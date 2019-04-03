@@ -33,6 +33,18 @@ var self = this;
     <?js= this.partial('params.tmpl', params) ?>
 <?js } ?>
 
+<?js if (data.returns && returns.length) { ?>
+<h5>Returns:</h5>
+<?js if (returns.length > 1) { ?><ul><?js
+    returns.forEach(function(r) { ?>
+        <li><?js= self.partial('returns.tmpl', r) ?></li>
+    <?js });
+?></ul><?js } else {
+    returns.forEach(function(r) { ?>
+        <?js= self.partial('returns.tmpl', r) ?>
+    <?js });
+} } ?>
+
 <?js if (data.augments && data.alias && data.alias.indexOf('module:') === 0) { ?>
     <h5>Extends:</h5>
     <?js= self.partial('augments.tmpl', data) ?>
@@ -106,18 +118,6 @@ var self = this;
 ?></ul><?js } else {
     exceptions.forEach(function(r) { ?>
         <?js= self.partial('exceptions.tmpl', r) ?>
-    <?js });
-} } ?>
-
-<?js if (data.returns && returns.length) { ?>
-<h5>Returns:</h5>
-<?js if (returns.length > 1) { ?><ul><?js
-    returns.forEach(function(r) { ?>
-        <li><?js= self.partial('returns.tmpl', r) ?></li>
-    <?js });
-?></ul><?js } else {
-    returns.forEach(function(r) { ?>
-        <?js= self.partial('returns.tmpl', r) ?>
     <?js });
 } } ?>
 
