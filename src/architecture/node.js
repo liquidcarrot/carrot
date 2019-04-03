@@ -9,9 +9,9 @@ var config = require('../config');
 *
 * @constructs Node
 *
-* @param {string} [type="hidden"] - "input", "hidden", or "output"
+* @param {string} [type=hidden] - "input", "hidden", or "output"
 *
-* @prop {number} bias
+* @prop {number} bias Neuron's
 * @prop {activation} squash
 * @prop {string} type
 * @prop {number} activation
