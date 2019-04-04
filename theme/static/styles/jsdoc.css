@@ -206,6 +206,12 @@ nav #nav-search:focus {
   box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102,175,233,.6);
 }
 
+nav .ion-social-github {
+  font-size: 30px;
+  padding-left:.25em;
+  color: #FF7518;
+}
+
 nav.wrap a{
     word-wrap: break-word;
 }
