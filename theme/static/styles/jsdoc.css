@@ -250,6 +250,10 @@ nav a:hover{
   background-color: #eee;
 }
 
+nav h2 a:hover {
+  background-color: transparent;
+}
+
 nav a:active {
   color: #FF7518;
 }
