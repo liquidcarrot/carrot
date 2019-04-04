@@ -1,7 +1,3 @@
-/*******************************************************************************
-                                      CONNECTION
-*******************************************************************************/
-
 /**
 * @todo Create a class description
 * @todo Add `@prop` tag types
@@ -11,11 +7,12 @@
 * @todo Add `@param` tag descriptions
 * @todo Add `@param` tag defaults
 *
-* @class Connection
+* @constructs Connection
 *
 * @param {Node} from - Connection origin node (neuron)
 * @param {Node} to - Connection destination node (neuron)
 * @param {number} [weight=] - Weight of the connection
+* 
 * @prop {Node} from
 * @prop {Node} to
 * @prop {number} [weight=]

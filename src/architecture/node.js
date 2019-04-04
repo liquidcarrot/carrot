@@ -4,6 +4,8 @@ var config = require('../config');
 
 /**
 * Creates a new neuron/node
+* 
+* For more information, check out: [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e), [here](https://en.wikipedia.org/wiki/Artificial_neuron), [here](https://wagenaartje.github.io/neataptic/docs/architecture/node/), [here](https://github.com/cazala/synaptic/wiki/Neural-Networks-101), [here](https://keras.io/backend/#bias_add)
 *
 * @todo Add `@param` tag descriptions
 *
@@ -11,7 +13,7 @@ var config = require('../config');
 *
 * @param {string} [type=hidden] - "input", "hidden", or "output"
 *
-* @prop {number} bias Neuron's
+* @prop {number} bias Neuron's bias [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
 * @prop {activation} squash
 * @prop {string} type
 * @prop {number} activation
