@@ -1,7 +1,8 @@
 /**
 * Built-in learning rate policies, which allow for a dynamic learning rate during neural network training.
 *
-* @see {@link https://stackoverflow.com/questions/30033096/what-is-lr-policy-in-caffe/30045244|Learning rate policy}
+* @see [Learning rates and how-to improve performance](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
+* @see [Learning rate policy](https://stackoverflow.com/questions/30033096/what-is-lr-policy-in-caffe/30045244)
 *
 * @example
 * network.train(trainingSet, {
