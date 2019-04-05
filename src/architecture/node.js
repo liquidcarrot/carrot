@@ -13,21 +13,21 @@ var config = require('../config');
 *
 * @constructs Node
 *
-* @param {string} [type=hidden] Can be: an <code>input</code>, <code>hidden</code>, or <code>output</code>
+* @param {string} [type=hidden] Can be: <code>input</code>, <code>hidden</code>, or <code>output</code>
 *
 * @prop {number} bias Neuron's bias [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
 * @prop {activation} squash [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0)
-* @prop {string} type 
-* @prop {number} activation 
+* @prop {string} type
+* @prop {number} activation Output value
 * @prop {number} state
 * @prop {number} old
 * @prop {number} mask
 * @prop {number} previousDeltaBias
 * @prop {number} totalDeltaBias
-* @prop {Array<Connection>} connections.in
-* @prop {Array<Connection>} connections.out
-* @prop {Array<Connection>} connections.gated
-* @prop {Connection} connections.self
+* @prop {Array<Connection>} connections.in Incoming connections to this node
+* @prop {Array<Connection>} connections.out Outgoing connections from this node
+* @prop {Array<Connection>} connections.gated Connections this node gates
+* @prop {Connection} connections.self A self-connection
 * @prop {number} error.responsibility
 * @prop {number} error.projected
 * @prop {number} error.gated
@@ -71,14 +71,20 @@ function Node (type) {
 
 Node.prototype = {
   /**
-  * Activates the node
+  * Actives the node. When a neuron activates, it computes its state from all its input connections and 'squashes' it using its activation function, and returns the output (activation).
+  * You can provide the activation as a parameter (useful for neurons in the input layer. It has to be a float between 0 and 1).
   *
-  * @todo Add `@returns` tag description
-  * @todo Add `@param` tag descriptions
+  * @param {number} [input] Optional value to be used for an input (or forwarding) neuron
   *
-  * @param {number} [input]
+  * @returns {number} A neuron's ['Squashed'](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) output value
   *
-  * @returns {number}
+  * @example
+  * let A = new Node();
+  * let B = new Node();
+  *
+  * A.connect(B);
+  * A.activate(0.5); // 0.5
+  * B.activate(); // 0.3244554645
   */
   activate: function (input) {
     // Check if an input is given
@@ -189,15 +195,15 @@ Node.prototype = {
   },
 
   /**
-  * Back-propagate the error, aka learn
+  * After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating the error aka learning.
   *
-  * @todo Add `@param` tag types
-  * @todo Add `@param` tag descriptions
+  * @param {number} rate=0.3 [Learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
+  * @param {number} momentum=0 [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one.
+  * @param {boolean} update=false When set to false weights won't update, so if you run propagate 3x with update: false, and then 1x with update: true then the weights will be updated after the last propagation, but the deltaweights of the first 3 propagation will be included.
+  * @param {number} target The target value, a <code>float</code> between zero and one
   *
-  * @param {number} rate=0.3
-  * @param {number} momentum=0
-  * @param {boolean} update=false
-  * @param {number} target
+  * @see @link [Regularization Neataptic](https://wagenaartje.github.io/neataptic/docs/methods/regularization/)
+  * @see @link [What is backpropagation | YouTube](https://www.youtube.com/watch?v=Ilg3gGewQ5U)
   */
   propagate: function (rate, momentum, update, target) {
     momentum = momentum || 0;
@@ -278,14 +284,26 @@ Node.prototype = {
   },
 
   /**
-  * Creates a connection from this node to the given node
+  * Creates a connection from this node to the given node or group
   *
-  * @todo Add `@param` tag descriptions
-  *
-  * @param {Node} target
-  * @param {number} weight
+  * @param {Node|Group} target Node or Group to project connections to
+  * @param {number} weight An initial [weight](https://en.wikipedia.org/wiki/Synaptic_weight) for the target Node(s)
   *
   * @returns {Connection[]}
+  *
+  * @example <caption>Connecting to other neurons and groups</caption>
+  * let A = new Node();
+  * let B = new Node();
+  * A.connect(B); // A now projects a connection to B
+  *
+  * // But you can also connect nodes to groups
+  * let C = new Group(4);
+  *
+  * B.connect(C); // B now projects a connection to all nodes in C
+  *
+  * @example <caption>A neuron can also connect to itself, creating a selfconnection</caption>
+  * let A = new Node();
+  * A.connect(A); // A now connects to itself
   */
   connect: function (target, weight) {
     var connections = [];
@@ -323,10 +341,24 @@ Node.prototype = {
   /**
   * Disconnects this node from the other node
   *
-  * @todo Add `@param` tag descriptions
-  *
   * @param {Node} node
-  * @param {boolean} [twosided]
+  * @param {boolean} [twosided] If the nodes project a connection to each other (two way connection), set this to true to disconnect both connections at once
+  *
+  * @example <caption>One sided connection</caption>
+  * let A = new Node();
+  * let B = new Node();
+  * A.connect(B); // A now projects a connection to B
+  *
+  * A.disconnect(B); // no connection between A and B anymore
+  *
+  * @example <caption>Two-sided connection</caption>
+  * var A = new Node();
+  * var B = new Node();
+  * A.connect(B); // A now projects a connection to B
+  * B.connect(A); // B now projects a connection to A
+  *
+  * // A.disconnect(B)  only disconnects A to B, so use
+  * A.disconnect(B, true); // or B.disconnect(A, true)
   */
   disconnect: function (node, twosided) {
     if (this === node) {
@@ -351,11 +383,21 @@ Node.prototype = {
   },
 
   /**
-  * Make this node gate a connection
+  * Neurons can gate connections. This means that the output (activation value) of a neuron influences the value sent through a connection.
   *
-  * @todo Add `@param` tag descriptions
+  * @param {Connection[]|Connection} connections Connections to be gated (influenced) by a neuron
   *
-  * @param {Connection[]|Connection} connections
+  * @example
+  * let A = new Node();
+  * let B = new Node();
+  * let C = new Node();
+  *
+  * connections = A.connect(B);
+  *
+  * // Now gate the connection(s)
+  * C.gate(connections);
+  *
+  * // Now the weight of the connection from A to B will always be multiplied by the activation of node C.
   */
   gate: function (connections) {
     if (!Array.isArray(connections)) {
@@ -375,7 +417,19 @@ Node.prototype = {
   *
   * @todo Add `@param` tag descriptions
   *
-  * @param {Connection[]|Connection} connections
+  * @param {Connection[]|Connection} connections Connections to be ungated
+  *
+  * @example
+  * var A = new Node();
+  * var B = new Node();
+  * var C = new Node();
+  * var connections = A.connect(B);
+  *
+  * // Now gate the connection(s)
+  * C.gate(connections);
+  *
+  * // Now ungate those connections
+  * C.ungate(connections);
   */
   ungate: function (connections) {
     if (!Array.isArray(connections)) {
@@ -393,7 +447,7 @@ Node.prototype = {
   },
 
   /**
-  * Clear the context of the node
+  * Clear the context of the node, basically reverting it to a 'new' neuron. Useful for predicting timeseries with LSTM's.
   */
   clear: function () {
     for (var i = 0; i < this.connections.in.length; i++) {
@@ -418,9 +472,7 @@ Node.prototype = {
   /**
   * Mutates the node with the given method
   *
-  * @todo Add `@param` tag descriptions
-  *
-  * @param {mutation} method
+  * @param {mutation} method A [Mutation Method](mutation)
   */
   mutate: function(method) {
     if (typeof method === 'undefined') {
@@ -445,10 +497,18 @@ Node.prototype = {
   /**
   * Checks if this node is projecting to the given node
   *
-  * @todo Add `@param` tag descriptions
+  * @param {Node} node Node to check for a connection to
+  * @returns {boolean} True if there is a connection from this node to a given node
   *
-  * @param {Node} node
-  * @returns {boolean}
+  * @example
+  * var A = new Node();
+  * var B = new Node();
+  * var C = new Node();
+  * A.connect(B);
+  * B.connect(C);
+  *
+  * A.isProjectingTo(B); // true
+  * A.isProjectingTo(C); // false
   */
   isProjectingTo: function (node) {
     if (node === this && this.connections.self.weight !== 0) return true;
@@ -465,10 +525,18 @@ Node.prototype = {
   /**
   * Checks if the given node is projecting to this node
   *
-  * @todo Add `@param` tag descriptions
+  * @param {Node} node Node to check for a connection from
+  * @returns {boolean} True if there is a connection from the given node to this node
   *
-  * @param {Node} node
-  * @returns {boolean}
+  * @example
+  * var A = new Node();
+  * var B = new Node();
+  * var C = new Node();
+  * A.connect(B);
+  * B.connect(C);
+  *
+  * A.isProjectedBy(C);// false
+  * B.isProjectedBy(A); // true
   */
   isProjectedBy: function (node) {
     if (node === this && this.connections.self.weight !== 0) return true;
@@ -484,7 +552,7 @@ Node.prototype = {
   },
 
   /**
-  * Converts the node to a json object
+  * Converts the node to a json object that can later be converted back
   *
   * @returns {object}
   */
@@ -503,8 +571,8 @@ Node.prototype = {
 /**
 * Convert a json object to a node
 *
-* @param {object} json - json object of node
-* @returns {Node}
+* @param {object} json A node represented as a JSON object
+* @returns {Node} A reconstructed node
 */
 Node.fromJSON = function (json) {
   var node = new Node();
