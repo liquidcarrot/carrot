@@ -20,8 +20,6 @@ var activation = require('./activation');
  *
  * @example <caption>Using a mutation method with a neuron</caption>
  * myNode.mutate(methods.mutation.MOD_BIAS);
- *
- *
  */
 var mutation = {
   /**
@@ -29,6 +27,9 @@ var mutation = {
    * @type {object}
    * @description Adds a node
    * @default
+   *
+   * @example
+   * myNetwork.mutate(methods.mutation.ADD_NODE);
    */
   ADD_NODE: {
     name: 'ADD_NODE'
@@ -40,7 +41,9 @@ var mutation = {
    * @default
    *
    * @prop {boolean} keep_gates=true Ensures replacement node has gated connections if the removed node did.
-
+   *
+   * @example
+   * myNetwork.mutate(methods.mutation.SUB_NODE);
    */
   SUB_NODE: {
     name: 'SUB_NODE',
@@ -51,6 +54,9 @@ var mutation = {
    * @type {object}
    * @description Adds a connection between two nodes
    * @default
+   *
+   * @example
+   * myNetwork.mutate(methods.mutation.ADD_CONN);
    */
   ADD_CONN: {
     name: 'ADD_CONN'
@@ -60,6 +66,9 @@ var mutation = {
    * @type {object}
    * @description Removes a connection between two nodes
    * @default
+   *
+   * @example
+   * myNetwork.mutate(methods.mutation.SUB_CONN);
    */
   SUB_CONN: {
     name: 'REMOVE_CONN'
@@ -72,6 +81,9 @@ var mutation = {
    *
    * @prop {number} min=-1 lower bound for weight modification
    * @prop {number} max=1 higher bound for weight modification
+   *
+   * @example
+   * myNetwork.mutate(methods.mutation.MOD_WEIGHT);
    */
   MOD_WEIGHT: {
     name: 'MOD_WEIGHT',
@@ -137,6 +149,9 @@ var mutation = {
    * @type {object}
    * @description Adds a self-connection to a node
    * @default
+   *
+   * @example
+   * myNetwork.mutate(methods.mutation.ADD_SELF_CONN);
    */
   ADD_SELF_CONN: {
     name: 'ADD_SELF_CONN'
@@ -146,6 +161,9 @@ var mutation = {
    * @type {object}
    * @description Removes a self-connection from a node
    * @default
+   *
+   * @example
+   * myNetwork.mutate(methods.mutation.SUB_SELF_CONN);
    */
   SUB_SELF_CONN: {
     name: 'SUB_SELF_CONN'
@@ -155,6 +173,9 @@ var mutation = {
    * @type {object}
    * @description Makes a node gate a connection
    * @default
+   *
+   * @example
+   * myNetwork.mutate(methods.mutation.ADD_GATE);
    */
   ADD_GATE: {
     name: 'ADD_GATE'
@@ -164,6 +185,9 @@ var mutation = {
    * @type {object}
    * @description Removes a gate from a connection
    * @default
+   *
+   * @example
+   * myNetwork.mutate(methods.mutation.SUB_GATE);
    */
   SUB_GATE: {
     name: 'SUB_GATE'
@@ -173,6 +197,9 @@ var mutation = {
    * @type {object}
    * @description Adds a recurrent connection
    * @default
+   *
+   * @example
+   * myNetwork.mutate(methods.mutation.ADD_BACK_CONN);
    */
   ADD_BACK_CONN: {
     name: 'ADD_BACK_CONN'
@@ -182,6 +209,9 @@ var mutation = {
    * @type {object}
    * @description Removes a recurrent connection
    * @default
+   *
+   * @example
+   * myNetwork.mutate(methods.mutation.SUB_BACK_CONN);
    */
   SUB_BACK_CONN: {
     name: 'SUB_BACK_CONN'
@@ -193,6 +223,8 @@ var mutation = {
    * @default
    *
    * @prop {boolean} mutateOutput=true Swap bias and activation function of network output neurons too. Disable this to keep output of a neural network normalized.
+   * @example
+   * myNetwork.mutate(methods.mutation.SWAP_NODES);
    */
   SWAP_NODES: {
     name: 'SWAP_NODES',
