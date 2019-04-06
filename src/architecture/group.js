@@ -6,18 +6,20 @@ var Layer = require('./layer');
 var Node = require('./node');
 
 /**
-* @todo Create a class description
-* 
-* @todo Add `@prop` tag descriptions
+* A group instance denotes a group of nodes. Beware: once a group has been used to construct a network, the groups will fall apart into individual nodes. They are purely for the creation and development of networks.
 *
 * @constructs Group
-* 
+*
 * @param {number} size
-* 
-* @prop {number} nodes=[]
-* @prop {connection} connections.in=[]
-* @prop {connection} connections.out=[]
-* @prop {connection} connections.self=[]
+*
+* @prop {number} nodes=[] All nodes within the group
+* @prop {Connection[]} connections.in=[] Incoming connections
+* @prop {Connection[]} connections.out=[] Outgoing connections
+* @prop {Connection[]} connections.self=[] Self connections
+*
+* @example
+* // A group with 5 nodes
+* let A = new Group(5);
 */
 function Group (size) {
   this.nodes = [];
@@ -35,13 +37,16 @@ function Group (size) {
 Group.prototype = {
   /**
   * Activates all the nodes in the group
-  * 
-  * @todo Add `@param` tag descriptions
-  * @todo Add `@returns` tag description
   *
-  * @param {number[]} value
-  * 
-  * @returns {number[]}
+  * @param {number[]} value Array of values of equal length to number of nodes, nodes are activated with corresponding value (order matters)
+  *
+  * @returns {number[]} Squashed output values
+  *
+  * @example
+  * myGroup.activate();
+  *
+  * // or (array length must be same length as nodes in group)
+  * myGroup.activate([1, 0, 1]);
   */
   activate: function (value) {
     var values = [];
@@ -65,13 +70,25 @@ Group.prototype = {
   },
 
   /**
-  * Propagates all the node in the group
-  * 
-  * @todo Add `@param` tag descriptions
+  * Will backpropagate all the node in the group -- make sure the group receives input from another group or node.
+  * [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
+  * If you combine a high learning rate with a lot of momentum, you will rush past the minimum with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
   *
-  * @param {number} rate
-  * @param {number} momentum
-  * @param {number} target
+  * @param {number} rate [Learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
+  * @param {number} momentum [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
+  * @param {number|number[]} target Ideal value(s)
+  *
+  * @example
+  * var A = new Group(2);
+  * var B = new Group(3);
+  *
+  * A.connect(B);
+  *
+  * A.activate([1,0]); // set the input
+  * B.activate(); // get the output
+  *
+  * // Then teach the network with learning rate and wanted output
+  * B.propagate(0.3, 0.9, [0,1]);
   */
   propagate: function(rate, momentum, target) {
     if (typeof target !== 'undefined' && target.length !== this.nodes.length) {
@@ -89,15 +106,18 @@ Group.prototype = {
 
   /**
   * Connects the nodes in this group to nodes in another group or just a node
-  * 
-  * @todo Add `@returns` tag descriptions
-  * @todo Add `@param` tag descriptions
   *
-  * @param {Group|Layer|Node} target
-  * @param {connection} method
-  * @param {number} weight
-  * 
-  * @returns {Connection[]}
+  * @param {Group|Layer|Node} target Node(s) to form connections to
+  * @param {connection} method [Connection Method](connection), determines how the nodes in this group will connect to the target (e.g. one-to-one, all-to-all)
+  * @param {number} weight Weight of the connection(s)
+  *
+  * @returns {Connection[]} The formed connections
+  *
+  * @example
+  * let A = new Group(4);
+  * let B = new Group(5);
+  *
+  * A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional
   */
   connect: function(target, method, weight) {
     var connections = [];
@@ -116,10 +136,10 @@ Group.prototype = {
         for (i = 0; i < this.nodes.length; i++) {
           for (j = 0; j < target.nodes.length; j++) {
             if (method === methods.connection.ALL_TO_ELSE && this.nodes[i] === target.nodes[j]) continue;
-            let connection = this.nodes[i].connect(target.nodes[j], weight);
-            this.connections.out.push(connection[0]);
-            target.connections.in.push(connection[0]);
-            connections.push(connection[0]);
+            let connection = this.nodes[i].connect(target.nodes[j], weight); // weird API quirk, should be fixed
+            this.connections.out.push(connection[0]); // weird API quirk, should be fixed
+            target.connections.in.push(connection[0]); // weird API quirk, should be fixed
+            connections.push(connection[0]); // weird API quirk, should be fixed
           }
         }
       } else if (method === methods.connection.ONE_TO_ONE) {
@@ -147,12 +167,10 @@ Group.prototype = {
   },
 
   /**
-  * Make nodes from this group gate the given connection(s)
-  * 
-  * @todo Add `@param` tag descriptions
+  * Make nodes from this group gate the given connection(s) between two other groups. You have to specify a [Gating Method](gating)
   *
-  * @param {Connection[]|Connection} connections
-  * @param {gating} method
+  * @param {Connection[]|Connection} connections Connections to gate
+  * @param {gating} method [Gating Method](gating)
   */
   gate: function(connections, method) {
     if (typeof method === 'undefined') {
@@ -214,12 +232,17 @@ Group.prototype = {
 
   /**
   * Sets the value of a property for every node
-  * 
-  * @todo Add `@param` tag descriptions
   *
-  * @param {number} values.bias
-  * @param {activation} values.squash
-  * @param {string} values.type
+  * @param {object} values A configuration object
+  * @param {number} values.bias [Weight bias](https://deepai.org/machine-learning-glossary-and-terms/bias-vector)
+  * @param {activation} values.squash [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0)
+  * @param {string} values.type <code>input</code>, <code>hidden</code> or <code>output</code>, should not be used manually (setting to <code>constant</code> will disable bias/weight changes)
+  *
+  * @example
+  * var group = new Group(4);
+  *
+  * // All nodes in 'group' now have a bias of 1
+  * group.set({bias: 1});
   */
   set: function(values) {
     for(var i = 0; i < this.nodes.length; i++) {
@@ -233,12 +256,10 @@ Group.prototype = {
   },
 
   /**
-  * Disconnects all nodes from this group from another given group/node
+  * *INCOMPLETE* Disconnects all nodes from this group from another given group/node.
   *
-  * @todo Add `@param` tag descriptions
-  *
-  * @param {Group|Node} target
-  * @param {boolean} [twosided=false]
+  * @param {Group|Node} target Node(s) to remove connections to/from
+  * @param {boolean} [twosided=false] Set to true, to disconnect both to and from connections simultaneously (applies to two-sided [Connections](Connection) only)
   */
   disconnect: function(target, twosided) {
     twosided = twosided || false;
@@ -299,7 +320,7 @@ Group.prototype = {
   },
 
   /**
-  * Clear the context of this group
+  * Clear the context of the nodes in this group
   */
   clear: function () {
     for (var i = 0; i < this.nodes.length; i++) {
