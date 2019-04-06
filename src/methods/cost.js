@@ -1,4 +1,6 @@
 /**
+ * Cost functions play an important role in neural networks. They give neural networks an indication of 'how wrong' they are; a.k.a. how far they are from the desired output. Also in fitness functions, cost functions play an important role.
+ * 
  * @namespace cost
  *
  * @see {@link https://en.wikipedia.org/wiki/Loss_function|Loss Function on Wikipedia}

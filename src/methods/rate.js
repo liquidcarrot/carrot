@@ -17,6 +17,12 @@ var rate = {
   * Default rate policy. Using this will make learning rate static (no change). Useful as a way to update a previous rate policy.
   *
   * @returns {function}
+  *
+  * @example
+  * network.train(trainingSet, {
+  *   rate: 0.3,
+  *   ratePolicy: methods.rate.FIXED(),
+  * });
   */
   FIXED: function () {
     var func = function (baseRate, iteration) { return baseRate; };
@@ -25,10 +31,8 @@ var rate = {
   /**
   * The rate will 'step down' every `n` iterations.
   *
-  * @todo Add `@param` tag descriptions
-  *
-  * @param {number} [gamma=0.9]
-  * @param {number} [stepSize=100]
+  * @param {number} [gamma=0.9] Percentage to decrease learning rate per 'step'
+  * @param {number} [stepSize=100] Amount of iterations before learning rate is updated (a step)
   *
   * @example
   * network.train(trainingSet, {
@@ -49,10 +53,9 @@ var rate = {
     return func;
   },
   /**
-  * @todo Create a function description
-  * @todo Add `@param` tag descriptions
+  * The learning rate will exponentially decrease. The rate at a certain iteration is calculated as: <code>rate = baseRate * Math.pow(gamma, iteration)</code>
   *
-  * @param {number} [gamma=0.999]
+  * @param {number} [gamma=0.999] Amount to decrease learning rate by, higher numbers mean lower decreases in learning rate. The default gamma of <code>0.999</code> will decrease the current rate by 0.1% every iteration.
   *
   * @example
   * network.train(trainingSet, {
@@ -72,11 +75,10 @@ var rate = {
     return func;
   },
   /**
-  * @todo Create a function description
-  * @todo Add `@param` tag descriptions
+  * An inverse exponential, the rate at certain iteration is calculated at <code>rate = baseRate * Math.pow(1 + gamma * iteration, -power)</code>
   *
-  * @param {number} [gamma=0.001]
-  * @param {number} [power=2]
+  * @param {number} [gamma=0.001] Amount to increase base by, lower numbers mean lower decreases in learning rate
+  * @param {number} [power=2] A power that is set to negative, higher numbers mean higher decreases in learning rate
   *
   * @example
   * network.train(trainingSet, {
