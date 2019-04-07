@@ -1,24 +1,46 @@
 /**
-* Specifies in what manner two groups are connected
+* Specifies the way two [Groups](Group) are connected. Connections can be made between groups using these built-in connection methods and within a group itself by calling the [Group](Group) connection method with itself as a target
 *
-* @namespace methods.connection
+* @namespace connection
+* @alias connection_method
 *
-* @typedef connection_method
-* @type {object}
-* @prop {object} ALL_TO_ALL
-* @prop {string} ALL_TO_ALL.name="OUTPUT"
-* @prop {object} ALL_TO_ELSE
-* @prop {string} ALL_TO_ELSE.name="INPUT"
-* @prop {object} ONE_TO_ONE
-* @prop {string} ONE_TO_ONE.name="SELF"
+* @example <caption>Connection between two Groups</caption>
+* let A = new Group(4);
+* let B = new Group(5);
+*
+* A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional
+*
+* @example <caption>Group connection with itself</caption>
+* let A = new Group(4);
+*
+* A.connect(A, methods.connection.ALL_TO_ALL);
+*
 */
 var connection = {
+  /**
+   * @constant
+   * @type {object}
+   * @description Connects all nodes from <code>GroupX</code> to all nodes from <code>GroupY</code>
+   * @default
+   */
   ALL_TO_ALL: {
     name: 'OUTPUT'
   },
+  /**
+   * @constant
+   * @type {object}
+   * @description Connects each node in <code>GroupX</code> to all nodes in the same group except itself
+   * @default
+   */
   ALL_TO_ELSE: {
     name: 'INPUT'
   },
+  /**
+   * @constant
+   * @type {object}
+   * @description Connects each node from <code>GroupX</code> to one node from <code>GroupY</code>
+   * @default
+   */
   ONE_TO_ONE: {
     name: 'SELF'
   }
