@@ -4,6 +4,8 @@ var config = require('../config');
 
 /**
 * Creates a new neuron/node
+*
+* Neurons are the basic unit of the neural network. They can be connected together, or used to gate connections between other neurons. A Neuron can perform basically 4 operations: form connections, gate connections, activate and [propagate](https://www.youtube.com/watch?v=Ilg3gGewQ5U).
 * 
 * For more information, check out: [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e), [here](https://en.wikipedia.org/wiki/Artificial_neuron), [here](https://wagenaartje.github.io/neataptic/docs/architecture/node/), [here](https://github.com/cazala/synaptic/wiki/Neural-Networks-101), [here](https://keras.io/backend/#bias_add)
 *
@@ -11,12 +13,12 @@ var config = require('../config');
 *
 * @constructs Node
 *
-* @param {string} [type=hidden] - "input", "hidden", or "output"
+* @param {string} [type=hidden] Can be: an <code>input</code>, <code>hidden</code>, or <code>output</code>
 *
 * @prop {number} bias Neuron's bias [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
-* @prop {activation} squash
-* @prop {string} type
-* @prop {number} activation
+* @prop {activation} squash [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0)
+* @prop {string} type 
+* @prop {number} activation 
 * @prop {number} state
 * @prop {number} old
 * @prop {number} mask
@@ -29,6 +31,10 @@ var config = require('../config');
 * @prop {number} error.responsibility
 * @prop {number} error.projected
 * @prop {number} error.gated
+*
+* @example
+* let node = new Node();
+*
 */
 function Node (type) {
   this.bias = (type === 'input') ? 0 : Math.random() * 0.2 - 0.1;
