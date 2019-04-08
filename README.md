@@ -8,6 +8,7 @@
 [![Carrot's License](https://img.shields.io/badge/License-MIT-blue.svg)](/LICENSE)
 [![Carrot's Love](https://img.shields.io/badge/Made%20with%20%E2%99%A5%20by-Liquid%20Carrot-ff1414.svg)](https://github.com/liquidcarrot/carrot/issues)
 
+For Documentation, visit [https://liquidcarrot.github.io/carrot](https://liquidcarrot.github.io/carrot)
 
 <details>
   <summary><strong>Table of Contents</strong></summary>
@@ -17,8 +18,6 @@
   * [Contributors](#contributors)
   * [Documentation](/DOCUMENTATION.md)
 </details>
-
-For Documentation, visit [https://liquidcarrot.github.io/carrot](https://liquidcarrot.github.io/carrot)
 
 ## Getting Started
 
