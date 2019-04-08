@@ -1,5 +1,5 @@
 /**
-* A connection instance describes the connection between two nodes. If you're looking for connections between [Groups](Group) please see [Connection Methods](connection_method)
+* A connection instance describes the connection between two nodes. If you're looking for connections between [Groups](Group) please see [Connection Methods](connection)
 *
 * @todo Add `@prop` tag descriptions
 * @todo Add `@param` tag descriptions

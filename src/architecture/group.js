@@ -10,7 +10,7 @@ var Node = require('./node');
 *
 * @constructs Group
 *
-* @param {number} size
+* @param {number} size Amount of nodes to build group with
 *
 * @prop {number} nodes=[] All nodes within the group
 * @prop {Connection[]} connections.in=[] Incoming connections
