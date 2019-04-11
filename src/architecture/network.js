@@ -11,21 +11,27 @@ var mutation = methods.mutation;
 /**
 * Create a neural network
 *
-* @todo Add `@param` tag descriptions
-* 
-* @constructs Network
-* 
-* @param {number} input - Size of input layer AKA neurons in input layer
-* @param {number} output - Size of output layer AKA neurons in output layer
-* 
+* Networks are easy to create, all you need to specify is an `input` and an `output` size.
 *
-* @prop {number} input - Size of input layer AKA neurons in input layer
-* @prop {number} output - Size of output layer AKA neurons in output layer
-* @prop {number} dropout
-* @prop {Array<Node>} nodes
-* @prop {Array<Node>} gates
-* @prop {Array<Connection>} connections
-* @prop {Array<Connection>} selfconns
+* @constructs Network
+*
+* @param {number} input Size of input layer AKA neurons in input layer
+* @param {number} output Size of output layer AKA neurons in output layer
+*
+* @prop {number} input Size of input layer AKA neurons in input layer
+* @prop {number} output Size of output layer AKA neurons in output layer
+* @prop {number} dropout [Dropout rate](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5) likelihood for any given neuron to be ignored during network training. Must be between zero and one, numbers closer to one will result in more neurons ignored.
+* @prop {Array<Node>} nodes Nodes currently within the network
+* @prop {Array<Node>} gates Gates within the network
+* @prop {Array<Connection>} connections Connections within the network
+* @prop {Array<Connection>} selfconns Self-connections within the network
+*
+* @example
+* // Network with 2 input neurons and 1 output neuron
+* let myNetwork = new Network(2, 1);
+*
+* // and a multi-layered network
+* let myNetwork = new architect.Perceptron(5, 20, 10, 5, 1);
 */
 function Network(input, output) {
   if (typeof input === 'undefined' || typeof output === 'undefined') {
@@ -64,14 +70,19 @@ function Network(input, output) {
 Network.prototype = {
   /**
    * Activates the network
-   * 
-   * @todo Add `@param` tag descriptions
-   * @todo Add `@returns` tag description
    *
-   * @param {Array<number>} [input]
-   * @param {boolean} training
-   * 
-   * @returns {number[]}
+   * It will activate all the nodes in activation order and produce an output.
+   *
+   * @param {number[]} [input] Input values to activate nodes with
+   * @param {boolean} training Used to toggle [dropout](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5)
+   *
+   * @returns {number[]} Squashed output values
+   *
+   * @example
+   * // Create a network
+   * let myNetwork = new Network(3, 2);
+   *
+   * myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
   activate: function (input, training) {
     var output = [];
@@ -94,13 +105,16 @@ Network.prototype = {
 
   /**
    * Activates the network without calculating elegibility traces and such
-   * 
-   * @todo Add `@param` tag descriptions
-   * @todo Add `@returns` tag description
    *
-   * @param {Array<number>} input
-   * 
-   * @returns {Array<number>} output
+   * @param {number[]} input An array of input values equal in size to the input layer
+   *
+   * @returns {number[]} output An array of output values equal in size to the output layer
+   *
+   * @example
+   * // Create a network
+   * let myNetwork = new Network(3, 2);
+   *
+   * myNetwork.noTraceActivate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
   noTraceActivate: function (input) {
     var output = [];
@@ -122,13 +136,24 @@ Network.prototype = {
 
   /**
    * Backpropagate the network
-   * 
-   * @todo Add `@param` tag descriptions
    *
-   * @param {number} rate=0.3
-   * @param {number} momentum=0
-   * @param {boolean} update=false
-   * @param {number} target
+   * This function allows you to teach the network. If you want to do more complex training, use the `network.train()` function.
+   *
+   * @param {number} rate=0.3 Sets the [learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10) of the backpropagation process
+   * @param {number} momentum=0 [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html). Adds a fraction of the previous weight update to the current one.
+   * @param {boolean} update=false When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
+   * @param {number} target Ideal values
+   *
+   * @example
+   * let myNetwork = new Network(1,1);
+   *
+   * // This trains the network to function as a NOT gate
+   * for(var i = 0; i < 1000; i++){
+   *  network.activate([0]);
+   *  network.propagate(0.2, 0, true, [1]);
+   *  network.activate([1]);
+   *  network.propagate(0.3, 0, true, [0]);
+   * }
    */
   propagate: function (rate, momentum, update, target) {
     if (typeof target === 'undefined' || target.length !== this.output) {
@@ -159,16 +184,16 @@ Network.prototype = {
   },
 
   /**
-   * Connects the from node to the to node
-   * 
-   * @todo Add `@param` tag descriptions
-   * @todo Add `@returns` tag description
+   * Connects a Node to another Node or Group in the network
    *
-   * @param {Node} from
-   * @param {Node} to
-   * @param {number} weight
-   * 
-   * @returns {Connection}
+   * @param {Node} from The source Node
+   * @param {Node|Group} to The destination Node or Group
+   * @param {number} weight An initial weight for the connections to be formed
+   *
+   * @returns {Connection[]} An array of the formed connections
+   *
+   * @example
+   * myNetwork.connect(myNetwork.nodes[4], myNetwork.nodes[5]); // connects network node 4 to network node 5
    */
   connect: function (from, to, weight) {
     var connections = from.connect(to, weight);
@@ -186,12 +211,14 @@ Network.prototype = {
   },
 
   /**
-   * Disconnects the from node from the to node
-   * 
-   * @todo Add `@param` tag descriptions
+   * Removes the connection of the `from` node to the `to` node
    *
-   * @param {Node} from
-   * @param {Node} to
+   * @param {Node} from Source node
+   * @param {Node} to Destination node
+   *
+   * @example
+   * myNetwork.disconnect(myNetwork.nodes[4], myNetwork.nodes[5]);
+   * // now node 4 does not have an effect on the output of node 5 anymore
    */
   disconnect: function (from, to) {
     // Delete the connection in the network's connection array
@@ -211,12 +238,16 @@ Network.prototype = {
   },
 
   /**
-   * Gate a connection with a node
-   * 
-   * @todo Add `@param` tag descriptions
+   * Makes a network node gate a connection
    *
-   * @param {Node} node
-   * @param {Array<Connection>|Connection} connection
+   * @todo Add ability to gate several network connections at once
+   *
+   * @param {Node} node Gating node
+   * @param {Connection} connection Connection to gate with node
+   *
+   * @example
+   * myNetwork.gate(myNetwork.nodes[1], myNetwork.connections[5])
+   * // now: connection 5's weight is multiplied with node 1's activaton
    */
   gate: function (node, connection) {
     if (this.nodes.indexOf(node) === -1) {
@@ -230,11 +261,18 @@ Network.prototype = {
   },
 
   /**
-   * Remove the gate of a connection
-   * 
-   * @todo Add `@param` tag descriptions
+   * Remove the gate of a connection.
    *
-   * @param {Connection} connection
+   * @param {Connection} connection Connection to remove gate from
+   *
+   * @example
+   * let myNetwork = new architect.Perceptron(1, 4, 2);
+   *
+   * // Gate a connection
+   * myNetwork.gate(myNetwork.nodes[2], myNetwork.connections[5]);
+   *
+   * // Remove the gate from the connection
+   * myNetwork.ungate(myNetwork.connections[5]);
    */
   ungate: function(connection) {
     var index = this.gates.indexOf(connection);
@@ -247,11 +285,15 @@ Network.prototype = {
   },
 
   /**
-   * Removes a node from the network
-   * 
-   * @todo Add `@param` tag descriptions
+   * Removes a node from a network, all its connections will be redirected. If it gates a connection, the gate will be removed.
    *
-   * @param {Node} node
+   * @param {Node} node Node to remove from the network
+   *
+   * @example
+   * let myNetwork = new architect.Perceptron(1,4,1);
+   *
+   * // Remove a node
+   * myNetwork.remove(myNetwork.nodes[2]);
    */
   remove: function (node) {
     var index = this.nodes.indexOf(node);
@@ -327,10 +369,11 @@ Network.prototype = {
 
   /**
    * Mutates the network with the given method
-   * 
-   * @todo Add `@param` tag descriptions
    *
-   * @param {mutation} method
+   * @param {mutation} method [Mutation method](mutation)
+   *
+   * @example
+   * myNetwork.mutate(mutation.ADD_GATE) // a random node will gate a random connection within the network
    */
   mutate: function(method) {
     if (typeof method === 'undefined') {
@@ -571,28 +614,74 @@ Network.prototype = {
 
   /**
    * Train the given set to this network
-   * 
-   * @todo Add `@param` tag descriptions
-   * @todo Add `@returns` tag description
    *
-   * @param {Array<{input:Array<number>,output:Array<number>}>} set
-   * @param {cost} [options.cost=cost.MSE]
-   * @param {rate} [options.ratePolicy=rate.FIXED]
-   * @param {number} [options.rate=0.3]
-   * @param {number} [options.iterations]
-   * @param {number} [options.error=0.05]
-   * @param {number} [options.dropout=0]
-   * @param {number} [options.momentum=0]
-   * @param {number} [options.batchSize=1]
-   * @param {number} [options.crossValidate.testSize]
-   * @param {number} [options.crossValidate.testError]
-   * @param {boolean} [options.clear=false]
-   * @param {boolean} [options.shuffle=false]
-   * @param {boolean} [options.log=false]
-   * @param {number} [options.schedule.iterations]
-   * @param {schedule} [options.schedule.function]
-   * 
-   * @returns {{error:{number},iterations:{number},time:{number}}}
+   * @param {Array<{input:number[],output:number[]}>} set A set of input values and ideal output values to train the network with
+   * @param {cost} [options.cost=cost.MSE] The [cost function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
+   * @param {rate} [options.ratePolicy=rate.FIXED] A [learning rate policy](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10), i.e. how to change the learning rate during training to get better network performance
+   * @param {number} [options.rate=0.3] Sets the [learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10) of the backpropagation process
+   * @param {number} [options.iterations=Infinity] Sets amount of training cycles the process will maximally run, even when the target error has not been reached.
+   * @param {number} [options.error=0.05] The target error to train for, once the network falls below this error, the process is stopped. Lower error rates require more training cycles.
+   * @param {number} [options.dropout=0] [Dropout rate](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5) likelihood for any given neuron to be ignored during network training. Must be between zero and one, numbers closer to one will result in more neurons ignored.
+   * @param {number} [options.momentum=0] [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html). Adds a fraction of the previous weight update to the current one.
+   * @param {number} [options.batchSize=1] Sets the (mini-) batch size of your training. Default: 1 [(online training)](https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes)
+   * @param {number} [options.crossValidate.testSize] Sets the amount of test cases that should be assigned to cross validation. If set to 0.4, 40% of the given set will be used for cross validation.
+   * @param {number} [options.crossValidate.testError] Sets the target error of the validation set.
+   * @param {boolean} [options.clear=false] If set to true, will clear the network after every activation. This is useful for training LSTM's, more importantly for timeseries prediction.
+   * @param {boolean} [options.shuffle=false] When set to true, will shuffle the training data every iteration. Good option to use if the network is performing worse in [cross validation](https://artint.info/html/ArtInt_189.html) than in the real training set.
+   * @param {number|boolean} [options.log=false] If set to n, outputs training status every n iterations. Setting `log` to 1 will log the status every iteration
+   * @param {number} [options.schedule.iterations] You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
+   * @param {schedule} [options.schedule.function] A function to run every n iterations as set by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
+   *
+   * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance
+   *
+   * @example <caption>Training with Defaults</caption>
+   * let network = new architect.Perceptron(2,4,1);
+   *
+   * // Train the XOR gate
+   * network.train([{ input: [0,0], output: [0] },
+   *                { input: [0,1], output: [1] },
+   *                { input: [1,0], output: [1] },
+   *                { input: [1,1], output: [0] }]);
+   *
+   * network.activate([0,1]); // 0.9824...
+   *
+   * @example <caption>Training with Options</caption>
+   * let network = new architect.Perceptron(2,4,1);
+   *
+   * let trainingSet = [
+   *    { input: [0,0], output: [0] },
+   *    { input: [0,1], output: [1] },
+   *    { input: [1,0], output: [1] },
+   *    { input: [1,1], output: [0] }
+   * ];
+   *
+   * // Train the XNOR gate
+   * network.train(trainingSet, {
+   *    log: 1,
+   *    iterations: 1000,
+   *    error: 0.0001,
+   *    rate: 0.2
+   * });
+   *
+   * @example <caption>Cross Validation Example</caption>
+   * let network = new architect.Perceptron(2,4,1);
+   *
+   * let trainingSet = [ // PS: don't use cross validation for small sets, this is just an example
+   *  { input: [0,0], output: [1] },
+   *  { input: [0,1], output: [0] },
+   *  { input: [1,0], output: [0] },
+   *  { input: [1,1], output: [1] }
+   * ];
+   *
+   * // Train the XNOR gate
+   * network.train(trainingSet, {
+   *  crossValidate:
+   *    {
+   *      testSize: 0.4,
+   *      testError: 0.02
+   *    }
+   * });
+   *
    */
   train: function (set, options) {
     if (set[0].input.length !== this.input || set[0].output.length !== this.output) {
@@ -697,19 +786,22 @@ Network.prototype = {
 
   /**
    * Performs one training epoch and returns the error - this is a private function used in `this.train`
-   * 
+   *
    * @todo Add `@param` tag descriptions
    * @todo Add `@returns` tag description
-   * 
+   *
    * @private
    *
-   * @param {Array<{input:Array<number>, output: Array<number>}>} set
+   * @param {Array<{input:number[], output: number[]}>} set
    * @param {number} batchSize
    * @param {number} currentRate
    * @param {number} momentum
    * @param {cost} costFunction
-   * 
+   *
    * @returns {number}
+   *
+   * @example
+   * let example = ""
    */
   _trainSet: function (set, batchSize, currentRate, momentum, costFunction) {
     var errorSum = 0;
@@ -729,14 +821,12 @@ Network.prototype = {
 
   /**
    * Tests a set and returns the error and elapsed time
-   * 
-   * @todo Add `@param` tag descriptions
-   * @todo Add `@returns` tag description
    *
-   * @param {Array<{input:Array<number>,output:Array<number>}>} set
-   * @param {cost} [cost=methods.cost.MSE]
-   * 
-   * @returns {{error:{number},time:{number}}}
+   * @param {Array<{input:number[],output:number[]}>} set A set of input values and ideal output values to test the network against
+   * @param {cost} [cost=methods.cost.MSE] The [cost function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
+   *
+   * @returns {{error:{number},time:{number}}} A summary object of the network's performance
+   *
    */
   test: function (set, cost = methods.cost.MSE) {
     // Check if dropout is enabled, set correct mask
@@ -771,14 +861,12 @@ Network.prototype = {
 
   /**
    * Creates a json that can be used to create a graph with d3 and webcola
-   * 
-   * @todo Add `@param` tag descriptions
-   * @todo Add `@returns` tag description
    *
-   * @param {number} width
-   * @param {number} height
-   * 
+   * @param {number} width Width of the graph
+   * @param {number} height Height of the graph
+   *
    * @returns {{nodes:Array<{id:{number},name:{string},activation:{activation},bias:{number}}>,links:Array<{{source:{number},target:{number},weight:{number},gate:{boolean}}}>,constraints:{Array<{type:{string},axis:{string},offsets:{node:{number},offset:{number}}}>}}}
+   *
    */
   graph: function (width, height) {
     var input = 0;
@@ -885,10 +973,12 @@ Network.prototype = {
 
   /**
    * Convert the network to a json object
-   * 
-   * @todo Add `@returns` tag description
-   * 
-   * @returns {{node:{object},connections:{object},input:{number},output:{number},dropout:{number}}}
+   *
+   * @returns {{node:{object},connections:{object},input:{number},output:{number},dropout:{number}}} The network represented as a json object
+   *
+   * @example
+   * let exported = myNetwork.toJSON();
+   * let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
    */
   toJSON: function () {
     var json = {
@@ -937,11 +1027,15 @@ Network.prototype = {
 
   /**
    * Sets the value of a property for every node in this network
-   * 
-   * @todo Add `@param` tag description
-   * 
-   * @param {number} values.bias
-   * @param {activation} values.squash
+   *
+   * @param {number} values.bias Bias to set for all network nodes
+   * @param {activation} values.squash [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) to set for all network nodes
+   *
+   * @example
+   * var network = new architect.Random(4, 4, 1);
+   *
+   * // All nodes in 'network' now have a bias of 1
+   * network.set({bias: 1});
    */
   set: function(values) {
     for (var i = 0; i < this.nodes.length; i++) {
@@ -952,24 +1046,48 @@ Network.prototype = {
 
   /**
    * Evolves the network to reach a lower error on a dataset
-   * 
-   * @todo Add `@param` tag descriptions
-   * @todo Add `@returns` tag description
    *
-   * @param {Array<{input:Array<number>,output:Array<number>}>} set
-   * @param {number} [options.error=0.05]
-   * @param {number} [options.growth=0.0001]
-   * @param {cost} [options.cost=cost.MSE]
-   * @param {number} [options.amount=1]
-   * @param {number} [options.threads]
-   * @param {number} [options.iterations=0]
+   * @param {Array<{input:number[],output:number[]}>} set A set of input values and ideal output values to train the network with
+   * @param {number} [options.error=0.05] Set the target error. The algorithm will stop once this target error has been reached.
+   * @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connectoins.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
+   * @param {cost} [options.cost=cost.MSE]  Specify the cost function for the evolution, this tells a genome in the population how well it's performing. Default: methods.cost.MSE (recommended).
+   * @param {number} [options.amount=1] Set the amount of times to test the trainingset on a genome each generation. Useful for timeseries. Do not use for regular feedfoward problems.
+   * @param {number} [options.threads] Specify the amount of threads to use. Default value is the amount of cores in your CPU.
+   * @param {number} [options.iterations=0] Set the maximum amount of iterations/generations for the algorithm to run. Always specify this, as the algorithm will not always converge.
    * @param {Network} [options.network]
-   * @param {boolean} [options.log=false]
-   * @param {number} [options.schedule.iterations]
-   * @param {schedule} [options.schedule.function]
-   * @param {boolean} [options.clear=false]
-   * 
-   * @returns {{error:{number},iterations:{number},time:{number}}}
+   * @param {number|boolean} [options.log=false] If set to n, outputs training status every n iterations. Setting `log` to 1 will log the status every iteration
+   * @param {number} [options.schedule.iterations] You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
+   * @param {schedule} [options.schedule.function] A function to run every n iterations as set by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
+   * @param {boolean} [options.clear=false]  If set to true, will clear the network after every activation. This is useful for evolving recurrent networks, more importantly for timeseries prediction.
+   *
+   * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance
+   *
+   * @example
+   * async function execute () {
+   *    var network = new Network(2,1);
+   *
+   *    // XOR dataset
+   *    var trainingSet = [
+   *        { input: [0,0], output: [0] },
+   *        { input: [0,1], output: [1] },
+   *        { input: [1,0], output: [1] },
+   *        { input: [1,1], output: [0] }
+   *    ];
+   *
+   *    await network.evolve(trainingSet, {
+   *        mutation: methods.mutation.FFW,
+   *        equal: true,
+   *        elitism: 5,
+   *        mutationRate: 0.5
+   *    });
+   *
+   *    network.activate([0,0]); // 0.2413
+   *    network.activate([0,1]); // 1.0000
+   *    network.activate([1,0]); // 0.7663
+   *    network.activate([1,1]); // -0.008
+   * }
+   *
+   * execute();
    */
   evolve: async function(set, options) {
     if(set[0].input.length !== this.input || set[0].output.length !== this.output) {
@@ -1114,10 +1232,21 @@ Network.prototype = {
 
   /**
    * Creates a standalone function of the network which can be run without the need of a library
-   * 
-   * @todo Add `@returns` tag description
-   * 
-   * @returns {string}
+   *
+   * @returns {string} Function as a string that can be eval'ed
+   *
+   * @example
+   * var myNetwork = new architect.Perceptron(2,4,1);
+   * myNetwork.activate([0,1]); // [0.24775789809]
+   *
+   * // a string
+   * var standalone = myNetwork.standalone();
+   *
+   * // turns your network into an 'activate' function
+   * eval(standalone);
+   *
+   * // calls the standalone function
+   * activate([0,1]);// [0.24775789809]
    */
   standalone: function () {
     var present = [];
@@ -1201,10 +1330,8 @@ Network.prototype = {
 
   /**
    * Serialize to send to workers efficiently
-   * 
-   * @todo Add `@returns` tag description
-   * 
-   * @returns {Array<Array<number>>}
+   *
+   * @returns {Array<number[]>} 3 `Float64Arrays`. Used for transferring networks to other threads fast.
    */
   serialize: function () {
     var activations = [];
@@ -1254,12 +1381,13 @@ Network.prototype = {
 /**
  * Convert a json object to a network
  *
- * @todo Add `@param` tag descriptions
- * @todo Add `@returns` tag description
+ * @param {{input:{number},output:{number},dropout:{number},nodes:Array<object>,connections:Array<object>}} json A network represented as a json object
  *
- * @param {{input:{number},output:{number},dropout:{number},nodes:Array<object>,connections:Array<object>}} json
- * 
- * @returns {Network} Network
+ * @returns {Network} Network A reconstructed network
+ *
+ * @example
+ * let exported = myNetwork.toJSON();
+ * let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
  */
 Network.fromJSON = function(json) {
   var network = new Network(json.input, json.output);
@@ -1287,14 +1415,20 @@ Network.fromJSON = function(json) {
 };
 
 /**
- * Merge two networks into one
- * 
- * @todo Add `@param` tag descriptions
- * @todo Add `@returns` tag description
+ * Merge two networks into one.
  *
- * @param {Network} network1
- * @param {Network} network2
- * @returns {Network} Network 
+ * The merge functions takes two networks, the output size of `network1` should be the same size as the input of `network2`. Merging will always be one to one to conserve the purpose of the networks.
+ *
+ * @param {Network} network1 Network to merge
+ * @param {Network} network2 Network to merge
+ * @returns {Network} Network Merged Network
+ *
+ * @example
+ * let XOR = architect.Perceptron(2,4,1); // assume this is a trained XOR
+ * let NOT = architect.Perceptron(1,2,1); // assume this is a trained NOT
+ *
+ * // combining these will create an XNOR
+ * let XNOR = Network.merge(XOR, NOT);
  */
 Network.merge = function (network1, network2) {
   // Create a copy of the networks
@@ -1336,16 +1470,25 @@ Network.merge = function (network1, network2) {
 };
 
 /**
- * Create an offspring from two parent networks
- * 
- * @todo Add `@param` tag descriptions
- * @todo Add `@returns` tag description
+ * Create an offspring from two parent networks.
  *
- * @param {Network} network1
- * @param {Network} network2
+ * Networks are not required to have the same size, however input and output size should be the same!
+ *
+ * @todo Add `@param` tag descriptions
+ *
+ * @param {Network} network1 First parent network
+ * @param {Network} network2 Second parent network
  * @param {boolean} equal
- * 
- * @returns {Network}
+ *
+ * @returns {Network} New network created from mixing parent networks
+ *
+ * @example
+ * // Initialise two parent networks
+ * let network1 = new architect.Perceptron(2, 4, 3);
+ * let network2 = new architect.Perceptron(2, 4, 5, 3);
+ *
+ * // Produce an offspring
+ * let network3 = Network.crossOver(network1, network2);
  */
 Network.crossOver = function (network1, network2, equal) {
   if (network1.input !== network2.input || network1.output !== network2.output) {

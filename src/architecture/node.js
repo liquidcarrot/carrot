@@ -6,14 +6,19 @@ var config = require('../config');
 * Creates a new neuron/node
 *
 * Neurons are the basic unit of the neural network. They can be connected together, or used to gate connections between other neurons. A Neuron can perform basically 4 operations: form connections, gate connections, activate and [propagate](https://www.youtube.com/watch?v=Ilg3gGewQ5U).
-* 
-* For more information, check out: [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e), [here](https://en.wikipedia.org/wiki/Artificial_neuron), [here](https://wagenaartje.github.io/neataptic/docs/architecture/node/), [here](https://github.com/cazala/synaptic/wiki/Neural-Networks-101), [here](https://keras.io/backend/#bias_add)
+*
+* For more information check:
+* - [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
+* - [here](https://en.wikipedia.org/wiki/Artificial_neuron)
+* - [here](https://wagenaartje.github.io/neataptic/docs/architecture/node/)
+* - [here](https://github.com/cazala/synaptic/wiki/Neural-Networks-101)
+* - [here](https://keras.io/backend/#bias_add)
 *
 * @todo Add `@param` tag descriptions
 *
 * @constructs Node
 *
-* @param {string} [type=hidden] Can be: <code>input</code>, <code>hidden</code>, or <code>output</code>
+* @param {string} [type=hidden] Can be: `input`, `hidden`, or `output`
 *
 * @prop {number} bias Neuron's bias [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
 * @prop {activation} squash [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0)
@@ -34,7 +39,6 @@ var config = require('../config');
 *
 * @example
 * let node = new Node();
-*
 */
 function Node (type) {
   this.bias = (type === 'input') ? 0 : Math.random() * 0.2 - 0.1;
@@ -71,8 +75,11 @@ function Node (type) {
 
 Node.prototype = {
   /**
-  * Actives the node. When a neuron activates, it computes its state from all its input connections and 'squashes' it using its activation function, and returns the output (activation).
-  * You can provide the activation as a parameter (useful for neurons in the input layer. It has to be a float between 0 and 1).
+  * Actives the node.
+  *
+  * When a neuron activates, it computes its state from all its input connections and 'squashes' it using its activation function, and returns the output (activation).
+  *
+  * You can also provide the activation (a float between 0 and 1) as a parameter, which is useful for neurons in the input layer.
   *
   * @param {number} [input] Optional value to be used for an input (or forwarding) neuron
   *
@@ -159,13 +166,18 @@ Node.prototype = {
   },
 
   /**
-  * Activates the node without calculating elegibility traces and such
+  * Activates the node without calculating elegibility traces and such.
   *
-  * @todo Add `@returns` tag description
-  * @todo Add `@param` tag descriptions
+  * Calculates the state from all the input connections, adds the bias, and 'squashes' it. Does not calculate traces, so this can't be used to backpropagate afterwards. That's also why it's quite a bit faster than regular `activate`.
   *
-  * @param {number} [input]
-  * @returns {number}
+  * @param {number} [input] Optional value to be used for an input (or forwarding) neuron
+  *
+  * @returns {number} A neuron's ['Squashed'](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) output value
+  *
+  * @example
+  * let node = new Node();
+  *
+  * node.noTraceActivate(); // 0.4923128591923
   */
   noTraceActivate: function (input) {
     // Check if an input is given
@@ -195,17 +207,41 @@ Node.prototype = {
   },
 
   /**
-  * After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating the error aka learning.
-  * [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
-  * If you combine a high learning rate with a lot of momentum, you will rush past the minimum with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
+  * Backpropagate the error (a.k.a. learn).
+  *
+  * After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating. [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
+  *
+  * If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
   *
   * @param {number} rate=0.3 [Learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
   * @param {number} momentum=0 [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one.
-  * @param {boolean} update=false When set to false weights won't update, so if you run propagate 3x with update: false, and then 1x with update: true then the weights will be updated after the last propagation, but the deltaweights of the first 3 propagation will be included.
-  * @param {number} target The target value, a <code>float</code> between zero and one
+  * @param {boolean} update=false When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
+  * @param {number} target The target value, a `float` between zero and one
   *
-  * @see @link [Regularization Neataptic](https://wagenaartje.github.io/neataptic/docs/methods/regularization/)
-  * @see @link [What is backpropagation | YouTube](https://www.youtube.com/watch?v=Ilg3gGewQ5U)
+  * @example
+  * let A = new Node();
+  * let B = new Node('output');
+  * A.connect(B);
+  *
+  * let learningRate = .3;
+  * let momentum = 0;
+  *
+  * for(let i = 0; i < 20000; i++)
+  * {
+  *   // when A activates 1
+  *   A.activate(1);
+  *
+  *   // train B to activate 0
+  *   B.activate();
+  *   B.propagate(learningRate, momentum, true, 0);
+  * }
+  *
+  * // test it
+  * A.activate(1);
+  * B.activate(); // 0.006540565760853365
+  *
+  * @see [Regularization Neataptic](https://wagenaartje.github.io/neataptic/docs/methods/regularization/)
+  * @see [What is backpropagation | YouTube](https://www.youtube.com/watch?v=Ilg3gGewQ5U)
   */
   propagate: function (rate, momentum, update, target) {
     momentum = momentum || 0;
@@ -354,8 +390,8 @@ Node.prototype = {
   * A.disconnect(B); // no connection between A and B anymore
   *
   * @example <caption>Two-sided connection</caption>
-  * var A = new Node();
-  * var B = new Node();
+  * let A = new Node();
+  * let B = new Node();
   * A.connect(B); // A now projects a connection to B
   * B.connect(A); // B now projects a connection to A
   *
@@ -417,15 +453,13 @@ Node.prototype = {
   /**
   * Removes the gates from this node from the given connection(s)
   *
-  * @todo Add `@param` tag descriptions
-  *
   * @param {Connection[]|Connection} connections Connections to be ungated
   *
   * @example
-  * var A = new Node();
-  * var B = new Node();
-  * var C = new Node();
-  * var connections = A.connect(B);
+  * let A = new Node();
+  * let B = new Node();
+  * let C = new Node();
+  * let connections = A.connect(B);
   *
   * // Now gate the connection(s)
   * C.gate(connections);
@@ -474,7 +508,17 @@ Node.prototype = {
   /**
   * Mutates the node with the given method
   *
-  * @param {mutation} method A [Mutation Method](mutation)
+  * @param {mutation} method A [Mutation Method](mutation), either MOD_ACTIVATION or MOD_BIAS
+  *
+  * @example
+  * let A = new Node(); // a Node with the default LOGISTIC squash function
+  *
+  * let allowable_methods = [
+  *   activation.TANH,
+  *   activation.RELU,
+  * ]
+  *
+  * A.mutate(methods.mutation.MOD_ACTIVATION, allowable_methods) // node's squash function is now TANH or RELU
   */
   mutate: function(method) {
     if (typeof method === 'undefined') {
@@ -503,9 +547,9 @@ Node.prototype = {
   * @returns {boolean} True if there is a connection from this node to a given node
   *
   * @example
-  * var A = new Node();
-  * var B = new Node();
-  * var C = new Node();
+  * let A = new Node();
+  * let B = new Node();
+  * let C = new Node();
   * A.connect(B);
   * B.connect(C);
   *
@@ -531,9 +575,9 @@ Node.prototype = {
   * @returns {boolean} True if there is a connection from the given node to this node
   *
   * @example
-  * var A = new Node();
-  * var B = new Node();
-  * var C = new Node();
+  * let A = new Node();
+  * let B = new Node();
+  * let C = new Node();
   * A.connect(B);
   * B.connect(C);
   *
@@ -557,6 +601,10 @@ Node.prototype = {
   * Converts the node to a json object that can later be converted back
   *
   * @returns {object}
+  *
+  * @example
+  * let exported = myNode.toJSON();
+  * let imported = myNode.fromJSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
   */
   toJSON: function () {
     var json = {
@@ -575,6 +623,10 @@ Node.prototype = {
 *
 * @param {object} json A node represented as a JSON object
 * @returns {Node} A reconstructed node
+*
+* @example
+* let exported = myNode.toJSON();
+* let imported = myNode.fromJSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
 */
 Node.fromJSON = function (json) {
   var node = new Node();

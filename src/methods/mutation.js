@@ -112,13 +112,18 @@ var mutation = {
   /**
    * @constant
    * @type {object}
-   * @description Modifies the activation function of a node
+   * @description Modifies the activation function of a node by randomly picking from the allowed activation methods
    * @default
    *
    * @prop {boolean} mutateOutput=true Change activation function of network output neurons. Disable this to keep output of a neural network normalized.
-   * @prop {activation[]} allowed=[]
+   * @prop {activation[]} [allowed=[all built-in activation methods]] Mutation methods to randomly select from when mutating
    *
-   * @example
+   * @example <caption>Mutating the activation function of a node</caption>
+   * let myNode = new Node();
+   *
+   * myNode.mutate(methods.mutation.MOD_ACTIVATION);
+   *
+   * @example <caption>Mutating the activation function of a network's nodes</caption>
    * let myNode = new Node();
    *
    * myNode.mutate(methods.mutation.MOD_ACTIVATION);
