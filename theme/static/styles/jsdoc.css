@@ -469,7 +469,7 @@ thead tr, thead tr {
   white-space: pre;
 }
 
-.params td, .params .name, .props .name, .name code {
+.params .name, .props .name, .name code {
   font-family: Consolas, Monaco, 'Andale Mono', monospace;
   font-size: 100%;
 }

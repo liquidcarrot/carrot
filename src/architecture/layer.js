@@ -9,6 +9,7 @@ var Node = require('./node');
 * Always start your network with a `Dense` layer and always end it with a `Dense` layer. You can connect layers with each other just like you can connect [Nodes](Node) and [Groups](Group) with each other.
 *
 * @constructs Layer
+*
 * @prop {Node[]} output Output nodes
 * @prop {Node[]} nodes Nodes within the layer
 * @prop {Group[]|Node[]} connections.in Income connections
@@ -321,7 +322,7 @@ Layer.LSTM = function(size) {
 * The GRU layer is similar to the LSTM layer, however it has no memory cell and only two gates. It is also a recurrent layer that is excellent for timeseries prediction.
 *
 * @param {number} size Amount of nodes to build the layer with
-*
+* 
 * @returns {Layer} GRU layer
 *
 * @example
