@@ -4,16 +4,29 @@ var Node = require('./node');
 
 
 /**
-* @todo Create a class description
-* @todo Add `@prop` tag types
+* Layers are pre-built architectures that allow you to combine different network architectures into óne network.
+*
+* Always start your network with a `Dense` layer and always end it with a `Dense` layer. You can connect layers with each other just like you can connect [Nodes](Node) and [Groups](Group) with each other.
 *
 * @constructs Layer
-* @prop output
-* @prop {Node[]} nodes
-* @prop {object} connections
-* @prop {Group[]|Node[]} connections.in
-* @prop {Group[]|Node[]} connections.out
-* @prop {Group[]|Node[]} connections.self
+* @prop {Node[]} output Output nodes
+* @prop {Node[]} nodes Nodes within the layer
+* @prop {Group[]|Node[]} connections.in Income connections
+* @prop {Group[]|Node[]} connections.out Outgoing connections
+* @prop {Group[]|Node[]} connections.self Self connections
+*
+* @example <caption>Custom architecture built with layers</caption>
+* let input = new Layer.Dense(1);
+* let hidden1 = new Layer.LSTM(5);
+* let hidden2 = new Layer.GRU(1);
+* let output = new Layer.Dense(1);
+*
+* // connect however you want
+* input.connect(hidden1);
+* hidden1.connect(hidden2);
+* hidden2.connect(output);
+*
+* let network = architect.Construct([input, hidden1, hidden2, output]);
 */
 function Layer() {
   this.output = null;
@@ -30,8 +43,8 @@ Layer.prototype = {
   /**
   * Activates all the nodes in the group
   *
-  * @param {object[]} value - Array with length equal to amount of nodes
-  * @returns {number[]} - Layer output values
+  * @param {object[]} value Array with length equal to amount of nodes
+  * @returns {number[]} Layer output values
   */
   activate: function(value) {
     var values = [];
@@ -57,10 +70,8 @@ Layer.prototype = {
   /**
   * Propagates all the node in the group
   *
-  * @todo Add `@param` tag descriptions
-  *
-  * @param {number} rate=0.3
-  * @param {number} momentum=0
+  * @param {number} rate=0.3 Sets the [learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10) of the backpropagation process
+  * @param {number} momentum=0 [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html). Adds a fraction of the previous weight update to the current one.
   * @param {number[]} target Target (Ideal) values
   */
   propagate: function(rate, momentum, target) {
@@ -80,11 +91,9 @@ Layer.prototype = {
   /**
   * Connects the nodes in this group to nodes in another group or just a node
   *
-  * @todo Add `@param` tag descriptions
-  *
-  * @param {Group|Node|Layer} target
-  * @param {connection_method} method
-  * @param {number} weight
+  * @param {Group|Node|Layer} target Node(s) to form connections with
+  * @param {connection} method [Connection Methods](connection)
+  * @param {number} weight An initial weight to build the connections with
   *
   * @returns {Connection[]} An array of connections between the nodes in this layer and target
   */
@@ -102,12 +111,10 @@ Layer.prototype = {
   /**
   * Make nodes from this group gate the given connection(s)
   *
-  * @todo Add `@param` tag descriptions
+  * @see [Synaptic Gating on Wikipedia](https://en.wikipedia.org/wiki/Synaptic_gating)
   *
-  * @see {@link https://en.wikipedia.org/wiki/Synaptic_gating|Synaptic Gating on Wikipedia}
-  *
-  * @param {Connection[]} connections
-  * @param {gating_method} method
+  * @param {Connection[]} connections Connections to gate
+  * @param {gating_method} method [Gating Method](gating)
   */
   gate: function(connections, method) {
     this.output.gate(connections, method);
@@ -116,7 +123,7 @@ Layer.prototype = {
   /**
   * Sets the value of a property for every node
   *
-  * @param {object[]} values - An object with optional bias, squash, and type properties
+  * @param {object[]} values An object with (all optional) bias, squash, and type properties to overwrite in the node
   */
   set: function(values) {
     for (var i = 0; i < this.nodes.length; i++) {
@@ -210,13 +217,14 @@ Layer.prototype = {
 };
 
 /**
-* @todo Create a function description
-* @todo Add `@param size` tag description
-* @todo Add `@param size` tag default
+* Creates a regular (dense) layer.
 *
-* @param {number} size
-* 
+* @param {number} size Amount of nodes to build the layer with
+*
 * @returns {Layer} Plain layer
+*
+* @example
+* let layer = new Layer.Dense(size);
 */
 Layer.Dense = function(size) {
   // Create the layer
@@ -238,13 +246,16 @@ Layer.Dense = function(size) {
 };
 
 /**
-* @todo Create a function description
-* @todo Add `@param size` tag description
-* @todo Add `@param size` tag default
+* Creates an LSTM layer.
 *
-* @param {number} size
-* 
+* LSTM layers are useful for detecting and predicting patterns over long time lags. This is a recurrent layer.
+*
+* @param {number} size Amount of nodes to build the layer with
+*
 * @returns {Layer} LSTM layer
+*
+* @example
+* let layer = new Layer.LSTM(size);
 */
 Layer.LSTM = function(size) {
   // Create the layer
@@ -305,12 +316,16 @@ Layer.LSTM = function(size) {
 };
 
 /**
-* @todo Create a function description
-* @todo Add `@param size` tag description
+* Creates a GRU layer.
 *
-* @param {number} size
-* 
+* The GRU layer is similar to the LSTM layer, however it has no memory cell and only two gates. It is also a recurrent layer that is excellent for timeseries prediction.
+*
+* @param {number} size Amount of nodes to build the layer with
+*
 * @returns {Layer} GRU layer
+*
+* @example
+* let layer = new Layer.GRU(size);
 */
 Layer.GRU = function(size) {
   // Create the layer
@@ -388,14 +403,17 @@ Layer.GRU = function(size) {
 };
 
 /**
-* @todo Create a function description
-* @todo Add `@param size` tag description
-* @todo Add `@param memory` tag description
+* Creates a Memory layer.
 *
-* @param {number} size
-* @param {number} memory
-* 
-* @returns {Layer} 
+* The Memory layer makes networks remember a number of previous inputs in an absolute way. For example, if you set the memory option to 3, it will remember the last 3 inputs in the same state as they were inputted.
+*
+* @param {number} size Amount of nodes to build the layer with
+* @param {number} memory Number of previous inputs to remember
+*
+* @returns {Layer} Layer with nodes that store previous inputs
+*
+* @example
+* let layer = new Layer.Memory(size, memory);
 */
 Layer.Memory = function(size, memory) {
   // Create the layer
