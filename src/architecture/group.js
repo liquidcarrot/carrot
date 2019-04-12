@@ -12,10 +12,10 @@ var Node = require('./node');
 *
 * @param {number} size Amount of nodes to build group with
 *
-* @prop {number} nodes=[] All nodes within the group
-* @prop {Connection[]} connections.in=[] Incoming connections
-* @prop {Connection[]} connections.out=[] Outgoing connections
-* @prop {Connection[]} connections.self=[] Self connections
+* @prop {Nodes[]} [nodes=[]] All nodes within the group
+* @prop {Connection[]} [connections.in=[]] Incoming connections
+* @prop {Connection[]} [connections.out=[]] Outgoing connections
+* @prop {Connection[]} [connections.self=[]] Self connections
 *
 * @example
 * // A group with 5 nodes
@@ -71,7 +71,8 @@ Group.prototype = {
 
   /**
   * Will backpropagate all the node in the group -- make sure the group receives input from another group or node.
-  * [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
+  *
+  * [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one.
   * If you combine a high learning rate with a lot of momentum, you will rush past the minimum with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
   *
   * @param {number} rate [Learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
