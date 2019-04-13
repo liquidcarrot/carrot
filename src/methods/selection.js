@@ -3,28 +3,70 @@
  *
  * @namespace
  *
- * @todo Add `@prop` tag descriptions
+ * @see [Genetic Algorithm - Selection]{@link https://en.wikipedia.org/wiki/Selection_(genetic_algorithm)}
  *
- * @see {@link https://en.wikipedia.org/wiki/Selection_(genetic_algorithm)|Selection (genetic algorithm)}
+ * @example
+ * let myNetwork = new architect.Perceptron(1,1,1);
+ * let myTrainingSet = [{ input:[0], output:[1]}, { input:[1], output:[0]}];
  *
- * @prop {object} FITNESS_PROPORTIONATE {@link https://en.wikipedia.org/wiki/Fitness_proportionate_selection|Fitness Proportionate / Roulette Wheel Selection on Wikipedia}
- * @prop {string} FITNESS_PROPORTIONATE.name="FITNESS_PROPORTIONATE"
- * @prop {object} POWER
- * @prop {string} POWER.name="POWER"
- * @prop {number} POWER.power=4
- * @prop {object} TOURNAMENT {@link https://en.wikipedia.org/wiki/Tournament_selection|Tournament Selection on Wikipedia}
- * @prop {string} TOURNAMENT.name="TOURNAMENT"
- * @prop {number} TOURNAMENT.size=5
- * @prop {number} TOURNAMENT.probability=0.5
+ * myNetwork.evolve(myTrainingSet, {
+ *  generations: 10,
+ *  selection: methods.selection.POWER // eg.
+ * });
 */
 var selection = {
+  /**
+   * @constant
+   * @type {object}
+   * @description [Fitness Proportionate / Roulette Wheel Selection on Wikipedia](https://en.wikipedia.org/wiki/Fitness_proportionate_selection)
+   * @default
+   *
+   * @example
+   * let myNetwork = new architect.Perceptron(1,1,1);
+   * let myTrainingSet = [{ input:[0], output:[1]}, { input:[1], output:[0]}];
+   *
+   * myNetwork.evolve(myTrainingSet, {
+   *  generations: 10,
+   *  selection: methods.selection.FITNESS_PROPORTIONATE // eg.
+   * });
+   */
   FITNESS_PROPORTIONATE: {
     name: 'FITNESS_PROPORTIONATE'
   },
+  /**
+   * @constant
+   * @type {object}
+   * @description A random decimal value between 0 and 1 will be generated (e.g. 0.5) then this value will get an exponential value (power, default is 4). So 0.5**4 = 0.0625. This is converted into an index for the array of the current population, sorted from fittest to worst.
+   * @default
+   *
+   * @example
+   * let myNetwork = new architect.Perceptron(1,1,1);
+   * let myTrainingSet = [{ input:[0], output:[1]}, { input:[1], output:[0]}];
+   *
+   * myNetwork.evolve(myTrainingSet, {
+   *  generations: 10,
+   *  selection: methods.selection.POWER // eg.
+   * });
+   */
   POWER: {
     name: 'POWER',
     power: 4
   },
+  /**
+   * @constant
+   * @type {object}
+   * @description [Tournament Selection on Wikipedia](https://en.wikipedia.org/wiki/Tournament_selection)
+   * @default
+   *
+   * @example
+   * let myNetwork = new architect.Perceptron(1,1,1);
+   * let myTrainingSet = [{ input:[0], output:[1]}, { input:[1], output:[0]}];
+   *
+   * myNetwork.evolve(myTrainingSet, {
+   *  generations: 10,
+   *  selection: methods.selection.TOURNAMENT // eg.
+   * });
+   */
   TOURNAMENT: {
     name: 'TOURNAMENT',
     size: 5,
