@@ -1,23 +1,20 @@
 /**
 * A connection instance describes the connection between two nodes. If you're looking for connections between [Groups](Group) please see [Connection Methods](connection)
 *
-* @todo Add `@prop` tag descriptions
-* @todo Add `@param` tag descriptions
-*
 * @constructs Connection
 *
 * @param {Node} from Connection origin node (neuron)
 * @param {Node} to Connection destination node (neuron)
-* @param {number} [weight] Weight of the connection
+* @param {number} [weight=random] Weight of the connection
 *
-* @prop {Node} from
-* @prop {Node} to
-* @prop {number} weight=
+* @prop {Node} from Connection origin node (neuron)
+* @prop {Node} to Connection destination node (neuron)
+* @prop {number} weight=random Weight of the connection
 * @prop {Node} gater=null The node gating this connection
 * @prop {number} gain=1 Used for gating, gets multiplied with weight
 * @prop {number} elegibility=0
-* @prop {number} previousDeltaWeight=0
-* @prop {number} totalDeltaWeight=0
+* @prop {number} previousDeltaWeight=0 Used for tracking [momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html), basically a log of previous training adjustments
+* @prop {number} totalDeltaWeight=0 Used for tracking [momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html), a log of previous training adjustments for [batch training](https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes)
 * @prop {object} xtrace
 * @prop {Node[]} xtrace.nodes
 * @prop {number[]} xtrace.values
