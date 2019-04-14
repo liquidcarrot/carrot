@@ -5,9 +5,12 @@ var Layer = require('./layer');
 var Node = require('./node');
 
 /**
-* @todo Create a namespace description
-*
-* @namespace
+ *
+ * Preconfigured neural networks!
+ *
+ * Ready to be built with simple one line functions.
+ *
+ * @namespace
 */
 var architect = {
   /**
@@ -154,7 +157,7 @@ var architect = {
   * @param {number} input Number of input nodes
   * @param {number} hidden Number of nodes inbetween input and output
   * @param {number} output Number of output nodes
-  * @param {object} options
+  * @param {object} [options] Configuration options
   * @param {number} [options.connections=hidden*2] Number of connections (Larger than hidden)
   * @param {number} [options.backconnections=0] Number of recurrent connections
   * @param {number} [options.selfconnections=0] Number of self connections
@@ -207,17 +210,16 @@ var architect = {
   * Creates a long short-term memory network
   *
   * @see {@link https://en.wikipedia.org/wiki/Long_short-term_memory|LSTM on Wikipedia}
-  * @todo Add `@param` tag descriptions
   *
   * @param {number} input Number of input nodes
   * @param {...number} memory Number of memory block assemblies (input gate, memory cell, forget gate, and output gate) per layer
   * @param {number} output Number of output nodes
   * @param {object} [options] Configuration options
-  * @param {boolean} [options.memoryToMemory=false]
-  * @param {boolean} [options.outputToMemory=false]
-  * @param {boolean} [options.outputToGates=false]
-  * @param {boolean} [options.inputToOutput=true]
-  * @param {boolean} [options.inputToDeep=true]
+  * @param {boolean} [options.memoryToMemory=false] Form internal connections between memory blocks
+  * @param {boolean} [options.outputToMemory=false] Form output to memory layer connections and gate them
+  * @param {boolean} [options.outputToGates=false] Form output to gate connections (connects to all gates)
+  * @param {boolean} [options.inputToOutput=true] Form direct input to output connections
+  * @param {boolean} [options.inputToDeep=true] Form input to memory layer conections and gate them
   *
   * @example <caption>While training sequences or timeseries prediction, set the clear option to true in training</caption>
   * // Input, memory block layer, output
@@ -280,7 +282,7 @@ var architect = {
     for (var i = 0; i < blocks.length; i++) {
       var block = blocks[i];
 
-      // Init required nodes (in activation order)
+      // Initialize required nodes (in activation order), altogether a memory block
       var inputGate = new Group(block);
       var forgetGate = new Group(block);
       var memoryCell = new Group(block);
@@ -298,7 +300,7 @@ var architect = {
       });
 
       // Connect the input with all the nodes
-      var input = previous.connect(memoryCell, methods.connection.ALL_TO_ALL);
+      var input = previous.connect(memoryCell, methods.connection.ALL_TO_ALL); // input to memory cell connections for gating
       previous.connect(inputGate, methods.connection.ALL_TO_ALL);
       previous.connect(outputGate, methods.connection.ALL_TO_ALL);
       previous.connect(forgetGate, methods.connection.ALL_TO_ALL);
@@ -307,8 +309,8 @@ var architect = {
       memoryCell.connect(inputGate, methods.connection.ALL_TO_ALL);
       memoryCell.connect(forgetGate, methods.connection.ALL_TO_ALL);
       memoryCell.connect(outputGate, methods.connection.ALL_TO_ALL);
-      var forget = memoryCell.connect(memoryCell, methods.connection.ONE_TO_ONE);
-      var output = memoryCell.connect(outputBlock, methods.connection.ALL_TO_ALL);
+      var forget = memoryCell.connect(memoryCell, methods.connection.ONE_TO_ONE); // memory cell connections for gating
+      var output = memoryCell.connect(outputBlock, methods.connection.ALL_TO_ALL); // memory cell connections for gating
 
       // Set up gates
       inputGate.gate(input, methods.gating.INPUT);
@@ -425,19 +427,19 @@ var architect = {
   * Creates a hopfield network of the given size
   *
   * @param {number} size Number of inputs and outputs (which is the same number)
-  * 
+  *
   * @example <caption>Output will always be binary due to `Activation.STEP` function.</caption>
   * var network = architect.Hopfield(10);
   * var trainingSet = [
   *   { input: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1], output: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1] },
   *   { input: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0], output: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0] }
   * ];
-  * 
+  *
   * network.train(trainingSet);
-  * 
+  *
   * network.activate([0,1,0,1,0,1,0,1,1,1]); // [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
   * network.activate([1,1,1,1,1,0,0,1,0,0]); // [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]
-  * 
+  *
   * @returns {Network}
   */
   Hopfield: function (size) {
@@ -467,10 +469,10 @@ var architect = {
   * @param {number} outputSize Number of output nodes
   * @param {number} previousInput Number of previous inputs to remember
   * @param {number} previousOutput Number of previous outputs to remember
-  * 
+  *
   * @example
   * let narx = new architect.NARX(1, 5, 1, 3, 3);
-  * 
+  *
   * // Training a sequence
   * let trainingData = [
   *   { input: [0], output: [0] },
