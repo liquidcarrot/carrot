@@ -1474,11 +1474,11 @@ Network.merge = function (network1, network2) {
  *
  * Networks are not required to have the same size, however input and output size should be the same!
  *
- * @todo Add `@param` tag descriptions
+ * @todo Add custom [crossover](crossover) method customization
  *
  * @param {Network} network1 First parent network
  * @param {Network} network2 Second parent network
- * @param {boolean} equal
+ * @param {boolean} [equal] Flag to indicate equally fit Networks
  *
  * @returns {Network} New network created from mixing parent networks
  *
