@@ -32,9 +32,14 @@ $ npm i @liquid-carrot/carrot
 Making your first neuron.
 
 ```javascript
-let Neuron = require('@liquid-carrot/carrot').Neuron
+let Node = require('@liquid-carrot/carrot').Node
 
-let neuron = new Neuron()
+let A = new Node() // neuron
+let B = new Node() // neuron
+
+A.connect(B)
+A.activate(0.5)
+console.log(B.activate())
 ```
 
 Making your first neural network.
