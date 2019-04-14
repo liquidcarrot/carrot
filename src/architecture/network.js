@@ -1047,13 +1047,15 @@ Network.prototype = {
   /**
    * Evolves the network to reach a lower error on a dataset
    *
+   * If both `iterations` and `error` options are unset, evolve will default to `iterations` as an end condition.
+   *
    * @param {Array<{input:number[],output:number[]}>} set A set of input values and ideal output values to train the network with
-   * @param {number} [options.error=0.05] Set the target error. The algorithm will stop once this target error has been reached.
+   * @param {number} [options.iterations=500] Set the maximum amount of iterations/generations for the algorithm to run.
+   * @param {number} [options.error] Set the target error. The algorithm will stop once this target error has been reached.
    * @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connectoins.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
    * @param {cost} [options.cost=cost.MSE]  Specify the cost function for the evolution, this tells a genome in the population how well it's performing. Default: methods.cost.MSE (recommended).
    * @param {number} [options.amount=1] Set the amount of times to test the trainingset on a genome each generation. Useful for timeseries. Do not use for regular feedfoward problems.
    * @param {number} [options.threads] Specify the amount of threads to use. Default value is the amount of cores in your CPU.
-   * @param {number} [options.iterations=0] Set the maximum amount of iterations/generations for the algorithm to run. Always specify this, as the algorithm will not always converge.
    * @param {Network} [options.network]
    * @param {number|boolean} [options.log=false] If set to n, outputs training status every n iterations. Setting `log` to 1 will log the status every iteration
    * @param {number} [options.schedule.iterations] You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
@@ -1077,6 +1079,7 @@ Network.prototype = {
    *    await network.evolve(trainingSet, {
    *        mutation: methods.mutation.FFW,
    *        equal: true,
+   *        error: 0.05,
    *        elitism: 5,
    *        mutationRate: 0.5
    *    });
@@ -1096,7 +1099,15 @@ Network.prototype = {
 
     // Read the options
     options = options || {};
-    var targetError = typeof options.error !== 'undefined' ? options.error : 0.05;
+
+    if (typeof options.iterations === 'undefined' && typeof options.error === 'undefined') {
+      options.iterations = 500;
+    } else if (options.iterations) {
+      targetError = -1; // run until iterations
+    } else if (options.error) {
+      options.iterations = 0; // run until target error
+    }
+
     var growth = typeof options.growth !== 'undefined' ? options.growth : 0.0001;
     var cost = options.cost || methods.cost.MSE;
     var amount = options.amount || 1;
@@ -1111,14 +1122,6 @@ Network.prototype = {
     }
 
     var start = Date.now();
-
-    if (typeof options.iterations === 'undefined' && typeof options.error === 'undefined') {
-      throw new Error('At least one of the following options must be specified: error, iterations');
-    } else if (typeof options.error === 'undefined') {
-      targetError = -1; // run until iterations
-    } else if (typeof options.iterations === 'undefined') {
-      options.iterations = 0; // run until target error
-    }
 
     var fitnessFunction;
     if (threads === 1) {
