@@ -8,7 +8,7 @@
 *
 * @param {Node} from Connection origin node (neuron)
 * @param {Node} to Connection destination node (neuron)
-* @param {number} [weight=] Weight of the connection
+* @param {number} [weight] Weight of the connection
 *
 * @prop {Node} from
 * @prop {Node} to
