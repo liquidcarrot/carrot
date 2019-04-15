@@ -9,7 +9,7 @@
     "build:docs": "> .temp && git add . && git stash && npm run jsdoc && npm run deploy:docs; git stash pop && rm -f .temp && git add .temp",
     "build:dist": "webpack",
     "build": "npm run build:dist && npm run build:docs",
-    "test": "nyc --reporter=html --reporter=text mocha test/src.js",
+    "test": "nyc --reporter=html --reporter=text mocha test/",
     "coverage": "nyc report --reporter=text-lcov | coveralls && rm -rf ./src-cov",
     "test:forever": "nodemon ./node_modules/.bin/mocha --reporter spec test/",
     "clean:docfiles": "find . -type f -name '*.html' -exec rm {} + && rm -rf styles/ && rm -rf scripts"
