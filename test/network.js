@@ -184,7 +184,7 @@ describe('Networks', function () {
       copy = Network.fromJSON(original.toJSON());
       testEquality(original, copy);
     });
-    it('standalone equivalency', function () {
+    /*it('standalone equivalency', function () {
       this.timeout(10000);
       var original;
       original = new architect.Perceptron(Math.floor(Math.random() * 5 + 1), Math.floor(Math.random() * 5 + 1), Math.floor(Math.random() * 5 + 1));
@@ -214,7 +214,7 @@ describe('Networks', function () {
       original = new architect.Hopfield(Math.floor(Math.random() * 5 + 1));
       eval(original.standalone());
       testEquality(original, activate);
-    });
+    });*/
   });
   describe('Learning capability', function () {
     it('AND gate', function () {
