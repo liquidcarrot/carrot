@@ -1,9 +1,10 @@
 /* Import */
 var chai = require('chai');
 var assert = chai.assert;
+let carrot = require('../src/carrot')
 
 /* Shorten var names */
-var { Network, methods, config } = neataptic;
+var { Network, methods, config } = carrot;
 
 /* Turn off warnings */
 config.warnings = false;
