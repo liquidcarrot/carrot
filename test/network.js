@@ -45,7 +45,7 @@ function learnSet (set, iterations, error) {
     error: error,
     shuffle: true,
     rate: 0.3,
-    momentum: 0.9
+    momentum: 0.8
   };
 
   var results = network.train(set, options);
