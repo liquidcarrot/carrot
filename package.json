@@ -62,13 +62,14 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-each": "0.0.1",
+    "copy-webpack-plugin": "^5.0.2",
     "coveralls": "^3.0.3",
     "faker": "^4.1.0",
     "jsdoc": "^3.5.5",
     "mocha": "^5.2.0",
-    "nodemon": "^1.18.7",
+    "nodemon": "^1.18.11",
     "nyc": "^13.3.0",
-    "webpack": "^4.29.6",
+    "webpack": "^4.30.0",
     "webpack-cli": "^3.3.0"
   },
   "nyc": {

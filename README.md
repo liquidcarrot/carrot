@@ -19,12 +19,16 @@ For Documentation, visit [https://liquidcarrot.github.io/carrot](https://liquidc
   * [Documentation](/DOCUMENTATION.md)
 </details>
 
-## Getting Started
-
-### Installing
+## Install
 
 ```bash
 $ npm i @liquid-carrot/carrot
+```
+
+Carrot files are hosted by GitHub Pages, just copy this link into the `<head>` tag:
+
+```html
+<script src="https://liquidcarrot.io/carrot/cdn/0.1.67/carrot.js"></script>
 ```
 
 ### Introduction
