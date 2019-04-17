@@ -80,42 +80,42 @@ If you're new to the project, and feel free to open up a pull request to address
 
 When adding or changing a service please add tests.
 
-<details>
-  <summary><strong>TODO</strong></summary>
+<summary><strong>Planned Features</strong></summary>
 
-  * [ ] Architecture Support
-      * [x] Neurons
-          * [x] Tests
-          * [x] Documentation
-      * [x] Layers
-          * [x] Tests
-          * [x] Documentation
-      * [ ] Networks
-          * [ ] Tests
-          * [ ] Documentation
-  * [ ] Performance Echancements
-      * [ ] GPU Acceleration
-          * [ ] Tests
-          * [ ] Benchmarks
-      * [ ] Matrix Multiplications
-          * [ ] Tests
-          * [ ] Benchmarks
-      * [ ] Clustering | Multi-Threading
-          * [ ] Tests
-          * [ ] Benchmarks
-  * [ ] Syntax Support
-      * [ ] Callbacks
-      * [ ] Promises
-      * [ ] Streaming
-      * [ ] Async/Await
-  * [ ] Math Support
-      * [ ] Big Numbers
-      * [ ] Small Numbers
-
-</details>
+* [X] Architecture Support
+    * [x] Neurons
+        * [x] Tests
+        * [x] Documentation
+    * [x] Layers
+        * [x] Tests
+        * [x] Documentation
+    * [x] Groups
+      * [X] Tests
+      * [X] Documentation
+    * [X] Networks
+        * [X] Tests
+        * [X] Documentation
+* [ ] Performance Enhancements
+    * [ ] GPU Acceleration
+        * [ ] Tests
+        * [ ] Benchmarks
+    * [ ] Matrix Multiplications
+        * [ ] Tests
+        * [ ] Benchmarks
+    * [ ] Clustering | Multi-Threading
+        * [ ] Tests
+        * [ ] Benchmarks
+* [ ] Syntax Support
+    * [ ] Callbacks
+    * [ ] Promises
+    * [ ] Streaming
+    * [ ] Async/Await
+* [ ] Math Support
+    * [ ] Big Numbers
+    * [ ] Small Numbers
 
 ## Support
-[![Carrot's Patrons](https://img.shields.io/badge/Patrons-0-yellow.svg)](https://github.com/liquidcarrot/carrot/issues)
+[![Carrot's Patrons](https://img.shields.io/badge/Patrons-2-green.svg)](https://github.com/liquidcarrot/carrot/issues)
 
 [![Become a Patron](https://c5.patreon.com/external/logo/become_a_patron_button.png)](https://www.patreon.com/liquidcarrot)
 
