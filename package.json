@@ -6,9 +6,11 @@
   "scripts": {
     "jsdoc": "node_modules/.bin/jsdoc -r -c jsdoc.json",
     "deploy:docs": "git add . && git stash && git branch -f gh-pages && git checkout gh-pages && git reset --hard origin/master && git merge --squash --strategy-option=theirs stash && git stash drop && git commit -m 'Auto-build' && git push origin gh-pages -f && git checkout master",
-    "build:docs": "> .temp && git add . && git stash && npm run jsdoc && npm run deploy:docs; git stash pop && rm -f .temp && git add .temp",
+    "build:docs": "npm run jsdoc && npm run deploy:docs",
     "build:dist": "webpack",
-    "build": "npm run build:dist && npm run build:docs",
+    "build:stash":"> .temp && git add . && git stash",
+    "build:pop":"git stash pop && rm -f .temp && git add .temp",
+    "build": "npm run build:stash && npm run build:dist; npm run build:docs; npm run build:pop",
     "test": "nyc --reporter=html --reporter=text mocha test/",
     "coverage": "nyc report --reporter=text-lcov | coveralls && rm -rf ./src-cov",
     "test:forever": "nodemon ./node_modules/.bin/mocha --reporter spec test/",
