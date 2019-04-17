@@ -1,5 +1,5 @@
 <p align="center">
- <img src="https://raw.githubusercontent.com/liquidcarrot/carrot/master/logo/carrot-logo_readme.png" alt="Carrot Logo" style="max-width:600px;padding:30px" />
+ <img src="https://raw.githubusercontent.com/liquidcarrot/carrot/master/logo/carrot-logo_readme.png" alt="Carrot Logo" width="600px"/>
 </p>
 
 <p align="center">
