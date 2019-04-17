@@ -115,8 +115,8 @@ When adding or changing a service please add tests.
     * [ ] Small Numbers
 </details>
 
-## Support
-[![Carrot's Patrons](https://img.shields.io/badge/Patrons-2-green.svg)](https://github.com/liquidcarrot/carrot/issues)
+## Backers
+[![Carrot's Backers](https://img.shields.io/endpoint.svg?color=blue&label=patrons&logo=patrons&url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fliquidcarrot)](https://www.patreon.com/liquidcarrot)
 
 [![Become a Patron](https://c5.patreon.com/external/logo/become_a_patron_button.png)](https://www.patreon.com/liquidcarrot)
 
