@@ -80,7 +80,7 @@ If you're new to the project, and feel free to open up a pull request to address
 
 When adding or changing a service please add tests.
 
-<summary><strong>Planned Features</strong></summary>
+<details><summary><strong>Planned Features</strong></summary>
 
 * [X] Architecture Support
     * [x] Neurons
@@ -113,7 +113,7 @@ When adding or changing a service please add tests.
 * [ ] Math Support
     * [ ] Big Numbers
     * [ ] Small Numbers
-
+</details>
 ## Support
 [![Carrot's Patrons](https://img.shields.io/badge/Patrons-2-green.svg)](https://github.com/liquidcarrot/carrot/issues)
 
