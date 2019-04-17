@@ -33,14 +33,15 @@ var self = this;
     <?js= this.partial('params.tmpl', params) ?>
 <?js } ?>
 
-<?js if (data.returns && returns.length) { ?>
+<?js if (data.returns && returns.length && returns[0].description) { ?>
 <h5>Returns:</h5>
-<?js if (returns.length > 1) { ?><ul><?js
-    returns.forEach(function(r) { ?>
+<?js if (returns.length > 1) { ?>
+<ul>
+    <?js returns.forEach(function(r) { ?>
         <li><?js= self.partial('returns.tmpl', r) ?></li>
-    <?js });
-?></ul><?js } else {
-    returns.forEach(function(r) { ?>
+    <?js });?>
+</ul>
+<?js } else { returns.forEach(function(r) { ?>
         <?js= self.partial('returns.tmpl', r) ?>
     <?js });
 } } ?>
