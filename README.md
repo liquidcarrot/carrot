@@ -114,6 +114,7 @@ When adding or changing a service please add tests.
     * [ ] Big Numbers
     * [ ] Small Numbers
 </details>
+
 ## Support
 [![Carrot's Patrons](https://img.shields.io/badge/Patrons-2-green.svg)](https://github.com/liquidcarrot/carrot/issues)
 
