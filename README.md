@@ -30,10 +30,16 @@
 </p>
 
 <p>
-  Carrot is a flexible neural network AI Library for Node.js with neuro-evolution capabilities</h2>
+  Carrot is a flexible multi-threaded neural network AI Library for Node.js with neuro-evolution capabilities.
 </p>
 
 For Documentation, visit [https://liquidcarrot.github.io/carrot](https://liquidcarrot.github.io/carrot)
+
+<summary><strong>Key Features</strong></summary>
+* Multi-threaded
+* Preconfigured GRU, LSTM, NARX Networks
+* Mutable Neurons, Layers, Groups, and Networks
+* Neuro-evolution with genetic algorithms
 
 ## Getting Started
 
@@ -58,6 +64,58 @@ let Network = require('@liquid-carrot/carrot').Network
 let network = new Network([2, 2, 1]) // Builds a neural network with 5 neurons: 2 + 2 + 1
 ```
 
+Building custom network architectures
+
+```javascript
+let architect = require('@liquid-carrot/carrot').architect
+let Layer = require('@liquid-carrot/carrot').Layer
+
+let input = new Layer.Dense(1);
+let hidden1 = new Layer.LSTM(5);
+let hidden2 = new Layer.GRU(1);
+let output = new Layer.Dense(1);
+
+// connect however you want
+input.connect(hidden1);
+hidden1.connect(hidden2);
+hidden2.connect(output);
+
+let network = architect.Construct([input, hidden1, hidden2, output]);
+```
+
+Shaping a network with neuro-evolution
+
+```javascript
+// this network learns the XOR gate (through neuro-evolution)
+async function execute () {
+   var network = new Network(2,1);
+
+   // XOR dataset
+   var trainingSet = [
+       { input: [0,0], output: [0] },
+       { input: [0,1], output: [1] },
+       { input: [1,0], output: [1] },
+       { input: [1,1], output: [0] }
+   ];
+
+   await network.evolve(trainingSet, {
+       mutation: methods.mutation.FFW,
+       equal: true,
+       error: 0.05,
+       elitism: 5,
+       mutationRate: 0.5
+   });
+
+   network.activate([0,0]); // 0.2413
+   network.activate([0,1]); // 1.0000
+   network.activate([1,0]); // 0.7663
+   network.activate([1,1]); // -0.008
+}
+
+execute();
+```
+
+
 ## Install
 
 ```bash
@@ -67,7 +125,7 @@ $ npm i @liquid-carrot/carrot
 Carrot files are hosted by GitHub Pages, just copy this link into the `<head>` tag:
 
 ```html
-<script src="https://liquidcarrot.io/carrot/cdn/0.1.76/carrot.js"></script>
+<script src="https://liquidcarrot.io/carrot/cdn/0.1.75/carrot.js"></script>
 ```
 
 ## Contributing
