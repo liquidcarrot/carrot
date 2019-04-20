@@ -10,14 +10,14 @@ the developers managing and developing this open source project. In return,
 they should reciprocate that respect in addressing your issue, assessing
 changes, and helping you finalize your pull requests.
 
-Contributions to CouchDB are governed by our [Code of Conduct][6] and a set of
+Contributions to Carrot are governed by our [Code of Conduct][6] and a set of
 [Project Bylaws][7]. Come join us!
 
 
 ## Using the issue tracker
 
 First things first: **Do NOT report security vulnerabilities in public issues!**
-Please disclose responsibly by letting [the Apache CouchDB Security team](mailto:security@couchdb.apache.org?subject=Security)
+Please disclose responsibly by letting [the Carrot Security team](mailto:people@liquidcarrot.io?subject=Security)
 know upfront. We will assess the issue as soon as possible on a best-effort
 basis and will give you an estimate for when we have a fix and release available
 for an eventual public disclosure.
@@ -27,7 +27,7 @@ The GitHub issue tracker is the preferred channel for [bug reports](#bugs),
 but please respect the following restrictions:
 
 * Please **do not** use the issue tracker for personal support requests. Use
-  [CouchDB Chat][8] instead. Alternately, help us to help more people by
+  [Carrot Chat][8] instead. Alternately, help us to help more people by
   using our publicly archived [user][1] or [developer][5] mailing lists.
 
 * Please **do not** derail or troll issues. Keep the discussion on topic and
@@ -111,7 +111,7 @@ on how to send one :)
    # Navigate to the newly cloned directory
    cd <repo-name>
    # Assign the original repo to a remote called "upstream"
-   git remote add upstream https://github.com/apache/<repo-name>
+   git remote add upstream https://github.com/liquid-carrot/<repo-name>
    ```
 
 2. If you cloned a while ago, get the latest changes from upstream:
@@ -134,7 +134,7 @@ on how to send one :)
    the project’s README for more information.
 
 5. If you added or changed a feature, make sure to document it accordingly in
-   the [CouchDB documentation](https://github.com/apache/couchdb-documentation)
+   the [Carrot documentation](https://github.com/liquid-carrot/carrot-documentation)
    repository.
 
 6. Push your topic branch up to your fork:
@@ -147,33 +147,32 @@ on how to send one :)
     with a clear title and description.
 
 
-### For Apache CouchDB Committers
+### For Carrot Committers
 
 1. Be sure to set up [GitHub two-factor authentication](https://help.github.com/articles/about-two-factor-authentication/),
-   then [link your Apache account to your GitHub account](https://gitbox.apache.org/setup/).
+   then [link your account to your GitHub account](https://gitbox.liquid-carrot.org/setup/).
    You will need to wait about 30 minutes after completing this process
    for it to complete. Follow the instructions in the organisational
-   invite email you receive. Alternately, you can use the Apache mirror
-   of the repository at `https://gitbox.apache.org/repos/asf/couchdb.git`
+   invite email you receive. Alternately, you can use the mirror
+   of the repository at `https://gitbox.liquid-carrot.org/repos/asf/carrot.git`
    if you do not agree to the GitHub Terms of Service.
 
 2. Clone the repo and create a branch.
 
    ```bash
-   git clone https://github.com/couchdb/couchdb
-   # or git clone https://gitbox.apache.org/repos/asf/couchdb.git
-   cd couchdb
+   git clone https://github.com/liquidcarrot/carrot.git
+   cd carrot
    git checkout -b <topic-branch-name>
    ```
 
 3. Make sure to update, or add to the tests when appropriate. Patches and
-   features will not be accepted without tests. Run `make check` to check that
+   features will not be accepted without tests. Run `npm test` to check that
    all tests pass after you've made changes. Look for a `Testing` section in
    the project’s README for more information.
 
 4. If you added or changed a feature, make sure to document it accordingly in
-   the [CouchDB documentation](https://github.com/apache/couchdb-documentation)
-   repository.
+   the [Carrot documentation](https://liquidcarrot.github.io/carrot)
+   using [JSDoc](http://usejsdoc.org/about-getting-started.html).
 
 5. Push your topic branch up to our repo
 
@@ -200,18 +199,18 @@ complicated, we can help you out and teach you as we go :)
    Git's [interactive rebase](https://help.github.com/articles/interactive-rebase).
 
 **IMPORTANT**: By submitting a patch, you agree to license your work under the
-Apache License, per your signed Apache CLA.
+License, per your signed CLA.
 
 
 ## Triagers
 
-Apache CouchDB committers who have completed the GitHub account linking
+Carrot committers who have completed the GitHub account linking
 process may triage issues. This helps to speed up releases and minimises both
 user and developer pain in working through our backlog.
 
 Briefly, to triage an issue, review the report, validate that it is an actual
 issue (reproducing if possible), and add one or more labels. We have a
-[summary of our label taxonomy](https://github.com/apache/couchdb/issues/499)
+[summary of our label taxonomy](https://github.com/liquid-carrot/carrot/issues/499)
 for your reference.
 
 If you are not an official committer, please reach out to our [mailing list][5]
@@ -240,7 +239,7 @@ If you have commit access, please follow this process for merging patches and cu
 8. If the commit messages follow [our conventions](@commit-message-conventions)
 
    1. If the pull request fixes one or more open issues, please include the
-      text "Fixes #472" or "Fixes apache/couchdb#472".
+      text "Fixes #472" or "Fixes liquid-carrot/carrot#472".
    2. Use the "Rebase and merge" button to merge the pull request.
    3. Done! You are awesome! Thanks so much for your help 🤗
 
@@ -249,7 +248,7 @@ If you have commit access, please follow this process for merging patches and cu
    1. Use the "squash and merge" button to clean up the commits and merge at
       the same time: ✨🎩
    2. If the pull request fixes one or more open issues, please include the
-      text "Fixes #472" or "Fixes apache/couchdb#472".
+      text "Fixes #472" or "Fixes liquid-carrot/carrot#472".
 
 Sometimes there might be a good reason to merge changes locally. The process
 looks like this:
@@ -284,8 +283,8 @@ without needing any other steps like setting git upstreams! :sparkles:
 Special thanks to [Hoodie](https://github.com/hoodiehq/hoodie) for the great
 CONTRIBUTING.md template.
 
-[1]: http://mail-archives.apache.org/mod_mbox/couchdb-user/
-[5]: http://mail-archives.apache.org/mod_mbox/couchdb-dev/
-[6]: http://couchdb.apache.org/conduct.html
-[7]: http://couchdb.apache.org/bylaws.html
-[8]: http://couchdb.apache.org/#chat
+[1]:
+[5]:
+[6]:
+[7]:
+[8]: https://gitter.im/carrot-ai/community?utm_source=share-link&utm_medium=link&utm_campaign=share-link
