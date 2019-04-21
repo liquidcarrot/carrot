@@ -37,6 +37,7 @@ For Documentation, visit [https://liquidcarrot.github.io/carrot](https://liquidc
 
 ## Key Features
 - Multi-threaded
+- Fully Documented with [async-style](https://liquidcarrot.github.io/carrot) Docs
 - Preconfigured GRU, LSTM, NARX Networks
 - Mutable Neurons, Layers, Groups, and Networks
 - Neuro-evolution with genetic algorithms
@@ -126,7 +127,7 @@ $ npm i @liquid-carrot/carrot
 Carrot files are hosted by GitHub Pages, just copy this link into the `<head>` tag:
 
 ```html
-<script src="https://liquidcarrot.io/carrot/cdn/0.1.80/carrot.js"></script>
+<script src="https://liquidcarrot.io/carrot/cdn/0.1.79/carrot.js"></script>
 ```
 
 ## Contributing
