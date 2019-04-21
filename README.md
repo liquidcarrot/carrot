@@ -40,6 +40,7 @@ For Documentation, visit [https://liquidcarrot.github.io/carrot](https://liquidc
 - Preconfigured GRU, LSTM, NARX Networks
 - Mutable Neurons, Layers, Groups, and Networks
 - Neuro-evolution with genetic algorithms
+- SVG Network Visualizations using D3.js
 
 ## Getting Started
 
