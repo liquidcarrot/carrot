@@ -423,7 +423,7 @@ function linktoExternal(longName, name) {
  */
 
 function buildNav(members) {
-    var nav = '<h2><a href="index.html">Home</a></h2>';
+    var nav = '';
     var seen = {};
     var seenTutorials = {};
     var docdash = env && env.conf && env.conf.docdash || {};

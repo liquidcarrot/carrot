@@ -40,11 +40,51 @@
 
 <label for="nav-trigger" class="overlay"></label>
 
+<div class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="#" style="padding:0">
+      <img src="img/carrot-logo.png" height="28">
+    </a>
+
+    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+
+  <div id="navbarBasicExample" class="navbar-menu">
+    <div class="navbar-start">
+      <a class="navbar-item" href="/">Home</a>
+      <a class="navbar-item" href="/carrot">Docs</a>
+      <a class="navbar-item" href="https://github.com/liquidcarrot/carrot" target="_blank"><i class="ion-social-github" aria-hidden="true"></i></a>
+
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More
+        </a>
+
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="mailto:people@liquidcarrot.io?subject=Contact%20From%20Docs">
+            Contact
+          </a>
+          <hr class="navbar-divider">
+          <a class="navbar-item" href="https://github.com/liquidcarrot/carrot/issues/new">
+            Report an issue
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <input type="text" id="nav-search" placeholder="Search" autofocus>
+      </div>
+    </div>
+  </div>
+</div>
+
 <nav <?js if (env.conf.docdash.wrap) { ?>class="wrap"<?js } ?>>
-    <?js if (env.conf.docdash.search) { ?>
-    <input type="text" id="nav-search" placeholder="Search" />
-    <?js } ?>
-    <h2><a target="_blank" href="https://github.com/liquidcarrot/carrot"><i class="ion-social-github" aria-hidden="true"></i></a></h2>
     <?js= this.nav ?>
 </nav>
 

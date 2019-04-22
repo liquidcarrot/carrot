@@ -6190,7 +6190,6 @@ a.list-item {
 .navbar.is-white .navbar-brand > a.navbar-item:hover, .navbar.is-white .navbar-brand > a.navbar-item.is-active,
 .navbar.is-white .navbar-brand .navbar-link:hover,
 .navbar.is-white .navbar-brand .navbar-link.is-active {
-  background-color: #f2f2f2;
   color: #0a0a0a;
 }
 
@@ -6942,7 +6941,7 @@ a.navbar-item:hover, a.navbar-item.is-active,
 }
 
 .navbar-link:not(.is-arrowless)::after {
-  border-color: #3273dc;
+  border-color: #777;
   margin-top: -0.375em;
   right: 1.125em;
 }
