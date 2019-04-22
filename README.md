@@ -130,15 +130,15 @@ Carrot files are hosted by GitHub Pages, just copy this link into the `<head>` t
 <script src="https://liquidcarrot.io/carrot/cdn/0.1.82/carrot.js"></script>
 ```
 
-## Contributing
+## 💬 Contributing
+
 [![Carrot's GitHub Issues](https://img.shields.io/github/issues/liquidcarrot/carrot.svg)](https://github.com/liquidcarrot/carrot/issues)
 
-Carrot™ is a open source  project. We invite your participation through issues
-and pull requests!
+Your contributions are always welcome! Please have a look at the [contribution guidelines](https://github.com/liquidcarrot/carrot/blob/master/CONTRIBUTING.md) first. 🎉
 
-If you're new to the project, and feel free to open up a pull request to address one of the open issues. It would be super appreciated! 🤗
+To build a community welcome to all, Carrot follows the [Contributor Covenant](https://github.com/liquidcarrot/carrot/blob/master/CODE_OF_CONDUCT.md) Code of Conduct.
 
-When adding or changing a service please add tests.
+And finally, a big thank you to all of you for supporting! 🤗
 
 <details><summary><strong>Planned Features</strong></summary>
 
