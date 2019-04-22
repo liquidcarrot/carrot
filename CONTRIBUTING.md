@@ -11,7 +11,7 @@ they should reciprocate that respect in addressing your issue, assessing
 changes, and helping you finalize your pull requests.
 
 Contributions to Carrot are governed by our [Code of Conduct][6] and a set of
-[Project Bylaws][7]. Come join us!
+Project Bylaws (TBD). Come join us!
 
 
 ## Using the issue tracker
@@ -28,7 +28,7 @@ but please respect the following restrictions:
 
 * Please **do not** use the issue tracker for personal support requests. Use
   [Carrot Chat][8] instead. Alternately, help us to help more people by
-  using our publicly archived [user][1] or [developer][5] mailing lists.
+  using our publicly archived user(TODO) or developer(TODO) mailing lists.
 
 * Please **do not** derail or troll issues. Keep the discussion on topic and
   respect the opinions of others.
@@ -93,7 +93,7 @@ commits.
 implementing features, refactoring code), otherwise you risk spending a lot of
 time working on something that the project's developers might not want to merge
 into the project. You can talk with the community on our
-[developer mailing list][5].  We're always open to suggestions and will get
+developer mailing list(TODO).  We're always open to suggestions and will get
 back to you as soon as we can!
 
 
@@ -213,7 +213,7 @@ issue (reproducing if possible), and add one or more labels. We have a
 [summary of our label taxonomy](https://github.com/liquid-carrot/carrot/issues/499)
 for your reference.
 
-If you are not an official committer, please reach out to our [mailing list][5]
+If you are not an official committer, please reach out to our mailing list(TODO)
 or [chat][8] to learn how you can assist with triaging indirectly.
 
 
@@ -285,6 +285,6 @@ CONTRIBUTING.md template.
 
 [1]:
 [5]:
-[6]:
+[6]: https://github.com/liquidcarrot/carrot/blob/master/CODE_OF_CONDUCT.md
 [7]:
 [8]: https://gitter.im/carrot-ai/community?utm_source=share-link&utm_medium=link&utm_campaign=share-link
