@@ -9,9 +9,6 @@ var selection = methods.selection;
 /**
 * Runs the NEAT algorithm on group of neural networks.
 *
-* @todo Add `@param` tag types
-* @todo Add `@param` tag descriptions
-*
 * @name NEAT
 *
 * @private
@@ -23,19 +20,19 @@ var selection = methods.selection;
 * @param {boolean} [options.equal=false]
 * @param {number} [options.clear=false]
 * @param {number} [options.popsize=50] Population size of each generation.
-* @param {number} [options.elitism=0] Elitism of every evolution loop. {@link https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm|Q&A: What is Elitism in Genetic Algortihtms}
+* @param {number} [options.elitism=0] Elitism of every evolution loop. [Elitism in genetic algortihtms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
 * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
 * @param {number} [options.mutationRate=0] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.3.
 * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
 * @param {boolean} [options.fitnessPopulation=false] When true, requires fitness function that takes an array of genomes as input and sets their .score property
 * @param {string} [options.selection=Selection.FITNESS_PROPORTIONATE] Selection method for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
 * @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
-* @param {Array} [options.mutation] Sets allowed mutation methods for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
+* @param {Array} [mutation] Sets allowed mutation methods for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
 * @param {Network} [options.network=false] Network to start evolution from
-* @param {number} [options.maxNodes=Infinity]
-* @param {number} [options.maxConns=Infinity]
-* @param {number} [options.maxGates=Infinity]
-* @param [options.mutationSelection=]
+* @param {number} [options.maxNodes=Infinity] Maximum nodes for a potential network
+* @param {number} [options.maxConns=Infinity] Maximum connections for a potential network
+* @param {number} [options.maxGates=Infinity] Maximum gates for a potential network
+* @param {function} [options.mutationSelection=] Custom mutation selection function if given
 *
 * @prop {number} generation A count of the generations
 */
@@ -64,6 +61,7 @@ function Neat (input, output, fitness, options) {
     methods.crossover.AVERAGE
   ];
   this.mutation = options.mutation || methods.mutation.FFW;
+  this.efficientMutation = options.efficientMutation || false;
 
   this.template = options.network || false;
 
@@ -173,7 +171,9 @@ Neat.prototype = {
    * @param genome
   */
   selectMutationMethod: function (genome) {
-    var mutationMethod = this.mutation[Math.floor(Math.random() * this.mutation.length)];
+    var mutation = this.efficientMutation ? genome.getPossibleMutations(this.mutation) : this.mutation;
+
+    var mutationMethod = mutation[Math.floor(Math.random() * mutation.length)];
 
     if (mutationMethod === methods.mutation.ADD_NODE && genome.nodes.length >= this.maxNodes) {
       if (config.warnings) console.warn('maxNodes exceeded!');

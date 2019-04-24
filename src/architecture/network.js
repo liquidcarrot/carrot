@@ -367,6 +367,123 @@ Network.prototype = {
   },
 
   /**
+   * Tests the state of the network and returns an array of mutations that are possible.
+   *
+   * @param {mutation[]} allowedMutations A list of potential mutations methods
+   *
+   */
+  getPossibleMutations: function (allowedMutations) {
+    var possibleMutations = [];
+
+    var i, j;
+    for (var x = 0; x < allowedMutations.length; x++) {
+      var method = allowedMutations[x];
+      switch (method) {
+        case mutation.SUB_NODE:
+          if (this.nodes.length === this.input + this.output) continue;
+          break;
+        case mutation.ADD_CONN:
+          // Create an array of all uncreated (feedforward) connections
+          var available = [];
+          for (i = 0; i < this.nodes.length - this.output; i++) {
+            let node1 = this.nodes[i];
+            for (j = Math.max(i + 1, this.input); j < this.nodes.length; j++) {
+              let node2 = this.nodes[j];
+              if (!node1.isProjectingTo(node2)) available.push([node1, node2]);
+            }
+          }
+          if (available.length === 0) continue;
+          break;
+        case mutation.SUB_CONN:
+          // List of possible connections that can be removed
+          var possible = [];
+
+          for (i = 0; i < this.connections.length; i++) {
+            let conn = this.connections[i];
+            // Check if it is not disabling a node
+            if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && this.nodes.indexOf(conn.to) > this.nodes.indexOf(conn.from)) {
+              possible.push(conn);
+            }
+          }
+
+          if (possible.length === 0) continue;
+          break;
+        case mutation.MOD_ACTIVATION:
+          if (!method.mutateOutput && this.input + this.output === this.nodes.length) continue;
+          break;
+        case mutation.ADD_SELF_CONN:
+          // Check which nodes aren't selfconnected yet
+          var possible = [];
+          for (i = this.input; i < this.nodes.length; i++) {
+            let node = this.nodes[i];
+            if (node.connections.self.weight === 0) {
+              possible.push(node);
+            }
+          }
+
+          if (possible.length === 0) continue;
+          break;
+        case mutation.SUB_SELF_CONN:
+          if (this.selfconns.length === 0) continue;
+          break;
+        case mutation.ADD_GATE:
+          var allconnections = this.connections.concat(this.selfconns);
+
+          // Create a list of all non-gated connections
+          var possible = [];
+          for (i = 0; i < allconnections.length; i++) {
+            let conn = allconnections[i];
+            if (conn.gater === null) {
+              possible.push(conn);
+            }
+          }
+
+          if (possible.length === 0) continue;
+          break;
+        case mutation.SUB_GATE:
+          if (this.gates.length === 0) continue;
+          break;
+        case mutation.ADD_BACK_CONN:
+          // Create an array of all uncreated (backfed) connections
+          var available = [];
+          for (i = this.input; i < this.nodes.length; i++) {
+            let node1 = this.nodes[i];
+            for (j = this.input; j < i; j++) {
+              let node2 = this.nodes[j];
+              if (!node1.isProjectingTo(node2)) available.push([node1, node2]);
+            }
+          }
+
+          if (available.length === 0) continue;
+          break;
+        case mutation.SUB_BACK_CONN:
+          // List of possible connections that can be removed
+          var possible = [];
+
+          for (i = 0; i < this.connections.length; i++) {
+            let conn = this.connections[i];
+            // Check if it is not disabling a node
+            if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && this.nodes.indexOf(conn.from) > this.nodes.indexOf(conn.to)) {
+              possible.push(conn);
+            }
+          }
+
+          if (possible.length === 0) continue;
+          break;
+        case mutation.SWAP_NODES:
+          if ((method.mutateOutput && this.nodes.length - this.input < 2) ||
+            (!method.mutateOutput && this.nodes.length - this.input - this.output < 2)) {
+            continue;
+          }
+          break;
+      }
+      possibleMutations.push(method);
+    }
+
+    return possibleMutations;
+  },
+
+  /**
    * Mutates the network with the given method
    *
    * @param {mutation} method [Mutation method](mutation)
@@ -1070,11 +1187,12 @@ Network.prototype = {
    * @param {boolean} [options.fitnessPopulation=false] When true, requires fitness function that takes an array of genomes as input and sets their .score property
    * @param {string} [options.selection=Selection.FITNESS_PROPORTIONATE] Selection method for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
    * @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
-   * @param {Array} [options.mutation] Sets allowed mutation methods for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
-   * @param {number} [options.maxNodes=Infinity]
-   * @param {number} [options.maxConns=Infinity]
-   * @param {number} [options.maxGates=Infinity]
-   * @param [options.mutationSelection=]
+   * @param {Array} [options.mutation] Sets allowed [mutation methods](mutation) for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
+   * @param {number} [options.maxNodes=Infinity] Maximum nodes for a potential network
+   * @param {number} [options.maxConns=Infinity] Maximum connections for a potential network
+   * @param {number} [options.maxGates=Infinity] Maximum gates for a potential network
+   * @param {function} [options.mutationSelection=random] Custom mutation selection function if given
+   * @param {boolean} [options.efficientMutation=false] Test & reduce [mutation methods](mutation) to avoid failed mutation attempts
    *
    * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance
    *
@@ -1684,9 +1802,6 @@ var selection = methods.selection;
 /**
 * Runs the NEAT algorithm on group of neural networks.
 *
-* @todo Add `@param` tag types
-* @todo Add `@param` tag descriptions
-*
 * @name NEAT
 *
 * @private
@@ -1698,7 +1813,7 @@ var selection = methods.selection;
 * @param {boolean} [options.equal=false]
 * @param {number} [options.clear=false]
 * @param {number} [options.popsize=50] Population size of each generation.
-* @param {number} [options.elitism=0] Elitism of every evolution loop. {@link https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm|Q&A: What is Elitism in Genetic Algortihtms}
+* @param {number} [options.elitism=0] Elitism of every evolution loop. [Elitism in genetic algortihtms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
 * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
 * @param {number} [options.mutationRate=0] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.3.
 * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
@@ -1707,10 +1822,11 @@ var selection = methods.selection;
 * @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
 * @param {Array} [mutation] Sets allowed mutation methods for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
 * @param {Network} [options.network=false] Network to start evolution from
-* @param {number} [options.maxNodes=Infinity]
-* @param {number} [options.maxConns=Infinity]
-* @param {number} [options.maxGates=Infinity]
-* @param [options.mutationSelection=]
+* @param {number} [options.maxNodes=Infinity] Maximum nodes for a potential network
+* @param {number} [options.maxConns=Infinity] Maximum connections for a potential network
+* @param {number} [options.maxGates=Infinity] Maximum gates for a potential network
+* @param {function} [options.mutationSelection=] Custom mutation selection function if given
+* @param {boolean} [options.efficientMutation=false] Reduce mutations before mutating each network
 *
 * @prop {number} generation A count of the generations
 */
@@ -1739,6 +1855,7 @@ function Neat (input, output, fitness, options) {
     methods.crossover.AVERAGE
   ];
   this.mutation = options.mutation || methods.mutation.FFW;
+  this.efficientMutation = options.efficientMutation || false;
 
   this.template = options.network || false;
 
@@ -1849,7 +1966,9 @@ Neat.prototype = {
    * @param genome
   */
   selectMutationMethod: function (genome) {
-    var mutationMethod = this.mutation[Math.floor(Math.random() * this.mutation.length)];
+    var mutation = this.efficientMutation ? genome.getPossibleMutations(this.mutation) : this.mutation;
+
+    var mutationMethod = mutation[Math.floor(Math.random() * mutation.length)];
 
     if (mutationMethod === methods.mutation.ADD_NODE && genome.nodes.length >= this.maxNodes) {
       if (config.warnings) console.warn('maxNodes exceeded!');
