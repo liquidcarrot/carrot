@@ -9,9 +9,7 @@ var selection = methods.selection;
 /**
 * Runs the NEAT algorithm on group of neural networks.
 *
-* @name NEAT
-*
-* @private
+* @constructs NEAT
 *
 * @param {number} input - The input size of the networks.
 * @param {number} output - The output size of the networks
@@ -25,7 +23,7 @@ var selection = methods.selection;
 * @param {number} [options.mutationRate=0] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.3.
 * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
 * @param {boolean} [options.fitnessPopulation=false] When true, requires fitness function that takes an array of genomes as input and sets their .score property
-* @param {string} [options.selection=Selection.FITNESS_PROPORTIONATE] Selection method for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
+* @param {string} [options.selection=Selection.FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
 * @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
 * @param {Array} [mutation] Sets allowed mutation methods for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
 * @param {Network} [options.network=false] Network to start evolution from
@@ -84,9 +82,9 @@ function Neat (input, output, fitness, options) {
 */
 Neat.prototype = {
   /**
-   * Create the initial pool of genomes
+   * Create the initial pool of genomes.
    *
-   * @param {Network} network
+   * @param {Network} network An initial network to evolve from
    */
   createPool: function (network) {
     this.population = [];
@@ -104,11 +102,9 @@ Neat.prototype = {
   },
 
   /**
-   * Evaluates, selects, breeds and mutates population
-   * @todo Add `@returns` tag type
-   * @todo Add `@returns` tag description
+   * Evaluates, selects, breeds and mutates population.
    *
-   * @returns {object}
+   * @returns {Network} Fittest network
   */
   evolve: async function () {
     // Check if evaluated, sort the population
@@ -155,9 +151,9 @@ Neat.prototype = {
   },
 
   /**
-   * Breeds two parents into an offspring, population MUST be sorted
-   * @todo Add `@returns` tag type
-   * @todo Add `@returns` tag description
+   * Selects two genomes from the population with `getParent()`, and returns the offspring from those parents. NOTE: Population MUST be sorted
+   *
+   * @returns {Network} Child network
    */
   getOffspring: function () {
     var parent1 = this.getParent();
@@ -168,7 +164,7 @@ Neat.prototype = {
 
   /**
    * Selects a random mutation method for a genome according to the parameters
-   * @param genome
+   * @param {Network} genome
   */
   selectMutationMethod: function (genome) {
     var mutation = this.efficientMutation ? genome.getPossibleMutations(this.mutation) : this.mutation;
@@ -209,7 +205,7 @@ Neat.prototype = {
   },
 
   /**
-   * Evaluates the current population
+   * Sets fitness scores for the current population members.
    */
   evaluate: async function () {
     var i;
@@ -230,8 +226,8 @@ Neat.prototype = {
   },
 
   /**
-   * Sorts the population by score
-  */
+   * Sorts the population by fitness
+   */
   sort: function () {
     this.population.sort(function (a, b) {
       return b.score - a.score;
@@ -240,8 +236,8 @@ Neat.prototype = {
 
   /**
    * Returns the fittest genome of the current population
-   * @todo Add `@returns` tag types
-   * @todo Add `@returns` tag descriptions
+   *
+   * @returns {Network} Current population's fittest genome
   */
   getFittest: function () {
     // Check if evaluated
@@ -257,8 +253,8 @@ Neat.prototype = {
 
   /**
    * Returns the average fitness of the current population
-   * @todo Add `@returns` tag type
-   * @todo Add `@returns` tag description
+   *
+   * @returns {number} Average fitness of the current population
    */
   getAverage: function () {
     if (typeof this.population[this.population.length - 1].score === 'undefined') {
@@ -274,15 +270,17 @@ Neat.prototype = {
   },
 
   /**
-   * Gets a genome based on the selection function
-   * @return {Network} genome
-   * @todo Add `@returns` tag description
+   * Returns a genome for recombination (crossover) based on one of the [selection methods](selection) provided.
+   *
+   * Should be called after `evaluate()`
+   *
+   * @return {Network} Selected genome for offspring generation
    */
   getParent: function () {
     var i;
     switch (this.selection) {
       case selection.POWER:
-        if (this.population[0].score < this.population[1].score) this.sort();
+        if (this.population[0].score < this.population[1].score) this.sort(); // SHOULD FIX: Not guaranteed to detect an unsorted population
 
         var index = Math.floor(Math.pow(Math.random(), this.selection.power) * this.population.length);
         return this.population[index];
@@ -340,9 +338,11 @@ Neat.prototype = {
   },
 
   /**
-   * Export the current population to a json object
-   * @todo Add `@returns` tag type
-   * @todo Add `@returns` tag description
+   * Export the current population to a JSON object
+   *
+   * Can be used later with `import(json)` to reload the population
+   *
+   * @return {object[]} A set of genomes (a population) represented as JSON objects.
    */
   export: function () {
     var json = [];
@@ -355,10 +355,9 @@ Neat.prototype = {
   },
 
   /**
-   * Import population from a json object
-   * @todo Add `@param` tag type
-   * @todo Add `@param` tag name
-   * @todo Add `@param` tag description
+   * Imports population from a json. Must be an array of networks converted to JSON objects.
+   *
+   * @param {object[]} json set of genomes (a population) represented as JSON objects.
   */
   import: function (json) {
     var population = [];
