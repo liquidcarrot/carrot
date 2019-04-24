@@ -135,6 +135,29 @@ var cost = {
     return error / output.length;
   },
   /**
+  * Weighted Absolute Percentage Error (WAPE)
+  *
+  * @param {number} target Ideal value
+  * @param {number output Actual values
+  *
+  * @returns {number} - [Weighted absolute percentage error](https://help.sap.com/doc/saphelp_nw70/7.0.31/en-US/76/487053bbe77c1ee10000000a174cb4/content.htm?no_cache=true)
+  * 
+  * @example
+  * myNetwork.train(trainingData, {
+  *   cost: methods.cost.WAPE
+  * });
+  */
+  WAPE: function (target, output) {
+    var error = 0;
+    var sumTarget = 0;
+    for (var i = 0; i < output.length; i++) {
+      error += Math.abs(target[i] - output[i]);
+      sumTarget += target[i];
+    }
+
+     return error / sumTarget;
+  },
+  /**
   * Mean Squared Logarithmic Error
   *
   * @param {number} target Ideal value
