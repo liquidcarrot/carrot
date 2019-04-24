@@ -29,8 +29,8 @@ var selection = methods.selection;
 * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
 * @param {boolean} [options.fitnessPopulation=false] When true, requires fitness function that takes an array of genomes as input and sets their .score property
 * @param {string} [options.selection=Selection.FITNESS_PROPORTIONATE] Selection method for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
-* @param {Array} [options.crossover=] Sets allowed crossover methods for evolution.
-* @param {Array} [mutation=] Sets allowed mutation methods for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
+* @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
+* @param {Array} [options.mutation] Sets allowed mutation methods for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
 * @param {Network} [options.network=false] Network to start evolution from
 * @param {number} [options.maxNodes=Infinity]
 * @param {number} [options.maxConns=Infinity]

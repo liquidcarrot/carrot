@@ -1044,7 +1044,7 @@ Network.prototype = {
   },
 
   /**
-   * Evolves the network to reach a lower error on a dataset
+   * Evolves the network to reach a lower error on a dataset using the [NEAT algorithm](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf)
    *
    * If both `iterations` and `error` options are unset, evolve will default to `iterations` as an end condition.
    *
@@ -1060,6 +1060,21 @@ Network.prototype = {
    * @param {number} [options.schedule.iterations] You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
    * @param {schedule} [options.schedule.function] A function to run every n iterations as set by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
    * @param {boolean} [options.clear=false]  If set to true, will clear the network after every activation. This is useful for evolving recurrent networks, more importantly for timeseries prediction.
+   *
+   * @param {boolean} [options.equal=false]
+   * @param {number} [options.popsize=50] Population size of each generation.
+   * @param {number} [options.elitism=0] Elitism of every evolution loop. {@link https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm|Q&A: What is Elitism in Genetic Algortihtms}
+   * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
+   * @param {number} [options.mutationRate=0] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.3.
+   * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
+   * @param {boolean} [options.fitnessPopulation=false] When true, requires fitness function that takes an array of genomes as input and sets their .score property
+   * @param {string} [options.selection=Selection.FITNESS_PROPORTIONATE] Selection method for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
+   * @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
+   * @param {Array} [options.mutation] Sets allowed mutation methods for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
+   * @param {number} [options.maxNodes=Infinity]
+   * @param {number} [options.maxConns=Infinity]
+   * @param {number} [options.maxGates=Infinity]
+   * @param [options.mutationSelection=]
    *
    * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance
    *
@@ -1689,8 +1704,8 @@ var selection = methods.selection;
 * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
 * @param {boolean} [options.fitnessPopulation=false] When true, requires fitness function that takes an array of genomes as input and sets their .score property
 * @param {string} [options.selection=Selection.FITNESS_PROPORTIONATE] Selection method for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
-* @param {Array} [options.crossover=] Sets allowed crossover methods for evolution.
-* @param {Array} [mutation=] Sets allowed mutation methods for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
+* @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
+* @param {Array} [mutation] Sets allowed mutation methods for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
 * @param {Network} [options.network=false] Network to start evolution from
 * @param {number} [options.maxNodes=Infinity]
 * @param {number} [options.maxConns=Infinity]
