@@ -1063,7 +1063,7 @@ Network.prototype = {
    *
    * @param {boolean} [options.equal=false]
    * @param {number} [options.popsize=50] Population size of each generation.
-   * @param {number} [options.elitism=0] Elitism of every evolution loop. {@link https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm|Q&A: What is Elitism in Genetic Algortihtms}
+   * @param {number} [options.elitism=0] Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
    * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
    * @param {number} [options.mutationRate=0] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.3.
    * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
