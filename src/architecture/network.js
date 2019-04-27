@@ -1166,6 +1166,7 @@ Network.prototype = {
    * If both `iterations` and `error` options are unset, evolve will default to `iterations` as an end condition.
    *
    * @param {Array<{input:number[],output:number[]}>} set A set of input values and ideal output values to train the network with
+   * @param {object} [options] Configuration options
    * @param {number} [options.iterations=500] Set the maximum amount of iterations/generations for the algorithm to run.
    * @param {number} [options.error] Set the target error. The algorithm will stop once this target error has been reached.
    * @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connectoins.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
@@ -1177,7 +1178,6 @@ Network.prototype = {
    * @param {number} [options.schedule.iterations] You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
    * @param {schedule} [options.schedule.function] A function to run every n iterations as set by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
    * @param {boolean} [options.clear=false]  If set to true, will clear the network after every activation. This is useful for evolving recurrent networks, more importantly for timeseries prediction.
-   *
    * @param {boolean} [options.equal=false]
    * @param {number} [options.popsize=50] Population size of each generation.
    * @param {number} [options.elitism=0] Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
@@ -1185,7 +1185,7 @@ Network.prototype = {
    * @param {number} [options.mutationRate=0] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.3.
    * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
    * @param {boolean} [options.fitnessPopulation=false] When true, requires fitness function that takes an array of genomes as input and sets their .score property
-   * @param {string} [options.selection=Selection.FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
+   * @param {string} [options.selection=FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. methods.Selection.FITNESS_PROPORTIONATE).
    * @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
    * @param {Array} [options.mutation] Sets allowed [mutation methods](mutation) for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
    * @param {number} [options.maxNodes=Infinity] Maximum nodes for a potential network

@@ -23,14 +23,14 @@ var selection = methods.selection;
 * @param {number} [options.mutationRate=0] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.3.
 * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
 * @param {boolean} [options.fitnessPopulation=false] When true, requires fitness function that takes an array of genomes as input and sets their .score property
-* @param {string} [options.selection=Selection.FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
+* @param {string} [options.selection=FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
 * @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
-* @param {Array} [mutation] Sets allowed mutation methods for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
 * @param {Network} [options.network=false] Network to start evolution from
 * @param {number} [options.maxNodes=Infinity] Maximum nodes for a potential network
 * @param {number} [options.maxConns=Infinity] Maximum connections for a potential network
 * @param {number} [options.maxGates=Infinity] Maximum gates for a potential network
-* @param {function} [options.mutationSelection=] Custom mutation selection function if given
+* @param {function} [options.mutationSelection=ALL] Custom mutation selection function if given
+* @param {mutation[]} [options.mutation] Sets allowed [mutation methods](mutation) for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent
 *
 * @prop {number} generation A count of the generations
 */

@@ -13,12 +13,12 @@
         if (parentParam && parentParam.name && param.name) {
             try {
                 paramRegExp = new RegExp('^(?:' + parentParam.name + '(?:\\[\\])*)\\.(.+)$');
-            }		
-            catch (e) {		
+            }
+            catch (e) {
                 console.error("Problem parsing comment", e);
-                // there's probably a typo in the JSDoc comment that resulted in a weird		
-                // parameter name		
-                return;		
+                // there's probably a typo in the JSDoc comment that resulted in a weird
+                // parameter name
+                return;
             }
 
             if ( paramRegExp.test(param.name) ) {
@@ -57,7 +57,7 @@
         }
     });
 ?>
-
+<div class="table-overflow">
 <table class="params">
     <thead>
     <tr>
@@ -66,10 +66,6 @@
         <?js } ?>
 
         <th>Type</th>
-
-        <?js if (params.hasAttributes) {?>
-        <th>Attributes</th>
-        <?js } ?>
 
         <?js if (params.hasDefault) {?>
         <th>Default</th>
@@ -91,42 +87,48 @@
                 <td class="name"><code><?js= param.name ?></code></td>
             <?js } ?>
 
-            <td class="type">
-            <?js if (param.type && param.type.names) {?>
-                <?js= self.partial('type.tmpl', param.type.names) ?>
-            <?js } ?>
-            </td>
-
-            <?js if (params.hasAttributes) {?>
-                <td class="attributes">
-                <?js if (param.optional) { ?>
-                    &lt;optional><br>
+            <?js if (!param.subparams) { ?>
+                <td class="type">
+                <?js if (param.type && param.type.names) {?>
+                    <?js= self.partial('type.tmpl', param.type.names) ?>
                 <?js } ?>
+                <?js if (params.hasAttributes) {?>
+                    <?js if (param.optional) { ?>
+                        <span class="attribute">&lt;optional&gt;</span>
+                    <?js } ?>
 
-                <?js if (param.nullable) { ?>
-                    &lt;nullable><br>
-                <?js } ?>
+                    <?js if (param.nullable) { ?>
+                        <span class="attribute">&lt;nullable&gt;</span>
+                    <?js } ?>
 
-                <?js if (param.variable) { ?>
-                    &lt;repeatable><br>
+                    <?js if (param.variable) { ?>
+                        <span class="attribute">&lt;repeatable&gt;</span>
+                    <?js } ?>
                 <?js } ?>
                 </td>
             <?js } ?>
 
-            <?js if (params.hasDefault) {?>
+            <?js if (param.subparams) { ?>
+                <td colspan="2" class="description last">
+                    <?js= param.description ?>
+                    <h6>Properties</h6>
+                    <?js= self.partial('params.tmpl', param.subparams) ?>
+                </td>
+            <?js } ?>
+
+            <?js if (params.hasDefault && !param.subparams) {?>
                 <td class="default">
                 <?js if (typeof param.defaultvalue !== 'undefined') { ?>
                     <code><?js= self.htmlsafe(param.defaultvalue) ?></code>
                 <?js } ?>
                 </td>
             <?js } ?>
-
-            <td class="description last"><?js= param.description ?><?js if (param.subparams) { ?>
-                <h6>Properties</h6>
-                <?js= self.partial('params.tmpl', param.subparams) ?>
-            <?js } ?></td>
+            <?js if (!param.subparams) { ?>
+                <td class="description last"><?js= param.description ?></td>
+            <?js } ?>
         </tr>
 
     <?js }); ?>
     </tbody>
 </table>
+</div>

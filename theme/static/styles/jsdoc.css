@@ -146,7 +146,6 @@ tt, code, kbd, samp {
 
 #main {
   float: right;
-  min-width: 360px;
   width: calc(100% - 240px);
 }
 
@@ -397,7 +396,6 @@ h4.name a.issue-button:hover {
 
 .prettyprint {
   font-size: 14px;
-  overflow: auto;
 }
 
 .prettyprint.source {
@@ -413,6 +411,7 @@ h4.name a.issue-button:hover {
   display: block;
   background-color: #0d152a;
   color: #4D4E53;
+  overflow: auto;
 }
 
 .prettyprint > code {
@@ -469,6 +468,10 @@ table {
   margin: 1em 0;
 }
 
+.table-overflow {
+  overflow: auto;
+}
+
 td, th {
    margin: 0px;
    text-align: left;
@@ -485,6 +488,11 @@ thead tr, thead tr {
 
 .params code {
   white-space: pre;
+}
+
+.params .attribute {
+  font-size: 80%;
+  color: hsl(0, 0%, 56%);
 }
 
 .params .name, .props .name, .name code {
@@ -523,34 +531,34 @@ span.param-type, .params td .param-type, .param-type dd {
 }
 
 /* navicon button */
-.navicon-button {
-  display: none;
-  position: relative;
-  padding: 2.0625rem 1.5rem;
-  transition: 0.25s;
-  cursor: pointer;
-  -webkit-user-select: none;
-     -moz-user-select: none;
-      -ms-user-select: none;
-          user-select: none;
-  opacity: .8;
-}
-.navicon-button .navicon:before, .navicon-button .navicon:after {
-  transition: 0.25s;
-}
-.navicon-button:hover {
-  transition: 0.5s;
-  opacity: 1;
-}
-.navicon-button:hover .navicon:before, .navicon-button:hover .navicon:after {
-  transition: 0.25s;
-}
-.navicon-button:hover .navicon:before {
-  top: .825rem;
-}
-.navicon-button:hover .navicon:after {
-  top: -.825rem;
-}
+/*.navicon-button {*/
+/*  display: none;*/
+/*  position: relative;*/
+/*  padding: 2.0625rem 1.5rem;*/
+/*  transition: 0.25s;*/
+/*  cursor: pointer;*/
+/*  -webkit-user-select: none;*/
+/*     -moz-user-select: none;*/
+/*      -ms-user-select: none;*/
+/*          user-select: none;*/
+/*  opacity: .8;*/
+/*}*/
+/*.navicon-button .navicon:before, .navicon-button .navicon:after {*/
+/*  transition: 0.25s;*/
+/*}*/
+/*.navicon-button:hover {*/
+/*  transition: 0.5s;*/
+/*  opacity: 1;*/
+/*}*/
+/*.navicon-button:hover .navicon:before, .navicon-button:hover .navicon:after {*/
+/*  transition: 0.25s;*/
+/*}*/
+/*.navicon-button:hover .navicon:before {*/
+/*  top: .825rem;*/
+/*}*/
+/*.navicon-button:hover .navicon:after {*/
+/*  top: -.825rem;*/
+/*}*/
 
 /* navicon */
 .navicon {
@@ -657,10 +665,7 @@ html[data-search-mode] .level-hide {
 }
 
 
-@media only screen and (min-width: 320px) and (max-width: 680px) {
-  body {
-    overflow-x: hidden;
-  }
+@media (max-width: 1087px) {
 
   nav {
     background: #FFF;
@@ -676,17 +681,59 @@ html[data-search-mode] .level-hide {
     transition: left 0.2s;
   }
 
-  .navicon-button {
-    display: inline-block;
+  /*.navicon-button {*/
+  /*  line-height: 56px;*/
+  /*  font-size: 1.6rem;*/
+  /*  width: inherit;*/
+  /*  display: inline-block;*/
+  /*  text-align: center;*/
+  /*}*/
+
+  .ion-ios-book {
+    font-size: 27px;
+    text-align: center;
+    color: white;
+    line-height: 27px;
+    vertical-align: middle;
+  }
+
+  .fixed-action-btn {
     position: fixed;
-    top: 1.5em;
-    right: 0;
-    z-index: 2;
+    bottom: 45px;
+    right: 24px;
+    padding-top: 15px;
+    margin-bottom: 0;
+    z-index: 997;
+  }
+
+  .button-floating {
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    width: 56px;
+    height: 56px;
+    padding: 0;
+    line-height: 54px;
+    font-size: 15px;
+    background-color: #FF7518;
+    border-radius: 50%;
+    -webkit-transition: background-color .3s;
+    transition: background-color .3s;
+    cursor: pointer;
+    vertical-align: middle;
+    text-decoration: none;
+    text-align: center;
+    letter-spacing: .5px;
+    outline: 0;
+    -webkit-tap-highlight-color: transparent;
+    border: none;
+    box-shadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12), 0 1px 5px 0 rgba(0,0,0,0.2);
   }
 
   #main {
     width: 100%;
-    min-width: 360px;
+    padding: 3.25rem 1.5rem;
   }
 
   #main h1.page-title {
@@ -699,6 +746,18 @@ html[data-search-mode] .level-hide {
 
   footer {
     margin-left: 0;
+  }
+}
+
+@media (max-width: 330px) {
+  .mobile-break {
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  #main {
+    width: 100%;
+    padding: 3.25rem 1vw 0 1vw;
   }
 }
 
