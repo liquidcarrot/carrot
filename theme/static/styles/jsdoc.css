@@ -530,36 +530,6 @@ span.param-type, .params td .param-type, .param-type dd {
   color: #454545
 }
 
-/* navicon button */
-/*.navicon-button {*/
-/*  display: none;*/
-/*  position: relative;*/
-/*  padding: 2.0625rem 1.5rem;*/
-/*  transition: 0.25s;*/
-/*  cursor: pointer;*/
-/*  -webkit-user-select: none;*/
-/*     -moz-user-select: none;*/
-/*      -ms-user-select: none;*/
-/*          user-select: none;*/
-/*  opacity: .8;*/
-/*}*/
-/*.navicon-button .navicon:before, .navicon-button .navicon:after {*/
-/*  transition: 0.25s;*/
-/*}*/
-/*.navicon-button:hover {*/
-/*  transition: 0.5s;*/
-/*  opacity: 1;*/
-/*}*/
-/*.navicon-button:hover .navicon:before, .navicon-button:hover .navicon:after {*/
-/*  transition: 0.25s;*/
-/*}*/
-/*.navicon-button:hover .navicon:before {*/
-/*  top: .825rem;*/
-/*}*/
-/*.navicon-button:hover .navicon:after {*/
-/*  top: -.825rem;*/
-/*}*/
-
 /* navicon */
 .navicon {
   position: relative;
@@ -680,14 +650,6 @@ html[data-search-mode] .level-hide {
     padding: 0 10px;
     transition: left 0.2s;
   }
-
-  /*.navicon-button {*/
-  /*  line-height: 56px;*/
-  /*  font-size: 1.6rem;*/
-  /*  width: inherit;*/
-  /*  display: inline-block;*/
-  /*  text-align: center;*/
-  /*}*/
 
   .ion-ios-book {
     font-size: 27px;
