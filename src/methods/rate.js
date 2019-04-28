@@ -5,6 +5,10 @@
 * @see [Learning rate policy](https://stackoverflow.com/questions/30033096/what-is-lr-policy-in-caffe/30045244)
 *
 * @example
+* let { methods, Network } = require("@liquid-carrot/carrot");
+* 
+* let network = new Network(5, 10, 5);
+* 
 * network.train(trainingSet, {
 *   rate: 0.3,
 *   ratePolicy: methods.rate.METHOD(options), // replace METHOD with your choice
@@ -19,6 +23,10 @@ var rate = {
   * @returns {function}
   *
   * @example
+  * let { methods, Network } = require("@liquid-carrot/carrot");
+  * 
+  * let network = new Network(5, 10, 5);
+  * 
   * network.train(trainingSet, {
   *   rate: 0.3,
   *   ratePolicy: methods.rate.FIXED(),
@@ -35,6 +43,10 @@ var rate = {
   * @param {number} [stepSize=100] Amount of iterations before learning rate is updated (a step)
   *
   * @example
+  * let { methods, Network } = require("@liquid-carrot/carrot");
+  * 
+  * let network = new Network(5, 10, 5);
+  * 
   * network.train(trainingSet, {
   *   rate: 0.3,
   *   ratePolicy: methods.rate.STEP(gamma, stepSize),
@@ -58,6 +70,10 @@ var rate = {
   * @param {number} [gamma=0.999] Amount to decrease learning rate by, higher numbers mean lower decreases in learning rate. The default gamma of <code>0.999</code> will decrease the current rate by 0.1% every iteration.
   *
   * @example
+  * let { methods, Network } = require("@liquid-carrot/carrot");
+  * 
+  * let network = new Network(5, 10, 5);
+  * 
   * network.train(trainingSet, {
   *   rate: 0.3,
   *   ratePolicy: methods.rate.EXP(gamma),
@@ -81,6 +97,10 @@ var rate = {
   * @param {number} [power=2] A power that is set to negative, higher numbers mean higher decreases in learning rate
   *
   * @example
+  * let { methods, Network } = require("@liquid-carrot/carrot");
+  * 
+  * let network = new Network(5, 10, 5);
+  * 
   * network.train(trainingSet, {
   *   rate: 0.3,
   *   ratePolicy: methods.rate.INV(gamma, power),

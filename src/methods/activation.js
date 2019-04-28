@@ -10,6 +10,8 @@
 *
 *
 * @example
+* let { methods, Node } = require("@liquid-carrot/carrot");
+* 
 * // Changing a neuron's activation function
 * var A = new Node();
 * A.squash = methods.activation.<ACTIVATION_FUNCTION>;
@@ -29,6 +31,8 @@ var activation = {
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
+  * let { methods, Node } = require("@liquid-carrot/carrot");
+  * 
   * // Changing a neuron's activation function
   * var A = new Node();
   * A.squash = methods.activation.LOGISTIC;
@@ -47,6 +51,8 @@ var activation = {
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
+  * let { methods, Node } = require("@liquid-carrot/carrot");
+  * 
   * // Changing a neuron's activation function
   * var A = new Node();
   * A.squash = methods.activation.TANH;
@@ -66,6 +72,8 @@ var activation = {
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
+  * let { methods, Node } = require("@liquid-carrot/carrot");
+  * 
   * // Changing a neuron's activation function
   * var A = new Node();
   * A.squash = methods.activation.IDENTITY;
@@ -82,6 +90,8 @@ var activation = {
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
+  * let { methods, Node } = require("@liquid-carrot/carrot");
+  * 
   * // Changing a neuron's activation function
   * var A = new Node();
   * A.squash = methods.activation.STEP;
@@ -98,6 +108,8 @@ var activation = {
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
+  * let { methods, Node } = require("@liquid-carrot/carrot");
+  * 
   * // Changing a neuron's activation function
   * var A = new Node();
   * A.squash = methods.activation.RELU;
@@ -115,6 +127,8 @@ var activation = {
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
+  * let { methods, Node } = require("@liquid-carrot/carrot");
+  * 
   * // Changing a neuron's activation function
   * var A = new Node();
   * A.squash = methods.activation.SOFTSIGN;
@@ -133,6 +147,8 @@ var activation = {
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
+  * let { methods, Node } = require("@liquid-carrot/carrot");
+  * 
   * // Changing a neuron's activation function
   * var A = new Node();
   * A.squash = methods.activation.SINUSOID;
@@ -150,6 +166,8 @@ var activation = {
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
+  * let { methods, Node } = require("@liquid-carrot/carrot");
+  * 
   * // Changing a neuron's activation function
   * var A = new Node();
   * A.squash = methods.activation.GAUSSIAN;
@@ -168,6 +186,8 @@ var activation = {
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
+  * let { methods, Node } = require("@liquid-carrot/carrot");
+  * 
   * // Changing a neuron's activation function
   * var A = new Node();
   * A.squash = methods.activation.BENT_IDENTITY;
@@ -185,7 +205,9 @@ var activation = {
   * @param {number} x Input value to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
-    * @example
+  * @example
+  * let { methods, Node } = require("@liquid-carrot/carrot");
+  * 
   * // Changing a neuron's activation function
   * var A = new Node();
   * A.squash = methods.activation.BIPOLAR;
@@ -202,6 +224,8 @@ var activation = {
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
+  * let { methods, Node } = require("@liquid-carrot/carrot");
+  * 
   * // Changing a neuron's activation function
   * var A = new Node();
   * A.squash = methods.activation.BIPOLAR_SIGMOID;
@@ -220,6 +244,8 @@ var activation = {
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
+  * let { methods, Node } = require("@liquid-carrot/carrot");
+  * 
   * // Changing a neuron's activation function
   * var A = new Node();
   * A.squash = methods.activation.HARD_TANH;
@@ -239,6 +265,8 @@ var activation = {
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
+  * let { methods, Node } = require("@liquid-carrot/carrot");
+  * 
   * // Changing a neuron's activation function
   * var A = new Node();
   * A.squash = methods.activation.ABSOLUTE;
@@ -256,6 +284,8 @@ var activation = {
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
+  * let { methods, Node } = require("@liquid-carrot/carrot");
+  * 
   * // Changing a neuron's activation function
   * var A = new Node();
   * A.squash = methods.activation.INVERSE;
@@ -277,6 +307,8 @@ var activation = {
    * @param {boolean} [derivate] Flag to select derivative function
    *
    * @example
+   * let { methods, Node } = require("@liquid-carrot/carrot");
+   * 
    * // Changing a neuron's activation function
    * var A = new Node();
    * A.squash = methods.activation.SELU;

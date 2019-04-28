@@ -18,6 +18,8 @@ var Node = require('./node');
 * @prop {Connection[]} [connections.self=[]] Self connections
 *
 * @example
+* let { Layer } = require("@liquid-carrot/carrot");
+*
 * // A group with 5 nodes
 * let A = new Group(5);
 */
@@ -43,6 +45,8 @@ Group.prototype = {
   * @returns {number[]} Squashed output values
   *
   * @example
+  * let { Layer } = require("@liquid-carrot/carrot");
+  *
   * myGroup.activate();
   *
   * // or (array length must be same length as nodes in group)
@@ -80,6 +84,8 @@ Group.prototype = {
   * @param {number|number[]} target Ideal value(s)
   *
   * @example
+  * let { Layer } = require("@liquid-carrot/carrot");
+  *
   * var A = new Group(2);
   * var B = new Group(3);
   *
@@ -115,6 +121,8 @@ Group.prototype = {
   * @returns {Connection[]} The formed connections
   *
   * @example
+  * let { Layer } = require("@liquid-carrot/carrot");
+  *
   * let A = new Group(4);
   * let B = new Group(5);
   *
@@ -240,6 +248,8 @@ Group.prototype = {
   * @param {string} values.type <code>input</code>, <code>hidden</code> or <code>output</code>, should not be used manually (setting to <code>constant</code> will disable bias/weight changes)
   *
   * @example
+  * let { Layer } = require("@liquid-carrot/carrot");
+  *
   * var group = new Group(4);
   *
   * // All nodes in 'group' now have a bias of 1

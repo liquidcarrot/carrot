@@ -88,6 +88,8 @@ let network = architect.Construct([input, hidden1, hidden2, output]);
 Shaping a network with neuro-evolution
 
 ```javascript
+let { Network, methods } = require('@liquid-carrot/carrot');
+
 // this network learns the XOR gate (through neuro-evolution)
 async function execute () {
    var network = new Network(2,1);

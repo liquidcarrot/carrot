@@ -9,12 +9,16 @@
 * @alias connection_method
 *
 * @example <caption>Connection between two Groups</caption>
+* let { methods, Group } = require("@liquid-carrot/carrot");
+* 
 * let A = new Group(4);
 * let B = new Group(5);
 *
 * A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional
 *
 * @example <caption>Group connection with itself</caption>
+* let { methods, Group } = require("@liquid-carrot/carrot");
+* 
 * let A = new Group(4);
 *
 * A.connect(A, methods.connection.ALL_TO_ALL);
@@ -28,6 +32,8 @@ var connection = {
    * @default
    *
    * @example <caption>Connection between two Groups</caption>
+   * let { methods, Group } = require("@liquid-carrot/carrot");
+   * 
    * let A = new Group(4);
    * let B = new Group(5);
    *
@@ -43,6 +49,8 @@ var connection = {
    * @default
    *
    * @example <caption>Connection between two Groups</caption>
+   * let { methods, Group } = require("@liquid-carrot/carrot");
+   * 
    * let A = new Group(4);
    * let B = new Group(5);
    *
@@ -59,6 +67,8 @@ var connection = {
    * @default
    *
    * @example <caption>Connection between two Groups</caption>
+   * let { methods, Group } = require("@liquid-carrot/carrot");
+   * 
    * let A = new Group(4);
    * let B = new Group(5);
    *

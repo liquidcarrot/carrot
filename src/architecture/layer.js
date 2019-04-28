@@ -17,6 +17,8 @@ var Node = require('./node');
 * @prop {Group[]|Node[]} connections.self Self connections
 *
 * @example <caption>Custom architecture built with layers</caption>
+* let { Layer } = require("@liquid-carrot/carrot");
+* 
 * let input = new Layer.Dense(1);
 * let hidden1 = new Layer.LSTM(5);
 * let hidden2 = new Layer.GRU(1);
@@ -225,6 +227,8 @@ Layer.prototype = {
 * @returns {Layer} Plain layer
 *
 * @example
+* let { Layer } = require("@liquid-carrot/carrot");
+* 
 * let layer = new Layer.Dense(size);
 */
 Layer.Dense = function(size) {
@@ -256,6 +260,8 @@ Layer.Dense = function(size) {
 * @returns {Layer} LSTM layer
 *
 * @example
+* let { Layer } = require("@liquid-carrot/carrot");
+* 
 * let layer = new Layer.LSTM(size);
 */
 Layer.LSTM = function(size) {
@@ -326,6 +332,8 @@ Layer.LSTM = function(size) {
 * @returns {Layer} GRU layer
 *
 * @example
+* let { Layer } = require("@liquid-carrot/carrot");
+* 
 * let layer = new Layer.GRU(size);
 */
 Layer.GRU = function(size) {
@@ -414,6 +422,8 @@ Layer.GRU = function(size) {
 * @returns {Layer} Layer with nodes that store previous inputs
 *
 * @example
+* let { Layer } = require("@liquid-carrot/carrot");
+* 
 * let layer = new Layer.Memory(size, memory);
 */
 Layer.Memory = function(size, memory) {

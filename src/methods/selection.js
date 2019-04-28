@@ -6,6 +6,8 @@
  * @see [Genetic Algorithm - Selection]{@link https://en.wikipedia.org/wiki/Selection_(genetic_algorithm)}
  *
  * @example
+ * let { architect, methods } = require("@liquid-carrot/carrot");
+ * 
  * let myNetwork = new architect.Perceptron(1,1,1);
  * let myTrainingSet = [{ input:[0], output:[1]}, { input:[1], output:[0]}];
  *
@@ -22,6 +24,8 @@ var selection = {
    * @default
    *
    * @example
+   * let { architect, methods } = require("@liquid-carrot/carrot");
+   * 
    * let myNetwork = new architect.Perceptron(1,1,1);
    * let myTrainingSet = [{ input:[0], output:[1]}, { input:[1], output:[0]}];
    *
@@ -40,6 +44,8 @@ var selection = {
    * @default
    *
    * @example
+   * let { architect, methods } = require("@liquid-carrot/carrot");
+   * 
    * let myNetwork = new architect.Perceptron(1,1,1);
    * let myTrainingSet = [{ input:[0], output:[1]}, { input:[1], output:[0]}];
    *
@@ -59,6 +65,8 @@ var selection = {
    * @default
    *
    * @example
+   * let { architect, methods } = require("@liquid-carrot/carrot");
+   * 
    * let myNetwork = new architect.Perceptron(1,1,1);
    * let myTrainingSet = [{ input:[0], output:[1]}, { input:[1], output:[0]}];
    *

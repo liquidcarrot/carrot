@@ -10,6 +10,10 @@ var activation = require('./activation');
  * @see {@link https://en.wikipedia.org/wiki/Genetic_algorithm#Selection|Selection (genetic algorithms) on Wikipedia}
  *
  * @example <caption>Mutation methods with networks</caption>
+ * let { methods, Network } = require("@liquid-carrot/carrot");
+ *
+ * let myNetwork = new Network(5, 10, 5);
+ *
  * // Setting a mutation method for a network
  * myNetwork.mutate(methods.mutation.ADD_NODE);
  *
@@ -19,6 +23,10 @@ var activation = require('./activation');
  * }
  *
  * @example <caption>Using a mutation method with a neuron</caption>
+ * let { methods, Network } = require("@liquid-carrot/carrot");
+ *
+ * let myNetwork = new Network(5, 10, 5);
+ *
  * myNode.mutate(methods.mutation.MOD_BIAS);
  */
 var mutation = {
@@ -29,6 +37,10 @@ var mutation = {
    * @default
    *
    * @example
+   * let { methods, Network } = require("@liquid-carrot/carrot");
+   *
+   * let myNetwork = new Network(5, 10, 5);
+   *
    * myNetwork.mutate(methods.mutation.ADD_NODE);
    */
   ADD_NODE: {
@@ -43,6 +55,10 @@ var mutation = {
    * @prop {boolean} keep_gates=true Ensures replacement node has gated connections if the removed node did.
    *
    * @example
+   * let { methods, Network } = require("@liquid-carrot/carrot");
+   *
+   * let myNetwork = new Network(5, 10, 5);
+   *
    * myNetwork.mutate(methods.mutation.SUB_NODE);
    */
   SUB_NODE: {
@@ -56,6 +72,10 @@ var mutation = {
    * @default
    *
    * @example
+   * let { methods, Network } = require("@liquid-carrot/carrot");
+   *
+   * let myNetwork = new Network(5, 10, 5);
+   *
    * myNetwork.mutate(methods.mutation.ADD_CONN);
    */
   ADD_CONN: {
@@ -68,6 +88,10 @@ var mutation = {
    * @default
    *
    * @example
+   * let { methods, Network } = require("@liquid-carrot/carrot");
+   *
+   * let myNetwork = new Network(5, 10, 5);
+   *
    * myNetwork.mutate(methods.mutation.SUB_CONN);
    */
   SUB_CONN: {
@@ -83,6 +107,10 @@ var mutation = {
    * @prop {number} max=1 higher bound for weight modification
    *
    * @example
+   * let { methods, Network } = require("@liquid-carrot/carrot");
+   *
+   * let myNetwork = new Network(5, 10, 5);
+   *
    * myNetwork.mutate(methods.mutation.MOD_WEIGHT);
    */
   MOD_WEIGHT: {
@@ -100,6 +128,10 @@ var mutation = {
    * @prop {number} max=1 higher bound for modification of a neuron's bias
    *
    * @example
+   * let { methods, Network } = require("@liquid-carrot/carrot");
+   *
+   * let myNetwork = new Network(5, 10, 5);
+   *
    * let myNode = new Node();
    *
    * myNode.mutate(methods.mutation.MOD_BIAS);
@@ -119,11 +151,19 @@ var mutation = {
    * @prop {activation[]} [allowed=[all built-in activation methods]] Mutation methods to randomly select from when mutating
    *
    * @example <caption>Mutating the activation function of a node</caption>
+   * let { methods, Network } = require("@liquid-carrot/carrot");
+   *
+   * let myNetwork = new Network(5, 10, 5);
+   *
    * let myNode = new Node();
    *
    * myNode.mutate(methods.mutation.MOD_ACTIVATION);
    *
    * @example <caption>Mutating the activation function of a network's nodes</caption>
+   * let { methods, Network } = require("@liquid-carrot/carrot");
+   *
+   * let myNetwork = new Network(5, 10, 5);
+   *
    * let myNode = new Node();
    *
    * myNode.mutate(methods.mutation.MOD_ACTIVATION);
@@ -156,6 +196,10 @@ var mutation = {
    * @default
    *
    * @example
+   * let { methods, Network } = require("@liquid-carrot/carrot");
+   *
+   * let myNetwork = new Network(5, 10, 5);
+   *
    * myNetwork.mutate(methods.mutation.ADD_SELF_CONN);
    */
   ADD_SELF_CONN: {
@@ -168,6 +212,10 @@ var mutation = {
    * @default
    *
    * @example
+   * let { methods, Network } = require("@liquid-carrot/carrot");
+   *
+   * let myNetwork = new Network(5, 10, 5);
+   *
    * myNetwork.mutate(methods.mutation.SUB_SELF_CONN);
    */
   SUB_SELF_CONN: {
@@ -180,6 +228,10 @@ var mutation = {
    * @default
    *
    * @example
+   * let { methods, Network } = require("@liquid-carrot/carrot");
+   *
+   * let myNetwork = new Network(5, 10, 5);
+   *
    * myNetwork.mutate(methods.mutation.ADD_GATE);
    */
   ADD_GATE: {
@@ -192,6 +244,10 @@ var mutation = {
    * @default
    *
    * @example
+   * let { methods, Network } = require("@liquid-carrot/carrot");
+   *
+   * let myNetwork = new Network(5, 10, 5);
+   *
    * myNetwork.mutate(methods.mutation.SUB_GATE);
    */
   SUB_GATE: {
@@ -204,6 +260,10 @@ var mutation = {
    * @default
    *
    * @example
+   * let { methods, Network } = require("@liquid-carrot/carrot");
+   *
+   * let myNetwork = new Network(5, 10, 5);
+   *
    * myNetwork.mutate(methods.mutation.ADD_BACK_CONN);
    */
   ADD_BACK_CONN: {
@@ -216,6 +276,10 @@ var mutation = {
    * @default
    *
    * @example
+   * let { methods, Network } = require("@liquid-carrot/carrot");
+   *
+   * let myNetwork = new Network(5, 10, 5);
+   *
    * myNetwork.mutate(methods.mutation.SUB_BACK_CONN);
    */
   SUB_BACK_CONN: {
@@ -229,6 +293,10 @@ var mutation = {
    *
    * @prop {boolean} mutateOutput=true Swap bias and activation function of network output neurons too. Disable this to keep output of a neural network normalized.
    * @example
+   * let { methods, Network } = require("@liquid-carrot/carrot");
+   *
+   * let myNetwork = new Network(5, 10, 5);
+   *
    * myNetwork.mutate(methods.mutation.SWAP_NODES);
    */
   SWAP_NODES: {
@@ -246,6 +314,10 @@ var mutation = {
  * @default
  *
  * @example <caption>A group of mutation methods for evolution</caption>
+ * let { methods, Network } = require("@liquid-carrot/carrot");
+ *
+ * let myNetwork = new Network(5, 10, 5);
+ *
  * network.evolve(trainingset, {
  *  mutation: methods.mutation.ALL // all mutation methods
  * }
@@ -276,6 +348,10 @@ mutation.ALL = [
  * @default
  *
  * @example <caption>A group of mutation methods for evolution</caption>
+ * let { methods, Network } = require("@liquid-carrot/carrot");
+ *
+ * let myNetwork = new Network(5, 10, 5);
+ *
  * network.evolve(trainingset, {
  *  mutation: methods.mutation.FFW// all feedforward mutation methods
  * }

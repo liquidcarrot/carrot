@@ -19,6 +19,8 @@ var architect = {
   * @param {Group[]|Layer[]|Node[]} list A list of Groups, Layers, and Nodes to combine into a Network
   *
   * @example <caption>A Network built with Nodes</caption>
+  * let { architect } = require("@liquid-carrot/carrot");
+  *
   * var A = new Node();
   * var B = new Node();
   * var C = new Node();
@@ -34,6 +36,8 @@ var architect = {
   * var network = architect.Construct([A, B, C, D]);
   *
   * @example <caption>A Network built with Groups</caption>
+  * let { architect } = require("@liquid-carrot/carrot");
+  *
   * var A = new Group(4);
   * var B = new Group(2);
   * var C = new Group(6);
@@ -121,6 +125,8 @@ var architect = {
   * @param {...number} layerNeurons Number of neurons in input layer, hidden layer(s), and output layer as a series of numbers (min 3 arguments)
   *
   * @example
+  * let { architect } = require("@liquid-carrot/carrot");
+  *
   * // Input 2 neurons, Hidden layer: 3 neurons, Output: 1 neuron
   * let myPerceptron = new architect.Perceptron(2,3,1);
   *
@@ -164,6 +170,8 @@ var architect = {
   * @param {number} [options.gates=0] Number of gates
   *
   * @example
+  * let { architect } = require("@liquid-carrot/carrot");
+  *
   * let network = architect.Random(1, 20, 2, {
   *   connections: 40,
   *   gates: 4,
@@ -222,6 +230,8 @@ var architect = {
   * @param {boolean} [options.inputToDeep=true] Form input to memory layer conections and gate them
   *
   * @example <caption>While training sequences or timeseries prediction, set the clear option to true in training</caption>
+  * let { architect } = require("@liquid-carrot/carrot");
+  *
   * // Input, memory block layer, output
   * let myLSTM = new architect.LSTM(2,6,1);
   *
@@ -367,6 +377,8 @@ var architect = {
   * @param {number} output Number of output nodes
   *
   * @example <caption>GRU is being tested, and may not always work for your dataset.</caption>
+  * let { architect } = require("@liquid-carrot/carrot");
+  *
   * // Input, gated recurrent unit layer, output
   * let myLSTM = new architect.GRU(2,6,1);
   *
@@ -374,6 +386,8 @@ var architect = {
   * let myLSTM = new architect.GRU(2, 4, 4, 4, 1);
   *
   * @example <caption>Training XOR gate</caption>
+  * let { architect } = require("@liquid-carrot/carrot");
+  *
   * var trainingSet = [
   *   { input: [0], output: [0]},
   *   { input: [1], output: [1]},
@@ -429,6 +443,8 @@ var architect = {
   * @param {number} size Number of inputs and outputs (which is the same number)
   *
   * @example <caption>Output will always be binary due to `Activation.STEP` function.</caption>
+  * let { architect } = require("@liquid-carrot/carrot");
+  *
   * var network = architect.Hopfield(10);
   * var trainingSet = [
   *   { input: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1], output: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1] },
@@ -471,6 +487,8 @@ var architect = {
   * @param {number} previousOutput Number of previous outputs to remember
   *
   * @example
+  * let { architect } = require("@liquid-carrot/carrot");
+  *
   * let narx = new architect.NARX(1, 5, 1, 3, 3);
   *
   * // Training a sequence

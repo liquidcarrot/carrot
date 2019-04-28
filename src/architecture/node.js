@@ -14,8 +14,6 @@ var config = require('../config');
 * - [here](https://github.com/cazala/synaptic/wiki/Neural-Networks-101)
 * - [here](https://keras.io/backend/#bias_add)
 *
-* @todo Add `@param` tag descriptions
-*
 * @constructs Node
 *
 * @param {string} [type=hidden] Can be: `input`, `hidden`, or `output`
@@ -38,6 +36,8 @@ var config = require('../config');
 * @prop {number} error.gated
 *
 * @example
+* let { Node } = require("@liquid-carrot/carrot");
+*
 * let node = new Node();
 */
 function Node (type) {
@@ -86,6 +86,8 @@ Node.prototype = {
   * @returns {number} A neuron's ['Squashed'](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) output value
   *
   * @example
+  * let { Node } = require("@liquid-carrot/carrot");
+  *
   * let A = new Node();
   * let B = new Node();
   *
@@ -175,6 +177,8 @@ Node.prototype = {
   * @returns {number} A neuron's ['Squashed'](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) output value
   *
   * @example
+  * let { Node } = require("@liquid-carrot/carrot");
+  *
   * let node = new Node();
   *
   * node.noTraceActivate(); // 0.4923128591923
@@ -219,6 +223,8 @@ Node.prototype = {
   * @param {number} target The target value, a `float` between zero and one
   *
   * @example
+  * let { Node } = require("@liquid-carrot/carrot");
+  *
   * let A = new Node();
   * let B = new Node('output');
   * A.connect(B);
@@ -330,6 +336,8 @@ Node.prototype = {
   * @returns {Connection[]}
   *
   * @example <caption>Connecting to other neurons and groups</caption>
+  * let { Node } = require("@liquid-carrot/carrot");
+  *
   * let A = new Node();
   * let B = new Node();
   * A.connect(B); // A now projects a connection to B
@@ -340,6 +348,8 @@ Node.prototype = {
   * B.connect(C); // B now projects a connection to all nodes in C
   *
   * @example <caption>A neuron can also connect to itself, creating a selfconnection</caption>
+  * let { Node } = require("@liquid-carrot/carrot");
+  *
   * let A = new Node();
   * A.connect(A); // A now connects to itself
   */
@@ -383,6 +393,8 @@ Node.prototype = {
   * @param {boolean} [twosided] If the nodes project a connection to each other (two way connection), set this to true to disconnect both connections at once
   *
   * @example <caption>One sided connection</caption>
+  * let { Node } = require("@liquid-carrot/carrot");
+  *
   * let A = new Node();
   * let B = new Node();
   * A.connect(B); // A now projects a connection to B
@@ -390,6 +402,8 @@ Node.prototype = {
   * A.disconnect(B); // no connection between A and B anymore
   *
   * @example <caption>Two-sided connection</caption>
+  * let { Node } = require("@liquid-carrot/carrot");
+  *
   * let A = new Node();
   * let B = new Node();
   * A.connect(B); // A now projects a connection to B
@@ -426,6 +440,8 @@ Node.prototype = {
   * @param {Connection[]|Connection} connections Connections to be gated (influenced) by a neuron
   *
   * @example
+  * let { Node } = require("@liquid-carrot/carrot");
+  *
   * let A = new Node();
   * let B = new Node();
   * let C = new Node();
@@ -456,6 +472,8 @@ Node.prototype = {
   * @param {Connection[]|Connection} connections Connections to be ungated
   *
   * @example
+  * let { Node } = require("@liquid-carrot/carrot");
+  *
   * let A = new Node();
   * let B = new Node();
   * let C = new Node();
@@ -511,6 +529,8 @@ Node.prototype = {
   * @param {mutation} method A [Mutation Method](mutation), either MOD_ACTIVATION or MOD_BIAS
   *
   * @example
+  * let { Node } = require("@liquid-carrot/carrot");
+  *
   * let A = new Node(); // a Node with the default LOGISTIC squash function
   *
   * let allowable_methods = [
@@ -547,6 +567,8 @@ Node.prototype = {
   * @returns {boolean} True if there is a connection from this node to a given node
   *
   * @example
+  * let { Node } = require("@liquid-carrot/carrot");
+  *
   * let A = new Node();
   * let B = new Node();
   * let C = new Node();
@@ -575,6 +597,8 @@ Node.prototype = {
   * @returns {boolean} True if there is a connection from the given node to this node
   *
   * @example
+  * let { Node } = require("@liquid-carrot/carrot");
+  *
   * let A = new Node();
   * let B = new Node();
   * let C = new Node();
@@ -603,6 +627,8 @@ Node.prototype = {
   * @returns {object}
   *
   * @example
+  * let { Node } = require("@liquid-carrot/carrot");
+  *
   * let exported = myNode.toJSON();
   * let imported = myNode.fromJSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
   */
@@ -625,6 +651,8 @@ Node.prototype = {
 * @returns {Node} A reconstructed node
 *
 * @example
+* let { Node } = require("@liquid-carrot/carrot");
+*
 * let exported = myNode.toJSON();
 * let imported = myNode.fromJSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
 */

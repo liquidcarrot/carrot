@@ -16,6 +16,9 @@ var cost = {
   * @returns {number} [Cross entropy error](https://ml-cheatsheet.readthedocs.io/en/latest/loss_functions.html)
   *
   * @example
+  * let { methods, Network } = require("@liquid-carrot/carrot");
+  * 
+  * let myNetwork = new Network(5, 10, 5);
   * myNetwork.train(trainingData, {
   *   log: 1,
   *   iterations: 500,
@@ -41,6 +44,9 @@ var cost = {
   * @returns {number} [Mean squared error](https://medium.freecodecamp.org/machine-learning-mean-squared-error-regression-line-c7dde9a26b93)
   *
   * @example
+  * let { methods, Network } = require("@liquid-carrot/carrot");
+  * 
+  * let myNetwork = new Network(5, 10, 5);
   * myNetwork.train(trainingData, {
   *   log: 1,
   *   iterations: 500,
@@ -68,6 +74,9 @@ var cost = {
   * @see [Hinge loss on Wikipedia](https://en.wikipedia.org/wiki/Hinge_loss)
   *
   * @example
+  * let { methods, Network } = require("@liquid-carrot/carrot");
+  * 
+  * let myNetwork = new Network(5, 10, 5);
   * myNetwork.train(trainingData, {
   *   log: 1,
   *   iterations: 500,
@@ -93,6 +102,9 @@ var cost = {
   * @returns {number} [Mean absoulte error](https://en.wikipedia.org/wiki/Mean_absolute_error)
   *
   * @example
+  * let { methods, Network } = require("@liquid-carrot/carrot");
+  * 
+  * let myNetwork = new Network(5, 10, 5);
   * myNetwork.train(trainingData, {
   *   log: 1,
   *   iterations: 500,
@@ -118,6 +130,9 @@ var cost = {
   * @returns {number} [Mean absolute percentage error](https://en.wikipedia.org/wiki/Mean_absolute_percentage_error)
   *
   * @example
+  * let { methods, Network } = require("@liquid-carrot/carrot");
+  * 
+  * let myNetwork = new Network(5, 10, 5);
   * myNetwork.train(trainingData, {
   *   log: 1,
   *   iterations: 500,
@@ -143,6 +158,9 @@ var cost = {
   * @returns {number} - [Weighted absolute percentage error](https://help.sap.com/doc/saphelp_nw70/7.0.31/en-US/76/487053bbe77c1ee10000000a174cb4/content.htm?no_cache=true)
   * 
   * @example
+  * let { methods, Network } = require("@liquid-carrot/carrot");
+  * 
+  * let myNetwork = new Network(5, 10, 5);
   * myNetwork.train(trainingData, {
   *   cost: methods.cost.WAPE
   * });
@@ -166,6 +184,9 @@ var cost = {
   * @returns {number} - [Mean squared logarithmic error](https://peltarion.com/knowledge-center/documentation/modeling-view/build-an-ai-model/loss-functions/mean-squared-logarithmic-error)
   *
   * @example
+  * let { methods, Network } = require("@liquid-carrot/carrot");
+  * 
+  * let myNetwork = new Network(5, 10, 5);
   * myNetwork.train(trainingData, {
   *   log: 1,
   *   iterations: 500,
@@ -191,6 +212,9 @@ var cost = {
   * @returns {number} - [Hinge loss](https://towardsdatascience.com/support-vector-machines-intuitive-understanding-part-1-3fb049df4ba1)
   *
   * @example
+  * let { methods, Network } = require("@liquid-carrot/carrot");
+  * 
+  * let myNetwork = new Network(5, 10, 5);
   * myNetwork.train(trainingData, {
   *   log: 1,
   *   iterations: 500,

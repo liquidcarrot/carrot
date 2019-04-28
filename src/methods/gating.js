@@ -2,6 +2,7 @@
 * Specifies how to gate a connection between two groups of multiple neurons.
 * Gating makes the weights in networks more dynamic by adapting them to their gating node. Read more about it [here](https://en.wikipedia.org/wiki/Synaptic_gating). For specific implementations of gating, see [Node](Node), [Group](Group) and [Network](Network)
 *
+* NOT YET IMPLEMENTED
 * @namespace
 *
 */
@@ -13,7 +14,7 @@ var gating = {
    * @default
    *
    * @example
-   * myNetwork.mutate(methods.mutation.ADD_NODE);
+   * let example = "TODO"
    */
   OUTPUT: {
     name: 'OUTPUT'
@@ -25,7 +26,7 @@ var gating = {
    * @default
    *
    * @example
-   * myNetwork.mutate(methods.mutation.ADD_NODE);
+   * let example = "TODO"
    */
   INPUT: {
     name: 'INPUT'
@@ -37,7 +38,7 @@ var gating = {
    * @default
    *
    * @example
-   * myNetwork.mutate(methods.mutation.ADD_NODE);
+   * let example = "TODO"
    */
   SELF: {
     name: 'SELF'
