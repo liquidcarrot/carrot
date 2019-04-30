@@ -43,6 +43,18 @@ For Documentation, visit [https://liquidcarrot.github.io/carrot](https://liquidc
 - Neuro-evolution with genetic algorithms
 - SVG Network Visualizations using D3.js
 
+## Install
+
+```bash
+$ npm i @liquid-carrot/carrot
+```
+
+Carrot files are hosted by GitHub Pages, just copy this link into the `<head>` tag:
+
+```html
+<script src="https://liquidcarrot.io/carrot/cdn/0.1.95/carrot.js"></script>
+```
+
 ## Getting Started
 
 Making neurons
@@ -117,19 +129,6 @@ async function execute () {
 }
 
 execute();
-```
-
-
-## Install
-
-```bash
-$ npm i @liquid-carrot/carrot
-```
-
-Carrot files are hosted by GitHub Pages, just copy this link into the `<head>` tag:
-
-```html
-<script src="https://liquidcarrot.io/carrot/cdn/0.1.95/carrot.js"></script>
 ```
 
 ## 💬 Contributing
