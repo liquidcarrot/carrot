@@ -52,50 +52,10 @@ $ npm i @liquid-carrot/carrot
 Carrot files are hosted by GitHub Pages, just copy this link into the `<head>` tag:
 
 ```html
-<script src="https://liquidcarrot.io/carrot/cdn/0.1.96/carrot.js"></script>
+<script src="https://liquidcarrot.io/carrot/cdn/0.1.95/carrot.js"></script>
 ```
 
 ## Getting Started
-
-Making neurons
-
-```javascript
-let Node = require('@liquid-carrot/carrot').Node
-
-let A = new Node() // neuron
-let B = new Node() // neuron
-
-A.connect(B)
-A.activate(0.5)
-console.log(B.activate())
-```
-
-Making neural networks
-
-```javascript
-let Network = require('@liquid-carrot/carrot').Network
-
-let network = new Network([2, 2, 1]) // Builds a neural network with 5 neurons: 2 + 2 + 1
-```
-
-Building custom network architectures
-
-```javascript
-let architect = require('@liquid-carrot/carrot').architect
-let Layer = require('@liquid-carrot/carrot').Layer
-
-let input = new Layer.Dense(1);
-let hidden1 = new Layer.LSTM(5);
-let hidden2 = new Layer.GRU(1);
-let output = new Layer.Dense(1);
-
-// connect however you want
-input.connect(hidden1);
-hidden1.connect(hidden2);
-hidden2.connect(output);
-
-let network = architect.Construct([input, hidden1, hidden2, output]);
-```
 
 Shaping a network with neuro-evolution
 
@@ -129,6 +89,46 @@ async function execute () {
 }
 
 execute();
+```
+
+Building neural networks
+
+```javascript
+let Network = require('@liquid-carrot/carrot').Network
+
+let network = new Network([2, 2, 1]) // Builds a neural network with 5 neurons: 2 + 2 + 1
+```
+
+Building custom network architectures
+
+```javascript
+let architect = require('@liquid-carrot/carrot').architect
+let Layer = require('@liquid-carrot/carrot').Layer
+
+let input = new Layer.Dense(1);
+let hidden1 = new Layer.LSTM(5);
+let hidden2 = new Layer.GRU(1);
+let output = new Layer.Dense(1);
+
+// connect however you want
+input.connect(hidden1);
+hidden1.connect(hidden2);
+hidden2.connect(output);
+
+let network = architect.Construct([input, hidden1, hidden2, output]);
+```
+
+Building neurons
+
+```javascript
+let Node = require('@liquid-carrot/carrot').Node
+
+let A = new Node() // neuron
+let B = new Node() // neuron
+
+A.connect(B)
+A.activate(0.5)
+console.log(B.activate())
 ```
 
 ## 💬 Contributing
