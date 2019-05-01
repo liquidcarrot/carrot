@@ -147,7 +147,7 @@ var mutation = {
    * @description Modifies the activation function of a node by randomly picking from the allowed activation methods
    * @default
    *
-   * @prop {boolean} mutateOutput=true Change activation function of network output neurons. Disable this to keep output of a neural network normalized.
+   * @prop {boolean} mutateOutput=false Change activation function of network output neurons. Enable this to let the network experiment with its output.
    * @prop {activation[]} [allowed=[all built-in activation methods]] Mutation methods to randomly select from when mutating
    *
    * @example <caption>Mutating the activation function of a node</caption>
@@ -170,7 +170,7 @@ var mutation = {
    */
   MOD_ACTIVATION: {
     name: 'MOD_ACTIVATION',
-    mutateOutput: true,
+    mutateOutput: false,
     allowed: [
       activation.LOGISTIC,
       activation.TANH,
