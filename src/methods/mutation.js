@@ -36,6 +36,8 @@ var mutation = {
    * @description Adds a node
    * @default
    *
+   * @prop {boolean} randomActivation=true If enabled, sets a random activation function on the newly created node
+   *
    * @example
    * let { methods, Network } = require("@liquid-carrot/carrot");
    *
@@ -44,7 +46,8 @@ var mutation = {
    * myNetwork.mutate(methods.mutation.ADD_NODE);
    */
   ADD_NODE: {
-    name: 'ADD_NODE'
+    name: 'ADD_NODE',
+    randomActivation: true
   },
   /**
    * @constant

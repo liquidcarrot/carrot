@@ -526,6 +526,11 @@ Network.prototype = {
         var toIndex = this.nodes.indexOf(connection.to);
         var node = new Node('hidden');
 
+        if(mutation.ADD_NODE.randomActivation){
+          // Random squash function
+          node.mutate(mutation.MOD_ACTIVATION);
+        }
+
         // Place it in this.nodes
         var minBound = Math.min(toIndex, this.nodes.length - this.output);
         this.nodes.splice(minBound, 0, node);
