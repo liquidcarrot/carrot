@@ -26,7 +26,7 @@ var mutation = methods.mutation;
 * @prop {Array<Connection>} selfconns Self-connections within the network
 *
 * @example
-* let { Network } = require("@liquid-carrot/carrot");
+* let { Network, architect } = require("@liquid-carrot/carrot");
 *
 * // Network with 2 input neurons and 1 output neuron
 * let myNetwork = new Network(2, 1);
@@ -277,7 +277,7 @@ Network.prototype = {
    * @param {Connection} connection Connection to remove gate from
    *
    * @example
-   * let { Network } = require("@liquid-carrot/carrot");
+   * let { Network, architect } = require("@liquid-carrot/carrot");
    *
    * let myNetwork = new architect.Perceptron(1, 4, 2);
    *
@@ -303,7 +303,7 @@ Network.prototype = {
    * @param {Node} node Node to remove from the network
    *
    * @example
-   * let { Network } = require("@liquid-carrot/carrot");
+   * let { Network, architect } = require("@liquid-carrot/carrot");
    *
    * let myNetwork = new architect.Perceptron(1,4,1);
    *
@@ -769,7 +769,7 @@ Network.prototype = {
    * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance
    *
    * @example <caption>Training with Defaults</caption>
-   * let { Network } = require("@liquid-carrot/carrot");
+   * let { Network, architect } = require("@liquid-carrot/carrot");
    *
    * let network = new architect.Perceptron(2,4,1);
    *
@@ -782,7 +782,7 @@ Network.prototype = {
    * network.activate([0,1]); // 0.9824...
    *
    * @example <caption>Training with Options</caption>
-   * let { Network } = require("@liquid-carrot/carrot");
+   * let { Network, architect } = require("@liquid-carrot/carrot");
    *
    * let network = new architect.Perceptron(2,4,1);
    *
@@ -802,7 +802,7 @@ Network.prototype = {
    * });
    *
    * @example <caption>Cross Validation Example</caption>
-   * let { Network } = require("@liquid-carrot/carrot");
+   * let { Network, architect } = require("@liquid-carrot/carrot");
    *
    * let network = new architect.Perceptron(2,4,1);
    *
@@ -1176,7 +1176,7 @@ Network.prototype = {
    * @param {activation} values.squash [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) to set for all network nodes
    *
    * @example
-   * let { Network } = require("@liquid-carrot/carrot");
+   * let { Network, architect } = require("@liquid-carrot/carrot");
    *
    * var network = new architect.Random(4, 4, 1);
    *
@@ -1227,7 +1227,7 @@ Network.prototype = {
    * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance
    *
    * @example
-   * let { Network } = require("@liquid-carrot/carrot");
+   * let { Network, methods } = require("@liquid-carrot/carrot");
    *
    * async function execute () {
    *    var network = new Network(2,1);
@@ -1407,7 +1407,7 @@ Network.prototype = {
    * @returns {string} Function as a string that can be eval'ed
    *
    * @example
-   * let { Network } = require("@liquid-carrot/carrot");
+   * let { Network, architect } = require("@liquid-carrot/carrot");
    *
    * var myNetwork = new architect.Perceptron(2,4,1);
    * myNetwork.activate([0,1]); // [0.24775789809]
@@ -1599,7 +1599,7 @@ Network.fromJSON = function(json) {
  * @returns {Network} Network Merged Network
  *
  * @example
- * let { Network } = require("@liquid-carrot/carrot");
+ * let { Network, architect } = require("@liquid-carrot/carrot");
  *
  * let XOR = architect.Perceptron(2,4,1); // assume this is a trained XOR
  * let NOT = architect.Perceptron(1,2,1); // assume this is a trained NOT
@@ -1660,7 +1660,7 @@ Network.merge = function (network1, network2) {
  * @returns {Network} New network created from mixing parent networks
  *
  * @example
- * let { Network } = require("@liquid-carrot/carrot");
+ * let { Network, architect } = require("@liquid-carrot/carrot");
  *
  * // Initialise two parent networks
  * let network1 = new architect.Perceptron(2, 4, 3);
