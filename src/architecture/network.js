@@ -1199,8 +1199,8 @@ Network.prototype = {
    *
    * @param {Array<{input:number[],output:number[]}>} set A set of input values and ideal output values to train the network with
    * @param {object} [options] Configuration options
-   * @param {number} [options.iterations=500] Set the maximum amount of iterations/generations for the algorithm to run.
-   * @param {number} [options.error] Set the target error. The algorithm will stop once this target error has been reached.
+   * @param {number} [options.iterations=10000] Set the maximum amount of iterations/generations for the algorithm to run.
+   * @param {number} [options.error=0.05] Set the target error. The algorithm will stop once this target error has been reached.
    * @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connectoins.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
    * @param {cost} [options.cost=cost.MSE]  Specify the cost function for the evolution, this tells a genome in the population how well it's performing. Default: methods.cost.MSE (recommended).
    * @param {number} [options.amount=1] Set the amount of times to test the trainingset on a genome each generation. Useful for timeseries. Do not use for regular feedfoward problems.
@@ -1269,8 +1269,8 @@ Network.prototype = {
     let targetError;
 
     if (typeof options.iterations === 'undefined' && typeof options.error === 'undefined') {
-      options.iterations = 500;
-      targetError = -1 // run until iterations
+      options.iterations = 10000; // limit in case network is not converging
+      targetError = 0.05
     } else if (options.iterations) {
       targetError = -1; // run until iterations
     } else if (options.error) {
