@@ -172,6 +172,7 @@ This project exists thanks to all the people who contribute. We can't do it with
 
 * [Luis Carbonell](https://twitter.com/luis_carbnell)
 * [Christian Echevarria](https://twitter.com/chrisgereina)
+* [Daniel Ryan](https://github.com/dan-ryan)
 
 ## Acknowledgements
 
