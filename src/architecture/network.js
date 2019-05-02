@@ -1199,7 +1199,7 @@ Network.prototype = {
    *
    * @param {Array<{input:number[],output:number[]}>} set A set of input values and ideal output values to train the network with
    * @param {object} [options] Configuration options
-   * @param {number} [options.iterations=10000] Set the maximum amount of iterations/generations for the algorithm to run.
+   * @param {number} [options.iterations=1000] Set the maximum amount of iterations/generations for the algorithm to run.
    * @param {number} [options.error=0.05] Set the target error. The algorithm will stop once this target error has been reached.
    * @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connectoins.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
    * @param {cost} [options.cost=cost.MSE]  Specify the cost function for the evolution, this tells a genome in the population how well it's performing. Default: methods.cost.MSE (recommended).
@@ -1209,12 +1209,12 @@ Network.prototype = {
    * @param {number|boolean} [options.log=false] If set to n, outputs training status every n iterations. Setting `log` to 1 will log the status every iteration
    * @param {number} [options.schedule.iterations] You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
    * @param {schedule} [options.schedule.function] A function to run every n iterations as set by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
-   * @param {boolean} [options.clear=false]  If set to true, will clear the network after every activation. This is useful for evolving recurrent networks, more importantly for timeseries prediction.
-   * @param {boolean} [options.equal=false]
+   * @param {boolean} [options.clear=false] If set to true, will clear the network after every activation. This is useful for evolving recurrent networks, more importantly for timeseries prediction.
+   * @param {boolean} [options.equal=true] If set to true when [Network.crossOver](Network.crossOver) runs it will assume both genomes are equally fit.
    * @param {number} [options.popsize=50] Population size of each generation.
    * @param {number} [options.elitism=0] Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
    * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
-   * @param {number} [options.mutationRate=0] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.3.
+   * @param {number} [options.mutationRate=0.3] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.3.
    * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
    * @param {boolean} [options.fitnessPopulation=false] When true, requires fitness function that takes an array of genomes as input and sets their .score property
    * @param {string} [options.selection=FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. methods.Selection.FITNESS_PROPORTIONATE).
@@ -1269,7 +1269,7 @@ Network.prototype = {
     let targetError;
 
     if (typeof options.iterations === 'undefined' && typeof options.error === 'undefined') {
-      options.iterations = 10000; // limit in case network is not converging
+      options.iterations = 1000; // limit in case network is not converging
       targetError = 0.05
     } else if (options.iterations) {
       targetError = -1; // run until iterations
@@ -1852,12 +1852,12 @@ var selection = methods.selection;
 * @param {number} output - The output size of the networks
 * @param {Function} fitness - The fitness function to evaluate the networks
 * @param {Object} options - Configuration options
-* @param {boolean} [options.equal=false]
+* @param {boolean} [options.equal=true] If set to true when [Network.crossOver](Network.crossOver) runs it will assume both genomes are equally fit.
 * @param {number} [options.clear=false]
 * @param {number} [options.popsize=50] Population size of each generation.
 * @param {number} [options.elitism=0] Elitism of every evolution loop. [Elitism in genetic algortihtms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
 * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
-* @param {number} [options.mutationRate=0] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.3.
+* @param {number} [options.mutationRate=0.3] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.3.
 * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
 * @param {boolean} [options.fitnessPopulation=false] When true, requires fitness function that takes an array of genomes as input and sets their .score property
 * @param {string} [options.selection=Selection.FITNESS_PROPORTIONATE] Selection method for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
@@ -1879,12 +1879,12 @@ function Neat (input, output, fitness, options) {
 
   // Configure options
   options = options || {};
-  this.equal = options.equal || false;
+  this.equal = options.equal || true;
   this.clear = options.clear || false;
   this.popsize = options.popsize || 50;
-  this.elitism = options.elitism || 0;
+  this.elitism = options.elitism || 1;
   this.provenance = options.provenance || 0;
-  this.mutationRate = options.mutationRate || 0.3;
+  this.mutationRate = options.mutationRate || 0.4;
   this.mutationAmount = options.mutationAmount || 1;
 
   this.fitnessPopulation = options.fitnessPopulation || false;
