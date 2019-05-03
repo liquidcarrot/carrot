@@ -61,7 +61,7 @@ function Neat (input, output, fitness, options) {
   this.mutation = options.mutation || methods.mutation.FFW;
   this.efficientMutation = options.efficientMutation || false;
 
-  this.template = options.network || false;
+  this.template = options.network || (new Network(this.input, this.output));
 
   this.maxNodes = options.maxNodes || Infinity;
   this.maxConns = options.maxConns || Infinity;
@@ -91,11 +91,7 @@ Neat.prototype = {
 
     for (var i = 0; i < this.popsize; i++) {
       var copy;
-      if (this.template) {
-        copy = Network.fromJSON(network.toJSON());
-      } else {
-        copy = new Network(this.input, this.output);
-      }
+      copy = Network.fromJSON(network.toJSON());
       copy.score = undefined;
       this.population.push(copy);
     }
