@@ -356,7 +356,7 @@ Node.prototype = {
   connect: function (target, weight) {
     var connections = [];
     if (typeof target.bias !== 'undefined') { // must be a node!
-      if (target === this) {
+      if (target === this) { // *TODO* This should be run after isProjectingTo
         // Turn on the self connection by setting the weight
         if (this.connections.self.weight !== 0) {
           if (config.warnings) console.warn('This connection already exists!');

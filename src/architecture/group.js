@@ -152,14 +152,24 @@ Group.prototype = {
           }
         }
       } else if (method === methods.connection.ONE_TO_ONE) {
-        if (this.nodes.length !== target.nodes.length) {
-          throw new Error('From and To group must be the same size!');
-        }
 
-        for (i = 0; i < this.nodes.length; i++) {
-          let connection = this.nodes[i].connect(target.nodes[i], weight);
-          this.connections.self.push(connection[0]);
-          connections.push(connection[0]);
+        if(this == target){
+          for (i = 0; i < this.nodes.length; i++) {
+            let connection = this.nodes[i].connect(target.nodes[i], weight);
+            this.connections.self.push(connection[0]);
+            connections.push(connection[0]);
+          }
+        } else {
+          if (this.nodes.length !== target.nodes.length) {
+            throw new Error('From and To group must be the same size!');
+          } else {
+            for (i = 0; i < this.nodes.length; i++) {
+              let connection = this.nodes[i].connect(target.nodes[i], weight);
+              this.connections.out.push(connection[0]);
+              target.connections.in.push(connection[0]);
+              connections.push(connection[0]);
+            }
+          }
         }
       }
     } else if (target instanceof Layer) {
