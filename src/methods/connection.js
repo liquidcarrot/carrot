@@ -27,7 +27,7 @@ var connection = {
   /**
    * @constant
    * @type {object}
-   * @description Connects all nodes from <code>GroupX</code> to all nodes from <code>GroupY</code>
+   * @description Connects each node from <code>GroupX</code> to all nodes in <code>GroupY</code>
    * @description The default connection method when connecting nodes inside of a group
    * @default
    *

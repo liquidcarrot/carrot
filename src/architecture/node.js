@@ -96,7 +96,7 @@ Node.prototype = {
   * B.activate(); // 0.3244554645
   */
   activate: function (input) {
-    // Check if an input is given
+    // If an input is given, forward it (i.e. act like an input neuron)
     if (typeof input !== 'undefined') {
       this.activation = input;
       return this.activation;

@@ -52,25 +52,25 @@ Group.prototype = {
   * // or (array length must be same length as nodes in group)
   * myGroup.activate([1, 0, 1]);
   */
-  activate: function (value) {
-    var values = [];
+  activate: function (inputs) {
+    var outputs = [];
 
-    if (typeof value !== 'undefined' && value.length !== this.nodes.length) {
+    if (typeof inputs !== 'undefined' && inputs.length !== this.nodes.length) {
       throw new Error('Array with values should be same as the amount of nodes!');
     }
 
     for (var i = 0; i < this.nodes.length; i++) {
       var activation;
-      if (typeof value === 'undefined') {
+      if (typeof inputs === 'undefined') {
         activation = this.nodes[i].activate();
       } else {
-        activation = this.nodes[i].activate(value[i]);
+        activation = this.nodes[i].activate(inputs[i]);
       }
 
-      values.push(activation);
+      outputs.push(activation);
     }
 
-    return values;
+    return outputs;
   },
 
   /**
@@ -129,46 +129,48 @@ Group.prototype = {
   * A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional
   */
   connect: function(target, method, weight) {
-    var connections = [];
+    let selfTargeted = (this === target)
+
+    var connections = []
     var i, j;
     if (target instanceof Group) {
+      // set default connection methods
       if (typeof method === 'undefined') {
-        if (this !== target) {
-          if (config.warnings) console.warn('No group connection specified, using ALL_TO_ALL');
-          method = methods.connection.ALL_TO_ALL;
-        } else {
+        if (selfTargeted) {
           if (config.warnings) console.warn('No group connection specified, using ONE_TO_ONE');
           method = methods.connection.ONE_TO_ONE;
+        } else {
+          if (config.warnings) console.warn('No group connection specified, using ALL_TO_ALL');
+          method = methods.connection.ALL_TO_ALL;
         }
       }
       if (method === methods.connection.ALL_TO_ALL || method === methods.connection.ALL_TO_ELSE) {
         for (i = 0; i < this.nodes.length; i++) {
           for (j = 0; j < target.nodes.length; j++) {
             if (method === methods.connection.ALL_TO_ELSE && this.nodes[i] === target.nodes[j]) continue;
-            let connection = this.nodes[i].connect(target.nodes[j], weight); // weird API quirk, should be fixed
-            this.connections.out.push(connection[0]); // weird API quirk, should be fixed
-            target.connections.in.push(connection[0]); // weird API quirk, should be fixed
-            connections.push(connection[0]); // weird API quirk, should be fixed
+            let connection = this.nodes[i].connect(target.nodes[j], weight);
+            this.connections.out.push(connection[0]);
+            target.connections.in.push(connection[0]);
+            connections.push(connection[0]);
           }
         }
       } else if (method === methods.connection.ONE_TO_ONE) {
-
-        if(this == target){
+        if(selfTargeted){
           for (i = 0; i < this.nodes.length; i++) {
             let connection = this.nodes[i].connect(target.nodes[i], weight);
             this.connections.self.push(connection[0]);
             connections.push(connection[0]);
           }
         } else {
-          if (this.nodes.length !== target.nodes.length) {
-            throw new Error('From and To group must be the same size!');
-          } else {
+          if (this.nodes.length === target.nodes.length) {
             for (i = 0; i < this.nodes.length; i++) {
               let connection = this.nodes[i].connect(target.nodes[i], weight);
               this.connections.out.push(connection[0]);
               target.connections.in.push(connection[0]);
               connections.push(connection[0]);
             }
+          } else {
+            throw new Error('From and To group must be the same size!');
           }
         }
       }
