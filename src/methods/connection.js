@@ -28,7 +28,7 @@ var connection = {
    * @constant
    * @type {object}
    * @description Connects each node from <code>GroupX</code> to all nodes in <code>GroupY</code>
-   * @description The default connection method when connecting nodes inside of a group
+   * @description The default connection method between Groups
    * @default
    *
    * @example <caption>Connection between two Groups</caption>
@@ -45,7 +45,7 @@ var connection = {
   /**
    * @constant
    * @type {object}
-   * @description Connects each node in <code>GroupX</code> to all nodes in the same group except itself
+   * @description Connects each node in <code>GroupX</code> to all nodes in <code>GroupY</code> except for the nodes also contained within itself
    * @default
    *
    * @example <caption>Connection between two Groups</caption>
@@ -63,7 +63,7 @@ var connection = {
    * @constant
    * @type {object}
    * @description Connects each node from <code>GroupX</code> to one node from <code>GroupY</code>
-   * @description The default connection method between Groups
+   * @description The default connection method when connecting Groups to themselves
    * @default
    *
    * @example <caption>Connection between two Groups</caption>
@@ -72,7 +72,7 @@ var connection = {
    * let A = new Group(4);
    * let B = new Group(5);
    *
-   * A.connect(B, methods.connection.ONE_TO_ONE); // specifying a method is optional
+   * A.connect(A, methods.connection.ONE_TO_ONE); // specifying a method is optional
    */
   ONE_TO_ONE: {
     name: 'SELF'
