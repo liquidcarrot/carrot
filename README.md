@@ -131,6 +131,12 @@ A.activate(0.5)
 console.log(B.activate())
 ```
 
+## Training, Testing, and Playing Around
+
+<details><summary><strong>Data Sets</strong></summary>
+* [ ] [MNIST](https://www.npmjs.com/package/mnist)
+</details>
+
 ## 💬 Contributing
 
 [![Carrot's GitHub Issues](https://img.shields.io/github/issues/liquidcarrot/carrot.svg)](https://github.com/liquidcarrot/carrot/issues)

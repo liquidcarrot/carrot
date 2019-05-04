@@ -1,4 +1,5 @@
 var Carrot = {
+  activation: require('./methods/activation'),
   methods: require('./methods/methods'),
   Connection: require('./architecture/connection'),
   architect: require('./architecture/architect'),
