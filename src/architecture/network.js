@@ -38,7 +38,7 @@ function Network(input, output) {
   if (typeof input === 'undefined' || typeof output === 'undefined') {
     throw new Error('No input or output size given');
   }
-
+  // *IDEA*: Store input & output nodes in arrays accessible by this.input and this.output instead of just storing the number
   this.input = input;
   this.output = output;
 
@@ -608,7 +608,7 @@ Network.prototype = {
         node.mutate(method);
         break;
       case mutation.MOD_ACTIVATION:
-        // Has no effect on input node, so they are excluded
+        // Has no effect on input node, so they (should be) excluded
         if (!method.mutateOutput && this.input + this.output === this.nodes.length) {
           if (config.warnings) console.warn('No nodes that allow mutation of activation function');
           break;
@@ -725,7 +725,7 @@ Network.prototype = {
         this.disconnect(randomConn.from, randomConn.to);
         break;
       case mutation.SWAP_NODES:
-        // Has no effect on input node, so they are excluded
+        // Has no effect on input node, so they (should be) excluded
         if ((method.mutateOutput && this.nodes.length - this.input < 2) ||
           (!method.mutateOutput && this.nodes.length - this.input - this.output < 2)) {
           if (config.warnings) console.warn('No nodes that allow swapping of bias and activation function');

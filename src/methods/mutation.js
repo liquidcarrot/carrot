@@ -294,7 +294,7 @@ var mutation = {
    * @description Swaps the bias and squash function between two nodes
    * @default
    *
-   * @prop {boolean} mutateOutput=true Swap bias and activation function of network output neurons too. Disable this to keep output of a neural network normalized.
+   * @prop {boolean} mutateOutput=false Swap bias and activation function of network output neurons too. Disable this to keep output of a neural network normalized.
    * @example
    * let { methods, Network } = require("@liquid-carrot/carrot");
    *
@@ -304,7 +304,7 @@ var mutation = {
    */
   SWAP_NODES: {
     name: 'SWAP_NODES',
-    mutateOutput: true
+    mutateOutput: false
   }
 };
 
