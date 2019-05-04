@@ -356,21 +356,16 @@ Node.prototype = {
   connect: function (target, weight) {
     var connections = [];
     if (typeof target.bias !== 'undefined') { // must be a node!
-      if (target === this) { // *TODO* This should be run after isProjectingTo
-        // Turn on the self connection by setting the weight
-        if (this.connections.self.weight !== 0) {
-          if (config.warnings) console.warn('This connection already exists!');
-        } else {
-          this.connections.self.weight = weight || 1;
-        }
-        connections.push(this.connections.self);
-      } else if (this.isProjectingTo(target)) {
+      if (this.isProjectingTo(target)) {
         throw new Error('Already projecting a connection to this node!');
-      } else {
+      }
+      if (target === this) { // self-connection that doesn't yet exist
+        this.connections.self.weight = weight || 1;
+        connections.push(this.connections.self);
+      } else { // connection between nodes
         let connection = new Connection(this, target, weight);
         target.connections.in.push(connection);
         this.connections.out.push(connection);
-
         connections.push(connection);
       }
     } else { // should be a group
