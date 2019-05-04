@@ -41,12 +41,12 @@ function Neat (input, output, fitness, options) {
 
   // Configure options
   options = options || {};
-  this.equal = options.equal || false;
+  this.equal = options.equal || true;
   this.clear = options.clear || false;
   this.popsize = options.popsize || 50;
-  this.elitism = options.elitism || 0;
+  this.elitism = options.elitism || 1;
   this.provenance = options.provenance || 0;
-  this.mutationRate = options.mutationRate || 0.3;
+  this.mutationRate = options.mutationRate || 0.4;
   this.mutationAmount = options.mutationAmount || 1;
 
   this.fitnessPopulation = options.fitnessPopulation || false;
@@ -90,8 +90,7 @@ Neat.prototype = {
     this.population = [];
 
     for (var i = 0; i < this.popsize; i++) {
-      var copy;
-      copy = Network.fromJSON(network.toJSON());
+      var copy = Network.fromJSON(network.toJSON());
       copy.score = undefined;
       this.population.push(copy);
     }

@@ -1899,7 +1899,7 @@ function Neat (input, output, fitness, options) {
   this.mutation = options.mutation || methods.mutation.FFW;
   this.efficientMutation = options.efficientMutation || false;
 
-  this.template = options.network || false;
+  this.template = options.network || (new Network(this.input, this.output));
 
   this.maxNodes = options.maxNodes || Infinity;
   this.maxConns = options.maxConns || Infinity;
@@ -1929,12 +1929,7 @@ Neat.prototype = {
     this.population = [];
 
     for (var i = 0; i < this.popsize; i++) {
-      var copy;
-      if (this.template) {
-        copy = Network.fromJSON(network.toJSON());
-      } else {
-        copy = new Network(this.input, this.output);
-      }
+      var copy = Network.fromJSON(network.toJSON());
       copy.score = undefined;
       this.population.push(copy);
     }
@@ -1942,10 +1937,8 @@ Neat.prototype = {
 
   /**
    * Evaluates, selects, breeds and mutates population
-   * @todo Add `@returns` tag type
-   * @todo Add `@returns` tag description
    *
-   * @returns {object}
+   * @returns {Network} Fittest network
   */
   evolve: async function () {
     // Check if evaluated, sort the population
@@ -1992,9 +1985,9 @@ Neat.prototype = {
   },
 
   /**
-   * Breeds two parents into an offspring, population MUST be sorted
-   * @todo Add `@returns` tag type
-   * @todo Add `@returns` tag description
+   * Selects two genomes from the population with `getParent()`, and returns the offspring from those parents. NOTE: Population MUST be sorted
+   *
+   * @returns {Network} Child network
    */
   getOffspring: function () {
     var parent1 = this.getParent();
@@ -2077,8 +2070,8 @@ Neat.prototype = {
 
   /**
    * Returns the fittest genome of the current population
-   * @todo Add `@returns` tag types
-   * @todo Add `@returns` tag descriptions
+   *
+   * @returns {Network} Current population's fittest genome
   */
   getFittest: function () {
     // Check if evaluated
@@ -2094,8 +2087,8 @@ Neat.prototype = {
 
   /**
    * Returns the average fitness of the current population
-   * @todo Add `@returns` tag type
-   * @todo Add `@returns` tag description
+   *
+   * @returns {number} Average fitness of the current population
    */
   getAverage: function () {
     if (typeof this.population[this.population.length - 1].score === 'undefined') {
@@ -2111,9 +2104,11 @@ Neat.prototype = {
   },
 
   /**
-   * Gets a genome based on the selection function
-   * @return {Network} genome
-   * @todo Add `@returns` tag description
+   * Returns a genome for recombination (crossover) based on one of the [selection methods](selection) provided.
+   *
+   * Should be called after `evaluate()`
+   *
+   * @return {Network} Selected genome for offspring generation
    */
   getParent: function () {
     var i;
@@ -2177,9 +2172,11 @@ Neat.prototype = {
   },
 
   /**
-   * Export the current population to a json object
-   * @todo Add `@returns` tag type
-   * @todo Add `@returns` tag description
+   * Export the current population to a JSON object
+   *
+   * Can be used later with `import(json)` to reload the population
+   *
+   * @return {object[]} A set of genomes (a population) represented as JSON objects.
    */
   export: function () {
     var json = [];
@@ -2192,10 +2189,9 @@ Neat.prototype = {
   },
 
   /**
-   * Import population from a json object
-   * @todo Add `@param` tag type
-   * @todo Add `@param` tag name
-   * @todo Add `@param` tag description
+   * Imports population from a json. Must be an array of networks converted to JSON objects.
+   *
+   * @param {object[]} json set of genomes (a population) represented as JSON objects.
   */
   import: function (json) {
     var population = [];
