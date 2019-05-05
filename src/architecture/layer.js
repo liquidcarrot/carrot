@@ -15,10 +15,11 @@ var Node = require('./node');
 * @prop {Group[]|Node[]} connections.in Income connections
 * @prop {Group[]|Node[]} connections.out Outgoing connections
 * @prop {Group[]|Node[]} connections.self Self connections
+* @prop {"lstm"|"gru"|"dense"|"memory"} architecture Type of layer architecture
 *
 * @example <caption>Custom architecture built with layers</caption>
 * let { Layer } = require("@liquid-carrot/carrot");
-* 
+*
 * let input = new Layer.Dense(1);
 * let hidden1 = new Layer.LSTM(5);
 * let hidden2 = new Layer.GRU(1);
@@ -31,7 +32,7 @@ var Node = require('./node');
 *
 * let network = architect.Construct([input, hidden1, hidden2, output]);
 */
-function Layer() {
+function Layer(architecture) {
   this.output = null;
 
   this.nodes = [];
@@ -40,6 +41,7 @@ function Layer() {
     out: [],
     self: []
   };
+  this.architecture = architecture ? architecture : null; // "lstm", "dense", "gru", "memory"
 }
 
 Layer.prototype = {
@@ -104,7 +106,7 @@ Layer.prototype = {
     var connections;
     if (target instanceof Group || target instanceof Node) {
       connections = this.output.connect(target, method, weight);
-    } else if (target instanceof Layer) {
+    } else if(target instanceof Layer) {
       connections = target.input(this, method, weight);
     }
 
@@ -228,7 +230,7 @@ Layer.prototype = {
 *
 * @example
 * let { Layer } = require("@liquid-carrot/carrot");
-* 
+*
 * let layer = new Layer.Dense(size);
 */
 Layer.Dense = function(size) {
@@ -261,12 +263,12 @@ Layer.Dense = function(size) {
 *
 * @example
 * let { Layer } = require("@liquid-carrot/carrot");
-* 
+*
 * let layer = new Layer.LSTM(size);
 */
 Layer.LSTM = function(size) {
   // Create the layer
-  var layer = new Layer();
+  var layer = new Layer("lstm");
 
   // Init required nodes (in activation order)
   var inputGate = new Group(size);
@@ -284,6 +286,14 @@ Layer.LSTM = function(size) {
   outputGate.set({
     bias: 1
   });
+
+  /**
+  // Connect the input with all the nodes
+  var input = previous.connect(memoryCell, methods.connection.ALL_TO_ALL); // input to memory cell connections for gating
+  previous.connect(inputGate, methods.connection.ALL_TO_ALL);
+  previous.connect(outputGate, methods.connection.ALL_TO_ALL);
+  previous.connect(forgetGate, methods.connection.ALL_TO_ALL);
+  */
 
   // Set up internal connections
   memoryCell.connect(inputGate, methods.connection.ALL_TO_ALL);
@@ -303,11 +313,21 @@ Layer.LSTM = function(size) {
   layer.output = outputBlock;
 
   layer.input = function(from, method, weight) {
-    if (from instanceof Layer) from = from.output;
+    if(from instanceof Layer) from = from.output;
     method = method || methods.connection.ALL_TO_ALL;
     var connections = [];
 
-    var input = from.connect(memoryCell, method, weight);
+    var input;
+    // If Layer.type === LSTM (|| Dense)
+    if(from.architecture === "lstm") {
+      input = previous.connect(memoryCell, methods.connection.ALL_TO_ALL); // input to memory cell connections for gating
+      previous.connect(inputGate, methods.connection.ALL_TO_ALL);
+      previous.connect(outputGate, methods.connection.ALL_TO_ALL);
+      previous.connect(forgetGate, methods.connection.ALL_TO_ALL);
+    } else {
+      input = from.connect(memoryCell, method, weight);
+    }
+
     connections = connections.concat(input);
 
     connections = connections.concat(from.connect(inputGate, method, weight));
@@ -328,12 +348,12 @@ Layer.LSTM = function(size) {
 * The GRU layer is similar to the LSTM layer, however it has no memory cell and only two gates. It is also a recurrent layer that is excellent for timeseries prediction.
 *
 * @param {number} size Amount of nodes to build the layer with
-* 
+*
 * @returns {Layer} GRU layer
 *
 * @example
 * let { Layer } = require("@liquid-carrot/carrot");
-* 
+*
 * let layer = new Layer.GRU(size);
 */
 Layer.GRU = function(size) {
@@ -423,7 +443,7 @@ Layer.GRU = function(size) {
 *
 * @example
 * let { Layer } = require("@liquid-carrot/carrot");
-* 
+*
 * let layer = new Layer.Memory(size, memory);
 */
 Layer.Memory = function(size, memory) {
