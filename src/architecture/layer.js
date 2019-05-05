@@ -258,6 +258,8 @@ Layer.Dense = function(size) {
 *
 * LSTM layers are useful for detecting and predicting patterns over long time lags. This is a recurrent layer.
 *
+* Note: architect.LSTM currently performs better than an equivalent network built with LSTM Layers.
+*
 * @param {number} size Amount of nodes to build the layer with
 *
 * @returns {Layer} LSTM layer
