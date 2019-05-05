@@ -290,14 +290,6 @@ Layer.LSTM = function(size) {
     bias: 1
   });
 
-  /**
-  // Connect the input with all the nodes
-  var input = previous.connect(memoryCell, methods.connection.ALL_TO_ALL); // input to memory cell connections for gating
-  previous.connect(inputGate, methods.connection.ALL_TO_ALL);
-  previous.connect(outputGate, methods.connection.ALL_TO_ALL);
-  previous.connect(forgetGate, methods.connection.ALL_TO_ALL);
-  */
-
   // Set up internal connections
   memoryCell.connect(inputGate, methods.connection.ALL_TO_ALL);
   memoryCell.connect(forgetGate, methods.connection.ALL_TO_ALL);
@@ -320,8 +312,7 @@ Layer.LSTM = function(size) {
     method = method || methods.connection.ALL_TO_ALL;
     var connections = [];
 
-    var input;
-    // If Layer.type === LSTM (|| Dense)
+    let input;
     if(from.architecture === "lstm") {
       input = previous.connect(memoryCell, methods.connection.ALL_TO_ALL); // input to memory cell connections for gating
       previous.connect(inputGate, methods.connection.ALL_TO_ALL);
