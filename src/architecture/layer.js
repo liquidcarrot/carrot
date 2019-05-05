@@ -10,12 +10,13 @@ var Node = require('./node');
 *
 * @constructs Layer
 *
+* @param {"lstm"|"gru"|"dense"|"memory"} [architecture] Type of layer architecture
+*
 * @prop {Node[]} output Output nodes
 * @prop {Node[]} nodes Nodes within the layer
 * @prop {Group[]|Node[]} connections.in Income connections
 * @prop {Group[]|Node[]} connections.out Outgoing connections
 * @prop {Group[]|Node[]} connections.self Self connections
-* @prop {"lstm"|"gru"|"dense"|"memory"} architecture Type of layer architecture
 *
 * @example <caption>Custom architecture built with layers</caption>
 * let { Layer } = require("@liquid-carrot/carrot");
