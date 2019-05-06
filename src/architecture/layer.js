@@ -33,7 +33,7 @@ var Node = require('./node');
 *
 * let network = architect.Construct([input, hidden1, hidden2, output]);
 */
-function Layer(architecture) {
+function Layer() {
   this.output = null;
 
   this.nodes = [];
@@ -42,7 +42,6 @@ function Layer(architecture) {
     out: [],
     self: []
   };
-  this.architecture = architecture ? architecture : null; // "lstm", "dense", "gru", "memory"
 }
 
 Layer.prototype = {
@@ -107,7 +106,7 @@ Layer.prototype = {
     var connections;
     if (target instanceof Group || target instanceof Node) {
       connections = this.output.connect(target, method, weight);
-    } else if(target instanceof Layer) {
+    } else if (target instanceof Layer) {
       connections = target.input(this, method, weight);
     }
 
@@ -271,7 +270,7 @@ Layer.Dense = function(size) {
 */
 Layer.LSTM = function(size) {
   // Create the layer
-  var layer = new Layer("lstm");
+  var layer = new Layer();
 
   // Init required nodes (in activation order)
   var inputGate = new Group(size);
@@ -308,20 +307,11 @@ Layer.LSTM = function(size) {
   layer.output = outputBlock;
 
   layer.input = function(from, method, weight) {
-    if(from instanceof Layer) from = from.output;
+    if (from instanceof Layer) from = from.output;
     method = method || methods.connection.ALL_TO_ALL;
     var connections = [];
 
-    let input;
-    if(from.architecture === "lstm") {
-      input = previous.connect(memoryCell, methods.connection.ALL_TO_ALL); // input to memory cell connections for gating
-      previous.connect(inputGate, methods.connection.ALL_TO_ALL);
-      previous.connect(outputGate, methods.connection.ALL_TO_ALL);
-      previous.connect(forgetGate, methods.connection.ALL_TO_ALL);
-    } else {
-      input = from.connect(memoryCell, method, weight);
-    }
-
+    var input = from.connect(memoryCell, method, weight);
     connections = connections.concat(input);
 
     connections = connections.concat(from.connect(inputGate, method, weight));
