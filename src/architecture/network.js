@@ -12,7 +12,7 @@ var mutation = methods.mutation;
 let findIndex = function(min, max, retry, ...args) {
   let range = max - min;
   if(range < 1) {
-    throw new Error('min & max are too close, called from: ' + location);
+    throw new Error('min & max are too close');
   }
 
   if(range == 1) {
