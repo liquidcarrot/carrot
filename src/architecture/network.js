@@ -4,8 +4,29 @@ var Connection = require('./connection');
 var config = require('../config');
 var Node = require('./node');
 
+
 // Easier variable naming
 var mutation = methods.mutation;
+
+// Index searching function
+let findIndex = function(min, max, retry, ...args) {
+  let range = max - min;
+  if(range < 1) {
+    throw new Error('min & max are too close, called from: ' + location);
+  }
+
+  if(range == 1) {
+    return min;
+  }
+
+  let index;
+  while(true) {
+    index = Math.floor(Math.random() * (max - min)) + min
+    if(retry(index, ...args)) continue;
+    break;
+  }
+  return index
+}
 
 /**
 * Create a neural network
@@ -552,7 +573,7 @@ Network.prototype = {
         }
 
         // Select a node which isn't an input or output node
-        var index = Math.floor(Math.random() * (this.nodes.length - this.output - this.input) + this.input);
+        var index = findIndex(this.output + this.input, this.nodes.length, (index) => { return (this.nodes[index].type === 'output' || this.nodes[index].type === 'input') });
         this.remove(this.nodes[index]);
         break;
       case mutation.ADD_CONN:
@@ -614,9 +635,14 @@ Network.prototype = {
           break;
         }
 
-        var index = Math.floor(Math.random() * (this.nodes.length - (method.mutateOutput ? 0 : this.output) - this.input) + this.input);
-        var node = this.nodes[index];
+        var index
+        if(method.mutateOutput) {
+          index = Math.floor(Math.random() * (this.nodes.length - this.input)) + this.input
+        } else {
+          index = findIndex(this.output + this.input, this.nodes.length,  (index) => { return (this.nodes[index].type === 'output') });
+        }
 
+        var node = this.nodes[index];
         node.mutate(method);
         break;
       case mutation.ADD_SELF_CONN:
@@ -726,16 +752,25 @@ Network.prototype = {
         break;
       case mutation.SWAP_NODES:
         // Has no effect on input node, so they (should be) excluded
-        if ((method.mutateOutput && this.nodes.length - this.input < 2) ||
-          (!method.mutateOutput && this.nodes.length - this.input - this.output < 2)) {
+        if ((method.mutateOutput && (this.nodes.length - 1) - this.input < 2) ||
+          (!method.mutateOutput && (this.nodes.length - 1) - this.input - this.output < 2)) {
           if (config.warnings) console.warn('No nodes that allow swapping of bias and activation function');
           break;
         }
 
-        var index = Math.floor(Math.random() * (this.nodes.length - (method.mutateOutput ? 0 : this.output) - this.input) + this.input);
-        var node1 = this.nodes[index];
-        index = Math.floor(Math.random() * (this.nodes.length - (method.mutateOutput ? 0 : this.output) - this.input) + this.input);
-        var node2 = this.nodes[index];
+        let index1, index2;
+        if(method.mutateOutput) {
+          index1 = Math.floor(Math.random() * (this.nodes.length - this.input)) + this.input
+          index2 = findIndex(this.input, this.nodes.length, (index2, index1) => { return (index2 == index1) }, index1)
+        } else {
+          let min = this.output + this.input;
+          let max = this.nodes.length;
+          index1 = findIndex(min, max, (index) => { return (this.nodes[index].type === 'output') });
+          index2 = findIndex(min, max, (index2, index1) => { return (index2 == index1 || this.nodes[index2].type === 'output') }, index1)
+        }
+
+        let node1 = this.nodes[index1];
+        let node2 = this.nodes[index2];
 
         var biasTemp = node1.bias;
         var squashTemp = node1.squash;
