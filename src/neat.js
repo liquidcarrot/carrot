@@ -13,7 +13,7 @@ var selection = methods.selection;
 *
 * @param {number} input - The input size of the networks.
 * @param {number} output - The output size of the networks
-* @param {Function} fitness - The fitness function to evaluate the networks
+* @param {Array<{input:number[],output:number[]}>} [dataset] A set of input values and ideal output values to evaluate a genome's fitness with. Must be included to use `NEAT.evaluate`
 * @param {Object} options - Configuration options
 * @param {boolean} [options.equal=false]
 * @param {number} [options.clear=false]
@@ -23,6 +23,7 @@ var selection = methods.selection;
 * @param {number} [options.mutationRate=0] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.3.
 * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
 * @param {boolean} [options.fitnessPopulation=false] When true, requires fitness function that takes an array of genomes as input and sets their .score property
+* @param {Function} [options.fitness] - A fitness function to evaluate the networks. Takes a `genome`, i.e. a [network](Network), and a `dataset` and sets the genome's score property
 * @param {string} [options.selection=FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
 * @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
 * @param {Network} [options.network=false] Network to start evolution from
@@ -34,10 +35,9 @@ var selection = methods.selection;
 *
 * @prop {number} generation A count of the generations
 */
-function Neat (input, output, fitness, options) {
+function Neat (input, output, dataset, fitness, options) {
   this.input = input; // The input size of the networks
   this.output = output; // The output size of the networks
-  this.fitness = fitness; // The fitness function to evaluate the networks
 
   // Configure options
   options = options || {};
@@ -72,6 +72,21 @@ function Neat (input, output, fitness, options) {
 
   // Generation counter
   this.generation = 0;
+  
+  // Fitness function options
+  fitnessFunction = function (genome, dataset) {
+    let score = 0;
+    
+    for (var i = 0; i < dataset.length; i++) {
+      score -= genome[i].test(dataset).error;
+    }
+  
+    score -= (genome.nodes.length - genome.input - genome.output + genome.connections.length + genome.gates.length) * 0.0001;
+    score = isNaN(score) ? -Infinity : score; // this can cause problems with fitness proportionate selection
+  
+    return score / amount;
+  };
+  this.fitness = options.fitness || fitnessFunction; // The fitness function to evaluate the networks
 
   // Initialise the genomes
   this.createPool(this.template);
@@ -203,6 +218,9 @@ Neat.prototype = {
    * Sets fitness scores for the current population members.
    */
   evaluate: async function () {
+    if(!this.dataset) {
+      throw new Error("You must include a dataset to use NEAT.evaluate()")
+    }
     var i;
     if (this.fitnessPopulation) {
       if (this.clear) {
@@ -210,12 +228,12 @@ Neat.prototype = {
           this.population[i].clear();
         }
       }
-      await this.fitness(this.population);
+      await this.fitness(this.population, this.dataset);
     } else {
       for (i = 0; i < this.population.length; i++) {
         var genome = this.population[i];
         if (this.clear) genome.clear();
-        genome.score = await this.fitness(genome);
+        genome.score = await this.fitness(genome, this.dataset);
       }
     }
   },
