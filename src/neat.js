@@ -35,7 +35,7 @@ var selection = methods.selection;
 *
 * @prop {number} generation A count of the generations
 */
-function Neat (input, output, dataset, fitness, options) {
+function Neat (input, output, dataset, options) {
   this.input = input; // The input size of the networks
   this.output = output; // The output size of the networks
 
