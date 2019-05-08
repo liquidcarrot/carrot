@@ -10,8 +10,6 @@ var Node = require('./node');
 *
 * @constructs Layer
 *
-* @param {"lstm"|"gru"|"dense"|"memory"} [architecture] Type of layer architecture
-*
 * @prop {Node[]} output Output nodes
 * @prop {Node[]} nodes Nodes within the layer
 * @prop {Group[]|Node[]} connections.in Income connections
