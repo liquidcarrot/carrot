@@ -15,10 +15,10 @@ var selection = methods.selection;
 * @param {number} output - The output size of the networks
 * @param {Array<{input:number[],output:number[]}>} [dataset] A set of input values and ideal output values to evaluate a genome's fitness with. Must be included to use `NEAT.evaluate`
 * @param {Object} options - Configuration options
-* @param {boolean} [options.equal=false]
-* @param {number} [options.clear=false]
+* @param {boolean} [options.equal=false] When true [crossover](Network.crossOver) parent genomes are assumed to be equally fit and offspring are built with a random amount of neurons within the range of parents' number of neurons. Set to false to select the "fittest" parent as the neuron amount template.
+* @param {number} [options.clear=false] Clear the context of the population's nodes, basically reverting them to 'new' neurons. Useful for predicting timeseries with LSTM's.
 * @param {number} [options.popsize=50] Population size of each generation.
-* @param {number} [options.elitism=0] Elitism of every evolution loop. [Elitism in genetic algortihtms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
+* @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algortihtms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
 * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
 * @param {number} [options.mutationRate=0] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.3.
 * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
@@ -34,6 +34,17 @@ var selection = methods.selection;
 * @param {mutation[]} [options.mutation] Sets allowed [mutation methods](mutation) for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent
 *
 * @prop {number} generation A count of the generations
+* @prop {Network[]} population The current population for the neat instance. Accessible through `neat.population`
+*
+* @example
+* let { Neat } = require("@liquid-carrot/carrot");
+*
+* let neat = new Neat(4, 1, dataset, {
+*   elitism: 10,
+*   clear: true,
+*   popsize: 1000,
+*   efficientMutation: true
+* });
 */
 function Neat (input, output, dataset, options) {
   this.input = input; // The input size of the networks
@@ -97,7 +108,7 @@ function Neat (input, output, dataset, options) {
 */
 Neat.prototype = {
   /**
-   * Create the initial pool of genomes.
+   * Create a pool of identical genomes.
    *
    * @param {Network} network An initial network to evolve from
    */
