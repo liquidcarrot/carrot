@@ -5,29 +5,6 @@ var config = require('./config');
 // Easier variable naming
 var selection = methods.selection;
 
-const filterGenome = function(population, template, pickGenome, adjustGenome) {
-    let filtered = [...population]; // avoid mutations
-    const pick = function(genome) {
-      const pick = pickGenome(genome)
-      if (typeof pick !== "boolean") throw new Error("pickGenome must always return a boolean!")
-      return pick
-    }
-    
-    if(adjustGenome){
-      for (let i = 0; i < population.length; i++) {
-        if(pick(filtered[i])) {
-          const result = adjustGenome(filtered[i])
-          if (!(result instanceof Network)) throw new Error("adjustGenome must always return a network!")
-          filtered[i] = result
-        }
-      }
-    } else
-        for (let i = 0; i < population.length; i++)
-          if(pick(filtered[i])) filtered[i] = Network.fromJSON(template.toJSON)
-  
-    return filtered;
-  }
-
 /**
 * Runs the NEAT algorithm on group of neural networks.
 *
@@ -129,6 +106,41 @@ function Neat (input, output, dataset, options) {
 * @namespace NEAT
 */
 Neat.prototype = {
+  // A collection of utility functions to be used with Neat.
+  util: {
+    /*
+     * Used to select and modify genomes as determined by the `pickGenome` function.
+     *
+     * @param {Network[]} population A population to filter
+     * @param {Network} template A network template to replace picked genomes if `adjustGenome` is left unset.
+     * @param {function} pickGenome A predicate function to mark genomes for adjustment. Accepts a network as a parameter and returns true for selection.
+     * @param {function} adjustGenome Accepts a network, modifies it, and returns it. Used to modify unwanted genomes returned by `pickGenome` and reincorporate them into the population. If left unset, picked genomes will be replaced with the template Network.
+     *
+     * @returns {Network[]} A new filtered population
+     */
+    filterGenome: function(population, template, pickGenome, adjustGenome) {
+      let filtered = [...population]; // avoid mutations
+      const pick = function(genome) {
+        const pick = pickGenome(genome)
+        if (typeof pick !== "boolean") throw new Error("pickGenome must always return a boolean!")
+        return pick
+      }
+      
+      if(adjustGenome){
+        for (let i = 0; i < population.length; i++) {
+          if(pick(filtered[i])) {
+            const result = adjustGenome(filtered[i])
+            if (!(result instanceof Network)) throw new Error("adjustGenome must always return a network!")
+            filtered[i] = result
+          }
+        }
+      } else
+          for (let i = 0; i < population.length; i++)
+            if(pick(filtered[i])) filtered[i] = Network.fromJSON(template.toJSON)
+    
+      return filtered;
+    },
+  },
   /**
    * Create a pool of identical genomes.
    *

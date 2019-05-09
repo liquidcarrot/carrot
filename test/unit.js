@@ -2,33 +2,12 @@ let { describe, Try } = require('riteway')
 let { architect, Network, methods, Neat } = require('../src/carrot')
 
 describe('filterGenome()', async assert => {
-  const filterGenome = function(population, template, pickGenome, adjustGenome) {
-    let filtered = [...population]; // avoid mutations
-    const pick = function(genome) {
-      const pick = pickGenome(genome)
-      if (typeof pick !== "boolean") throw new Error("pickGenome must always return a boolean!")
-      return pick
-    }
-    
-    if(adjustGenome){
-      for (let i = 0; i < population.length; i++) {
-        if(pick(filtered[i])) {
-          const result = adjustGenome(filtered[i])
-          if (!(result instanceof Network)) throw new Error("adjustGenome must always return a network!")
-          filtered[i] = result
-        }
-      }
-    } else
-        for (let i = 0; i < population.length; i++)
-          if(pick(filtered[i])) filtered[i] = Network.fromJSON(template.toJSON)
-  
-    return filtered;
-  }
-  
   // total nodes length = 200
   let neat = new Neat(100, 100, null, {
     popsize: 20
   })
+  
+  const filterGenome = neat.util.filterGenome;
   
   let pickGenome = function(network) {
     return (network.nodes.length > 100)
