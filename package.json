@@ -62,7 +62,9 @@
     "url": "https://github.com/liquidcarrot/carrot/issues"
   },
   "homepage": "https://liquidcarrot.io/",
-  "dependencies": {},
+  "dependencies": {
+    "lodash": "^4.17.11"
+  },
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-each": "0.0.1",
