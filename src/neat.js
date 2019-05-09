@@ -5,7 +5,7 @@ var methods = require('./methods/methods');
 var config = require('./config');
 
 // Easier variable naming
-var selection = methods.selectio
+var selection = methods.selection;
 
 
 /**
