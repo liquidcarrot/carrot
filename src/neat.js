@@ -8,18 +8,19 @@ var config = require('./config');
 var selection = methods.selection;
 
 let filterGenome = function(pickGenome, adjustGenome) {
-  if(pickGenome) {
-    let pickedIndexes = _.each(this.population, function(genome, index) {
-    if(pickGenome(genome)) return index
-  });
-  
-    if(adjustGenome) {
-      for(const i in pickedIndexes) this.population[i] = adjustGenome(this.population[i])
-    } else {
-      for(const i in pickedIndexes) this.population[i] = this.template
-    }
+  let pickedIndexes = [];
+
+  for (let i = 0; i < this.population.length; i++) {
+    if (pickGenome(this.population[i])) pickedIndexes.push(i);
+  }
+
+  if(adjustGenome) {
+    for(const i in pickedIndexes) this.population[i] = adjustGenome(this.population[i])
+  } else {
+    for(const i in pickedIndexes) this.population[i] = this.template
   }
 }
+
 
 /**
 * Runs the NEAT algorithm on group of neural networks.
@@ -171,8 +172,8 @@ Neat.prototype = {
     if (typeof this.population[this.population.length - 1].score === 'undefined') {
       await this.evaluate();
     }
-  
-    filterGenome(pickGenome, adjustGenome);
+    
+    if(pickGenome) filterGenome(pickGenome, adjustGenome)
     
     this.sort();
     
@@ -203,7 +204,7 @@ Neat.prototype = {
 
     this.population.push(...elitists);
     
-    filterGenome(pickGenome, adjustGenome);
+    if(pickGenome) filterGenome(pickGenome, adjustGenome)
 
     // Reset the scores
     for (i = 0; i < this.population.length; i++) {
