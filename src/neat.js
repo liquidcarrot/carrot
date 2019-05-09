@@ -1,5 +1,3 @@
-let _ = require('lodash');
-
 var Network = require('./architecture/network');
 var methods = require('./methods/methods');
 var config = require('./config');
@@ -7,18 +5,19 @@ var config = require('./config');
 // Easier variable naming
 var selection = methods.selection;
 
-let filterGenome = function(pickGenome, adjustGenome) {
+let filterGenome = function(population, template, pickGenome, adjustGenome) {
+  let filtered = [...population]; // avoid mutations
+  
   let pickedIndexes = [];
+  for (let i = 0; i < population.length; i++)
+    if (pickGenome(filtered[i])) pickedIndexes.push(i);
 
-  for (let i = 0; i < this.population.length; i++) {
-    if (pickGenome(this.population[i])) pickedIndexes.push(i);
-  }
+  if(adjustGenome)
+    for(const i in pickedIndexes) filtered[i] = adjustGenome(filtered[i])
+  else
+    for(const i in pickedIndexes) filtered[i] = template
 
-  if(adjustGenome) {
-    for(const i in pickedIndexes) this.population[i] = adjustGenome(this.population[i])
-  } else {
-    for(const i in pickedIndexes) this.population[i] = this.template
-  }
+  return filtered;
 }
 
 
@@ -173,7 +172,7 @@ Neat.prototype = {
       await this.evaluate();
     }
     
-    if(pickGenome) filterGenome(pickGenome, adjustGenome)
+    if(pickGenome) this.population = filterGenome(this.population, this.template, pickGenome, adjustGenome)
     
     this.sort();
     
@@ -204,7 +203,7 @@ Neat.prototype = {
 
     this.population.push(...elitists);
     
-    if(pickGenome) filterGenome(pickGenome, adjustGenome)
+    if(pickGenome) this.population = filterGenome(this.population, this.template, pickGenome, adjustGenome)
 
     // Reset the scores
     for (i = 0; i < this.population.length; i++) {

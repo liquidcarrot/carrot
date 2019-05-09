@@ -1,6 +1,5 @@
-/* Import */
-var chai = require('chai');
-var assert = chai.assert;
+var chai = require('chai')
+var assert = chai.assert
 let carrot = require('../src/carrot')
 
 /* Shorten var names */
@@ -9,11 +8,8 @@ var { Network, methods, config } = carrot;
 /* Turn off warnings */
 config.warnings = false;
 
-/*******************************************************************************************
-                      Tests the effectiveness of evolution
-*******************************************************************************************/
-
 describe('Neat', function () {
+  
   it('AND', async function () {
     this.timeout(40000);
 
