@@ -127,21 +127,51 @@ Neat.prototype = {
   /**
    * Evaluates, selects, breeds and mutates population.
    *
-   * @param [function] [removeGenome] A custom selection function to remove unwanted genomes. Accepts a network as a parameter and returns true for removal cases.
-   *
+   * @param {function} [pickGenome] A custom selection function to pick out unwanted genomes. Accepts a network as a parameter and returns true for selection.
+   * @param {function} [adjustGenome=this.template] Accepts a network, modifies it, and returns it. Used to modify unwanted genomes returned by `pickGenome` and reincorporate them into the population. If left unset, unwanted genomes will be replaced with the template Network. Will only run when pickGenome is defined.
    * @returns {Network} Fittest network
+   *
+   * @example
+   * let neat = new Neat(4, 1, dataset, {
+   *  elitism: 10,
+   *  clear: true,
+   *  popsize: 1000,
+   *  efficientMutation: true
+   * });
+   *
+   * let filter = function(genome) {
+   *  // Remove genomes with more than 100 nodes
+   *  return genome.nodes.length > 100 ? true : false
+   * }
+   *
+   * let adjust = function(genome) {
+   *  // clear the nodes
+   *  return genome.clear()
+   * }
+   *
+   * neat.evolve(filter, adjust).then(function(fittest) {
+   *  console.log(fittest)
+   * })
   */
-  evolve: async function (removeGenome) {
-    // Check if evaluated, sort the population
+  evolve: async function (pickGenome, adjustGenome) {
+    // Check if evaluated, check genomes, sort the population
     if (typeof this.population[this.population.length - 1].score === 'undefined') {
       await this.evaluate();
     }
-    this.sort();
-    
-    if(removeGenome) {
-      _.remove(this.population, removeGenome);
+  
+    if(pickGenome) {
+      let pickedIndexes = _.each(this.population, function(genome, index) {
+        if(pickGenome(genome)) return index
+      });
+      
+      if(adjustGenome) {
+        for(const i in pickedIndexes) this.population[i] = adjustGenome(this.population[i])
+      } else {
+        for(const i in pickedIndexes) this.population[i] = this.template
+      }
     }
     
+    this.sort();
     
     var fittest = Network.fromJSON(this.population[0].toJSON());
     fittest.score = this.population[0].score;
@@ -170,8 +200,16 @@ Neat.prototype = {
 
     this.population.push(...elitists);
     
-    if(removeGenome) {
-      _.remove(this.population, removeGenome);
+    if(pickGenome) {
+      let pickedIndexes = _.each(this.population, function(genome, index) {
+        if(pickGenome(genome)) return index
+      });
+      
+      if(adjustGenome) {
+        for(const i in pickedIndexes) this.population[i] = adjustGenome(this.population[i])
+      } else {
+        for(const i in pickedIndexes) this.population[i] = this.template
+      }
     }
 
     // Reset the scores
