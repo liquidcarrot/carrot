@@ -5,21 +5,28 @@ var config = require('./config');
 // Easier variable naming
 var selection = methods.selection;
 
-let filterGenome = function(population, template, pickGenome, adjustGenome) {
-  let filtered = [...population]; // avoid mutations
+const filterGenome = function(population, template, pickGenome, adjustGenome) {
+    let filtered = [...population]; // avoid mutations
+    const pick = function(genome) {
+      const pick = pickGenome(genome)
+      if (typeof pick !== "boolean") throw new Error("pickGenome must always return a boolean!")
+      return pick
+    }
+    
+    if(adjustGenome){
+      for (let i = 0; i < population.length; i++) {
+        if(pick(filtered[i])) {
+          const result = adjustGenome(filtered[i])
+          if (!(result instanceof Network)) throw new Error("adjustGenome must always return a network!")
+          filtered[i] = result
+        }
+      }
+    } else
+        for (let i = 0; i < population.length; i++)
+          if(pick(filtered[i])) filtered[i] = Network.fromJSON(template.toJSON)
   
-  let pickedIndexes = [];
-  for (let i = 0; i < population.length; i++)
-    if (pickGenome(filtered[i])) pickedIndexes.push(i);
-
-  if(adjustGenome)
-    for(const i in pickedIndexes) filtered[i] = adjustGenome(filtered[i])
-  else
-    for(const i in pickedIndexes) filtered[i] = template
-
-  return filtered;
-}
-
+    return filtered;
+  }
 
 /**
 * Runs the NEAT algorithm on group of neural networks.
