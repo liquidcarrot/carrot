@@ -1,12 +1,12 @@
 {
   "name": "@liquid-carrot/carrot",
-  "version": "0.2.1",
+  "version": "0.2.6",
   "description": "A Simple Node.js AI Library for Neural Network",
   "main": "src/carrot",
   "scripts": {
-    "preversion": "npm run build:stash && git pull && npm test",
-    "version": "./node_modules/.bin/webpack && git add .",
-    "postversion": "git push; npm publish; npm run build; npm run build:pop",
+    "preversion:deep": "npm run build:stash && git pull && npm test && git add . && git commit -am 'Auto Sync'; git push;",
+    "version:deep": "npm version $TYPE -no-git-tag-version && ./node_modules/.bin/webpack && git add . && git commit -m 'Version bump'",
+    "postversion:deep": "git push && npm publish && npm run build; npm run build:pop",
     "jsdoc": "node_modules/.bin/jsdoc -r -c jsdoc.json",
     "build:stash": "> .temp && git add . && git stash",
     "build:docs": "npm run jsdoc && npm run deploy:docs",
