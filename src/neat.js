@@ -186,15 +186,16 @@ Neat.prototype = {
    * })
   */
   evolve: async function (pickGenome, adjustGenome) {
-    // Check if evaluated, check genomes, sort the population
-    if (typeof this.population[this.population.length - 1].score === 'undefined') {
-      await this.evaluate();
-    }
+    if(this.elitism + this.provenance > this.popsize) throw new Error("Can't evolve! Elitism + provenance exceeds population size!");
     
+    // Assign fitness score(s) to the population if needed
+    if (typeof this.population[this.population.length - 1].score === 'undefined') await this.evaluate()
+    
+    // Check & adjust genomes as needed
     if(pickGenome) this.population = filterGenome(this.population, this.template, pickGenome, adjustGenome)
     
+    // Sort in order of fitness (fittest first)
     this.sort();
-    
     var fittest = Network.fromJSON(this.population[0].toJSON());
     fittest.score = this.population[0].score;
 
@@ -210,7 +211,7 @@ Neat.prototype = {
     for (i = 0; i < this.provenance; i++) {
       newPopulation.push(Network.fromJSON(this.template.toJSON()));
     }
-
+    
     // Breed the next individuals
     for (i = 0; i < this.popsize - this.elitism - this.provenance; i++) {
       newPopulation.push(this.getOffspring());
