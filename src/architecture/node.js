@@ -41,7 +41,7 @@ let config = require('../config');
 *
 * let node = new Node();
 */
-function Node (type) {
+function Node(type) {
   this.bias = (type === 'input') ? 0 : Math.random() * 0.2 - 0.1;
   this.squash = methods.activation.LOGISTIC;
   this.type = type || 'hidden';
@@ -96,17 +96,19 @@ Node.prototype = {
   * A.activate(0.5); // 0.5
   * B.activate(); // 0.3244554645
   */
-  activate: function (input) {
+  activate: function(input) {
     // If an input is given, forward it (i.e. act like an input neuron)
-    if(_.isNumber(input)) {
-      if(_.isFinite(input)) {
-        this.activation = input;
-        return this.activation;
+    if(!_.isNil(input)) {
+      if(_.isNumber(input)) {
+        if(_.isFinite(input)) {
+          this.activation = input;
+          return this.activation;
+        } else {
+          throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
+        }
       } else {
-        throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
+        throw new TypeError("Parameter \"input\": Expected a \"number\", got a " + typeof input);
       }
-    } else {
-      throw new TypeError("Parameter \"input\": Expected a \"number\", got a " + typeof input);
     }
 
     this.old = this.state;
@@ -190,11 +192,19 @@ Node.prototype = {
   *
   * node.noTraceActivate(); // 0.4923128591923
   */
-  noTraceActivate: function (input) {
+  noTraceActivate: function(input) {
     // Check if an input is given
-    if (typeof input !== 'undefined') {
-      this.activation = input;
-      return this.activation;
+    if(!_.isNil(input)) {
+      if(_.isNumber(input)) {
+        if(_.isFinite(input)) {
+          this.activation = input;
+          return this.activation;
+        } else {
+          throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
+        }
+      } else {
+        throw new TypeError("Parameter \"input\": Expected a \"number\", got a " + typeof input);
+      }
     }
 
     // All activation sources coming from the node itself
@@ -226,8 +236,8 @@ Node.prototype = {
   *
   * @param {number} rate=0.3 [Learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
   * @param {number} momentum=0 [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one.
-  * @param {boolean} update=false When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
-  * @param {number} target The target value, a `float` between zero and one
+  * @param {boolean} update=true When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
+  * @param {number} target The target value
   *
   * @example
   * let { Node } = require("@liquid-carrot/carrot");
@@ -256,7 +266,46 @@ Node.prototype = {
   * @see [Regularization Neataptic](https://wagenaartje.github.io/neataptic/docs/methods/regularization/)
   * @see [What is backpropagation | YouTube](https://www.youtube.com/watch?v=Ilg3gGewQ5U)
   */
-  propagate: function (rate, momentum, update, target) {
+  propagate: function(rate, momentum, update, target) {
+    // TYPE CHECK: rate
+    if(!_.isNil(rate)) {
+      if(_.isNumber(rate)) {
+        if(!_.isFinite(rate)) {
+          throw new TypeError("Parameter \"rate\": " + rate + " is not a valid \"number\".");
+        }
+      } else {
+        throw new TypeError("Parameter \"rate\": Expected a \"number\", got a " + typeof rate);
+      }
+      
+    }
+    // TYPE CHECK: momentum
+    if(!_.isNil(momentum)) {
+      if(_.isNumber(momentum)) {
+        if(!_.isFinite(momentum)) {
+          throw new TypeError("Parameter \"momentum\": " + momentum + " is not a valid \"number\".");
+        }
+      } else {
+        throw new TypeError("Parameter \"momentum\": Expected a \"number\", got a " + typeof momentum);
+      }
+    }
+    // TYPE CHECK: update
+    if(!_.isNil(update)) {
+      if(!_.isBoolean(update)) {
+        throw new TypeError("Parameter \"update\": Expected a \"boolean\", got a " + typeof update);
+      }
+    }
+    // TYPE CHECK: target
+    if(!_.isNil(target)) {
+      if(_.isNumber(target)) {
+        if(!_.isFinite(target)) {
+          throw new TypeError("Parameter \"target\": " + target + " is not a valid \"number\".");
+        }
+      } else {
+        throw new TypeError("Parameter \"target\": Expected a \"number\", got a " + typeof target);
+      }
+    }
+    
+    
     momentum = momentum || 0;
     rate = rate || 0.3;
 
