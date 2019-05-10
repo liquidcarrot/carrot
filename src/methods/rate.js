@@ -6,9 +6,9 @@
 *
 * @example
 * let { methods, Network } = require("@liquid-carrot/carrot");
-* 
+*
 * let network = new Network(5, 10, 5);
-* 
+*
 * network.train(trainingSet, {
 *   rate: 0.3,
 *   ratePolicy: methods.rate.METHOD(options), // replace METHOD with your choice
@@ -17,25 +17,23 @@
 * @namespace
 */
 var rate = {
+  
   /**
   * Default rate policy. Using this will make learning rate static (no change). Useful as a way to update a previous rate policy.
   *
   * @returns {function}
   *
   * @example
-  * let { methods, Network } = require("@liquid-carrot/carrot");
-  * 
-  * let network = new Network(5, 10, 5);
-  * 
-  * network.train(trainingSet, {
-  *   rate: 0.3,
-  *   ratePolicy: methods.rate.FIXED(),
-  * });
+  * let { Network, methods } = require("@liquid-carrot/carrot");
+  *
+  * let network = new Network(10, 1);
+  *
+  * network.train(trainingData, { ratePolicy: methods.rate.FIXED() });
   */
-  FIXED: function () {
-    var func = function (baseRate, iteration) { return baseRate; };
-    return func;
+  FIXED: function() {
+    return function (baseRate, iteration) { return baseRate; };
   },
+  
   /**
   * The rate will 'step down' every `n` iterations.
   *
@@ -43,52 +41,34 @@ var rate = {
   * @param {number} [stepSize=100] Amount of iterations before learning rate is updated (a step)
   *
   * @example
-  * let { methods, Network } = require("@liquid-carrot/carrot");
-  * 
-  * let network = new Network(5, 10, 5);
-  * 
-  * network.train(trainingSet, {
-  *   rate: 0.3,
-  *   ratePolicy: methods.rate.STEP(gamma, stepSize),
-  * });
+  * let { Network, methods } = require("@liquid-carrot/carrot");
+  *
+  * let network = new Network(10, 1);
+  *
+  * network.train(trainingData, { ratePolicy: methods.rate.STEP(0.7, 500) });
   *
   * @returns {function}
   */
-  STEP: function (gamma, stepSize) {
-    gamma = gamma || 0.9;
-    stepSize = stepSize || 100;
-
-    var func = function (baseRate, iteration) {
-      return baseRate * Math.pow(gamma, Math.floor(iteration / stepSize));
-    };
-
-    return func;
+  STEP: function (gamma=0.9, stepSize=100) {
+    return function(baseRate, iteration) { return baseRate * Math.pow(gamma, Math.floor(iteration / stepSize)); }
   },
+  
   /**
   * The learning rate will exponentially decrease. The rate at a certain iteration is calculated as: <code>rate = baseRate * Math.pow(gamma, iteration)</code>
   *
   * @param {number} [gamma=0.999] Amount to decrease learning rate by, higher numbers mean lower decreases in learning rate. The default gamma of <code>0.999</code> will decrease the current rate by 0.1% every iteration.
   *
   * @example
-  * let { methods, Network } = require("@liquid-carrot/carrot");
-  * 
-  * let network = new Network(5, 10, 5);
-  * 
-  * network.train(trainingSet, {
-  *   rate: 0.3,
-  *   ratePolicy: methods.rate.EXP(gamma),
-  * });
+  * let { Network, methods } = require("@liquid-carrot/carrot");
+  *
+  * let network = new Network(10, 1);
+  *
+  * network.train(trainingData, { ratePolicy: methods.rate.EXP(0.98) });
   *
   * @returns {function}
   */
-  EXP: function (gamma) {
-    gamma = gamma || 0.999;
-
-    var func = function (baseRate, iteration) {
-      return baseRate * Math.pow(gamma, iteration);
-    };
-
-    return func;
+  EXP: function(gamma=0.999) {
+    return function(baseRate, iteration) { return baseRate * Math.pow(gamma, iteration); }
   },
   /**
   * An inverse exponential, the rate at certain iteration is calculated at <code>rate = baseRate * Math.pow(1 + gamma * iteration, -power)</code>
@@ -97,26 +77,16 @@ var rate = {
   * @param {number} [power=2] A power that is set to negative, higher numbers mean higher decreases in learning rate
   *
   * @example
-  * let { methods, Network } = require("@liquid-carrot/carrot");
-  * 
-  * let network = new Network(5, 10, 5);
-  * 
-  * network.train(trainingSet, {
-  *   rate: 0.3,
-  *   ratePolicy: methods.rate.INV(gamma, power),
-  * });
+  * let { Network, methods } = require("@liquid-carrot/carrot");
+  *
+  * let network = new Network(10, 1);
+  *
+  * network.train(trainingData, { ratePolicy: methods.rate.INV(0.002, 3) });
   *
   * @returns {function}
   */
-  INV: function (gamma, power) {
-    gamma = gamma || 0.001;
-    power = power || 2;
-
-    var func = function (baseRate, iteration) {
-      return baseRate * Math.pow(1 + gamma * iteration, -power);
-    };
-
-    return func;
+  INV: function (gamma=0.001, power=2) {
+    return function(baseRate, iteration) { return baseRate * Math.pow(1 + gamma * iteration, -power); }
   }
 };
 
