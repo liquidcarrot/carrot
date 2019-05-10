@@ -1,6 +1,7 @@
-var methods = require('../methods/methods');
-var Connection = require('./connection');
-var config = require('../config');
+let _ = require("lodash");
+let methods = require('../methods/methods');
+let Connection = require('./connection');
+let config = require('../config');
 
 /**
 * Creates a new neuron/node
@@ -97,9 +98,15 @@ Node.prototype = {
   */
   activate: function (input) {
     // If an input is given, forward it (i.e. act like an input neuron)
-    if (typeof input !== 'undefined') {
-      this.activation = input;
-      return this.activation;
+    if(_.isNumber(input)) {
+      if(_.isFinite(input)) {
+        this.activation = input;
+        return this.activation;
+      } else {
+        throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
+      }
+    } else {
+      throw new TypeError("Parameter \"input\": Expected a \"number\", got a " + typeof input);
     }
 
     this.old = this.state;
