@@ -5,8 +5,8 @@
   "main": "src/carrot",
   "scripts": {
     "preversion:deep": "npm run build:stash && git pull && npm test",
-    "version:deep": "./node_modules/.bin/webpack && git add .",
-    "postversion:deep": "git push; npm version patch; npm publish; npm run build; npm run build:pop",
+    "version:deep": "./node_modules/.bin/webpack && git add .; git push; version-type=${version-type:patch}; npm version $version-type;",
+    "postversion:deep": "npm publish; npm run build; npm run build:pop",
     "jsdoc": "node_modules/.bin/jsdoc -r -c jsdoc.json",
     "build:stash": "> .temp && git add . && git stash",
     "build:docs": "npm run jsdoc && npm run deploy:docs",
