@@ -7,18 +7,21 @@ describe('filterGenome()', async assert => {
     popsize: 20
   })
   
+  
+  // This replaces bad networks in a population
   const filterGenome = neat.util.filterGenome;
   
-  let pickGenome = function(network) {
-    return (network.nodes.length > 100)
+  let pickGenome = function(network) { // takes some input and returns a boolean (true / false)
+    return (network.nodes.length > 100) // avoid overfit
   }
   
-  let adjustGenome = function(network) {
-    return new Network(4, 4)
+  let adjustGenome = function(network) { // a function that takes an object and returns a new form of the object
+    return new Network(4, 4) // spit back a new network, 4 in 4 out 8 total
   }
   
   const should = "return a new Network with 8 nodes";
   
+  // a case
   assert({
     given: "a genome with more than 100 nodes",
     should: should,
@@ -26,6 +29,7 @@ describe('filterGenome()', async assert => {
     expected: 8
   });
   
+  // another case
   assert({
     given: "a population with 20 members",
     should: "return an array of 20",
@@ -33,6 +37,7 @@ describe('filterGenome()', async assert => {
     expected: 20
   });
   
+  // another case
   assert({
     given: "an pickGenome function that doesn't return a boolean",
     should: 'throw an error',
@@ -40,6 +45,7 @@ describe('filterGenome()', async assert => {
     expected: new Error("pickGenome must always return a boolean!")
   });
   
+  // another case
   assert({
     given: "an adjustGenome function that doesn't return a network",
     should: 'throw an error',
