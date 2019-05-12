@@ -168,8 +168,42 @@ And finally, a big thank you to all of you for supporting! 🤗
     * [ ] Small Numbers
 </details>
 
-## Backers
-[![Carrot's Backers](https://img.shields.io/endpoint.svg?color=blue&label=patrons&logo=patrons&url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fliquidcarrot)](https://www.patreon.com/liquidcarrot)
+## Patrons
+[![Carrot's Patrons](https://img.shields.io/endpoint.svg?color=blue&label=patrons&logo=patrons&url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fliquidcarrot)](https://www.patreon.com/liquidcarrot)
+
+<table>
+ <thead>
+  <tr>
+   <th>Silver Patron</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td align="center">
+    <a href="https://protonmail.com/" alt="ProtonMail"><img src="https://protonmail.com/apple-touch-icon.png" alt="ProtonMail Logo" width="150px" /></a>
+    <br>
+    <strong>ProtonMail</strong>
+   </td>
+  </tr>
+ </tbody>
+</table>
+
+<table>
+ <thead>
+  <tr>
+   <th>Patron</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>
+    <a href="http://dollarbizclub.com/" alt="DollarBizClub"><img src="http://dollarbizclub.com/css/img/red400.png" alt="DollarBizClub Logo" width="100px" /></a>
+    <br>
+    <strong>DollarBizClub</strong>
+   </td>
+  </tr>
+ </tbody>
+</table>
 
 [![Become a Patron](https://c5.patreon.com/external/logo/become_a_patron_button.png)](https://www.patreon.com/liquidcarrot)
 
