@@ -1,6 +1,6 @@
 let { assert, expect } = require('chai');
 let should = require('chai').should();
-let carrot = require('../../../src/carrot');
+let carrot = require('../../../../src/carrot');
 
 /**
  *

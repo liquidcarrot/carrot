@@ -192,7 +192,7 @@ Neat.prototype = {
     if (typeof this.population[this.population.length - 1].score === 'undefined') await this.evaluate()
     
     // Check & adjust genomes as needed
-    if(pickGenome) this.population = filterGenome(this.population, this.template, pickGenome, adjustGenome)
+    if(pickGenome) this.population = this.util.filterGenome(this.population, this.template, pickGenome, adjustGenome)
     
     // Sort in order of fitness (fittest first)
     this.sort();
@@ -223,7 +223,7 @@ Neat.prototype = {
 
     this.population.push(...elitists);
     
-    if(pickGenome) this.population = filterGenome(this.population, this.template, pickGenome, adjustGenome)
+    if(pickGenome) this.population = this.util.filterGenome(this.population, this.template, pickGenome, adjustGenome)
 
     // Reset the scores
     for (i = 0; i < this.population.length; i++) {
