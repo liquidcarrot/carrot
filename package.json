@@ -14,7 +14,7 @@
     "build:pop": "git stash pop && rm -f .temp && git add .temp",
     "build": "npm run build:stash && npm run build:docs; npm run build:pop",
     "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | coveralls && rm -rf ./src-cov",
-    "test": "./node_modules/.bin/nyc --reporter=html --reporter=text mocha test/ --exclude test/unit.js",
+    "test": "./node_modules/.bin/nyc --reporter=html --reporter=text mocha --recursive test/ --exclude test/unit.js",
     "test:riteway": "./node_modules/.bin/nyc --reporter=html --reporter=text riteway test/unit.js",
     "test:forever": "./node_modules/.bin/nodemon ./node_modules/.bin/mocha --reporter spec test/",
     "clean:docfiles": "find . -type f -name '*.html' -exec rm {} + && rm -rf styles/ && rm -rf scripts"
