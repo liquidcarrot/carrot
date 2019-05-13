@@ -99,16 +99,19 @@ Node.prototype = {
   activate: function(input) {
     // If an input is given, forward it (i.e. act like an input neuron)
     
-    if(!_.isNil(input) && _.isNumber(input)) {
-      if(_.isFinite(input)) {
-        this.activation = input;
-        return this.activation;
+    if(!_.isNil(input)) {
+      if(_.isNumber(input)) {
+        if(_.isFinite(input)) {
+          this.activation = input;
+          return this.activation;
+        } else {
+          throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
+        }
       } else {
-        throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
+        throw new TypeError("Parameter \"input\": Expected a \"number\", got a " + typeof input);
       }
-    } else {
-      throw new TypeError("Parameter \"input\": Expected a \"number\", got a " + typeof input);
     }
+
 
     this.old = this.state;
 
