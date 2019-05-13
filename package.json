@@ -64,17 +64,19 @@
   },
   "homepage": "https://liquidcarrot.io/",
   "dependencies": {
+    "bignumber.js": "^8.1.1",
     "lodash": "^4.17.11"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-each": "0.0.1",
+    "chalk": "^2.4.2",
     "copy-webpack-plugin": "^5.0.2",
     "coveralls": "^3.0.3",
     "faker": "^4.1.0",
     "jsdoc": "^3.6.1",
     "mocha": "^5.2.0",
-    "nodemon": "^1.18.11",
+    "nodemon": "^1.19.0",
     "nyc": "^13.3.0",
     "riteway": "^6.0.3",
     "webpack": "^4.30.0",
