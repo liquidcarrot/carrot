@@ -16,7 +16,7 @@
 *
 * @namespace
 */
-var rate = {
+const rate = {
   
   /**
   * Default rate policy. Using this will make learning rate static (no change). Useful as a way to update a previous rate policy.
