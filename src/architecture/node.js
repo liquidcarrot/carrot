@@ -25,7 +25,7 @@ let config = require('../config');
 * @prop {number} activation Output value
 * @prop {number} state
 * @prop {number} old
-* @prop {number} mask
+* @prop {number} mask=1 Used for dropout. This is either 0 (ignored) or 1 (included) during training and is used to avoid [overfit](https://www.kdnuggets.com/2015/04/preventing-overfitting-neural-networks.html).
 * @prop {number} previousDeltaBias
 * @prop {number} totalDeltaBias
 * @prop {Array<Connection>} connections.in Incoming connections to this node
@@ -98,17 +98,16 @@ Node.prototype = {
   */
   activate: function(input) {
     // If an input is given, forward it (i.e. act like an input neuron)
-    if(!_.isNil(input)) {
-      if(_.isNumber(input)) {
-        if(_.isFinite(input)) {
-          this.activation = input;
-          return this.activation;
-        } else {
-          throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
-        }
+    
+    if(!_.isNil(input) && _.isNumber(input)) {
+      if(_.isFinite(input)) {
+        this.activation = input;
+        return this.activation;
       } else {
-        throw new TypeError("Parameter \"input\": Expected a \"number\", got a " + typeof input);
+        throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
       }
+    } else {
+      throw new TypeError("Parameter \"input\": Expected a \"number\", got a " + typeof input);
     }
 
     this.old = this.state;
@@ -119,7 +118,7 @@ Node.prototype = {
     // Activation sources coming from connections
     var i;
     for (i = 0; i < this.connections.in.length; i++) {
-      var connection = this.connections.in[i];
+      const connection = this.connections.in[i];
       this.state += connection.from.activation * connection.weight * connection.gain;
     }
 
@@ -152,8 +151,7 @@ Node.prototype = {
       let connection = this.connections.in[i];
 
       // Elegibility trace
-      connection.elegibility = this.connections.self.gain * this.connections.self.weight *
-        connection.elegibility + connection.from.activation * connection.gain;
+      connection.elegibility = this.connections.self.gain * this.connections.self.weight * connection.elegibility + connection.from.activation * connection.gain;
 
       // Extended trace
       for (var j = 0; j < nodes.length; j++) {
