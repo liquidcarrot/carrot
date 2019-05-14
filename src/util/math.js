@@ -1,8 +1,25 @@
-const BigNumber = require("bignumber.js")
 const _ = require("lodash");
 
-const toNumber = (BigNumber) => BigNumber.abs().gt(Number.MAX_VALUE) ? BigNumber.isNegative() ? -Number.MAX_VALUE : Number.MAX_VALUE : BigNumber.toNumber();
+let squeeze = (n,m=Number.MAX_VALUE) => Math.abs(n) > Math.abs(m) ? (Math.sign(n) * m) : n;
 
-module.exports.multiply = (numbers) => toNumber(_.reduce(numbers, (total, number) => total.times(number), new BigNumber(1)));
+module.exports.multiply = function(numbers) {
+  let total = numbers.reduce((t, n) => t * n, 1);
+  
+  // REAL MATH
+  if(Number.isFinite(total)) return total;
+  // FAKE MATH
+  else return numbers.reduce(function(total, number) {
+    return total * squeeze(number, Math.pow(Number.MAX_VALUE, 1 / numbers.length));
+  }, 1);
+};
 
-module.exports.sum = (numbers) => toNumber(_.reduce(numbers, (total, number) => total.plus(number), new BigNumber(0)));
+module.exports.sum = function(numbers) {
+  let total = numbers.reduce((t, n) => t + n, 0);
+  
+  // REAL MATH
+  if(Number.isFinite(total)) return total;
+  //FAKE MATH
+  else return numbers.reduce(function(total, number) {
+    return total * squeeze(number, Number.MAX_VALUE / numbers.length)
+  }, 0)
+};
