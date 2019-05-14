@@ -5,7 +5,7 @@ const { multiply, sum } = require("../../../src/util/math");
 const MAX = Number.MAX_VALUE;
 const MIN = -Number.MAX_VALUE;
 
-describe("src/util/math.js", function() {
+describe.skip("src/util/math.js", function() {
   describe("multiply()", function() {
     it(`multiply([${MIN}, ${-1}]) === ${MAX}`, function() {
       expect(multiply([MIN, -1])).to.equal(MAX);

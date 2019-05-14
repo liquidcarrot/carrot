@@ -7,6 +7,7 @@ module.exports.multiply = function(numbers) {
   
   // REAL MATH
   if(Number.isFinite(total)) return total;
+  
   // FAKE MATH
   else return numbers.reduce(function(total, number) {
     return total * squeeze(number, Math.pow(Number.MAX_VALUE, 1 / numbers.length));
@@ -18,8 +19,9 @@ module.exports.sum = function(numbers) {
   
   // REAL MATH
   if(Number.isFinite(total)) return total;
+  
   //FAKE MATH
   else return numbers.reduce(function(total, number) {
-    return total * squeeze(number, Number.MAX_VALUE / numbers.length)
+    return total + squeeze(number, Number.MAX_VALUE / numbers.length)
   }, 0)
 };
