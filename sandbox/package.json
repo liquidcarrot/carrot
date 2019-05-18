@@ -26,5 +26,8 @@
     "mathjs": "^5.10.1",
     "node-biginteger": "0.0.10",
     "number-crunch": "^1.2.3"
+  },
+  "devDependencies": {
+    "chalk": "^2.4.2"
   }
 }
