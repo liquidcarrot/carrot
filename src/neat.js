@@ -41,8 +41,7 @@ var selection = methods.selection;
 * let neat = new Neat(4, 1, dataset, {
 *   elitism: 10,
 *   clear: true,
-*   popsize: 1000,
-*   efficientMutation: true
+*   popsize: 1000
 * });
 */
 function Neat (input, output, dataset, options) {
@@ -69,7 +68,7 @@ function Neat (input, output, dataset, options) {
     methods.crossover.AVERAGE
   ];
   this.mutation = options.mutation || methods.mutation.FFW;
-  this.efficientMutation = options.efficientMutation || false;
+  // this.efficientMutation = options.efficientMutation || false;
 
   this.template = options.network || (new Network(this.input, this.output));
 
@@ -167,8 +166,7 @@ Neat.prototype = {
    * let neat = new Neat(4, 1, dataset, {
    *  elitism: 10,
    *  clear: true,
-   *  popsize: 1000,
-   *  efficientMutation: true
+   *  popsize: 1000
    * });
    *
    * let filter = function(genome) {
@@ -252,9 +250,9 @@ Neat.prototype = {
    * @param {Network} genome
   */
   selectMutationMethod: function (genome) {
-    var mutation = this.efficientMutation ? genome.getPossibleMutations(this.mutation) : this.mutation;
+    let mutation = this.mutation;
 
-    var mutationMethod = mutation[Math.floor(Math.random() * mutation.length)];
+    let mutationMethod = mutation[Math.floor(Math.random() * mutation.length)];
 
     if (mutationMethod === methods.mutation.ADD_NODE && genome.nodes.length >= this.maxNodes) {
       if (config.warnings) console.warn('maxNodes exceeded!');

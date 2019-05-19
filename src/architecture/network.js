@@ -385,127 +385,6 @@ Network.prototype = {
   },
 
   /**
-   * Tests the state of the network and returns an array of mutations that are possible.
-   *
-   * @param {mutation[]} allowedMutations A list of potential mutations methods
-   *
-   */
-  getPossibleMutations: function (allowedMutations) {
-    let possibleMutations = [];
-
-    var i, j;
-    for (var x = 0; x < allowedMutations.length; x++) {
-      var method = allowedMutations[x];
-      switch (method) {
-        case mutation.SUB_NODE:
-          if (this.nodes.length === this.input + this.output) continue;
-          break;
-        case mutation.ADD_CONN:
-          // Create an array of all uncreated (feedforward) connections
-          var available = [];
-          for (i = 0; i < this.nodes.length - this.output; i++) {
-            let node1 = this.nodes[i];
-            for (j = Math.max(i + 1, this.input); j < this.nodes.length; j++) {
-              let node2 = this.nodes[j];
-              if (!node1.isProjectingTo(node2)) available.push([node1, node2]);
-            }
-          }
-          if (available.length === 0) continue;
-          break;
-        case mutation.SUB_CONN: { // block scoping
-          // List of possible connections that can be removed
-          let possible = [];
-  
-          for (i = 0; i < this.connections.length; i++) {
-            let conn = this.connections[i];
-            // Check if it is not disabling a node
-            if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && this.nodes.indexOf(conn.to) > this.nodes.indexOf(conn.from)) {
-              possible.push(conn);
-            }
-          }
-  
-          if (possible.length === 0) continue;
-          break;
-        }
-        case mutation.MOD_ACTIVATION:
-          if (!method.mutateOutput && this.input + this.output === this.nodes.length) continue;
-          break;
-        case mutation.ADD_SELF_CONN: {
-          // Check which nodes aren't selfconnected yet
-          let possible = [];
-          for (i = this.input; i < this.nodes.length; i++) {
-            let node = this.nodes[i];
-            if (node.connections.self.weight === 0) {
-              possible.push(node);
-            }
-          }
-
-          if (possible.length === 0) continue;
-          break;
-        }
-        case mutation.SUB_SELF_CONN:
-          if (this.selfconns.length === 0) continue;
-          break;
-        case mutation.ADD_GATE: {
-          var allconnections = this.connections.concat(this.selfconns);
-
-          // Create a list of all non-gated connections
-          let possible = [];
-          for (i = 0; i < allconnections.length; i++) {
-            let conn = allconnections[i];
-            if (conn.gater === null) {
-              possible.push(conn);
-            }
-          }
-
-          if (possible.length === 0) continue;
-          break;
-        }
-        case mutation.SUB_GATE:
-          if (this.gates.length === 0) continue;
-          break;
-        case mutation.ADD_BACK_CONN:
-          // Create an array of all uncreated (backfed) connections
-          var available = [];
-          for (i = this.input; i < this.nodes.length; i++) {
-            let node1 = this.nodes[i];
-            for (j = this.input; j < i; j++) {
-              let node2 = this.nodes[j];
-              if (!node1.isProjectingTo(node2)) available.push([node1, node2]);
-            }
-          }
-
-          if (available.length === 0) continue;
-          break;
-        case mutation.SUB_BACK_CONN: {
-          // List of possible connections that can be removed
-          let possible = [];
-
-          for (i = 0; i < this.connections.length; i++) {
-            let conn = this.connections[i];
-            // Check if it is not disabling a node
-            if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && this.nodes.indexOf(conn.from) > this.nodes.indexOf(conn.to)) {
-              possible.push(conn);
-            }
-          }
-
-          if (possible.length === 0) continue;
-          break;
-        }
-        case mutation.SWAP_NODES:
-          if ((method.mutateOutput && this.nodes.length - this.input < 2) ||
-            (!method.mutateOutput && this.nodes.length - this.input - this.output < 2)) {
-            continue;
-          }
-          break;
-      }
-      possibleMutations.push(method);
-    }
-
-    return possibleMutations;
-  },
-
-  /**
    * Mutates the network with the given method
    *
    * @param {mutation} method [Mutation method](mutation)
@@ -1951,7 +1830,7 @@ function Neat (input, output, fitness, options) {
     methods.crossover.AVERAGE
   ];
   this.mutation = options.mutation || methods.mutation.FFW;
-  this.efficientMutation = options.efficientMutation || false;
+  // this.efficientMutation = options.efficientMutation || false;
 
   this.template = options.network || (new Network(this.input, this.output));
 
@@ -2055,9 +1934,9 @@ Neat.prototype = {
    * @param genome
   */
   selectMutationMethod: function (genome) {
-    var mutation = this.efficientMutation ? genome.getPossibleMutations(this.mutation) : this.mutation;
+    let mutation = this.mutation;
 
-    var mutationMethod = mutation[Math.floor(Math.random() * mutation.length)];
+    let mutationMethod = mutation[Math.floor(Math.random() * mutation.length)];
 
     if (mutationMethod === methods.mutation.ADD_NODE && genome.nodes.length >= this.maxNodes) {
       if (config.warnings) console.warn('maxNodes exceeded!');

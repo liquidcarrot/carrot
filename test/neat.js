@@ -55,7 +55,7 @@ describe('Neat', function () {
 
     assert.isBelow(results.error, 0.03);
   });
-  it('XOR using efficientMutation', async function () {
+  it.skip('XOR using efficientMutation', async function () {
     this.timeout(40000);
     // Train the XOR gate
     var trainingSet = [
