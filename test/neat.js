@@ -48,14 +48,13 @@ describe('Neat', function () {
       mutation: methods.mutation.FFW,
       equal: true,
       elitism: 10,
-      mutationRate: 0.5,
+      mutationRate: 0.9,
       error: 0.03,
       threads: 1
     });
-
     assert.isBelow(results.error, 0.03);
   });
-  it.skip('XOR using efficientMutation', async function () {
+  it('XOR using efficientMutation', async function () {
     this.timeout(40000);
     // Train the XOR gate
     var trainingSet = [
@@ -70,12 +69,11 @@ describe('Neat', function () {
       mutation: methods.mutation.FFW,
       equal: true,
       elitism: 10,
-      mutationRate: 0.5,
+      mutationRate: 0.9,
       error: 0.03,
       efficientMutation: true,
       threads: 1
     });
-
     assert.isBelow(results.error, 0.03);
   });
   it('XNOR', async function () {
