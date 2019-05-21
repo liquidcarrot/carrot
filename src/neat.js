@@ -8,7 +8,7 @@ var selection = methods.selection;
 /**
 * Runs the NEAT algorithm on group of neural networks.
 *
-* @constructs NEAT
+* @constructs Neat
 *
 * @param {number} input - The input size of the networks.
 * @param {number} output - The output size of the networks
