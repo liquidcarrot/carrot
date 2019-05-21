@@ -808,6 +808,7 @@ Network.prototype = {
    * Train the given set to this network
    *
    * @param {Array<{input:number[],output:number[]}>} set A set of input values and ideal output values to train the network with
+   * @param {Object} options Options used to train network
    * @param {cost} [options.cost=cost.MSE] The [cost function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
    * @param {rate} [options.ratePolicy=rate.FIXED] A [learning rate policy](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10), i.e. how to change the learning rate during training to get better network performance
    * @param {number} [options.rate=0.3] Sets the [learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10) of the backpropagation process
