@@ -58,6 +58,12 @@ function Node(type) {
 
   // Batch training
   this.totalDeltaBias = 0;
+  
+  // Aliases
+  this.deltabias = {
+    previous: 0,
+    total: 0
+  }
 
   this.connections = {
     in: [],
@@ -82,7 +88,8 @@ Node.prototype = {
   *
   * You can also provide the activation (a float between 0 and 1) as a parameter, which is useful for neurons in the input layer.
   *
-  * @param {number} [input] Optional value to be used for an input (or forwarding) neuron
+  * @param {number} [input] Optional value to be used for an input (or forwarding) neuron - _defaults to `0` when `node.type === "input"`._
+  * @param {Object} [options]
   *
   * @returns {number} A neuron's ['Squashed'](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) output value
   *
@@ -96,9 +103,10 @@ Node.prototype = {
   * A.activate(0.5); // 0.5
   * B.activate(); // 0.3244554645
   */
-  activate: function(input) {
-    // If an input is given, forward it (i.e. act like an input neuron)
+  activate: function(input, options) {
+    let self = this;
     
+    // If an input is given, forward it (i.e. act like an input neuron)
     if(!_.isNil(input)) {
       if(_.isNumber(input)) {
         if(_.isFinite(input)) {
@@ -110,8 +118,10 @@ Node.prototype = {
       } else {
         throw new TypeError("Parameter \"input\": Expected a \"number\", got a " + typeof input);
       }
+    } else if(self.type === "input") {
+      this.activation = 0;
+      return this.activation;
     }
-
 
     this.old = this.state;
 
