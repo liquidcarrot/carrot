@@ -68,7 +68,7 @@ function Neat (input, output, dataset, options) {
     methods.crossover.AVERAGE
   ];
   this.mutation = options.mutation || methods.mutation.FFW;
-  // this.efficientMutation = options.efficientMutation || false;
+  this.efficientMutation = options.efficientMutation || false;
 
   this.template = options.network || (new Network(this.input, this.output));
 
