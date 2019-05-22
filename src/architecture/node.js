@@ -88,7 +88,7 @@ Node.prototype = {
   *
   * You can also provide the activation (a float between 0 and 1) as a parameter, which is useful for neurons in the input layer.
   *
-  * @param {number} [input] Optional value to be used for an input (or forwarding) neuron - _defaults to `0` when `node.type === "input"`._
+  * @param {number} [input] _defaults to `0` when `node.type === "input"`._
   * @param {Object} [options]
   *
   * @returns {number} A neuron's ['Squashed'](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) output value
