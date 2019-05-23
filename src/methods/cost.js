@@ -142,6 +142,7 @@ const cost = {
 
     return error / output.length;
   },
+  
   /**
   * Weighted Absolute Percentage Error (WAPE)
   *

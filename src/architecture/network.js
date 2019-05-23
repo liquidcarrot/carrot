@@ -727,8 +727,8 @@ Network.prototype = {
    * @param {cost} [options.cost=cost.MSE] The [cost function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
    * @param {rate} [options.ratePolicy=rate.FIXED] A [learning rate policy](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10), i.e. how to change the learning rate during training to get better network performance
    * @param {number} [options.rate=0.3] Sets the [learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10) of the backpropagation process
-   * @param {number} [options.iterations=Infinity] Sets amount of training cycles the process will maximally run, even when the target error has not been reached.
-   * @param {number} [options.error=0.05] The target error to train for, once the network falls below this error, the process is stopped. Lower error rates require more training cycles.
+   * @param {number} [options.iterations=1000] Sets amount of training cycles the process will maximally run, even when the target error has not been reached.
+   * @param {number} [options.error] The target error to train for, once the network falls below this error, the process is stopped. Lower error rates require more training cycles.
    * @param {number} [options.dropout=0] [Dropout rate](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5) likelihood for any given neuron to be ignored during network training. Must be between zero and one, numbers closer to one will result in more neurons ignored.
    * @param {number} [options.momentum=0] [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html). Adds a fraction of the previous weight update to the current one.
    * @param {number} [options.batchSize=1] Sets the (mini-) batch size of your training. Default: 1 [(online training)](https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes)
@@ -803,6 +803,7 @@ Network.prototype = {
     }
 
     options = options || {};
+    options.iterations = options.operations || 1000;
 
     // Warning messages
     if (typeof options.rate === 'undefined') {
@@ -813,15 +814,15 @@ Network.prototype = {
     }
 
     // Read the options
-    var targetError = options.error || 0.05;
-    var cost = options.cost || methods.cost.MSE;
-    var baseRate = options.rate || 0.3;
-    var dropout = options.dropout || 0;
-    var momentum = options.momentum || 0;
-    var batchSize = options.batchSize || 1; // online learning
-    var ratePolicy = options.ratePolicy || methods.rate.FIXED();
+    let targetError = options.error || 0.05;
+    let cost = options.cost || methods.cost.MSE;
+    let baseRate = options.rate || 0.3;
+    let dropout = options.dropout || 0;
+    let momentum = options.momentum || 0;
+    let batchSize = options.batchSize || 1; // online learning
+    let ratePolicy = options.ratePolicy || methods.rate.FIXED();
 
-    var start = Date.now();
+    let start = Date.now();
 
     if (batchSize > set.length) {
       throw new Error('Batch size must be smaller or equal to dataset length!');
