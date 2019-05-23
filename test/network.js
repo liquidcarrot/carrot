@@ -283,7 +283,7 @@ describe('Networks', function () {
 
       learnSet(set, 500, 0.05);
     });
-    it('LSTM XOR', function () {
+    it.skip('LSTM XOR', function () {
       this.timeout(30000);
       var lstm = new architect.LSTM(1, 1, 1);
 
