@@ -140,18 +140,23 @@ Neat.prototype = {
       return filtered;
     },
   },
+  
   /**
    * Create a pool of identical genomes.
    *
    * @param {Network} network An initial network to evolve from
    */
   createPool: function (network) {
-    this.population = [];
+    let self = this;
+    self.population = [];
 
-    for (var i = 0; i < this.popsize; i++) {
-      var copy = Network.fromJSON(network.toJSON());
+    for(let i = 0; i < self.popsize; i++) {
+      // POSSIBLE
+      // self.population.push(Network.fromJSON({ ...network.toJSON(), score: undefined }))
+      
+      const copy = Network.fromJSON(network.toJSON());
       copy.score = undefined;
-      this.population.push(copy);
+      self.population.push(copy);
     }
   },
 
