@@ -30,7 +30,7 @@
 </p>
 
 <p>
-  Carrot is a flexible multi-threaded neural network AI Library for Node.js with neuro-evolution capabilities.
+  Carrot is a flexible multi-threaded neural network AI Library for Node.js with neuro-evolution capabilities built by cool people.
 </p>
 
 For Documentation, visit [https://liquidcarrot.github.io/carrot](https://liquidcarrot.github.io/carrot)
