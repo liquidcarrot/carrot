@@ -5,7 +5,6 @@ var Connection = require('./connection');
 var config = require('../config');
 var Node = require('./node');
 
-
 // Easier variable naming
 var mutation = methods.mutation;
 
@@ -207,10 +206,10 @@ Network.prototype = {
    * myNetwork.connect(myNetwork.nodes[4], myNetwork.nodes[5]); // connects network node 4 to network node 5
    */
   connect: function (from, to, weight) {
-    var connections = from.connect(to, weight);
+    let connections = from.connect(to, weight);
 
-    for (var i = 0; i < connections.length; i++) {
-      var connection = connections[i];
+    for (let i = 0; i < connections.length; i++) {
+      let connection = connections[i];
       if (from !== to) {
         this.connections.push(connection);
       } else {
