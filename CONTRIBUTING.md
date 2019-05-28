@@ -33,6 +33,7 @@ but please respect the following restrictions:
 * Please **do not** derail or troll issues. Keep the discussion on topic and
   respect the opinions of others.
 
+If you need to learn how to open an issue on Github we invite you to check out [this resource](https://help.github.com/en/articles/creating-an-issue)!
 
 ## Bug reports
 

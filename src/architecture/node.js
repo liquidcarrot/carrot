@@ -1,6 +1,7 @@
-var methods = require('../methods/methods');
-var Connection = require('./connection');
-var config = require('../config');
+let _ = require("lodash");
+let methods = require('../methods/methods');
+let Connection = require('./connection');
+let config = require('../config');
 
 /**
 * Creates a new neuron/node
@@ -24,7 +25,7 @@ var config = require('../config');
 * @prop {number} activation Output value
 * @prop {number} state
 * @prop {number} old
-* @prop {number} mask
+* @prop {number} mask=1 Used for dropout. This is either 0 (ignored) or 1 (included) during training and is used to avoid [overfit](https://www.kdnuggets.com/2015/04/preventing-overfitting-neural-networks.html).
 * @prop {number} previousDeltaBias
 * @prop {number} totalDeltaBias
 * @prop {Array<Connection>} connections.in Incoming connections to this node
@@ -40,7 +41,7 @@ var config = require('../config');
 *
 * let node = new Node();
 */
-function Node (type) {
+function Node(type) {
   this.bias = (type === 'input') ? 0 : Math.random() * 0.2 - 0.1;
   this.squash = methods.activation.LOGISTIC;
   this.type = type || 'hidden';
@@ -57,6 +58,12 @@ function Node (type) {
 
   // Batch training
   this.totalDeltaBias = 0;
+  
+  // Aliases
+  this.deltabias = {
+    previous: 0,
+    total: 0
+  }
 
   this.connections = {
     in: [],
@@ -81,7 +88,8 @@ Node.prototype = {
   *
   * You can also provide the activation (a float between 0 and 1) as a parameter, which is useful for neurons in the input layer.
   *
-  * @param {number} [input] Optional value to be used for an input (or forwarding) neuron
+  * @param {number} [input] _defaults to `0` when `node.type === "input"`._
+  * @param {Object} [options]
   *
   * @returns {number} A neuron's ['Squashed'](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) output value
   *
@@ -95,10 +103,23 @@ Node.prototype = {
   * A.activate(0.5); // 0.5
   * B.activate(); // 0.3244554645
   */
-  activate: function (input) {
+  activate: function(input, options) {
+    let self = this;
+    
     // If an input is given, forward it (i.e. act like an input neuron)
-    if (typeof input !== 'undefined') {
-      this.activation = input;
+    if(!_.isNil(input)) {
+      if(_.isNumber(input)) {
+        if(_.isFinite(input)) {
+          this.activation = input;
+          return this.activation;
+        } else {
+          throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
+        }
+      } else {
+        throw new TypeError("Parameter \"input\": Expected a \"number\", got a " + typeof input);
+      }
+    } else if(self.type === "input") {
+      this.activation = 0;
       return this.activation;
     }
 
@@ -110,7 +131,7 @@ Node.prototype = {
     // Activation sources coming from connections
     var i;
     for (i = 0; i < this.connections.in.length; i++) {
-      var connection = this.connections.in[i];
+      const connection = this.connections.in[i];
       this.state += connection.from.activation * connection.weight * connection.gain;
     }
 
@@ -143,8 +164,7 @@ Node.prototype = {
       let connection = this.connections.in[i];
 
       // Elegibility trace
-      connection.elegibility = this.connections.self.gain * this.connections.self.weight *
-        connection.elegibility + connection.from.activation * connection.gain;
+      connection.elegibility = this.connections.self.gain * this.connections.self.weight * connection.elegibility + connection.from.activation * connection.gain;
 
       // Extended trace
       for (var j = 0; j < nodes.length; j++) {
@@ -183,11 +203,19 @@ Node.prototype = {
   *
   * node.noTraceActivate(); // 0.4923128591923
   */
-  noTraceActivate: function (input) {
+  noTraceActivate: function(input) {
     // Check if an input is given
-    if (typeof input !== 'undefined') {
-      this.activation = input;
-      return this.activation;
+    if(!_.isNil(input)) {
+      if(_.isNumber(input)) {
+        if(_.isFinite(input)) {
+          this.activation = input;
+          return this.activation;
+        } else {
+          throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
+        }
+      } else {
+        throw new TypeError("Parameter \"input\": Expected a \"number\", got a " + typeof input);
+      }
     }
 
     // All activation sources coming from the node itself
@@ -219,8 +247,8 @@ Node.prototype = {
   *
   * @param {number} rate=0.3 [Learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
   * @param {number} momentum=0 [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one.
-  * @param {boolean} update=false When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
-  * @param {number} target The target value, a `float` between zero and one
+  * @param {boolean} update=true When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
+  * @param {number} target The target value
   *
   * @example
   * let { Node } = require("@liquid-carrot/carrot");
@@ -249,7 +277,46 @@ Node.prototype = {
   * @see [Regularization Neataptic](https://wagenaartje.github.io/neataptic/docs/methods/regularization/)
   * @see [What is backpropagation | YouTube](https://www.youtube.com/watch?v=Ilg3gGewQ5U)
   */
-  propagate: function (rate, momentum, update, target) {
+  propagate: function(rate, momentum, update, target) {
+    // TYPE CHECK: rate
+    if(!_.isNil(rate)) {
+      if(_.isNumber(rate)) {
+        if(!_.isFinite(rate)) {
+          throw new TypeError("Parameter \"rate\": " + rate + " is not a valid \"number\".");
+        }
+      } else {
+        throw new TypeError("Parameter \"rate\": Expected a \"number\", got a " + typeof rate);
+      }
+      
+    }
+    // TYPE CHECK: momentum
+    if(!_.isNil(momentum)) {
+      if(_.isNumber(momentum)) {
+        if(!_.isFinite(momentum)) {
+          throw new TypeError("Parameter \"momentum\": " + momentum + " is not a valid \"number\".");
+        }
+      } else {
+        throw new TypeError("Parameter \"momentum\": Expected a \"number\", got a " + typeof momentum);
+      }
+    }
+    // TYPE CHECK: update
+    if(!_.isNil(update)) {
+      if(!_.isBoolean(update)) {
+        throw new TypeError("Parameter \"update\": Expected a \"boolean\", got a " + typeof update);
+      }
+    }
+    // TYPE CHECK: target
+    if(!_.isNil(target)) {
+      if(_.isNumber(target)) {
+        if(!_.isFinite(target)) {
+          throw new TypeError("Parameter \"target\": " + target + " is not a valid \"number\".");
+        }
+      } else {
+        throw new TypeError("Parameter \"target\": Expected a \"number\", got a " + typeof target);
+      }
+    }
+    
+    
     momentum = momentum || 0;
     rate = rate || 0.3;
 

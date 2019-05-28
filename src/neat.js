@@ -5,11 +5,10 @@ var config = require('./config');
 // Easier variable naming
 var selection = methods.selection;
 
-
 /**
 * Runs the NEAT algorithm on group of neural networks.
 *
-* @constructs NEAT
+* @constructs Neat
 *
 * @param {number} input - The input size of the networks.
 * @param {number} output - The output size of the networks
@@ -22,7 +21,7 @@ var selection = methods.selection;
 * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
 * @param {number} [options.mutationRate=0] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.3.
 * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
-* @param {boolean} [options.fitnessPopulation=false] When true, requires fitness function that takes an array of genomes as input and sets their .score property
+* @param {boolean} [options.fitnessPopulation=false] Flag to return the fitness of a population of genomes. Set this to false to evaluate each genome inidividually.
 * @param {Function} [options.fitness] - A fitness function to evaluate the networks. Takes a `genome`, i.e. a [network](Network), and a `dataset` and sets the genome's score property
 * @param {string} [options.selection=FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
 * @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
@@ -42,8 +41,7 @@ var selection = methods.selection;
 * let neat = new Neat(4, 1, dataset, {
 *   elitism: 10,
 *   clear: true,
-*   popsize: 1000,
-*   efficientMutation: true
+*   popsize: 1000
 * });
 */
 function Neat (input, output, dataset, options) {
@@ -107,33 +105,100 @@ function Neat (input, output, dataset, options) {
 * @namespace NEAT
 */
 Neat.prototype = {
+  // A collection of utility functions to be used with Neat.
+  util: {
+    /*
+     * Used to select and modify genomes as determined by the `pickGenome` function.
+     *
+     * @param {Network[]} population A population to filter
+     * @param {Network} template A network template to replace picked genomes if `adjustGenome` is left unset.
+     * @param {function} pickGenome A predicate function to mark genomes for adjustment. Accepts a network as a parameter and returns true for selection.
+     * @param {function} adjustGenome Accepts a network, modifies it, and returns it. Used to modify unwanted genomes returned by `pickGenome` and reincorporate them into the population. If left unset, picked genomes will be replaced with the template Network.
+     *
+     * @returns {Network[]} A new filtered population
+     */
+    filterGenome: function(population, template, pickGenome, adjustGenome) {
+      let filtered = [...population]; // avoid mutations
+      const pick = function(genome) {
+        const pick = pickGenome(genome)
+        if (typeof pick !== "boolean") throw new Error("pickGenome must always return a boolean!")
+        return pick
+      }
+      
+      if(adjustGenome){
+        for (let i = 0; i < population.length; i++) {
+          if(pick(filtered[i])) {
+            const result = adjustGenome(filtered[i])
+            if (!(result instanceof Network)) throw new Error("adjustGenome must always return a network!")
+            filtered[i] = result
+          }
+        }
+      } else
+          for (let i = 0; i < population.length; i++)
+            if(pick(filtered[i])) filtered[i] = Network.fromJSON(template.toJSON)
+    
+      return filtered;
+    },
+  },
+  
   /**
    * Create a pool of identical genomes.
    *
    * @param {Network} network An initial network to evolve from
    */
   createPool: function (network) {
-    this.population = [];
+    let self = this;
+    self.population = [];
 
-    for (var i = 0; i < this.popsize; i++) {
-      var copy = Network.fromJSON(network.toJSON());
+    for(let i = 0; i < self.popsize; i++) {
+      // POSSIBLE
+      // self.population.push(Network.fromJSON({ ...network.toJSON(), score: undefined }))
+      
+      const copy = Network.fromJSON(network.toJSON());
       copy.score = undefined;
-      this.population.push(copy);
+      self.population.push(copy);
     }
   },
 
   /**
    * Evaluates, selects, breeds and mutates population.
    *
+   * @param {function} [pickGenome] A custom selection function to pick out unwanted genomes. Accepts a network as a parameter and returns true for selection.
+   * @param {function} [adjustGenome=this.template] Accepts a network, modifies it, and returns it. Used to modify unwanted genomes returned by `pickGenome` and reincorporate them into the population. If left unset, unwanted genomes will be replaced with the template Network. Will only run when pickGenome is defined.
    * @returns {Network} Fittest network
+   *
+   * @example
+   * let neat = new Neat(4, 1, dataset, {
+   *  elitism: 10,
+   *  clear: true,
+   *  popsize: 1000
+   * });
+   *
+   * let filter = function(genome) {
+   *  // Remove genomes with more than 100 nodes
+   *  return genome.nodes.length > 100 ? true : false
+   * }
+   *
+   * let adjust = function(genome) {
+   *  // clear the nodes
+   *  return genome.clear()
+   * }
+   *
+   * neat.evolve(filter, adjust).then(function(fittest) {
+   *  console.log(fittest)
+   * })
   */
-  evolve: async function () {
-    // Check if evaluated, sort the population
-    if (typeof this.population[this.population.length - 1].score === 'undefined') {
-      await this.evaluate();
-    }
+  evolve: async function (pickGenome, adjustGenome) {
+    if(this.elitism + this.provenance > this.popsize) throw new Error("Can't evolve! Elitism + provenance exceeds population size!");
+    
+    // Assign fitness score(s) to the population if needed
+    if (typeof this.population[this.population.length - 1].score === 'undefined') await this.evaluate()
+    
+    // Check & adjust genomes as needed
+    if(pickGenome) this.population = this.util.filterGenome(this.population, this.template, pickGenome, adjustGenome)
+    
+    // Sort in order of fitness (fittest first)
     this.sort();
-
     var fittest = Network.fromJSON(this.population[0].toJSON());
     fittest.score = this.population[0].score;
 
@@ -149,7 +214,7 @@ Neat.prototype = {
     for (i = 0; i < this.provenance; i++) {
       newPopulation.push(Network.fromJSON(this.template.toJSON()));
     }
-
+    
     // Breed the next individuals
     for (i = 0; i < this.popsize - this.elitism - this.provenance; i++) {
       newPopulation.push(this.getOffspring());
@@ -160,6 +225,8 @@ Neat.prototype = {
     this.mutate();
 
     this.population.push(...elitists);
+    
+    if(pickGenome) this.population = this.util.filterGenome(this.population, this.template, pickGenome, adjustGenome)
 
     // Reset the scores
     for (i = 0; i < this.population.length; i++) {
@@ -188,9 +255,9 @@ Neat.prototype = {
    * @param {Network} genome
   */
   selectMutationMethod: function (genome) {
-    var mutation = this.efficientMutation ? genome.getPossibleMutations(this.mutation) : this.mutation;
+    let mutation = this.mutation;
 
-    var mutationMethod = mutation[Math.floor(Math.random() * mutation.length)];
+    let mutationMethod = mutation[Math.floor(Math.random() * mutation.length)];
 
     if (mutationMethod === methods.mutation.ADD_NODE && genome.nodes.length >= this.maxNodes) {
       if (config.warnings) console.warn('maxNodes exceeded!');
@@ -216,12 +283,9 @@ Neat.prototype = {
   mutate: function () {
     // Elitist genomes should not be included
     for (var i = 0; i < this.population.length; i++) {
-      if (Math.random() <= this.mutationRate) {
-        for (var j = 0; j < this.mutationAmount; j++) {
-          var mutationMethod = this.selectMutationMethod(this.population[i]);
-          this.population[i].mutate(mutationMethod);
-        }
-      }
+      if (Math.random() <= this.mutationRate)
+        for (var j = 0; j < this.mutationAmount; j++)
+          this.population[i].mutate(this.selectMutationMethod(this.population[i]));
     }
   },
 

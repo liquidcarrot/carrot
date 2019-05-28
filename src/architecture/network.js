@@ -1,32 +1,12 @@
+let _ = require('lodash');
 var multi = require('../multithreading/multi');
 var methods = require('../methods/methods');
 var Connection = require('./connection');
 var config = require('../config');
 var Node = require('./node');
 
-
 // Easier variable naming
 var mutation = methods.mutation;
-
-// Index searching function
-let findIndex = function(min, max, retry, ...args) {
-  let range = max - min;
-  if(range < 1) {
-    throw new Error('min & max are too close');
-  }
-
-  if(range == 1) {
-    return min;
-  }
-
-  let index;
-  while(true) {
-    index = Math.floor(Math.random() * (max - min)) + min
-    if(retry(index, ...args)) continue;
-    break;
-  }
-  return index
-}
 
 /**
 * Create a neural network
@@ -226,10 +206,10 @@ Network.prototype = {
    * myNetwork.connect(myNetwork.nodes[4], myNetwork.nodes[5]); // connects network node 4 to network node 5
    */
   connect: function (from, to, weight) {
-    var connections = from.connect(to, weight);
+    let connections = from.connect(to, weight);
 
-    for (var i = 0; i < connections.length; i++) {
-      var connection = connections[i];
+    for (let i = 0; i < connections.length; i++) {
+      let connection = connections[i];
       if (from !== to) {
         this.connections.push(connection);
       } else {
@@ -404,126 +384,11 @@ Network.prototype = {
   },
 
   /**
-   * Tests the state of the network and returns an array of mutations that are possible.
-   *
-   * @param {mutation[]} allowedMutations A list of potential mutations methods
-   *
-   */
-  getPossibleMutations: function (allowedMutations) {
-    var possibleMutations = [];
-
-    var i, j;
-    for (var x = 0; x < allowedMutations.length; x++) {
-      var method = allowedMutations[x];
-      switch (method) {
-        case mutation.SUB_NODE:
-          if (this.nodes.length === this.input + this.output) continue;
-          break;
-        case mutation.ADD_CONN:
-          // Create an array of all uncreated (feedforward) connections
-          var available = [];
-          for (i = 0; i < this.nodes.length - this.output; i++) {
-            let node1 = this.nodes[i];
-            for (j = Math.max(i + 1, this.input); j < this.nodes.length; j++) {
-              let node2 = this.nodes[j];
-              if (!node1.isProjectingTo(node2)) available.push([node1, node2]);
-            }
-          }
-          if (available.length === 0) continue;
-          break;
-        case mutation.SUB_CONN:
-          // List of possible connections that can be removed
-          var possible = [];
-
-          for (i = 0; i < this.connections.length; i++) {
-            let conn = this.connections[i];
-            // Check if it is not disabling a node
-            if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && this.nodes.indexOf(conn.to) > this.nodes.indexOf(conn.from)) {
-              possible.push(conn);
-            }
-          }
-
-          if (possible.length === 0) continue;
-          break;
-        case mutation.MOD_ACTIVATION:
-          if (!method.mutateOutput && this.input + this.output === this.nodes.length) continue;
-          break;
-        case mutation.ADD_SELF_CONN:
-          // Check which nodes aren't selfconnected yet
-          var possible = [];
-          for (i = this.input; i < this.nodes.length; i++) {
-            let node = this.nodes[i];
-            if (node.connections.self.weight === 0) {
-              possible.push(node);
-            }
-          }
-
-          if (possible.length === 0) continue;
-          break;
-        case mutation.SUB_SELF_CONN:
-          if (this.selfconns.length === 0) continue;
-          break;
-        case mutation.ADD_GATE:
-          var allconnections = this.connections.concat(this.selfconns);
-
-          // Create a list of all non-gated connections
-          var possible = [];
-          for (i = 0; i < allconnections.length; i++) {
-            let conn = allconnections[i];
-            if (conn.gater === null) {
-              possible.push(conn);
-            }
-          }
-
-          if (possible.length === 0) continue;
-          break;
-        case mutation.SUB_GATE:
-          if (this.gates.length === 0) continue;
-          break;
-        case mutation.ADD_BACK_CONN:
-          // Create an array of all uncreated (backfed) connections
-          var available = [];
-          for (i = this.input; i < this.nodes.length; i++) {
-            let node1 = this.nodes[i];
-            for (j = this.input; j < i; j++) {
-              let node2 = this.nodes[j];
-              if (!node1.isProjectingTo(node2)) available.push([node1, node2]);
-            }
-          }
-
-          if (available.length === 0) continue;
-          break;
-        case mutation.SUB_BACK_CONN:
-          // List of possible connections that can be removed
-          var possible = [];
-
-          for (i = 0; i < this.connections.length; i++) {
-            let conn = this.connections[i];
-            // Check if it is not disabling a node
-            if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && this.nodes.indexOf(conn.from) > this.nodes.indexOf(conn.to)) {
-              possible.push(conn);
-            }
-          }
-
-          if (possible.length === 0) continue;
-          break;
-        case mutation.SWAP_NODES:
-          if ((method.mutateOutput && this.nodes.length - this.input < 2) ||
-            (!method.mutateOutput && this.nodes.length - this.input - this.output < 2)) {
-            continue;
-          }
-          break;
-      }
-      possibleMutations.push(method);
-    }
-
-    return possibleMutations;
-  },
-
-  /**
    * Mutates the network with the given method
    *
    * @param {mutation} method [Mutation method](mutation)
+   *
+   * @returns {boolean} Whether or not a mutation was achieved
    *
    * @example
    * let { Network } = require("@liquid-carrot/carrot");
@@ -537,7 +402,7 @@ Network.prototype = {
 
     var i, j;
     switch (method) {
-      case mutation.ADD_NODE:
+      case mutation.ADD_NODE: { // block scope & code folding
         // Look for an existing connection and place a node in between
         var connection = this.connections[Math.floor(Math.random() * this.connections.length)];
         var gater = connection.gater;
@@ -564,19 +429,25 @@ Network.prototype = {
         if (gater != null) {
           this.gate(gater, Math.random() >= 0.5 ? newConn1 : newConn2);
         }
+        return true;
         break;
-      case mutation.SUB_NODE:
+      }
+      case mutation.SUB_NODE: {
         // Check if there are nodes left to remove
         if (this.nodes.length === this.input + this.output) {
           if (config.warnings) console.warn('No more nodes left to remove!');
+          return false;
           break;
         }
 
-        // Select a node which isn't an input or output node
-        var index = findIndex(this.output + this.input, this.nodes.length, (index) => { return (this.nodes[index].type === 'output' || this.nodes[index].type === 'input') });
-        this.remove(this.nodes[index]);
+        // Filter out input & output nodes
+        let possible = _.filter(this.nodes, function(node) { return (node.type !== 'output' && node.type !== 'input') })
+        // Remove a random node out of the filtered collection
+        this.remove(_.sample(possible));
+        return true;
         break;
-      case mutation.ADD_CONN:
+      }
+      case mutation.ADD_CONN: {
         // Create an array of all uncreated (feedforward) connections
         var available = [];
         for (i = 0; i < this.nodes.length - this.output; i++) {
@@ -589,15 +460,18 @@ Network.prototype = {
 
         if (available.length === 0) {
           if (config.warnings) console.warn('No more connections to be made!');
+          return false;
           break;
         }
 
         var pair = available[Math.floor(Math.random() * available.length)];
         this.connect(pair[0], pair[1]);
+        return true;
         break;
-      case mutation.SUB_CONN:
+      }
+      case mutation.SUB_CONN: {
         // List of possible connections that can be removed
-        var possible = [];
+        let possible = [];
 
         for (i = 0; i < this.connections.length; i++) {
           let conn = this.connections[i];
@@ -609,45 +483,58 @@ Network.prototype = {
 
         if (possible.length === 0) {
           if (config.warnings) console.warn('No connections to remove!');
+          return false;
           break;
         }
 
         var randomConn = possible[Math.floor(Math.random() * possible.length)];
         this.disconnect(randomConn.from, randomConn.to);
+        return true;
         break;
-      case mutation.MOD_WEIGHT:
+      }
+      case mutation.MOD_WEIGHT: {
         var allconnections = this.connections.concat(this.selfconns);
 
         var connection = allconnections[Math.floor(Math.random() * allconnections.length)];
         var modification = Math.random() * (method.max - method.min) + method.min;
         connection.weight += modification;
+        return true;
         break;
-      case mutation.MOD_BIAS:
-        // Has no effect on input node, so they are excluded
+      }
+      case mutation.MOD_BIAS: {
+        // Has no effect on input nodes, so they (should be) excluded, should remove this ordered array assumption...
         var index = Math.floor(Math.random() * (this.nodes.length - this.input) + this.input);
         var node = this.nodes[index];
         node.mutate(method);
+        return true;
         break;
-      case mutation.MOD_ACTIVATION:
-        // Has no effect on input node, so they (should be) excluded
+      }
+      case mutation.MOD_ACTIVATION:{
+        // Has no effect on input nodes, so they (should be) excluded, should remove this ordered array assumption...
         if (!method.mutateOutput && this.input + this.output === this.nodes.length) {
           if (config.warnings) console.warn('No nodes that allow mutation of activation function');
+          return false;
           break;
         }
 
-        var index
+        let possible;
         if(method.mutateOutput) {
-          index = Math.floor(Math.random() * (this.nodes.length - this.input)) + this.input
+          // Filter out input nodes
+          possible = _.filter(this.nodes, function(node, index) { return(node.type !== 'input') })
         } else {
-          index = findIndex(this.output + this.input, this.nodes.length,  (index) => { return (this.nodes[index].type === 'output') });
+          // Filter out input & output nodes
+          possible = _.filter(this.nodes, function(node, index) { return(node.type !== 'input' && node.type !== 'output') })
         }
-
-        var node = this.nodes[index];
+        
+        // Return a random node out of the filtered collection
+        let node = _.sample(possible)
         node.mutate(method);
+        return true;
         break;
-      case mutation.ADD_SELF_CONN:
+      }
+      case mutation.ADD_SELF_CONN: {
         // Check which nodes aren't selfconnected yet
-        var possible = [];
+        let possible = [];
         for (i = this.input; i < this.nodes.length; i++) {
           let node = this.nodes[i];
           if (node.connections.self.weight === 0) {
@@ -657,6 +544,7 @@ Network.prototype = {
 
         if (possible.length === 0) {
           if (config.warnings) console.warn('No more self-connections to add!');
+          return false;
           break;
         }
 
@@ -665,20 +553,25 @@ Network.prototype = {
 
         // Connect it to himself
         this.connect(node, node);
+        return true;
         break;
-      case mutation.SUB_SELF_CONN:
+      }
+      case mutation.SUB_SELF_CONN: {
         if (this.selfconns.length === 0) {
           if (config.warnings) console.warn('No more self-connections to remove!');
+          return false;
           break;
         }
         var conn = this.selfconns[Math.floor(Math.random() * this.selfconns.length)];
         this.disconnect(conn.from, conn.to);
+        return true;
         break;
-      case mutation.ADD_GATE:
+      }
+      case mutation.ADD_GATE: {
         var allconnections = this.connections.concat(this.selfconns);
 
         // Create a list of all non-gated connections
-        var possible = [];
+        let possible = [];
         for (i = 0; i < allconnections.length; i++) {
           let conn = allconnections[i];
           if (conn.gater === null) {
@@ -688,6 +581,7 @@ Network.prototype = {
 
         if (possible.length === 0) {
           if (config.warnings) console.warn('No more connections to gate!');
+          return false;
           break;
         }
 
@@ -698,11 +592,14 @@ Network.prototype = {
 
         // Gate the connection with the node
         this.gate(node, conn);
+        return true;
         break;
-      case mutation.SUB_GATE:
+      }
+      case mutation.SUB_GATE: {
         // Select a random gated connection
         if (this.gates.length === 0) {
           if (config.warnings) console.warn('No more connections to ungate!');
+          return false;
           break;
         }
 
@@ -710,8 +607,10 @@ Network.prototype = {
         var gatedconn = this.gates[index];
 
         this.ungate(gatedconn);
+        return true;
         break;
-      case mutation.ADD_BACK_CONN:
+      }
+      case mutation.ADD_BACK_CONN: {
         // Create an array of all uncreated (backfed) connections
         var available = [];
         for (i = this.input; i < this.nodes.length; i++) {
@@ -724,15 +623,18 @@ Network.prototype = {
 
         if (available.length === 0) {
           if (config.warnings) console.warn('No more connections to be made!');
+          return false;
           break;
         }
 
         var pair = available[Math.floor(Math.random() * available.length)];
         this.connect(pair[0], pair[1]);
+        return true;
         break;
-      case mutation.SUB_BACK_CONN:
+      }
+      case mutation.SUB_BACK_CONN:{
         // List of possible connections that can be removed
-        var possible = [];
+        let possible = [];
 
         for (i = 0; i < this.connections.length; i++) {
           let conn = this.connections[i];
@@ -744,33 +646,64 @@ Network.prototype = {
 
         if (possible.length === 0) {
           if (config.warnings) console.warn('No connections to remove!');
+          return false;
           break;
         }
 
         var randomConn = possible[Math.floor(Math.random() * possible.length)];
         this.disconnect(randomConn.from, randomConn.to);
+        return true;
         break;
-      case mutation.SWAP_NODES:
+      }
+      case mutation.SWAP_NODES: {
         // Has no effect on input node, so they (should be) excluded
         if ((method.mutateOutput && (this.nodes.length - 1) - this.input < 2) ||
           (!method.mutateOutput && (this.nodes.length - 1) - this.input - this.output < 2)) {
           if (config.warnings) console.warn('No nodes that allow swapping of bias and activation function');
+          return false;
           break;
         }
 
-        let index1, index2;
+        let possible, node1, node2;
         if(method.mutateOutput) {
-          index1 = Math.floor(Math.random() * (this.nodes.length - this.input)) + this.input
-          index2 = findIndex(this.input, this.nodes.length, (index2, index1) => { return (index2 == index1) }, index1)
+          // Filter out input nodes
+          possible = _.filter(this.nodes, function(node, index) { return(node.type !== 'input') })
+          
+          // Break out early if less than two possible nodes
+          if(possible.length < 2) {
+            if(config.warnings) console.warn("Less than 2 availables nodes, SWAP_NODES mutation failed!")
+            return false;
+            break;
+          }
+          
+          // Return a random node out of the filtered collection
+          node1 = _.sample(possible)
+          
+          // Filter out node1 from collection | impure function... should clean that node1
+          let possible2 = _.filter(possible, function(node, index) { return (node !== node1) })
+          
+          // Return a random node out of the filtered collection which excludes node1
+          node2 = _.sample(possible2)
         } else {
-          let min = this.output + this.input;
-          let max = this.nodes.length;
-          index1 = findIndex(min, max, (index) => { return (this.nodes[index].type === 'output') });
-          index2 = findIndex(min, max, (index2, index1) => { return (index2 == index1 || this.nodes[index2].type === 'output') }, index1)
+          // Filter out input & output nodes
+          possible = _.filter(this.nodes, function(node, index) { return(node.type !== 'input' && node.type !== 'output') })
+          
+          // Break out early if less than two possible nodes
+          if(possible.length < 2) {
+            if(config.warnings) console.warn("Less than 2 availables nodes, SWAP_NODES mutation failed!")
+            return false;
+            break;
+          }
+          
+          // Return a random node out of the filtered collection
+          node1 = _.sample(possible)
+          
+          // Filter out node1 from collection | impure function... should clean that node1
+          let possible2 = _.filter(possible, function(node, index) { return (node !== node1) })
+          
+          // Return a random node out of the filtered collection which excludes node1
+          node2 = _.sample(possible2)
         }
-
-        let node1 = this.nodes[index1];
-        let node2 = this.nodes[index2];
 
         var biasTemp = node1.bias;
         var squashTemp = node1.squash;
@@ -779,7 +712,9 @@ Network.prototype = {
         node1.squash = node2.squash;
         node2.bias = biasTemp;
         node2.squash = squashTemp;
+        return true;
         break;
+      }
     }
   },
 
@@ -787,11 +722,12 @@ Network.prototype = {
    * Train the given set to this network
    *
    * @param {Array<{input:number[],output:number[]}>} set A set of input values and ideal output values to train the network with
+   * @param {Object} options Options used to train network
    * @param {cost} [options.cost=cost.MSE] The [cost function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
    * @param {rate} [options.ratePolicy=rate.FIXED] A [learning rate policy](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10), i.e. how to change the learning rate during training to get better network performance
    * @param {number} [options.rate=0.3] Sets the [learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10) of the backpropagation process
-   * @param {number} [options.iterations=Infinity] Sets amount of training cycles the process will maximally run, even when the target error has not been reached.
-   * @param {number} [options.error=0.05] The target error to train for, once the network falls below this error, the process is stopped. Lower error rates require more training cycles.
+   * @param {number} [options.iterations=1000] Sets amount of training cycles the process will maximally run, even when the target error has not been reached.
+   * @param {number} [options.error] The target error to train for, once the network falls below this error, the process is stopped. Lower error rates require more training cycles.
    * @param {number} [options.dropout=0] [Dropout rate](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5) likelihood for any given neuron to be ignored during network training. Must be between zero and one, numbers closer to one will result in more neurons ignored.
    * @param {number} [options.momentum=0] [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html). Adds a fraction of the previous weight update to the current one.
    * @param {number} [options.batchSize=1] Sets the (mini-) batch size of your training. Default: 1 [(online training)](https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes)
@@ -866,6 +802,7 @@ Network.prototype = {
     }
 
     options = options || {};
+    options.iterations = options.operations || 1000;
 
     // Warning messages
     if (typeof options.rate === 'undefined') {
@@ -876,15 +813,15 @@ Network.prototype = {
     }
 
     // Read the options
-    var targetError = options.error || 0.05;
-    var cost = options.cost || methods.cost.MSE;
-    var baseRate = options.rate || 0.3;
-    var dropout = options.dropout || 0;
-    var momentum = options.momentum || 0;
-    var batchSize = options.batchSize || 1; // online learning
-    var ratePolicy = options.ratePolicy || methods.rate.FIXED();
+    let targetError = options.error || 0.05;
+    let cost = options.cost || methods.cost.MSE;
+    let baseRate = options.rate || 0.3;
+    let dropout = options.dropout || 0;
+    let momentum = options.momentum || 0;
+    let batchSize = options.batchSize || 1; // online learning
+    let ratePolicy = options.ratePolicy || methods.rate.FIXED();
 
-    var start = Date.now();
+    let start = Date.now();
 
     if (batchSize > set.length) {
       throw new Error('Batch size must be smaller or equal to dataset length!');
@@ -1226,7 +1163,7 @@ Network.prototype = {
       this.nodes[i].squash = values.squash || this.nodes[i].squash;
     }
   },
-
+  
   /**
    * Evolves the network to reach a lower error on a dataset using the [NEAT algorithm](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf)
    *
@@ -2031,29 +1968,52 @@ Neat.prototype = {
 
   /**
    * Selects a random mutation method for a genome according to the parameters
+   *
    * @param genome
   */
-  selectMutationMethod: function (genome) {
-    var mutation = this.efficientMutation ? genome.getPossibleMutations(this.mutation) : this.mutation;
+  selectMutationMethod: function (genome, allowedMutations, efficientMutation) {
+    
+    if(efficientMutation) {
+      let filtered = allowedMutations ? [...allowedMutations] : [...this.mutation]
+      let success = false
+      while(!success) {
+        const currentMethod = filtered[Math.floor(Math.random() * filtered.length)]
+        
+        if(currentMethod === methods.mutation.ADD_NODE && genome.nodes.length >= this.maxNodes || currentMethod === methods.mutation.ADD_CONN && genome.connections.length >= this.maxConns || currentMethod === methods.mutation.ADD_GATE && genome.gates.length >= this.maxGates) {
+          success = false
+        } else {
+          success = genome.mutate(currentMethod)
+        }
+        
+        // we're done
+        if(success || !filtered || filtered.length === 0) return
+        
+        // if not, remove the impossible method
+        filtered = filtered.filter(function(value, index, array) {
+          return value.name !== currentMethod.name
+        })
+      }
+    } else {
+      let allowed = allowedMutations ? allowedMutations : this.mutation
+      let current = allowed[Math.floor(Math.random() * allowed.length)]
 
-    var mutationMethod = mutation[Math.floor(Math.random() * mutation.length)];
-
-    if (mutationMethod === methods.mutation.ADD_NODE && genome.nodes.length >= this.maxNodes) {
-      if (config.warnings) console.warn('maxNodes exceeded!');
-      return;
+      if (current === methods.mutation.ADD_NODE && genome.nodes.length >= this.maxNodes) {
+        if (config.warnings) console.warn('maxNodes exceeded!')
+        return
+      }
+  
+      if (current === methods.mutation.ADD_CONN && genome.connections.length >= this.maxConns) {
+        if (config.warnings) console.warn('maxConns exceeded!');
+        return
+      }
+  
+      if (current === methods.mutation.ADD_GATE && genome.gates.length >= this.maxGates) {
+        if (config.warnings) console.warn('maxGates exceeded!');
+        return
+      }
+  
+      return current
     }
-
-    if (mutationMethod === methods.mutation.ADD_CONN && genome.connections.length >= this.maxConns) {
-      if (config.warnings) console.warn('maxConns exceeded!');
-      return;
-    }
-
-    if (mutationMethod === methods.mutation.ADD_GATE && genome.gates.length >= this.maxGates) {
-      if (config.warnings) console.warn('maxGates exceeded!');
-      return;
-    }
-
-    return mutationMethod;
   },
 
   /**
@@ -2064,8 +2024,8 @@ Neat.prototype = {
     for (var i = 0; i < this.population.length; i++) {
       if (Math.random() <= this.mutationRate) {
         for (var j = 0; j < this.mutationAmount; j++) {
-          var mutationMethod = this.selectMutationMethod(this.population[i]);
-          this.population[i].mutate(mutationMethod);
+          const mutationMethod = this.selectMutationMethod(this.population[i], this.mutation, this.efficientMutation);
+          this.efficientMutation ? null : this.population[i].mutate(mutationMethod);
         }
       }
     }

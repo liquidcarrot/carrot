@@ -5,7 +5,8 @@
  *
  * @see [Loss Function on Wikipedia](https://en.wikipedia.org/wiki/Loss_function)
  */
-var cost = {
+const cost = {
+  
   /**
   * Cross entropy error
   *
@@ -17,24 +18,19 @@ var cost = {
   *
   * @example
   * let { methods, Network } = require("@liquid-carrot/carrot");
-  * 
+  *
   * let myNetwork = new Network(5, 10, 5);
-  * myNetwork.train(trainingData, {
-  *   log: 1,
-  *   iterations: 500,
-  *   error: 0.03,
-  *   rate: 0.05,
-  *   cost: methods.cost.CROSS_ENTROPY
-  * });
+  * myNetwork.train(trainingData, { cost: methods.cost.CROSS_ENTROPY });
   */
-  CROSS_ENTROPY: function (target, output) {
-    var error = 0;
-    for (var i = 0; i < output.length; i++) {
+  CROSS_ENTROPY: function(target, output) {
+    let error = 0;
+    for(let i = 0; i < output.length; i++) {
       // Avoid negative and zero numbers, use 1e-15
       error -= target[i] * Math.log(Math.max(output[i], 1e-15)) + (1 - target[i]) * Math.log(1 - Math.max(output[i], 1e-15));
     }
     return error / output.length;
   },
+  
   /**
   * Mean Squared Error
   *
@@ -45,24 +41,19 @@ var cost = {
   *
   * @example
   * let { methods, Network } = require("@liquid-carrot/carrot");
-  * 
+  *
   * let myNetwork = new Network(5, 10, 5);
-  * myNetwork.train(trainingData, {
-  *   log: 1,
-  *   iterations: 500,
-  *   error: 0.03,
-  *   rate: 0.05,
-  *   cost: methods.cost.MSE
-  * });
+  * myNetwork.train(trainingData, { cost: methods.cost.MSE });
   */
   MSE: function (target, output) {
-    var error = 0;
-    for (var i = 0; i < output.length; i++) {
+    let error = 0;
+    for(let i = 0; i < output.length; i++) {
       error += Math.pow(target[i] - output[i], 2);
     }
 
     return error / output.length;
   },
+  
   /**
   * Binary Error
   *
@@ -75,7 +66,7 @@ var cost = {
   *
   * @example
   * let { methods, Network } = require("@liquid-carrot/carrot");
-  * 
+  *
   * let myNetwork = new Network(5, 10, 5);
   * myNetwork.train(trainingData, {
   *   log: 1,
@@ -93,6 +84,7 @@ var cost = {
 
     return misses;
   },
+  
   /**
   * Mean Absolute Error
   *
@@ -103,7 +95,7 @@ var cost = {
   *
   * @example
   * let { methods, Network } = require("@liquid-carrot/carrot");
-  * 
+  *
   * let myNetwork = new Network(5, 10, 5);
   * myNetwork.train(trainingData, {
   *   log: 1,
@@ -121,6 +113,7 @@ var cost = {
 
     return error / output.length;
   },
+  
   /**
   * Mean Absolute Percentage Error
   *
@@ -131,7 +124,7 @@ var cost = {
   *
   * @example
   * let { methods, Network } = require("@liquid-carrot/carrot");
-  * 
+  *
   * let myNetwork = new Network(5, 10, 5);
   * myNetwork.train(trainingData, {
   *   log: 1,
@@ -149,17 +142,18 @@ var cost = {
 
     return error / output.length;
   },
+  
   /**
   * Weighted Absolute Percentage Error (WAPE)
   *
   * @param {number} target Ideal value
-  * @param {number output Actual values
+  * @param {number} output Actual values
   *
   * @returns {number} - [Weighted absolute percentage error](https://help.sap.com/doc/saphelp_nw70/7.0.31/en-US/76/487053bbe77c1ee10000000a174cb4/content.htm?no_cache=true)
-  * 
+  *
   * @example
   * let { methods, Network } = require("@liquid-carrot/carrot");
-  * 
+  *
   * let myNetwork = new Network(5, 10, 5);
   * myNetwork.train(trainingData, {
   *   cost: methods.cost.WAPE
@@ -175,6 +169,7 @@ var cost = {
 
      return error / sumTarget;
   },
+  
   /**
   * Mean Squared Logarithmic Error
   *
@@ -185,7 +180,7 @@ var cost = {
   *
   * @example
   * let { methods, Network } = require("@liquid-carrot/carrot");
-  * 
+  *
   * let myNetwork = new Network(5, 10, 5);
   * myNetwork.train(trainingData, {
   *   log: 1,
@@ -203,6 +198,7 @@ var cost = {
 
     return error;
   },
+  
   /**
   * Hinge loss, for classifiers
   *
@@ -213,7 +209,7 @@ var cost = {
   *
   * @example
   * let { methods, Network } = require("@liquid-carrot/carrot");
-  * 
+  *
   * let myNetwork = new Network(5, 10, 5);
   * myNetwork.train(trainingData, {
   *   log: 1,

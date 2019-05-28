@@ -268,14 +268,14 @@ Layer.Dense = function(size) {
 */
 Layer.LSTM = function(size) {
   // Create the layer
-  var layer = new Layer();
+  let layer = new Layer();
 
   // Init required nodes (in activation order)
-  var inputGate = new Group(size);
-  var forgetGate = new Group(size);
-  var memoryCell = new Group(size);
-  var outputGate = new Group(size);
-  var outputBlock = new Group(size);
+  let inputGate = new Group(size);
+  let forgetGate = new Group(size);
+  let memoryCell = new Group(size);
+  let outputGate = new Group(size);
+  let outputBlock = new Group(size);
 
   inputGate.set({
     bias: 1
@@ -291,8 +291,8 @@ Layer.LSTM = function(size) {
   memoryCell.connect(inputGate, methods.connection.ALL_TO_ALL);
   memoryCell.connect(forgetGate, methods.connection.ALL_TO_ALL);
   memoryCell.connect(outputGate, methods.connection.ALL_TO_ALL);
-  var forget = memoryCell.connect(memoryCell, methods.connection.ONE_TO_ONE);
-  var output = memoryCell.connect(outputBlock, methods.connection.ALL_TO_ALL);
+  let forget = memoryCell.connect(memoryCell, methods.connection.ONE_TO_ONE);
+  let output = memoryCell.connect(outputBlock, methods.connection.ALL_TO_ALL);
 
   // Set up gates
   forgetGate.gate(forget, methods.gating.SELF);
@@ -309,7 +309,7 @@ Layer.LSTM = function(size) {
     method = method || methods.connection.ALL_TO_ALL;
     var connections = [];
 
-    var input = from.connect(memoryCell, method, weight);
+    let input = from.connect(memoryCell, method, weight);
     connections = connections.concat(input);
 
     connections = connections.concat(from.connect(inputGate, method, weight));

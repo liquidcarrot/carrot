@@ -1,6 +1,5 @@
-/* Import */
-var chai = require('chai');
-var assert = chai.assert;
+var chai = require('chai')
+var assert = chai.assert
 let carrot = require('../src/carrot')
 
 /* Shorten var names */
@@ -9,11 +8,8 @@ var { Network, methods, config } = carrot;
 /* Turn off warnings */
 config.warnings = false;
 
-/*******************************************************************************************
-                      Tests the effectiveness of evolution
-*******************************************************************************************/
-
 describe('Neat', function () {
+  
   it('AND', async function () {
     this.timeout(40000);
 
@@ -52,11 +48,10 @@ describe('Neat', function () {
       mutation: methods.mutation.FFW,
       equal: true,
       elitism: 10,
-      mutationRate: 0.5,
+      mutationRate: 0.9,
       error: 0.03,
       threads: 1
     });
-
     assert.isBelow(results.error, 0.03);
   });
   it('XOR using efficientMutation', async function () {
@@ -74,12 +69,11 @@ describe('Neat', function () {
       mutation: methods.mutation.FFW,
       equal: true,
       elitism: 10,
-      mutationRate: 0.5,
+      mutationRate: 0.9,
       error: 0.03,
       efficientMutation: true,
       threads: 1
     });
-
     assert.isBelow(results.error, 0.03);
   });
   it('XNOR', async function () {

@@ -1,12 +1,12 @@
 {
   "name": "@liquid-carrot/carrot",
-  "version": "0.1.128",
+  "version": "0.2.18",
   "description": "A Simple Node.js AI Library for Neural Network",
   "main": "src/carrot",
   "scripts": {
-    "preversion": "npm run build:stash && git pull && npm test",
-    "version": "./node_modules/.bin/webpack && git add .",
-    "postversion": "git push; npm publish; npm run build; npm run build:pop",
+    "preversion:deep": "npm run build:stash && git pull && npm test && git add . && git commit -am 'Auto Sync'; git push;",
+    "version:deep": "npm version $TYPE -no-git-tag-version && ./node_modules/.bin/webpack && git add . && git commit -m 'Version bump'",
+    "postversion:deep": "git push && npm publish && npm run build; npm run build:pop",
     "jsdoc": "node_modules/.bin/jsdoc -r -c jsdoc.json",
     "build:stash": "> .temp && git add . && git stash",
     "build:docs": "npm run jsdoc && npm run deploy:docs",
@@ -14,7 +14,8 @@
     "build:pop": "git stash pop && rm -f .temp && git add .temp",
     "build": "npm run build:stash && npm run build:docs; npm run build:pop",
     "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | coveralls && rm -rf ./src-cov",
-    "test": "./node_modules/.bin/nyc --reporter=html --reporter=text mocha test/",
+    "test": "./node_modules/.bin/nyc --reporter=html --reporter=text mocha --recursive test/ --exclude test/unit.js",
+    "test:riteway": "./node_modules/.bin/nyc --reporter=html --reporter=text riteway test/unit.js",
     "test:forever": "./node_modules/.bin/nodemon ./node_modules/.bin/mocha --reporter spec test/",
     "clean:docfiles": "find . -type f -name '*.html' -exec rm {} + && rm -rf styles/ && rm -rf scripts"
   },
@@ -62,17 +63,22 @@
     "url": "https://github.com/liquidcarrot/carrot/issues"
   },
   "homepage": "https://liquidcarrot.io/",
-  "dependencies": {},
+  "dependencies": {
+    "bignumber.js": "^8.1.1",
+    "lodash": "^4.17.11"
+  },
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-each": "0.0.1",
+    "chalk": "^2.4.2",
     "copy-webpack-plugin": "^5.0.2",
     "coveralls": "^3.0.3",
     "faker": "^4.1.0",
     "jsdoc": "^3.6.1",
     "mocha": "^5.2.0",
-    "nodemon": "^1.18.11",
+    "nodemon": "^1.19.0",
     "nyc": "^13.3.0",
+    "riteway": "^6.0.3",
     "webpack": "^4.30.0",
     "webpack-cli": "^3.3.0"
   },
