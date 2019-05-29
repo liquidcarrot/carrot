@@ -7,6 +7,10 @@
         <img src="https://travis-ci.org/liquidcarrot/carrot.svg?branch=master"
              alt="Build Status via Travis CI">
     </a>
+    <a href="https://www.codacy.com/app/christianechevarria/carrot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=liquidcarrot/carrot&amp;utm_campaign=Badge_Grade">
+        <img src="https://api.codacy.com/project/badge/Grade/3ee723b170f14b4990c8a0a6fc1feb27"
+             alt="Codacy Badge">
+    </a>
     <a href="https://www.npmjs.com/package/@liquid-carrot/carrot">
         <img src="https://img.shields.io/npm/dm/@liquid-carrot/carrot.svg"
              alt="Carrot's Monthly Downloads">
