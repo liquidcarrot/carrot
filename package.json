@@ -1,0 +1,35 @@
+{
+  "name": "@liquid-carrot/carrot",
+  "version": "0.2.18",
+  "description": "Deep learning framework",
+  "main": "index.js",
+  "scripts": {
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luiscarbonell/carrot.git"
+  },
+  "author": "Liquid Carrot <people@liquidcarrot.io> (https://liquidcarrot.io)",
+  "contributors": [
+    "Luis Ernesto Carbonell (luis@liquidcarrot.io)",
+    "Christian George Echevarria-Reina (chris@liquidcarrot.io)",
+    "Irma Martinez (iimartinezh@miners.utep.edu)",
+    "Akash Samlal (triforcemaster345@gmail.com",
+    "Abelardo Riojas (NOTABELARDORIOJAS@GMAIL.COM)"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/luiscarbonell/carrot/issues"
+  },
+  "homepage": "https://github.com/luiscarbonell/carrot#readme",
+  "devDependencies": {
+    "benchmark": "^2.1.4",
+    "chai": "^4.2.0",
+    "mocha": "^6.1.4",
+    "nodemon": "^1.19.1"
+  },
+  "dependencies": {
+    "lodash": "^4.17.11"
+  }
+}
