@@ -139,6 +139,7 @@ console.log(B.activate())
 
 ## 💬 Contributing
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5d75f3c061bc46099c47043f2e926897)](https://app.codacy.com/app/christianechevarria/carrot?utm_source=github.com&utm_medium=referral&utm_content=liquidcarrot/carrot&utm_campaign=Badge_Grade_Settings)
 [![Carrot's GitHub Issues](https://img.shields.io/github/issues/liquidcarrot/carrot.svg)](https://github.com/liquidcarrot/carrot/issues)
 
 Your contributions are always welcome! Please have a look at the [contribution guidelines](https://github.com/liquidcarrot/carrot/blob/master/CONTRIBUTING.md) first. 🎉
