@@ -1253,6 +1253,7 @@ Network.prototype = {
     var growth = typeof options.growth !== 'undefined' ? options.growth : 0.0001;
     var cost = options.cost || methods.cost.MSE;
     var amount = options.amount || 1;
+    let defaultSet = set;
 
     var threads = options.threads;
     if (typeof threads === 'undefined') {
@@ -1265,14 +1266,11 @@ Network.prototype = {
 
     var start = Date.now();
 
-    var fitnessFunction;
     if (threads === 1) {
       // Create the fitness function
-      fitnessFunction = function (genome) {
+      options.fitness = function (genome, amount = 1, cost = methods.cost.MSE, set = defaultSet, growth = 0.0001) {
         var score = 0;
-        for (var i = 0; i < amount; i++) {
-          score -= genome.test(set, cost).error;
-        }
+        for (var i = 0; i < amount; i++) score -= genome.test(set, cost).error;
 
         score -= (genome.nodes.length - genome.input - genome.output + genome.connections.length + genome.gates.length) * growth;
         score = isNaN(score) ? -Infinity : score; // this can cause problems with fitness proportionate selection
@@ -1295,7 +1293,7 @@ Network.prototype = {
         }
       }
 
-      fitnessFunction = function (population) {
+      options.fitness = function (population) {
         return new Promise((resolve, reject) => {
           // Create a queue
           var queue = population.slice();
@@ -1330,7 +1328,7 @@ Network.prototype = {
 
     // Intialise the NEAT instance
     options.network = this;
-    var neat = new Neat(this.input, this.output, fitnessFunction, options);
+    var neat = new Neat(this.input, this.output, options);
 
     var error = -Infinity;
     var bestFitness = -Infinity;
@@ -1842,10 +1840,9 @@ var selection = methods.selection;
 *
 * @prop {number} generation A count of the generations
 */
-function Neat (input, output, fitness, options) {
+function Neat (input, output, options) {
   this.input = input; // The input size of the networks
   this.output = output; // The output size of the networks
-  this.fitness = fitness; // The fitness function to evaluate the networks
 
   // Configure options
   options = options || {};
@@ -1858,6 +1855,7 @@ function Neat (input, output, fitness, options) {
   this.mutationAmount = options.mutationAmount || 1;
 
   this.fitnessPopulation = options.fitnessPopulation || false;
+  this.fitness = options.fitness // The fitness function to evaluate the networks
 
   this.selection = options.selection || methods.selection.POWER;
   this.crossover = options.crossover || [
