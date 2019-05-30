@@ -1840,37 +1840,57 @@ var selection = methods.selection;
 *
 * @prop {number} generation A count of the generations
 */
-function Neat (input, output, options) {
+function Neat (input, output, {
+  generation = 0, // internal variable
+  equal = true,
+  clean = false,
+  popsize = 50,
+  elitism = 1,
+  provenance = 0,
+  mutationRate = 0.4,
+  mutationAmount = 1,
+  fitnessPopulation = false,
+  fitness,
+  selection = methods.selection.POWER,
+  crossover = [
+    methods.crossover.SINGLE_POINT,
+    methods.crossover.TWO_POINT,
+    methods.crossover.UNIFORM,
+    methods.crossover.AVERAGE
+  ],
+  mutation = methods.mutation.FFW,
+  efficientMutation = false,
+  template = (new Network(input, output)),
+  maxNodes = Infinity,
+  maxConns = Infinity,
+  maxGates = Infinity,
+  selectMutationMethod = this.selectMutationMethod
+} = {}) {
   let self = this;
-  let actuals = _.defaults(options || {}, {
+  
+  _.assignIn(this, {
     input,
     output,
-    generation: 0,
-    equal: true,
-    clean: false,
-    popsize: 50,
-    elitism: 1,
-    provenance: 0,
-    mutationRate: 0.4,
-    mutationAmount: 1,
-    fitnessPopulation: false,
-    selection: methods.selection.POWER,
-    crossover: [
-      methods.crossover.SINGLE_POINT,
-      methods.crossover.TWO_POINT,
-      methods.crossover.UNIFORM,
-      methods.crossover.AVERAGE
-    ],
-    mutation: methods.mutation.FFW,
-    efficientMutation: false,
-    template: (new Network(input, output)),
-    maxNodes: Infinity,
-    maxConns: Infinity,
-    maxGates: Infinity,
-    selectMutationMethod: this.selectMutationMethod
+    generation,
+    equal,
+    clean,
+    popsize,
+    elitism,
+    provenance,
+    mutationRate,
+    mutationAmount,
+    fitnessPopulation,
+    fitness,
+    selection,
+    crossover,
+    mutation,
+    efficientMutation,
+    template,
+    maxNodes,
+    maxConns,
+    maxGates,
+    selectMutationMethod
   });
-  
-  _.assignIn(this, actuals);
 
   // Initialise the genomes
   this.createPool(this.template);
