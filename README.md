@@ -89,7 +89,7 @@ let Hopfield = new architect.Hopfield(4);
 
 let Random = new architect.Random(4, 5, 1);
 
-// as many hidden layers as needed
+// Add as many hidden layers as needed
 let Perceptron = new architect.Perceptron(4, 5, 20, 5, 10, 1);
 ```
 
