@@ -178,15 +178,15 @@ And finally, a big thank you to all of you for supporting! 🤗
 <table>
  <thead>
   <tr>
-   <th>Silver Patron</th>
+   <th>Silver Patrons</th>
   </tr>
  </thead>
  <tbody>
   <tr>
    <td align="center">
-    <a href="https://protonmail.com/" alt="ProtonMail"><img src="https://protonmail.com/apple-touch-icon.png" alt="ProtonMail Logo" width="150px" /></a>
+    <a href="https://github.com/D-Nice" alt="D-Nice on Github"><img src="https://avatars0.githubusercontent.com/u/2888248?s=460&v=4" alt="D-Nice Profile Pitcure" width="150px" /></a>
     <br>
-    <strong>ProtonMail</strong>
+    <strong>D-Nice</strong>
    </td>
   </tr>
  </tbody>
@@ -195,7 +195,24 @@ And finally, a big thank you to all of you for supporting! 🤗
 <table>
  <thead>
   <tr>
-   <th>Patron</th>
+   <th>Bronze Patrons</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td align="center">
+    <a href="https://github.com/kappaxbeta" alt="Kappaxbeta on Github"><img src="https://avatars2.githubusercontent.com/u/7612464?s=460&v=4" alt="Kappaxbeta's Profile Pitcure" width="150px" /></a>
+    <br>
+    <strong>Kappaxbeta</strong>
+   </td>
+  </tr>
+ </tbody>
+</table>
+
+<table>
+ <thead>
+  <tr>
+   <th>Patrons</th>
   </tr>
  </thead>
  <tbody>
