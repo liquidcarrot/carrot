@@ -148,7 +148,7 @@ async function execute () {
 execute();
 ```
 
-Building neural networks
+Build vanilla neural networks
 
 ```javascript
 let Network = require('@liquid-carrot/carrot').Network
@@ -156,7 +156,7 @@ let Network = require('@liquid-carrot/carrot').Network
 let network = new Network([2, 2, 1]) // Builds a neural network with 5 neurons: 2 + 2 + 1
 ```
 
-Building neurons
+Or implement custom algorithms with neuron-level control
 
 ```javascript
 let Node = require('@liquid-carrot/carrot').Node
