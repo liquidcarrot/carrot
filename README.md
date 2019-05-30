@@ -87,11 +87,10 @@ let NARX = new architect.NARX(4, 5, 1);
 
 let Hopfield = new architect.Hopfield(4);
 
-// With as many hidden layers as you want
-let Perceptron = new architect.Perceptron(4, 5, 20, 5, 10, 1);
-
 let Random = new architect.Random(4, 5, 1);
 
+// as many hidden layers as needed
+let Perceptron = new architect.Perceptron(4, 5, 20, 5, 10, 1);
 ```
 
 Building custom network architectures
