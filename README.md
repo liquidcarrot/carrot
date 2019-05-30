@@ -61,6 +61,31 @@ Carrot files are hosted by GitHub Pages, just copy this link into the `<head>` t
 
 ## Getting Started
 
+This is a simple **perceptron**:
+
+![perceptron](http://www.codeproject.com/KB/dotnet/predictor/network.jpg).
+
+How to build it with Carrot:
+
+```javascript
+let { architect } = require('@liquid-carrot/carrot');
+
+// The example Perceptron you see above with 4 inputs, 5 hidden, and 1 output neuron
+let simplePerceptron = new architect.Perceptron(4, 5, 1);
+
+// And now, 4 inputs, *two* hidden layers of 5, and 1 output neuron
+let simplePercetronTwo = new architect.Perceptron(4, 5, 5, 1);
+```
+
+And building networks is easy with **6** built-in networks
+
+```javascript
+let { architect } = require('@liquid-carrot/carrot');
+
+let LSTM = new architect.LSTM(4, 5, 1);
+
+```
+
 Shaping a network with neuro-evolution
 
 ```javascript
