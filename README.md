@@ -135,11 +135,10 @@ A.activate(0.5)
 console.log(B.activate())
 ```
 
-## Training, Testing, and Playing Around
+## Try with
 
-<details><summary><strong>Data Sets</strong></summary>
-* [ ] [MNIST](https://www.npmjs.com/package/mnist)
-</details>
+#### Data Sets
+ - [ ] [MNIST](https://www.npmjs.com/package/mnist)
 
 ## 💬 Contributing
 
