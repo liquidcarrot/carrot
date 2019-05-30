@@ -201,7 +201,7 @@ And finally, a big thank you to all of you for supporting! 🤗
  <tbody>
   <tr>
    <td align="center">
-    <a href="https://github.com/kappaxbeta" alt="Kappaxbeta on Github"><img src="https://avatars2.githubusercontent.com/u/7612464?s=460&v=4" alt="Kappaxbeta's Profile Pitcure" width="150px" /></a>
+    <a href="https://github.com/kappaxbeta" alt="Kappaxbeta on Github"><img src="https://avatars2.githubusercontent.com/u/7612464?s=460&v=4" alt="Kappaxbeta's Profile Pitcure" width="125px" /></a>
     <br>
     <strong>Kappaxbeta</strong>
    </td>
