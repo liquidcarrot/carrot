@@ -74,7 +74,7 @@ let { architect } = require('@liquid-carrot/carrot');
 let simplePerceptron = new architect.Perceptron(4, 5, 1);
 ```
 
-And building networks is easy with **6** built-in networks
+Building networks is easy with **6** built-in networks
 
 ```javascript
 let { architect } = require('@liquid-carrot/carrot');
