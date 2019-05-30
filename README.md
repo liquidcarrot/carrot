@@ -72,9 +72,6 @@ let { architect } = require('@liquid-carrot/carrot');
 
 // The example Perceptron you see above with 4 inputs, 5 hidden, and 1 output neuron
 let simplePerceptron = new architect.Perceptron(4, 5, 1);
-
-// And now, 4 inputs, *two* hidden layers of 5, and 1 output neuron
-let simplePercetronTwo = new architect.Perceptron(4, 5, 5, 1);
 ```
 
 And building networks is easy with **6** built-in networks
@@ -84,48 +81,17 @@ let { architect } = require('@liquid-carrot/carrot');
 
 let LSTM = new architect.LSTM(4, 5, 1);
 
-```
+let GRU = new architect.GRU(4, 5, 1);
 
-Shaping a network with neuro-evolution
+let NARX = new architect.NARX(4, 5, 1);
 
-```javascript
-let { Network, methods } = require('@liquid-carrot/carrot');
+let Hopfield = new architect.Hopfield(4);
 
-// this network learns the XOR gate (through neuro-evolution)
-async function execute () {
-   var network = new Network(2,1);
+// With as many hidden layers as you want
+let Perceptron = new architect.Perceptron(4, 5, 20, 5, 10, 1);
 
-   // XOR dataset
-   var trainingSet = [
-       { input: [0,0], output: [0] },
-       { input: [0,1], output: [1] },
-       { input: [1,0], output: [1] },
-       { input: [1,1], output: [0] }
-   ];
+let Random = new architect.Random(4, 5, 1);
 
-   await network.evolve(trainingSet, {
-       mutation: methods.mutation.FFW,
-       equal: true,
-       error: 0.05,
-       elitism: 5,
-       mutationRate: 0.5
-   });
-
-   network.activate([0,0]); // 0.2413
-   network.activate([0,1]); // 1.0000
-   network.activate([1,0]); // 0.7663
-   network.activate([1,1]); // -0.008
-}
-
-execute();
-```
-
-Building neural networks
-
-```javascript
-let Network = require('@liquid-carrot/carrot').Network
-
-let network = new Network([2, 2, 1]) // Builds a neural network with 5 neurons: 2 + 2 + 1
 ```
 
 Building custom network architectures
@@ -145,6 +111,50 @@ hidden1.connect(hidden2);
 hidden2.connect(output);
 
 let network = architect.Construct([input, hidden1, hidden2, output]);
+```
+
+Networks can also shape **themselves** with neuro-evolution
+
+```javascript
+let { Network, methods } = require('@liquid-carrot/carrot');
+
+// this network learns the XOR gate (through neuro-evolution)
+async function execute () {
+  // no hidden layers...
+   var network = new Network(2,1);
+
+   // XOR dataset
+   var trainingSet = [
+       { input: [0,0], output: [0] },
+       { input: [0,1], output: [1] },
+       { input: [1,0], output: [1] },
+       { input: [1,1], output: [0] }
+   ];
+
+   await network.evolve(trainingSet, {
+       mutation: methods.mutation.FFW,
+       equal: true,
+       error: 0.05,
+       elitism: 5,
+       mutationRate: 0.5
+   });
+   
+   // and it works!
+   network.activate([0,0]); // 0.2413
+   network.activate([0,1]); // 1.0000
+   network.activate([1,0]); // 0.7663
+   network.activate([1,1]); // 0.008
+}
+
+execute();
+```
+
+Building neural networks
+
+```javascript
+let Network = require('@liquid-carrot/carrot').Network
+
+let network = new Network([2, 2, 1]) // Builds a neural network with 5 neurons: 2 + 2 + 1
 ```
 
 Building neurons
