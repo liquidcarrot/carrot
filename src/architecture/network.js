@@ -1841,43 +1841,36 @@ var selection = methods.selection;
 * @prop {number} generation A count of the generations
 */
 function Neat (input, output, options) {
-  this.input = input; // The input size of the networks
-  this.output = output; // The output size of the networks
-
-  // Configure options
-  options = options || {};
-  this.equal = options.equal || true;
-  this.clear = options.clear || false;
-  this.popsize = options.popsize || 50;
-  this.elitism = options.elitism || 1;
-  this.provenance = options.provenance || 0;
-  this.mutationRate = options.mutationRate || 0.4;
-  this.mutationAmount = options.mutationAmount || 1;
-
-  this.fitnessPopulation = options.fitnessPopulation || false;
-  this.fitness = options.fitness // The fitness function to evaluate the networks
-
-  this.selection = options.selection || methods.selection.POWER;
-  this.crossover = options.crossover || [
-    methods.crossover.SINGLE_POINT,
-    methods.crossover.TWO_POINT,
-    methods.crossover.UNIFORM,
-    methods.crossover.AVERAGE
-  ];
-  this.mutation = options.mutation || methods.mutation.FFW;
-  this.efficientMutation = options.efficientMutation || false;
-
-  this.template = options.network || (new Network(this.input, this.output));
-
-  this.maxNodes = options.maxNodes || Infinity;
-  this.maxConns = options.maxConns || Infinity;
-  this.maxGates = options.maxGates || Infinity;
-
-  // Custom mutation selection function if given
-  this.selectMutationMethod = typeof options.mutationSelection === 'function' ? options.mutationSelection.bind(this) : this.selectMutationMethod;
-
-  // Generation counter
-  this.generation = 0;
+  let self = this;
+  let actuals = _.defaults(options || {}, {
+    input,
+    output,
+    generation: 0,
+    equal: true,
+    clean: false,
+    popsize: 50,
+    elitism: 1,
+    provenance: 0,
+    mutationRate: 0.4,
+    mutationAmount: 1,
+    fitnessPopulation: false,
+    selection: methods.selection.POWER,
+    crossover: [
+      methods.crossover.SINGLE_POINT,
+      methods.crossover.TWO_POINT,
+      methods.crossover.UNIFORM,
+      methods.crossover.AVERAGE
+    ],
+    mutation: methods.mutation.FFW,
+    efficientMutation: false,
+    template: (new Network(input, output)),
+    maxNodes: Infinity,
+    maxConns: Infinity,
+    maxGates: Infinity,
+    selectMutationMethod: this.selectMutationMethod
+  });
+  
+  _.assignIn(this, actuals);
 
   // Initialise the genomes
   this.createPool(this.template);
