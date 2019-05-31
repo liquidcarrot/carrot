@@ -1809,6 +1809,8 @@ module.exports = Network;
 /**
 * Runs the NEAT algorithm on group of neural networks.
 *
+* @namespace Neat
+*
 * @private
 *
 * @param {Array<{input:number[],output:number[]}>} [dataset] A set of input values and ideal output values to evaluate a genome's fitness with. Must be included to use `NEAT.evaluate` without passing a dataset
@@ -1909,6 +1911,31 @@ let Neat = function (dataset, {
   // Initialise the genomes
   self.createPool(self.template);
   
+  self.filterGenome = function(population, template, pickGenome, adjustGenome) {
+      let filtered = [...population]; // avoid mutations
+      
+      // Check for correct return type from pickGenome
+      const check = function checkPick(genome) {
+        const pick = pickGenome(genome)
+        if (typeof pick !== "boolean") throw new Error("pickGenome must always return a boolean!")
+        return pick
+      }
+      
+      if(adjustGenome){
+        for (let i = 0; i < population.length; i++) {
+          if(check(filtered[i])) {
+            const result = adjustGenome(filtered[i])
+            if (!(result instanceof Network)) throw new Error("adjustGenome must always return a network!")
+            filtered[i] = result
+          }
+        }
+      } else
+          for (let i = 0; i < population.length; i++)
+            if(check(filtered[i])) filtered[i] = Network.fromJSON(template.toJSON)
+    
+      return filtered;
+    };
+  
   /**
    * Selects a random mutation method for a genome according to the parameters
    *
@@ -1962,7 +1989,7 @@ let Neat = function (dataset, {
   /**
    * Evaluates, selects, breeds and mutates population
    *
-   * @param {Array<{input:number[],output:number[]}>} [evolveSet] A set to be used specifically for evolving the population, if none is provided the dataset passed to Neat on creation will be used.
+   * @param {Array<{input:number[],output:number[]}>} [evolveSet=dataset] A set to be used for evolving the population, if none is provided the dataset passed to Neat on creation will be used.
    * @param {function} [pickGenome] A custom selection function to pick out unwanted genomes. Accepts a network as a parameter and returns true for selection.
    * @param {function} [adjustGenome=this.template] Accepts a network, modifies it, and returns it. Used to modify unwanted genomes returned by `pickGenome` and reincorporate them into the population. If left unset, unwanted genomes will be replaced with the template Network. Will only run when pickGenome is defined.
    *
@@ -1989,11 +2016,18 @@ let Neat = function (dataset, {
    *  console.log(fittest)
    * })
   */
-  self.evolve = async function (evolveSet) {
-    // Check if evaluated, sort the population
-    if (typeof self.population[self.population.length - 1].score === 'undefined') {
+  self.evolve = async function (evolveSet, pickGenome, adjustGenome) {
+    // Check if evolve is possible
+    if(this.elitism + this.provenance > this.popsize) throw new Error("Can't evolve! Elitism + provenance exceeds population size!");
+    
+    // Check population for evaluation
+    if (typeof self.population[self.population.length - 1].score === 'undefined')
       await self.evaluate(_.isArray(evolveSet) ? evolveSet : _.isArray(dataset) ? dataset : parameter.is.required("dataset"));
-    }
+      
+    // Check & adjust genomes as needed
+    if(pickGenome) self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome)
+    
+    // Sort in order of fitness (fittest first)
     self.sort();
 
     var fittest = Network.fromJSON(self.population[0].toJSON());
@@ -2017,6 +2051,9 @@ let Neat = function (dataset, {
     self.mutate();
 
     self.population.push(...elitists);
+    
+    // Check & adjust genomes as needed
+    if(pickGenome) self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome)
 
     // Reset the scores
     for (let i = 0; i < self.population.length; i++) self.population[i].score = undefined;
