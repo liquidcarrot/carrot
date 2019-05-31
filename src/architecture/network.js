@@ -2013,7 +2013,7 @@ let Neat = function (dataset, {
   */
   self.evolve = async function (evolveSet, pickGenome, adjustGenome) {
     // Check if evolve is possible
-    if(this.elitism + this.provenance > this.popsize) throw new Error("Can't evolve! Elitism + provenance exceeds population size!");
+    if(self.elitism + self.provenance > self.popsize) throw new Error("Can't evolve! Elitism + provenance exceeds population size!");
     
     // Check population for evaluation
     if (typeof self.population[self.population.length - 1].score === 'undefined')
