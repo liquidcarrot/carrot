@@ -1,4 +1,5 @@
 let _ = require('lodash');
+let parameter = require('../util/parameter');
 var multi = require('../multithreading/multi');
 var methods = require('../methods/methods');
 var Connection = require('./connection');
@@ -1810,7 +1811,7 @@ module.exports = Network;
 *
 * @private
 *
-* @param {Array<{input:number[],output:number[]}>} [dataset] A set of input values and ideal output values to evaluate a genome's fitness with. Must be included to use `NEAT.evaluate`
+* @param {Array<{input:number[],output:number[]}>} [dataset] A set of input values and ideal output values to evaluate a genome's fitness with. Must be included to use `NEAT.evaluate` without passing a dataset
 * @param {Object} options - Configuration options
 * @param {number} input - The input size of `template` networks.
 * @param {number} output - The output size of `template` networks.
@@ -1991,9 +1992,8 @@ let Neat = function (dataset, {
   self.evolve = async function (evolveSet) {
     // Check if evaluated, sort the population
     if (typeof self.population[self.population.length - 1].score === 'undefined') {
-      await self.evaluate(_.isArray(evolveSet) ? evolveSet : dataset);
+      await self.evaluate(_.isArray(evolveSet) ? evolveSet : _.isArray(dataset) ? dataset : parameter.is.required("dataset"));
     }
-    
     self.sort();
 
     var fittest = Network.fromJSON(self.population[0].toJSON());
