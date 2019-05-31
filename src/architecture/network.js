@@ -1328,7 +1328,9 @@ Network.prototype = {
 
     // Intialise the NEAT instance
     options.network = this;
-    var neat = new Neat(this.input, this.output, options);
+    options.input = this.input;
+    options.output = this.output;
+    var neat = new Neat(set, options);
 
     var error = -Infinity;
     var bestFitness = -Infinity;
@@ -1813,10 +1815,10 @@ module.exports = Network;
 *
 * @private
 *
-* @param {number} input - The input size of the networks.
-* @param {number} output - The output size of the networks
 * @param {Array<{input:number[],output:number[]}>} [dataset] A set of input values and ideal output values to evaluate a genome's fitness with. Must be included to use `NEAT.evaluate`
 * @param {Object} options - Configuration options
+* @param {number} input - The input size of `template` networks.
+* @param {number} output - The output size of `template` networks.
 * @param {boolean} [options.equal=false] When true [crossover](Network.crossOver) parent genomes are assumed to be equally fit and offspring are built with a random amount of neurons within the range of parents' number of neurons. Set to false to select the "fittest" parent as the neuron amount template.
 * @param {number} [options.clear=false] Clear the context of the population's nodes, basically reverting them to 'new' neurons. Useful for predicting timeseries with LSTM's.
 * @param {number} [options.popsize=50] Population size of each generation.
@@ -1837,8 +1839,10 @@ module.exports = Network;
 *
 * @prop {number} generation A count of the generations
 */
-let Neat = function (input, output, {
+let Neat = function (dataset, {
   generation = 0, // internal variable
+  input = 0,
+  output = 0,
   equal = true,
   clean = false,
   popsize = 50,
@@ -1969,6 +1973,7 @@ let Neat = function (input, output, {
     if (typeof self.population[self.population.length - 1].score === 'undefined') {
       await self.evaluate();
     }
+    
     self.sort();
 
     var fittest = Network.fromJSON(self.population[0].toJSON());
@@ -1978,17 +1983,17 @@ let Neat = function (input, output, {
 
     // Elitism
     var elitists = [];
-    for (var i = 0; i < self.elitism; i++) {
+    for (let i = 0; i < self.elitism; i++) {
       elitists.push(self.population[i]);
     }
 
     // Provenance
-    for (i = 0; i < self.provenance; i++) {
+    for (let i = 0; i < self.provenance; i++) {
       newPopulation.push(Network.fromJSON(self.template.toJSON()));
     }
 
     // Breed the next individuals
-    for (i = 0; i < self.popsize - self.elitism - self.provenance; i++) {
+    for (let i = 0; i < self.popsize - self.elitism - self.provenance; i++) {
       newPopulation.push(self.getOffspring());
     }
 
@@ -1999,7 +2004,7 @@ let Neat = function (input, output, {
     self.population.push(...elitists);
 
     // Reset the scores
-    for (i = 0; i < self.population.length; i++) {
+    for (let i = 0; i < self.population.length; i++) {
       self.population[i].score = undefined;
     }
 
@@ -2016,7 +2021,6 @@ let Neat = function (input, output, {
    * @return {Network} Selected genome for offspring generation
    */
   self.getParent = function () {
-    var i;
     switch (self.selection.name) {
       case 'POWER': {
         if (self.population[0].score < self.population[1].score) self.sort();
@@ -2031,7 +2035,7 @@ let Neat = function (input, output, {
 
         var totalFitness = 0;
         var minimalFitness = 0;
-        for (i = 0; i < self.population.length; i++) {
+        for (let i = 0; i < self.population.length; i++) {
           var score = self.population[i].score;
           minimalFitness = score < minimalFitness ? score : minimalFitness;
           totalFitness += score;
@@ -2043,7 +2047,7 @@ let Neat = function (input, output, {
         var random = Math.random() * totalFitness;
         var value = 0;
 
-        for (i = 0; i < self.population.length; i++) {
+        for (let i = 0; i < self.population.length; i++) {
           let genome = self.population[i];
           value += genome.score + minimalFitness;
           if (random < value) return genome;
@@ -2059,7 +2063,7 @@ let Neat = function (input, output, {
 
         // Create a tournament
         var individuals = [];
-        for (i = 0; i < self.selection.size; i++) {
+        for (let i = 0; i < self.selection.size; i++) {
           let random = self.population[Math.floor(Math.random() * self.population.length)];
           individuals.push(random);
         }
@@ -2070,7 +2074,7 @@ let Neat = function (input, output, {
         });
 
         // Select an individual
-        for (i = 0; i < self.selection.size; i++)
+        for (let i = 0; i < self.selection.size; i++)
           if (Math.random() < self.selection.probability || i === self.selection.size - 1) return individuals[i];
       }
     }
@@ -2093,9 +2097,9 @@ let Neat = function (input, output, {
    */
   self.mutate = function () {
     // Elitist genomes should not be included
-    for (var i = 0; i < self.population.length; i++) {
+    for (let i = 0; i < self.population.length; i++) {
       if (Math.random() <= self.mutationRate) {
-        for (var j = 0; j < self.mutationAmount; j++) {
+        for (let j = 0; j < self.mutationAmount; j++) {
           const mutationMethod = self.selectMutationMethod(self.population[i], self.mutation, self.efficientMutation);
           self.efficientMutation ? null : self.population[i].mutate(mutationMethod);
         }
@@ -2107,16 +2111,14 @@ let Neat = function (input, output, {
    * Evaluates the current population
    */
   self.evaluate = async function () {
-    var i;
     if (self.fitnessPopulation) {
       if (self.clear) {
-        for (i = 0; i < self.population.length; i++) {
+        for (let i = 0; i < self.population.length; i++)
           self.population[i].clear();
-        }
       }
       await self.fitness(self.population);
     } else {
-      for (i = 0; i < self.population.length; i++) {
+      for (let i = 0; i < self.population.length; i++) {
         var genome = self.population[i];
         if (self.clear) genome.clear();
         genome.score = await self.fitness(genome);
@@ -2140,12 +2142,10 @@ let Neat = function (input, output, {
   */
   self.getFittest = function () {
     // Check if evaluated
-    if (typeof self.population[self.population.length - 1].score === 'undefined') {
+    if (typeof self.population[self.population.length - 1].score === 'undefined')
       self.evaluate();
-    }
-    if (self.population[0].score < self.population[1].score) {
-      self.sort();
-    }
+    
+    if (self.population[0].score < self.population[1].score) self.sort();
 
     return self.population[0];
   };
@@ -2161,9 +2161,8 @@ let Neat = function (input, output, {
     }
 
     var score = 0;
-    for (var i = 0; i < self.population.length; i++) {
+    for (let i = 0; i < self.population.length; i++)
       score += self.population[i].score;
-    }
 
     return score / self.population.length;
   };
@@ -2177,10 +2176,8 @@ let Neat = function (input, output, {
    */
   self.toJSON = function exportPopulation() {
     var json = [];
-    for (var i = 0; i < self.population.length; i++) {
-      var genome = self.population[i];
-      json.push(genome.toJSON());
-    }
+    for (let i = 0; i < self.population.length; i++)
+      json.push(self.population[i].toJSON());
 
     return json;
   };
@@ -2192,10 +2189,8 @@ let Neat = function (input, output, {
   */
   self.fromJSON = function importPopulation(json) {
     var population = [];
-    for (var i = 0; i < json.length; i++) {
-      var genome = json[i];
-      population.push(Network.fromJSON(genome));
-    }
+    for (let i = 0; i < json.length; i++)
+      population.push(Network.fromJSON(json[i]));
     self.population = population;
     self.popsize = population.length;
   };
