@@ -1899,18 +1899,12 @@ let Neat = function (dataset, {
    *
    * @param {Network} network
    */
-  self.createPool = function createInitialPopulation (network) {
-    self.population = [];
-
-    for (let i = 0; i < self.popsize; i++) {
-      const copy = Network.fromJSON(network.toJSON());
-      copy.score = undefined;
-      self.population.push(copy);
-    }
+  self.createPool = function createInitialPopulation (network, popsize) {
+    return Array(popsize).fill(Network.fromJSON({ ...network.toJSON(), score: undefined }))
   };
   
   // Initialise the genomes
-  self.createPool(self.template);
+  self.population = self.createPool(self.template, self.popsize);
   
   self.filterGenome = function(population, template, pickGenome, adjustGenome) {
       let filtered = [...population]; // avoid mutations
