@@ -1810,7 +1810,7 @@ module.exports = Network;
 /**
 * Runs the NEAT algorithm on group of neural networks.
 *
-* @namespace Neat
+* @constructs Neat
 *
 * @private
 *
@@ -1821,6 +1821,9 @@ module.exports = Network;
 * @param {boolean} [options.equal=false] When true [crossover](Network.crossOver) parent genomes are assumed to be equally fit and offspring are built with a random amount of neurons within the range of parents' number of neurons. Set to false to select the "fittest" parent as the neuron amount template.
 * @param {number} [options.clear=false] Clear the context of the population's nodes, basically reverting them to 'new' neurons. Useful for predicting timeseries with LSTM's.
 * @param {number} [options.popsize=50] Population size of each generation.
+* @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connectoins.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
+* @param {cost} [options.cost=cost.MSE]  Specify the cost function for the evolution, this tells a genome in the population how well it's performing. Default: methods.cost.MSE (recommended).
+* @param {number} [options.amount=1] Set the amount of times to test the trainingset on a genome each generation. Useful for timeseries. Do not use for regular feedfoward problems.
 * @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algortihtms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
 * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
 * @param {number} [options.mutationRate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.3.
@@ -1837,6 +1840,16 @@ module.exports = Network;
 * @param {mutation[]} [options.mutation] Sets allowed [mutation methods](mutation) for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent
 *
 * @prop {number} generation A count of the generations
+* @prop {Network[]} population The current population for the neat instance. Accessible through `neat.population`
+*
+* @example
+* let { Neat } = require("@liquid-carrot/carrot");
+*
+* let neat = new Neat(4, 1, dataset, {
+*   elitism: 10,
+*   clear: true,
+*   popsize: 1000
+* });
 */
 let Neat = function (dataset, {
   generation = 0, // internal variable
@@ -1845,12 +1858,23 @@ let Neat = function (dataset, {
   equal = true,
   clean = false,
   popsize = 50,
+  growth = 0.0001,
+  cost = methods.cost.MSE,
+  amount = 1,
   elitism = 1,
   provenance = 0,
   mutationRate = 0.4,
   mutationAmount = 1,
   fitnessPopulation = false,
-  fitness,
+  fitness = function(set = dataset, genome, amount = 1, cost = methods.cost.MSE, growth = 0.0001) {
+    let score = 0;
+    for (let i = 0; i < amount; i++) score -= genome.test(set, cost).error;
+
+    score -= (genome.nodes.length - genome.input - genome.output + genome.connections.length + genome.gates.length) * growth;
+    score = isNaN(score) ? -Infinity : score; // this can cause problems with fitness proportionate selection
+
+    return score / amount;
+  },
   selection = methods.selection.POWER,
   crossover = [
     methods.crossover.SINGLE_POINT,
@@ -1871,12 +1895,15 @@ let Neat = function (dataset, {
   // // Easier variable naming
   // let selection = methods.selection;
   _.assignIn(self, {
+    generation,
     input,
     output,
-    generation,
     equal,
     clean,
     popsize,
+    growth,
+    cost,
+    amount,
     elitism,
     provenance,
     mutationRate,
