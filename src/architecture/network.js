@@ -8,6 +8,8 @@ var Node = require('./node');
 // Easier variable naming
 var mutation = methods.mutation;
 
+
+
 /**
 * Create a neural network
 *
@@ -1803,7 +1805,6 @@ Network.crossOver = function (network1, network2, equal) {
 
 module.exports = Network;
 
-
 /**
 * Runs the NEAT algorithm on group of neural networks.
 *
@@ -1960,12 +1961,37 @@ let Neat = function (dataset, {
   /**
    * Evaluates, selects, breeds and mutates population
    *
+   * @param {Array<{input:number[],output:number[]}>} [evolveSet] A set to be used specifically for evolving the population, if none is provided the dataset passed to Neat on creation will be used.
+   * @param {function} [pickGenome] A custom selection function to pick out unwanted genomes. Accepts a network as a parameter and returns true for selection.
+   * @param {function} [adjustGenome=this.template] Accepts a network, modifies it, and returns it. Used to modify unwanted genomes returned by `pickGenome` and reincorporate them into the population. If left unset, unwanted genomes will be replaced with the template Network. Will only run when pickGenome is defined.
+   *
    * @returns {Network} Fittest network
+   *
+   * @example
+   * let neat = new Neat(dataset, {
+   *  elitism: 10,
+   *  clear: true,
+   *  popsize: 1000
+   * });
+   *
+   * let filter = function(genome) {
+   *  // Remove genomes with more than 100 nodes
+   *  return genome.nodes.length > 100 ? true : false
+   * }
+   *
+   * let adjust = function(genome) {
+   *  // clear the nodes
+   *  return genome.clear()
+   * }
+   *
+   * neat.evolve(evolveSet, filter, adjust).then(function(fittest) {
+   *  console.log(fittest)
+   * })
   */
-  self.evolve = async function () {
+  self.evolve = async function (evolveSet) {
     // Check if evaluated, sort the population
     if (typeof self.population[self.population.length - 1].score === 'undefined') {
-      await self.evaluate();
+      await self.evaluate(_.isArray(evolveSet) ? evolveSet : dataset);
     }
     
     self.sort();
@@ -1977,19 +2003,14 @@ let Neat = function (dataset, {
 
     // Elitism
     var elitists = [];
-    for (let i = 0; i < self.elitism; i++) {
-      elitists.push(self.population[i]);
-    }
+    for (let i = 0; i < self.elitism; i++) elitists.push(self.population[i]);
 
     // Provenance
-    for (let i = 0; i < self.provenance; i++) {
-      newPopulation.push(Network.fromJSON(self.template.toJSON()));
-    }
+    for (let i = 0; i < self.provenance; i++) newPopulation.push(Network.fromJSON(self.template.toJSON()));
 
     // Breed the next individuals
-    for (let i = 0; i < self.popsize - self.elitism - self.provenance; i++) {
+    for (let i = 0; i < self.popsize - self.elitism - self.provenance; i++)
       newPopulation.push(self.getOffspring());
-    }
 
     // Replace the old population with the new population
     self.population = newPopulation;
@@ -1998,9 +2019,7 @@ let Neat = function (dataset, {
     self.population.push(...elitists);
 
     // Reset the scores
-    for (let i = 0; i < self.population.length; i++) {
-      self.population[i].score = undefined;
-    }
+    for (let i = 0; i < self.population.length; i++) self.population[i].score = undefined;
 
     self.generation++;
 
@@ -2104,7 +2123,7 @@ let Neat = function (dataset, {
   /**
    * Evaluates the current population
    */
-  self.evaluate = async function () {
+  self.evaluate = async function (dataset) {
     if (self.fitnessPopulation) {
       if (self.clear) {
         for (let i = 0; i < self.population.length; i++)
@@ -2135,7 +2154,7 @@ let Neat = function (dataset, {
    * @returns {Network} Current population's fittest genome
   */
   self.getFittest = function () {
-    // Check if evaluated
+    // Check if evaluated. Self.evaluate is an async function
     if (typeof self.population[self.population.length - 1].score === 'undefined')
       self.evaluate();
     
