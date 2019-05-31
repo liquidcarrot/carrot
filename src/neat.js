@@ -226,6 +226,7 @@ Neat.prototype = {
 
     this.population.push(...elitists);
     
+    // Check & adjust genomes as needed
     if(pickGenome) this.population = this.util.filterGenome(this.population, this.template, pickGenome, adjustGenome)
 
     // Reset the scores
