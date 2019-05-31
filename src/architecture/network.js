@@ -1901,8 +1901,8 @@ let Neat = function (dataset, {
   self.createPool = function createInitialPopulation (network) {
     self.population = [];
 
-    for (var i = 0; i < self.popsize; i++) {
-      var copy = Network.fromJSON(network.toJSON());
+    for (let i = 0; i < self.popsize; i++) {
+      const copy = Network.fromJSON(network.toJSON());
       copy.score = undefined;
       self.population.push(copy);
     }
@@ -1969,17 +1969,17 @@ let Neat = function (dataset, {
 
       if (current === methods.mutation.ADD_NODE && genome.nodes.length >= self.maxNodes) {
         if (config.warnings) console.warn('maxNodes exceeded!')
-        return
+        return null;
       }
   
       if (current === methods.mutation.ADD_CONN && genome.connections.length >= self.maxConns) {
         if (config.warnings) console.warn('maxConns exceeded!');
-        return
+        return null;
       }
   
       if (current === methods.mutation.ADD_GATE && genome.gates.length >= self.maxGates) {
         if (config.warnings) console.warn('maxGates exceeded!');
-        return
+        return null;
       }
   
       return current
