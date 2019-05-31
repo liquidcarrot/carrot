@@ -2018,7 +2018,7 @@ let Neat = function (dataset, {
     // Check population for evaluation
     if (typeof self.population[self.population.length - 1].score === 'undefined')
       await self.evaluate(_.isArray(evolveSet) ? evolveSet : _.isArray(dataset) ? dataset : parameter.is.required("dataset"));
-      
+    
     // Check & adjust genomes as needed
     if(pickGenome) self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome)
     
@@ -2028,7 +2028,7 @@ let Neat = function (dataset, {
     var fittest = Network.fromJSON(self.population[0].toJSON());
     fittest.score = self.population[0].score;
 
-    // Elitism
+    // Elitism, assumes population is sorted by fitness
     var elitists = [];
     for (let i = 0; i < self.elitism; i++) elitists.push(self.population[i]);
 
@@ -2041,8 +2041,11 @@ let Neat = function (dataset, {
 
     // Replace the old population with the new population
     self.population = newPopulation;
+    
+    // Mutate the new population
     self.mutate();
 
+    // Add the elitists
     self.population.push(...elitists);
     
     // Check & adjust genomes as needed
@@ -2184,7 +2187,7 @@ let Neat = function (dataset, {
    * @returns {Network} Current population's fittest genome
   */
   self.getFittest = function () {
-    // Check if evaluated. Self.evaluate is an async function
+    // Check if evaluated. self.evaluate is an async function
     if (typeof self.population[self.population.length - 1].score === 'undefined')
       self.evaluate();
     
@@ -2199,9 +2202,8 @@ let Neat = function (dataset, {
    * @returns {number} Average fitness of the current population
    */
   self.getAverage = function () {
-    if (typeof self.population[self.population.length - 1].score === 'undefined') {
-      self.evaluate();
-    }
+    if (typeof self.population[self.population.length - 1].score === 'undefined')
+      self.evaluate(); // self.evaluate is an async function
 
     var score = 0;
     for (let i = 0; i < self.population.length; i++)
