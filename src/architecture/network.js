@@ -1268,7 +1268,7 @@ Network.prototype = {
 
     if (threads === 1) {
       // Create the fitness function
-      options.fitness = function (genome, amount = 1, cost = methods.cost.MSE, set = defaultSet, growth = 0.0001) {
+      options.fitness = function (set = defaultSet, genome, amount = 1, cost = methods.cost.MSE, growth = 0.0001) {
         var score = 0;
         for (var i = 0; i < amount; i++) score -= genome.test(set, cost).error;
 
@@ -1284,16 +1284,12 @@ Network.prototype = {
       // Create workers, send datasets
       var workers = [];
       if (typeof window === 'undefined') {
-        for (var i = 0; i < threads; i++) {
-          workers.push(new multi.workers.node.TestWorker(converted, cost));
-        }
+        for (var i = 0; i < threads; i++) workers.push(new multi.workers.node.TestWorker(converted, cost));
       } else {
-        for (var i = 0; i < threads; i++) {
-          workers.push(new multi.workers.browser.TestWorker(converted, cost));
-        }
+        for (var i = 0; i < threads; i++) workers.push(new multi.workers.browser.TestWorker(converted, cost));
       }
 
-      options.fitness = function (population) {
+      options.fitness = function (set, population) {
         return new Promise((resolve, reject) => {
           // Create a queue
           var queue = population.slice();
@@ -1317,9 +1313,7 @@ Network.prototype = {
             });
           };
 
-          for (var i = 0; i < workers.length; i++) {
-            startWorker(workers[i]);
-          }
+          for (var i = 0; i < workers.length; i++) startWorker(workers[i]);
         });
       };
 
@@ -1827,7 +1821,7 @@ module.exports = Network;
 * @param {number} [options.mutationRate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.3.
 * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
 * @param {boolean} [options.fitnessPopulation=false] When true, requires fitness function that takes an array of genomes as input and sets their .score property
-* @param {Function} [options.fitness] - A fitness function to evaluate the networks. Takes a `genome`, i.e. a [network](Network), and a `dataset` and sets the genome's score property
+* @param {Function} [options.fitness] - A fitness function to evaluate the networks. Takes a `dataset` and a `genome` i.e. a [network](Network) and sets the genome's `.score` property
 * @param {string} [options.selection=FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
 * @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
 * @param {Network} [options.network=false] Network to start evolution from
@@ -2116,12 +2110,12 @@ let Neat = function (dataset, {
         for (let i = 0; i < self.population.length; i++)
           self.population[i].clear();
       }
-      await self.fitness(self.population);
+      await self.fitness(dataset, self.population);
     } else {
       for (let i = 0; i < self.population.length; i++) {
         var genome = self.population[i];
         if (self.clear) genome.clear();
-        genome.score = await self.fitness(genome);
+        genome.score = await self.fitness(dataset, genome);
       }
     }
   };
