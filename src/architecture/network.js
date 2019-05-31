@@ -2028,15 +2028,13 @@ let Neat = function (dataset, {
     var fittest = Network.fromJSON(self.population[0].toJSON());
     fittest.score = self.population[0].score;
 
-    var newPopulation = [];
-
     // Elitism
     var elitists = [];
     for (let i = 0; i < self.elitism; i++) elitists.push(self.population[i]);
 
     // Provenance
-    for (let i = 0; i < self.provenance; i++) newPopulation.push(Network.fromJSON(self.template.toJSON()));
-
+    let newPopulation = Array(self.provenance).fill(Network.fromJSON(self.template.toJSON()))
+    
     // Breed the next individuals
     for (let i = 0; i < self.popsize - self.elitism - self.provenance; i++)
       newPopulation.push(self.getOffspring());
