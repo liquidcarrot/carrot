@@ -374,7 +374,9 @@ let Neat = function (dataset, {
   };
 
   /**
-   * Evaluates the current population
+   * Evaluates the current population, basically sets their `.score` property
+   *
+   * @return {Network} Fittest Network
    */
   self.evaluate = async function (dataset) {
     if (self.fitnessPopulation) {
@@ -390,6 +392,10 @@ let Neat = function (dataset, {
         genome.score = await self.fitness(dataset, genome);
       }
     }
+    // Sort the population in order of fitness
+    self.sort()
+    
+    return self.population[0]
   };
 
   /**
