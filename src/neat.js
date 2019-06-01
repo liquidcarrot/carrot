@@ -238,15 +238,11 @@ let Neat = function (dataset, {
     // Check population for evaluation
     if (typeof self.population[self.population.length - 1].score === 'undefined')
       await self.evaluate(_.isArray(evolveSet) ? evolveSet : _.isArray(dataset) ? dataset : parameter.is.required("dataset"));
-    
     // Check & adjust genomes as needed
     if(pickGenome) self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome)
     
     // Sort in order of fitness (fittest first)
     self.sort();
-
-    var fittest = Network.fromJSON(self.population[0].toJSON());
-    fittest.score = self.population[0].score;
 
     // Elitism, assumes population is sorted by fitness
     var elitists = [];
@@ -267,9 +263,18 @@ let Neat = function (dataset, {
 
     // Add the elitists
     self.population.push(...elitists);
+
+    // evaluate the population
+    await self.evaluate(_.isArray(evolveSet) ? evolveSet : _.isArray(dataset) ? dataset : parameter.is.required("dataset"));
     
     // Check & adjust genomes as needed
     if(pickGenome) self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome)
+    
+    // Sort in order of fitness (fittest first)
+    self.sort()
+    
+    const fittest = Network.fromJSON(self.population[0].toJSON());
+    fittest.score = self.population[0].score;
 
     // Reset the scores
     for (let i = 0; i < self.population.length; i++) self.population[i].score = undefined;
@@ -387,14 +392,16 @@ let Neat = function (dataset, {
       await self.fitness(dataset, self.population);
     } else {
       for (let i = 0; i < self.population.length; i++) {
-        var genome = self.population[i];
+        const genome = self.population[i];
         if (self.clear) genome.clear();
         genome.score = await self.fitness(dataset, genome);
+        self.population[i] = genome;
       }
     }
+    
     // Sort the population in order of fitness
     self.sort()
-    
+
     return self.population[0]
   };
 
