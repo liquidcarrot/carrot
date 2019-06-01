@@ -310,7 +310,7 @@ describe('Networks', function () {
       assert.isBelow(0.9, getActivation([0]), 'LSTM error');
       assert.isBelow(getActivation([0]), 0.1, 'LSTM error');
     });
-    it('GRU XOR', function () {
+    it.skip('GRU XOR', function () {
       this.timeout(30000);
       var gru = new architect.GRU(1, 2, 1);
 
