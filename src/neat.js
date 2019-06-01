@@ -48,8 +48,8 @@ var config = require('./config');
 */
 let Neat = function (dataset, {
   generation = 0, // internal variable
-  input = 0,
-  output = 0,
+  input = 1,
+  output = 1,
   equal = true,
   clean = false,
   popsize = 50,
