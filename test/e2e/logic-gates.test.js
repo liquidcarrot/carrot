@@ -57,7 +57,9 @@ describe("Logic Gates", function() {
     
     expect(final.error).to.be.at.most(initial.error);
   });
-  it("[NOT] Network.evolve()", function() {
+  it("[NOT] Network.evolve()");
+  
+  it("[NOT] Neat.evolve()", function() {
     const neat = new Neat(data.NOT, { input: 1, output: 1 });
     
     let execute = async function() {
@@ -66,14 +68,11 @@ describe("Logic Gates", function() {
       const intermediate = await neat.evolve(data.NOT); // evolves
       const final = await neat.evaluate(data.NOT); // returns fittest network
       
-      expect(final.score).to.be.at.least(initial.score);
-      console.log("Initial score: " + initial.score + " Final score: " + final.score)
+      expect(final.score).to.be.above(initial.score);
     };
     
     execute();
   });
-  
-  it("[NOT] Neat.evolve()");
   
   it("[AND] Network.train()", function() {
     const network = new Network(2,1);
