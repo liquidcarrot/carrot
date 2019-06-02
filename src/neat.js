@@ -1,8 +1,8 @@
 let _ = require('lodash');
 let parameter = require('./util/parameter');
-var Network = require('./architecture/network');
-var methods = require('./methods/methods');
-var config = require('./config');
+let Network = require('./architecture/network');
+let methods = require('./methods/methods');
+let config = require('./config');
 
 /**
 * Runs the NEAT algorithm on group of neural networks.
@@ -245,7 +245,7 @@ let Neat = function (dataset, {
     self.sort();
 
     // Elitism, assumes population is sorted by fitness
-    var elitists = [];
+    let elitists = [];
     for (let i = 0; i < self.elitism; i++) elitists.push(self.population[i]);
 
     // Provenance
@@ -296,7 +296,7 @@ let Neat = function (dataset, {
       case 'POWER': {
         if (self.population[0].score < self.population[1].score) self.sort();
 
-        var index = Math.floor(Math.pow(Math.random(), self.selection.power) * self.population.length);
+        let index = Math.floor(Math.pow(Math.random(), self.selection.power) * self.population.length);
         return self.population[index];
       }
       case 'FITNESS_PROPORTIONATE': {
@@ -304,10 +304,10 @@ let Neat = function (dataset, {
         // https://stackoverflow.com/questions/16186686/genetic-algorithm-handling-negative-fitness-values
         // this is unnecessarily run for every individual, should be changed
 
-        var totalFitness = 0;
-        var minimalFitness = 0;
+        let totalFitness = 0;
+        let minimalFitness = 0;
         for (let i = 0; i < self.population.length; i++) {
-          var score = self.population[i].score;
+          let score = self.population[i].score;
           minimalFitness = score < minimalFitness ? score : minimalFitness;
           totalFitness += score;
         }
@@ -315,8 +315,8 @@ let Neat = function (dataset, {
         minimalFitness = Math.abs(minimalFitness);
         totalFitness += minimalFitness * self.population.length;
 
-        var random = Math.random() * totalFitness;
-        var value = 0;
+        let random = Math.random() * totalFitness;
+        let value = 0;
 
         for (let i = 0; i < self.population.length; i++) {
           let genome = self.population[i];
@@ -333,7 +333,7 @@ let Neat = function (dataset, {
         }
 
         // Create a tournament
-        var individuals = [];
+        let individuals = [];
         for (let i = 0; i < self.selection.size; i++) {
           let random = self.population[Math.floor(Math.random() * self.population.length)];
           individuals.push(random);
@@ -357,8 +357,8 @@ let Neat = function (dataset, {
    * @returns {Network} Child network
    */
   self.getOffspring = function () {
-    var parent1 = self.getParent();
-    var parent2 = self.getParent();
+    let parent1 = self.getParent();
+    let parent2 = self.getParent();
 
     return Network.crossOver(parent1, parent2, self.equal);
   };
@@ -438,7 +438,7 @@ let Neat = function (dataset, {
     if (typeof self.population[self.population.length - 1].score === 'undefined')
       self.evaluate(); // self.evaluate is an async function
 
-    var score = 0;
+    let score = 0;
     for (let i = 0; i < self.population.length; i++)
       score += self.population[i].score;
 
@@ -453,7 +453,7 @@ let Neat = function (dataset, {
    * @return {object[]} A set of genomes (a population) represented as JSON objects.
    */
   self.toJSON = function exportPopulation() {
-    var json = [];
+    let json = [];
     for (let i = 0; i < self.population.length; i++)
       json.push(self.population[i].toJSON());
 
@@ -466,7 +466,7 @@ let Neat = function (dataset, {
    * @param {object[]} json set of genomes (a population) represented as JSON objects.
   */
   self.fromJSON = function importPopulation(json) {
-    var population = [];
+    let population = [];
     for (let i = 0; i < json.length; i++)
       population.push(Network.fromJSON(json[i]));
     self.population = population;
