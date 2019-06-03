@@ -1,6 +1,16 @@
-let { assert, expect } = require('chai');
-let should = require('chai').should();
-let carrot = require('../../src/carrot');
+let _ = require('lodash')
+let { assert, expect } = require('chai')
+let should = require('chai').should()
+let {
+  Network,
+  Neat,
+  methods,
+  config,
+  architect
+} = require('../../src/carrot')
+
+
+let mutation = methods.mutation;
 
 /**
  *

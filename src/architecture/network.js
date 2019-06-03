@@ -10,7 +10,6 @@ var Node = require('./node');
 var mutation = methods.mutation;
 
 
-
 /**
 * Create a neural network
 *
@@ -1959,7 +1958,11 @@ let Neat = function (dataset, {
   /**
    * Selects a random mutation method for a genome according to the parameters
    *
-   * @param genome
+   * @param {Network} genome Network to test for possible mutations
+   * @param {mutation[]} allowedMutations An array of allowed mutations to pick from
+   * @param {boolean} efficientMutation A flag to enable checking for possible mutations on a [network](Network)
+   *
+   * @return {mutation} Selected mutation
   */
   self.selectMutationMethod = function (genome, allowedMutations, efficientMutation) {
     
@@ -1972,7 +1975,7 @@ let Neat = function (dataset, {
         if(currentMethod === methods.mutation.ADD_NODE && genome.nodes.length >= self.maxNodes || currentMethod === methods.mutation.ADD_CONN && genome.connections.length >= self.maxConns || currentMethod === methods.mutation.ADD_GATE && genome.gates.length >= self.maxGates) {
           success = false
         } else {
-          success = genome.mutate(currentMethod)
+          success = genome.mutate(currentMethod) // actual mutation happens
         }
         
         // we're done
