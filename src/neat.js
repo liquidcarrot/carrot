@@ -220,7 +220,7 @@ let Neat = function (dataset, {
    *
    * @example
    *
-   * // Original
+   * // original
    * let originalSet = [
    *  { input: [0,0], output: [0] },
    *  { input: [0,1], output: [1] },
@@ -230,39 +230,29 @@ let Neat = function (dataset, {
    *
    * let neat = new Neat(originalSet, {
    *  input: 1,
-   *  output: 2,
-   *  elitism: 10,
-   *  clear: true,
-   *  popsize: 1000
+   *  output: 2
    * });
    *
+   * // special set to be used when evolving
    * let evolveSet = [
    *  { input: [0], output: [1] },
    *  { input: [1], output: [0] }
    * ]
    *
-   * let filter = function(genome) {
-   *  // Remove genomes with more than 100 nodes
-   *  return genome.nodes.length > 100 ? true : false
-   * }
-   *
-   * let adjust = function(genome) {
-   *  // clear the nodes
-   *  return genome.clear()
-   * }
-   *
    * // evolves using evolveSet INSTEAD of originalSet
-   * neat.evolve(evolveSet, filter, adjust).then(function(fittest) {
-   *  console.log(fittest)
-   * })
+   * neat.evolve(evolveSet)
    *
    * // evolves using originalSet
-   * neat.evolve(null, filter, adjust).then(function(fittest) {
-   *  console.log(fittest)
-   * })
-   *
    * neat.evolve()
-  */
+   *
+   * let pick = function pickGenome(genome) return genome.nodes.length > 100 ? true : false // Remove genomes with more than 100 nodes
+   *
+   * let adjust = function adjustGenome(genome) return genome.clear() // clear the nodes
+   *
+   * // evolves using originalSet
+   * neat.evolve(null, filter, adjust)
+   *
+   */
   self.evolve = async function (evolveSet, pickGenome, adjustGenome) {
     // Check if evolve is possible
     if(self.elitism + self.provenance > self.popsize) throw new Error("Can't evolve! Elitism + provenance exceeds population size!");
