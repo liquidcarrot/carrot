@@ -88,7 +88,6 @@ const random = {
         min: random.number(this.max)
       }
     }),
-    network: () => ({}),
     group: () => ({}),
     layer: () => ({}),
     node: () => ({})
