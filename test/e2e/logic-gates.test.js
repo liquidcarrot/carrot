@@ -66,10 +66,10 @@ describe("Logic Gates", function() {
     const final = await population.evolve(data.NOT);
     
     
-    console.log(`Initial Score: ${initial.score}`);
-    console.log(`Final Score: ${final.score}`);
+    // console.log(`Initial Score: ${initial.score}`);
+    // console.log(`Final Score: ${final.score}`);
     
-    expect(final.score).to.be.at.most(initial.score);
+    expect(final.score).to.be.at.least(initial.score);
   });
   
   it("[AND] Network.train()", function() {
