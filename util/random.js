@@ -2,7 +2,8 @@ const _ = require("lodash")
 const { methods } = require("../src/carrot")
 
 // 50/50 chance of returning `thing`
-const maybe = (thing) => Math.round(Math.random()) ? thing : undefined;
+const maybe = (thing) => Math.round(Math.random()) ? thing : null;
+const MAX_SAFE_LENGTH = 4294967295;
 
 /**
  * Used for randomly generating things
@@ -16,7 +17,7 @@ const random = {
    * @param min
    * @param max
    */
-  number: (min=0, max=Number.MAX_SAFE_INTEGER, floating) => maybe(_.random(min, max, floating)),
+  number: (min=0, max=MAX_SAFE_LENGTH, floating) => _.random(min, max, floating),
   /**
    * 50/50 chance of generating a boolean
    */
@@ -59,11 +60,9 @@ const random = {
   options: {
     network: () => ({}),
     neat: () => ({
-      inputs: random.number(),
-      outputs: random.number(),
       equal: random.boolean(),
       clean: random.boolean(),
-      popsize: random.number(),
+      popsize: random.number(0, 100),
       growth: random.number(1, true),
       amount: random.number(),
       elitism: random.number(),
@@ -74,7 +73,6 @@ const random = {
       selection: random.methods.selection(),
       crossover: random.methods.crossover(),
       mutation: random.methods.mutation(),
-      // template: random.network(),
       nodes: {
         max: random.number(),
         min: random.number(this.max)

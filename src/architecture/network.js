@@ -91,10 +91,10 @@ Network.prototype = {
    * myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
   activate: function (input, training) {
-    var output = [];
+    let output = [];
 
     // Activate nodes chronologically
-    for (var i = 0; i < this.nodes.length; i++) {
+    for(let i = 0; i < this.nodes.length; i++) {
       if (this.nodes[i].type === 'input') {
         this.nodes[i].activate(input[i]);
       } else if (this.nodes[i].type === 'output') {
@@ -191,6 +191,17 @@ Network.prototype = {
     for (var i = 0; i < this.nodes.length; i++) {
       this.nodes[i].clear();
     }
+  },
+  
+  /**
+   * Returns a new identical network
+   *
+   * @returns {Network} Returns an identical network
+   */
+  clone: function() {
+    const self = this;
+    
+    return new Network(self.input, self.output);
   },
 
   /**

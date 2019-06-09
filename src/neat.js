@@ -7,7 +7,14 @@ let config = require('./config');
 /**
 * Runs the NEAT algorithm on group of neural networks.
 *
-* @class Neat
+* @constructs Neat
+*
+* @param {number} [inputs=1] Size of input layer of the networks in the population
+* @param {number} [outputs=1] Size of input layer of the networks in the population
+* @param {Array<{inputs:number[],outputs:number[]}> [dataset] Dataset used to train networks in the population at first - _other sets of data can be passed to `neat.evolve()` after constuction_
+* @param {Object} options
+*
+* // A lot of random shit here.
 *
 * @param {Array<{input:number[],output:number[]}>} [dataset] A set of input values and ideal output values to evaluate a genome's fitness with. Must be included to use `NEAT.evaluate` without passing a dataset
 * @param {Object} options - Configuration options
@@ -46,73 +53,44 @@ let config = require('./config');
 *   popsize: 1000
 * });
 */
-let Neat = function (dataset, {
-  generation = 0, // internal variable
-  input = 1,
-  output = 1,
-  equal = true,
-  clean = false,
-  popsize = 50,
-  growth = 0.0001,
-  cost = methods.cost.MSE,
-  amount = 1,
-  elitism = 1,
-  provenance = 0,
-  mutationRate = 0.4,
-  mutationAmount = 1,
-  fitnessPopulation = false,
-  fitness = function(set = dataset, genome, amount = 1, cost = methods.cost.MSE, growth = 0.0001) {
-    let score = 0;
-    for (let i = 0; i < amount; i++) score -= genome.test(set, cost).error;
-
-    score -= (genome.nodes.length - genome.input - genome.output + genome.connections.length + genome.gates.length) * growth;
-    score = isNaN(score) ? -Infinity : score; // this can cause problems with fitness proportionate selection
-
-    return score / amount;
-  },
-  selection = methods.selection.POWER,
-  crossover = [
-    methods.crossover.SINGLE_POINT,
-    methods.crossover.TWO_POINT,
-    methods.crossover.UNIFORM,
-    methods.crossover.AVERAGE
-  ],
-  mutation = methods.mutation.FFW,
-  efficientMutation = false,
-  template = (new Network(input, output)),
-  maxNodes = Infinity,
-  maxConns = Infinity,
-  maxGates = Infinity,
-  selectMutationMethod = this.selectMutationMethod
-} = {}) {
+let Neat = function(inputs, outputs, dataset, options) {
   let self = this;
   
-  _.assignIn(self, {
-    generation,
-    input,
-    output,
-    equal,
-    clean,
-    popsize,
-    growth,
-    cost,
-    amount,
-    elitism,
-    provenance,
-    mutationRate,
-    mutationAmount,
-    fitnessPopulation,
-    fitness,
-    selection,
-    crossover,
-    mutation,
-    efficientMutation,
-    template,
-    maxNodes,
-    maxConns,
-    maxGates,
-    selectMutationMethod
-  });
+  // new Neat(dataset) || new Neat(options)
+  if(!(outputs || dataset || options)) {
+    if(_.isPlainObject(inputs)) options = inputs;
+    else if(_.isArray(inputs)) dataset = inputs;
+
+    inputs = undefined;
+  }
+  
+  // new Neat(dataset, options)
+  else if(!(dataset || options) && _.isArray(inputs) && _.isPlainObject(outputs)) {
+    dataset = inputs;
+    options = outputs;
+    inputs = outputs = undefined;
+  }
+  
+  // new Neat(input, output, options)
+  else if(!(options) && _.isInteger(inputs) && _.isInteger(outputs) && _.isPlainObject(dataset)) {
+    options = dataset;
+    dataset = undefined;
+  }
+  
+  // new Neat()
+  // new Neat(population) - leave out for now
+  // new Neat(input, output)
+  // new Neat(population, options) - leave out for now
+  // new Neat(population, dataset) - leave out for now
+  // new Neat(input, output, dataset)
+  // new Neat(population, dataset, options) - leave out for now
+  // new Neat(input, output, dataset, options)
+  inputs = inputs || 1;
+  outputs = outputs || 1;
+  options = _.defaultsDeep(options, Neat.default.options);
+  options.template = options.template || new Network(inputs, outputs);
+  
+  _.assignIn(self, { inputs, outputs, dataset, ...options});
   
   /**
    * Create the initial pool of genomes
@@ -123,12 +101,32 @@ let Neat = function (dataset, {
    *
    * @param {Network} network
    */
-  self.createPool = function createInitialPopulation (network, popsize) {
+  self.createPool = function createInitialPopulation(network, popsize) {
     return Array(popsize).fill(Network.fromJSON({ ...network.toJSON(), score: undefined }))
   };
   
+  /**
+   * Creates a new population
+   *
+   * @param {Network} network - Template network used to create population - _other networks will be "identical twins"_
+   * @param {number} size - Number of network in created population - _how many identical twins created in new population_
+   *
+   * @returns {Network[]} Returns an array of networks
+   */
+  self.createPopulation = function(network, size) {
+    if(!size && _.isInteger(network)) {
+      size = network;
+      network = undefined;
+    }
+    
+    network = network ? network.clone() : new Network(self.inputs, self.outputs);
+    size = size || self.popsize;
+    
+    return Array(size).fill(network);
+  };
+  
   // Initialise the genomes
-  self.population = self.createPool(self.template, self.popsize);
+  self.population = self.population || self.createPopulation(self.template, self.popsize);
   
   self.filterGenome = function(population, template, pickGenome, adjustGenome) {
       let filtered = [...population]; // avoid mutations
@@ -494,6 +492,48 @@ let Neat = function (dataset, {
     self.population = population;
     self.popsize = population.length;
   };
+}
+
+Neat.default = {
+  options: {
+    generation: 0, // internal variable
+    // input: 1,
+    // output: 1,
+    equal: true,
+    clean: false,
+    popsize: 50,
+    growth: 0.0001,
+    cost: methods.cost.MSE,
+    amount: 1,
+    elitism: 1,
+    provenance: 0,
+    mutationRate: 0.4,
+    mutationAmount: 1,
+    fitnessPopulation: false,
+    fitness: function(set = dataset, genome, amount = 1, cost = methods.cost.MSE, growth = 0.0001) {
+      let score = 0;
+      for (let i = 0; i < amount; i++) score -= genome.test(set, cost).error;
+  
+      score -= (genome.nodes.length - genome.input - genome.output + genome.connections.length + genome.gates.length) * growth;
+      score = isNaN(score) ? -Infinity : score; // this can cause problems with fitness proportionate selection
+  
+      return score / amount;
+    },
+    selection: methods.selection.POWER,
+    crossover: [
+      methods.crossover.SINGLE_POINT,
+      methods.crossover.TWO_POINT,
+      methods.crossover.UNIFORM,
+      methods.crossover.AVERAGE
+    ],
+    mutation: methods.mutation.FFW,
+    efficientMutation: false,
+    // template: new Network(this.input, this.output)
+    maxNodes: Infinity,
+    maxConns: Infinity,
+    maxGates: Infinity,
+    selectMutationMethod: this.selectMutationMethod
+  }
 }
 
 module.exports = Neat;

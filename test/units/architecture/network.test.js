@@ -62,5 +62,7 @@ let mutation = methods.mutation;
        
      });
    });
-   
+   describe("network.clone()", function() {
+     
+   })
  })
