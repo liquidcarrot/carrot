@@ -11,23 +11,18 @@ let config = require('./config');
 *
 * @param {number} [inputs=1] Size of input layer of the networks in the population
 * @param {number} [outputs=1] Size of input layer of the networks in the population
-* @param {Array<{inputs:number[],outputs:number[]}> [dataset] Dataset used to train networks in the population at first - _other sets of data can be passed to `neat.evolve()` after constuction_
-* @param {Object} options
-*
-* // A lot of random shit here.
-*
-* @param {Array<{input:number[],output:number[]}>} [dataset] A set of input values and ideal output values to evaluate a genome's fitness with. Must be included to use `NEAT.evaluate` without passing a dataset
-* @param {Object} options - Configuration options
-* @param {boolean} [options.equal=false] When true [crossover](Network.crossOver) parent genomes are assumed to be equally fit and offspring are built with a random amount of neurons within the range of parents' number of neurons. Set to false to select the "fittest" parent as the neuron amount template.
-* @param {number} [options.clear=false] Clear the context of the population's nodes, basically reverting them to 'new' neurons. Useful for predicting timeseries with LSTM's.
+* @param {Array<{inputs:number[],outputs:number[]}>} [dataset] Dataset used to train networks in the population at first - _other sets of data can be passed to `neat.evolve()` after constuction_
+* @param {Object} options **Configuration Options**
 * @param {number} [options.popsize=50] Population size of each generation.
-* @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connectoins.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
-* @param {cost} [options.cost=cost.MSE]  Specify the cost function for the evolution, this tells a genome in the population how well it's performing. Default: methods.cost.MSE (recommended).
-* @param {number} [options.amount=1] Set the amount of times to test the trainingset on a genome each generation. Useful for timeseries. Do not use for regular feedfoward problems.
 * @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algortihtms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
 * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
 * @param {number} [options.mutationRate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.4.
 * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
+* @param {cost} [options.cost=cost.MSE]  Specify the cost function for the evolution, this tells a genome in the population how well it's performing. Default: methods.cost.MSE (recommended).
+* @param {boolean} [options.equal=false] When true [crossover](Network.crossOver) parent genomes are assumed to be equally fit and offspring are built with a random amount of neurons within the range of parents' number of neurons. Set to false to select the "fittest" parent as the neuron amount template.
+* @param {number} [options.clear=false] Clear the context of the population's nodes, basically reverting them to 'new' neurons. Useful for predicting timeseries with LSTM's.
+* @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connectoins.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
+* @param {number} [options.amount=1] Set the amount of times to test the trainingset on a genome each generation. Useful for timeseries. Do not use for regular feedfoward problems.
 * @param {boolean} [options.fitnessPopulation=false] Flag to return the fitness of a population of genomes. Set this to false to evaluate each genome inidividually.
 * @param {Function} [options.fitness] - A fitness function to evaluate the networks. Takes a `dataset` and a `genome` i.e. a [network](Network) or a `population` i.e. an array of networks and sets the genome `.score` property
 * @param {string} [options.selection=FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
@@ -43,15 +38,52 @@ let config = require('./config');
 * @prop {Network[]} population The current population for the neat instance. Accessible through `neat.population`
 *
 * @example
-* let { Neat } = require("@liquid-carrot/carrot");
+* const { Neat } = require("@liquid-carrot/carrot");
 *
-* let neat = new Neat(dataset, {
-*   input: 5,
-*   output: 5,
-*   elitism: 10,
-*   clear: true,
-*   popsize: 1000
-* });
+* // new Neat()
+* let neat = new Neat()
+*
+* // new Neat(options)
+* let neat = new Neat({ popsize: 100 })
+*
+* // new Neat(dataset)
+* let neat = new Neat([
+*   { input: [0, 0], output: [0] },
+*   { input: [0, 1], output: [1] },
+*   { input: [1, 0], output: [1] },
+*   { input: [1, 1], output: [0] }
+* ])
+*
+* // new Neat(input, output)
+* let neat = new Neat(64, 10)
+*
+* // new Neat(dataset, options)
+* let neat = new Neat([
+*   { input: [0, 0], output: [0] },
+*   { input: [0, 1], output: [1] },
+*   { input: [1, 0], output: [1] },
+*   { input: [1, 1], output: [0] }
+* ], { popsize: 100 })
+*
+* // new Neat(input, output, options)
+* let neat = new Neat(64, 10, { popsize: 100 })
+*
+* // new Neat(input, output, dataset)
+* let neat = new Neat(2, 1, [
+*   { input: [0, 0], output: [0] },
+*   { input: [0, 1], output: [1] },
+*   { input: [1, 0], output: [1] },
+*   { input: [1, 1], output: [0] }
+* ])
+*
+* // new Neat(input, output, dataset, options)
+* let neat = new Neat(2, 1, [
+*   { input: [0, 0], output: [0] },
+*   { input: [0, 1], output: [1] },
+*   { input: [1, 0], output: [1] },
+*   { input: [1, 1], output: [0] }
+* ], { popsize: 100 })
+*
 */
 let Neat = function(inputs, outputs, dataset, options) {
   let self = this;
