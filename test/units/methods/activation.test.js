@@ -1,6 +1,6 @@
-let { assert, expect } = require('chai');
-let should = require('chai').should();
-let carrot = require('../../../src/carrot');
+const { assert, expect } = require('chai');
+const should = require('chai').should();
+const {activation} = require('../../../src/carrot');
 
 /**
  *
@@ -14,4 +14,12 @@ let carrot = require('../../../src/carrot');
  *
  */
  
- 
+describe("activation", function(){
+
+describe("activation.TANH()", function(){
+it("activation.TANH(), => {ReferenceError}", function(){
+    expect(() => activation.TANH()).to.throw(ReferenceError);    
+})
+
+ })   
+}) 
