@@ -58,7 +58,8 @@ var activation = {
   * A.squash = methods.activation.TANH;
   */
   TANH: function (x, derivate) {
-    if (derivate) return 1 - Math.pow(Math.tanh(x), 2);
+    if(!x) throw new ReferenceError("Parameter 'x' is required, but was not defined");
+    if(derivate) return 1 - Math.pow(Math.tanh(x), 2);
     return Math.tanh(x);
   },
   /**
