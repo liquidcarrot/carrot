@@ -47,7 +47,7 @@ var activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
@@ -58,9 +58,16 @@ var activation = {
   * A.squash = methods.activation.TANH;
   */
   TANH: function (x, derivate) {
-    if(!x) throw new ReferenceError("Parameter 'x' is required, but was not defined");
-    if(derivate) return 1 - Math.pow(Math.tanh(x), 2);
-    return Math.tanh(x);
+    let y=[];
+    if(!x) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
+    if(derivate) {
+      if(x.length>0) {for(let i=0;i<=x.length;i++){y[i]=1 - Math.pow(Math.tanh(x[i]), 2);} return y;}
+      return 1 - Math.pow(Math.tanh(x), 2);
+    }
+    else{ 
+      if(x.length>0) {for(let i=0;i<x.length;i++){y[i]=Math.tanh(x[i]);} return y;}
+      return Math.tanh(x);
+    }
   },
   /**
   * [Identity function.](https://en.wikipedia.org/wiki/Identity_function)
