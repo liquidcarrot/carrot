@@ -153,7 +153,6 @@ Perceptron: function () {
 
   for (let i = 1; i < sizes.length; i++) {
     //if(i === sizes.length-1) {
-      console.log("size " + (i+1) + " " + sizes[i])
       groups.push(new Group(sizes[i], i === sizes.length - 1 ? "output" : "hidden"))
       groups[i - 1].connect(groups[i], methods.connection.ALL_TO_ALL)
   }
