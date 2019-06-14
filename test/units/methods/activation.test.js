@@ -35,14 +35,18 @@ it("activation.TANH(undefined,derivative=true) => {ReferenceError}", function(){
     expect(() => activation.TANH(undefined,true)).to.throw(ReferenceError);
 })
 //Array
-it("activation.TANH(numbers, derivative=false) => {number}", function(){
+it("activation.TANH(numbers, derivative=false) => {numbers}", function(){
     let z=[];
     x=Array.from({length: _.random(1,4)}, () => _.random(2,50,true));  
     for(let i=0;i<x.length;i++) {z[i]=Math.tanh(x[i]); }
     expect(activation.TANH(x, false)).to.eql(z);
 })
-
-
+it("activation.TANH(numbers, derivative=true) => {numbers}", function(){
+    let z=[];
+    x=Array.from({length: _.random(1,5)}, () => _.random(2,50,true));  
+    for(let i=0;i<x.length;i++) {z[i]= 1 - Math.pow(Math.tanh(x[i]), 2); }
+    expect(activation.TANH(x, true)).to.eql(z);
+})
 })
 
 
