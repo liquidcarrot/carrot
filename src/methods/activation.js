@@ -1,3 +1,5 @@
+const _ = require("lodash");
+
 /**
 * Activation functions
 *
@@ -58,16 +60,11 @@ var activation = {
   * A.squash = methods.activation.TANH;
   */
   TANH: function (x, derivate) {
-    let y=[];
     if(!x) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
-    if(derivate) {
-      if(x.length>0) {for(let i=0;i<x.length;i++){y[i]=1 - Math.pow(Math.tanh(x[i]), 2);} return y;}
-      return 1 - Math.pow(Math.tanh(x), 2);
-    }
-    else{ 
-      if(x.length>0) {for(let i=0;i<x.length;i++){y[i]=Math.tanh(x[i]);} return y;}
-      return Math.tanh(x);
-    }
+    
+    const f = derivate ? (x) => 1 - Math.pow(Math.tanh(x), 2) : (X) => Math.tanh(x)
+    
+    return _.isArray(x) ? _.map(x, f) : f(x);
   },
   /**
   * [Identity function.](https://en.wikipedia.org/wiki/Identity_function)
