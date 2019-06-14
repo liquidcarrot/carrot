@@ -47,7 +47,7 @@ var activation = {
   *
   * @member
   * @function
-  * @param {number | number[]} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
@@ -61,7 +61,7 @@ var activation = {
     let y=[];
     if(!x) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     if(derivate) {
-      if(x.length>0) {for(let i=0;i<=x.length;i++){y[i]=1 - Math.pow(Math.tanh(x[i]), 2);} return y;}
+      if(x.length>0) {for(let i=0;i<x.length;i++){y[i]=1 - Math.pow(Math.tanh(x[i]), 2);} return y;}
       return 1 - Math.pow(Math.tanh(x), 2);
     }
     else{ 
