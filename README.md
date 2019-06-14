@@ -264,9 +264,10 @@ And finally, a big thank you to all of you for supporting! 🤗
 ## Contributors
 This project exists thanks to all the people who contribute. We can't do it without you! 🙇
 
-* [Luis Carbonell](https://twitter.com/luis_carbnell)
+* [Luis Carbonell](https://luiscarbonell.com)
 * [Christian Echevarria](https://twitter.com/chrisgereina)
 * [Daniel Ryan](https://github.com/dan-ryan)
+* [Irma Iveth Martinez Huerta (Iviie)](https://github.com/IviieMtz)
 
 ## Acknowledgements
 
