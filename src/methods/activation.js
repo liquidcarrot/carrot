@@ -62,7 +62,7 @@ var activation = {
   TANH: function (x, derivate) {
     if(!x) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
-    const f = derivate ? (x) => 1 - Math.pow(Math.tanh(x), 2) : (X) => Math.tanh(x)
+    const f = derivate ? (x) => 1 - Math.pow(Math.tanh(x), 2) : (x) => Math.tanh(x)
     
     return _.isArray(x) ? _.map(x, f) : f(x);
   },
