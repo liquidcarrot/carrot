@@ -140,6 +140,8 @@ let Neat = function(inputs, outputs, dataset, options) {
   /**
    * Creates a new population
    *
+   * @memberof Neat
+   *
    * @param {Network} network - Template network used to create population - _other networks will be "identical twins"_
    * @param {number} size - Number of network in created population - _how many identical twins created in new population_
    *
@@ -187,6 +189,8 @@ let Neat = function(inputs, outputs, dataset, options) {
   
   /**
    * Selects a random mutation method for a genome according to the parameters
+   *
+   * @memberof Neat
    *
    * @param genome
   */
@@ -341,6 +345,8 @@ let Neat = function(inputs, outputs, dataset, options) {
    *
    * Should be called after `evaluate()`
    *
+   * @memberof Neat
+   *
    * @return {Network} Selected genome for offspring generation
    */
   self.getParent = function () {
@@ -406,6 +412,8 @@ let Neat = function(inputs, outputs, dataset, options) {
   /**
    * Selects two genomes from the population with `getParent()`, and returns the offspring from those parents. NOTE: Population MUST be sorted
    *
+   * @memberof Neat
+   *
    * @returns {Network} Child network
    */
   self.getOffspring = function () {
@@ -417,6 +425,8 @@ let Neat = function(inputs, outputs, dataset, options) {
 
   /**
    * Mutates the given (or current) population
+   *
+   * @memberof Neat
    */
   self.mutate = function () {
     // Elitist genomes should not be included
@@ -432,6 +442,8 @@ let Neat = function(inputs, outputs, dataset, options) {
 
   /**
    * Evaluates the current population, basically sets their `.score` property
+   *
+   * @memberof Neat
    *
    * @return {Network} Fittest Network
    */
@@ -469,6 +481,8 @@ let Neat = function(inputs, outputs, dataset, options) {
   /**
    * Returns the fittest genome of the current population
    *
+   * @memberof Neat
+   *
    * @returns {Network} Current population's fittest genome
   */
   self.getFittest = function () {
@@ -483,6 +497,8 @@ let Neat = function(inputs, outputs, dataset, options) {
 
   /**
    * Returns the average fitness of the current population
+   *
+   * @memberof Neat
    *
    * @returns {number} Average fitness of the current population
    */
@@ -502,6 +518,8 @@ let Neat = function(inputs, outputs, dataset, options) {
    *
    * Can be used later with `fromJSON(json)` to reload the population
    *
+   * @memberof Neat
+   *
    * @return {object[]} A set of genomes (a population) represented as JSON objects.
    */
   self.toJSON = function exportPopulation() {
@@ -514,6 +532,8 @@ let Neat = function(inputs, outputs, dataset, options) {
 
   /**
    * Imports population from a json. Must be an array of networks converted to JSON objects.
+   *
+   * @memberof Neat
    *
    * @param {object[]} json set of genomes (a population) represented as JSON objects.
   */
