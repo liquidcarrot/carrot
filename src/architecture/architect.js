@@ -4,6 +4,7 @@ const Group = require('./group');
 const Layer = require('./layer');
 const Node = require('./node');
 const _ = require("lodash");
+const assert = require("assert")
 
 /**
  *
@@ -195,13 +196,12 @@ const architect = {
     }
 
     hidden = hidden || 0;
-
-    _.defaults(options, {
+    options = _.defaults(options, {
       connections: hidden * 2,
       backconnections: 0,
       selfconnections: 0,
       gates: 0
-    })
+    });
 
     const network = new Network(input, output);
 
