@@ -559,7 +559,6 @@ Network.prototype = {
         var connection = allconnections[Math.floor(Math.random() * allconnections.length)];
         var modification = Math.random() * (method.max - method.min) + method.min;
         connection.weight += modification;
-        return true;
         break;
       }
       case mutation.MOD_BIAS: {
@@ -567,7 +566,6 @@ Network.prototype = {
         var index = Math.floor(Math.random() * (this.nodes.length - this.input) + this.input);
         var node = this.nodes[index];
         node.mutate(method);
-        return true;
         break;
       }
       case mutation.MOD_ACTIVATION:{
@@ -583,7 +581,6 @@ Network.prototype = {
         // Return a random node out of the filtered collection
         const node = _.sample(possible)
         node.mutate(method);
-        return true;
         break;
       }
       case mutation.ADD_SELF_CONN: {
@@ -607,7 +604,6 @@ Network.prototype = {
 
         // Connect it to himself
         this.connect(node, node);
-        return true;
         break;
       }
       case mutation.SUB_SELF_CONN: {
@@ -618,7 +614,6 @@ Network.prototype = {
         }
         var conn = this.selfconns[Math.floor(Math.random() * this.selfconns.length)];
         this.disconnect(conn.from, conn.to);
-        return true;
         break;
       }
       case mutation.ADD_GATE: {
@@ -646,7 +641,6 @@ Network.prototype = {
 
         // Gate the connection with the node
         this.gate(node, conn);
-        return true;
         break;
       }
       case mutation.SUB_GATE: {
@@ -661,7 +655,6 @@ Network.prototype = {
         var gatedconn = this.gates[index];
 
         this.ungate(gatedconn);
-        return true;
         break;
       }
       case mutation.ADD_BACK_CONN: {
@@ -683,7 +676,6 @@ Network.prototype = {
 
         var pair = available[Math.floor(Math.random() * available.length)];
         this.connect(pair[0], pair[1]);
-        return true;
         break;
       }
       case mutation.SUB_BACK_CONN:{
@@ -706,7 +698,6 @@ Network.prototype = {
 
         var randomConn = possible[Math.floor(Math.random() * possible.length)];
         this.disconnect(randomConn.from, randomConn.to);
-        return true;
         break;
       }
       case mutation.SWAP_NODES: {
@@ -766,7 +757,6 @@ Network.prototype = {
         node1.squash = node2.squash;
         node2.bias = biasTemp;
         node2.squash = squashTemp;
-        return true;
         break;
       }
     }
