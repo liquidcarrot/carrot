@@ -563,21 +563,12 @@ Network.prototype = {
       }
       case mutation.MOD_ACTIVATION:{
         if(this.possible(method)) {
-          const possible = _.filter(this.nodes, method.mutateOutput ? (node) => node.type !== 'input' : (node) => node.type !== 'input' && node.type !== 'output')
+          const possible = _.filter(this.nodes, method.mutateOutput ? (node) => node.type !== 'input' : (node) => node.type !== 'input' && node.type !== 'output');
 
           // Mutate a random node out of the filtered collection
           _.sample(possible).mutate(method);
         }
-<<<<<<< HEAD
-        break
-=======
-
-        // Return a random node out of the filtered collection
-        let node = _.sample(possible)
-        node.mutate(method);
-        return true;
         break;
->>>>>>> development
       }
       case mutation.ADD_SELF_CONN: {
         const possible = this.possible(method)
@@ -632,7 +623,6 @@ Network.prototype = {
         break;
       }
       case mutation.SWAP_NODES: {
-<<<<<<< HEAD
         const possible = this.possible(method)
         if(possible) {
           // Return a random node out of the filtered collection
@@ -651,55 +641,6 @@ Network.prototype = {
           node1.squash = node2.squash;
           node2.bias = biasTemp;
           node2.squash = squashTemp;
-=======
-        // Has no effect on input node, so they (should be) excluded
-        if ((method.mutateOutput && (this.nodes.length - 1) - this.input < 2) ||
-          (!method.mutateOutput && (this.nodes.length - 1) - this.input - this.output < 2)) {
-          if (config.warnings) console.warn('No nodes that allow swapping of bias and activation function');
-          return false;
-          break;
-        }
-
-        let possible, node1, node2;
-        if(method.mutateOutput) {
-          // Filter out input nodes
-          possible = _.filter(this.nodes, function(node, index) { return(node.type !== 'input') })
-
-          // Break out early if less than two possible nodes
-          if(possible.length < 2) {
-            if(config.warnings) console.warn("Less than 2 availables nodes, SWAP_NODES mutation failed!")
-            return false;
-            break;
-          }
-
-          // Return a random node out of the filtered collection
-          node1 = _.sample(possible)
-
-          // Filter out node1 from collection | impure function... should clean that node1
-          let possible2 = _.filter(possible, function(node, index) { return (node !== node1) })
-
-          // Return a random node out of the filtered collection which excludes node1
-          node2 = _.sample(possible2)
-        } else {
-          // Filter out input & output nodes
-          possible = _.filter(this.nodes, function(node, index) { return(node.type !== 'input' && node.type !== 'output') })
-
-          // Break out early if less than two possible nodes
-          if(possible.length < 2) {
-            if(config.warnings) console.warn("Less than 2 availables nodes, SWAP_NODES mutation failed!")
-            return false;
-            break;
-          }
-
-          // Return a random node out of the filtered collection
-          node1 = _.sample(possible)
-
-          // Filter out node1 from collection | impure function... should clean that node1
-          let possible2 = _.filter(possible, function(node, index) { return (node !== node1) })
-
-          // Return a random node out of the filtered collection which excludes node1
-          node2 = _.sample(possible2)
->>>>>>> development
         }
 
         break;
@@ -908,11 +849,8 @@ Network.prototype = {
    *
    * let example = ""
    */
-<<<<<<< HEAD
-  _trainSet: function(set, batchSize, currentRate, momentum, costFunction) {
-=======
   _train_set: function (set, batchSize, currentRate, momentum, costFunction) {
->>>>>>> development
+
     var errorSum = 0;
     for (var i = 0; i < set.length; i++) {
       var input = set[i].input;
