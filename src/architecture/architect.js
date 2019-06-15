@@ -124,22 +124,22 @@ const architect = {
   /**
   * Creates a multilayer perceptron (MLP)
   *
-  * @param {...number} layerNeurons Number of neurons in input layer, hidden layer(s), and output layer as a series of numbers (min 3 arguments)
+  * @param {...number} layer_neurons Number of neurons in input layer, hidden layer(s), and output layer as a series of numbers (min 3 arguments)
   *
   * @example
   * let { architect } = require("@liquid-carrot/carrot");
   *
   * // Input 2 neurons, Hidden layer: 3 neurons, Output: 1 neuron
-  * let myPerceptron = new architect.Perceptron(2,3,1);
+  * let my_perceptron = new architect.Perceptron(2,3,1);
   *
   * // Input: 2 neurons, 4 Hidden layers: 10 neurons, Output: 1 neuron
-  * let myPerceptron = new architect.Perceptron(2, 10, 10, 10, 10, 1);
+  * let my_perceptron = new architect.Perceptron(2, 10, 10, 10, 10, 1);
   *
   * @returns {Network} Feed forward neural network
   */
   Perceptron: function () {
     // Convert arguments to Array
-    const layers = Array.from(arguments);
+    const layers = Array(arguments);
 
     if (layers.length < 3) throw new Error(`You have to specify at least 3 layers`);
 
