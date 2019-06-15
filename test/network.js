@@ -353,7 +353,7 @@ describe('Networks', function () {
       ];
 
       narx.train(trainingData, {
-        iterations: 1000,
+        iterations: 3000,
         error: 0.005,
         rate: 0.05
       });

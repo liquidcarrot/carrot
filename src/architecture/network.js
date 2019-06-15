@@ -192,7 +192,7 @@ Network.prototype = {
       this.nodes[i].clear();
     }
   },
-  
+
   /**
    * Returns a new identical network
    *
@@ -200,7 +200,7 @@ Network.prototype = {
    */
   clone: function() {
     const self = this;
-    
+
     return new Network(self.input, self.output);
   },
 
@@ -568,7 +568,6 @@ Network.prototype = {
           // Mutate a random node out of the filtered collection
           _.sample(possible).mutate(method);
         }
-        
         break
       }
       case mutation.ADD_SELF_CONN: {
@@ -733,7 +732,7 @@ Network.prototype = {
     }
 
     options = options || {};
-    options.iterations = options.operations || 1000;
+    options.iterations = options.iterations || 1000;
 
     // Warning messages
     if (typeof options.rate === 'undefined') {
@@ -1094,7 +1093,7 @@ Network.prototype = {
       this.nodes[i].squash = values.squash || this.nodes[i].squash;
     }
   },
-  
+
   /**
    * Evolves the network to reach a lower error on a dataset using the [NEAT algorithm](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf)
    *
@@ -1819,7 +1818,7 @@ let Neat = function (dataset, {
   selectMutationMethod = this.selectMutationMethod
 } = {}) {
   let self = this;
-  
+
   _.assignIn(self, {
     generation,
     input,
@@ -1846,7 +1845,7 @@ let Neat = function (dataset, {
     maxGates,
     selectMutationMethod
   });
-  
+
   /**
    * Create the initial pool of genomes
    *
@@ -1855,20 +1854,20 @@ let Neat = function (dataset, {
   self.createPool = function createInitialPopulation (network, popsize) {
     return Array(popsize).fill(Network.fromJSON({ ...network.toJSON(), score: undefined }))
   };
-  
+
   // Initialise the genomes
   self.population = self.createPool(self.template, self.popsize);
-  
+
   self.filterGenome = function(population, template, pickGenome, adjustGenome) {
       let filtered = [...population]; // avoid mutations
-      
+
       // Check for correct return type from pickGenome
       const check = function checkPick(genome) {
         const pick = pickGenome(genome)
         if (typeof pick !== "boolean") throw new Error("pickGenome must always return a boolean!")
         return pick
       }
-      
+
       if(adjustGenome){
         for (let i = 0; i < population.length; i++) {
           if(check(filtered[i])) {
@@ -1880,10 +1879,10 @@ let Neat = function (dataset, {
       } else
           for (let i = 0; i < population.length; i++)
             if(check(filtered[i])) filtered[i] = Network.fromJSON(template.toJSON)
-    
+
       return filtered;
     };
-  
+
   /**
    * Selects a random mutation method for a genome according to the parameters
    *
@@ -1894,22 +1893,22 @@ let Neat = function (dataset, {
    * @return {mutation} Selected mutation
   */
   self.selectMutationMethod = function (genome, allowedMutations, efficientMutation) {
-    
+
     if(efficientMutation) {
       let filtered = allowedMutations ? [...allowedMutations] : [...self.mutation]
       let success = false
       while(!success) {
         const currentMethod = filtered[Math.floor(Math.random() * filtered.length)]
-        
+
         if(currentMethod === methods.mutation.ADD_NODE && genome.nodes.length >= self.maxNodes || currentMethod === methods.mutation.ADD_CONN && genome.connections.length >= self.maxConns || currentMethod === methods.mutation.ADD_GATE && genome.gates.length >= self.maxGates) {
           success = false
         } else {
           success = genome.mutate(currentMethod) // actual mutation happens
         }
-        
+
         // we're done
         if(success || !filtered || filtered.length === 0) return
-        
+
         // if not, remove the impossible method
         filtered = filtered.filter(function(value, index, array) {
           return value.name !== currentMethod.name
@@ -1923,21 +1922,21 @@ let Neat = function (dataset, {
         if (config.warnings) console.warn('maxNodes exceeded!')
         return null;
       }
-  
+
       if (current === methods.mutation.ADD_CONN && genome.connections.length >= self.maxConns) {
         if (config.warnings) console.warn('maxConns exceeded!');
         return null;
       }
-  
+
       if (current === methods.mutation.ADD_GATE && genome.gates.length >= self.maxGates) {
         if (config.warnings) console.warn('maxGates exceeded!');
         return null;
       }
-  
+
       return current
     }
   };
-  
+
   /**
    * Evaluates, selects, breeds and mutates population
    *
@@ -1971,13 +1970,13 @@ let Neat = function (dataset, {
   self.evolve = async function (evolveSet, pickGenome, adjustGenome) {
     // Check if evolve is possible
     if(self.elitism + self.provenance > self.popsize) throw new Error("Can't evolve! Elitism + provenance exceeds population size!");
-    
+
     // Check population for evaluation
     if (typeof self.population[self.population.length - 1].score === 'undefined')
       await self.evaluate(_.isArray(evolveSet) ? evolveSet : _.isArray(dataset) ? dataset : parameter.is.required("dataset"));
     // Check & adjust genomes as needed
     if(pickGenome) self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome)
-    
+
     // Sort in order of fitness (fittest first)
     self.sort();
 
@@ -1987,14 +1986,14 @@ let Neat = function (dataset, {
 
     // Provenance
     let newPopulation = Array(self.provenance).fill(Network.fromJSON(self.template.toJSON()))
-    
+
     // Breed the next individuals
     for (let i = 0; i < self.popsize - self.elitism - self.provenance; i++)
       newPopulation.push(self.getOffspring());
 
     // Replace the old population with the new population
     self.population = newPopulation;
-    
+
     // Mutate the new population
     self.mutate();
 
@@ -2003,13 +2002,13 @@ let Neat = function (dataset, {
 
     // evaluate the population
     await self.evaluate(_.isArray(evolveSet) ? evolveSet : _.isArray(dataset) ? dataset : parameter.is.required("dataset"));
-    
+
     // Check & adjust genomes as needed
     if(pickGenome) self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome)
-    
+
     // Sort in order of fitness (fittest first)
     self.sort()
-    
+
     const fittest = Network.fromJSON(self.population[0].toJSON());
     fittest.score = self.population[0].score;
 
@@ -2020,7 +2019,7 @@ let Neat = function (dataset, {
 
     return fittest;
   };
-  
+
   /**
    * Returns a genome for recombination (crossover) based on one of the [selection methods](selection) provided.
    *
@@ -2135,7 +2134,7 @@ let Neat = function (dataset, {
         self.population[i] = genome;
       }
     }
-    
+
     // Sort the population in order of fitness
     self.sort()
 
@@ -2160,7 +2159,7 @@ let Neat = function (dataset, {
     // Check if evaluated. self.evaluate is an async function
     if (typeof self.population[self.population.length - 1].score === 'undefined')
       self.evaluate();
-    
+
     if (self.population[0].score < self.population[1].score) self.sort();
 
     return self.population[0];
