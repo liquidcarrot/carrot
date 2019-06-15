@@ -395,7 +395,20 @@ Network.prototype = {
     // Remove the node from this.nodes
     this.nodes.splice(index, 1);
   },
-
+  
+  /**
+   * Checks whether a given mutation is possible, returns an array of candidates to use for a mutation when it is.
+   *
+   * @param {mutation} method [Mutation method](mutation)
+   *
+   * @returns {false | object[]} candidates to use for a mutation. Entries may be arrays containing paris when appropriate.
+   *
+   * @example
+   *
+   * const network = new architect.Perceptron(2,3,1)
+   *
+   * network.possible(mutation.SUB_NODE) // returns an array of nodes that can be removed
+   */
   possible: function mutationIsPossible(method) {
     let candidates
     switch (method) {
@@ -633,10 +646,10 @@ Network.prototype = {
           // Return a random node out of the filtered collection
           const node1 = _.sample(possible)
           
-          // Filter out node1 from collection
+          // Filter node1 from collection
           const possible2 = _.filter(possible, function(node, index) { return (node !== node1) })
           
-          // Return a random node out of the filtered collection which excludes node1
+          // Get random node from filtered collection (excludes node1)
           const node2 = _.sample(possible2)
   
           const biasTemp = node1.bias;
