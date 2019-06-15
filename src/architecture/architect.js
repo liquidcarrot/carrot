@@ -139,21 +139,19 @@ const architect = {
   */
   Perceptron: function () {
     // Convert arguments to Array
-    var layers = Array.prototype.slice.call(arguments);
-    if (layers.length < 3) {
-      throw new Error('You have to specify at least 3 layers');
-    }
+    const layers = Array.from(arguments);
 
-    // Create a list of nodes/groups
-    var nodes = [];
-    nodes.push(new Group(layers[0]));
+    if (layers.length < 3) throw new Error(`You have to specify at least 3 layers`);
 
-    for (var i = 1; i < layers.length; i++) {
-      var layer = layers[i];
-      layer = new Group(layer);
+    // Create a list of nodes/groups and add input nodes
+    const nodes = [new Group(layers[0])];
+
+    // add the following nodes and connect them
+    _.times(layers.length - 1, (index) => {
+      const layer = new Group(layers[index + 1]);
       nodes.push(layer);
-      nodes[i - 1].connect(nodes[i], methods.connection.ALL_TO_ALL);
-    }
+      nodes[index].connect(nodes[index + 1], methods.connection.ALL_TO_ALL);
+    });
 
     // Construct the network
     return architect.Construct(nodes);
