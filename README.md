@@ -268,6 +268,7 @@ This project exists thanks to all the people who contribute. We can't do it with
 * [Christian Echevarria](https://twitter.com/chrisgereina)
 * [Daniel Ryan](https://github.com/dan-ryan)
 * [Irma Iveth Martinez Huerta (Iviie)](https://github.com/IviieMtz)
+* [Nic (Szerminator) Szerman](https://github.com/nicszerman)
 
 ## Acknowledgements
 
