@@ -517,8 +517,9 @@ Network.prototype = {
         const newConn1 = this.connect(connection.from, node)[0];
         const newConn2 = this.connect(node, connection.to)[0];
 
+        const gater = connection.gater;
         // Check if the original connection was gated
-        if (connection.gater != null) this.gate(gater, Math.random() >= 0.5 ? newConn1 : newConn2);
+        if (gater != null) this.gate(gater, Math.random() >= 0.5 ? newConn1 : newConn2);
         
         break;
       }
