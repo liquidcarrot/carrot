@@ -1171,10 +1171,10 @@ Network.prototype = {
    * network.set({bias: 1});
    */
   set: function(values) {
-    for (var i = 0; i < this.nodes.length; i++) {
-      this.nodes[i].bias = values.bias || this.nodes[i].bias;
-      this.nodes[i].squash = values.squash || this.nodes[i].squash;
-    }
+    this.nodes = _.forEach(this.nodes, (node) => _.defaults(node, {
+      bias: values.bias,
+      squash: values.squash
+    }));
   },
 
   /**
