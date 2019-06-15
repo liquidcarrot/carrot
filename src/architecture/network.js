@@ -413,7 +413,9 @@ Network.prototype = {
     const self = this
     let candidates = []
     switch (method) {
-      case mutation.SUB_NODE: return (this.nodes.length > this.input + this.output) ? [] : false
+      case mutation.SUB_NODE:
+        candidates = _.filter(this.nodes, function(node) { return (node.type !== 'output' && node.type !== 'input') }) // assumes input & output node 'type' has been set
+        return candidates.length ? candidates : false
       case mutation.ADD_CONN:
         for (let i = 0; i < this.nodes.length - this.output; i++) {
           const node1 = this.nodes[i]
@@ -521,11 +523,8 @@ Network.prototype = {
         break;
       }
       case mutation.SUB_NODE: {
-        if(this.possible(method)) {
-          // Filter out input & output nodes
-          const possible = _.filter(this.nodes, function(node) { return (node.type !== 'output' && node.type !== 'input') })
-          this.remove(_.sample(possible));
-        }
+        const possible = this.possible(method)
+        if(possible) this.remove(_.sample(possible));
         
         break
       }
