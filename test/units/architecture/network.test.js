@@ -22,36 +22,37 @@ let mutation = methods.mutation;
  * How do you reproduce the failure?
  *
  */
- 
+
  describe('Network', function(){
    describe('.mutate()', function() {
-     
+
      describe('mutation.SUB_NODE', function() {
        it('given a network with 7 nodes, should produce a network with 6', function(){
-         let network = new architect.Random(2,3,2);
-         
-         network.mutate(mutation.SUB_NODE);
-         
-         assert.equal(6, network.nodes.length)
+         // const network = new architect.Random(2,3,2);
+         const network = new architect.Perceptron(2,3,2);
+
+        network.mutate(mutation.SUB_NODE);
+
+        expect(network.nodes.length).to.equal(6);
        });
-       
+
        it('given a network with no hidden nodes, should keep network unchanged', function(){
          // Update "new Network" to allow for hidden nodes
          let network = new architect.Random(2,0,2); // strange workaround
          let network2 = _.cloneDeepWith(network)
-         
+
          network2.mutate(mutation.SUB_NODE);
-         
+
          assert.deepEqual(network.toJSON(), network2.toJSON())
        });
-       
+
        it('given mutation.SUB_NODE.mutateOutput = false, should leave output nodes unchanged', function() {
          let network = new architect.Random(2,50,2);
-         
+
          let outputs = _.filter(network.nodes, (node) => {
            return (node.type === 'output')
          })
-         
+
          let total = network.nodes.length;
          for(let i = 0; i < total; i++) {
            network.mutate(mutation.SUB_NODE)
@@ -59,10 +60,10 @@ let mutation = methods.mutation;
 
          assert.deepEqual(outputs, _.filter(network.nodes, (node) => { return (node.type === 'output') }))
        })
-       
+
      });
    });
    describe("network.clone()", function() {
-     
+
    })
  })
