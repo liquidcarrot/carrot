@@ -1,8 +1,10 @@
-var methods = require('../methods/methods');
-var Network = require('./network');
-var Group = require('./group');
-var Layer = require('./layer');
-var Node = require('./node');
+const methods = require('../methods/methods');
+const Network = require('./network');
+const Group = require('./group');
+const Layer = require('./layer');
+const Node = require('./node');
+const _ = require("lodash");
+const assert = require("assert")
 
 /**
  *
@@ -12,7 +14,7 @@ var Node = require('./node');
  *
  * @namespace
 */
-var architect = {
+const architect = {
   /**
   * Constructs a network from a given array of connected nodes
   *
@@ -161,7 +163,7 @@ var architect = {
   * Creates a randomly connected network
   *
   * @param {number} input Number of input nodes
-  * @param {number} hidden Number of nodes inbetween input and output
+  * @param {number} [hidden] Number of nodes inbetween input and output
   * @param {number} output Number of output nodes
   * @param {object} [options] Configuration options
   * @param {number} [options.connections=hidden*2] Number of connections (Larger than hidden)
@@ -181,35 +183,33 @@ var architect = {
   * @returns {Network}
   */
   Random: function (input, hidden, output, options) {
-    options = options || {};
-
-    var connections = options.connections || hidden * 2;
-    var backconnections = options.backconnections || 0;
-    var selfconnections = options.selfconnections || 0;
-    var gates = options.gates || 0;
-
-    var network = new Network(input, output);
-
-    var i;
-    for (i = 0; i < hidden; i++) {
-      network.mutate(methods.mutation.ADD_NODE);
+    // Random(input, output)
+    if(!(output, options)) {
+      output = hidden;
+      hidden = undefined;
+    }
+    // Random(input, output, options)
+    else if(!options && _.isPlainObject(output)) {
+        options = output;
+        output = hidden;
+        hidden = undefined;
     }
 
-    for (i = 0; i < connections - hidden; i++) {
-      network.mutate(methods.mutation.ADD_CONN);
-    }
+    hidden = hidden || 0;
+    options = _.defaults(options, {
+      connections: hidden * 2,
+      backconnections: 0,
+      selfconnections: 0,
+      gates: 0
+    });
 
-    for (i = 0; i < backconnections; i++) {
-      network.mutate(methods.mutation.ADD_BACK_CONN);
-    }
+    const network = new Network(input, output);
 
-    for (i = 0; i < selfconnections; i++) {
-      network.mutate(methods.mutation.ADD_SELF_CONN);
-    }
-
-    for (i = 0; i < gates; i++) {
-      network.mutate(methods.mutation.ADD_GATE);
-    }
+    _.times(hidden, () => network.mutate(methods.mutation.ADD_NODE));
+    _.times(options.connections - hidden, () => network.mutate(methods.mutation.ADD_CONN));
+    _.times(options.backconnections, () => network.mutate(methods.mutation.ADD_BACK_CONN));
+    _.times(options.selfconnections, () => network.mutate(methods.mutation.ADD_SELF_CONN));
+    _.times(options.gates, () => network.mutate(methods.mutation.ADD_GATE));
 
     return network;
   },
@@ -554,7 +554,7 @@ var architect = {
 
     return architect.Construct(nodes);
   },
-  
+
   /**
    * @todo Build Liquid network constructor
    */
