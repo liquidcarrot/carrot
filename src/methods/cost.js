@@ -1,3 +1,5 @@
+const _ = require("lodash");
+
 /**
  * Cost functions play an important role in neural networks. They give neural networks an indication of 'how wrong' they are; a.k.a. how far they are from the desired output. Also in fitness functions, cost functions play an important role.
  *
@@ -11,7 +13,7 @@ const cost = {
   * Cross entropy error
   *
   * @see {@link http://bit.ly/2p5W29A|Cross-entropy Error Function}
-  * @param {number} target Ideal value
+  * @param {number[]} target Ideal value
   * @param {number[]} output Actual values
   *
   * @returns {number} [Cross entropy error](https://ml-cheatsheet.readthedocs.io/en/latest/loss_functions.html)
@@ -23,11 +25,8 @@ const cost = {
   * myNetwork.train(trainingData, { cost: methods.cost.CROSS_ENTROPY });
   */
   CROSS_ENTROPY: function(target, output) {
-    let error = 0;
-    for(let i = 0; i < output.length; i++) {
-      // Avoid negative and zero numbers, use 1e-15
-      error -= target[i] * Math.log(Math.max(output[i], 1e-15)) + (1 - target[i]) * Math.log(1 - Math.max(output[i], 1e-15));
-    }
+    const error = _.reduce(output, (total, value, index) => total -= target[index] * Math.log(Math.max(output[index], 1e-15)) + (1 - target[index]) * Math.log(1 - Math.max(output[index], 1e-15)), 0)
+    
     return error / output.length;
   },
   
@@ -46,11 +45,8 @@ const cost = {
   * myNetwork.train(trainingData, { cost: methods.cost.MSE });
   */
   MSE: function (target, output) {
-    let error = 0;
-    for(let i = 0; i < output.length; i++) {
-      error += Math.pow(target[i] - output[i], 2);
-    }
-
+    const error = _.reduce(output, (total, value, index) => total += Math.pow(target[index] - output[index], 2), 0)
+    
     return error / output.length;
   },
   
@@ -77,12 +73,9 @@ const cost = {
   * });
   */
   BINARY: function (target, output) {
-    var misses = 0;
-    for (var i = 0; i < output.length; i++) {
-      misses += Math.round(target[i] * 2) !== Math.round(output[i] * 2);
-    }
-
-    return misses;
+    const error = _.reduce(output, (total, value, index) => total += Math.round(target[index] * 2) !== Math.round(output[index] * 2), 0)
+    
+    return error;
   },
   
   /**
@@ -106,11 +99,8 @@ const cost = {
   * });
   */
   MAE: function (target, output) {
-    var error = 0;
-    for (var i = 0; i < output.length; i++) {
-      error += Math.abs(target[i] - output[i]);
-    }
-
+    const error = _.reduce(output, (total, value, index) => total += Math.abs(target[index] - output[index]), 0)
+    
     return error / output.length;
   },
   
@@ -135,11 +125,8 @@ const cost = {
   * });
   */
   MAPE: function (target, output) {
-    var error = 0;
-    for (var i = 0; i < output.length; i++) {
-      error += Math.abs((output[i] - target[i]) / Math.max(target[i], 1e-15));
-    }
-
+    const error = _.reduce(output, (total, value, index) => total += Math.abs((output[index] - target[index]) / Math.max(target[index], 1e-15)), 0)
+    
     return error / output.length;
   },
   
@@ -160,14 +147,15 @@ const cost = {
   * });
   */
   WAPE: function (target, output) {
-    var error = 0;
-    var sumTarget = 0;
-    for (var i = 0; i < output.length; i++) {
-      error += Math.abs(target[i] - output[i]);
-      sumTarget += target[i];
-    }
-
-     return error / sumTarget;
+    let error = 0;
+    let sum = 0;
+    
+    _.times(output.length, (index) => {
+      error += Math.abs(target[index] - output[index]);
+      sum += target[index];
+    })
+    
+     return error / sum;
   },
   
   /**
@@ -191,11 +179,8 @@ const cost = {
   * });
   */
   MSLE: function (target, output) {
-    var error = 0;
-    for (var i = 0; i < output.length; i++) {
-      error += Math.log(Math.max(target[i], 1e-15)) - Math.log(Math.max(output[i], 1e-15));
-    }
-
+    const error = _.reduce(output, (total, value, index) => total += Math.log(Math.max(target[index], 1e-15)) - Math.log(Math.max(output[index], 1e-15)), 0)
+    
     return error;
   },
   
@@ -220,11 +205,8 @@ const cost = {
   * });
   */
   HINGE: function (target, output) {
-    var error = 0;
-    for (var i = 0; i < output.length; i++) {
-      error += Math.max(0, 1 - target[i] * output[i]);
-    }
-
+    const error = _.reduce(output, (total, value, index) => total += Math.max(0, 1 - target[index] * output[index]), 0)
+    
     return error;
   }
 };
