@@ -1,3 +1,5 @@
+const _ = require("lodash");
+
 /**
 * A connection instance describes the connection between two nodes. If you're looking for connections between [Groups](Group) please see [Connection Methods](connection)
 *
@@ -22,44 +24,40 @@
 * @see {@link connection|Connection Methods}
 * @see {@link Node|Node}
 */
-function Connection (from, to, weight) {
-  this.from = from;
-  this.to = to;
-  this.gain = 1;
-
-  this.weight = (typeof weight === 'undefined') ? Math.random() * 0.2 - 0.1 : weight;
-
-  this.gater = null;
-  this.elegibility = 0;
-
-  // For tracking momentum
-  this.previousDeltaWeight = 0;
-
-  // Batch training
-  this.totalDeltaWeight = 0;
-
-  this.xtrace = {
-    nodes: [],
-    values: []
-  };
-}
-
-Connection.prototype = {
+function Connection (from, to, weight, options) {
+  let self = this;
+  
+  _.assignIn(self, _.defaults({ from, to, weight }, { ...options }, {
+    weight: Math.random() * 2 - 1,
+    gain: 1,
+    gater: null,
+    elegibility: 0,
+    previousDeltaWeight: 0, // ALIAS: deltas.previous
+    totalDeltaWeight: 0, // ALIAS: deltas.total
+    xtrace: {
+      nodes: [],
+      values: []
+    },
+    
+    // (BETA)
+    deltas: {
+      previous: 0,
+      total: 0,
+      all: [],
+    }
+  }));
+  
   /**
-   * Converts the connection to a json object
-   *
-   * @memberof Connection
-   *
-   * @returns {object} A connection represented as a JSON object
-   */
-  toJSON: function () {
-    var json = {
-      weight: this.weight
-    };
-
-    return json;
+  * Converts the connection to a json object
+  *
+  * @memberof Connection
+  *
+  * @returns {object} A connection represented as a JSON object
+  */
+  self.toJSON = function () {
+    return { weight: self.weight };
   }
-};
+}
 
 /**
 * Returns an innovation ID
