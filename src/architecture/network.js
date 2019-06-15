@@ -468,23 +468,19 @@ Network.prototype = {
     
     var i, j;
     switch (method) {
-      case mutation.ADD_NODE: { // block scope & code folding
+      case mutation.ADD_NODE: {
         // Look for an existing connection and place a node in between
-        var connection = this.connections[Math.floor(Math.random() * this.connections.length)];
-        var gater = connection.gater;
+        const connection = this.connections[Math.floor(Math.random() * this.connections.length)];
         this.disconnect(connection.from, connection.to);
 
         // Insert the new node right before the old connection.to
-        var toIndex = this.nodes.indexOf(connection.to);
-        var node = new Node('hidden');
+        const toIndex = this.nodes.indexOf(connection.to);
+        const node = new Node('hidden');
 
-        if(mutation.ADD_NODE.randomActivation){
-          // Random squash function
-          node.mutate(mutation.MOD_ACTIVATION);
-        }
+        if(mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION);
 
         // Place it in this.nodes
-        var minBound = Math.min(toIndex, this.nodes.length - this.output);
+        const minBound = Math.min(toIndex, this.nodes.length - this.output);
         this.nodes.splice(minBound, 0, node);
 
         // Now create two new connections
@@ -492,10 +488,8 @@ Network.prototype = {
         var newConn2 = this.connect(node, connection.to)[0];
 
         // Check if the original connection was gated
-        if (gater != null) {
-          this.gate(gater, Math.random() >= 0.5 ? newConn1 : newConn2);
-        }
-        return true;
+        if (connection.gater != null) this.gate(gater, Math.random() >= 0.5 ? newConn1 : newConn2);
+        
         break;
       }
       case mutation.SUB_NODE: {
