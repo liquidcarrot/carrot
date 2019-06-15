@@ -462,7 +462,24 @@ Network.prototype = {
         }
         
         return candidates.length ? candidates : false
-      case mutation.SWAP_NODES: return ((method.mutateOutput && (this.nodes.length - 1) - this.input < 2) || (!method.mutateOutput && (this.nodes.length - 1) - this.input - this.output < 2)) ? false : []
+      case mutation.SWAP_NODES:
+        if(method.mutateOutput) {
+          if((this.nodes.length - 1) - this.input < 2) return false;
+          
+          // Filter out input & output nodes
+          candidates = _.filter(this.nodes, function(node, index) { return(node.type !== 'input' && node.type !== 'output') })
+          
+          // Check if less than two possible nodes
+          return (candidates.length < 2) ? false : candidates
+        } else {
+          if((this.nodes.length - 1) - this.input - this.output < 2) return false;
+          
+          // Filter out input nodes
+          candidates = _.filter(this.nodes, function(node, index) { return(node.type !== 'input') })
+          
+          // Break out early if less than two possible nodes
+          return (candidates.length < 2) ? false : candidates
+        }
     }
   },
   
@@ -611,47 +628,16 @@ Network.prototype = {
         break;
       }
       case mutation.SWAP_NODES: {
-        if(this.possible(method)) {
-          let possible, node1, node2;
-          if(method.mutateOutput) {
-            // Filter out input nodes
-            possible = _.filter(this.nodes, function(node, index) { return(node.type !== 'input') })
-            
-            // Break out early if less than two possible nodes
-            if(possible.length < 2) {
-              if(config.warnings) console.warn("Less than 2 availables nodes, SWAP_NODES mutation failed!")
-              return false;
-              break;
-            }
-            
-            // Return a random node out of the filtered collection
-            node1 = _.sample(possible)
-            
-            // Filter out node1 from collection | impure function... should clean that node1
-            let possible2 = _.filter(possible, function(node, index) { return (node !== node1) })
-            
-            // Return a random node out of the filtered collection which excludes node1
-            node2 = _.sample(possible2)
-          } else {
-            // Filter out input & output nodes
-            possible = _.filter(this.nodes, function(node, index) { return(node.type !== 'input' && node.type !== 'output') })
-            
-            // Break out early if less than two possible nodes
-            if(possible.length < 2) {
-              if(config.warnings) console.warn("Less than 2 availables nodes, SWAP_NODES mutation failed!")
-              return false;
-              break;
-            }
-            
-            // Return a random node out of the filtered collection
-            node1 = _.sample(possible)
-            
-            // Filter out node1 from collection | impure function... should clean that node1
-            let possible2 = _.filter(possible, function(node, index) { return (node !== node1) })
-            
-            // Return a random node out of the filtered collection which excludes node1
-            node2 = _.sample(possible2)
-          }
+        const possible = this.possible(method)
+        if(possible) {
+          // Return a random node out of the filtered collection
+          const node1 = _.sample(possible)
+          
+          // Filter out node1 from collection
+          const possible2 = _.filter(possible, function(node, index) { return (node !== node1) })
+          
+          // Return a random node out of the filtered collection which excludes node1
+          const node2 = _.sample(possible2)
   
           const biasTemp = node1.bias;
           const squashTemp = node1.squash;
