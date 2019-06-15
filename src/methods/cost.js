@@ -33,7 +33,7 @@ const cost = {
   /**
   * Mean Squared Error
   *
-  * @param {number} target Ideal value
+  * @param {number[]} target Ideal value
   * @param {number[]} output Actual values
   *
   * @returns {number} [Mean squared error](https://medium.freecodecamp.org/machine-learning-mean-squared-error-regression-line-c7dde9a26b93)
@@ -53,7 +53,7 @@ const cost = {
   /**
   * Binary Error
   *
-  * @param {number} target Ideal value
+  * @param {number[]} target Ideal value
   * @param {number[]} output Actual values
   *
   * @returns {number} misses The amount of times target value was missed
@@ -81,7 +81,7 @@ const cost = {
   /**
   * Mean Absolute Error
   *
-  * @param {number} target Ideal value
+  * @param {number[]} target Ideal value
   * @param {number[]} output Actual values
   *
   * @returns {number} [Mean absoulte error](https://en.wikipedia.org/wiki/Mean_absolute_error)
@@ -107,7 +107,7 @@ const cost = {
   /**
   * Mean Absolute Percentage Error
   *
-  * @param {number} target Ideal value
+  * @param {number[]} target Ideal value
   * @param {number[]} output Actual values
   *
   * @returns {number} [Mean absolute percentage error](https://en.wikipedia.org/wiki/Mean_absolute_percentage_error)
@@ -133,8 +133,8 @@ const cost = {
   /**
   * Weighted Absolute Percentage Error (WAPE)
   *
-  * @param {number} target Ideal value
-  * @param {number} output Actual values
+  * @param {number[]} target Ideal value
+  * @param {number[]} output Actual values
   *
   * @returns {number} - [Weighted absolute percentage error](https://help.sap.com/doc/saphelp_nw70/7.0.31/en-US/76/487053bbe77c1ee10000000a174cb4/content.htm?no_cache=true)
   *
@@ -161,7 +161,7 @@ const cost = {
   /**
   * Mean Squared Logarithmic Error
   *
-  * @param {number} target Ideal value
+  * @param {number[]} target Ideal value
   * @param {number[]} output Actual values
   *
   * @returns {number} - [Mean squared logarithmic error](https://peltarion.com/knowledge-center/documentation/modeling-view/build-an-ai-model/loss-functions/mean-squared-logarithmic-error)
@@ -187,7 +187,7 @@ const cost = {
   /**
   * Hinge loss, for classifiers
   *
-  * @param {number} target Ideal value
+  * @param {number[]} target Ideal value
   * @param {number[]} output Actual values
   *
   * @returns {number} - [Hinge loss](https://towardsdatascience.com/support-vector-machines-intuitive-understanding-part-1-3fb049df4ba1)
