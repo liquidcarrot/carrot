@@ -410,6 +410,7 @@ Network.prototype = {
    * network.possible(mutation.SUB_NODE) // returns an array of nodes that can be removed
    */
   possible: function mutationIsPossible(method) {
+    const self = this
     let candidates
     switch (method) {
       case mutation.SUB_NODE: return (this.nodes.length > this.input + this.output) ? [] : false
@@ -425,18 +426,19 @@ Network.prototype = {
         
         return candidates.length ? candidates : false
       case mutation.SUB_CONN:
+        
         candidates = []
-        for (let i = 0; i < this.connections.length; i++) {
-          const conn = this.connections[i]
+        _.each(self.connections, (conn) => {
           // Check if it is not disabling a node
-          if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && this.nodes.indexOf(conn.to) > this.nodes.indexOf(conn.from))
+          if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && self.nodes.indexOf(conn.to) > self.nodes.indexOf(conn.from))
             candidates.push(conn)
-        }
+        })
         
         return candidates.length ? candidates : false
       case mutation.MOD_ACTIVATION: return (method.mutateOutput || this.nodes.length > this.input + this.output) ? [] : false
       case mutation.ADD_SELF_CONN:
         candidates = []
+        
         for (let i = this.input; i < this.nodes.length; i++) {
           const node = this.nodes[i]
           if (node.connections.self.weight === 0) candidates.push(node)
@@ -448,10 +450,7 @@ Network.prototype = {
         const allconnections = this.connections.concat(this.selfconns);
         
         candidates = [];
-        for (let i = 0; i < allconnections.length; i++) {
-          const conn = allconnections[i];
-          if (conn.gater === null) candidates.push(conn)
-        }
+        _.each(allconnections, (conn) => { if(conn.gater === null) candidates.push(conn) })
           
         return candidates.length ? candidates : false
       case mutation.SUB_GATE: return (this.gates.length > 0) ? [] : false
@@ -467,17 +466,17 @@ Network.prototype = {
         
         return candidates.length ? candidates : false
       case mutation.SUB_BACK_CONN:
+        
         candidates = [];
-        for (let i = 0; i < this.connections.length; i++) {
-          const conn = this.connections[i];
-          if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && this.nodes.indexOf(conn.from) > this.nodes.indexOf(conn.to))
+        _.each(self.connections, (conn) => {
+          if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && self.nodes.indexOf(conn.from) > self.nodes.indexOf(conn.to))
             candidates.push(conn)
-        }
+        })
         
         return candidates.length ? candidates : false
       case mutation.SWAP_NODES:
         // break out early if there aren't enough nodes to swap
-        if((this.nodes.length - 1) - this.input - (method.mutateOutput) ? 0 : this.output < 2) return false;
+        if((this.nodes.length - 1) - this.input - (method.mutateOutput ? 0 : this.output) < 2) return false;
         
         const filterFn = (method.mutateOutput) ? (node) => (node.type !== 'input') : (node) => (node.type !== 'input' && node.type !== 'output')
         
