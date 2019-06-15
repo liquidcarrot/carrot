@@ -7,7 +7,7 @@ var config = require('../config');
 var Node = require('./node');
 
 // Easier variable naming
-var mutation = methods.mutation;
+const mutation = methods.mutation;
 
 
 /**
@@ -122,20 +122,20 @@ Network.prototype = {
    * // Create a network
    * let myNetwork = new Network(3, 2);
    *
-   * myNetwork.noTraceActivate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
+   * myNetwork.no_trace_activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
-  noTraceActivate: function (input) {
+  no_trace_activate: function (input) {
     var output = [];
 
     // Activate nodes chronologically
     for (var i = 0; i < this.nodes.length; i++) {
       if (this.nodes[i].type === 'input') {
-        this.nodes[i].noTraceActivate(input[i]);
+        this.nodes[i].no_trace_activate(input[i]);
       } else if (this.nodes[i].type === 'output') {
-        var activation = this.nodes[i].noTraceActivate();
+        var activation = this.nodes[i].no_trace_activate();
         output.push(activation);
       } else {
-        this.nodes[i].noTraceActivate();
+        this.nodes[i].no_trace_activate();
       }
     }
 
@@ -871,12 +871,12 @@ Network.prototype = {
 
       // Checks if cross validation is enabled
       if (options.crossValidate) {
-        this._trainSet(trainSet, batchSize, currentRate, momentum, cost);
+        this._train_set(trainSet, batchSize, currentRate, momentum, cost);
         if (options.clear) this.clear();
         error = this.test(testSet, cost).error;
         if (options.clear) this.clear();
       } else {
-        error = this._trainSet(set, batchSize, currentRate, momentum, cost);
+        error = this._train_set(set, batchSize, currentRate, momentum, cost);
         if (options.clear) this.clear();
       }
 
@@ -932,7 +932,7 @@ Network.prototype = {
    *
    * let example = ""
    */
-  _trainSet: function (set, batchSize, currentRate, momentum, costFunction) {
+  _train_set: function (set, batchSize, currentRate, momentum, costFunction) {
     var errorSum = 0;
     for (var i = 0; i < set.length; i++) {
       var input = set[i].input;
@@ -974,7 +974,7 @@ Network.prototype = {
     for (i = 0; i < set.length; i++) {
       let input = set[i].input;
       let target = set[i].output;
-      let output = this.noTraceActivate(input);
+      let output = this.no_trace_activate(input);
       error += cost(target, output);
     }
 
@@ -1108,10 +1108,10 @@ Network.prototype = {
    * @example
    * let { Network } = require("@liquid-carrot/carrot");
    *
-   * let exported = myNetwork.toJSON();
+   * let exported = myNetwork.to_JSON();
    * let imported = Network.from_JSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
    */
-  toJSON: function () {
+  to_JSON: function () {
     var json = {
       nodes: [],
       connections: [],
@@ -1128,12 +1128,12 @@ Network.prototype = {
 
     for (i = 0; i < this.nodes.length; i++) {
       let node = this.nodes[i];
-      let tojson = node.toJSON();
+      let tojson = node.to_JSON();
       tojson.index = i;
       json.nodes.push(tojson);
 
       if (node.connections.self.weight !== 0) {
-        let tojson = node.connections.self.toJSON();
+        let tojson = node.connections.self.to_JSON();
         tojson.from = i;
         tojson.to = i;
 
@@ -1144,7 +1144,7 @@ Network.prototype = {
 
     for (i = 0; i < this.connections.length; i++) {
       let conn = this.connections[i];
-      let tojson = conn.toJSON();
+      let tojson = conn.to_JSON();
       tojson.from = conn.from.index;
       tojson.to = conn.to.index;
 
@@ -1543,7 +1543,7 @@ Network.prototype = {
  * @example
  * let { Network } = require("@liquid-carrot/carrot");
  *
- * let exported = myNetwork.toJSON();
+ * let exported = myNetwork.to_JSON();
  * let imported = Network.from_JSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
  */
 Network.from_JSON = function(json) {
@@ -1591,8 +1591,8 @@ Network.from_JSON = function(json) {
  */
 Network.merge = function (network1, network2) {
   // Create a copy of the networks
-  network1 = Network.from_JSON(network1.toJSON());
-  network2 = Network.from_JSON(network2.toJSON());
+  network1 = Network.from_JSON(network1.to_JSON());
+  network2 = Network.from_JSON(network2.to_JSON());
 
   // Check if output and input size are the same
   if (network1.output !== network2.input) {
@@ -1861,7 +1861,7 @@ module.exports = Network;
 *   popsize: 1000
 * });
 */
-let Neat = function (dataset, {
+const Neat = function (dataset, {
   generation = 0, // internal variable
   input = 1,
   output = 1,
@@ -1935,7 +1935,7 @@ let Neat = function (dataset, {
    * @param {Network} network
    */
   self.createPool = function createInitialPopulation (network, popsize) {
-    return Array(popsize).fill(Network.from_JSON({ ...network.toJSON(), score: undefined }))
+    return Array(popsize).fill(Network.from_JSON({ ...network.to_JSON(), score: undefined }))
   };
 
   // Initialise the genomes
@@ -1961,7 +1961,7 @@ let Neat = function (dataset, {
         }
       } else
           for (let i = 0; i < population.length; i++)
-            if(check(filtered[i])) filtered[i] = Network.from_JSON(template.toJSON)
+            if(check(filtered[i])) filtered[i] = Network.from_JSON(template.to_JSON)
 
       return filtered;
     };
@@ -2068,7 +2068,7 @@ let Neat = function (dataset, {
     for (let i = 0; i < self.elitism; i++) elitists.push(self.population[i]);
 
     // Provenance
-    let newPopulation = Array(self.provenance).fill(Network.from_JSON(self.template.toJSON()))
+    let newPopulation = Array(self.provenance).fill(Network.from_JSON(self.template.to_JSON()))
 
     // Breed the next individuals
     for (let i = 0; i < self.popsize - self.elitism - self.provenance; i++)
@@ -2092,7 +2092,7 @@ let Neat = function (dataset, {
     // Sort in order of fitness (fittest first)
     self.sort()
 
-    const fittest = Network.from_JSON(self.population[0].toJSON());
+    const fittest = Network.from_JSON(self.population[0].to_JSON());
     fittest.score = self.population[0].score;
 
     // Reset the scores
@@ -2271,10 +2271,10 @@ let Neat = function (dataset, {
    *
    * @return {object[]} A set of genomes (a population) represented as JSON objects.
    */
-  self.toJSON = function exportPopulation() {
+  self.to_JSON = function exportPopulation() {
     var json = [];
     for (let i = 0; i < self.population.length; i++)
-      json.push(self.population[i].toJSON());
+      json.push(self.population[i].to_JSON());
 
     return json;
   };

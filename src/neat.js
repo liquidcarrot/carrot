@@ -134,7 +134,7 @@ let Neat = function(inputs, outputs, dataset, options) {
    * @param {Network} network
    */
   self.createPool = function createInitialPopulation(network, popsize) {
-    return Array(popsize).fill(Network.from_JSON({ ...network.toJSON(), score: undefined }))
+    return Array(popsize).fill(Network.from_JSON({ ...network.to_JSON(), score: undefined }))
   };
 
   /**
@@ -182,7 +182,7 @@ let Neat = function(inputs, outputs, dataset, options) {
         }
       } else
           for (let i = 0; i < population.length; i++)
-            if(check(filtered[i])) filtered[i] = Network.from_JSON(template.toJSON)
+            if(check(filtered[i])) filtered[i] = Network.from_JSON(template.to_JSON)
 
       return filtered;
     };
@@ -305,7 +305,7 @@ let Neat = function(inputs, outputs, dataset, options) {
     for (let i = 0; i < self.elitism; i++) elitists.push(self.population[i]);
 
     // Provenance
-    let newPopulation = Array(self.provenance).fill(Network.from_JSON(self.template.toJSON()))
+    let newPopulation = Array(self.provenance).fill(Network.from_JSON(self.template.to_JSON()))
 
     // Breed the next individuals
     for (let i = 0; i < self.popsize - self.elitism - self.provenance; i++)
@@ -329,7 +329,7 @@ let Neat = function(inputs, outputs, dataset, options) {
     // Sort in order of fitness (fittest first)
     self.sort()
 
-    const fittest = Network.from_JSON(self.population[0].toJSON());
+    const fittest = Network.from_JSON(self.population[0].to_JSON());
     fittest.score = self.population[0].score;
 
     // Reset the scores
@@ -522,10 +522,10 @@ let Neat = function(inputs, outputs, dataset, options) {
    *
    * @return {object[]} A set of genomes (a population) represented as JSON objects.
    */
-  self.toJSON = function exportPopulation() {
+  self.to_JSON = function exportPopulation() {
     let json = [];
     for (let i = 0; i < self.population.length; i++)
-      json.push(self.population[i].toJSON());
+      json.push(self.population[i].to_JSON());
 
     return json;
   };

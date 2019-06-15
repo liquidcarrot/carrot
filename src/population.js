@@ -20,7 +20,7 @@ function Population({
   _.assignIn(self, {template,size,data,population,fitness});
 
   if(self.template && !self.population.length) _.times(self.size, function() {
-    self.population.push(Network.from_JSON({ ...self.template.toJSON(), score: undefined }));
+    self.population.push(Network.from_JSON({ ...self.template.to_JSON(), score: undefined }));
   });
 }
 

@@ -54,7 +54,7 @@ function Connection (from, to, weight, options) {
   *
   * @returns {object} A connection represented as a JSON object
   */
-  self.toJSON = function () {
+  self.to_JSON = function () {
     return { weight: self.weight };
   }
 }

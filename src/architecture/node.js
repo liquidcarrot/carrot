@@ -201,9 +201,9 @@ Node.prototype = {
   *
   * let node = new Node();
   *
-  * node.noTraceActivate(); // 0.4923128591923
+  * node.no_trace_activate(); // 0.4923128591923
   */
-  noTraceActivate: function(input) {
+  no_trace_activate: function(input) {
     // Check if an input is given
     if(!_.isNil(input)) {
       if(_.isNumber(input)) {
@@ -691,10 +691,10 @@ Node.prototype = {
   * @example
   * let { Node } = require("@liquid-carrot/carrot");
   *
-  * let exported = myNode.toJSON();
+  * let exported = myNode.to_JSON();
   * let imported = myNode.from_JSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
   */
-  toJSON: function () {
+  to_JSON: function () {
     var json = {
       bias: this.bias,
       type: this.type,
@@ -715,7 +715,7 @@ Node.prototype = {
 * @example
 * let { Node } = require("@liquid-carrot/carrot");
 *
-* let exported = myNode.toJSON();
+* let exported = myNode.to_JSON();
 * let imported = myNode.from_JSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
 */
 Node.from_JSON = function (json) {
