@@ -437,7 +437,7 @@ Network.prototype = {
         candidates = [];
         for (let i = 0; i < allconnections.length; i++) {
           const conn = allconnections[i];
-          if (conn.gater === null) possible.push(conn)
+          if (conn.gater === null) candidates.push(conn)
         }
           
         return candidates.length ? candidates : false
@@ -499,8 +499,8 @@ Network.prototype = {
         this.nodes.splice(minBound, 0, node);
 
         // Now create two new connections
-        var newConn1 = this.connect(connection.from, node)[0];
-        var newConn2 = this.connect(node, connection.to)[0];
+        const newConn1 = this.connect(connection.from, node)[0];
+        const newConn2 = this.connect(node, connection.to)[0];
 
         // Check if the original connection was gated
         if (connection.gater != null) this.gate(gater, Math.random() >= 0.5 ? newConn1 : newConn2);
@@ -514,7 +514,7 @@ Network.prototype = {
           this.remove(_.sample(possible));
         }
         
-        break;
+        break
       }
       case mutation.ADD_CONN: {
         if(this.possible(method)) {
@@ -532,15 +532,15 @@ Network.prototype = {
           this.connect(pair[0], pair[1]);
         }
 
-        break;
+        break
       }
       case mutation.SUB_CONN: {
         if(this.possible(method)) {
           // List of possible connections that can be removed
-          let possible = [];
+          const possible = [];
 
           for (i = 0; i < this.connections.length; i++) {
-            let conn = this.connections[i];
+            const conn = this.connections[i];
             // Check if it is not disabling a node
             if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && this.nodes.indexOf(conn.to) > this.nodes.indexOf(conn.from)) {
               possible.push(conn);
@@ -551,7 +551,8 @@ Network.prototype = {
         
           this.disconnect(randomConn.from, randomConn.to);
         }
-        break;
+        
+        break
       }
       case mutation.MOD_WEIGHT: {
         var allconnections = this.connections.concat(this.selfconns);
@@ -569,194 +570,155 @@ Network.prototype = {
         break;
       }
       case mutation.MOD_ACTIVATION:{
-        // Has no effect on input nodes, so they (should be) excluded, should remove this ordered array assumption...
-        if (!method.mutateOutput && this.input + this.output === this.nodes.length) {
-          if (config.warnings) console.warn('No nodes that allow mutation of activation function');
-          return false;
-          break;
+        if(this.possible(method)) {
+          const possible = _.filter(this.nodes, method.mutateOutput ? (node) => node.type !== 'input' : (node) => node.type !== 'input' && node.type !== 'output')
+          
+          // Mutate a random node out of the filtered collection
+          _.sample(possible).mutate(method);
         }
-
-        const possible = _.filter(this.nodes, method.mutateOutput ? (node) => node.type !== 'input' : (node) => node.type !== 'input' && node.type !== 'output')
         
-        // Return a random node out of the filtered collection
-        const node = _.sample(possible)
-        node.mutate(method);
-        break;
+        break
       }
       case mutation.ADD_SELF_CONN: {
-        // Check which nodes aren't selfconnected yet
-        let possible = [];
-        for (i = this.input; i < this.nodes.length; i++) {
-          let node = this.nodes[i];
-          if (node.connections.self.weight === 0) {
-            possible.push(node);
+        if(this.possible(method)) {
+          // Check which nodes aren't selfconnected yet
+          const possible = [];
+          for (i = this.input; i < this.nodes.length; i++) {
+            const node = this.nodes[i];
+            if (node.connections.self.weight === 0) possible.push(node);
           }
+
+          // Select a random node
+          const node = possible[Math.floor(Math.random() * possible.length)];
+  
+          // Create the self-connection
+          this.connect(node, node);
         }
-
-        if (possible.length === 0) {
-          if (config.warnings) console.warn('No more self-connections to add!');
-          return false;
-          break;
-        }
-
-        // Select a random node
-        var node = possible[Math.floor(Math.random() * possible.length)];
-
-        // Connect it to himself
-        this.connect(node, node);
-        break;
+        
+        break
       }
       case mutation.SUB_SELF_CONN: {
-        if (this.selfconns.length === 0) {
-          if (config.warnings) console.warn('No more self-connections to remove!');
-          return false;
-          break;
+        if(this.possible(method)) {
+          const conn = this.selfconns[Math.floor(Math.random() * this.selfconns.length)];
+          this.disconnect(conn.from, conn.to);
         }
-        var conn = this.selfconns[Math.floor(Math.random() * this.selfconns.length)];
-        this.disconnect(conn.from, conn.to);
-        break;
+        
+        break
       }
       case mutation.ADD_GATE: {
-        var allconnections = this.connections.concat(this.selfconns);
+        if(this.possible(method)) {
+          const allconnections = this.connections.concat(this.selfconns);
 
-        // Create a list of all non-gated connections
-        let possible = [];
-        for (i = 0; i < allconnections.length; i++) {
-          let conn = allconnections[i];
-          if (conn.gater === null) {
-            possible.push(conn);
+          // Create a list of all non-gated connections
+          const possible = [];
+          for (i = 0; i < allconnections.length; i++) {
+            const conn = allconnections[i];
+            if (conn.gater === null) possible.push(conn);
           }
+  
+          // Select a random gater node and connection, can't be gated by input
+          const index = Math.floor(Math.random() * (this.nodes.length - this.input) + this.input);
+          const node = this.nodes[index];
+          const conn = possible[Math.floor(Math.random() * possible.length)];
+  
+          // Gate the connection with the node
+          this.gate(node, conn);
         }
-
-        if (possible.length === 0) {
-          if (config.warnings) console.warn('No more connections to gate!');
-          return false;
-          break;
-        }
-
-        // Select a random gater node and connection, can't be gated by input
-        var index = Math.floor(Math.random() * (this.nodes.length - this.input) + this.input);
-        var node = this.nodes[index];
-        var conn = possible[Math.floor(Math.random() * possible.length)];
-
-        // Gate the connection with the node
-        this.gate(node, conn);
-        break;
+        
+        break
       }
       case mutation.SUB_GATE: {
-        // Select a random gated connection
-        if (this.gates.length === 0) {
-          if (config.warnings) console.warn('No more connections to ungate!');
-          return false;
-          break;
-        }
-
-        var index = Math.floor(Math.random() * this.gates.length);
-        var gatedconn = this.gates[index];
-
-        this.ungate(gatedconn);
-        break;
+        if(this.possible(method)) this.ungate(this.gates[Math.floor(Math.random() * this.gates.length)])
+        
+        break
       }
       case mutation.ADD_BACK_CONN: {
-        // Create an array of all uncreated (backfed) connections
-        var available = [];
-        for (i = this.input; i < this.nodes.length; i++) {
-          let node1 = this.nodes[i];
-          for (j = this.input; j < i; j++) {
-            let node2 = this.nodes[j];
-            if (!node1.isProjectingTo(node2)) available.push([node1, node2]);
+        if(this.possible(method)) {
+          // Create an array of all uncreated (backfed) connections
+          const available = [];
+          for (i = this.input; i < this.nodes.length; i++) {
+            const node1 = this.nodes[i];
+            for (j = this.input; j < i; j++) {
+              const node2 = this.nodes[j];
+              if (!node1.isProjectingTo(node2)) available.push([node1, node2]);
+            }
           }
+          
+          const pair = available[Math.floor(Math.random() * available.length)];
+          this.connect(pair[0], pair[1]);
         }
-
-        if (available.length === 0) {
-          if (config.warnings) console.warn('No more connections to be made!');
-          return false;
-          break;
-        }
-
-        var pair = available[Math.floor(Math.random() * available.length)];
-        this.connect(pair[0], pair[1]);
+        
         break;
       }
       case mutation.SUB_BACK_CONN:{
-        // List of possible connections that can be removed
-        let possible = [];
-
-        for (i = 0; i < this.connections.length; i++) {
-          let conn = this.connections[i];
-          // Check if it is not disabling a node
-          if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && this.nodes.indexOf(conn.from) > this.nodes.indexOf(conn.to)) {
-            possible.push(conn);
+        if(this.possible(method)) {
+          // List of possible connections that can be removed
+          const possible = [];
+  
+          for (i = 0; i < this.connections.length; i++) {
+            const conn = this.connections[i];
+            // Check if it is not disabling a node
+            if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && this.nodes.indexOf(conn.from) > this.nodes.indexOf(conn.to))
+              possible.push(conn);
           }
+          const randomConn = possible[Math.floor(Math.random() * possible.length)];
+          this.disconnect(randomConn.from, randomConn.to);
         }
 
-        if (possible.length === 0) {
-          if (config.warnings) console.warn('No connections to remove!');
-          return false;
-          break;
-        }
-
-        var randomConn = possible[Math.floor(Math.random() * possible.length)];
-        this.disconnect(randomConn.from, randomConn.to);
         break;
       }
       case mutation.SWAP_NODES: {
-        // Has no effect on input node, so they (should be) excluded
-        if ((method.mutateOutput && (this.nodes.length - 1) - this.input < 2) ||
-          (!method.mutateOutput && (this.nodes.length - 1) - this.input - this.output < 2)) {
-          if (config.warnings) console.warn('No nodes that allow swapping of bias and activation function');
-          return false;
-          break;
-        }
-
-        let possible, node1, node2;
-        if(method.mutateOutput) {
-          // Filter out input nodes
-          possible = _.filter(this.nodes, function(node, index) { return(node.type !== 'input') })
-          
-          // Break out early if less than two possible nodes
-          if(possible.length < 2) {
-            if(config.warnings) console.warn("Less than 2 availables nodes, SWAP_NODES mutation failed!")
-            return false;
-            break;
+        if(this.possible(method)) {
+          let possible, node1, node2;
+          if(method.mutateOutput) {
+            // Filter out input nodes
+            possible = _.filter(this.nodes, function(node, index) { return(node.type !== 'input') })
+            
+            // Break out early if less than two possible nodes
+            if(possible.length < 2) {
+              if(config.warnings) console.warn("Less than 2 availables nodes, SWAP_NODES mutation failed!")
+              return false;
+              break;
+            }
+            
+            // Return a random node out of the filtered collection
+            node1 = _.sample(possible)
+            
+            // Filter out node1 from collection | impure function... should clean that node1
+            let possible2 = _.filter(possible, function(node, index) { return (node !== node1) })
+            
+            // Return a random node out of the filtered collection which excludes node1
+            node2 = _.sample(possible2)
+          } else {
+            // Filter out input & output nodes
+            possible = _.filter(this.nodes, function(node, index) { return(node.type !== 'input' && node.type !== 'output') })
+            
+            // Break out early if less than two possible nodes
+            if(possible.length < 2) {
+              if(config.warnings) console.warn("Less than 2 availables nodes, SWAP_NODES mutation failed!")
+              return false;
+              break;
+            }
+            
+            // Return a random node out of the filtered collection
+            node1 = _.sample(possible)
+            
+            // Filter out node1 from collection | impure function... should clean that node1
+            let possible2 = _.filter(possible, function(node, index) { return (node !== node1) })
+            
+            // Return a random node out of the filtered collection which excludes node1
+            node2 = _.sample(possible2)
           }
-          
-          // Return a random node out of the filtered collection
-          node1 = _.sample(possible)
-          
-          // Filter out node1 from collection | impure function... should clean that node1
-          let possible2 = _.filter(possible, function(node, index) { return (node !== node1) })
-          
-          // Return a random node out of the filtered collection which excludes node1
-          node2 = _.sample(possible2)
-        } else {
-          // Filter out input & output nodes
-          possible = _.filter(this.nodes, function(node, index) { return(node.type !== 'input' && node.type !== 'output') })
-          
-          // Break out early if less than two possible nodes
-          if(possible.length < 2) {
-            if(config.warnings) console.warn("Less than 2 availables nodes, SWAP_NODES mutation failed!")
-            return false;
-            break;
-          }
-          
-          // Return a random node out of the filtered collection
-          node1 = _.sample(possible)
-          
-          // Filter out node1 from collection | impure function... should clean that node1
-          let possible2 = _.filter(possible, function(node, index) { return (node !== node1) })
-          
-          // Return a random node out of the filtered collection which excludes node1
-          node2 = _.sample(possible2)
+  
+          const biasTemp = node1.bias;
+          const squashTemp = node1.squash;
+  
+          node1.bias = node2.bias;
+          node1.squash = node2.squash;
+          node2.bias = biasTemp;
+          node2.squash = squashTemp;
         }
-
-        var biasTemp = node1.bias;
-        var squashTemp = node1.squash;
-
-        node1.bias = node2.bias;
-        node1.squash = node2.squash;
-        node2.bias = biasTemp;
-        node2.squash = squashTemp;
+        
         break;
       }
     }
