@@ -476,23 +476,15 @@ Network.prototype = {
         
         return candidates.length ? candidates : false
       case mutation.SWAP_NODES:
-        if(method.mutateOutput) {
-          if((this.nodes.length - 1) - this.input < 2) return false;
+        // break out early if there aren't enough nodes to swap
+        if((this.nodes.length - 1) - this.input - (method.mutateOutput) ? 0 : this.output < 2) return false;
+        
+        const filterFn = (method.mutateOutput) ? (node) => (node.type !== 'input') : (node) => (node.type !== 'input' && node.type !== 'output')
+        
+        candidates = _.filter(this.nodes, filterFn)
           
-          // Filter out input & output nodes
-          candidates = _.filter(this.nodes, function(node, index) { return(node.type !== 'input' && node.type !== 'output') })
-          
-          // Check if less than two possible nodes
-          return (candidates.length < 2) ? false : candidates
-        } else {
-          if((this.nodes.length - 1) - this.input - this.output < 2) return false;
-          
-          // Filter out input nodes
-          candidates = _.filter(this.nodes, function(node, index) { return(node.type !== 'input') })
-          
-          // Break out early if less than two possible nodes
-          return (candidates.length < 2) ? false : candidates
-        }
+        // Check if less than two possible nodes
+        return (candidates.length < 2) ? false : candidates
     }
   },
   
