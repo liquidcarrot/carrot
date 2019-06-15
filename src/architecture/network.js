@@ -493,18 +493,12 @@ Network.prototype = {
         break;
       }
       case mutation.SUB_NODE: {
-        // Check if there are nodes left to remove
-        if (this.nodes.length === this.input + this.output) {
-          if (config.warnings) console.warn('No more nodes left to remove!');
-          return false;
-          break;
+        if(this.possible(method)) {
+          // Filter out input & output nodes
+          const possible = _.filter(this.nodes, function(node) { return (node.type !== 'output' && node.type !== 'input') })
+          this.remove(_.sample(possible));
         }
-
-        // Filter out input & output nodes
-        let possible = _.filter(this.nodes, function(node) { return (node.type !== 'output' && node.type !== 'input') })
-        // Remove a random node out of the filtered collection
-        this.remove(_.sample(possible));
-        return true;
+        
         break;
       }
       case mutation.ADD_CONN: {
