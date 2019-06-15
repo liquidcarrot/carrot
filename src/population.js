@@ -16,33 +16,33 @@ function Population({
   _selection=methods.selection.POWER
 } = {}) {
   let self = this;
-  
+
   _.assignIn(self, {template,size,data,population,fitness});
-  
+
   if(self.template && !self.population.length) _.times(self.size, function() {
-    self.population.push(Network.fromJSON({ ...self.template.toJSON(), score: undefined }));
+    self.population.push(Network.from_JSON({ ...self.template.to_JSON(), score: undefined }));
   });
 }
 
 Population.prototype = {
   evaluate: async function() {
     let self = this;
-    
+
     _.each(self.population, function(genome, index) {
       self.population[index].score = self.fitness(genome, self.data);
     })
   },
-  
+
   // Mates 2 "good genomes"; returns child
   mate: function(genomes, options) {
     let self = this;
-    return Network.crossOver(self.getParent(), self.getParent(), true);
+    return Network.cross_over(self.getParent(), self.getParent(), true);
   },
-  
+
   // Selects a "good genome" by `this.selection`
   select: function (options) {
     let self = this;
-    
+
     let i;
     switch (this.selection) {
       case selection.POWER:
@@ -101,26 +101,26 @@ Population.prototype = {
         }
     }
   },
-  
+
   test: function(dataset, options) {},
-  
+
   /**
    * @typedef {Object} state
    * @prop {number[]} state.information
    * @prop {number[]} state.action
    * @prop {number[]} state.reward
    */
-   
+
   /**
    * @typedef {Object} data
    * @prop {number[]} data.input
    * @prop {number[]} data.output
    */
-   
+
   /**
    * @typedef {data[]|state[]} Dataset
    */
-  
+
   /**
    * @typedef {Object} EvolutionaryPeriod
    * @prop {number} generations
@@ -131,7 +131,7 @@ Population.prototype = {
    * @prop {Network} networks.worst
    * @prop {Network[]} networks.all
    */
-  
+
   /**
    * @param {number} [options.error=0.1] Target error for networks in population - _`evolve()` will stop running when ONE network reaches `options.error`, or `options.iterations` is reached_
    * @param {number} [options.iterations] Maximum number of generations over which population evolves - _`evolve()` will stop running if `options.error` is reached before `options.iterations`_
@@ -162,20 +162,20 @@ Population.prototype = {
       options = dataset;
       dataset = undefined;
     }
-    
+
     // OVERLOADS: Population.prototype.evolve()
     // OVERLOADS: Population.prototype.evolve(options)
     // OVERLOADS: Population.prototype.evolve((undefined || null),options)
     if(!dataset && self.dataset.length) {
       dataset = self.dataset;
     }
-    
+
     // CASE: No dataset; Can not train population.
     else {
       throw new ReferenceError(`Parameter "dataset" was not passed & "this.dataset" was not declared; can not train "Population" without parameter "dataset" or "this.dataset".`)
     }
-    
-    
+
+
   }
 }
 

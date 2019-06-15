@@ -7,7 +7,7 @@ var config = require('../config');
 var Node = require('./node');
 
 // Easier variable naming
-var mutation = methods.mutation;
+const mutation = methods.mutation;
 
 
 /**
@@ -122,20 +122,20 @@ Network.prototype = {
    * // Create a network
    * let myNetwork = new Network(3, 2);
    *
-   * myNetwork.noTraceActivate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
+   * myNetwork.no_trace_activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
-  noTraceActivate: function(input) {
+  no_trace_activate: function (input) {
     var output = [];
 
     // Activate nodes chronologically
     for (var i = 0; i < this.nodes.length; i++) {
       if (this.nodes[i].type === 'input') {
-        this.nodes[i].noTraceActivate(input[i]);
+        this.nodes[i].no_trace_activate(input[i]);
       } else if (this.nodes[i].type === 'output') {
-        var activation = this.nodes[i].noTraceActivate();
+        var activation = this.nodes[i].no_trace_activate();
         output.push(activation);
       } else {
-        this.nodes[i].noTraceActivate();
+        this.nodes[i].no_trace_activate();
       }
     }
 
@@ -395,7 +395,7 @@ Network.prototype = {
     // Remove the node from this.nodes
     this.nodes.splice(index, 1);
   },
-  
+
   /**
    * Checks whether a given mutation is possible, returns an array of candidates to use for a mutation when it is.
    *
@@ -424,7 +424,7 @@ Network.prototype = {
             if (!node1.isProjectingTo(node2)) candidates.push([node1, node2])
           }
         }
-        
+
         return candidates.length ? candidates : false
       case mutation.SUB_CONN:
         _.each(self.connections, (conn) => {
@@ -432,23 +432,23 @@ Network.prototype = {
           if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && self.nodes.indexOf(conn.to) > self.nodes.indexOf(conn.from))
             candidates.push(conn)
         })
-        
+
         return candidates.length ? candidates : false
       case mutation.MOD_ACTIVATION: return (method.mutateOutput || this.nodes.length > this.input + this.output) ? [] : false
       case mutation.ADD_SELF_CONN:
-        
+
         for (let i = this.input; i < this.nodes.length; i++) {
           const node = this.nodes[i]
           if (node.connections.self.weight === 0) candidates.push(node)
         }
-          
+
         return candidates.length ? candidates : false
       case mutation.SUB_SELF_CONN: return (this.selfconns.length > 0) ? [] : false
       case mutation.ADD_GATE:
         const allconnections = this.connections.concat(this.selfconns);
-        
+
         _.each(allconnections, (conn) => { if(conn.gater === null) candidates.push(conn) })
-          
+
         return candidates.length ? candidates : false
       case mutation.SUB_GATE: return (this.gates.length > 0) ? [] : false
       case mutation.ADD_BACK_CONN:
@@ -459,28 +459,28 @@ Network.prototype = {
             if (!node1.isProjectingTo(node2)) candidates.push([node1, node2])
           }
         }
-        
+
         return candidates.length ? candidates : false
       case mutation.SUB_BACK_CONN:
         _.each(self.connections, (conn) => {
           if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && self.nodes.indexOf(conn.from) > self.nodes.indexOf(conn.to))
             candidates.push(conn)
         })
-        
+
         return candidates.length ? candidates : false
       case mutation.SWAP_NODES:
         // break out early if there aren't enough nodes to swap
         if((this.nodes.length - 1) - this.input - (method.mutateOutput ? 0 : this.output) < 2) return false;
-        
+
         const filterFn = (method.mutateOutput) ? (node) => (node.type !== 'input') : (node) => (node.type !== 'input' && node.type !== 'output')
-        
+
         candidates = _.filter(this.nodes, filterFn)
-          
+
         // Check there are at least two possible nodes
         return (candidates.length >= 2) ? candidates : false
     }
   },
-  
+
   /**
    * Mutates the network with the given method
    *
@@ -495,7 +495,7 @@ Network.prototype = {
    */
   mutate: function(method) {
     if (typeof method === 'undefined') throw new Error('No (correct) mutate method given!');
-    
+
     var i, j;
     switch (method) {
       case mutation.ADD_NODE: {
@@ -520,13 +520,13 @@ Network.prototype = {
         const gater = connection.gater;
         // Check if the original connection was gated
         if (gater != null) this.gate(gater, Math.random() >= 0.5 ? newConn1 : newConn2);
-        
+
         break;
       }
       case mutation.SUB_NODE: {
         const possible = this.possible(method)
         if(possible) this.remove(_.sample(possible));
-        
+
         break
       }
       case mutation.ADD_CONN: {
@@ -544,7 +544,7 @@ Network.prototype = {
           const randomConn = possible[Math.floor(Math.random() * possible.length)];
           this.disconnect(randomConn.from, randomConn.to);
         }
-        
+
         break
       }
       case mutation.MOD_WEIGHT: {
@@ -552,23 +552,32 @@ Network.prototype = {
         const connection = allconnections[Math.floor(Math.random() * allconnections.length)];
 
         connection.weight += Math.random() * (method.max - method.min) + method.min;
-        
+
         break;
       }
       case mutation.MOD_BIAS: {
         // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
         this.nodes[Math.floor(Math.random() * (this.nodes.length - this.input) + this.input)].mutate(method);
-        
+
         break;
       }
       case mutation.MOD_ACTIVATION:{
         if(this.possible(method)) {
           const possible = _.filter(this.nodes, method.mutateOutput ? (node) => node.type !== 'input' : (node) => node.type !== 'input' && node.type !== 'output')
-          
+
           // Mutate a random node out of the filtered collection
           _.sample(possible).mutate(method);
         }
+<<<<<<< HEAD
         break
+=======
+
+        // Return a random node out of the filtered collection
+        let node = _.sample(possible)
+        node.mutate(method);
+        return true;
+        break;
+>>>>>>> development
       }
       case mutation.ADD_SELF_CONN: {
         const possible = this.possible(method)
@@ -576,7 +585,7 @@ Network.prototype = {
           const node = possible[Math.floor(Math.random() * possible.length)];
           this.connect(node, node); // Create the self-connection
         }
-        
+
         break
       }
       case mutation.SUB_SELF_CONN: {
@@ -584,7 +593,7 @@ Network.prototype = {
           const conn = this.selfconns[Math.floor(Math.random() * this.selfconns.length)];
           this.disconnect(conn.from, conn.to);
         }
-        
+
         break
       }
       case mutation.ADD_GATE: {
@@ -593,15 +602,15 @@ Network.prototype = {
           // Select a random gater node and connection, can't be gated by input
           const node = this.nodes[Math.floor(Math.random() * (this.nodes.length - this.input) + this.input)];
           const conn = possible[Math.floor(Math.random() * possible.length)];
-  
+
           this.gate(node, conn); // Gate the connection with the node
         }
-        
+
         break
       }
       case mutation.SUB_GATE: {
         if(this.possible(method)) this.ungate(this.gates[Math.floor(Math.random() * this.gates.length)])
-        
+
         break
       }
       case mutation.ADD_BACK_CONN: {
@@ -610,7 +619,7 @@ Network.prototype = {
           const pair = possible[Math.floor(Math.random() * possible.length)];
           this.connect(pair[0], pair[1]);
         }
-        
+
         break;
       }
       case mutation.SUB_BACK_CONN:{
@@ -623,26 +632,76 @@ Network.prototype = {
         break;
       }
       case mutation.SWAP_NODES: {
+<<<<<<< HEAD
         const possible = this.possible(method)
         if(possible) {
           // Return a random node out of the filtered collection
           const node1 = _.sample(possible)
-          
+
           // Filter node1 from collection
           const possible2 = _.filter(possible, function(node, index) { return (node !== node1) })
-          
+
           // Get random node from filtered collection (excludes node1)
           const node2 = _.sample(possible2)
-  
+
           const biasTemp = node1.bias;
           const squashTemp = node1.squash;
-  
+
           node1.bias = node2.bias;
           node1.squash = node2.squash;
           node2.bias = biasTemp;
           node2.squash = squashTemp;
+=======
+        // Has no effect on input node, so they (should be) excluded
+        if ((method.mutateOutput && (this.nodes.length - 1) - this.input < 2) ||
+          (!method.mutateOutput && (this.nodes.length - 1) - this.input - this.output < 2)) {
+          if (config.warnings) console.warn('No nodes that allow swapping of bias and activation function');
+          return false;
+          break;
         }
-        
+
+        let possible, node1, node2;
+        if(method.mutateOutput) {
+          // Filter out input nodes
+          possible = _.filter(this.nodes, function(node, index) { return(node.type !== 'input') })
+
+          // Break out early if less than two possible nodes
+          if(possible.length < 2) {
+            if(config.warnings) console.warn("Less than 2 availables nodes, SWAP_NODES mutation failed!")
+            return false;
+            break;
+          }
+
+          // Return a random node out of the filtered collection
+          node1 = _.sample(possible)
+
+          // Filter out node1 from collection | impure function... should clean that node1
+          let possible2 = _.filter(possible, function(node, index) { return (node !== node1) })
+
+          // Return a random node out of the filtered collection which excludes node1
+          node2 = _.sample(possible2)
+        } else {
+          // Filter out input & output nodes
+          possible = _.filter(this.nodes, function(node, index) { return(node.type !== 'input' && node.type !== 'output') })
+
+          // Break out early if less than two possible nodes
+          if(possible.length < 2) {
+            if(config.warnings) console.warn("Less than 2 availables nodes, SWAP_NODES mutation failed!")
+            return false;
+            break;
+          }
+
+          // Return a random node out of the filtered collection
+          node1 = _.sample(possible)
+
+          // Filter out node1 from collection | impure function... should clean that node1
+          let possible2 = _.filter(possible, function(node, index) { return (node !== node1) })
+
+          // Return a random node out of the filtered collection which excludes node1
+          node2 = _.sample(possible2)
+>>>>>>> development
+        }
+
         break;
       }
     }
@@ -788,12 +847,12 @@ Network.prototype = {
 
       // Checks if cross validation is enabled
       if (options.crossValidate) {
-        this._trainSet(trainSet, batchSize, currentRate, momentum, cost);
+        this._train_set(trainSet, batchSize, currentRate, momentum, cost);
         if (options.clear) this.clear();
         error = this.test(testSet, cost).error;
         if (options.clear) this.clear();
       } else {
-        error = this._trainSet(set, batchSize, currentRate, momentum, cost);
+        error = this._train_set(set, batchSize, currentRate, momentum, cost);
         if (options.clear) this.clear();
       }
 
@@ -849,7 +908,11 @@ Network.prototype = {
    *
    * let example = ""
    */
+<<<<<<< HEAD
   _trainSet: function(set, batchSize, currentRate, momentum, costFunction) {
+=======
+  _train_set: function (set, batchSize, currentRate, momentum, costFunction) {
+>>>>>>> development
     var errorSum = 0;
     for (var i = 0; i < set.length; i++) {
       var input = set[i].input;
@@ -891,7 +954,7 @@ Network.prototype = {
     for (i = 0; i < set.length; i++) {
       let input = set[i].input;
       let target = set[i].output;
-      let output = this.noTraceActivate(input);
+      let output = this.no_trace_activate(input);
       error += cost(target, output);
     }
 
@@ -1025,10 +1088,10 @@ Network.prototype = {
    * @example
    * let { Network } = require("@liquid-carrot/carrot");
    *
-   * let exported = myNetwork.toJSON();
-   * let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
+   * let exported = myNetwork.to_JSON();
+   * let imported = Network.from_JSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
    */
-  toJSON: function() {
+  to_JSON: function () {
     var json = {
       nodes: [],
       connections: [],
@@ -1045,12 +1108,12 @@ Network.prototype = {
 
     for (i = 0; i < this.nodes.length; i++) {
       let node = this.nodes[i];
-      let tojson = node.toJSON();
+      let tojson = node.to_JSON();
       tojson.index = i;
       json.nodes.push(tojson);
 
       if (node.connections.self.weight !== 0) {
-        let tojson = node.connections.self.toJSON();
+        let tojson = node.connections.self.to_JSON();
         tojson.from = i;
         tojson.to = i;
 
@@ -1061,7 +1124,7 @@ Network.prototype = {
 
     for (i = 0; i < this.connections.length; i++) {
       let conn = this.connections[i];
-      let tojson = conn.toJSON();
+      let tojson = conn.to_JSON();
       tojson.from = conn.from.index;
       tojson.to = conn.to.index;
 
@@ -1088,10 +1151,10 @@ Network.prototype = {
    * network.set({bias: 1});
    */
   set: function(values) {
-    for (var i = 0; i < this.nodes.length; i++) {
-      this.nodes[i].bias = values.bias || this.nodes[i].bias;
-      this.nodes[i].squash = values.squash || this.nodes[i].squash;
-    }
+    this.nodes = _.forEach(this.nodes, (node) => _.defaults(node, {
+      bias: values.bias,
+      squash: values.squash
+    }));
   },
 
   /**
@@ -1112,7 +1175,7 @@ Network.prototype = {
    * @param {number} [options.schedule.iterations] You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
    * @param {schedule} [options.schedule.function] A function to run every n iterations as set by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
    * @param {boolean} [options.clear=false] If set to true, will clear the network after every activation. This is useful for evolving recurrent networks, more importantly for timeseries prediction.
-   * @param {boolean} [options.equal=true] If set to true when [Network.crossOver](Network.crossOver) runs it will assume both genomes are equally fit.
+   * @param {boolean} [options.equal=true] If set to true when [Network.cross_over](Network.cross_over) runs it will assume both genomes are equally fit.
    * @param {number} [options.popsize=50] Population size of each generation.
    * @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
    * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
@@ -1460,10 +1523,10 @@ Network.prototype = {
  * @example
  * let { Network } = require("@liquid-carrot/carrot");
  *
- * let exported = myNetwork.toJSON();
- * let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
+ * let exported = myNetwork.to_JSON();
+ * let imported = Network.from_JSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
  */
-Network.fromJSON = function(json) {
+Network.from_JSON = function(json) {
   var network = new Network(json.input, json.output);
   network.dropout = json.dropout;
   network.nodes = [];
@@ -1471,7 +1534,7 @@ Network.fromJSON = function(json) {
 
   var i;
   for (i = 0; i < json.nodes.length; i++) {
-    network.nodes.push(Node.fromJSON(json.nodes[i]));
+    network.nodes.push(Node.from_JSON(json.nodes[i]));
   }
 
   for (i = 0; i < json.connections.length; i++) {
@@ -1508,8 +1571,8 @@ Network.fromJSON = function(json) {
  */
 Network.merge = function (network1, network2) {
   // Create a copy of the networks
-  network1 = Network.fromJSON(network1.toJSON());
-  network2 = Network.fromJSON(network2.toJSON());
+  network1 = Network.from_JSON(network1.to_JSON());
+  network2 = Network.from_JSON(network2.to_JSON());
 
   // Check if output and input size are the same
   if (network1.output !== network2.input) {
@@ -1566,9 +1629,9 @@ Network.merge = function (network1, network2) {
  * let network2 = new architect.Perceptron(2, 4, 5, 3);
  *
  * // Produce an offspring
- * let network3 = Network.crossOver(network1, network2);
+ * let network3 = Network.cross_over(network1, network2);
  */
-Network.crossOver = function (network1, network2, equal) {
+Network.cross_over = function (network1, network2, equal) {
   if (network1.input !== network2.input || network1.output !== network2.output) {
     throw new Error("Networks don't have the same input/output size!");
   }
@@ -1745,7 +1808,7 @@ module.exports = Network;
 * @param {Object} options - Configuration options
 * @param {number} input - The input size of `template` networks.
 * @param {number} output - The output size of `template` networks.
-* @param {boolean} [options.equal=false] When true [crossover](Network.crossOver) parent genomes are assumed to be equally fit and offspring are built with a random amount of neurons within the range of parents' number of neurons. Set to false to select the "fittest" parent as the neuron amount template.
+* @param {boolean} [options.equal=false] When true [crossover](Network.cross_over) parent genomes are assumed to be equally fit and offspring are built with a random amount of neurons within the range of parents' number of neurons. Set to false to select the "fittest" parent as the neuron amount template.
 * @param {number} [options.clear=false] Clear the context of the population's nodes, basically reverting them to 'new' neurons. Useful for predicting timeseries with LSTM's.
 * @param {number} [options.popsize=50] Population size of each generation.
 * @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connectoins.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
@@ -1778,7 +1841,7 @@ module.exports = Network;
 *   popsize: 1000
 * });
 */
-let Neat = function (dataset, {
+const Neat = function (dataset, {
   generation = 0, // internal variable
   input = 1,
   output = 1,
@@ -1852,7 +1915,7 @@ let Neat = function (dataset, {
    * @param {Network} network
    */
   self.createPool = function createInitialPopulation (network, popsize) {
-    return Array(popsize).fill(Network.fromJSON({ ...network.toJSON(), score: undefined }))
+    return Array(popsize).fill(Network.from_JSON({ ...network.to_JSON(), score: undefined }))
   };
 
   // Initialise the genomes
@@ -1878,7 +1941,7 @@ let Neat = function (dataset, {
         }
       } else
           for (let i = 0; i < population.length; i++)
-            if(check(filtered[i])) filtered[i] = Network.fromJSON(template.toJSON)
+            if(check(filtered[i])) filtered[i] = Network.from_JSON(template.to_JSON)
 
       return filtered;
     };
@@ -1985,7 +2048,7 @@ let Neat = function (dataset, {
     for (let i = 0; i < self.elitism; i++) elitists.push(self.population[i]);
 
     // Provenance
-    let newPopulation = Array(self.provenance).fill(Network.fromJSON(self.template.toJSON()))
+    let newPopulation = Array(self.provenance).fill(Network.from_JSON(self.template.to_JSON()))
 
     // Breed the next individuals
     for (let i = 0; i < self.popsize - self.elitism - self.provenance; i++)
@@ -2009,7 +2072,7 @@ let Neat = function (dataset, {
     // Sort in order of fitness (fittest first)
     self.sort()
 
-    const fittest = Network.fromJSON(self.population[0].toJSON());
+    const fittest = Network.from_JSON(self.population[0].to_JSON());
     fittest.score = self.population[0].score;
 
     // Reset the scores
@@ -2096,7 +2159,7 @@ let Neat = function (dataset, {
     var parent1 = self.getParent();
     var parent2 = self.getParent();
 
-    return Network.crossOver(parent1, parent2, self.equal);
+    return Network.cross_over(parent1, parent2, self.equal);
   };
 
   /**
@@ -2184,14 +2247,14 @@ let Neat = function (dataset, {
   /**
    * Export the current population to a JSON object
    *
-   * Can be used later with `fromJSON(json)` to reload the population
+   * Can be used later with `from_JSON(json)` to reload the population
    *
    * @return {object[]} A set of genomes (a population) represented as JSON objects.
    */
-  self.toJSON = function exportPopulation() {
+  self.to_JSON = function exportPopulation() {
     var json = [];
     for (let i = 0; i < self.population.length; i++)
-      json.push(self.population[i].toJSON());
+      json.push(self.population[i].to_JSON());
 
     return json;
   };
@@ -2201,10 +2264,10 @@ let Neat = function (dataset, {
    *
    * @param {object[]} json set of genomes (a population) represented as JSON objects.
   */
-  self.fromJSON = function importPopulation(json) {
+  self.from_JSON = function importPopulation(json) {
     var population = [];
     for (let i = 0; i < json.length; i++)
-      population.push(Network.fromJSON(json[i]));
+      population.push(Network.from_JSON(json[i]));
     self.population = population;
     self.popsize = population.length;
   };

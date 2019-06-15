@@ -43,7 +43,7 @@ let mutation = methods.mutation;
 
          network2.mutate(mutation.SUB_NODE);
 
-         assert.deepEqual(network.toJSON(), network2.toJSON())
+         assert.deepEqual(network.to_JSON(), network2.to_JSON())
        });
 
        it('given mutation.SUB_NODE.mutateOutput = false, should leave output nodes unchanged', function() {

@@ -58,7 +58,7 @@ function Node(type) {
 
   // Batch training
   this.totalDeltaBias = 0;
-  
+
   // Aliases
   this.deltabias = {
     previous: 0,
@@ -105,7 +105,7 @@ Node.prototype = {
   */
   activate: function(input, options) {
     let self = this;
-    
+
     // If an input is given, forward it (i.e. act like an input neuron)
     if(!_.isNil(input)) {
       if(_.isNumber(input)) {
@@ -201,9 +201,9 @@ Node.prototype = {
   *
   * let node = new Node();
   *
-  * node.noTraceActivate(); // 0.4923128591923
+  * node.no_trace_activate(); // 0.4923128591923
   */
-  noTraceActivate: function(input) {
+  no_trace_activate: function(input) {
     // Check if an input is given
     if(!_.isNil(input)) {
       if(_.isNumber(input)) {
@@ -287,7 +287,7 @@ Node.prototype = {
       } else {
         throw new TypeError("Parameter \"rate\": Expected a \"number\", got a " + typeof rate);
       }
-      
+
     }
     // TYPE CHECK: momentum
     if(!_.isNil(momentum)) {
@@ -315,8 +315,8 @@ Node.prototype = {
         throw new TypeError("Parameter \"target\": Expected a \"number\", got a " + typeof target);
       }
     }
-    
-    
+
+
     momentum = momentum || 0;
     rate = rate || 0.3;
 
@@ -691,10 +691,10 @@ Node.prototype = {
   * @example
   * let { Node } = require("@liquid-carrot/carrot");
   *
-  * let exported = myNode.toJSON();
-  * let imported = myNode.fromJSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
+  * let exported = myNode.to_JSON();
+  * let imported = myNode.from_JSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
   */
-  toJSON: function () {
+  to_JSON: function () {
     var json = {
       bias: this.bias,
       type: this.type,
@@ -715,10 +715,10 @@ Node.prototype = {
 * @example
 * let { Node } = require("@liquid-carrot/carrot");
 *
-* let exported = myNode.toJSON();
-* let imported = myNode.fromJSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
+* let exported = myNode.to_JSON();
+* let imported = myNode.from_JSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
 */
-Node.fromJSON = function (json) {
+Node.from_JSON = function (json) {
   var node = new Node();
   node.bias = json.bias;
   node.type = json.type;

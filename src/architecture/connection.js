@@ -26,7 +26,7 @@ const _ = require("lodash");
 */
 function Connection (from, to, weight, options) {
   let self = this;
-  
+
   _.assignIn(self, _.defaults({ from, to, weight }, { ...options }, {
     weight: Math.random() * 2 - 1,
     gain: 1,
@@ -38,7 +38,7 @@ function Connection (from, to, weight, options) {
       nodes: [],
       values: []
     },
-    
+
     // (BETA)
     deltas: {
       previous: 0,
@@ -46,7 +46,7 @@ function Connection (from, to, weight, options) {
       all: [],
     }
   }));
-  
+
   /**
   * Converts the connection to a json object
   *
@@ -54,7 +54,7 @@ function Connection (from, to, weight, options) {
   *
   * @returns {object} A connection represented as a JSON object
   */
-  self.toJSON = function () {
+  self.to_JSON = function () {
     return { weight: self.weight };
   }
 }

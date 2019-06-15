@@ -36,7 +36,7 @@ describe("Node", function() {
     node.should.have.property("disconnect");  node.disconnect.should.be.a("function");
     node.should.have.property("gate");  node.gate.should.be.a("function");
     node.should.have.property("ungate");  node.ungate.should.be.a("function");
-    node.should.have.property("toJSON");  node.toJSON.should.be.a("function");
+    node.should.have.property("to_JSON");  node.to_JSON.should.be.a("function");
     node.should.have.property("clear");  node.clear.should.be.a("function");
     // node.should.have.property("reset");  node.reset.should.be.a("function"); // Not implemented
     
