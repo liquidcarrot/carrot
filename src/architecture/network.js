@@ -517,56 +517,35 @@ Network.prototype = {
         break
       }
       case mutation.ADD_CONN: {
-        if(this.possible(method)) {
-          // Create an array of all uncreated (feedforward) connections
-          const available = [];
-          for (let i = 0; i < this.nodes.length - this.output; i++) {
-            const node1 = this.nodes[i];
-            for (let j = Math.max(i + 1, this.input); j < this.nodes.length; j++) {
-              const node2 = this.nodes[j];
-              if (!node1.isProjectingTo(node2)) available.push([node1, node2]);
-            }
-          }
-          
-          const pair = available[Math.floor(Math.random() * available.length)];
+        const possible = this.possible(method)
+        if(possible) {
+          const pair = possible[Math.floor(Math.random() * possible.length)];
           this.connect(pair[0], pair[1]);
         }
 
         break
       }
       case mutation.SUB_CONN: {
-        if(this.possible(method)) {
-          // List of possible connections that can be removed
-          const possible = [];
-
-          for (i = 0; i < this.connections.length; i++) {
-            const conn = this.connections[i];
-            // Check if it is not disabling a node
-            if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && this.nodes.indexOf(conn.to) > this.nodes.indexOf(conn.from)) {
-              possible.push(conn);
-            }
-          }
-
+        const possible = this.possible(method)
+        if(possible) {
           const randomConn = possible[Math.floor(Math.random() * possible.length)];
-        
           this.disconnect(randomConn.from, randomConn.to);
         }
         
         break
       }
       case mutation.MOD_WEIGHT: {
-        var allconnections = this.connections.concat(this.selfconns);
+        const allconnections = this.connections.concat(this.selfconns);
+        const connection = allconnections[Math.floor(Math.random() * allconnections.length)];
 
-        var connection = allconnections[Math.floor(Math.random() * allconnections.length)];
-        var modification = Math.random() * (method.max - method.min) + method.min;
-        connection.weight += modification;
+        connection.weight += Math.random() * (method.max - method.min) + method.min;
+        
         break;
       }
       case mutation.MOD_BIAS: {
-        // Has no effect on input nodes, so they (should be) excluded, should remove this ordered array assumption...
-        var index = Math.floor(Math.random() * (this.nodes.length - this.input) + this.input);
-        var node = this.nodes[index];
-        node.mutate(method);
+        // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
+        this.nodes[Math.floor(Math.random() * (this.nodes.length - this.input) + this.input)].mutate(method);
+        
         break;
       }
       case mutation.MOD_ACTIVATION:{
@@ -580,19 +559,10 @@ Network.prototype = {
         break
       }
       case mutation.ADD_SELF_CONN: {
-        if(this.possible(method)) {
-          // Check which nodes aren't selfconnected yet
-          const possible = [];
-          for (i = this.input; i < this.nodes.length; i++) {
-            const node = this.nodes[i];
-            if (node.connections.self.weight === 0) possible.push(node);
-          }
-
-          // Select a random node
+        const possible = this.possible(method)
+        if(possible) {
           const node = possible[Math.floor(Math.random() * possible.length)];
-  
-          // Create the self-connection
-          this.connect(node, node);
+          this.connect(node, node); // Create the self-connection
         }
         
         break
@@ -606,23 +576,13 @@ Network.prototype = {
         break
       }
       case mutation.ADD_GATE: {
-        if(this.possible(method)) {
-          const allconnections = this.connections.concat(this.selfconns);
-
-          // Create a list of all non-gated connections
-          const possible = [];
-          for (i = 0; i < allconnections.length; i++) {
-            const conn = allconnections[i];
-            if (conn.gater === null) possible.push(conn);
-          }
-  
+        const possible = this.possible(method)
+        if(possible) {
           // Select a random gater node and connection, can't be gated by input
-          const index = Math.floor(Math.random() * (this.nodes.length - this.input) + this.input);
-          const node = this.nodes[index];
+          const node = this.nodes[Math.floor(Math.random() * (this.nodes.length - this.input) + this.input)];
           const conn = possible[Math.floor(Math.random() * possible.length)];
   
-          // Gate the connection with the node
-          this.gate(node, conn);
+          this.gate(node, conn); // Gate the connection with the node
         }
         
         break
@@ -633,34 +593,17 @@ Network.prototype = {
         break
       }
       case mutation.ADD_BACK_CONN: {
-        if(this.possible(method)) {
-          // Create an array of all uncreated (backfed) connections
-          const available = [];
-          for (i = this.input; i < this.nodes.length; i++) {
-            const node1 = this.nodes[i];
-            for (j = this.input; j < i; j++) {
-              const node2 = this.nodes[j];
-              if (!node1.isProjectingTo(node2)) available.push([node1, node2]);
-            }
-          }
-          
-          const pair = available[Math.floor(Math.random() * available.length)];
+        const possible = this.possible(method)
+        if(possible) {
+          const pair = possible[Math.floor(Math.random() * possible.length)];
           this.connect(pair[0], pair[1]);
         }
         
         break;
       }
       case mutation.SUB_BACK_CONN:{
-        if(this.possible(method)) {
-          // List of possible connections that can be removed
-          const possible = [];
-  
-          for (i = 0; i < this.connections.length; i++) {
-            const conn = this.connections[i];
-            // Check if it is not disabling a node
-            if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && this.nodes.indexOf(conn.from) > this.nodes.indexOf(conn.to))
-              possible.push(conn);
-          }
+        const possible = this.possible(method)
+        if(possible) {
           const randomConn = possible[Math.floor(Math.random() * possible.length)];
           this.disconnect(randomConn.from, randomConn.to);
         }
