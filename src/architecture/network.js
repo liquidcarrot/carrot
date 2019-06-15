@@ -412,7 +412,7 @@ Network.prototype = {
   possible: function mutationIsPossible(method) {
     let candidates
     switch (method) {
-      case mutation.SUB_NODE: return (this.nodes.length === this.input + this.output) ? false : []
+      case mutation.SUB_NODE: return (this.nodes.length > this.input + this.output) ? [] : false
       case mutation.ADD_CONN:
         candidates = []
         for (let i = 0; i < this.nodes.length - this.output; i++) {
@@ -434,7 +434,7 @@ Network.prototype = {
         }
         
         return candidates.length ? candidates : false
-      case mutation.MOD_ACTIVATION: return (!method.mutateOutput && this.input + this.output === this.nodes.length) ? false : []
+      case mutation.MOD_ACTIVATION: return (method.mutateOutput || this.nodes.length > this.input + this.output) ? [] : false
       case mutation.ADD_SELF_CONN:
         candidates = []
         for (let i = this.input; i < this.nodes.length; i++) {
@@ -443,7 +443,7 @@ Network.prototype = {
         }
           
         return candidates.length ? candidates : false
-      case mutation.SUB_SELF_CONN: return (this.selfconns.length === 0) ? false : []
+      case mutation.SUB_SELF_CONN: return (this.selfconns.length > 0) ? [] : false
       case mutation.ADD_GATE:
         const allconnections = this.connections.concat(this.selfconns);
         
@@ -454,7 +454,7 @@ Network.prototype = {
         }
           
         return candidates.length ? candidates : false
-      case mutation.SUB_GATE: return (this.gates.length === 0) ? false : []
+      case mutation.SUB_GATE: return (this.gates.length > 0) ? [] : false
       case mutation.ADD_BACK_CONN:
         candidates = [];
         for (let i = this.input; i < this.nodes.length; i++) {
@@ -483,8 +483,8 @@ Network.prototype = {
         
         candidates = _.filter(this.nodes, filterFn)
           
-        // Check if less than two possible nodes
-        return (candidates.length < 2) ? false : candidates
+        // Check there are at least two possible nodes
+        return (candidates.length >= 2) ? candidates : false
     }
   },
   
