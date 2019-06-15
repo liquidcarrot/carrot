@@ -502,25 +502,21 @@ Network.prototype = {
         break;
       }
       case mutation.ADD_CONN: {
-        // Create an array of all uncreated (feedforward) connections
-        var available = [];
-        for (i = 0; i < this.nodes.length - this.output; i++) {
-          let node1 = this.nodes[i];
-          for (j = Math.max(i + 1, this.input); j < this.nodes.length; j++) {
-            let node2 = this.nodes[j];
-            if (!node1.isProjectingTo(node2)) available.push([node1, node2]);
+        if(this.possible(method)) {
+          // Create an array of all uncreated (feedforward) connections
+          const available = [];
+          for (let i = 0; i < this.nodes.length - this.output; i++) {
+            const node1 = this.nodes[i];
+            for (let j = Math.max(i + 1, this.input); j < this.nodes.length; j++) {
+              const node2 = this.nodes[j];
+              if (!node1.isProjectingTo(node2)) available.push([node1, node2]);
+            }
           }
+          
+          const pair = available[Math.floor(Math.random() * available.length)];
+          this.connect(pair[0], pair[1]);
         }
 
-        if (available.length === 0) {
-          if (config.warnings) console.warn('No more connections to be made!');
-          return false;
-          break;
-        }
-
-        var pair = available[Math.floor(Math.random() * available.length)];
-        this.connect(pair[0], pair[1]);
-        return true;
         break;
       }
       case mutation.SUB_CONN: {
