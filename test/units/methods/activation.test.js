@@ -1,7 +1,7 @@
 const _ = require("lodash");
 const { assert, expect } = require('chai');
 const should = require('chai').should();
-const {activation} = require('../../../src/carrot');
+const { activation } = require('../../../src/carrot');
  
 describe("activation", function(){
   describe("activation.LOGISTIC()", function() {
