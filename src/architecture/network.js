@@ -815,7 +815,7 @@ Network.prototype = {
     }
 
     options = options || {};
-    options.iterations = options.operations || 1000;
+    options.iterations = options.iterations || 1000;
 
     // Warning messages
     if (typeof options.rate === 'undefined') {
