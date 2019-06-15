@@ -237,10 +237,10 @@ const architect = {
   * let { architect } = require("@liquid-carrot/carrot");
   *
   * // Input, memory block_size layer, output
-  * let my_lSTM = new architect.LSTM(2,6,1);
+  * let my_LSTM = new architect.LSTM(2,6,1);
   *
   * // with multiple memory block_size layer_sizes
-  * let my_lSTM = new architect.LSTM(2, 4, 4, 4, 1);
+  * let my_LSTM = new architect.LSTM(2, 4, 4, 4, 1);
   *
   * // with options
   * var options = {
@@ -251,7 +251,7 @@ const architect = {
   *   input_to_deep: true         // default
   * };
   *
-  * let my_lSTM = new architect.LSTM(2, 4, 4, 4, 1, options);
+  * let my_LSTM = new architect.LSTM(2, 4, 4, 4, 1, options);
   *
   * @returns {Network}
   */
@@ -344,7 +344,7 @@ const architect = {
       output_gate.gate(output_gate_connections, methods.gating.OUTPUT);
 
       // add the connections specified in options
-            
+
       // Input to all memory cells
       if (options.input_to_deep && index > 0) {
         const input_layer_memory_gate_connection =
@@ -399,15 +399,15 @@ const architect = {
   * let { architect } = require("@liquid-carrot/carrot");
   *
   * // Input, gated recurrent unit layer, output
-  * let myLSTM = new architect.GRU(2,6,1);
+  * let my_LSTM = new architect.GRU(2,6,1);
   *
   * // with multiple layers of gated recurrent units
-  * let myLSTM = new architect.GRU(2, 4, 4, 4, 1);
+  * let my_LSTM = new architect.GRU(2, 4, 4, 4, 1);
   *
   * @example <caption>Training XOR gate</caption>
   * let { architect } = require("@liquid-carrot/carrot");
   *
-  * var trainingSet = [
+  * var training_set = [
   *   { input: [0], output: [0]},
   *   { input: [1], output: [1]},
   *   { input: [1], output: [0]},
@@ -418,7 +418,7 @@ const architect = {
   * var network = new architect.GRU(1,1,1);
   *
   * // Train a sequence: 00100100..
-  * network.train(trainingSet, {
+  * network.train(training_set, {
   *   log: 1,
   *   rate: 0.1, // lower rates work best
   *   error: 0.005,
@@ -434,14 +434,14 @@ const architect = {
       throw new Error('not enough layers (minimum 3) !!');
     }
 
-    var inputLayer = new Group(args.shift()); // first argument
-    var outputLayer = new Group(args.pop()); // last argument
+    var input_layer = new Group(args.shift()); // first argument
+    var output_layer = new Group(args.pop()); // last argument
     var blocks = args; // all the arguments in the middle
 
     var nodes = [];
-    nodes.push(inputLayer);
+    nodes.push(input_layer);
 
-    var previous = inputLayer;
+    var previous = input_layer;
     for (var i = 0; i < blocks.length; i++) {
       var layer = new Layer.GRU(blocks[i]);
       previous.connect(layer);
@@ -450,8 +450,8 @@ const architect = {
       nodes.push(layer);
     }
 
-    previous.connect(outputLayer);
-    nodes.push(outputLayer);
+    previous.connect(output_layer);
+    nodes.push(output_layer);
 
     return architect.Construct(nodes);
   },
@@ -465,12 +465,12 @@ const architect = {
   * let { architect } = require("@liquid-carrot/carrot");
   *
   * var network = architect.Hopfield(10);
-  * var trainingSet = [
+  * var training_set = [
   *   { input: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1], output: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1] },
   *   { input: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0], output: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0] }
   * ];
   *
-  * network.train(trainingSet);
+  * network.train(training_set);
   *
   * network.activate([0,1,0,1,0,1,0,1,1,1]); // [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
   * network.activate([1,1,1,1,1,0,0,1,0,0]); // [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]
@@ -511,7 +511,7 @@ const architect = {
   * let narx = new architect.NARX(1, 5, 1, 3, 3);
   *
   * // Training a sequence
-  * let trainingData = [
+  * let training_data = [
   *   { input: [0], output: [0] },
   *   { input: [0], output: [0] },
   *   { input: [0], output: [1] },
@@ -520,7 +520,7 @@ const architect = {
   *   { input: [0], output: [0] },
   *   { input: [0], output: [1] },
   * ];
-  * narx.train(trainingData, {
+  * narx.train(training_data, {
   *   log: 1,
   *   iterations: 3000,
   *   error: 0.03,
