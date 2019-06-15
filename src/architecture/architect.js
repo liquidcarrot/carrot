@@ -79,16 +79,22 @@ const architect = {
       }
     }
 
+    // check if there are input or output nodes, bc otherwise must guess based on number of outputs
+    let found_output_nodes = _.reduce(nodes, (total_found, node) =>
+      total_found + (node.type === `output`), 0);
+    let found_input_nodes = _.reduce(nodes, (total_found, node) =>
+      total_found + (node.type === `input`), 0);
+
     // Determine input and output nodes
     var inputs = [];
     var outputs = [];
     for (i = nodes.length - 1; i >= 0; i--) {
-      if (nodes[i].type === 'output' || nodes[i].connections.out.length + nodes[i].connections.gated.length === 0) {
+      if (nodes[i].type === 'output' || (!found_output_nodes && nodes[i].connections.out.length + nodes[i].connections.gated.length === 0)) {
         nodes[i].type = 'output';
         network.output++;
         outputs.push(nodes[i]);
         nodes.splice(i, 1);
-      } else if (nodes[i].type === 'input' || !nodes[i].connections.in.length) {
+      } else if (nodes[i].type === 'input' || (!found_input_nodes && !nodes[i].connections.in.length)) {
         nodes[i].type = 'input';
         network.input++;
         inputs.push(nodes[i]);
@@ -139,7 +145,7 @@ const architect = {
   */
   Perceptron: function () {
     // Convert arguments to Array
-    const layers = Array(arguments);
+    const layers = Array.from(arguments);
 
     if (layers.length < 3) throw new Error(`You have to specify at least 3 layers`);
 
@@ -478,11 +484,11 @@ const architect = {
   /**
   * Creates a NARX network (remember previous inputs/outputs)
   *
-  * @param {number} inputSize Number of input nodes
-  * @param {number[]|number} hiddenLayers Array of hidden layer sizes, e.g. [10,20,10] If only one hidden layer, can be a number (of nodes)
-  * @param {number} outputSize Number of output nodes
-  * @param {number} previousInput Number of previous inputs to remember
-  * @param {number} previousOutput Number of previous outputs to remember
+  * @param {number} input Number of input nodes
+  * @param {number[]|number} hidden Array of hidden layer sizes, e.g. [10,20,10] If only one hidden layer, can be a number (of nodes)
+  * @param {number} output Number of output nodes
+  * @param {number} input_memory Number of previous inputs to remember
+  * @param {number} output_memory Number of previous outputs to remember
   *
   * @example
   * let { architect } = require("@liquid-carrot/carrot");
@@ -508,45 +514,57 @@ const architect = {
   *
   * @returns {Network}
   */
-  NARX: function (inputSize, hiddenLayers, outputSize, previousInput, previousOutput) {
-    if (!Array.isArray(hiddenLayers)) {
-      hiddenLayers = [hiddenLayers];
+  NARX: function (input_size, hidden_sizes, output_size, input_memory_size, output_memory_size) {
+    if (!Array.isArray(hidden_sizes)) {
+      hidden_sizes = [hidden_sizes];
     }
 
-    var nodes = [];
+    const nodes = [];
 
-    var input = new Layer.Dense(inputSize);
-    var inputMemory = new Layer.Memory(inputSize, previousInput);
-    var hidden = [];
-    var output = new Layer.Dense(outputSize);
-    var outputMemory = new Layer.Memory(outputSize, previousOutput);
+    const input_layer = new Layer.Dense(input_size);
+    const input_memory = new Layer.Memory(input_size, input_memory_size);
 
-    nodes.push(input);
-    nodes.push(outputMemory);
+    const hidden_layers = [];
+    // create the hidden layers
+    _.times(hidden_sizes.length, (index) => {
+      hidden_layers.push(new Layer.Dense(hidden_sizes[index]));
+    });
 
-    for (var i = 0; i < hiddenLayers.length; i++) {
-      var hiddenLayer = new Layer.Dense(hiddenLayers[i]);
-      hidden.push(hiddenLayer);
-      nodes.push(hiddenLayer);
-      if (typeof hidden[i - 1] !== 'undefined') {
-        hidden[i - 1].connect(hiddenLayer, methods.connection.ALL_TO_ALL);
+    const output_layer = new Layer.Dense(output_size);
+    const output_memory = new Layer.Memory(output_size, output_memory_size);
+
+    // add the input connections and add to the list of nodes
+    input_layer.connect(hidden_layers[0], methods.connection.ALL_TO_ALL);
+    input_layer.connect(input_memory, methods.connection.ONE_TO_ONE, 1);
+    nodes.push(input_layer);
+
+    // connect the memories to the first hidden layer
+    input_memory.connect(hidden_layers[0], methods.connection.ALL_TO_ALL);
+    output_memory.connect(hidden_layers[0], methods.connection.ALL_TO_ALL);
+    nodes.push(input_memory);
+    nodes.push(output_memory);
+
+    // feed forward the hidden layers
+    _.times(hidden_layers.length, (index) => {
+      if (index < hidden_layers.length - 1) { // do not connect to next if last
+        hidden_layers[index].connect(hidden_layers[index + 1], methods.connection.ALL_TO_ALL);
       }
-    }
+      else { // if last, connect to output
+        hidden_layers[index].connect(output_layer, methods.connection.ALL_TO_ALL);
+      }
 
-    nodes.push(inputMemory);
-    nodes.push(output);
+      nodes.push(hidden_layers[index]);
+    });
 
-    input.connect(hidden[0], methods.connection.ALL_TO_ALL);
-    input.connect(inputMemory, methods.connection.ONE_TO_ONE, 1);
-    inputMemory.connect(hidden[0], methods.connection.ALL_TO_ALL);
-    hidden[hidden.length - 1].connect(output, methods.connection.ALL_TO_ALL);
-    output.connect(outputMemory, methods.connection.ONE_TO_ONE, 1);
-    outputMemory.connect(hidden[0], methods.connection.ALL_TO_ALL);
+    // finally, connect output to memory
+    output_layer.connect(output_memory, methods.connection.ONE_TO_ONE, 1);
+    nodes.push(output_layer);
 
-    input.set({
+
+    input_layer.set({
       type: 'input'
     });
-    output.set({
+    output_layer.set({
       type: 'output'
     });
 
