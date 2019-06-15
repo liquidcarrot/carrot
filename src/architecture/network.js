@@ -1893,7 +1893,7 @@ let Neat = function (dataset, {
    * @return {mutation} Selected mutation
   */
   self.selectMutationMethod = function (genome, allowedMutations, efficientMutation) {
-
+    efficientMutation = false;
     if(efficientMutation) {
       let filtered = allowedMutations ? [...allowedMutations] : [...self.mutation]
       let success = false
