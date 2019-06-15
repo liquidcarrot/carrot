@@ -411,11 +411,10 @@ Network.prototype = {
    */
   possible: function mutationIsPossible(method) {
     const self = this
-    let candidates
+    let candidates = []
     switch (method) {
       case mutation.SUB_NODE: return (this.nodes.length > this.input + this.output) ? [] : false
       case mutation.ADD_CONN:
-        candidates = []
         for (let i = 0; i < this.nodes.length - this.output; i++) {
           const node1 = this.nodes[i]
           for (let j = Math.max(i + 1, this.input); j < this.nodes.length; j++) {
@@ -426,8 +425,6 @@ Network.prototype = {
         
         return candidates.length ? candidates : false
       case mutation.SUB_CONN:
-        
-        candidates = []
         _.each(self.connections, (conn) => {
           // Check if it is not disabling a node
           if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && self.nodes.indexOf(conn.to) > self.nodes.indexOf(conn.from))
@@ -437,7 +434,6 @@ Network.prototype = {
         return candidates.length ? candidates : false
       case mutation.MOD_ACTIVATION: return (method.mutateOutput || this.nodes.length > this.input + this.output) ? [] : false
       case mutation.ADD_SELF_CONN:
-        candidates = []
         
         for (let i = this.input; i < this.nodes.length; i++) {
           const node = this.nodes[i]
@@ -449,13 +445,11 @@ Network.prototype = {
       case mutation.ADD_GATE:
         const allconnections = this.connections.concat(this.selfconns);
         
-        candidates = [];
         _.each(allconnections, (conn) => { if(conn.gater === null) candidates.push(conn) })
           
         return candidates.length ? candidates : false
       case mutation.SUB_GATE: return (this.gates.length > 0) ? [] : false
       case mutation.ADD_BACK_CONN:
-        candidates = [];
         for (let i = this.input; i < this.nodes.length; i++) {
           const node1 = this.nodes[i]
           for (let j = this.input; j < i; j++) {
@@ -466,8 +460,6 @@ Network.prototype = {
         
         return candidates.length ? candidates : false
       case mutation.SUB_BACK_CONN:
-        
-        candidates = [];
         _.each(self.connections, (conn) => {
           if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && self.nodes.indexOf(conn.from) > self.nodes.indexOf(conn.to))
             candidates.push(conn)
