@@ -1467,21 +1467,17 @@ Network.from_JSON = function(json) {
   network.nodes = [];
   network.connections = [];
 
-  var i;
-  for (i = 0; i < json.nodes.length; i++) {
-    network.nodes.push(Node.from_JSON(json.nodes[i]));
-  }
+  _.forEach(json.nodes, (node) => network.nodes.push(Node.from_JSON(node)));
 
-  for (i = 0; i < json.connections.length; i++) {
-    var conn = json.connections[i];
+  _.forEach(json.connections, (json_connection) => {
+    var connection =
+      network.connect(network.nodes[json_connection.from], network.nodes[json_connection.to])[0];
+    connection.weight = json_connection.weight;
 
-    var connection = network.connect(network.nodes[conn.from], network.nodes[conn.to])[0];
-    connection.weight = conn.weight;
-
-    if (conn.gater != null) {
-      network.gate(network.nodes[conn.gater], connection);
+    if (json_connection.gater != null) {
+      network.gate(network.nodes[json_connection.gater], connection);
     }
-  }
+  });
 
   return network;
 };
