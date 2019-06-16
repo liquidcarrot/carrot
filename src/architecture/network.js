@@ -877,28 +877,27 @@ Network.prototype = {
    */
   test: function(set, cost = methods.cost.MSE) {
     // Check if dropout is enabled, set correct mask
-    var i;
     if (this.dropout) {
-      for (i = 0; i < this.nodes.length; i++) {
-        if (this.nodes[i].type === 'hidden' || this.nodes[i].type === 'constant') {
-          this.nodes[i].mask = 1 - this.dropout;
+      _.times(this.nodes.length, (index) => {
+        if (this.nodes[index].type === 'hidden' || this.nodes[index].type === 'constant') {
+          this.nodes[index].mask = 1 - this.dropout;
         }
-      }
+      });
     }
 
-    var error = 0;
-    var start = Date.now();
+    let error = 0;
+    let start = Date.now();
 
-    for (i = 0; i < set.length; i++) {
-      let input = set[i].input;
-      let target = set[i].output;
+    _.times(set.length, (index) => {
+      let input = set[index].input;
+      let target = set[index].output;
       let output = this.no_trace_activate(input);
       error += cost(target, output);
-    }
+    });
 
     error /= set.length;
 
-    var results = {
+    const results = {
       error: error,
       time: Date.now() - start
     };
