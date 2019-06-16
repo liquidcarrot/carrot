@@ -1406,47 +1406,47 @@ Network.prototype = {
    * @returns {Array<number[]>} 3 `Float64Arrays`. Used for transferring networks to other threads fast.
    */
   serialize: function () {
-    var activations = [];
-    var states = [];
-    var conns = [];
-    var squashes = [
-      'LOGISTIC', 'TANH', 'IDENTITY', 'STEP', 'RELU', 'SOFTSIGN', 'SINUSOID',
-      'GAUSSIAN', 'BENT_IDENTITY', 'BIPOLAR', 'BIPOLAR_SIGMOID', 'HARD_TANH',
-      'ABSOLUTE', 'INVERSE', 'SELU'
+    const activations = [];
+    const states = [];
+    const connections = [];
+    const squashes = [
+      `LOGISTIC`, `TANH`, `IDENTITY`, `STEP`, `RELU`, `SOFTSIGN`, `SINUSOID`,
+      `GAUSSIAN`, `BENT_IDENTITY`, `BIPOLAR`, `BIPOLAR_SIGMOID`, `HARD_TANH`,
+      `ABSOLUTE`, `INVERSE`, `SELU`
     ];
 
-    conns.push(this.input);
-    conns.push(this.output);
+    connections.push(this.input);
+    connections.push(this.output);
 
-    var i;
-    for (i = 0; i < this.nodes.length; i++) {
-      let node = this.nodes[i];
-      node.index = i;
+    let node_index_counter = 0;
+    _.forEach(this.nodes, (node) => {
+      node.index = node_index_counter;
+      node_index_counter++;
       activations.push(node.activation);
       states.push(node.state);
+    });
+
+    for (let node_index = this.input; node_index < this.nodes.length; node_index++) {
+      const node = this.nodes[node_index];
+      connections.push(node.index);
+      connections.push(node.bias);
+      connections.push(squashes.indexOf(node.squash.name));
+
+      connections.push(node.connections.self.weight);
+      connections.push(node.connections.self.gater == null ? -1 : node.connections.self.gater.index);
+
+      _.times(node.connections.in.length, (incoming_connections_index) => {
+        const connection = node.connectionections.in[incoming_connectionections_index];
+
+        connectionections.push(connection.from.index);
+        connectionections.push(connection.weight);
+        connectionections.push(connection.gater == null ? -1 : connection.gater.index);
+      });
+
+      connections.push(-2); // stop token -> next node
     }
 
-    for (i = this.input; i < this.nodes.length; i++) {
-      let node = this.nodes[i];
-      conns.push(node.index);
-      conns.push(node.bias);
-      conns.push(squashes.indexOf(node.squash.name));
-
-      conns.push(node.connections.self.weight);
-      conns.push(node.connections.self.gater == null ? -1 : node.connections.self.gater.index);
-
-      for (var j = 0; j < node.connections.in.length; j++) {
-        let conn = node.connections.in[j];
-
-        conns.push(conn.from.index);
-        conns.push(conn.weight);
-        conns.push(conn.gater == null ? -1 : conn.gater.index);
-      }
-
-      conns.push(-2); // stop token -> next node
-    }
-
-    return [activations, states, conns];
+    return [activations, states, connections];
   }
 };
 
