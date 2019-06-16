@@ -16,7 +16,10 @@
       "avatar_url": "https://avatars3.githubusercontent.com/u/21148993?v=4",
       "profile": "https://liquidcarrot.io/",
       "contributions": [
-        "code"
+        "code",
+        "ideas",
+        "review",
+        "doc"
       ]
     },
     {
@@ -25,7 +28,9 @@
       "avatar_url": "https://avatars2.githubusercontent.com/u/23618650?v=4",
       "profile": "http://liquidcarrot.io",
       "contributions": [
-        "code"
+        "code",
+        "doc",
+        "infra"
       ]
     },
     {
@@ -34,7 +39,8 @@
       "avatar_url": "https://avatars1.githubusercontent.com/u/775672?v=4",
       "profile": "https://github.com/dan-ryan",
       "contributions": [
-        "bug"
+        "bug",
+        "review"
       ]
     },
     {
