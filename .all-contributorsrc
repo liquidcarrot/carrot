@@ -1,4 +1,6 @@
 {
+  "projectName": "carrot",
+  "projectOwner": "liquidcarrot",
   "files": ["README.md"],
   "imageSize": 100,
   "contributorsPerLine": 7,
@@ -11,5 +13,6 @@
       "link": "[<%= symbol %>](<%= url %> \"<%= description %>\"),"
     }
   },
-  "contributors": []
+  "contributors": [],
+  "repoType": "github"
 }
