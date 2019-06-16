@@ -325,62 +325,63 @@ Network.prototype = {
    * myNetwork.remove(myNetwork.nodes[2]);
    */
   remove: function(node) {
-    var index = this.nodes.indexOf(node);
+    const index = this.nodes.indexOf(node);
 
     if (index === -1) {
       throw new Error('This node does not exist in the network!');
     }
 
-    // Keep track of gaters
-    var gaters = [];
+    // Keep track of gates
+    const gates = [];
 
     // Remove selfconnections from this.selfconns
     this.disconnect(node, node);
 
     // Get all its inputting nodes
-    var inputs = [];
-    for (var i = node.connections.in.length - 1; i >= 0; i--) {
-      let connection = node.connections.in[i];
-      if (mutation.SUB_NODE.keep_gates && connection.gater !== null && connection.gater !== node) {
-        gaters.push(connection.gater);
+    const inputs = [];
+    // unsure why not regular forEach
+    _.forEachRight(node.connections.in, (connection) => {
+
+      if (!connection) console.error("the connection is undefined wtf");
+
+      if (mutation.SUB_NODE.keep_gates && connection.gate !== null && connection.gate !== node) {
+        gates.push(connection.gate);
       }
       inputs.push(connection.from);
       this.disconnect(connection.from, node);
-    }
+    });
+
 
     // Get all its outputing nodes
-    var outputs = [];
-    for (i = node.connections.out.length - 1; i >= 0; i--) {
-      let connection = node.connections.out[i];
-      if (mutation.SUB_NODE.keep_gates && connection.gater !== null && connection.gater !== node) {
-        gaters.push(connection.gater);
+    const outputs = [];
+    // unsure why not regular forEach
+    _.forEachRight(node.connections.out, (connection) => {
+      if (mutation.SUB_NODE.keep_gates && connection.gate !== null && connection.gate !== node) {
+        gates.push(connection.gate);
       }
       outputs.push(connection.to);
       this.disconnect(node, connection.to);
-    }
+    });
 
     // Connect the input nodes to the output nodes (if not already connected)
-    var connections = [];
-    for (i = 0; i < inputs.length; i++) {
-      let input = inputs[i];
-      for (var j = 0; j < outputs.length; j++) {
-        let output = outputs[j];
+    const connections = [];
+    _.forEach(inputs, (input) => {
+      _.forEach(outputs, (output) => {
         if (!input.isProjectingTo(output)) {
-          var conn = this.connect(input, output);
-          connections.push(conn[0]);
+          const connection = this.connect(input, output);
+          connections.push(connection[0]);
         }
-      }
-    }
+      });
+    });
 
-    // Gate random connections with gaters
-    for (i = 0; i < gaters.length; i++) {
-      if (connections.length === 0) break;
+    // Gate random connections with gates
+    // finish after all gates have been placed again or all connections are gated
+    while (gates.length > 0 && connections.length > 0) {
+      const gate = gates.shift();
+      const connection_to_gate_index = Math.floor(Math.random() * connections.length);
 
-      let gater = gaters[i];
-      let connIndex = Math.floor(Math.random() * connections.length);
-
-      this.gate(gater, connections[connIndex]);
-      connections.splice(connIndex, 1);
+      this.gate(gate, connections[connection_to_gate_index]);
+      connections.splice(connection_to_gate_index, 1);
     }
 
     // Remove gated connections gated by this node

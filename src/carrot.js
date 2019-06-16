@@ -1,4 +1,4 @@
-var Carrot = {
+const Carrot = {
   activation: require('./methods/activation'),
   cost: require("./methods/cost"),
   methods: require('./methods/methods'),
