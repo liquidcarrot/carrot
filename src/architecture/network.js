@@ -125,19 +125,19 @@ Network.prototype = {
    * myNetwork.no_trace_activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
   no_trace_activate: function (input) {
-    var output = [];
+    const output = [];
 
     // Activate nodes chronologically
-    for (var i = 0; i < this.nodes.length; i++) {
-      if (this.nodes[i].type === 'input') {
-        this.nodes[i].no_trace_activate(input[i]);
-      } else if (this.nodes[i].type === 'output') {
-        var activation = this.nodes[i].no_trace_activate();
-        output.push(activation);
+    _.times(this.nodes.length, (node_index) => {
+      if (this.nodes[node_index].type === 'input') {
+        this.nodes[node_index].no_trace_activate(input[node_index]);
+      } else if (this.nodes[node_index].type === 'output') {
+        const activation_result = this.nodes[node_index].no_trace_activate();
+        output.push(activation_result);
       } else {
-        this.nodes[i].no_trace_activate();
+        this.nodes[node_index].no_trace_activate();
       }
-    }
+    });
 
     return output;
   },
@@ -158,7 +158,7 @@ Network.prototype = {
    * let myNetwork = new Network(1,1);
    *
    * // This trains the network to function as a NOT gate
-   * for(var i = 0; i < 1000; i++){
+   * for(var node_index = 0; i < 1000; i++){
    *  network.activate([0]);
    *  network.propagate(0.2, 0, true, [1]);
    *  network.activate([1]);
