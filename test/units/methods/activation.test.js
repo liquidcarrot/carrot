@@ -5,12 +5,31 @@ const { activation } = require('../../../src/carrot');
  
 describe("activation", function(){
   describe("activation.LOGISTIC()", function() {
-    it("activation.LOGISTIC() => {ReferenceError}")
-    it("activation.LOGISTIC(number) => {number}")
-    it("activation.LOGISTIC(number, derivative=true) => {number}")
-    it("activation.LOGISTIC(undefined, derivative=true) => {ReferenceError}")
-    it("activation.LOGISTIC(numbers) => {number[]}")
-    it("activation.LOGISTIC(numbers, derivative=true) => {number[]}")
+    it("activation.LOGISTIC() => {ReferenceError}", function(){
+      const x = _.random(-50, 50, true);
+      expect(() => activation.LOGISTIC()).to.throw(ReferenceError);
+    })
+    it("activation.LOGISTIC(number, derivative=false) => {number}", function(){
+      const x = _.random(-50, 50, true);
+      expect(activation.LOGISTIC(x, false)).to.equal(1 / (1 + Math.exp(-x)));
+    })
+    it("activation.LOGISTIC(number, derivative=true) => {number}", function(){
+      const x = _.random(-50, 50, true);
+      expect(activation.LOGISTIC(x, true)).to.equal((Math.exp(-x) / Math.pow(1 + Math.exp(-x), 2)));
+    })
+    it("activation.LOGISTIC(undefined, derivative=true) => {ReferenceError}", function(){
+      expect(() => activation.LOGISTIC(undefined,true)).to.throw(ReferenceError);
+    })
+    it("activation.LOGISTIC(numbers, derivative=false) => {number[]}", function() {
+      const x = Array.from({ length: _.random(1, 5) }, () => _.random(-50, 50,  true));
+      const z = _.map(x, x => 1 / (1 + Math.exp(-x)));
+      expect(activation.LOGISTIC(x, false)).to.eql(z);
+    })
+    it("activation.LOGISTIC(numbers, derivative=true) => {number[]}", function(){
+      const x = Array.from({ length: _.random(1, 5) }, () => _.random(-50, 50,  true));
+      const z = _.map(x, x => Math.exp(-x) / Math.pow(1 + Math.exp(-x), 2));
+      expect(activation.LOGISTIC(x, true)).to.eql(z);
+    })
   })
   describe("activation.TANH()", function(){
     it("activation.TANH() => {ReferenceError}", function(){
