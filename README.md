@@ -264,9 +264,6 @@ And finally, a big thank you to all of you for supporting! 🤗
 # Contributors
 This project exists thanks to all the people who contribute. We can't do it without you! 🙇
 
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
 This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification.
 Contributions of any kind are welcome!
 
