@@ -29,7 +29,7 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
@@ -75,7 +75,7 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
@@ -97,7 +97,7 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
@@ -119,7 +119,7 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
@@ -141,7 +141,7 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
@@ -163,7 +163,7 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
@@ -185,7 +185,7 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
