@@ -341,11 +341,8 @@ Network.prototype = {
     const inputs = [];
     // unsure why not regular forEach
     _.forEachRight(node.connections.in, (connection) => {
-
-      if (!connection) console.error("the connection is undefined wtf");
-
-      if (mutation.SUB_NODE.keep_gates && connection.gate !== null && connection.gate !== node) {
-        gates.push(connection.gate);
+      if (mutation.SUB_NODE.keep_gates && connection.gater !== null && connection.gater !== node) {
+        gates.push(connection.gater);
       }
       inputs.push(connection.from);
       this.disconnect(connection.from, node);
@@ -356,8 +353,8 @@ Network.prototype = {
     const outputs = [];
     // unsure why not regular forEach
     _.forEachRight(node.connections.out, (connection) => {
-      if (mutation.SUB_NODE.keep_gates && connection.gate !== null && connection.gate !== node) {
-        gates.push(connection.gate);
+      if (mutation.SUB_NODE.keep_gates && connection.gater !== null && connection.gater !== node) {
+        gates.push(connection.gater);
       }
       outputs.push(connection.to);
       this.disconnect(node, connection.to);
