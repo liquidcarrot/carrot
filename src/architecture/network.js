@@ -302,7 +302,7 @@ Network.prototype = {
    * myNetwork.ungate(myNetwork.connections[5]);
    */
   ungate: function(connection) {
-    var index = this.gates.indexOf(connection);
+    const index = this.gates.indexOf(connection);
     if (index === -1) {
       throw new Error('This connection is not gated!');
     }
