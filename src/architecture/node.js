@@ -1,7 +1,7 @@
-let _ = require("lodash");
-let methods = require('../methods/methods');
-let Connection = require('./connection');
-let config = require('../config');
+ const _ = require("lodash");
+const methods = require('../methods/methods');
+const Connection = require('./connection');
+const config = require('../config');
 
 /**
 * Creates a new neuron/node
@@ -42,45 +42,51 @@ let config = require('../config');
 * let node = new Node();
 */
 function Node(type) {
-  this.bias = (type === 'input') ? 0 : Math.random() * 0.2 - 0.1;
-  this.squash = methods.activation.LOGISTIC;
-  this.type = type || 'hidden';
+  let self = this;
+  
+  type = type || 'hidden';
+  
+  _.assignIn(self, _.defaults({ type }, {
+    bias: self.type === 'input' ? 0 : Math.random() * 2 - 1,
+    squash: methods.activation.LOGISTIC,
+    activation: 0,
+    state: 0,
+    old: 0,
+    
+    // PURPOSE: Dropout
+    mask: 1,
+    
+    // PURPOSE: Tracking Momentum
+    previousDeltaBias: 0, // ALIAS: delta_bias
+    
+    // PURPOSE: Batch Training
+    totalDeltaBias: 0, // ALIAS: delta_bias
+    connections: {
+      in: [],
+      out: [],
+      gated: [],
+      self: new Connection(this, this, 0),
+      
+      // (BETA)
+      incoming: [],
+      outgoing: []
+    },
+    
+    // Backpropagation Data
+    error: {
+      responsibility: 0,
+      projected: 0,
+      gated: 0
+    },
+    
+    // (BETA)
+    delta_bias: {
+      previous: 0,
+      total: 0,
+      all: []
+    }
+  }));
 
-  this.activation = 0;
-  this.state = 0;
-  this.old = 0;
-
-  // For dropout
-  this.mask = 1;
-
-  // For tracking momentum
-  this.previousDeltaBias = 0;
-
-  // Batch training
-  this.totalDeltaBias = 0;
-
-  // Aliases
-  this.deltabias = {
-    previous: 0,
-    total: 0
-  }
-
-  this.connections = {
-    in: [],
-    out: [],
-    gated: [],
-    self: new Connection(this, this, 0)
-  };
-
-  // Data for backpropagation
-  this.error = {
-    responsibility: 0,
-    projected: 0,
-    gated: 0
-  };
-}
-
-Node.prototype = {
   /**
   * Actives the node.
   *
@@ -103,7 +109,7 @@ Node.prototype = {
   * A.activate(0.5); // 0.5
   * B.activate(); // 0.3244554645
   */
-  activate: function(input, options) {
+  self.activate = function(input, options) {
     let self = this;
 
     // If an input is given, forward it (i.e. act like an input neuron)
@@ -203,7 +209,7 @@ Node.prototype = {
   *
   * node.no_trace_activate(); // 0.4923128591923
   */
-  no_trace_activate: function(input) {
+  self.no_trace_activate = function(input) {
     // Check if an input is given
     if(!_.isNil(input)) {
       if(_.isNumber(input)) {
@@ -277,7 +283,7 @@ Node.prototype = {
   * @see [Regularization Neataptic](https://wagenaartje.github.io/neataptic/docs/methods/regularization/)
   * @see [What is backpropagation | YouTube](https://www.youtube.com/watch?v=Ilg3gGewQ5U)
   */
-  propagate: function(rate, momentum, update, target) {
+  self.propagate = function(rate, momentum, update, target) {
     // TYPE CHECK: rate
     if(!_.isNil(rate)) {
       if(_.isNumber(rate)) {
@@ -420,7 +426,7 @@ Node.prototype = {
   * let A = new Node();
   * A.connect(A); // A now connects to itself
   */
-  connect: function (target, weight) {
+  self.connect = function (target, weight) {
     var connections = [];
     if (typeof target.bias !== 'undefined') { // must be a node!
       if (this.isProjectingTo(target)) {
@@ -474,7 +480,7 @@ Node.prototype = {
   * // A.disconnect(B)  only disconnects A to B, so use
   * A.disconnect(B, true); // or B.disconnect(A, true)
   */
-  disconnect: function (node, twosided) {
+  self.disconnect = function (node, twosided) {
     if (this === node) {
       this.connections.self.weight = 0;
       return;
@@ -515,7 +521,7 @@ Node.prototype = {
   *
   * // Now the weight of the connection from A to B will always be multiplied by the activation of node C.
   */
-  gate: function (connections) {
+  self.gate = function (connections) {
     if (!Array.isArray(connections)) {
       connections = [connections];
     }
@@ -547,7 +553,7 @@ Node.prototype = {
   * // Now ungate those connections
   * C.ungate(connections);
   */
-  ungate: function (connections) {
+  self.ungate = function (connections) {
     if (!Array.isArray(connections)) {
       connections = [connections];
     }
@@ -565,7 +571,7 @@ Node.prototype = {
   /**
   * Clear the context of the node, basically reverting it to a 'new' neuron. Useful for predicting timeseries with LSTM's.
   */
-  clear: function () {
+  self.clear = function () {
     for (var i = 0; i < this.connections.in.length; i++) {
       var connection = this.connections.in[i];
 
@@ -602,7 +608,7 @@ Node.prototype = {
   *
   * A.mutate(methods.mutation.MOD_ACTIVATION, allowable_methods) // node's squash function is now TANH or RELU
   */
-  mutate: function(method) {
+  self.mutate = function(method) {
     if (typeof method === 'undefined') {
       throw new Error('No mutate method given!');
     } else if (!(method.name in methods.mutation)) {
@@ -640,7 +646,7 @@ Node.prototype = {
   * A.isProjectingTo(B); // true
   * A.isProjectingTo(C); // false
   */
-  isProjectingTo: function (node) {
+  self.isProjectingTo = function (node) {
     if (node === this && this.connections.self.weight !== 0) return true;
 
     for (var i = 0; i < this.connections.out.length; i++) {
@@ -670,7 +676,7 @@ Node.prototype = {
   * A.isProjectedBy(C);// false
   * B.isProjectedBy(A); // true
   */
-  isProjectedBy: function (node) {
+  self.isProjectedBy = function (node) {
     if (node === this && this.connections.self.weight !== 0) return true;
 
     for (var i = 0; i < this.connections.in.length; i++) {
@@ -694,7 +700,7 @@ Node.prototype = {
   * let exported = myNode.to_JSON();
   * let imported = myNode.from_JSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
   */
-  to_JSON: function () {
+  self.to_JSON = function () {
     var json = {
       bias: this.bias,
       type: this.type,
@@ -704,7 +710,7 @@ Node.prototype = {
 
     return json;
   }
-};
+}
 
 /**
 * Convert a json object to a node
