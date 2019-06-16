@@ -261,8 +261,17 @@ And finally, a big thank you to all of you for supporting! 🤗
 
 [![Become a Patron](https://c5.patreon.com/external/logo/become_a_patron_button.png)](https://www.patreon.com/liquidcarrot)
 
-## Contributors
+# Contributors
 This project exists thanks to all the people who contribute. We can't do it without you! 🙇
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification.
+Contributions of any kind are welcome!
 
 * [Luis Carbonell](https://luiscarbonell.com)
 * [Christian Echevarria](https://twitter.com/chrisgereina)
