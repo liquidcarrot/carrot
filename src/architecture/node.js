@@ -1,4 +1,4 @@
- const _ = require("lodash");
+const _ = require("lodash");
 const methods = require('../methods/methods');
 const Connection = require('./connection');
 const config = require('../config');
@@ -110,14 +110,12 @@ function Node(type) {
   * B.activate(); // 0.3244554645
   */
   self.activate = function(input, options) {
-    let self = this;
-
     // If an input is given, forward it (i.e. act like an input neuron)
     if(!_.isNil(input)) {
       if(_.isNumber(input)) {
         if(_.isFinite(input)) {
-          this.activation = input;
-          return this.activation;
+          self.activation = input;
+          return self.activation;
         } else {
           throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
         }
@@ -125,72 +123,69 @@ function Node(type) {
         throw new TypeError("Parameter \"input\": Expected a \"number\", got a " + typeof input);
       }
     } else if(self.type === "input") {
-      this.activation = 0;
-      return this.activation;
+      self.activation = 0;
+      return self.activation;
     }
+    
+    // Update traces
+    const nodes = [];
+    const influences = [];
 
-    this.old = this.state;
+    self.old = self.state;
 
     // All activation sources coming from the node itself
-    this.state = this.connections.self.gain * this.connections.self.weight * this.state + this.bias;
+    self.state = self.connections.self.gain * self.connections.self.weight * self.state + self.bias;
 
-    // Activation sources coming from connections
-    var i;
-    for (i = 0; i < this.connections.in.length; i++) {
-      const connection = this.connections.in[i];
-      this.state += connection.from.activation * connection.weight * connection.gain;
-    }
+    /**
+    // var i;
+    // for(let i = 0; i < self.connections.in.length; i++) {
+    //   const connection = self.connections.in[i];
+    //   self.state += connection.from.activation * connection.weight * connection.gain;
+    // }
+    */
+    
+    // Activate (from incoming connections)
+    _.each(self.connections.in, function(connection, index) {
+      self.state += connection.from.activation * connection.weight * connection.gain;
+    })
 
-    // Squash the values received
-    this.activation = this.squash(this.state) * this.mask;
-    this.derivative = this.squash(this.state, true);
+    // Squash Activation
+    self.activation = self.squash(self.state) * self.mask;
+    self.derivative = self.squash(self.state, true);
 
-    // Update traces
-    var nodes = [];
-    var influences = [];
-
-    for (i = 0; i < this.connections.gated.length; i++) {
-      let conn = this.connections.gated[i];
-      let node = conn.to;
-
-      let index = nodes.indexOf(node);
-      if (index > -1) {
-        influences[index] += conn.weight * conn.from.activation;
-      } else {
-        nodes.push(node);
-        influences.push(conn.weight * conn.from.activation +
-          (node.connections.self.gater === this ? node.old : 0));
+    // Adjusting `gain` (to gated connections)
+    _.each(self.connections.gated, function(connection) {
+      const index = nodes.indexOf(connection.to);
+      
+      if(index > -1) influences[index] += connection.weight * connection.from.activation;
+      else {
+        nodes.push(connection.to);
+        influences.push(connection.weight * connection.from.activation + (connection.to.connections.self.gater === this ? connection.to.old : 0));
       }
+      
+      // Adjust gain
+      connection.gain = self.activation;
+    })
 
-      // Adjust the gain to this nodes' activation
-      conn.gain = this.activation;
-    }
-
-    for (i = 0; i < this.connections.in.length; i++) {
-      let connection = this.connections.in[i];
-
-      // Elegibility trace
-      connection.elegibility = this.connections.self.gain * this.connections.self.weight * connection.elegibility + connection.from.activation * connection.gain;
-
-      // Extended trace
-      for (var j = 0; j < nodes.length; j++) {
-        let node = nodes[j];
-        let influence = influences[j];
-
-        let index = connection.xtrace.nodes.indexOf(node);
-
-        if (index > -1) {
-          connection.xtrace.values[index] = node.connections.self.gain * node.connections.self.weight *
-          connection.xtrace.values[index] + this.derivative * connection.elegibility * influence;
-        } else {
-          // Does not exist there yet, might be through mutation
+    // Forwarding `xtrace` (to incoming connections)
+    _.each(self.connections.in, function(connection) {
+      // Trace Elegibility
+      connection.elegibility = self.connections.self.gain * self.connections.self.weight * connection.elegibility + connection.from.activation * connection.gain;
+      
+      _.times(nodes.length, function(i) {
+        const [ node, influence ]  = [nodes[i], influences[i]];
+        
+        const index = connection.xtrace.nodes.indexOf(node);
+        
+        if(index > -1) connection.xtrace.values[index] = node.connections.self.gain * node.connections.self.weight * connection.xtrace.values[index] + self.derivative * connection.elegibility * influence;
+        else {
           connection.xtrace.nodes.push(node);
           connection.xtrace.values.push(this.derivative * connection.elegibility * influence);
         }
-      }
-    }
+      })
+    })
 
-    return this.activation;
+    return self.activation;
   },
 
   /**
