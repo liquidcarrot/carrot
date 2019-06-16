@@ -42,7 +42,7 @@ const activation = {
   LOGISTIC: function (x, derivate) {
     if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
-    const f = derivate ? (x) => Math.exp(-x) / Math.pow(1 + Math.exp(-x), 2) : (x) => 1 / (1 + Math.exp(-x));
+    const f = derivate ? (x) => Math.exp(-x) / ((1 + Math.exp(-x)) * (1 + Math.exp(-x))) : (x) => 1 / (1 + Math.exp(-x));
     
     return _.isArray(x) ? _.map(x, f) : f(x);
   },
@@ -64,7 +64,7 @@ const activation = {
   TANH: function (x, derivate) {
     if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
-    const f = derivate ? (x) => 1 - Math.pow(Math.tanh(x), 2) : (x) => Math.tanh(x)
+    const f = derivate ? (x) => 1 - (Math.tanh(x) * Math.tanh(x)) : (x) => Math.tanh(x)
     
     return _.isArray(x) ? _.map(x, f) : f(x);
   },
@@ -154,7 +154,7 @@ const activation = {
   SOFTSIGN: function (x, derivate) {
     if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
-    const f = derivate ? (x) => x / Math.pow(1 + Math.abs(x), 2) : (x) => x / 1 + Math.abs(x);
+    const f = derivate ? (x) => x / ((1 + Math.abs(x)) * (1 + Math.abs(x))) : (x) => x / 1 + Math.abs(x);
     
     return _.isArray(x) ? _.map(x, f) : f(x);
   },
@@ -198,7 +198,7 @@ const activation = {
   GAUSSIAN: function (x, derivate) {
     if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
-    const f = derivate ? (x) => -2 * x * Math.exp(-Math.pow(x, 2)) : (x) => Math.exp(-Math.pow(x, 2));
+    const f = derivate ? (x) => -2 * x * Math.exp(-(x * x)) : (x) => Math.exp(-(x * x));
     
     return _.isArray(x) ? _.map(x, f) : f(x);
   },
@@ -220,7 +220,7 @@ const activation = {
   BENT_IDENTITY: function (x, derivate) {
     if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
-    const f = derivate ? (x) => x / (2 * Math.sqrt(Math.pow(x, 2) + 1)) + 1 : (x) => (Math.sqrt(Math.pow(x, 2) + 1) - 1) / 2 + x;
+    const f = derivate ? (x) => x / (2 * Math.sqrt((x * x) + 1)) + 1 : (x) => (Math.sqrt((x * x) + 1) - 1) / 2 + x;
     
     return _.isArray(x) ? _.map(x, f) : f(x);
   },
@@ -264,7 +264,7 @@ const activation = {
   BIPOLAR_SIGMOID: function (x, derivate) {
     if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
-    const f = derivate ? (x) => (2 * Math.exp(-x)) / Math.pow(1 + Math.exp(-x), 2) : (x) => 2 / (1 + Math.exp(-x)) - 1;
+    const f = derivate ? (x) => (2 * Math.exp(-x)) / ((1 + Math.exp(-x)) * (1 + Math.exp(-x))) : (x) => 2 / (1 + Math.exp(-x)) - 1;
     
     return _.isArray(x) ? _.map(x, f) : f(x);
   },
