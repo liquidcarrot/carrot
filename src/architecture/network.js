@@ -91,20 +91,20 @@ Network.prototype = {
    * myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
   activate: function(input, training) {
-    let output = [];
+    const output = [];
 
     // Activate nodes chronologically
-    for(let i = 0; i < this.nodes.length; i++) {
-      if (this.nodes[i].type === 'input') {
-        this.nodes[i].activate(input[i]);
-      } else if (this.nodes[i].type === 'output') {
-        var activation = this.nodes[i].activate();
-        output.push(activation);
+    _.times(this.nodes.length, (node_index) => {
+      if (this.nodes[node_index].type === 'input') {
+        this.nodes[node_index].activate(input[node_index]);
+      } else if (this.nodes[node_index].type === 'output') {
+        const activation_result = this.nodes[node_index].activate();
+        output.push(activation_result);
       } else {
-        if (training) this.nodes[i].mask = Math.random() < this.dropout ? 0 : 1;
-        this.nodes[i].activate();
+        if (training) this.nodes[node_index].mask = Math.random() < this.dropout ? 0 : 1;
+        this.nodes[node_index].activate();
       }
-    }
+    });
 
     return output;
   },
