@@ -187,8 +187,8 @@ Network.prototype = {
   /**
    * Clear the context of the network
    */
-  clear: function() {
-    for (var i = 0; i < this.nodes.length; i++) {
+  clear: function clear() {
+    for (let i = 0; i < this.nodes.length; i++) {
       this.nodes[i].clear();
     }
   },
