@@ -175,12 +175,12 @@ Network.prototype = {
     // Propagate output nodes
     var i;
     for (i = this.nodes.length - 1; i >= this.nodes.length - this.output; i--) {
-      this.nodes[i].propagate(rate, momentum, update, target[--targetIndex]);
+      this.nodes[i].propagate(target[--targetIndex], { rate, momentum, update });
     }
 
     // Propagate hidden and input nodes
     for (i = this.nodes.length - this.output - 1; i >= this.input; i--) {
-      this.nodes[i].propagate(rate, momentum, update);
+      this.nodes[i].propagate({ rate, momentum, update });
     }
   },
 

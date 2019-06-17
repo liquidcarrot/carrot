@@ -32,15 +32,15 @@ function Connection (from, to, weight, options) {
     gain: 1,
     gater: null,
     elegibility: 0,
-    previousDeltaWeight: 0, // ALIAS: deltas.previous
-    totalDeltaWeight: 0, // ALIAS: deltas.total
+    previousDeltaWeight: 0, // ALIAS: deltaweight.previous
+    totalDeltaWeight: 0, // ALIAS: deltaweight.total
     xtrace: {
       nodes: [],
       values: []
     },
 
     // (BETA)
-    deltas: {
+    delta_weights: {
       previous: 0,
       total: 0,
       all: [],
