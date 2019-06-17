@@ -1359,13 +1359,14 @@ Network.prototype = {
     const lines = [];
     const functions = [];
 
+    // get input nodes
     for (let i = 0; i < this.input_size; i++) {
       var node = this.nodes[i];
       activations.push(node.activation);
       states.push(node.state);
     }
 
-    lines.push('for(var i = 0; i < input.length; i++) A[i] = input[i];');
+    lines.push(`for(var i = 0; i < input.length; i++) A[i] = input[i];`);
 
     // So we don't have to use expensive .indexOf()
     for (i = 0; i < this.nodes.length; i++) {
@@ -1377,44 +1378,45 @@ Network.prototype = {
       activations.push(node.activation);
       states.push(node.state);
 
-      var functionIndex = present.indexOf(node.squash.name);
+      const function_index = present.indexOf(node.squash.name);
 
-      if (functionIndex === -1) {
-        functionIndex = present.length;
+      if (function_index === -1) {
+        function_index = present.length;
         present.push(node.squash.name);
         functions.push(node.squash.toString());
       }
 
-      var incoming = [];
+      const incoming = [];
       for (var j = 0; j < node.connections.in.length; j++) {
-        var conn = node.connections.in[j];
-        var computation = `A[${conn.from.index}] * ${conn.weight}`;
+        const connection = node.connections.in[j];
+        let computation = `A[${connection.from.index}] * ${connection.weight}`;
 
-        if (conn.gater != null) {
-          computation += ` * A[${conn.gater.index}]`;
+        if (connection.gater != null) {
+          computation += ` * A[${connection.gater.index}]`;
         }
 
         incoming.push(computation);
       }
 
       if (node.connections.self.weight) {
-        let conn = node.connections.self;
-        let computation = `S[${i}] * ${conn.weight}`;
+        const connection = node.connections.self;
+        let computation = `S[${i}] * ${connection.weight}`;
 
-        if (conn.gater != null) {
-          computation += ` * A[${conn.gater.index}]`;
+        if (connection.gater != null) {
+          computation += ` * A[${connection.gater.index}]`;
         }
 
         incoming.push(computation);
       }
 
-      var line1 = `S[${i}] = ${incoming.join(' + ')} + ${node.bias};`;
-      var line2 = `A[${i}] = F[${functionIndex}](S[${i}])${!node.mask ? ' * ' + node.mask : ''};`;
+      // the number indicates the order of execution
+      const line1 = `S[${i}] = ${incoming.join(' + ')} + ${node.bias};`;
+      const line2 = `A[${i}] = F[${function_index}](S[${i}])${!node.mask ? ' * ' + node.mask : ''};`;
       lines.push(line1);
       lines.push(line2);
     }
 
-    var output = [];
+    let output = [];
     for (i = this.nodes.length - this.output_size; i < this.nodes.length; i++) {
       output.push(`A[${i}]`);
     }
@@ -1422,7 +1424,7 @@ Network.prototype = {
     output = `return [${output.join(',')}];`;
     lines.push(output);
 
-    var total = '';
+    let total = '';
     total += `var F = [${functions.toString()}];\r\n`;
     total += `var A = [${activations.toString()}];\r\n`;
     total += `var S = [${states.toString()}];\r\n`;
