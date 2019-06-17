@@ -69,7 +69,8 @@ function Node(type) {
       
       // (BETA)
       incoming: [],
-      outgoing: []
+      outgoing: [],
+      gates: []
     },
     
     // Backpropagation Data
@@ -112,20 +113,9 @@ function Node(type) {
   self.activate = function(input, options) {
     // If an input is given, forward it (i.e. act like an input neuron)
     if(!_.isNil(input)) {
-      if(_.isNumber(input)) {
-        if(_.isFinite(input)) {
-          self.activation = input;
-          return self.activation;
-        } else {
-          throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
-        }
-      } else {
-        throw new TypeError("Parameter \"input\": Expected a \"number\", got a " + typeof input);
-      }
-    } else if(self.type === "input") {
-      self.activation = 0;
-      return self.activation;
-    }
+      if(_.isFinite(input)) return self.activation = input;
+      else throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
+    } else if(self.type === "input") return self.activation = 0;
     
     // Update traces
     const nodes = [];
@@ -133,16 +123,8 @@ function Node(type) {
 
     self.old = self.state;
 
-    // All activation sources coming from the node itself
+    // Activate (from self)
     self.state = self.connections.self.gain * self.connections.self.weight * self.state + self.bias;
-
-    /**
-    // var i;
-    // for(let i = 0; i < self.connections.in.length; i++) {
-    //   const connection = self.connections.in[i];
-    //   self.state += connection.from.activation * connection.weight * connection.gain;
-    // }
-    */
     
     // Activate (from incoming connections)
     _.each(self.connections.in, function(connection, index) {
@@ -207,36 +189,26 @@ function Node(type) {
   self.no_trace_activate = function(input) {
     // Check if an input is given
     if(!_.isNil(input)) {
-      if(_.isNumber(input)) {
-        if(_.isFinite(input)) {
-          this.activation = input;
-          return this.activation;
-        } else {
-          throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
-        }
-      } else {
-        throw new TypeError("Parameter \"input\": Expected a \"number\", got a " + typeof input);
-      }
-    }
+      if(_.isFinite(input)) return self.activation = input;
+      else throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
+    } else if(self.type === "input") return self.activation = 0;
 
-    // All activation sources coming from the node itself
-    this.state = this.connections.self.gain * this.connections.self.weight * this.state + this.bias;
-
-    // Activation sources coming from connections
-    var i;
-    for (i = 0; i < this.connections.in.length; i++) {
-      var connection = this.connections.in[i];
-      this.state += connection.from.activation * connection.weight * connection.gain;
-    }
+    // Activate (from self)
+    self.state = self.connections.self.gain * self.connections.self.weight * self.state + self.bias;
+    
+    // Activate (from incoming connections)
+    _.each(self.connections.in, function(connection, index) {
+      self.state += connection.from.activation * connection.weight * connection.gain;
+    })
 
     // Squash the values received
-    this.activation = this.squash(this.state);
+    self.activation = self.squash(self.state);
 
-    for (i = 0; i < this.connections.gated.length; i++) {
-      this.connections.gated[i].gain = this.activation;
-    }
+    _.each(self.connections.gated, function(gate) {
+      gate.gain = self.activation;
+    })
 
-    return this.activation;
+    return self.activation;
   },
 
   /**
@@ -246,10 +218,11 @@ function Node(type) {
   *
   * If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
   *
-  * @param {number} rate=0.3 [Learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
-  * @param {number} momentum=0 [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one.
-  * @param {boolean} update=true When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
   * @param {number} target The target value
+  * @param {Object} options
+  * @param {number} [options.rate=0.3] [Learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
+  * @param {number} [options.momentum=0] [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one.
+  * @param {boolean} [options.update=true] When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
   *
   * @example
   * let { Node } = require("@liquid-carrot/carrot");
@@ -278,120 +251,70 @@ function Node(type) {
   * @see [Regularization Neataptic](https://wagenaartje.github.io/neataptic/docs/methods/regularization/)
   * @see [What is backpropagation | YouTube](https://www.youtube.com/watch?v=Ilg3gGewQ5U)
   */
-  self.propagate = function(rate, momentum, update, target) {
-    // TYPE CHECK: rate
-    if(!_.isNil(rate)) {
-      if(_.isNumber(rate)) {
-        if(!_.isFinite(rate)) {
-          throw new TypeError("Parameter \"rate\": " + rate + " is not a valid \"number\".");
-        }
-      } else {
-        throw new TypeError("Parameter \"rate\": Expected a \"number\", got a " + typeof rate);
-      }
-
+  self.propagate = function(target, options) {
+    // node.propagate(options)
+    if(!options && _.isPlainObject(target)) {
+      options = target;
+      target = undefined;
     }
-    // TYPE CHECK: momentum
-    if(!_.isNil(momentum)) {
-      if(_.isNumber(momentum)) {
-        if(!_.isFinite(momentum)) {
-          throw new TypeError("Parameter \"momentum\": " + momentum + " is not a valid \"number\".");
-        }
-      } else {
-        throw new TypeError("Parameter \"momentum\": Expected a \"number\", got a " + typeof momentum);
-      }
-    }
-    // TYPE CHECK: update
-    if(!_.isNil(update)) {
-      if(!_.isBoolean(update)) {
-        throw new TypeError("Parameter \"update\": Expected a \"boolean\", got a " + typeof update);
-      }
-    }
-    // TYPE CHECK: target
-    if(!_.isNil(target)) {
-      if(_.isNumber(target)) {
-        if(!_.isFinite(target)) {
-          throw new TypeError("Parameter \"target\": " + target + " is not a valid \"number\".");
-        }
-      } else {
-        throw new TypeError("Parameter \"target\": Expected a \"number\", got a " + typeof target);
-      }
-    }
+    
+    options = _.defaults(options, {
+      momentum: 0,
+      rate: 0.3,
+      update: true
+    })
 
+    // Error Aggregator
+    let error = 0;
 
-    momentum = momentum || 0;
-    rate = rate || 0.3;
-
-    // Error accumulator
-    var error = 0;
-
-    // Output nodes get their error from the enviroment
-    if (this.type === 'output') {
-      this.error.responsibility = this.error.projected = target - this.activation;
-    } else { // the rest of the nodes compute their error responsibilities by backpropagation
-      // error responsibilities from all the connections projected from this node
+    // Output Node Error (from environment)
+    if(self.type === 'output') self.error.responsibility = self.error.projected = target - self.activation;
+    // Hidden/Input Node Error (from backpropagation)
+    else {
       var i;
-      for (i = 0; i < this.connections.out.length; i++) {
-        let connection = this.connections.out[i];
-        let node = connection.to;
-        // Eq. 21
-        error += node.error.responsibility * connection.weight * connection.gain;
-      }
-
-      // Projected error responsibility
-      this.error.projected = this.derivative * error;
-
-      // Error responsibilities from all connections gated by this neuron
-      error = 0;
-
-      for (i = 0; i < this.connections.gated.length; i++) {
-        let conn = this.connections.gated[i];
-        let node = conn.to;
-        let influence = node.connections.self.gater === this ? node.old : 0;
-
-        influence += conn.weight * conn.from.activation;
-        error += node.error.responsibility * influence;
-      }
-
-      // Gated error responsibility
-      this.error.gated = this.derivative * error;
-
-      // Error responsibility
-      this.error.responsibility = this.error.projected + this.error.gated;
+      
+      // Projected Error Responsibility (from outgoing connections)
+      self.error.projected = self.derivative * self.connections.out.reduce(function(error, connection) {
+        return error += connection.to.error.responsibility * connection.weight * connection.gain;
+      }, 0);
+      
+      // Gated Error Responsibility (from gated connections)
+      self.error.gated = self.derivative * self.connections.gated.reduce(function(error, connection) {
+        const node = connection.to;
+        const influence = (node.connections.self.gater === self ? node.old : 0) + connection.weight * connection.from.activation;
+        
+        return error += node.error.reponsibility * influence;
+      }, 0);
+      
+      // Error Responsibility
+      self.error.responsibility = self.error.projected + self.error.gated;
     }
 
-    if (this.type === 'constant') return;
+    if(self.type === 'constant') return;
 
-    // Adjust all the node's incoming connections
-    for (i = 0; i < this.connections.in.length; i++) {
-      let connection = this.connections.in[i];
-
-      let gradient = this.error.projected * connection.elegibility;
-
-      for (var j = 0; j < connection.xtrace.nodes.length; j++) {
-        let node = connection.xtrace.nodes[j];
-        let value = connection.xtrace.values[j];
-        gradient += node.error.responsibility * value;
+    // Adjust Incoming Connections
+    self.connections.in.forEach(function(connection) {
+      const gradient = connection.xtrace.nodes.reduce(function(gradient, node, index) {
+        return gradient += node.error.responsibility * connection.xtrace.values[index];
+      }, self.error.projected * connection.elegibility);
+      
+      // Adjust Weight ()
+      connection.totalDeltaWeight += options.rate * gradient * self.mask; // (BETA): connection.delta_weights.total += delta_weight;
+      if(options.update) {
+        connection.totalDeltaWeight += options.momentum * connection.previousDeltaWeight; // (BETA): connection.delta_weights.total += options.momentum * connection.delta_weights.previous;
+        connection.weight += connection.totalDeltaWeight; // (BETA): connection.weight += connection.delta_weights.total;
+        connection.previousDeltaWeight = connection.totalDeltaWeight; // (BETA): connection.delta_weights.previous += connection.delta_weights.total;
+        connection.totalDeltaWeight = 0; // (BETA): connection.delta_weights.total
       }
+    })
 
-      // Adjust weight
-      let deltaWeight = rate * gradient * this.mask;
-      connection.totalDeltaWeight += deltaWeight;
-      if (update) {
-        connection.totalDeltaWeight += momentum * connection.previousDeltaWeight;
-        connection.weight += connection.totalDeltaWeight;
-        connection.previousDeltaWeight = connection.totalDeltaWeight;
-        connection.totalDeltaWeight = 0;
-      }
-    }
-
-    // Adjust bias
-    var deltaBias = rate * this.error.responsibility;
-    this.totalDeltaBias += deltaBias;
-    if (update) {
-      this.totalDeltaBias += momentum * this.previousDeltaBias;
-      this.bias += this.totalDeltaBias;
-      this.previousDeltaBias = this.totalDeltaBias;
-      this.totalDeltaBias = 0;
+    // Adjust Bias
+    self.totalDeltaBias += options.rate * self.error.responsibility;
+    if(options.update) {
+      self.totalDeltaBias += options.momentum * self.previousDeltaBias;
+      self.bias += self.totalDeltaBias;
+      self.previousDeltaBias = self.totalDeltaBias;
+      self.totalDeltaBias = 0;
     }
   },
 
