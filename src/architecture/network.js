@@ -815,7 +815,7 @@ Network.prototype = {
       current_training_rate = options.rate_policy(base_training_rate, iteration_number);
 
       // run on training epoch
-      const train_error = this._train_set(
+      const train_error = this._train_one_epoch(
         train_set, options.batch_size, current_training_rate, options.momentum, options.cost);
       if (options.clear) this.clear();
       // Checks if cross validation is enabled
@@ -869,10 +869,10 @@ Network.prototype = {
    * @private
    *
    * @param {Array<{input:number[], output: number[]}>} set
-   * @param {number} batchSize
+   * @param {number} batch_size
    * @param {number} current_training_rate
    * @param {number} momentum
-   * @param {cost} costFunction
+   * @param {cost} cost_function
    *
    * @returns {number}
    *
@@ -881,21 +881,21 @@ Network.prototype = {
    *
    * let example = ""
    */
-  _train_set: function _train_set(set, batchSize, current_training_rate, momentum, costFunction) {
-
-    var errorSum = 0;
+  _train_one_epoch: function _train_one_epoch(set, batch_size, training_rate, momentum, cost_function) {
+    let error_sum = 0;
     for (var i = 0; i < set.length; i++) {
-      var input = set[i].input;
-      var target = set[i].output;
+      const input = set[i].input;
+      const correct_output = set[i].output;
 
-      var update = !!((i + 1) % batchSize === 0 || (i + 1) === set.length);
+      // the !! turns to boolean
+      const update = !!((i + 1) % batch_size === 0 || (i + 1) === set.length);
 
-      var output = this.activate(input, true);
-      this.propagate(current_training_rate, momentum, update, target);
+      const output = this.activate(input, true);
+      this.propagate(training_rate, momentum, update, correct_output);
 
-      errorSum += costFunction(target, output);
+      error_sum += cost_function(correct_output, output);
     }
-    return errorSum / set.length;
+    return error_sum / set.length;
   },
 
   /**
