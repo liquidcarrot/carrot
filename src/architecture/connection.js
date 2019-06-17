@@ -8,6 +8,7 @@ const _ = require("lodash");
 * @param {Node} from Connection origin node (neuron)
 * @param {Node} to Connection destination node (neuron)
 * @param {number} [weight=random] Weight of the connection
+* @param {Object} [options]
 *
 * @prop {Node} from Connection origin node (neuron)
 * @prop {Node} to Connection destination node (neuron)
