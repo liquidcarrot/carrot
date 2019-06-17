@@ -246,10 +246,10 @@ Network.prototype = {
    */
   disconnect: function disconnect(from, to) {
     // Delete the connection in the network's connection array
-    var connections = from === to ? this.selfconns : this.connections;
+    const connections = from === to ? this.selfconns : this.connections;
 
-    for (var i = 0; i < connections.length; i++) {
-      var connection = connections[i];
+    for (let i = 0; i < connections.length; i++) {
+      const connection = connections[i];
       if (connection.from === from && connection.to === to) {
         if (connection.gater !== null) this.ungate(connection);
         connections.splice(i, 1);
