@@ -1348,14 +1348,13 @@ Network.prototype = {
    * activate([0,1]);// [0.24775789809]
    */
   standalone: function standalone() {
-    var present = [];
-    var activations = [];
-    var states = [];
-    var lines = [];
-    var functions = [];
+    const present = [];
+    const activations = [];
+    const states = [];
+    const lines = [];
+    const functions = [];
 
-    var i;
-    for (i = 0; i < this.input; i++) {
+    for (let i = 0; i < this.input; i++) {
       var node = this.nodes[i];
       activations.push(node.activation);
       states.push(node.state);
