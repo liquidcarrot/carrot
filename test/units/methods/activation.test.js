@@ -72,7 +72,7 @@ describe("activation", function(){
       expect(activation.IDENTITY(x, true)).to.equal(1);
     })
     it("activation.IDENTITY(undefined, derivate=true) => {ReferenceError}",function(){
-      expect(() => activation.IDENTITY(undefine, true)).to.throw(ReferenceError);
+      expect(() => activation.IDENTITY(undefined, true)).to.throw(ReferenceError);
     })
     it("activation.IDENTITY(numbers, derivate=false) => {number[]}", function(){
       const x = Array.from({ length: _.random(1, 5) }, () => _.random(-50, 50,  true));
