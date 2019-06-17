@@ -37,13 +37,16 @@ const mutation = methods.mutation;
 * // and a multi-layered network
 * let myNetwork = new architect.Perceptron(5, 20, 10, 5, 1);
 */
-function Network(input, output) {
-  if (typeof input === 'undefined' || typeof output === 'undefined') {
+function Network(input_size, output_size) {
+  if (typeof input_size === 'undefined' || typeof output_size === 'undefined') {
     throw new Error('No input or output size given');
   }
   // *IDEA*: Store input & output nodes in arrays accessible by this.input and this.output instead of just storing the number
-  this.input = input;
-  this.output = output;
+  this.input_size = input_size;
+  this.output_size = output_size;
+  // backwards compatibility
+  this.input = input_size;
+  this.output = output_size;
 
   // Store all the node and connection genes
   this.nodes = []; // Stored in activation order
@@ -56,16 +59,16 @@ function Network(input, output) {
 
   // Create input and output nodes
   var i;
-  for (i = 0; i < this.input + this.output; i++) {
-    var type = i < this.input ? 'input' : 'output';
+  for (i = 0; i < this.input_size + this.output_size; i++) {
+    var type = i < this.input_size ? 'input' : 'output';
     this.nodes.push(new Node(type));
   }
 
   // Connect input nodes with output nodes directly
-  for (i = 0; i < this.input; i++) {
-    for (var j = this.input; j < this.output + this.input; j++) {
+  for (i = 0; i < this.input_size; i++) {
+    for (var j = this.input_size; j < this.output_size + this.input_size; j++) {
       // https://stats.stackexchange.com/a/248040/147931
-      var weight = Math.random() * this.input * Math.sqrt(2 / this.input);
+      var weight = Math.random() * this.input_size * Math.sqrt(2 / this.input_size);
       this.connect(this.nodes[i], this.nodes[j], weight);
     }
   }
@@ -166,7 +169,8 @@ Network.prototype = {
    * }
    */
   propagate: function propagate(rate, momentum, update, target) {
-    if (typeof target === 'undefined' || target.length !== this.output) {
+    // the or in the if is for backward compatibility
+    if (typeof target === 'undefined' || target.length !== (this.output_size || this.output)) {
       throw new Error('Output target length should match network output length');
     }
 
@@ -174,12 +178,12 @@ Network.prototype = {
 
     // Propagate output nodes
     var i;
-    for (i = this.nodes.length - 1; i >= this.nodes.length - this.output; i--) {
+    for (i = this.nodes.length - 1; i >= this.nodes.length - this.output_size; i--) {
       this.nodes[i].propagate(target[--targetIndex], { rate, momentum, update });
     }
 
     // Propagate hidden and input nodes
-    for (i = this.nodes.length - this.output - 1; i >= this.input; i--) {
+    for (i = this.nodes.length - this.output_size - 1; i >= this.input_size; i--) {
       this.nodes[i].propagate({ rate, momentum, update });
     }
   },
@@ -416,9 +420,9 @@ Network.prototype = {
         candidates = _.filter(this.nodes, function(node) { return (node.type !== 'output' && node.type !== 'input') }) // assumes input & output node 'type' has been set
         return candidates.length ? candidates : false
       case mutation.ADD_CONN:
-        for (let i = 0; i < this.nodes.length - this.output; i++) {
+        for (let i = 0; i < this.nodes.length - this.output_size; i++) {
           const node1 = this.nodes[i]
-          for (let j = Math.max(i + 1, this.input); j < this.nodes.length; j++) {
+          for (let j = Math.max(i + 1, this.input_size); j < this.nodes.length; j++) {
             const node2 = this.nodes[j]
             if (!node1.isProjectingTo(node2)) candidates.push([node1, node2])
           }
@@ -433,10 +437,10 @@ Network.prototype = {
         })
 
         return candidates.length ? candidates : false
-      case mutation.MOD_ACTIVATION: return (method.mutateOutput || this.nodes.length > this.input + this.output) ? [] : false
+      case mutation.MOD_ACTIVATION: return (method.mutateOutput || this.nodes.length > this.input_size + this.output_size) ? [] : false
       case mutation.ADD_SELF_CONN:
 
-        for (let i = this.input; i < this.nodes.length; i++) {
+        for (let i = this.input_size; i < this.nodes.length; i++) {
           const node = this.nodes[i]
           if (node.connections.self.weight === 0) candidates.push(node)
         }
@@ -451,9 +455,9 @@ Network.prototype = {
         return candidates.length ? candidates : false
       case mutation.SUB_GATE: return (this.gates.length > 0) ? [] : false
       case mutation.ADD_BACK_CONN:
-        for (let i = this.input; i < this.nodes.length; i++) {
+        for (let i = this.input_size; i < this.nodes.length; i++) {
           const node1 = this.nodes[i]
-          for (let j = this.input; j < i; j++) {
+          for (let j = this.input_size; j < i; j++) {
             const node2 = this.nodes[j]
             if (!node1.isProjectingTo(node2)) candidates.push([node1, node2])
           }
@@ -469,7 +473,7 @@ Network.prototype = {
         return candidates.length ? candidates : false
       case mutation.SWAP_NODES:
         // break out early if there aren't enough nodes to swap
-        if((this.nodes.length - 1) - this.input - (method.mutateOutput ? 0 : this.output) < 2) return false;
+        if((this.nodes.length - 1) - this.input_size - (method.mutateOutput ? 0 : this.output_size) < 2) return false;
 
         const filterFn = (method.mutateOutput) ? (node) => (node.type !== 'input') : (node) => (node.type !== 'input' && node.type !== 'output')
 
@@ -509,7 +513,7 @@ Network.prototype = {
         if(mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION);
 
         // Place it in this.nodes
-        const minBound = Math.min(toIndex, this.nodes.length - this.output);
+        const minBound = Math.min(toIndex, this.nodes.length - this.output_size);
         this.nodes.splice(minBound, 0, node);
 
         // Now create two new connections
@@ -556,7 +560,7 @@ Network.prototype = {
       }
       case mutation.MOD_BIAS: {
         // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
-        this.nodes[Math.floor(Math.random() * (this.nodes.length - this.input) + this.input)].mutate(method);
+        this.nodes[Math.floor(Math.random() * (this.nodes.length - this.input_size) + this.input_size)].mutate(method);
 
         break;
       }
@@ -590,7 +594,7 @@ Network.prototype = {
         const possible = this.possible(method)
         if(possible) {
           // Select a random gater node and connection, can't be gated by input
-          const node = this.nodes[Math.floor(Math.random() * (this.nodes.length - this.input) + this.input)];
+          const node = this.nodes[Math.floor(Math.random() * (this.nodes.length - this.input_size) + this.input_size)];
           const conn = possible[Math.floor(Math.random() * possible.length)];
 
           this.gate(node, conn); // Gate the connection with the node
@@ -726,7 +730,8 @@ Network.prototype = {
    *
    */
   train: function train(data, options) {
-    if (data[0].input.length !== this.input || data[0].output.length !== this.output) {
+    // the or in the size is for backward compatibility
+    if (data[0].input.length !== (this.input_size || this.input) || data[0].output.length !== (this.output_size || this.output)) {
       throw new Error(`Dataset input/output size should be same as network input/output size!`);
     }
 
@@ -964,7 +969,7 @@ Network.prototype = {
       var node = this.nodes[i];
 
       if (node.type === 'input') {
-        if (this.input === 1) {
+        if (this.input_size === 1) {
           json.constraints[0].offsets.push({
             node: i,
             offset: 0
@@ -972,7 +977,7 @@ Network.prototype = {
         } else {
           json.constraints[0].offsets.push({
             node: i,
-            offset: 0.8 * width / (this.input - 1) * input++
+            offset: 0.8 * width / (this.input_size - 1) * input++
           });
         }
         json.constraints[1].offsets.push({
@@ -980,7 +985,7 @@ Network.prototype = {
           offset: 0
         });
       } else if (node.type === 'output') {
-        if (this.output === 1) {
+        if (this.output_size === 1) {
           json.constraints[0].offsets.push({
             node: i,
             offset: 0
@@ -988,7 +993,7 @@ Network.prototype = {
         } else {
           json.constraints[0].offsets.push({
             node: i,
-            offset: 0.8 * width / (this.output - 1) * output++
+            offset: 0.8 * width / (this.output_size - 1) * output++
           });
         }
         json.constraints[1].offsets.push({
@@ -1059,8 +1064,8 @@ Network.prototype = {
     var json = {
       nodes: [],
       connections: [],
-      input: this.input,
-      output: this.output,
+      input: this.input_size,
+      output: this.output_size,
       dropout: this.dropout
     };
 
@@ -1189,7 +1194,7 @@ Network.prototype = {
    * execute();
    */
   evolve: async function(set, options) {
-    if(set[0].input.length !== this.input || set[0].output.length !== this.output) {
+    if(set[0].input.length !== this.input_size || set[0].output.length !== this.output_size) {
       throw new Error('Dataset input/output size should be same as network input/output size!');
     }
 
@@ -1280,8 +1285,8 @@ Network.prototype = {
 
     // Intialise the NEAT instance
     options.network = this;
-    options.input = this.input;
-    options.output = this.output;
+    options.input = this.input_size;
+    options.output = this.output_size;
     var neat = new Neat(set, options);
 
     var error = -Infinity;
@@ -1354,7 +1359,7 @@ Network.prototype = {
     const lines = [];
     const functions = [];
 
-    for (let i = 0; i < this.input; i++) {
+    for (let i = 0; i < this.input_size; i++) {
       var node = this.nodes[i];
       activations.push(node.activation);
       states.push(node.state);
@@ -1367,7 +1372,7 @@ Network.prototype = {
       this.nodes[i].index = i;
     }
 
-    for (i = this.input; i < this.nodes.length; i++) {
+    for (i = this.input_size; i < this.nodes.length; i++) {
       let node = this.nodes[i];
       activations.push(node.activation);
       states.push(node.state);
@@ -1410,7 +1415,7 @@ Network.prototype = {
     }
 
     var output = [];
-    for (i = this.nodes.length - this.output; i < this.nodes.length; i++) {
+    for (i = this.nodes.length - this.output_size; i < this.nodes.length; i++) {
       output.push(`A[${i}]`);
     }
 
@@ -1441,8 +1446,8 @@ Network.prototype = {
       `ABSOLUTE`, `INVERSE`, `SELU`
     ];
 
-    connections.push(this.input);
-    connections.push(this.output);
+    connections.push(this.input_size);
+    connections.push(this.output_size);
 
     let node_index_counter = 0;
     _.forEach(this.nodes, (node) => {
@@ -1452,7 +1457,7 @@ Network.prototype = {
       states.push(node.state);
     });
 
-    for (let node_index = this.input; node_index < this.nodes.length; node_index++) {
+    for (let node_index = this.input_size; node_index < this.nodes.length; node_index++) {
       const node = this.nodes[node_index];
       connections.push(node.index);
       connections.push(node.bias);
