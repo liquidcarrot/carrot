@@ -2,6 +2,7 @@ const _ = require("lodash");
 const methods = require('../methods/methods');
 const Connection = require('./connection');
 const config = require('../config');
+// const Group = require()
 
 /**
 * Creates a new neuron/node
@@ -46,7 +47,7 @@ function Node(type) {
   
   type = type || 'hidden';
   
-  _.assignIn(self, _.defaults({ type }, {
+  Object.assign(self, { type }, {
     bias: self.type === 'input' ? 0 : Math.random() * 2 - 1,
     squash: methods.activation.LOGISTIC,
     activation: 0,
@@ -86,7 +87,7 @@ function Node(type) {
       total: 0,
       all: []
     }
-  }));
+  });
 
   /**
   * Actives the node.
@@ -112,8 +113,8 @@ function Node(type) {
   */
   self.activate = function(input, options) {
     // If an input is given, forward it (i.e. act like an input neuron)
-    if(!_.isNil(input)) {
-      if(_.isFinite(input)) return self.activation = input;
+    if(!(input == undefined)) {
+      if(Number.isFinite(input)) return self.activation = input;
       else throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
     } else if(self.type === "input") return self.activation = 0;
     
@@ -127,7 +128,7 @@ function Node(type) {
     self.state = self.connections.self.gain * self.connections.self.weight * self.state + self.bias;
     
     // Activate (from incoming connections)
-    _.each(self.connections.in, function(connection, index) {
+    self.connections.in.forEach(function(connection, index) {
       self.state += connection.from.activation * connection.weight * connection.gain;
     })
 
@@ -136,7 +137,7 @@ function Node(type) {
     self.derivative = self.squash(self.state, true);
 
     // Adjusting `gain` (to gated connections)
-    _.each(self.connections.gated, function(connection) {
+    self.connections.gated.forEach(function(connection) {
       const index = nodes.indexOf(connection.to);
       
       if(index > -1) influences[index] += connection.weight * connection.from.activation;
@@ -150,11 +151,11 @@ function Node(type) {
     })
 
     // Forwarding `xtrace` (to incoming connections)
-    _.each(self.connections.in, function(connection) {
+    self.connections.in.forEach(function(connection) {
       // Trace Elegibility
       connection.elegibility = self.connections.self.gain * self.connections.self.weight * connection.elegibility + connection.from.activation * connection.gain;
       
-      _.times(nodes.length, function(i) {
+      for(let i = 0; i < nodes.length; i++) {
         const [ node, influence ]  = [nodes[i], influences[i]];
         
         const index = connection.xtrace.nodes.indexOf(node);
@@ -164,7 +165,7 @@ function Node(type) {
           connection.xtrace.nodes.push(node);
           connection.xtrace.values.push(this.derivative * connection.elegibility * influence);
         }
-      })
+      }
     })
 
     return self.activation;
@@ -188,8 +189,8 @@ function Node(type) {
   */
   self.no_trace_activate = function(input) {
     // Check if an input is given
-    if(!_.isNil(input)) {
-      if(_.isFinite(input)) return self.activation = input;
+    if(!(input == undefined)) {
+      if(Number.isFinite(input)) return self.activation = input;
       else throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
     } else if(self.type === "input") return self.activation = 0;
 
@@ -197,14 +198,14 @@ function Node(type) {
     self.state = self.connections.self.gain * self.connections.self.weight * self.state + self.bias;
     
     // Activate (from incoming connections)
-    _.each(self.connections.in, function(connection, index) {
+    self.connections.in.forEach(function(connection, index) {
       self.state += connection.from.activation * connection.weight * connection.gain;
     })
 
     // Squash the values received
     self.activation = self.squash(self.state);
 
-    _.each(self.connections.gated, function(gate) {
+    self.connections.gated.forEach(function(gate) {
       gate.gain = self.activation;
     })
 
@@ -258,14 +259,11 @@ function Node(type) {
       target = undefined;
     }
     
-    options = _.defaults(options, {
+    options = Object.assign(options, {
       momentum: 0,
       rate: 0.3,
       update: true
     })
-
-    // Error Aggregator
-    let error = 0;
 
     // Output Node Error (from environment)
     if(self.type === 'output') self.error.responsibility = self.error.projected = target - self.activation;
@@ -344,31 +342,32 @@ function Node(type) {
   * let A = new Node();
   * A.connect(A); // A now connects to itself
   */
-  self.connect = function (target, weight) {
-    var connections = [];
-    if (typeof target.bias !== 'undefined') { // must be a node!
-      if (this.isProjectingTo(target)) {
-        throw new Error('Already projecting a connection to this node!');
-      }
-      if (target === this) { // self-connection that doesn't yet exist
-        this.connections.self.weight = weight || 1;
-        connections.push(this.connections.self);
-      } else { // connection between nodes
-        let connection = new Connection(this, target, weight);
+  self.connect = function (target, weight, options) {
+    const connections = [];
+    
+    if(target instanceof Node) {
+      if(self.isProjectingTo(target)) throw new Error('Already projecting a connection to this node!'); // Should this throw an error or just a "warning" and update `wieght`, `options`?
+      else if(target === self) {
+        self.connections.self.weight = weight || 1;
+        connections.push(self.connections.self);
+      } else {
+        const connection = new Connection(self, target, weight, options);
+        
         target.connections.in.push(connection);
-        this.connections.out.push(connection);
+        self.connections.out.push(connection);
         connections.push(connection);
       }
-    } else { // should be a group
-      for (var i = 0; i < target.nodes.length; i++) {
-        let connection = new Connection(this, target.nodes[i], weight);
-        target.nodes[i].connections.in.push(connection);
-        this.connections.out.push(connection);
+    } else if(target instanceof Group) {
+      target.nodes.forEach(function(node) {
+        const connection = new Connection(self, node, weight, options);
+        
+        node.connections.in.push(connection);
+        self.connections.out.push(connection);
         target.connections.in.push(connection);
-
         connections.push(connection);
-      }
+      })
     }
+    
     return connections;
   },
 
