@@ -97,15 +97,15 @@ Network.prototype = {
     const output = [];
 
     // Activate nodes chronologically
-    _.times(this.nodes.length, (node_index) => {
-      if (this.nodes[node_index].type === 'input') {
-        this.nodes[node_index].activate(input[node_index]);
-      } else if (this.nodes[node_index].type === 'output') {
-        const activation_result = this.nodes[node_index].activate();
+    this.nodes.forEach((node, node_index) => {
+      if (node.type === 'input') {
+        node.activate(input[node_index]);
+      } else if (node.type === 'output') {
+        const activation_result = node.activate();
         output.push(activation_result);
       } else {
-        if (training) this.nodes[node_index].mask = Math.random() < this.dropout ? 0 : 1;
-        this.nodes[node_index].activate();
+        if (training) node.mask = Math.random() < this.dropout ? 0 : 1;
+        node.activate();
       }
     });
 
@@ -130,15 +130,15 @@ Network.prototype = {
   no_trace_activate: function no_trace_activate(input) {
     const output = [];
 
-    // Activate nodes chronologically
-    _.times(this.nodes.length, (node_index) => {
-      if (this.nodes[node_index].type === 'input') {
-        this.nodes[node_index].no_trace_activate(input[node_index]);
-      } else if (this.nodes[node_index].type === 'output') {
-        const activation_result = this.nodes[node_index].no_trace_activate();
+    // Activate nodes chronologically for forward feeding
+    this.nodes.forEach((node, node_index) => {
+      if (node.type === 'input') {
+        node.no_trace_activate(input[node_index]);
+      } else if (node.type === 'output') {
+        const activation_result = node.no_trace_activate();
         output.push(activation_result);
       } else {
-        this.nodes[node_index].no_trace_activate();
+        node.no_trace_activate();
       }
     });
 
