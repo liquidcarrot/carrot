@@ -647,25 +647,25 @@ Network.prototype = {
   },
 
   /**
-   * Train the given set to this network
+   * Train the given data to this network
    *
-   * @param {Array<{input:number[],output:number[]}>} set A set of input values and ideal output values to train the network with
+   * @param {Array<{input:number[],output:number[]}>} data A data of input values and ideal output values to train the network with
    * @param {Object} options Options used to train network
-   * @param {cost} [options.cost=cost.MSE] The [cost function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
-   * @param {rate} [options.ratePolicy=rate.FIXED] A [learning rate policy](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10), i.e. how to change the learning rate during training to get better network performance
+   * @param {options.cost} [options.cost=options.cost.MSE] The [options.cost function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
+   * @param {rate} [options.rate_policy=rate.FIXED] A [learning rate policy](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10), i.e. how to change the learning rate during training to get better network performance
    * @param {number} [options.rate=0.3] Sets the [learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10) of the backpropagation process
    * @param {number} [options.iterations=1000] Sets amount of training cycles the process will maximally run, even when the target error has not been reached.
    * @param {number} [options.error] The target error to train for, once the network falls below this error, the process is stopped. Lower error rates require more training cycles.
-   * @param {number} [options.dropout=0] [Dropout rate](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5) likelihood for any given neuron to be ignored during network training. Must be between zero and one, numbers closer to one will result in more neurons ignored.
+   * @param {number} [options.dropout=0] [Dropout rate](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-options.dropout-in-deep-machine-learning-74334da4bfc5) likelihood for any given neuron to be ignored during network training. Must be between zero and one, numbers closer to one will result in more neurons ignored.
    * @param {number} [options.momentum=0] [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html). Adds a fraction of the previous weight update to the current one.
-   * @param {number} [options.batchSize=1] Sets the (mini-) batch size of your training. Default: 1 [(online training)](https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes)
-   * @param {number} [options.crossValidate.testSize] Sets the amount of test cases that should be assigned to cross validation. If set to 0.4, 40% of the given set will be used for cross validation.
-   * @param {number} [options.crossValidate.testError] Sets the target error of the validation set.
-   * @param {boolean} [options.clear=false] If set to true, will clear the network after every activation. This is useful for training LSTM's, more importantly for timeseries prediction.
-   * @param {boolean} [options.shuffle=false] When set to true, will shuffle the training data every iteration. Good option to use if the network is performing worse in [cross validation](https://artint.info/html/ArtInt_189.html) than in the real training set.
-   * @param {number|boolean} [options.log=false] If set to n, outputs training status every n iterations. Setting `log` to 1 will log the status every iteration
+   * @param {number} [options.batch_size=1] Sets the (mini-) batch size of your training. Default: 1 [(online training)](https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes)
+   * @param {number} [options.cross_validate.testSize] Sets the amount of test cases that should be assigned to cross validation. If data to 0.4, 40% of the given data will be used for cross validation.
+   * @param {number} [options.cross_validate.test_error] Sets the target error of the validation data.
+   * @param {boolean} [options.clear=false] If data to true, will clear the network after every activation. This is useful for training LSTM's, more importantly for timeseries prediction.
+   * @param {boolean} [options.shuffle=false] When data to true, will shuffle the training data every iteration_number. Good option to use if the network is performing worse in [cross validation](https://artint.info/html/ArtInt_189.html) than in the real training data.
+   * @param {number|boolean} [options.log=false] If data to n, outputs training status every n iterations. Setting `log` to 1 will log the status every iteration_number
    * @param {number} [options.schedule.iterations] You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
-   * @param {schedule} [options.schedule.function] A function to run every n iterations as set by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
+   * @param {schedule} [options.schedule.function] A function to run every n iterations as data by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
    *
    * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance
    *
@@ -719,101 +719,129 @@ Network.prototype = {
    *  crossValidate:
    *    {
    *      testSize: 0.4,
-   *      testError: 0.02
+   *      test_error: 0.02
    *    }
    * });
    *
    */
-  train: function(set, options) {
-    if (set[0].input.length !== this.input || set[0].output.length !== this.output) {
-      throw new Error('Dataset input/output size should be same as network input/output size!');
+  train: function(data, options) {
+    if (data[0].input.length !== this.input || data[0].output.length !== this.output) {
+      throw new Error(`Dataset input/output size should be same as network input/output size!`);
     }
-
-    options = options || {};
-    options.iterations = options.iterations || 1000;
 
     // Warning messages
-    if (typeof options.rate === 'undefined') {
-      if (config.warnings) console.warn('Using default learning rate, please define a rate!');
+    if (config.warnings && options) {
+      if (typeof options.rate === `undefined`) {
+        console.warn(`Using default learning rate, please define a rate!`);
+      }
+      if (typeof options.iterations === `undefined`) {
+        console.warn(`No target iterations given, running until error is reached!`);
+      }
     }
-    if (typeof options.iterations === 'undefined') {
-      if (config.warnings) console.warn('No target iterations given, running until error is reached!');
+
+    // backwards compatibility
+    if (options) {
+      options = _.defaults(options, {
+        batch_size: options.batchSize,
+        rate_policy: options.ratePolicy,
+        cross_validate: options.crossValidate
+      });
     }
 
-    // Read the options
-    let targetError = options.error || 0.05;
-    let cost = options.cost || methods.cost.MSE;
-    let baseRate = options.rate || 0.3;
-    let dropout = options.dropout || 0;
-    let momentum = options.momentum || 0;
-    let batchSize = options.batchSize || 1; // online learning
-    let ratePolicy = options.ratePolicy || methods.rate.FIXED();
+    // data defaults and read the options
+    options = _.defaults(options, {
+      iterations: 1000,
+      error: 0.05,
+      cost: methods.cost.MSE,
+      rate: 0.3,
+      dropout: 0,
+      momentum: 0,
+      batch_size: 1, // online learning
+      rate_policy: methods.rate.FIXED()
+    });
 
-    let start = Date.now();
+    // if cross validation is data, target error might be higher than crossValidate.test_error,
+    // so if CV is data then also data target error to crossvalidate error
+    let target_error;
+    if (options.cross_validate) {
+      target_error = options.cross_validate.test_error;
+    } else if (options.error) {
+      target_error = options.error;
+    } else {
+      target_error = -1; // run until iterations
+    }
+    const base_training_rate = options.rate;
 
-    if (batchSize > set.length) {
-      throw new Error('Batch size must be smaller or equal to dataset length!');
-    } else if (typeof options.iterations === 'undefined' && typeof options.error === 'undefined') {
-      throw new Error('At least one of the following options must be specified: error, iterations');
-    } else if (typeof options.error === 'undefined') {
-      targetError = -1; // run until iterations
-    } else if (typeof options.iterations === 'undefined') {
+    const start = Date.now();
+
+    // check for errors
+    if (options.batch_size > data.length) {
+      throw new Error(`Batch size must be smaller or equal to dataset length!`);
+    } else if (typeof options.iterations === `undefined` && typeof options.error === `undefined`) {
+      throw new Error(`At least one of the following options must be specified: error, iterations`);
+    } else if (typeof options.iterations === `undefined`) {
       options.iterations = 0; // run until target error
     }
 
     // Save to network
-    this.dropout = dropout;
+    this.dropout = options.dropout;
 
-    if (options.crossValidate) {
-      let numTrain = Math.ceil((1 - options.crossValidate.testSize) * set.length);
-      var trainSet = set.slice(0, numTrain);
-      var testSet = set.slice(numTrain);
+    let training_set_size, train_set, test_set;
+    if (options.cross_validate) {
+      training_set_size = Math.ceil((1 - options.cross_validate.testSize) * data.length);
+      train_set = data.slice(0, training_set_size);
+      test_set = data.slice(training_set_size);
+    } else {
+      train_set = data;
     }
 
     // Loops the training process
-    var currentRate = baseRate;
-    var iteration = 0;
-    var error = 1;
+    let current_training_rate = base_training_rate;
+    let iteration_number = 0;
+    let error = 1;
 
     var i, j, x;
-    while (error > targetError && (options.iterations === 0 || iteration < options.iterations)) {
-      if (options.crossValidate && error <= options.crossValidate.testError) break;
-
-      iteration++;
+    while (error > target_error && (options.iterations === 0 ||
+      iteration_number < options.iterations)) {
+      iteration_number++;
 
       // Update the rate
-      currentRate = ratePolicy(baseRate, iteration);
+      current_training_rate = options.rate_policy(base_training_rate, iteration_number);
 
+      // run on training epoch
+      const train_error = this._train_set(
+        train_set, options.batch_size, current_training_rate, options.momentum, options.cost);
+      if (options.clear) this.clear();
       // Checks if cross validation is enabled
-      if (options.crossValidate) {
-        this._train_set(trainSet, batchSize, currentRate, momentum, cost);
-        if (options.clear) this.clear();
-        error = this.test(testSet, cost).error;
+      if (options.cross_validate) {
+        error = this.test(test_set, options.cost).error;
         if (options.clear) this.clear();
       } else {
-        error = this._train_set(set, batchSize, currentRate, momentum, cost);
-        if (options.clear) this.clear();
+        error = train_error;
       }
 
       // Checks for options such as scheduled logs and shuffling
       if (options.shuffle) {
-        for (j, x, i = set.length; i; j = Math.floor(Math.random() * i), x = set[--i], set[i] = set[j], set[j] = x);
+        // just a horrible shuffle - black magic ahead (not that bad but looks like witchery)
+        for (j, x, i = data.length; i;
+          j = Math.floor(Math.random() * i), x = data[--i], data[i] = data[j], data[j] = x);
       }
 
-      if (options.log && iteration % options.log === 0) {
-        console.log('iteration', iteration, 'error', error, 'rate', currentRate);
+      if (options.log && iteration_number % options.log === 0) {
+        console.log(`iteration number`, iteration_number,
+          `error`, error, `training rate`, current_training_rate);
       }
 
-      if (options.schedule && iteration % options.schedule.iterations === 0) {
-        options.schedule.function({ error: error, iteration: iteration });
+      if (options.schedule && iteration_number % options.schedule.iterations === 0) {
+        options.schedule.function({ error: error, iteration_number: iteration_number });
       }
     }
 
     if (options.clear) this.clear();
 
-    if (dropout) {
+    if (options.dropout) {
       for (i = 0; i < this.nodes.length; i++) {
-        if (this.nodes[i].type === 'hidden' || this.nodes[i].type === 'constant') {
+        if (this.nodes[i].type === `hidden` || this.nodes[i].type === `constant`) {
           this.nodes[i].mask = 1 - this.dropout;
         }
       }
@@ -821,7 +849,7 @@ Network.prototype = {
 
     return {
       error: error,
-      iterations: iteration,
+      iterations: iteration_number,
       time: Date.now() - start
     };
   },
@@ -836,7 +864,7 @@ Network.prototype = {
    *
    * @param {Array<{input:number[], output: number[]}>} set
    * @param {number} batchSize
-   * @param {number} currentRate
+   * @param {number} current_training_rate
    * @param {number} momentum
    * @param {cost} costFunction
    *
@@ -847,7 +875,7 @@ Network.prototype = {
    *
    * let example = ""
    */
-  _train_set: function (set, batchSize, currentRate, momentum, costFunction) {
+  _train_set: function (set, batchSize, current_training_rate, momentum, costFunction) {
 
     var errorSum = 0;
     for (var i = 0; i < set.length; i++) {
@@ -857,7 +885,7 @@ Network.prototype = {
       var update = !!((i + 1) % batchSize === 0 || (i + 1) === set.length);
 
       var output = this.activate(input, true);
-      this.propagate(currentRate, momentum, update, target);
+      this.propagate(current_training_rate, momentum, update, target);
 
       errorSum += costFunction(target, output);
     }
@@ -1167,15 +1195,15 @@ Network.prototype = {
     // Read the options
     options = options || {};
 
-    let targetError;
+    let target_error;
 
     if (typeof options.iterations === 'undefined' && typeof options.error === 'undefined') {
       options.iterations = 1000; // limit in case network is not converging
-      targetError = 0.05
+      target_error = 0.05
     } else if (options.iterations) {
-      targetError = -1; // run until iterations
+      target_error = -1; // run until iterations
     } else if (options.error) {
-      targetError = options.error
+      target_error = options.error
       options.iterations = 0; // run until target error
     }
 
@@ -1259,7 +1287,7 @@ Network.prototype = {
     var bestFitness = -Infinity;
     var bestGenome;
 
-    while (error < -targetError && (options.iterations === 0 || neat.generation < options.iterations)) {
+    while (error < -target_error && (options.iterations === 0 || neat.generation < options.iterations)) {
       let fittest = await neat.evolve();
       let fitness = fittest.score;
       error = fitness + (fittest.nodes.length - fittest.input - fittest.output + fittest.connections.length + fittest.gates.length) * growth;
