@@ -17,11 +17,11 @@ const mutation = methods.mutation;
 *
 * @constructs Network
 *
-* @param {number} input Size of input layer AKA neurons in input layer
-* @param {number} output Size of output layer AKA neurons in output layer
+* @param {number} input_size Size of input layer AKA neurons in input layer
+* @param {number} output_size Size of output layer AKA neurons in output layer
 *
-* @prop {number} input Size of input layer AKA neurons in input layer
-* @prop {number} output Size of output layer AKA neurons in output layer
+* @prop {number} input_size Size of input layer AKA neurons in input layer
+* @prop {number} output_size Size of output layer AKA neurons in output layer
 * @prop {number} dropout [Dropout rate](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5) likelihood for any given neuron to be ignored during network training. Must be between zero and one, numbers closer to one will result in more neurons ignored.
 * @prop {Array<Node>} nodes Nodes currently within the network
 * @prop {Array<Node>} gates Gates within the network
