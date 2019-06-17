@@ -90,7 +90,7 @@ Network.prototype = {
    *
    * myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
-  activate: function(input, training) {
+  activate: function activate(input, training) {
     const output = [];
 
     // Activate nodes chronologically
@@ -124,7 +124,7 @@ Network.prototype = {
    *
    * myNetwork.no_trace_activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
-  no_trace_activate: function (input) {
+  no_trace_activate: function no_trace_activate(input) {
     const output = [];
 
     // Activate nodes chronologically
@@ -165,7 +165,7 @@ Network.prototype = {
    *  network.propagate(0.3, 0, true, [0]);
    * }
    */
-  propagate: function(rate, momentum, update, target) {
+  propagate: function propagate(rate, momentum, update, target) {
     if (typeof target === 'undefined' || target.length !== this.output) {
       throw new Error('Output target length should match network output length');
     }
@@ -198,7 +198,7 @@ Network.prototype = {
    *
    * @returns {Network} Returns an identical network
    */
-  clone: function() {
+  clone: function clone() {
     const self = this;
 
     return new Network(self.input, self.output);
@@ -218,7 +218,7 @@ Network.prototype = {
    *
    * myNetwork.connect(myNetwork.nodes[4], myNetwork.nodes[5]); // connects network node 4 to network node 5
    */
-  connect: function(from, to, weight) {
+  connect: function connect(from, to, weight) {
     let connections = from.connect(to, weight);
 
     for (let i = 0; i < connections.length; i++) {
@@ -243,7 +243,7 @@ Network.prototype = {
    * myNetwork.disconnect(myNetwork.nodes[4], myNetwork.nodes[5]);
    * // now node 4 does not have an effect on the output of node 5 anymore
    */
-  disconnect: function(from, to) {
+  disconnect: function disconnect(from, to) {
     // Delete the connection in the network's connection array
     var connections = from === to ? this.selfconns : this.connections;
 
@@ -274,7 +274,7 @@ Network.prototype = {
    * myNetwork.gate(myNetwork.nodes[1], myNetwork.connections[5])
    * // now: connection 5's weight is multiplied with node 1's activaton
    */
-  gate: function(node, connection) {
+  gate: function gate(node, connection) {
     if (this.nodes.indexOf(node) === -1) {
       throw new Error('This node is not part of the network!');
     } else if (connection.gater != null) {
@@ -301,7 +301,7 @@ Network.prototype = {
    * // Remove the gate from the connection
    * myNetwork.ungate(myNetwork.connections[5]);
    */
-  ungate: function(connection) {
+  ungate: function ungate(connection) {
     const index = this.gates.indexOf(connection);
     if (index === -1) {
       throw new Error('This connection is not gated!');
@@ -324,7 +324,7 @@ Network.prototype = {
    * // Remove a node
    * myNetwork.remove(myNetwork.nodes[2]);
    */
-  remove: function(node) {
+  remove: function remove(node) {
     const index = this.nodes.indexOf(node);
 
     if (index === -1) {
@@ -491,7 +491,7 @@ Network.prototype = {
    *
    * myNetwork.mutate(mutation.ADD_GATE) // a random node will gate a random connection within the network
    */
-  mutate: function(method) {
+  mutate: function mutate(method) {
     if (typeof method === 'undefined') throw new Error('No (correct) mutate method given!');
 
     var i, j;
@@ -724,7 +724,7 @@ Network.prototype = {
    * });
    *
    */
-  train: function(data, options) {
+  train: function train(data, options) {
     if (data[0].input.length !== this.input || data[0].output.length !== this.output) {
       throw new Error(`Dataset input/output size should be same as network input/output size!`);
     }
@@ -875,7 +875,7 @@ Network.prototype = {
    *
    * let example = ""
    */
-  _train_set: function (set, batchSize, current_training_rate, momentum, costFunction) {
+  _train_set: function _train_set(set, batchSize, current_training_rate, momentum, costFunction) {
 
     var errorSum = 0;
     for (var i = 0; i < set.length; i++) {
@@ -901,7 +901,7 @@ Network.prototype = {
    * @returns {{error:{number},time:{number}}} A summary object of the network's performance
    *
    */
-  test: function(set, cost = methods.cost.MSE) {
+  test: function test(set, cost = methods.cost.MSE) {
     // Check if dropout is enabled, set correct mask
     if (this.dropout) {
       _.times(this.nodes.length, (index) => {
@@ -940,7 +940,7 @@ Network.prototype = {
    * @returns {{nodes:Array<{id:{number},name:{string},activation:{activation},bias:{number}}>,links:Array<{{source:{number},target:{number},weight:{number},gate:{boolean}}}>,constraints:{Array<{type:{string},axis:{string},offsets:{node:{number},offset:{number}}}>}}}
    *
    */
-  graph: function(width, height) {
+  graph: function graph(width, height) {
     var input = 0;
     var output = 0;
 
@@ -1054,7 +1054,7 @@ Network.prototype = {
    * let exported = myNetwork.to_JSON();
    * let imported = Network.from_JSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
    */
-  to_JSON: function () {
+  to_JSON: function to_JSON() {
     var json = {
       nodes: [],
       connections: [],
@@ -1113,7 +1113,7 @@ Network.prototype = {
    * // All nodes in 'network' now have a bias of 1
    * network.set({bias: 1});
    */
-  set: function(values) {
+  set: function set(values) {
     this.nodes = _.forEach(this.nodes, (node) => _.defaults(node, {
       bias: values.bias,
       squash: values.squash
@@ -1346,7 +1346,7 @@ Network.prototype = {
    * // calls the standalone function
    * activate([0,1]);// [0.24775789809]
    */
-  standalone: function () {
+  standalone: function standalone() {
     var present = [];
     var activations = [];
     var states = [];
@@ -1431,7 +1431,7 @@ Network.prototype = {
    *
    * @returns {Array<number[]>} 3 `Float64Arrays`. Used for transferring networks to other threads fast.
    */
-  serialize: function () {
+  serialize: function serialize() {
     const activations = [];
     const states = [];
     const connections = [];
