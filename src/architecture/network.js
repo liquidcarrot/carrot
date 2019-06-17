@@ -219,6 +219,7 @@ Network.prototype = {
    * myNetwork.connect(myNetwork.nodes[4], myNetwork.nodes[5]); // connects network node 4 to network node 5
    */
   connect: function connect(from, to, weight) {
+    // many elements if dealing with groups for example
     let connections = from.connect(to, weight);
 
     for (let i = 0; i < connections.length; i++) {
