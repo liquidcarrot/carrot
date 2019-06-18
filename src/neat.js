@@ -1,8 +1,8 @@
-let _ = require('lodash');
-let parameter = require('./util/parameter');
-let Network = require('./architecture/network');
-let methods = require('./methods/methods');
-let config = require('./config');
+const _ = require('lodash');
+const parameter = require('./util/parameter');
+const Network = require('./architecture/network');
+const methods = require('./methods/methods');
+const config = require('./config');
 
 /**
 * Runs the NEAT algorithm on group of neural networks.
@@ -31,7 +31,6 @@ let config = require('./config');
 * @param {number} [options.maxNodes=Infinity] Maximum nodes for a potential network
 * @param {number} [options.maxConns=Infinity] Maximum connections for a potential network
 * @param {number} [options.maxGates=Infinity] Maximum gates for a potential network
-* @param {function} [options.mutationSelection=ALL] Custom mutation selection function if given
 * @param {mutation[]} [options.mutation] Sets allowed [mutation methods](mutation) for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent
 *
 * @prop {number} generation A count of the generations
@@ -188,55 +187,38 @@ let Neat = function(inputs, outputs, dataset, options) {
     };
 
   /**
-   * Selects a random mutation method for a genome according to the parameters
+   * Selects a random mutation method for a genome and mutates it
    *
-   * @memberof Neat
+   * @param {Network} genome Network to test for possible mutations
+   * @param {mutation[]} allowedMutations An array of allowed mutations to pick from
    *
-   * @param genome
+   * @return {mutation} Selected mutation
   */
-  self.selectMutationMethod = function (genome, allowedMutations, efficientMutation) {
-
-    if(efficientMutation) {
-      let filtered = allowedMutations ? [...allowedMutations] : [...self.mutation]
-      let success = false
-      while(!success) {
-        const currentMethod = filtered[Math.floor(Math.random() * filtered.length)]
-
-        if(currentMethod === methods.mutation.ADD_NODE && genome.nodes.length >= self.maxNodes || currentMethod === methods.mutation.ADD_CONN && genome.connections.length >= self.maxConns || currentMethod === methods.mutation.ADD_GATE && genome.gates.length >= self.maxGates) {
-          success = false
-        } else {
-          success = genome.mutate(currentMethod)
-        }
-
-        // we're done
-        if(success || !filtered || filtered.length === 0) return
-
-        // if not, remove the impossible method
-        filtered = filtered.filter(function(value, index, array) {
-          return value.name !== currentMethod.name
-        })
-      }
-    } else {
-      let allowed = allowedMutations ? allowedMutations : self.mutation
-      let current = allowed[Math.floor(Math.random() * allowed.length)]
-
-      if (current === methods.mutation.ADD_NODE && genome.nodes.length >= self.maxNodes) {
-        if (config.warnings) console.warn('maxNodes exceeded!')
-        return null;
-      }
-
-      if (current === methods.mutation.ADD_CONN && genome.connections.length >= self.maxConns) {
-        if (config.warnings) console.warn('maxConns exceeded!');
-        return null;
-      }
-
-      if (current === methods.mutation.ADD_GATE && genome.gates.length >= self.maxGates) {
-        if (config.warnings) console.warn('maxGates exceeded!');
-        return null;
-      }
-
-      return current
-    }
+  self.mutateRandom = function selectMethodAndMutateNetwork(genome, allowedMutations) {
+    let possible = allowedMutations ? [...allowedMutations] : [...self.mutation]
+    
+    // remove any methods disallowed by user-limits: i.e. maxNodes, maxConns, ...
+    possible = possible.filter(function(method) {
+      return (
+        method !== methods.mutation.ADD_NODE || genome.nodes.length < self.maxNodes ||
+        method !== methods.mutation.ADD_CONN || genome.connections.length < self.maxConns ||
+        method !== methods.mutation.ADD_GATE || genome.gates.length < self.maxGates
+      )
+    })
+    
+    do {
+      const current = possible[Math.floor(Math.random() * possible.length)]
+      
+      console.log("mutation insde Neat.mutateRandom: " + current.name)
+      // attempt mutation, success: return mutation method, failure: remove from possible methods
+      if(genome.mutate(current)) return current
+      else possible = possible.filter(function(method) { return method.name !== current.name })
+      
+      console.log("mutation failed!")
+      // Return null when mutation is impossible
+      if((!possible || possible.length === 0)) return null;
+      
+    } while(true)
   };
 
   /**
@@ -431,15 +413,21 @@ let Neat = function(inputs, outputs, dataset, options) {
    * Mutates the given (or current) population
    *
    * @memberof Neat
+   *
+   * @param {mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
    */
-  self.mutate = function () {
-    // Elitist genomes should not be included
-    for (let i = 0; i < self.population.length; i++) {
-      if (Math.random() <= self.mutationRate) {
-        for (let j = 0; j < self.mutationAmount; j++) {
-          const mutationMethod = self.selectMutationMethod(self.population[i], self.mutation, self.efficientMutation);
-          self.efficientMutation ? null : self.population[i].mutate(mutationMethod);
-        }
+  self.mutate = function (method) {
+    if(method) {
+      for(let i = 0; i < self.population.length; i++) { // Elitist genomes should not be included
+        if (Math.random() <= self.mutationRate)
+          for (let j = 0; j < self.mutationAmount; j++)
+            self.population[i].mutate(method)
+      }
+    } else {
+      for(let i = 0; i < self.population.length; i++) { // Elitist genomes should not be included
+        if (Math.random() <= self.mutationRate)
+          for (let j = 0; j < self.mutationAmount; j++)
+            self.mutateRandom(self.population[i], self.mutation)
       }
     }
   };
@@ -585,12 +573,10 @@ Neat.default = {
       methods.crossover.AVERAGE
     ],
     mutation: methods.mutation.FFW,
-    efficientMutation: false,
     // template: new Network(this.input, this.output)
     maxNodes: Infinity,
     maxConns: Infinity,
-    maxGates: Infinity,
-    selectMutationMethod: this.selectMutationMethod
+    maxGates: Infinity
   }
 }
 

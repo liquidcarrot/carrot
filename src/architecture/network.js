@@ -1,10 +1,10 @@
-let _ = require(`lodash`);
-let parameter = require(`../util/parameter`);
-var multi = require(`../multithreading/multi`);
-var methods = require(`../methods/methods`);
-var Connection = require(`./connection`);
-var config = require(`../config`);
-var Node = require(`./node`);
+const _ = require('lodash');
+const parameter = require('../util/parameter')
+const multi = require('../multithreading/multi')
+const methods = require('../methods/methods')
+const Connection = require('./connection')
+const config = require('../config')
+const Node = require('./node')
 
 // Easier variable naming
 const mutation = methods.mutation;
@@ -407,7 +407,7 @@ Network.prototype = {
    *
    * @param {mutation} method [Mutation method](mutation)
    *
-   * @returns {false | object[]} candidates to use for a mutation. Entries may be arrays containing paris when appropriate.
+   * @returns {false | object[]} Candidates to use for a mutation. Entries may be arrays containing pairs / tuples when appropriate.
    *
    * @example
    *
@@ -500,98 +500,106 @@ Network.prototype = {
    * myNetwork.mutate(mutation.ADD_GATE) // a random node will gate a random connection within the network
    */
   mutate: function mutate(method) {
-    if (typeof method === `undefined`) throw new Error(`No (correct) mutate method given!`);
-
+    if (typeof method === 'undefined') throw new Error('Mutate method is undefined!')
+  
     var i, j;
     switch (method) {
       case mutation.ADD_NODE: {
         // Look for an existing connection and place a node in between
-        const connection = this.connections[Math.floor(Math.random() * this.connections.length)];
-        this.disconnect(connection.from, connection.to);
+        const connection = this.connections[Math.floor(Math.random() * this.connections.length)]
+        this.disconnect(connection.from, connection.to)
 
         // Insert the new node right before the old connection.to
-        const toIndex = this.nodes.indexOf(connection.to);
-        const node = new Node(`hidden`);
+        const toIndex = this.nodes.indexOf(connection.to)
+        const node = new Node('hidden')
 
-        if(mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION);
+        if(mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION)
 
         // Place it in this.nodes
         const minBound = Math.min(toIndex, this.nodes.length - this.output_size);
         this.nodes.splice(minBound, 0, node);
 
         // Now create two new connections
-        const newConn1 = this.connect(connection.from, node)[0];
-        const newConn2 = this.connect(node, connection.to)[0];
+        const newConn1 = this.connect(connection.from, node)[0]
+        const newConn2 = this.connect(node, connection.to)[0]
 
-        const gater = connection.gater;
+        const gater = connection.gater
         // Check if the original connection was gated
-        if (gater != null) this.gate(gater, Math.random() >= 0.5 ? newConn1 : newConn2);
+        if (gater != null) this.gate(gater, Math.random() >= 0.5 ? newConn1 : newConn2)
 
-        break;
+        return true;
       }
       case mutation.SUB_NODE: {
         const possible = this.possible(method)
-        if(possible) this.remove(_.sample(possible));
-
-        break
+        if(possible) {
+          this.remove(_.sample(possible))
+          return true
+        }
+        return false
       }
       case mutation.ADD_CONN: {
         const possible = this.possible(method)
         if(possible) {
-          const pair = possible[Math.floor(Math.random() * possible.length)];
-          this.connect(pair[0], pair[1]);
+          const pair = possible[Math.floor(Math.random() * possible.length)]
+          this.connect(pair[0], pair[1])
+          return true
         }
 
-        break
+        return false
       }
+      case mutation.REMOVE_CONN: // alias for sub_conn
       case mutation.SUB_CONN: {
         const possible = this.possible(method)
         if(possible) {
-          const randomConn = possible[Math.floor(Math.random() * possible.length)];
-          this.disconnect(randomConn.from, randomConn.to);
+          const randomConn = possible[Math.floor(Math.random() * possible.length)]
+          this.disconnect(randomConn.from, randomConn.to)
+          return true
         }
 
-        break
+        return false
       }
       case mutation.MOD_WEIGHT: {
-        const allconnections = this.connections.concat(this.selfconns);
-        const connection = allconnections[Math.floor(Math.random() * allconnections.length)];
+        const allconnections = this.connections.concat(this.selfconns)
+        const connection = allconnections[Math.floor(Math.random() * allconnections.length)]
 
-        connection.weight += Math.random() * (method.max - method.min) + method.min;
+        connection.weight += Math.random() * (method.max - method.min) + method.min
 
-        break;
+        return true
       }
       case mutation.MOD_BIAS: {
         // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
         this.nodes[Math.floor(Math.random() * (this.nodes.length - this.input_size) + this.input_size)].mutate(method);
 
-        break;
+        return true
       }
       case mutation.MOD_ACTIVATION:{
         if(this.possible(method)) {
-          const possible = _.filter(this.nodes, method.mutateOutput ? (node) => node.type !== `input` : (node) => node.type !== `input` && node.type !== `output`);
+          const possible = _.filter(this.nodes, method.mutateOutput ? (node) => node.type !== 'input' : (node) => node.type !== 'input' && node.type !== 'output')
 
           // Mutate a random node out of the filtered collection
-          _.sample(possible).mutate(method);
+          _.sample(possible).mutate(method)
+          return true
         }
-        break;
+        return false
       }
       case mutation.ADD_SELF_CONN: {
         const possible = this.possible(method)
         if(possible) {
-          const node = possible[Math.floor(Math.random() * possible.length)];
-          this.connect(node, node); // Create the self-connection
+          const node = possible[Math.floor(Math.random() * possible.length)]
+          this.connect(node, node) // Create the self-connection
+          return true
         }
 
-        break
+        return false
       }
       case mutation.SUB_SELF_CONN: {
         if(this.possible(method)) {
-          const conn = this.selfconns[Math.floor(Math.random() * this.selfconns.length)];
-          this.disconnect(conn.from, conn.to);
+          const conn = this.selfconns[Math.floor(Math.random() * this.selfconns.length)]
+          this.disconnect(conn.from, conn.to)
+          return true
         }
 
-        break
+        return false
       }
       case mutation.ADD_GATE: {
         const possible = this.possible(method)
@@ -600,33 +608,39 @@ Network.prototype = {
           const node = this.nodes[Math.floor(Math.random() * (this.nodes.length - this.input_size) + this.input_size)];
           const conn = possible[Math.floor(Math.random() * possible.length)];
 
-          this.gate(node, conn); // Gate the connection with the node
+          this.gate(node, conn) // Gate the connection with the node
+          return true
         }
 
-        break
+        return false
       }
       case mutation.SUB_GATE: {
-        if(this.possible(method)) this.ungate(this.gates[Math.floor(Math.random() * this.gates.length)])
+        if(this.possible(method)) {
+          this.ungate(this.gates[Math.floor(Math.random() * this.gates.length)])
+          return true
+        }
 
-        break
+        return false
       }
       case mutation.ADD_BACK_CONN: {
         const possible = this.possible(method)
         if(possible) {
-          const pair = possible[Math.floor(Math.random() * possible.length)];
-          this.connect(pair[0], pair[1]);
+          const pair = possible[Math.floor(Math.random() * possible.length)]
+          this.connect(pair[0], pair[1])
+          return true
         }
 
-        break;
+        return false
       }
-      case mutation.SUB_BACK_CONN:{
+      case mutation.SUB_BACK_CONN: {
         const possible = this.possible(method)
         if(possible) {
-          const randomConn = possible[Math.floor(Math.random() * possible.length)];
-          this.disconnect(randomConn.from, randomConn.to);
+          const randomConn = possible[Math.floor(Math.random() * possible.length)]
+          this.disconnect(randomConn.from, randomConn.to)
+          return true
         }
 
-        break;
+        return false
       }
       case mutation.SWAP_NODES: {
         const possible = this.possible(method)
@@ -640,16 +654,17 @@ Network.prototype = {
           // Get random node from filtered collection (excludes node1)
           const node2 = _.sample(possible2)
 
-          const biasTemp = node1.bias;
-          const squashTemp = node1.squash;
+          const biasTemp = node1.bias
+          const squashTemp = node1.squash
 
-          node1.bias = node2.bias;
-          node1.squash = node2.squash;
-          node2.bias = biasTemp;
-          node2.squash = squashTemp;
+          node1.bias = node2.bias
+          node1.squash = node2.squash
+          node2.bias = biasTemp
+          node2.squash = squashTemp
+          return true
         }
 
-        break;
+        return false
       }
     }
   },
@@ -1807,7 +1822,6 @@ module.exports = Network;
 * @param {number} [options.maxNodes=Infinity] Maximum nodes for a potential network
 * @param {number} [options.maxConns=Infinity] Maximum connections for a potential network
 * @param {number} [options.maxGates=Infinity] Maximum gates for a potential network
-* @param {function} [options.mutationSelection=ALL] Custom mutation selection function if given
 * @param {mutation[]} [options.mutation] Sets allowed [mutation methods](mutation) for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent
 *
 * @prop {number} generation A count of the generations
@@ -1858,8 +1872,7 @@ const Neat = function(dataset, {
   template = (new Network(input, output)),
   maxNodes = Infinity,
   maxConns = Infinity,
-  maxGates = Infinity,
-  selectMutationMethod = this.selectMutationMethod
+  maxGates = Infinity
 } = {}) {
   let self = this;
 
@@ -1886,8 +1899,7 @@ const Neat = function(dataset, {
     template,
     maxNodes,
     maxConns,
-    maxGates,
-    selectMutationMethod
+    maxGates
   });
 
   /**
@@ -1928,57 +1940,36 @@ const Neat = function(dataset, {
     };
 
   /**
-   * Selects a random mutation method for a genome according to the parameters
+   * Selects a random mutation method for a genome and mutates it
    *
    * @param {Network} genome Network to test for possible mutations
    * @param {mutation[]} allowedMutations An array of allowed mutations to pick from
-   * @param {boolean} efficientMutation A flag to enable checking for possible mutations on a [network](Network)
    *
    * @return {mutation} Selected mutation
   */
-  self.selectMutationMethod = function (genome, allowedMutations, efficientMutation) {
-    efficientMutation = false;
-    if(efficientMutation) {
-      let filtered = allowedMutations ? [...allowedMutations] : [...self.mutation]
-      let success = false
-      while(!success) {
-        const currentMethod = filtered[Math.floor(Math.random() * filtered.length)]
-
-        if(currentMethod === methods.mutation.ADD_NODE && genome.nodes.length >= self.maxNodes || currentMethod === methods.mutation.ADD_CONN && genome.connections.length >= self.maxConns || currentMethod === methods.mutation.ADD_GATE && genome.gates.length >= self.maxGates) {
-          success = false
-        } else {
-          success = genome.mutate(currentMethod) // actual mutation happens
-        }
-
-        // we're done
-        if(success || !filtered || filtered.length === 0) return
-
-        // if not, remove the impossible method
-        filtered = filtered.filter(function(value, index, array) {
-          return value.name !== currentMethod.name
-        })
-      }
-    } else {
-      let allowed = allowedMutations ? allowedMutations : self.mutation
-      let current = allowed[Math.floor(Math.random() * allowed.length)]
-
-      if (current === methods.mutation.ADD_NODE && genome.nodes.length >= self.maxNodes) {
-        if (config.warnings) console.warn(`maxNodes exceeded!`)
-        return null;
-      }
-
-      if (current === methods.mutation.ADD_CONN && genome.connections.length >= self.maxConns) {
-        if (config.warnings) console.warn(`maxConns exceeded!`);
-        return null;
-      }
-
-      if (current === methods.mutation.ADD_GATE && genome.gates.length >= self.maxGates) {
-        if (config.warnings) console.warn(`maxGates exceeded!`);
-        return null;
-      }
-
-      return current
-    }
+  self.mutateRandom = function selectMethodAndMutateNetwork(genome, allowedMutations) {
+      let possible = allowedMutations ? [...allowedMutations] : [...self.mutation]
+      
+      // remove any methods disallowed by user-limits: i.e. maxNodes, maxConns, ...
+      possible = possible.filter(function(method) {
+        return (
+          method !== methods.mutation.ADD_NODE || genome.nodes.length < self.maxNodes ||
+          method !== methods.mutation.ADD_CONN || genome.connections.length < self.maxConns ||
+          method !== methods.mutation.ADD_GATE || genome.gates.length < self.maxGates
+        )
+      })
+      
+      do {
+        const current = possible[Math.floor(Math.random() * possible.length)]
+        
+        // attempt mutation, success: return mutation method, failure: remove from possible methods
+        if(genome.mutate(current)) return current
+        else possible = possible.filter(function(method) { return method.name !== current.name })
+        
+        // Return null when mutation is impossible
+        if((!possible || possible.length === 0)) return null;
+        
+      } while(true)
   };
 
   /**
@@ -2149,15 +2140,23 @@ const Neat = function(dataset, {
 
   /**
    * Mutates the given (or current) population
+   *
+   * @param {mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
    */
-  self.mutate = function () {
-    // Elitist genomes should not be included
-    for (let i = 0; i < self.population.length; i++) {
-      if (Math.random() <= self.mutationRate) {
-        for (let j = 0; j < self.mutationAmount; j++) {
-          const mutationMethod = self.selectMutationMethod(self.population[i], self.mutation, self.efficientMutation);
-          self.efficientMutation ? null : self.population[i].mutate(mutationMethod);
-        }
+  self.mutate = function (method) {
+    if(method) {
+      // Elitist genomes should not be included
+      for(let i = 0; i < self.population.length; i++) {
+        if (Math.random() <= self.mutationRate)
+          for (let j = 0; j < self.mutationAmount; j++)
+            self.population[i].mutate(method)
+      }
+    } else {
+      // Elitist genomes should not be included
+      for(let i = 0; i < self.population.length; i++) {
+        if (Math.random() <= self.mutationRate)
+          for (let j = 0; j < self.mutationAmount; j++)
+            self.mutateRandom(self.population[i], self.mutation)
       }
     }
   };
