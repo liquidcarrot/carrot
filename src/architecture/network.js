@@ -1642,8 +1642,8 @@ Network.cross_over = function(network1, network2, equal) {
   // Determine offspring node size
   let size;
   if(equal || score1 === score2) {
-    let max = Math.max(network1.nodes.length, network2.nodes.length);
-    let min = Math.min(network1.nodes.length, network2.nodes.length);
+    const max = Math.max(network1.nodes.length, network2.nodes.length);
+    const min = Math.min(network1.nodes.length, network2.nodes.length);
     size = Math.floor(Math.random() * (max - min + 1) + min);
   } else if(score1 > score2) {
     size = network1.nodes.length;
