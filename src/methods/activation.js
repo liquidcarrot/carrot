@@ -15,7 +15,7 @@ const _ = require("lodash");
 * let { methods, Node } = require("@liquid-carrot/carrot");
 *
 * // Changing a neuron's activation function
-* var A = new Node();
+* let A = new Node();
 * A.squash = methods.activation.<ACTIVATION_FUNCTION>;
 *
 * // eg.
@@ -36,7 +36,7 @@ const activation = {
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.LOGISTIC;
   */
   LOGISTIC: function (x, derivate) {
@@ -58,7 +58,7 @@ const activation = {
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.TANH;
   */
   TANH: function (x, derivate) {
@@ -82,7 +82,7 @@ const activation = {
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.IDENTITY;
   */
   IDENTITY: function (x, derivate) {
@@ -104,7 +104,7 @@ const activation = {
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.STEP;
   */
   STEP: function (x, derivate) {
@@ -126,7 +126,7 @@ const activation = {
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.RELU;
   */
   RELU: function (x, derivate) {
@@ -148,7 +148,7 @@ const activation = {
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.SOFTSIGN;
   */
   SOFTSIGN: function (x, derivate) {
@@ -170,7 +170,7 @@ const activation = {
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.SINUSOID;
   */
   SINUSOID: function (x, derivate) {
@@ -192,7 +192,7 @@ const activation = {
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.GAUSSIAN;
   */
   GAUSSIAN: function (x, derivate) {
@@ -207,20 +207,20 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.BENT_IDENTITY;
   */
   BENT_IDENTITY: function (x, derivate) {
     if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
-    const f = derivate ? (x) => x / (2 * Math.sqrt(Math.pow(x, 2) + 1)) + 1 : (x) => (Math.sqrt(Math.pow(x, 2) + 1) - 1) / 2 + x;
+    const f = derivate ? (x) => x / (2 * Math.sqrt((Math.pow(x, 2)) + 1)) + 1 : (x) => (Math.sqrt(Math.pow(x, 2) + 1) - 1) / 2 + x;
     
     return _.isArray(x) ? _.map(x, f) : f(x);
   },
@@ -229,14 +229,14 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.BIPOLAR;
   */
   BIPOLAR: function (x, derivate) {
@@ -251,14 +251,14 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]}  x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.BIPOLAR_SIGMOID;
   */
   BIPOLAR_SIGMOID: function (x, derivate) {
@@ -273,14 +273,14 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.HARD_TANH;
   */
   HARD_TANH: function (x, derivate) {
@@ -297,14 +297,14 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.ABSOLUTE;
   */
   ABSOLUTE: function (x, derivate) {
@@ -319,14 +319,14 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.INVERSE;
   */
   INVERSE: function (x, derivate) {
@@ -345,14 +345,14 @@ const activation = {
    *
    * @member
    * @function
-   * @param {number} x Input value to activation function
+   * @param {number | number[]} x Input value to activation function
    * @param {boolean} [derivate] Flag to select derivative function
    *
    * @example
    * let { methods, Node } = require("@liquid-carrot/carrot");
    *
    * // Changing a neuron's activation function
-   * var A = new Node();
+   * let A = new Node();
    * A.squash = methods.activation.SELU;
    */
   SELU: function (x, derivate) {
