@@ -1012,7 +1012,7 @@ Network.prototype = {
 
     const connections = this.connections.concat(this.selfconns);
     for (i = 0; i < connections.length; i++) {
-      var connection = connections[i];
+      const connection = connections[i];
       if (connection.gater == null) {
         graph_json.links.push({
           source: this.nodes.indexOf(connection.from),
@@ -1021,7 +1021,7 @@ Network.prototype = {
         });
       } else {
         // Add a gater 'node'
-        var index = graph_json.nodes.length;
+        const index = graph_json.nodes.length;
         graph_json.nodes.push({
           id: index,
           activation: connection.gater.activation,
