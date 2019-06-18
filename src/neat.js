@@ -214,12 +214,10 @@ const Neat = function(inputs, outputs, dataset, options) {
     do {
       const current = possible[Math.floor(Math.random() * possible.length)]
       
-      console.log("mutation insde Neat.mutateRandom: " + current.name)
       // attempt mutation, success: return mutation method, failure: remove from possible methods
       if(genome.mutate(current)) return current
       else possible = possible.filter(function(method) { return method.name !== current.name })
       
-      console.log("mutation failed!")
       // Return null when mutation is impossible
       if((!possible || possible.length === 0)) return null;
       
