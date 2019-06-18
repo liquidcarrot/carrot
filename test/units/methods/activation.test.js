@@ -218,60 +218,183 @@ describe("activation", function(){
     })
   })
   describe("activation.BENT_IDENTITY()", function() {
-    it("activation.BENT_IDENTITY() => {ReferenceError}")
-    it("activation.BENT_IDENTITY(number) => {number}")
-    it("activation.BENT_IDENTITY(number, derivate=true) => {number}")
-    it("activation.BENT_IDENTITY(undefined, derivate=true) => {ReferenceError}")
-    it("activation.BENT_IDENTITY(numbers) => {number[]}")
-    it("activation.BENT_IDENTITY(numbers, derivate=true) => {number[]}")
+    it("activation.BENT_IDENTITY() => {ReferenceError}",function(){
+      expect(() => activation.BENT_IDENTITY()).to.throw(ReferenceError);
+      })
+    it("activation.BENT_IDENTITY(number, derivate=false) => {number}", function(){
+      const x = _.random(-50, 50, true)
+      expect(activation.BENT_IDENTITY(x, false)).to.equal((Math.sqrt(Math.pow(x, 2) + 1) - 1) / 2 + x);
+    })
+    it("activation.BENT_IDENTITY(number, derivate=true) => {number}", function(){
+      const x = _.random(-50, 50, true)
+      expect(activation.BENT_IDENTITY(x, true)).to.equal(x / (2 * Math.sqrt(Math.pow(x, 2) + 1)) + 1 );
+    })
+    it("activation.BENT_IDENTITY(undefined, derivate=true) => {ReferenceError}",function(){
+      expect(() => activation.BENT_IDENTITY(undefined, true)).to.throw(ReferenceError);
+      })
+    it("activation.BENT_IDENTITY(numbers, derivate=false) => {number[]}", function(){
+      const x = Array.from({ length: _.random(1,5)}, () => _.random(-50, 50,  true));
+      const z = _.map(x, x =>  (Math.sqrt(Math.pow(x,2) + 1) - 1) / 2 + x);
+      expect(activation.BENT_IDENTITY(x, false)).to.eql(z);
+    })
+    it("activation.BENT_IDENTITY(numbers, derivate=true) => {number[]}", function(){
+      const x = Array.from({ length: _.random(1,5)}, () => _.random(-50, 50,  true));
+      const z = _.map(x, x =>  x / (2 * Math.sqrt(Math.pow(x,2) + 1)) + 1);
+      expect(activation.BENT_IDENTITY(x, true)).to.eql(z);
+    })
   })
   describe("activation.BIPOLAR()", function() {
-    it("activation.BIPOLAR() => {ReferenceError}")
-    it("activation.BIPOLAR(number) => {number}")
-    it("activation.BIPOLAR(number, derivate=true) => {number}")
-    it("activation.BIPOLAR(undefined, derivate=true) => {ReferenceError}")
-    it("activation.BIPOLAR(numbers) => {number[]}")
-    it("activation.BIPOLAR(numbers, derivate=true) => {number[]}")
+    it("activation.BIPOLAR() => {ReferenceError}",function(){
+      expect(() => activation.BIPOLAR()).to.throw(ReferenceError);
+      })
+    it("activation.BIPOLAR(number, derivate=false) => {number}", function(){
+      const x = _.random(-50, 50, true)
+      expect(activation.BIPOLAR(x, false)).to.equal(x > 0 ? 1 : -1 );
+    })
+    it("activation.BIPOLAR(number, derivate=true) => {number}", function(){
+      const x = _.random(-50, 50, true)
+      expect(activation.BIPOLAR(x, true)).to.equal(0);
+    })
+    it("activation.BIPOLAR(undefined, derivate=true) => {ReferenceError}",function(){
+      expect(() => activation.BIPOLAR(undefined, true)).to.throw(ReferenceError);
+      })
+    it("activation.BIPOLAR(numbers, derivate=false) => {number[]}", function(){
+      const x = Array.from({ length: _.random(1,5)}, () => _.random(-50, 50,  true));
+      expect(activation.BIPOLAR(x, false)).to.eql(_.map(x, x => x > 0 ? 1 : -1));
+    })
+    it("activation.BIPOLAR(numbers, derivate=true) => {number[]}", function(){
+      const x = Array.from({ length: _.random(1,5) }, () => _.random(-50, 50,  true));
+      expect(activation.BIPOLAR(x, true)).to.eql(_.map(x, x => 0));
+    })
   })
   describe("activation.BIPOLAR_SIGMOID()", function() {
-    it("activation.BIPOLAR_SIGMOID() => {ReferenceError}")
-    it("activation.BIPOLAR_SIGMOID(number) => {number}")
-    it("activation.BIPOLAR_SIGMOID(number, derivate=true) => {number}")
-    it("activation.BIPOLAR_SIGMOID(undefined, derivate=true) => {ReferenceError}")
-    it("activation.BIPOLAR_SIGMOID(numbers) => {number[]}")
-    it("activation.BIPOLAR_SIGMOID(numbers, derivate=true) => {number[]}")
+    it("activation.BIPOLAR_SIGMOID() => {ReferenceError}",function(){
+      expect(() => activation.BIPOLAR_SIGMOID()).to.throw(ReferenceError);
+      })
+    it("activation.BIPOLAR_SIGMOID(number, derivate=false) => {number}", function(){
+      const x = _.random(-50, 50, true)
+      expect(activation.BIPOLAR_SIGMOID(x, false)).to.equal(2 / (1 + Math.exp(-x)) - 1);
+    })
+    it("activation.BIPOLAR_SIGMOID(number, derivate=true) => {number}", function(){
+      const x = _.random(-50, 50, true)
+      expect(activation.BIPOLAR_SIGMOID(x, true)).to.equal((2 * Math.exp(-x)) / Math.pow(1 + Math.exp(-x), 2));
+    })
+    it("activation.BIPOLAR_SIGMOID(undefined, derivate=true) => {ReferenceError}",function(){
+      expect(() => activation.BIPOLAR_SIGMOID(undefined, true)).to.throw(ReferenceError);
+      })
+    it("activation.BIPOLAR_SIGMOID(numbers, derivate=false) => {number[]}", function(){
+      const x = Array.from({ length: _.random(1,5) }, () => _.random(-50, 50,  true));
+      expect(activation.BIPOLAR_SIGMOID(x, false)).to.eql(_.map(x, x => 2 / (1 + Math.exp(-x)) - 1));
+    })
+    it("activation.BIPOLAR_SIGMOID(numbers, derivate=true) => {number[]}", function(){
+      const x = Array.from({ length: _.random(1,5) }, () => _.random(-50, 50,  true));
+      expect(activation.BIPOLAR_SIGMOID(x, true)).to.eql(_.map(x, x => (2 * Math.exp(-x)) / Math.pow(1 + Math.exp(-x), 2)));
+    })
   })
   describe("activation.HARD_TANH()", function() {
-    it("activation.HARD_TANH() => {ReferenceError}")
-    it("activation.HARD_TANH(number) => {number}")
-    it("activation.HARD_TANH(number, derivate=true) => {number}")
-    it("activation.HARD_TANH(undefined, derivate=true) => {ReferenceError}")
-    it("activation.HARD_TANH(numbers) => {number[]}")
-    it("activation.HARD_TANH(numbers, derivate=true) => {number[]}")
+    it("activation.HARD_TANH() => {ReferenceError}",function(){
+      expect(() => activation.HARD_TANH()).to.throw(ReferenceError);
+      })
+    it("activation.HARD_TANH(number) => {number, derivate=false}", function(){
+      const x = _.random(-50, 50, true)
+      expect(activation.HARD_TANH(x, false)).to.equal(Math.max(-1, Math.min(1, x)));
+    })
+    it("activation.HARD_TANH(number, derivate=true) => {number}", function(){
+      const x = _.random(-50, 50, true);
+      const z = x > -1 && x < 1 ? 1 : 0 
+      expect(activation.HARD_TANH(x, true)).to.equal(z) ;
+    })
+    it("activation.HARD_TANH(undefined, derivate=true) => {ReferenceError}",function(){
+      expect(() => activation.HARD_TANH(undefined, true)).to.throw(ReferenceError);
+      })
+    it("activation.HARD_TANH(numbers, derivate=false) => {number[]}", function(){
+      const x = Array.from({ length: _.random(1,5) }, () => _.random(-50, 50,  true));
+      expect(activation.HARD_TANH(x, false)).to.eql(_.map(x, x => Math.max(-1, Math.min(1, x))));
+    })
+    it("activation.HARD_TANH(numbers, derivate=true) => {number[]}", function(){
+      const x = Array.from({ length: _.random(1,5) }, () => _.random(-50, 50,  true));
+      expect(activation.HARD_TANH(x, true)).to.eql(_.map(x, x => x > -1 && x < 1 ? 1 : 0 ));
+    })
   })
   describe("activation.ABSOLUTE()", function() {
-    it("activation.ABSOLUTE() => {ReferenceError}")
-    it("activation.ABSOLUTE(number) => {number}")
-    it("activation.ABSOLUTE(number, derivate=true) => {number}")
-    it("activation.ABSOLUTE(undefined, derivate=true) => {ReferenceError}")
-    it("activation.ABSOLUTE(numbers) => {number[]}")
-    it("activation.ABSOLUTE(numbers, derivate=true) => {number[]}")
+    it("activation.ABSOLUTE() => {ReferenceError}",function(){
+      expect(() => activation.ABSOLUTE()).to.throw(ReferenceError);
+      })
+    it("activation.ABSOLUTE(number, derivate=false) => {number}", function(){
+      const x = _.random(-50, 50, true)
+      expect(activation.ABSOLUTE(x, false)).to.equal(Math.abs(x));
+    })
+    it("activation.ABSOLUTE(number, derivate=true) => {number}", function(){
+      const x = _.random(-50, 50, true)
+      const z = x < 0 ? -1 : 1;
+      expect(activation.ABSOLUTE(x, true)).to.equal(z);
+    })
+    it("activation.ABSOLUTE(undefined, derivate=true) => {ReferenceError}",function(){
+      expect(() => activation.ABSOLUTE(undefined, true)).to.throw(ReferenceError);
+      })
+    it("activation.ABSOLUTE(numbers, false) => {number[]}", function(){
+      const x = Array.from({ length: _.random(1,5) }, () => _.random(-50, 50,  true));
+      expect(activation.ABSOLUTE(x, false)).to.eql(_.map(x, x => Math.abs(x) ));
+    })
+    it("activation.ABSOLUTE(numbers, derivate=true) => {number[]}", function(){
+      const x = Array.from({ length: _.random(1,5) }, () => _.random(-50, 50,  true));
+      expect(activation.ABSOLUTE(x, true)).to.eql(_.map(x, x => x < 0 ? -1 : 1));
+    })
   })
   describe("activation.INVERSE()", function() {
-    it("activation.INVERSE() => {ReferenceError}")
-    it("activation.INVERSE(number) => {number}")
-    it("activation.INVERSE(number, derivate=true) => {number}")
-    it("activation.INVERSE(undefined, derivate=true) => {ReferenceError}")
-    it("activation.INVERSE(numbers) => {number[]}")
-    it("activation.INVERSE(numbers, derivate=true) => {number[]}")
+    it("activation.INVERSE() => {ReferenceError}",function(){
+      expect(() => activation.INVERSE()).to.throw(ReferenceError);
+      })
+    it("activation.INVERSE(number, derivate=false) => {number}", function(){
+      const x = _.random(-50, 50, true)
+      expect(activation.INVERSE(x, false)).to.equal(1-x);
+    })
+    it("activation.INVERSE(number, derivate=true) => {number}", function(){
+      const x = _.random(-50, 50, true)
+      expect(activation.INVERSE(x, true)).to.equal(-1);
+    })
+    it("activation.INVERSE(undefined, derivate=true) => {ReferenceError}",function(){
+      expect(() => activation.INVERSE(undefined, true)).to.throw(ReferenceError);
+      })
+    it("activation.INVERSE(numbers, derivate=false) => {number[]}", function(){
+      const x = Array.from({ length: _.random(1,5) }, () => _.random(-50, 50,  true));
+      expect(activation.INVERSE(x, false)).to.eql(_.map(x, x => 1-x));
+    })
+    it("activation.INVERSE(numbers, derivate=true) => {number[]}", function(){
+      const x = Array.from({ length: _.random(1,5) }, () => _.random(-50, 50,  true));
+      expect(activation.INVERSE(x, true)).to.eql(_.map(x, x => -1));
+    })
   })
   describe("activation.SELU()", function() {
-    it("activation.SELU() => {ReferenceError}")
-    it("activation.SELU(number) => {number}")
-    it("activation.SELU(number, derivate=true) => {number}")
-    it("activation.SELU(undefined, derivate=true) => {ReferenceError}")
-    it("activation.SELU(numbers) => {number[]}")
-    it("activation.SELU(numbers, derivate=true) => {number[]}")
+    const alpha = 1.6732632423543772848170429916717;
+    const scale = 1.0507009873554804934193349852946;
+
+    it("activation.SELU() => {ReferenceError}",function(){
+      expect(() => activation.SELU()).to.throw(ReferenceError);
+      })
+    it("activation.SELU(number, derivate=false) => {number}", function(){
+      const x = _.random(-50, 50, true)
+      const z = (x > 0 ? x : alpha * Math.exp(x) - alpha) * scale;
+      expect(activation.SELU(x, false)).to.equal(z);
+    })
+    it("activation.SELU(number, derivate=true) => {number}", function(){
+      const x = _.random(-50, 50, true)
+      const z = x > 0 ? scale : ((x > 0 ? x : alpha * Math.exp(x) - alpha) + alpha) * scale;
+      expect(activation.SELU(x, true)).to.equal(z);
+    })
+    it("activation.SELU(undefined, derivate=true) => {ReferenceError}",function(){
+      expect(() => activation.SELU(undefined, true)).to.throw(ReferenceError);
+      })
+    it("activation.SELU(numbers, derivate=false) => {number[]}", function(){
+      const x = Array.from({ length: _.random(1,5) }, () => _.random(-50, 50,  true));
+      const z = _.map(x, x => (x > 0 ? x : alpha * Math.exp(x) - alpha) * scale);
+      expect(activation.SELU(x, false)).to.eql(z);
+    })
+    it("activation.SELU(numbers, derivate=true) => {number[]}", function(){
+      const x = Array.from({ length: _.random(1,5) }, () => _.random(-50, 50,  true));
+      const z = _.map(x, x => x > 0 ? scale : ((x > 0 ? x : alpha * Math.exp(x) - alpha) + alpha) * scale)
+      expect(activation.SELU(x, true)).to.eql(z);
+    })
   })
 })
 
