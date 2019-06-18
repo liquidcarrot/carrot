@@ -1626,21 +1626,21 @@ Network.merge = function(network1, network2) {
  * let network3 = Network.cross_over(network1, network2);
  */
 Network.cross_over = function(network1, network2, equal) {
-  if (network1.input !== network2.input || network1.output !== network2.output) {
+  if (network1.input_size !== network2.input_size || network1.output_size !== network2.output_size) {
     throw new Error("Networks don`t have the same input/output size!");
   }
 
   // Initialise offspring
-  var offspring = new Network(network1.input, network1.output);
+  const offspring = new Network(network1.input, network1.output);
   offspring.connections = [];
   offspring.nodes = [];
 
   // Save scores and create a copy
-  var score1 = network1.score || 0;
-  var score2 = network2.score || 0;
+  const score1 = network1.score || 0;
+  const score2 = network2.score || 0;
 
   // Determine offspring node size
-  var size;
+  let size;
   if(equal || score1 === score2) {
     let max = Math.max(network1.nodes.length, network2.nodes.length);
     let min = Math.min(network1.nodes.length, network2.nodes.length);
