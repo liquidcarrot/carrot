@@ -1061,45 +1061,48 @@ Network.prototype = {
    * let imported = Network.from_JSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
    */
   to_JSON: function to_JSON() {
-    var json = {
+    const json = {
       nodes: [],
       connections: [],
+      input_size: this.input_size,
+      output_size: this.output_size,
+      dropout: this.dropout,
+      // backward compatibility
       input: this.input_size,
       output: this.output_size,
-      dropout: this.dropout
     };
 
     // So we don't have to use expensive .indexOf()
-    var i;
+    let i;
     for (i = 0; i < this.nodes.length; i++) {
       this.nodes[i].index = i;
     }
 
     for (i = 0; i < this.nodes.length; i++) {
-      let node = this.nodes[i];
-      let tojson = node.to_JSON();
-      tojson.index = i;
-      json.nodes.push(tojson);
+      const node = this.nodes[i];
+      const node_json = node.to_JSON();
+      node_json.index = i;
+      json.nodes.push(node_json);
 
       if (node.connections.self.weight !== 0) {
-        let tojson = node.connections.self.to_JSON();
-        tojson.from = i;
-        tojson.to = i;
+        const connection_json = node.connections.self.to_JSON();
+        connection_json.from = i;
+        connection_json.to = i;
 
-        tojson.gater = node.connections.self.gater != null ? node.connections.self.gater.index : null;
-        json.connections.push(tojson);
+        connection_json.gater = node.connections.self.gater != null ? node.connections.self.gater.index : null;
+        json.connections.push(connection_json);
       }
     }
 
     for (i = 0; i < this.connections.length; i++) {
-      let conn = this.connections[i];
-      let tojson = conn.to_JSON();
-      tojson.from = conn.from.index;
-      tojson.to = conn.to.index;
+      const connection = this.connections[i];
+      const connection_json = connection.to_JSON();
+      connection_json.from = connection.from.index;
+      connection_json.to = connection.to.index;
 
-      tojson.gater = conn.gater != null ? conn.gater.index : null;
+      connection_json.gater = connection.gater != null ? connection.gater.index : null;
 
-      json.connections.push(tojson);
+      json.connections.push(connection_json);
     }
 
     return json;
