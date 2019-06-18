@@ -1158,15 +1158,15 @@ Network.prototype = {
    * @param {boolean} [options.equal=true] If set to true when [Network.cross_over](Network.cross_over) runs it will assume both genomes are equally fit.
    * @param {number} [options.popsize=50] Population size of each generation.
    * @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
-   * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
-   * @param {number} [options.mutationRate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.3.
+   * @param {number} [options.provenance=0] Number of genomes inserted into the original network template (Network(input,output)) per evolution.
+   * @param {number} [options.mutationRate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated.
    * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
-   * @param {boolean} [options.fitnessPopulation=false] Flag to return the fitness of a population of genomes. Set this to false to evaluate each genome individually.
+   * @param {boolean} [options.fitness_population=false] Flag to return the fitness of a population of genomes. Set this to false to evaluate each genome individually.
    * @param {Function} [options.fitness] - A fitness function to evaluate the networks. Takes a `genome`, i.e. a [network](Network), and a `dataset` and sets the genome's score property
    * @param {string} [options.selection=FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. methods.Selection.FITNESS_PROPORTIONATE).
    * @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
    * @param {Array} [options.mutation] Sets allowed [mutation methods](mutation) for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
-   * @param {number} [options.maxNodes=Infinity] Maximum nodes for a potential network
+   * @param {number} [options.max_nodes=Infinity] Maximum nodes for a potential network
    * @param {number} [options.maxConns=Infinity] Maximum connections for a potential network
    * @param {number} [options.maxGates=Infinity] Maximum gates for a potential network
    * @param {function} [options.mutationSelection=random] Custom mutation selection function if given
@@ -1204,47 +1204,59 @@ Network.prototype = {
    *
    * execute();
    */
-  evolve: async function(set, options) {
-    if(set[0].input.length !== this.input_size || set[0].output.length !== this.output_size) {
+  evolve: async function(dataset, options) {
+    if (dataset[0].input.length !== (this.input_size || this.input) || dataset[0].output.length !== (this.output_size || this.output)) {
       throw new Error(`Dataset input/output size should be same as network input/output size!`);
     }
 
     // Read the options
     options = options || {};
 
+    // Deal with complex default values first (cases where default depends on conditions)
     let target_error;
-
     if (typeof options.iterations === `undefined` && typeof options.error === `undefined`) {
       options.iterations = 1000; // limit in case network is not converging
       target_error = 0.05
     } else if (options.iterations) {
       target_error = -1; // run until iterations
     } else if (options.error) {
-      target_error = options.error
+      target_error = options.error;
       options.iterations = 0; // run until target error
     }
 
-    var growth = typeof options.growth !== `undefined` ? options.growth : 0.0001;
-    var cost = options.cost || methods.cost.MSE;
-    var amount = options.amount || 1;
-    let defaultSet = set;
+    // backward compatibility
+    options = _.defaults(options, {
+      fitness_population: options.fitnessPopulation,
+      max_nodes: options.maxNodes,
+      max_connections: options.maxConns,
+      max_gates: options.maxGates=Infinity,
+      mutation_selection: options.mutationSelection,
+      efficient_mutation: options.efficientMutation,
+    });
 
-    var threads = options.threads;
-    if (typeof threads === `undefined`) {
-      if (typeof window === `undefined`) { // Node.js
-        threads = require(`os`).cpus().length;
-      } else { // Browser
-        threads = navigator.hardwareConcurrency;
-      }
-    }
+    // set default values
+    options = _.defaults(options, {
+      threads: (typeof window === `undefined`) ? require(`os`).cpus().length : navigator.hardwareConcurrency,
+      growth: (typeof options.growth !== `undefined`) ? options.growth : 0.0001,
+      cost: methods.cost.MSE,
+      amount: 1,
+      fitness_population: false,
+      max_nodes: Infinity,
+      max_connections: Infinity,
+      max_gates: Infinity,
+      efficient_mutation: false,
+      // mutation_selection: random // TODO: actually use it
+    });
 
-    var start = Date.now();
+    const default_dataset = dataset;
 
-    if (threads === 1) {
+    const start = Date.now();
+
+    if (options.threads === 1) {
       // Create the fitness function
-      options.fitness = function (set = defaultSet, genome, amount = 1, cost = methods.cost.MSE, growth = 0.0001) {
-        var score = 0;
-        for (var i = 0; i < amount; i++) score -= genome.test(set, cost).error;
+      options.fitness = function (dataset = default_dataset, genome, amount = options.amount, cost = options.cost, growth = options.growth) {
+        let score = 0;
+        for (let i = 0; i < amount; i++) score -= genome.test(dataset, cost).error;
 
         score -= (genome.nodes.length - genome.input - genome.output + genome.connections.length + genome.gates.length) * growth;
         score = isNaN(score) ? -Infinity : score; // this can cause problems with fitness proportionate selection
@@ -1253,65 +1265,65 @@ Network.prototype = {
       };
     } else {
       // Serialize the dataset
-      var converted = multi.serializeDataSet(set);
+      const serialized_dataset = multi.serializeDataSet(dataset);
 
       // Create workers, send datasets
-      var workers = [];
+      const workers = [];
       if (typeof window === `undefined`) {
-        for (var i = 0; i < threads; i++) workers.push(new multi.workers.node.TestWorker(converted, cost));
+        for (var i = 0; i < options.threads; i++) workers.push(new multi.workers.node.TestWorker(serialized_dataset, options.cost));
       } else {
-        for (var i = 0; i < threads; i++) workers.push(new multi.workers.browser.TestWorker(converted, cost));
+        for (var i = 0; i < options.threads; i++) workers.push(new multi.workers.browser.TestWorker(serialized_dataset, options.cost));
       }
 
-      options.fitness = function (set, population) {
+      options.fitness = function (dataset, population) {
         return new Promise((resolve, reject) => {
           // Create a queue
-          var queue = population.slice();
-          var done = 0;
+          const queue = population.slice();
+          let done = 0;
 
           // Start worker function
-          var startWorker = function (worker) {
+          const start_worker = function (worker) {
             if (!queue.length) {
-              if (++done === threads) resolve();
+              if (++done === options.threads) resolve();
               return;
             }
 
-            var genome = queue.shift();
+            const genome = queue.shift();
 
             worker.evaluate(genome).then(function (result) {
               genome.score = -result;
               genome.score -= (genome.nodes.length - genome.input - genome.output +
-                genome.connections.length + genome.gates.length) * growth;
+                genome.connections.length + genome.gates.length) * options.growth;
               genome.score = isNaN(parseFloat(result)) ? -Infinity : genome.score;
-              startWorker(worker);
+              start_worker(worker);
             });
           };
 
-          for (var i = 0; i < workers.length; i++) startWorker(workers[i]);
+          for (var i = 0; i < workers.length; i++) start_worker(workers[i]);
         });
       };
 
-      options.fitnessPopulation = true;
+      options.fitness_population = true;
     }
 
     // Intialise the NEAT instance
     options.network = this;
     options.input = this.input_size;
     options.output = this.output_size;
-    var neat = new Neat(set, options);
+    const neat = new Neat(dataset, options);
 
-    var error = -Infinity;
-    var bestFitness = -Infinity;
-    var bestGenome;
+    let error = -Infinity;
+    let best_fitness = -Infinity;
+    let best_genome;
 
     while (error < -target_error && (options.iterations === 0 || neat.generation < options.iterations)) {
-      let fittest = await neat.evolve();
-      let fitness = fittest.score;
-      error = fitness + (fittest.nodes.length - fittest.input - fittest.output + fittest.connections.length + fittest.gates.length) * growth;
+      const fittest = await neat.evolve();
+      const fitness = fittest.score;
+      error = fitness + (fittest.nodes.length - fittest.input - fittest.output + fittest.connections.length + fittest.gates.length) * options.growth;
 
-      if (fitness > bestFitness) {
-        bestFitness = fitness;
-        bestGenome = fittest;
+      if (fitness > best_fitness) {
+        best_fitness = fitness;
+        best_genome = fittest;
       }
 
       if (options.log && neat.generation % options.log === 0) {
@@ -1323,15 +1335,15 @@ Network.prototype = {
       }
     }
 
-    if(threads > 1) {
-      for (var i = 0; i < workers.length; i++) workers[i].terminate();
+    if(options.threads > 1) {
+      for (let i = 0; i < workers.length; i++) workers[i].terminate();
     }
 
-    if(typeof bestGenome !== `undefined`) {
-      this.nodes = bestGenome.nodes;
-      this.connections = bestGenome.connections;
-      this.selfconns = bestGenome.selfconns;
-      this.gates = bestGenome.gates;
+    if(typeof best_genome !== `undefined`) {
+      this.nodes = best_genome.nodes;
+      this.connections = best_genome.connections;
+      this.selfconns = best_genome.selfconns;
+      this.gates = best_genome.gates;
 
       if(options.clear) this.clear();
     }
@@ -1339,7 +1351,7 @@ Network.prototype = {
     return {
       error: -error,
       iterations: neat.generation,
-      time: Date.now() - start
+      time: Date.now() - start,
     };
   },
 
@@ -1800,12 +1812,12 @@ module.exports = Network;
 * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
 * @param {number} [options.mutationRate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.4.
 * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
-* @param {boolean} [options.fitnessPopulation=false] Flag to return the fitness of a population of genomes. Set this to false to evaluate each genome inidividually.
+* @param {boolean} [options.fitness_population=false] Flag to return the fitness of a population of genomes. Set this to false to evaluate each genome inidividually.
 * @param {Function} [options.fitness] - A fitness function to evaluate the networks. Takes a `dataset` and a `genome` i.e. a [network](Network) or a `population` i.e. an array of networks and sets the genome `.score` property
 * @param {string} [options.selection=FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
 * @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
 * @param {Network} [options.network=false] Network to start evolution from
-* @param {number} [options.maxNodes=Infinity] Maximum nodes for a potential network
+* @param {number} [options.max_nodes=Infinity] Maximum nodes for a potential network
 * @param {number} [options.maxConns=Infinity] Maximum connections for a potential network
 * @param {number} [options.maxGates=Infinity] Maximum gates for a potential network
 * @param {function} [options.mutationSelection=ALL] Custom mutation selection function if given
@@ -1837,7 +1849,7 @@ const Neat = function(dataset, {
   provenance = 0,
   mutationRate = 0.4,
   mutationAmount = 1,
-  fitnessPopulation = false,
+  fitness_population = false,
   fitness = function(set = dataset, genome, amount = 1, cost = methods.cost.MSE, growth = 0.0001) {
     let score = 0;
     for (let i = 0; i < amount; i++) score -= genome.test(set, cost).error;
@@ -1857,7 +1869,7 @@ const Neat = function(dataset, {
   mutation = methods.mutation.FFW,
   efficientMutation = false,
   template = (new Network(input, output)),
-  maxNodes = Infinity,
+  max_nodes = Infinity,
   maxConns = Infinity,
   maxGates = Infinity,
   selectMutationMethod = this.selectMutationMethod
@@ -1878,14 +1890,14 @@ const Neat = function(dataset, {
     provenance,
     mutationRate,
     mutationAmount,
-    fitnessPopulation,
+    fitness_population,
     fitness,
     selection,
     crossover,
     mutation,
     efficientMutation,
     template,
-    maxNodes,
+    max_nodes,
     maxConns,
     maxGates,
     selectMutationMethod
@@ -1945,7 +1957,7 @@ const Neat = function(dataset, {
       while(!success) {
         const currentMethod = filtered[Math.floor(Math.random() * filtered.length)]
 
-        if(currentMethod === methods.mutation.ADD_NODE && genome.nodes.length >= self.maxNodes || currentMethod === methods.mutation.ADD_CONN && genome.connections.length >= self.maxConns || currentMethod === methods.mutation.ADD_GATE && genome.gates.length >= self.maxGates) {
+        if(currentMethod === methods.mutation.ADD_NODE && genome.nodes.length >= self.max_nodes || currentMethod === methods.mutation.ADD_CONN && genome.connections.length >= self.maxConns || currentMethod === methods.mutation.ADD_GATE && genome.gates.length >= self.maxGates) {
           success = false
         } else {
           success = genome.mutate(currentMethod) // actual mutation happens
@@ -1963,8 +1975,8 @@ const Neat = function(dataset, {
       let allowed = allowedMutations ? allowedMutations : self.mutation
       let current = allowed[Math.floor(Math.random() * allowed.length)]
 
-      if (current === methods.mutation.ADD_NODE && genome.nodes.length >= self.maxNodes) {
-        if (config.warnings) console.warn(`maxNodes exceeded!`)
+      if (current === methods.mutation.ADD_NODE && genome.nodes.length >= self.max_nodes) {
+        if (config.warnings) console.warn(`max_nodes exceeded!`)
         return null;
       }
 
@@ -2165,7 +2177,7 @@ const Neat = function(dataset, {
    * @return {Network} Fittest Network
    */
   self.evaluate = async function (dataset) {
-    if (self.fitnessPopulation) {
+    if (self.fitness_population) {
       if (self.clear) {
         for (let i = 0; i < self.population.length; i++)
           self.population[i].clear();
