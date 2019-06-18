@@ -947,10 +947,10 @@ Network.prototype = {
    *
    */
   graph: function graph(width, height) {
-    var input = 0;
-    var output = 0;
+    let input = 0;
+    let output = 0;
 
-    var json = {
+    var graph_json = {
       nodes: [],
       links: [],
       constraints: [{
@@ -964,45 +964,45 @@ Network.prototype = {
       }]
     };
 
-    var i;
+    let i;
     for (i = 0; i < this.nodes.length; i++) {
-      var node = this.nodes[i];
+      const node = this.nodes[i];
 
       if (node.type === 'input') {
         if (this.input_size === 1) {
-          json.constraints[0].offsets.push({
+          graph_json.constraints[0].offsets.push({
             node: i,
             offset: 0
           });
         } else {
-          json.constraints[0].offsets.push({
+          graph_json.constraints[0].offsets.push({
             node: i,
             offset: 0.8 * width / (this.input_size - 1) * input++
           });
         }
-        json.constraints[1].offsets.push({
+        graph_json.constraints[1].offsets.push({
           node: i,
           offset: 0
         });
       } else if (node.type === 'output') {
         if (this.output_size === 1) {
-          json.constraints[0].offsets.push({
+          graph_json.constraints[0].offsets.push({
             node: i,
             offset: 0
           });
         } else {
-          json.constraints[0].offsets.push({
+          graph_json.constraints[0].offsets.push({
             node: i,
             offset: 0.8 * width / (this.output_size - 1) * output++
           });
         }
-        json.constraints[1].offsets.push({
+        graph_json.constraints[1].offsets.push({
           node: i,
           offset: -0.8 * height
         });
       }
 
-      json.nodes.push({
+      graph_json.nodes.push({
         id: i,
         name: node.type === 'hidden' ? node.squash.name : node.type.toUpperCase(),
         activation: node.activation,
@@ -1010,34 +1010,34 @@ Network.prototype = {
       });
     }
 
-    var connections = this.connections.concat(this.selfconns);
+    const connections = this.connections.concat(this.selfconns);
     for (i = 0; i < connections.length; i++) {
       var connection = connections[i];
       if (connection.gater == null) {
-        json.links.push({
+        graph_json.links.push({
           source: this.nodes.indexOf(connection.from),
           target: this.nodes.indexOf(connection.to),
           weight: connection.weight
         });
       } else {
         // Add a gater 'node'
-        var index = json.nodes.length;
-        json.nodes.push({
+        var index = graph_json.nodes.length;
+        graph_json.nodes.push({
           id: index,
           activation: connection.gater.activation,
           name: 'GATE'
         });
-        json.links.push({
+        graph_json.links.push({
           source: this.nodes.indexOf(connection.from),
           target: index,
           weight: 1 / 2 * connection.weight
         });
-        json.links.push({
+        graph_json.links.push({
           source: index,
           target: this.nodes.indexOf(connection.to),
           weight: 1 / 2 * connection.weight
         });
-        json.links.push({
+        graph_json.links.push({
           source: this.nodes.indexOf(connection.gater),
           target: index,
           weight: connection.gater.activation,
@@ -1046,7 +1046,7 @@ Network.prototype = {
       }
     }
 
-    return json;
+    return graph_json;
   },
 
   /**
@@ -1107,6 +1107,11 @@ Network.prototype = {
 
     return json;
   },
+
+  /**
+   * For backward compatibility
+   */
+  toJSON: Network.prototype.to_JSON,
 
   /**
    * Sets the value of a property for every node in this network
@@ -1521,6 +1526,11 @@ Network.from_JSON = function(json) {
 };
 
 /**
+ * For backward compatibility
+ */
+Network.fromJSON = Network.from_JSON;
+
+/**
  * Merge two networks into one.
  *
  * The merge functions takes two networks, the output size of `network1` should be the same size as the input of `network2`. Merging will always be one to one to conserve the purpose of the networks.
@@ -1538,7 +1548,7 @@ Network.from_JSON = function(json) {
  * // combining these will create an XNOR
  * let XNOR = Network.merge(XOR, NOT);
  */
-Network.merge = function (network1, network2) {
+Network.merge = function(network1, network2) {
   // Create a copy of the networks
   network1 = Network.from_JSON(network1.to_JSON());
   network2 = Network.from_JSON(network2.to_JSON());
@@ -1600,7 +1610,7 @@ Network.merge = function (network1, network2) {
  * // Produce an offspring
  * let network3 = Network.cross_over(network1, network2);
  */
-Network.cross_over = function (network1, network2, equal) {
+Network.cross_over = function(network1, network2, equal) {
   if (network1.input !== network2.input || network1.output !== network2.output) {
     throw new Error("Networks don't have the same input/output size!");
   }
@@ -1810,7 +1820,7 @@ module.exports = Network;
 *   popsize: 1000
 * });
 */
-const Neat = function (dataset, {
+const Neat = function(dataset, {
   generation = 0, // internal variable
   input = 1,
   output = 1,
