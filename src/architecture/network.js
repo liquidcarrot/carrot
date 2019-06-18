@@ -153,7 +153,7 @@ Network.prototype = {
    * @param {number} rate=0.3 Sets the [learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10) of the backpropagation process
    * @param {number} momentum=0 [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html). Adds a fraction of the previous weight update to the current one.
    * @param {boolean} update=false When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
-   * @param {number} target Ideal values
+   * @param {number[]} target Ideal values of the previous activate. Will use the difference to improve the weights
    *
    * @example
    * let { Network } = require("@liquid-carrot/carrot");
@@ -174,12 +174,13 @@ Network.prototype = {
       throw new Error('Output target length should match network output length');
     }
 
-    var targetIndex = target.length;
+    // index used to iterate through the target array when updating
+    let target_index = target.length;
 
-    // Propagate output nodes
-    var i;
+    // propagate output nodes
+    let i;
     for (i = this.nodes.length - 1; i >= this.nodes.length - this.output_size; i--) {
-      this.nodes[i].propagate(target[--targetIndex], { rate, momentum, update });
+      this.nodes[i].propagate(target[--target_index], { rate, momentum, update });
     }
 
     // Propagate hidden and input nodes
