@@ -293,7 +293,7 @@ let Neat = function(inputs, outputs, dataset, options) {
 
     // Check population for evaluation
     if (typeof self.population[self.population.length - 1].score === 'undefined')
-      await self.evaluate(_.isArray(evolveSet) ? evolveSet : _.isArray(dataset) ? dataset : parameter.is.required("dataset"));
+      await self.evaluate(_.isArray(evolveSet) ? evolveSet : _.isArray(self.dataset) ? self.dataset : parameter.is.required("dataset"));
     // Check & adjust genomes as needed
     if(pickGenome) self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome)
 
