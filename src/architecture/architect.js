@@ -481,22 +481,16 @@ const architect = {
   * @returns {Network}
   */
   Hopfield: function (size) {
-    var input = new Group(size);
-    var output = new Group(size);
+    const input = new Group(size, "input")
+    const output = new Group(size, "output")
 
-    input.connect(output, methods.connection.ALL_TO_ALL);
+    input.connect(output, methods.connection.ALL_TO_ALL)
 
-    input.set({
-      type: 'input'
-    });
     output.set({
-      squash: methods.activation.STEP,
-      type: 'output'
-    });
+      squash: methods.activation.STEP
+    })
 
-    var network = new architect.Construct([input, output]);
-
-    return network;
+    return new architect.Construct([input, output])
   },
 
   /**
