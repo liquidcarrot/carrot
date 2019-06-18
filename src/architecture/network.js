@@ -170,21 +170,25 @@ Network.prototype = {
    */
   propagate: function propagate(rate, momentum, update, target) {
     // the or in the if is for backward compatibility
-    if (typeof target === 'undefined' || target.length !== (this.output_size || this.output)) {
+    const output_size = (this.output_size || this.output);
+    const input_size = (this.input_size || this.input);
+    if (typeof target === 'undefined' || target.length !== output_size) {
       throw new Error('Output target length should match network output length');
     }
+
+
 
     // index used to iterate through the target array when updating
     let target_index = target.length;
 
     // propagate output nodes
     let i;
-    for (i = this.nodes.length - 1; i >= this.nodes.length - this.output_size; i--) {
+    for (i = this.nodes.length - 1; i >= this.nodes.length - output_size; i--) {
       this.nodes[i].propagate(target[--target_index], { rate, momentum, update });
     }
 
     // Propagate hidden and input nodes
-    for (i = this.nodes.length - this.output_size - 1; i >= this.input_size; i--) {
+    for (i = this.nodes.length - output_size - 1; i >= input_size; i--) {
       this.nodes[i].propagate({ rate, momentum, update });
     }
   },
