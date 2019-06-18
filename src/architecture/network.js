@@ -2014,10 +2014,13 @@ const Neat = function(dataset, {
   self.evolve = async function (evolveSet, pickGenome, adjustGenome) {
     // Check if evolve is possible
     if(self.elitism + self.provenance > self.popsize) throw new Error("Can`t evolve! Elitism + provenance exceeds population size!");
+    
+    evolveSet = evolveSet || self.dataset;
 
     // Check population for evaluation
     if(typeof self.population[self.population.length - 1].score === `undefined`)
-      await self.evaluate(_.isArray(evolveSet) ? evolveSet : _.isArray(self.dataset) ? self.dataset : parameter.is.required("dataset"));
+      await self.evaluate(evolveSet);
+      // await self.evaluate(_.isArray(evolveSet) ? evolveSet : _.isArray(self.dataset) ? self.dataset : parameter.is.required("dataset"));
     // Check & adjust genomes as needed
     if(pickGenome) self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome)
 
@@ -2045,7 +2048,8 @@ const Neat = function(dataset, {
     self.population.push(...elitists);
 
     // evaluate the population
-    await self.evaluate(_.isArray(evolveSet) ? evolveSet : _.isArray(dataset) ? dataset : parameter.is.required("dataset"));
+    await self.evaluate(evolveSet);
+    // await self.evaluate(_.isArray(evolveSet) ? evolveSet : _.isArray(self.dataset) ? self.dataset : parameter.is.required("dataset"));
 
     // Check & adjust genomes as needed
     if(pickGenome) self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome)
@@ -2163,7 +2167,9 @@ const Neat = function(dataset, {
    *
    * @return {Network} Fittest Network
    */
-  self.evaluate = async function (dataset) {
+  self.evaluate = async function(dataset) {
+    dataset = dataset || self.dataset;
+    
     if (self.fitnessPopulation) {
       if (self.clear) {
         for (let i = 0; i < self.population.length; i++)
