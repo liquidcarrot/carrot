@@ -1,10 +1,10 @@
-let _ = require('lodash');
-let parameter = require('../util/parameter');
-var multi = require('../multithreading/multi');
-var methods = require('../methods/methods');
-var Connection = require('./connection');
-var config = require('../config');
-var Node = require('./node');
+let _ = require(`lodash`);
+let parameter = require(`../util/parameter`);
+var multi = require(`../multithreading/multi`);
+var methods = require(`../methods/methods`);
+var Connection = require(`./connection`);
+var config = require(`../config`);
+var Node = require(`./node`);
 
 // Easier variable naming
 const mutation = methods.mutation;
@@ -38,8 +38,8 @@ const mutation = methods.mutation;
 * let myNetwork = new architect.Perceptron(5, 20, 10, 5, 1);
 */
 function Network(input_size, output_size) {
-  if (typeof input_size === 'undefined' || typeof output_size === 'undefined') {
-    throw new Error('No input or output size given');
+  if (typeof input_size === `undefined` || typeof output_size === `undefined`) {
+    throw new Error(`No input or output size given`);
   }
   // *IDEA*: Store input & output nodes in arrays accessible by this.input and this.output instead of just storing the number
   this.input_size = input_size;
@@ -60,7 +60,7 @@ function Network(input_size, output_size) {
   // Create input and output nodes
   var i;
   for (i = 0; i < this.input_size + this.output_size; i++) {
-    var type = i < this.input_size ? 'input' : 'output';
+    var type = i < this.input_size ? `input` : `output`;
     this.nodes.push(new Node(type));
   }
 
@@ -98,9 +98,9 @@ Network.prototype = {
 
     // Activate nodes chronologically
     this.nodes.forEach((node, node_index) => {
-      if (node.type === 'input') {
+      if (node.type === `input`) {
         node.activate(input[node_index]);
-      } else if (node.type === 'output') {
+      } else if (node.type === `output`) {
         const activation_result = node.activate();
         output.push(activation_result);
       } else {
@@ -132,9 +132,9 @@ Network.prototype = {
 
     // Activate nodes chronologically for forward feeding
     this.nodes.forEach((node, node_index) => {
-      if (node.type === 'input') {
+      if (node.type === `input`) {
         node.no_trace_activate(input[node_index]);
-      } else if (node.type === 'output') {
+      } else if (node.type === `output`) {
         const activation_result = node.no_trace_activate();
         output.push(activation_result);
       } else {
@@ -172,11 +172,9 @@ Network.prototype = {
     // the or in the if is for backward compatibility
     const output_size = (this.output_size || this.output);
     const input_size = (this.input_size || this.input);
-    if (typeof target === 'undefined' || target.length !== output_size) {
-      throw new Error('Output target length should match network output length');
+    if (typeof target === `undefined` || target.length !== output_size) {
+      throw new Error(`Output target length should match network output length`);
     }
-
-
 
     // index used to iterate through the target array when updating
     let target_index = target.length;
@@ -286,9 +284,9 @@ Network.prototype = {
    */
   gate: function gate(node, connection) {
     if (this.nodes.indexOf(node) === -1) {
-      throw new Error('This node is not part of the network!');
+      throw new Error(`This node is not part of the network!`);
     } else if (connection.gater != null) {
-      if (config.warnings) console.warn('This connection is already gated!');
+      if (config.warnings) console.warn(`This connection is already gated!`);
       return;
     }
     node.gate(connection);
@@ -314,7 +312,7 @@ Network.prototype = {
   ungate: function ungate(connection) {
     const index = this.gates.indexOf(connection);
     if (index === -1) {
-      throw new Error('This connection is not gated!');
+      throw new Error(`This connection is not gated!`);
     }
 
     this.gates.splice(index, 1);
@@ -338,7 +336,7 @@ Network.prototype = {
     const index = this.nodes.indexOf(node);
 
     if (index === -1) {
-      throw new Error('This node does not exist in the network!');
+      throw new Error(`This node does not exist in the network!`);
     }
 
     // Keep track of gates
@@ -422,7 +420,7 @@ Network.prototype = {
     let candidates = []
     switch (method) {
       case mutation.SUB_NODE:
-        candidates = _.filter(this.nodes, function(node) { return (node.type !== 'output' && node.type !== 'input') }) // assumes input & output node 'type' has been set
+        candidates = _.filter(this.nodes, function(node) { return (node.type !== `output` && node.type !== `input`) }) // assumes input & output node 'type' has been set
         return candidates.length ? candidates : false
       case mutation.ADD_CONN:
         for (let i = 0; i < this.nodes.length - this.output_size; i++) {
@@ -480,7 +478,7 @@ Network.prototype = {
         // break out early if there aren't enough nodes to swap
         if((this.nodes.length - 1) - this.input_size - (method.mutateOutput ? 0 : this.output_size) < 2) return false;
 
-        const filterFn = (method.mutateOutput) ? (node) => (node.type !== 'input') : (node) => (node.type !== 'input' && node.type !== 'output')
+        const filterFn = (method.mutateOutput) ? (node) => (node.type !== `input`) : (node) => (node.type !== `input` && node.type !== `output`)
 
         candidates = _.filter(this.nodes, filterFn)
 
@@ -502,7 +500,7 @@ Network.prototype = {
    * myNetwork.mutate(mutation.ADD_GATE) // a random node will gate a random connection within the network
    */
   mutate: function mutate(method) {
-    if (typeof method === 'undefined') throw new Error('No (correct) mutate method given!');
+    if (typeof method === `undefined`) throw new Error(`No (correct) mutate method given!`);
 
     var i, j;
     switch (method) {
@@ -513,7 +511,7 @@ Network.prototype = {
 
         // Insert the new node right before the old connection.to
         const toIndex = this.nodes.indexOf(connection.to);
-        const node = new Node('hidden');
+        const node = new Node(`hidden`);
 
         if(mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION);
 
@@ -571,7 +569,7 @@ Network.prototype = {
       }
       case mutation.MOD_ACTIVATION:{
         if(this.possible(method)) {
-          const possible = _.filter(this.nodes, method.mutateOutput ? (node) => node.type !== 'input' : (node) => node.type !== 'input' && node.type !== 'output');
+          const possible = _.filter(this.nodes, method.mutateOutput ? (node) => node.type !== `input` : (node) => node.type !== `input` && node.type !== `output`);
 
           // Mutate a random node out of the filtered collection
           _.sample(possible).mutate(method);
@@ -916,7 +914,7 @@ Network.prototype = {
     // Check if dropout is enabled, set correct mask
     if (this.dropout) {
       _.times(this.nodes.length, (index) => {
-        if (this.nodes[index].type === 'hidden' || this.nodes[index].type === 'constant') {
+        if (this.nodes[index].type === `hidden` || this.nodes[index].type === `constant`) {
           this.nodes[index].mask = 1 - this.dropout;
         }
       });
@@ -959,12 +957,12 @@ Network.prototype = {
       nodes: [],
       links: [],
       constraints: [{
-        type: 'alignment',
-        axis: 'x',
+        type: `alignment`,
+        axis: `x`,
         offsets: []
       }, {
-        type: 'alignment',
-        axis: 'y',
+        type: `alignment`,
+        axis: `y`,
         offsets: []
       }]
     };
@@ -973,7 +971,7 @@ Network.prototype = {
     for (i = 0; i < this.nodes.length; i++) {
       const node = this.nodes[i];
 
-      if (node.type === 'input') {
+      if (node.type === `input`) {
         if (this.input_size === 1) {
           graph_json.constraints[0].offsets.push({
             node: i,
@@ -989,7 +987,7 @@ Network.prototype = {
           node: i,
           offset: 0
         });
-      } else if (node.type === 'output') {
+      } else if (node.type === `output`) {
         if (this.output_size === 1) {
           graph_json.constraints[0].offsets.push({
             node: i,
@@ -1009,7 +1007,7 @@ Network.prototype = {
 
       graph_json.nodes.push({
         id: i,
-        name: node.type === 'hidden' ? node.squash.name : node.type.toUpperCase(),
+        name: node.type === `hidden` ? node.squash.name : node.type.toUpperCase(),
         activation: node.activation,
         bias: node.bias
       });
@@ -1030,7 +1028,7 @@ Network.prototype = {
         graph_json.nodes.push({
           id: index,
           activation: connection.gater.activation,
-          name: 'GATE'
+          name: `GATE`
         });
         graph_json.links.push({
           source: this.nodes.indexOf(connection.from),
@@ -1208,7 +1206,7 @@ Network.prototype = {
    */
   evolve: async function(set, options) {
     if(set[0].input.length !== this.input_size || set[0].output.length !== this.output_size) {
-      throw new Error('Dataset input/output size should be same as network input/output size!');
+      throw new Error(`Dataset input/output size should be same as network input/output size!`);
     }
 
     // Read the options
@@ -1216,7 +1214,7 @@ Network.prototype = {
 
     let target_error;
 
-    if (typeof options.iterations === 'undefined' && typeof options.error === 'undefined') {
+    if (typeof options.iterations === `undefined` && typeof options.error === `undefined`) {
       options.iterations = 1000; // limit in case network is not converging
       target_error = 0.05
     } else if (options.iterations) {
@@ -1226,15 +1224,15 @@ Network.prototype = {
       options.iterations = 0; // run until target error
     }
 
-    var growth = typeof options.growth !== 'undefined' ? options.growth : 0.0001;
+    var growth = typeof options.growth !== `undefined` ? options.growth : 0.0001;
     var cost = options.cost || methods.cost.MSE;
     var amount = options.amount || 1;
     let defaultSet = set;
 
     var threads = options.threads;
-    if (typeof threads === 'undefined') {
-      if (typeof window === 'undefined') { // Node.js
-        threads = require('os').cpus().length;
+    if (typeof threads === `undefined`) {
+      if (typeof window === `undefined`) { // Node.js
+        threads = require(`os`).cpus().length;
       } else { // Browser
         threads = navigator.hardwareConcurrency;
       }
@@ -1259,7 +1257,7 @@ Network.prototype = {
 
       // Create workers, send datasets
       var workers = [];
-      if (typeof window === 'undefined') {
+      if (typeof window === `undefined`) {
         for (var i = 0; i < threads; i++) workers.push(new multi.workers.node.TestWorker(converted, cost));
       } else {
         for (var i = 0; i < threads; i++) workers.push(new multi.workers.browser.TestWorker(converted, cost));
@@ -1317,7 +1315,7 @@ Network.prototype = {
       }
 
       if (options.log && neat.generation % options.log === 0) {
-        console.log('iteration', neat.generation, 'fitness', fitness, 'error', -error);
+        console.log(`iteration`, neat.generation, `fitness`, fitness, `error`, -error);
       }
 
       if (options.schedule && neat.generation % options.schedule.iterations === 0) {
@@ -1329,7 +1327,7 @@ Network.prototype = {
       for (var i = 0; i < workers.length; i++) workers[i].terminate();
     }
 
-    if(typeof bestGenome !== 'undefined') {
+    if(typeof bestGenome !== `undefined`) {
       this.nodes = bestGenome.nodes;
       this.connections = bestGenome.connections;
       this.selfconns = bestGenome.selfconns;
@@ -1423,8 +1421,8 @@ Network.prototype = {
       }
 
       // the number indicates the order of execution
-      const line1 = `S[${i}] = ${incoming.join(' + ')} + ${node.bias};`;
-      const line2 = `A[${i}] = F[${function_index}](S[${i}])${!node.mask ? ' * ' + node.mask : ''};`;
+      const line1 = `S[${i}] = ${incoming.join(` + `)} + ${node.bias};`;
+      const line2 = `A[${i}] = F[${function_index}](S[${i}])${!node.mask ? ` * ` + node.mask : ``};`;
       lines.push(line1);
       lines.push(line2);
     }
@@ -1434,14 +1432,14 @@ Network.prototype = {
       output.push(`A[${i}]`);
     }
 
-    output = `return [${output.join(',')}];`;
+    output = `return [${output.join(`,`)}];`;
     lines.push(output);
 
-    let total = '';
+    let total = ``;
     total += `var F = [${functions.toString()}];\r\n`;
     total += `var A = [${activations.toString()}];\r\n`;
     total += `var S = [${states.toString()}];\r\n`;
-    total += `function activate(input){\r\n${lines.join('\r\n')}\r\n}`;
+    total += `function activate(input){\r\n${lines.join(`\r\n`)}\r\n}`;
 
     return total;
   },
@@ -1560,14 +1558,14 @@ Network.merge = function(network1, network2) {
 
   // Check if output and input size are the same
   if (network1.output !== network2.input) {
-    throw new Error('Output size of network1 should be the same as the input size of network2!');
+    throw new Error(`Output size of network1 should be the same as the input size of network2!`);
   }
 
   // Redirect all connections from network2 input from network1 output
   var i;
   for (i = 0; i < network2.connections.length; i++) {
     let conn = network2.connections[i];
-    if (conn.from.type === 'input') {
+    if (conn.from.type === `input`) {
       let index = network2.nodes.indexOf(conn.from);
 
       // redirect
@@ -1582,7 +1580,7 @@ Network.merge = function(network1, network2) {
 
   // Change the node type of network1's output nodes (now hidden)
   for (i = network1.nodes.length - network1.output; i < network1.nodes.length; i++) {
-    network1.nodes[i].type = 'hidden';
+    network1.nodes[i].type = `hidden`;
   }
 
   // Create one network from both networks
@@ -1617,7 +1615,7 @@ Network.merge = function(network1, network2) {
  */
 Network.cross_over = function(network1, network2, equal) {
   if (network1.input !== network2.input || network1.output !== network2.output) {
-    throw new Error("Networks don't have the same input/output size!");
+    throw new Error("Networks don`t have the same input/output size!");
   }
 
   // Initialise offspring
@@ -1663,7 +1661,7 @@ Network.cross_over = function(network1, network2, equal) {
       node = random >= 0.5 ? network1.nodes[i] : network2.nodes[i];
       let other = random < 0.5 ? network1.nodes[i] : network2.nodes[i];
 
-      if (typeof node === 'undefined' || node.type === 'output') {
+      if (typeof node === `undefined` || node.type === `output`) {
         node = other;
       }
     } else {
@@ -1740,7 +1738,7 @@ Network.cross_over = function(network1, network2, equal) {
   var keys2 = Object.keys(n2conns);
   for (i = keys1.length - 1; i >= 0; i--) {
     // Common gene
-    if (typeof n2conns[keys1[i]] !== 'undefined') {
+    if (typeof n2conns[keys1[i]] !== `undefined`) {
       let conn = Math.random() >= 0.5 ? n1conns[keys1[i]] : n2conns[keys1[i]];
       connections.push(conn);
 
@@ -1754,7 +1752,7 @@ Network.cross_over = function(network1, network2, equal) {
   // Excess/disjoint gene
   if (score2 >= score1 || equal) {
     for (i = 0; i < keys2.length; i++) {
-      if (typeof n2conns[keys2[i]] !== 'undefined') {
+      if (typeof n2conns[keys2[i]] !== `undefined`) {
         connections.push(n2conns[keys2[i]]);
       }
     }
@@ -1966,17 +1964,17 @@ const Neat = function(dataset, {
       let current = allowed[Math.floor(Math.random() * allowed.length)]
 
       if (current === methods.mutation.ADD_NODE && genome.nodes.length >= self.maxNodes) {
-        if (config.warnings) console.warn('maxNodes exceeded!')
+        if (config.warnings) console.warn(`maxNodes exceeded!`)
         return null;
       }
 
       if (current === methods.mutation.ADD_CONN && genome.connections.length >= self.maxConns) {
-        if (config.warnings) console.warn('maxConns exceeded!');
+        if (config.warnings) console.warn(`maxConns exceeded!`);
         return null;
       }
 
       if (current === methods.mutation.ADD_GATE && genome.gates.length >= self.maxGates) {
-        if (config.warnings) console.warn('maxGates exceeded!');
+        if (config.warnings) console.warn(`maxGates exceeded!`);
         return null;
       }
 
@@ -2016,10 +2014,10 @@ const Neat = function(dataset, {
   */
   self.evolve = async function (evolveSet, pickGenome, adjustGenome) {
     // Check if evolve is possible
-    if(self.elitism + self.provenance > self.popsize) throw new Error("Can't evolve! Elitism + provenance exceeds population size!");
+    if(self.elitism + self.provenance > self.popsize) throw new Error("Can`t evolve! Elitism + provenance exceeds population size!");
 
     // Check population for evaluation
-    if (typeof self.population[self.population.length - 1].score === 'undefined')
+    if (typeof self.population[self.population.length - 1].score === `undefined`)
       await self.evaluate(_.isArray(evolveSet) ? evolveSet : _.isArray(dataset) ? dataset : parameter.is.required("dataset"));
     // Check & adjust genomes as needed
     if(pickGenome) self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome)
@@ -2076,13 +2074,13 @@ const Neat = function(dataset, {
    */
   self.getParent = function () {
     switch (self.selection.name) {
-      case 'POWER': {
+      case `POWER`: {
         if (self.population[0].score < self.population[1].score) self.sort();
 
         var index = Math.floor(Math.pow(Math.random(), self.selection.power) * self.population.length);
         return self.population[index];
       }
-      case 'FITNESS_PROPORTIONATE': {
+      case `FITNESS_PROPORTIONATE`: {
         // As negative fitnesses are possible
         // https://stackoverflow.com/questions/16186686/genetic-algorithm-handling-negative-fitness-values
         // this is unnecessarily run for every individual, should be changed
@@ -2110,9 +2108,9 @@ const Neat = function(dataset, {
         // if all scores equal, return random genome
         return self.population[Math.floor(Math.random() * self.population.length)];
       }
-      case 'TOURNAMENT': {
+      case `TOURNAMENT`: {
         if (self.selection.size > self.popsize) {
-          throw new Error('Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size');
+          throw new Error(`Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size`);
         }
 
         // Create a tournament
@@ -2204,7 +2202,7 @@ const Neat = function(dataset, {
   */
   self.getFittest = function () {
     // Check if evaluated. self.evaluate is an async function
-    if (typeof self.population[self.population.length - 1].score === 'undefined')
+    if (typeof self.population[self.population.length - 1].score === `undefined`)
       self.evaluate();
 
     if (self.population[0].score < self.population[1].score) self.sort();
@@ -2218,7 +2216,7 @@ const Neat = function(dataset, {
    * @returns {number} Average fitness of the current population
    */
   self.getAverage = function () {
-    if (typeof self.population[self.population.length - 1].score === 'undefined')
+    if (typeof self.population[self.population.length - 1].score === `undefined`)
       self.evaluate(); // self.evaluate is an async function
 
     var score = 0;
