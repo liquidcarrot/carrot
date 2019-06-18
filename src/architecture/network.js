@@ -1569,19 +1569,19 @@ Network.merge = function(network1, network2) {
   network2 = Network.from_JSON(network2.to_JSON());
 
   // Check if output and input size are the same
-  if (network1.output !== network2.input) {
+  if (network1.output_size !== network2.input_size) {
     throw new Error(`Output size of network1 should be the same as the input size of network2!`);
   }
 
   // Redirect all connections from network2 input from network1 output
-  var i;
+  let i;
   for (i = 0; i < network2.connections.length; i++) {
-    let conn = network2.connections[i];
-    if (conn.from.type === `input`) {
-      let index = network2.nodes.indexOf(conn.from);
+    const connection = network2.connections[i];
+    if (connection.from.type === `input`) {
+      let index = network2.nodes.indexOf(connection.from);
 
       // redirect
-      conn.from = network1.nodes[network1.nodes.length - 1 - index];
+      connection.from = network1.nodes[network1.nodes.length - 1 - index];
     }
   }
 
