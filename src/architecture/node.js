@@ -342,7 +342,7 @@ function Node(type) {
   * let A = new Node();
   * A.connect(A); // A now connects to itself
   */
-  self.connect = function (target, weight, options) {
+  self.connect = function(target, weight, options) {
     const connections = [];
     
     if(target instanceof Node) {
@@ -397,25 +397,24 @@ function Node(type) {
   * // A.disconnect(B)  only disconnects A to B, so use
   * A.disconnect(B, true); // or B.disconnect(A, true)
   */
-  self.disconnect = function (node, twosided) {
-    if (this === node) {
-      this.connections.self.weight = 0;
-      return;
-    }
-
-    for (var i = 0; i < this.connections.out.length; i++) {
-      let conn = this.connections.out[i];
-      if (conn.to === node) {
-        this.connections.out.splice(i, 1);
-        let j = conn.to.connections.in.indexOf(conn);
-        conn.to.connections.in.splice(j, 1);
-        if (conn.gater !== null) conn.gater.ungate(conn);
-        break;
+  self.disconnect = function(node, twosided) {
+    if(self === node) self.connections.self.weight = 0;
+    else {
+      for(let index = 0; index < self.connections.out.length; index++) {
+        const connection = self.connections.out[index];
+        
+        if(connection.to === node) {
+          self.connections.out.splice(index, 1);
+          
+          connection.to.connections.in.splice(connection.to.connections.in.indexOf(connection), 1);
+          
+          if(connection.gater !== null) connection.gater.ungate(connection);
+          
+          break;
+        }
       }
-    }
 
-    if (twosided) {
-      node.disconnect(this);
+      if(twosided) node.disconnect(self);
     }
   },
 
@@ -438,16 +437,14 @@ function Node(type) {
   *
   * // Now the weight of the connection from A to B will always be multiplied by the activation of node C.
   */
-  self.gate = function (connections) {
-    if (!Array.isArray(connections)) {
-      connections = [connections];
-    }
+  self.gate = function(connections) {
+    if(!Array.isArray(connections)) connections = [connections];
 
-    for (var i = 0; i < connections.length; i++) {
-      var connection = connections[i];
+    for(let index = 0; index < connections.length; index++) {
+      const connection = connections[index];
 
-      this.connections.gated.push(connection);
-      connection.gater = this;
+      self.connections.gated.push(connection);
+      connection.gater = self;
     }
   },
 
@@ -470,16 +467,14 @@ function Node(type) {
   * // Now ungate those connections
   * C.ungate(connections);
   */
-  self.ungate = function (connections) {
-    if (!Array.isArray(connections)) {
-      connections = [connections];
-    }
+  self.ungate = function(connections) {
+    if(!Array.isArray(connections)) connections = [connections];
 
-    for (var i = connections.length - 1; i >= 0; i--) {
-      var connection = connections[i];
+    for(let index = connections.length - 1; index >= 0; index--) {
+      const connection = connections[index];
 
-      var index = this.connections.gated.indexOf(connection);
-      this.connections.gated.splice(index, 1);
+      const gate = self.connections.gated.indexOf(connection);
+      self.connections.gated.splice(gate, 1);
       connection.gater = null;
       connection.gain = 1;
     }
@@ -488,9 +483,9 @@ function Node(type) {
   /**
   * Clear the context of the node, basically reverting it to a 'new' neuron. Useful for predicting timeseries with LSTM's.
   */
-  self.clear = function () {
-    for (var i = 0; i < this.connections.in.length; i++) {
-      var connection = this.connections.in[i];
+  self.clear = function() {
+    for(let index = 0; index < self.connections.in.length; index++) {
+      const connection = self.connections.in[index];
 
       connection.elegibility = 0;
       connection.xtrace = {
@@ -499,13 +494,13 @@ function Node(type) {
       };
     }
 
-    for (i = 0; i < this.connections.gated.length; i++) {
-      let conn = this.connections.gated[i];
-      conn.gain = 0;
+    for(let index = 0; index < self.connections.gated.length; index++) {
+      const connection = self.connections.gated[index];
+      connection.gain = 0;
     }
 
-    this.error.responsibility = this.error.projected = this.error.gated = 0;
-    this.old = this.state = this.activation = 0;
+    self.error.responsibility = self.error.projected = self.error.gated = 0;
+    self.old = self.state = self.activation = 0;
   },
 
   /**
@@ -526,21 +521,18 @@ function Node(type) {
   * A.mutate(methods.mutation.MOD_ACTIVATION, allowable_methods) // node's squash function is now TANH or RELU
   */
   self.mutate = function(method) {
-    if (typeof method === 'undefined') {
-      throw new Error('No mutate method given!');
-    } else if (!(method.name in methods.mutation)) {
-      throw new Error('This method does not exist!');
-    }
+    if(method == undefined) throw new Error('No mutate method given!');
+    // CHECK: https://scotch.io/bar-talk/5-tips-to-write-better-conditionals-in-javascript
+    else if(!(method.name in methods.mutation)) throw new Error('This method does not exist!');
 
-    switch (method) {
+    switch(method) {
       case methods.mutation.MOD_ACTIVATION:
-        // Can't be the same squash
-        var squash = method.allowed[(method.allowed.indexOf(this.squash) + Math.floor(Math.random() * (method.allowed.length - 1)) + 1) % method.allowed.length];
-        this.squash = squash;
+        // Pick Different Squash
+        // const squash = method.allowed[("exclude current" + "other random index" + "overflow...") % "...control"]
+        self.squash = method.allowed[(method.allowed.indexOf(self.squash) + Math.floor(Math.random() * (method.allowed.length - 1)) + 1) % method.allowed.length];
         break;
       case methods.mutation.MOD_BIAS:
-        var modification = Math.random() * (method.max - method.min) + method.min;
-        this.bias += modification;
+        self.bias += Math.random() * (method.max - method.min) + method.min;
         break;
     }
   },
@@ -563,15 +555,13 @@ function Node(type) {
   * A.isProjectingTo(B); // true
   * A.isProjectingTo(C); // false
   */
-  self.isProjectingTo = function (node) {
-    if (node === this && this.connections.self.weight !== 0) return true;
+  self.isProjectingTo = function(node) {
+    if(node === self && self.connections.self.weight !== 0) return true;
 
-    for (var i = 0; i < this.connections.out.length; i++) {
-      var conn = this.connections.out[i];
-      if (conn.to === node) {
-        return true;
-      }
+    for(let i = 0; i < self.connections.out.length; i++) {
+      if(self.connections.out[i].to === node) return true;
     }
+    
     return false;
   },
 
@@ -593,14 +583,11 @@ function Node(type) {
   * A.isProjectedBy(C);// false
   * B.isProjectedBy(A); // true
   */
-  self.isProjectedBy = function (node) {
-    if (node === this && this.connections.self.weight !== 0) return true;
+  self.isProjectedBy = function(node) {
+    if(node === self && self.connections.self.weight !== 0) return true;
 
-    for (var i = 0; i < this.connections.in.length; i++) {
-      var conn = this.connections.in[i];
-      if (conn.from === node) {
-        return true;
-      }
+    for(let i = 0; i < self.connections.in.length; i++) {
+      if(self.connections.in[i].from === node) return true;
     }
 
     return false;
@@ -618,14 +605,12 @@ function Node(type) {
   * let imported = myNode.from_JSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
   */
   self.to_JSON = function () {
-    var json = {
-      bias: this.bias,
-      type: this.type,
-      squash: this.squash.name,
-      mask: this.mask
+    return {
+      bias: self.bias,
+      type: self.type,
+      squash: self.squash.name,
+      mask: self.mask
     };
-
-    return json;
   }
 }
 
@@ -642,11 +627,11 @@ function Node(type) {
 * let imported = myNode.from_JSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
 */
 Node.from_JSON = function (json) {
-  var node = new Node();
-  node.bias = json.bias;
-  node.type = json.type;
-  node.mask = json.mask;
-  node.squash = methods.activation[json.squash];
+  const node = new Node();
+  
+  Object.assign(node, { ...json }, {
+    squash: methods.activation[json.squash]
+  });
 
   return node;
 };

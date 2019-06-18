@@ -333,7 +333,7 @@ let Neat = function(inputs, outputs, dataset, options) {
     fittest.score = self.population[0].score;
 
     // Reset the scores
-    for (let i = 0; i < self.population.length; i++) self.population[i].score = undefined;
+    for(let i = 0; i < self.population.length; i++) self.population[i].score = undefined;
 
     self.generation++;
 

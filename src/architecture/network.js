@@ -1508,7 +1508,8 @@ Network.prototype = {
  * let imported = Network.from_JSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
  */
 Network.from_JSON = function(json) {
-  var network = new Network(json.input, json.output);
+  const network = new Network(json.input, json.output);
+  
   network.dropout = json.dropout;
   network.nodes = [];
   network.connections = [];
@@ -1516,13 +1517,11 @@ Network.from_JSON = function(json) {
   _.forEach(json.nodes, (node) => network.nodes.push(Node.from_JSON(node)));
 
   _.forEach(json.connections, (json_connection) => {
-    var connection =
+    const connection =
       network.connect(network.nodes[json_connection.from], network.nodes[json_connection.to])[0];
     connection.weight = json_connection.weight;
 
-    if (json_connection.gater != null) {
-      network.gate(network.nodes[json_connection.gater], connection);
-    }
+    if(json_connection.gater != null) network.gate(network.nodes[json_connection.gater], connection);
   });
 
   return network;
