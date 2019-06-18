@@ -1,10 +1,10 @@
-const _ = require('lodash');
-const parameter = require('../util/parameter')
-const multi = require('../multithreading/multi')
-const methods = require('../methods/methods')
-const Connection = require('./connection')
-const config = require('../config')
-const Node = require('./node')
+const _ = require("lodash");
+const parameter = require("../util/parameter");
+const multi = require("../multithreading/multi");
+const methods = require("../methods/methods");
+const Connection = require("./connection");
+const config = require("../config");
+const Node = require("./node");
 
 // Easier variable naming
 const mutation = methods.mutation;
@@ -2052,7 +2052,7 @@ const Neat = function(dataset, {
     fittest.score = self.population[0].score;
 
     // Reset the scores
-    for (let i = 0; i < self.population.length; i++) self.population[i].score = undefined;
+    for(let i = 0; i < self.population.length; i++) self.population[i].score = undefined;
 
     self.generation++;
 
