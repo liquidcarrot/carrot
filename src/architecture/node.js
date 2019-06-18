@@ -1,7 +1,8 @@
-let _ = require("lodash");
-let methods = require('../methods/methods');
-let Connection = require('./connection');
-let config = require('../config');
+const _ = require("lodash");
+const methods = require('../methods/methods');
+const Connection = require('./connection');
+const config = require('../config');
+// const Group = require()
 
 /**
 * Creates a new neuron/node
@@ -42,45 +43,52 @@ let config = require('../config');
 * let node = new Node();
 */
 function Node(type) {
-  this.bias = (type === 'input') ? 0 : Math.random() * 0.2 - 0.1;
-  this.squash = methods.activation.LOGISTIC;
-  this.type = type || 'hidden';
-
-  this.activation = 0;
-  this.state = 0;
-  this.old = 0;
-
-  // For dropout
-  this.mask = 1;
-
-  // For tracking momentum
-  this.previousDeltaBias = 0;
-
-  // Batch training
-  this.totalDeltaBias = 0;
+  let self = this;
   
-  // Aliases
-  this.deltabias = {
-    previous: 0,
-    total: 0
-  }
+  type = type || 'hidden';
+  
+  Object.assign(self, { type }, {
+    bias: self.type === 'input' ? 0 : Math.random() * 2 - 1,
+    squash: methods.activation.LOGISTIC,
+    activation: 0,
+    state: 0,
+    old: 0,
+    
+    // PURPOSE: Dropout
+    mask: 1,
+    
+    // PURPOSE: Tracking Momentum
+    previousDeltaBias: 0, // ALIAS: delta_bias
+    
+    // PURPOSE: Batch Training
+    totalDeltaBias: 0, // ALIAS: delta_bias
+    connections: {
+      in: [],
+      out: [],
+      gated: [],
+      self: new Connection(this, this, 0),
+      
+      // (BETA)
+      incoming: [],
+      outgoing: [],
+      gates: []
+    },
+    
+    // Backpropagation Data
+    error: {
+      responsibility: 0,
+      projected: 0,
+      gated: 0
+    },
+    
+    // (BETA)
+    delta_bias: {
+      previous: 0,
+      total: 0,
+      all: []
+    }
+  });
 
-  this.connections = {
-    in: [],
-    out: [],
-    gated: [],
-    self: new Connection(this, this, 0)
-  };
-
-  // Data for backpropagation
-  this.error = {
-    responsibility: 0,
-    projected: 0,
-    gated: 0
-  };
-}
-
-Node.prototype = {
   /**
   * Actives the node.
   *
@@ -103,88 +111,64 @@ Node.prototype = {
   * A.activate(0.5); // 0.5
   * B.activate(); // 0.3244554645
   */
-  activate: function(input, options) {
-    let self = this;
-    
+  self.activate = function(input, options) {
     // If an input is given, forward it (i.e. act like an input neuron)
-    if(!_.isNil(input)) {
-      if(_.isNumber(input)) {
-        if(_.isFinite(input)) {
-          this.activation = input;
-          return this.activation;
-        } else {
-          throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
-        }
-      } else {
-        throw new TypeError("Parameter \"input\": Expected a \"number\", got a " + typeof input);
-      }
-    } else if(self.type === "input") {
-      this.activation = 0;
-      return this.activation;
-    }
-
-    this.old = this.state;
-
-    // All activation sources coming from the node itself
-    this.state = this.connections.self.gain * this.connections.self.weight * this.state + this.bias;
-
-    // Activation sources coming from connections
-    var i;
-    for (i = 0; i < this.connections.in.length; i++) {
-      const connection = this.connections.in[i];
-      this.state += connection.from.activation * connection.weight * connection.gain;
-    }
-
-    // Squash the values received
-    this.activation = this.squash(this.state) * this.mask;
-    this.derivative = this.squash(this.state, true);
-
+    if(!(input == undefined)) {
+      if(Number.isFinite(input)) return self.activation = input;
+      else throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
+    } else if(self.type === "input") return self.activation = 0;
+    
     // Update traces
-    var nodes = [];
-    var influences = [];
+    const nodes = [];
+    const influences = [];
 
-    for (i = 0; i < this.connections.gated.length; i++) {
-      let conn = this.connections.gated[i];
-      let node = conn.to;
+    self.old = self.state;
 
-      let index = nodes.indexOf(node);
-      if (index > -1) {
-        influences[index] += conn.weight * conn.from.activation;
-      } else {
-        nodes.push(node);
-        influences.push(conn.weight * conn.from.activation +
-          (node.connections.self.gater === this ? node.old : 0));
+    // Activate (from self)
+    self.state = self.connections.self.gain * self.connections.self.weight * self.state + self.bias;
+    
+    // Activate (from incoming connections)
+    self.connections.in.forEach(function(connection, index) {
+      self.state += connection.from.activation * connection.weight * connection.gain;
+    })
+
+    // Squash Activation
+    self.activation = self.squash(self.state) * self.mask;
+    self.derivative = self.squash(self.state, true);
+
+    // Adjusting `gain` (to gated connections)
+    self.connections.gated.forEach(function(connection) {
+      const index = nodes.indexOf(connection.to);
+      
+      if(index > -1) influences[index] += connection.weight * connection.from.activation;
+      else {
+        nodes.push(connection.to);
+        influences.push(connection.weight * connection.from.activation + (connection.to.connections.self.gater === this ? connection.to.old : 0));
       }
+      
+      // Adjust gain
+      connection.gain = self.activation;
+    })
 
-      // Adjust the gain to this nodes' activation
-      conn.gain = this.activation;
-    }
-
-    for (i = 0; i < this.connections.in.length; i++) {
-      let connection = this.connections.in[i];
-
-      // Elegibility trace
-      connection.elegibility = this.connections.self.gain * this.connections.self.weight * connection.elegibility + connection.from.activation * connection.gain;
-
-      // Extended trace
-      for (var j = 0; j < nodes.length; j++) {
-        let node = nodes[j];
-        let influence = influences[j];
-
-        let index = connection.xtrace.nodes.indexOf(node);
-
-        if (index > -1) {
-          connection.xtrace.values[index] = node.connections.self.gain * node.connections.self.weight *
-          connection.xtrace.values[index] + this.derivative * connection.elegibility * influence;
-        } else {
-          // Does not exist there yet, might be through mutation
+    // Forwarding `xtrace` (to incoming connections)
+    self.connections.in.forEach(function(connection) {
+      // Trace Elegibility
+      connection.elegibility = self.connections.self.gain * self.connections.self.weight * connection.elegibility + connection.from.activation * connection.gain;
+      
+      for(let i = 0; i < nodes.length; i++) {
+        const [ node, influence ]  = [nodes[i], influences[i]];
+        
+        const index = connection.xtrace.nodes.indexOf(node);
+        
+        if(index > -1) connection.xtrace.values[index] = node.connections.self.gain * node.connections.self.weight * connection.xtrace.values[index] + self.derivative * connection.elegibility * influence;
+        else {
           connection.xtrace.nodes.push(node);
           connection.xtrace.values.push(this.derivative * connection.elegibility * influence);
         }
       }
-    }
+    })
 
-    return this.activation;
+    return self.activation;
   },
 
   /**
@@ -201,41 +185,31 @@ Node.prototype = {
   *
   * let node = new Node();
   *
-  * node.noTraceActivate(); // 0.4923128591923
+  * node.no_trace_activate(); // 0.4923128591923
   */
-  noTraceActivate: function(input) {
+  self.no_trace_activate = function(input) {
     // Check if an input is given
-    if(!_.isNil(input)) {
-      if(_.isNumber(input)) {
-        if(_.isFinite(input)) {
-          this.activation = input;
-          return this.activation;
-        } else {
-          throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
-        }
-      } else {
-        throw new TypeError("Parameter \"input\": Expected a \"number\", got a " + typeof input);
-      }
-    }
+    if(!(input == undefined)) {
+      if(Number.isFinite(input)) return self.activation = input;
+      else throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
+    } else if(self.type === "input") return self.activation = 0;
 
-    // All activation sources coming from the node itself
-    this.state = this.connections.self.gain * this.connections.self.weight * this.state + this.bias;
-
-    // Activation sources coming from connections
-    var i;
-    for (i = 0; i < this.connections.in.length; i++) {
-      var connection = this.connections.in[i];
-      this.state += connection.from.activation * connection.weight * connection.gain;
-    }
+    // Activate (from self)
+    self.state = self.connections.self.gain * self.connections.self.weight * self.state + self.bias;
+    
+    // Activate (from incoming connections)
+    self.connections.in.forEach(function(connection, index) {
+      self.state += connection.from.activation * connection.weight * connection.gain;
+    })
 
     // Squash the values received
-    this.activation = this.squash(this.state);
+    self.activation = self.squash(self.state);
 
-    for (i = 0; i < this.connections.gated.length; i++) {
-      this.connections.gated[i].gain = this.activation;
-    }
+    self.connections.gated.forEach(function(gate) {
+      gate.gain = self.activation;
+    })
 
-    return this.activation;
+    return self.activation;
   },
 
   /**
@@ -245,10 +219,11 @@ Node.prototype = {
   *
   * If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
   *
-  * @param {number} rate=0.3 [Learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
-  * @param {number} momentum=0 [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one.
-  * @param {boolean} update=true When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
   * @param {number} target The target value
+  * @param {Object} options
+  * @param {number} [options.rate=0.3] [Learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
+  * @param {number} [options.momentum=0] [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one.
+  * @param {boolean} [options.update=true] When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
   *
   * @example
   * let { Node } = require("@liquid-carrot/carrot");
@@ -277,120 +252,67 @@ Node.prototype = {
   * @see [Regularization Neataptic](https://wagenaartje.github.io/neataptic/docs/methods/regularization/)
   * @see [What is backpropagation | YouTube](https://www.youtube.com/watch?v=Ilg3gGewQ5U)
   */
-  propagate: function(rate, momentum, update, target) {
-    // TYPE CHECK: rate
-    if(!_.isNil(rate)) {
-      if(_.isNumber(rate)) {
-        if(!_.isFinite(rate)) {
-          throw new TypeError("Parameter \"rate\": " + rate + " is not a valid \"number\".");
-        }
-      } else {
-        throw new TypeError("Parameter \"rate\": Expected a \"number\", got a " + typeof rate);
-      }
-      
-    }
-    // TYPE CHECK: momentum
-    if(!_.isNil(momentum)) {
-      if(_.isNumber(momentum)) {
-        if(!_.isFinite(momentum)) {
-          throw new TypeError("Parameter \"momentum\": " + momentum + " is not a valid \"number\".");
-        }
-      } else {
-        throw new TypeError("Parameter \"momentum\": Expected a \"number\", got a " + typeof momentum);
-      }
-    }
-    // TYPE CHECK: update
-    if(!_.isNil(update)) {
-      if(!_.isBoolean(update)) {
-        throw new TypeError("Parameter \"update\": Expected a \"boolean\", got a " + typeof update);
-      }
-    }
-    // TYPE CHECK: target
-    if(!_.isNil(target)) {
-      if(_.isNumber(target)) {
-        if(!_.isFinite(target)) {
-          throw new TypeError("Parameter \"target\": " + target + " is not a valid \"number\".");
-        }
-      } else {
-        throw new TypeError("Parameter \"target\": Expected a \"number\", got a " + typeof target);
-      }
+  self.propagate = function(target, options) {
+    // node.propagate(options)
+    if(!options && _.isPlainObject(target)) {
+      options = target;
+      target = undefined;
     }
     
-    
-    momentum = momentum || 0;
-    rate = rate || 0.3;
+    options = Object.assign(options, {
+      momentum: 0,
+      rate: 0.3,
+      update: true
+    })
 
-    // Error accumulator
-    var error = 0;
-
-    // Output nodes get their error from the enviroment
-    if (this.type === 'output') {
-      this.error.responsibility = this.error.projected = target - this.activation;
-    } else { // the rest of the nodes compute their error responsibilities by backpropagation
-      // error responsibilities from all the connections projected from this node
+    // Output Node Error (from environment)
+    if(self.type === 'output') self.error.responsibility = self.error.projected = target - self.activation;
+    // Hidden/Input Node Error (from backpropagation)
+    else {
       var i;
-      for (i = 0; i < this.connections.out.length; i++) {
-        let connection = this.connections.out[i];
-        let node = connection.to;
-        // Eq. 21
-        error += node.error.responsibility * connection.weight * connection.gain;
-      }
-
-      // Projected error responsibility
-      this.error.projected = this.derivative * error;
-
-      // Error responsibilities from all connections gated by this neuron
-      error = 0;
-
-      for (i = 0; i < this.connections.gated.length; i++) {
-        let conn = this.connections.gated[i];
-        let node = conn.to;
-        let influence = node.connections.self.gater === this ? node.old : 0;
-
-        influence += conn.weight * conn.from.activation;
-        error += node.error.responsibility * influence;
-      }
-
-      // Gated error responsibility
-      this.error.gated = this.derivative * error;
-
-      // Error responsibility
-      this.error.responsibility = this.error.projected + this.error.gated;
+      
+      // Projected Error Responsibility (from outgoing connections)
+      self.error.projected = self.derivative * self.connections.out.reduce(function(error, connection) {
+        return error += connection.to.error.responsibility * connection.weight * connection.gain;
+      }, 0);
+      
+      // Gated Error Responsibility (from gated connections)
+      self.error.gated = self.derivative * self.connections.gated.reduce(function(error, connection) {
+        const node = connection.to;
+        const influence = (node.connections.self.gater === self ? node.old : 0) + connection.weight * connection.from.activation;
+        
+        return error += node.error.reponsibility * influence;
+      }, 0);
+      
+      // Error Responsibility
+      self.error.responsibility = self.error.projected + self.error.gated;
     }
 
-    if (this.type === 'constant') return;
+    if(self.type === 'constant') return;
 
-    // Adjust all the node's incoming connections
-    for (i = 0; i < this.connections.in.length; i++) {
-      let connection = this.connections.in[i];
-
-      let gradient = this.error.projected * connection.elegibility;
-
-      for (var j = 0; j < connection.xtrace.nodes.length; j++) {
-        let node = connection.xtrace.nodes[j];
-        let value = connection.xtrace.values[j];
-        gradient += node.error.responsibility * value;
+    // Adjust Incoming Connections
+    self.connections.in.forEach(function(connection) {
+      const gradient = connection.xtrace.nodes.reduce(function(gradient, node, index) {
+        return gradient += node.error.responsibility * connection.xtrace.values[index];
+      }, self.error.projected * connection.elegibility);
+      
+      // Adjust Weight ()
+      connection.totalDeltaWeight += options.rate * gradient * self.mask; // (BETA): connection.delta_weights.total += delta_weight;
+      if(options.update) {
+        connection.totalDeltaWeight += options.momentum * connection.previousDeltaWeight; // (BETA): connection.delta_weights.total += options.momentum * connection.delta_weights.previous;
+        connection.weight += connection.totalDeltaWeight; // (BETA): connection.weight += connection.delta_weights.total;
+        connection.previousDeltaWeight = connection.totalDeltaWeight; // (BETA): connection.delta_weights.previous += connection.delta_weights.total;
+        connection.totalDeltaWeight = 0; // (BETA): connection.delta_weights.total
       }
+    })
 
-      // Adjust weight
-      let deltaWeight = rate * gradient * this.mask;
-      connection.totalDeltaWeight += deltaWeight;
-      if (update) {
-        connection.totalDeltaWeight += momentum * connection.previousDeltaWeight;
-        connection.weight += connection.totalDeltaWeight;
-        connection.previousDeltaWeight = connection.totalDeltaWeight;
-        connection.totalDeltaWeight = 0;
-      }
-    }
-
-    // Adjust bias
-    var deltaBias = rate * this.error.responsibility;
-    this.totalDeltaBias += deltaBias;
-    if (update) {
-      this.totalDeltaBias += momentum * this.previousDeltaBias;
-      this.bias += this.totalDeltaBias;
-      this.previousDeltaBias = this.totalDeltaBias;
-      this.totalDeltaBias = 0;
+    // Adjust Bias
+    self.totalDeltaBias += options.rate * self.error.responsibility;
+    if(options.update) {
+      self.totalDeltaBias += options.momentum * self.previousDeltaBias;
+      self.bias += self.totalDeltaBias;
+      self.previousDeltaBias = self.totalDeltaBias;
+      self.totalDeltaBias = 0;
     }
   },
 
@@ -420,31 +342,32 @@ Node.prototype = {
   * let A = new Node();
   * A.connect(A); // A now connects to itself
   */
-  connect: function (target, weight) {
-    var connections = [];
-    if (typeof target.bias !== 'undefined') { // must be a node!
-      if (this.isProjectingTo(target)) {
-        throw new Error('Already projecting a connection to this node!');
-      }
-      if (target === this) { // self-connection that doesn't yet exist
-        this.connections.self.weight = weight || 1;
-        connections.push(this.connections.self);
-      } else { // connection between nodes
-        let connection = new Connection(this, target, weight);
+  self.connect = function(target, weight, options) {
+    const connections = [];
+    
+    if(target instanceof Node) {
+      if(self.isProjectingTo(target)) throw new Error('Already projecting a connection to this node!'); // Should this throw an error or just a "warning" and update `wieght`, `options`?
+      else if(target === self) {
+        self.connections.self.weight = weight || 1;
+        connections.push(self.connections.self);
+      } else {
+        const connection = new Connection(self, target, weight, options);
+        
         target.connections.in.push(connection);
-        this.connections.out.push(connection);
+        self.connections.out.push(connection);
         connections.push(connection);
       }
-    } else { // should be a group
-      for (var i = 0; i < target.nodes.length; i++) {
-        let connection = new Connection(this, target.nodes[i], weight);
-        target.nodes[i].connections.in.push(connection);
-        this.connections.out.push(connection);
+    } else if(target instanceof Group) {
+      target.nodes.forEach(function(node) {
+        const connection = new Connection(self, node, weight, options);
+        
+        node.connections.in.push(connection);
+        self.connections.out.push(connection);
         target.connections.in.push(connection);
-
         connections.push(connection);
-      }
+      })
     }
+    
     return connections;
   },
 
@@ -474,25 +397,24 @@ Node.prototype = {
   * // A.disconnect(B)  only disconnects A to B, so use
   * A.disconnect(B, true); // or B.disconnect(A, true)
   */
-  disconnect: function (node, twosided) {
-    if (this === node) {
-      this.connections.self.weight = 0;
-      return;
-    }
-
-    for (var i = 0; i < this.connections.out.length; i++) {
-      let conn = this.connections.out[i];
-      if (conn.to === node) {
-        this.connections.out.splice(i, 1);
-        let j = conn.to.connections.in.indexOf(conn);
-        conn.to.connections.in.splice(j, 1);
-        if (conn.gater !== null) conn.gater.ungate(conn);
-        break;
+  self.disconnect = function(node, twosided) {
+    if(self === node) self.connections.self.weight = 0;
+    else {
+      for(let index = 0; index < self.connections.out.length; index++) {
+        const connection = self.connections.out[index];
+        
+        if(connection.to === node) {
+          self.connections.out.splice(index, 1);
+          
+          connection.to.connections.in.splice(connection.to.connections.in.indexOf(connection), 1);
+          
+          if(connection.gater !== null) connection.gater.ungate(connection);
+          
+          break;
+        }
       }
-    }
 
-    if (twosided) {
-      node.disconnect(this);
+      if(twosided) node.disconnect(self);
     }
   },
 
@@ -515,16 +437,14 @@ Node.prototype = {
   *
   * // Now the weight of the connection from A to B will always be multiplied by the activation of node C.
   */
-  gate: function (connections) {
-    if (!Array.isArray(connections)) {
-      connections = [connections];
-    }
+  self.gate = function(connections) {
+    if(!Array.isArray(connections)) connections = [connections];
 
-    for (var i = 0; i < connections.length; i++) {
-      var connection = connections[i];
+    for(let index = 0; index < connections.length; index++) {
+      const connection = connections[index];
 
-      this.connections.gated.push(connection);
-      connection.gater = this;
+      self.connections.gated.push(connection);
+      connection.gater = self;
     }
   },
 
@@ -547,16 +467,14 @@ Node.prototype = {
   * // Now ungate those connections
   * C.ungate(connections);
   */
-  ungate: function (connections) {
-    if (!Array.isArray(connections)) {
-      connections = [connections];
-    }
+  self.ungate = function(connections) {
+    if(!Array.isArray(connections)) connections = [connections];
 
-    for (var i = connections.length - 1; i >= 0; i--) {
-      var connection = connections[i];
+    for(let index = connections.length - 1; index >= 0; index--) {
+      const connection = connections[index];
 
-      var index = this.connections.gated.indexOf(connection);
-      this.connections.gated.splice(index, 1);
+      const gate = self.connections.gated.indexOf(connection);
+      self.connections.gated.splice(gate, 1);
       connection.gater = null;
       connection.gain = 1;
     }
@@ -565,9 +483,9 @@ Node.prototype = {
   /**
   * Clear the context of the node, basically reverting it to a 'new' neuron. Useful for predicting timeseries with LSTM's.
   */
-  clear: function () {
-    for (var i = 0; i < this.connections.in.length; i++) {
-      var connection = this.connections.in[i];
+  self.clear = function() {
+    for(let index = 0; index < self.connections.in.length; index++) {
+      const connection = self.connections.in[index];
 
       connection.elegibility = 0;
       connection.xtrace = {
@@ -576,13 +494,13 @@ Node.prototype = {
       };
     }
 
-    for (i = 0; i < this.connections.gated.length; i++) {
-      let conn = this.connections.gated[i];
-      conn.gain = 0;
+    for(let index = 0; index < self.connections.gated.length; index++) {
+      const connection = self.connections.gated[index];
+      connection.gain = 0;
     }
 
-    this.error.responsibility = this.error.projected = this.error.gated = 0;
-    this.old = this.state = this.activation = 0;
+    self.error.responsibility = self.error.projected = self.error.gated = 0;
+    self.old = self.state = self.activation = 0;
   },
 
   /**
@@ -602,22 +520,19 @@ Node.prototype = {
   *
   * A.mutate(methods.mutation.MOD_ACTIVATION, allowable_methods) // node's squash function is now TANH or RELU
   */
-  mutate: function(method) {
-    if (typeof method === 'undefined') {
-      throw new Error('No mutate method given!');
-    } else if (!(method.name in methods.mutation)) {
-      throw new Error('This method does not exist!');
-    }
+  self.mutate = function(method) {
+    if(method == undefined) throw new Error('No mutate method given!');
+    // CHECK: https://scotch.io/bar-talk/5-tips-to-write-better-conditionals-in-javascript
+    else if(!(method.name in methods.mutation)) throw new Error('This method does not exist!');
 
-    switch (method) {
+    switch(method) {
       case methods.mutation.MOD_ACTIVATION:
-        // Can't be the same squash
-        var squash = method.allowed[(method.allowed.indexOf(this.squash) + Math.floor(Math.random() * (method.allowed.length - 1)) + 1) % method.allowed.length];
-        this.squash = squash;
+        // Pick Different Squash
+        // const squash = method.allowed[("exclude current" + "other random index" + "overflow...") % "...control"]
+        self.squash = method.allowed[(method.allowed.indexOf(self.squash) + Math.floor(Math.random() * (method.allowed.length - 1)) + 1) % method.allowed.length];
         break;
       case methods.mutation.MOD_BIAS:
-        var modification = Math.random() * (method.max - method.min) + method.min;
-        this.bias += modification;
+        self.bias += Math.random() * (method.max - method.min) + method.min;
         break;
     }
   },
@@ -640,15 +555,13 @@ Node.prototype = {
   * A.isProjectingTo(B); // true
   * A.isProjectingTo(C); // false
   */
-  isProjectingTo: function (node) {
-    if (node === this && this.connections.self.weight !== 0) return true;
+  self.isProjectingTo = function(node) {
+    if(node === self && self.connections.self.weight !== 0) return true;
 
-    for (var i = 0; i < this.connections.out.length; i++) {
-      var conn = this.connections.out[i];
-      if (conn.to === node) {
-        return true;
-      }
+    for(let i = 0; i < self.connections.out.length; i++) {
+      if(self.connections.out[i].to === node) return true;
     }
+    
     return false;
   },
 
@@ -670,14 +583,11 @@ Node.prototype = {
   * A.isProjectedBy(C);// false
   * B.isProjectedBy(A); // true
   */
-  isProjectedBy: function (node) {
-    if (node === this && this.connections.self.weight !== 0) return true;
+  self.isProjectedBy = function(node) {
+    if(node === self && self.connections.self.weight !== 0) return true;
 
-    for (var i = 0; i < this.connections.in.length; i++) {
-      var conn = this.connections.in[i];
-      if (conn.from === node) {
-        return true;
-      }
+    for(let i = 0; i < self.connections.in.length; i++) {
+      if(self.connections.in[i].from === node) return true;
     }
 
     return false;
@@ -691,20 +601,18 @@ Node.prototype = {
   * @example
   * let { Node } = require("@liquid-carrot/carrot");
   *
-  * let exported = myNode.toJSON();
-  * let imported = myNode.fromJSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
+  * let exported = myNode.to_JSON();
+  * let imported = myNode.from_JSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
   */
-  toJSON: function () {
-    var json = {
-      bias: this.bias,
-      type: this.type,
-      squash: this.squash.name,
-      mask: this.mask
+  self.to_JSON = function () {
+    return {
+      bias: self.bias,
+      type: self.type,
+      squash: self.squash.name,
+      mask: self.mask
     };
-
-    return json;
   }
-};
+}
 
 /**
 * Convert a json object to a node
@@ -715,15 +623,15 @@ Node.prototype = {
 * @example
 * let { Node } = require("@liquid-carrot/carrot");
 *
-* let exported = myNode.toJSON();
-* let imported = myNode.fromJSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
+* let exported = myNode.to_JSON();
+* let imported = myNode.from_JSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
 */
-Node.fromJSON = function (json) {
-  var node = new Node();
-  node.bias = json.bias;
-  node.type = json.type;
-  node.mask = json.mask;
-  node.squash = methods.activation[json.squash];
+Node.from_JSON = function (json) {
+  const node = new Node();
+  
+  Object.assign(node, { ...json }, {
+    squash: methods.activation[json.squash]
+  });
 
   return node;
 };

@@ -91,21 +91,24 @@ const architect = {
     for (i = nodes.length - 1; i >= 0; i--) {
       if (nodes[i].type === 'output' || (!found_output_nodes && nodes[i].connections.out.length + nodes[i].connections.gated.length === 0)) {
         nodes[i].type = 'output';
-        network.output++;
+        network.output_size++;
         outputs.push(nodes[i]);
         nodes.splice(i, 1);
       } else if (nodes[i].type === 'input' || (!found_input_nodes && !nodes[i].connections.in.length)) {
         nodes[i].type = 'input';
-        network.input++;
+        network.input_size++;
         inputs.push(nodes[i]);
         nodes.splice(i, 1);
       }
     }
+    // backward compatibility
+    network.input = network.input_size
+    network.output = network.output_size
 
     // Input nodes are always first, output nodes are always last
     nodes = inputs.concat(nodes).concat(outputs);
 
-    if (network.input === 0 || network.output === 0) {
+    if (network.input_size === 0 || network.output_size === 0) {
       throw new Error('Given nodes have no clear input/output node!');
     }
 

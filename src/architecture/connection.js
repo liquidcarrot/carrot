@@ -8,6 +8,7 @@ const _ = require("lodash");
 * @param {Node} from Connection origin node (neuron)
 * @param {Node} to Connection destination node (neuron)
 * @param {number} [weight=random] Weight of the connection
+* @param {Object} [options]
 *
 * @prop {Node} from Connection origin node (neuron)
 * @prop {Node} to Connection destination node (neuron)
@@ -26,27 +27,27 @@ const _ = require("lodash");
 */
 function Connection (from, to, weight, options) {
   let self = this;
-  
+
   _.assignIn(self, _.defaults({ from, to, weight }, { ...options }, {
     weight: Math.random() * 2 - 1,
     gain: 1,
     gater: null,
     elegibility: 0,
-    previousDeltaWeight: 0, // ALIAS: deltas.previous
-    totalDeltaWeight: 0, // ALIAS: deltas.total
+    previousDeltaWeight: 0, // ALIAS: deltaweight.previous
+    totalDeltaWeight: 0, // ALIAS: deltaweight.total
     xtrace: {
       nodes: [],
       values: []
     },
-    
+
     // (BETA)
-    deltas: {
+    delta_weights: {
       previous: 0,
       total: 0,
       all: [],
     }
   }));
-  
+
   /**
   * Converts the connection to a json object
   *
@@ -54,7 +55,7 @@ function Connection (from, to, weight, options) {
   *
   * @returns {object} A connection represented as a JSON object
   */
-  self.toJSON = function () {
+  self.to_JSON = function () {
     return { weight: self.weight };
   }
 }

@@ -142,7 +142,7 @@ describe('Networks', function () {
       }
 
       // Crossover
-      var network = Network.crossOver(network1, network2);
+      var network = Network.cross_over(network1, network2);
 
       // Check if the network is feed-forward correctly
       for (i = 0; i < network.connections.length; i++) {
@@ -153,35 +153,35 @@ describe('Networks', function () {
         assert.isBelow(from, to, 'network is not feeding forward correctly');
       }
     });
-    it.skip('from/toJSON equivalency', function () {
+    it.skip('from/to_JSON equivalency', function () {
       this.timeout(10000);
       var original, copy;
       original = new architect.Perceptron(Math.floor(Math.random() * 5 + 1), Math.floor(Math.random() * 5 + 1), Math.floor(Math.random() * 5 + 1));
-      copy = Network.fromJSON(original.toJSON());
+      copy = Network.from_JSON(original.to_JSON());
       testEquality(original, copy);
 
       original = new Network(Math.floor(Math.random() * 5 + 1), Math.floor(Math.random() * 5 + 1));
-      copy = Network.fromJSON(original.toJSON());
+      copy = Network.from_JSON(original.to_JSON());
       testEquality(original, copy);
 
       original = new architect.LSTM(Math.floor(Math.random() * 5 + 1), Math.floor(Math.random() * 5 + 1), Math.floor(Math.random() * 5 + 1));
-      copy = Network.fromJSON(original.toJSON());
+      copy = Network.from_JSON(original.to_JSON());
       testEquality(original, copy);
 
       original = new architect.GRU(Math.floor(Math.random() * 5 + 1), Math.floor(Math.random() * 5 + 1), Math.floor(Math.random() * 5 + 1), Math.floor(Math.random() * 5 + 1));
-      copy = Network.fromJSON(original.toJSON());
+      copy = Network.from_JSON(original.to_JSON());
       testEquality(original, copy);
 
       original = new architect.Random(Math.floor(Math.random() * 5 + 1), Math.floor(Math.random() * 10 + 1), Math.floor(Math.random() * 5 + 1));
-      copy = Network.fromJSON(original.toJSON());
+      copy = Network.from_JSON(original.to_JSON());
       testEquality(original, copy);
 
       original = new architect.NARX(Math.floor(Math.random() * 5 + 1), Math.floor(Math.random() * 10 + 1), Math.floor(Math.random() * 5 + 1), Math.floor(Math.random() * 5 + 1), Math.floor(Math.random() * 5 + 1));
-      copy = Network.fromJSON(original.toJSON());
+      copy = Network.from_JSON(original.to_JSON());
       testEquality(original, copy);
 
       original = new architect.Hopfield(Math.floor(Math.random() * 5 + 1));
-      copy = Network.fromJSON(original.toJSON());
+      copy = Network.from_JSON(original.to_JSON());
       testEquality(original, copy);
     });
     it.skip('standalone equivalency', function () {
