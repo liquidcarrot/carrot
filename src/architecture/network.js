@@ -1052,7 +1052,7 @@ Network.prototype = {
   /**
    * Convert the network to a json object
    *
-   * @returns {{node:{object},connections:{object},input:{number},output:{number},dropout:{number}}} The network represented as a json object
+   * @returns {{node:{object},connections:{object},input_size:{number},output_size:{number},dropout:{number}}} The network represented as a json object
    *
    * @example
    * let { Network } = require("@liquid-carrot/carrot");
