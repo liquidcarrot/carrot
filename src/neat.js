@@ -235,7 +235,7 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    * @alias evolve
    *
-   * @param {Array<{input:number[],output:number[]}>} [evolveSet=dataset] A set to be used for evolving the population, if none is provided the dataset passed to Neat on creation will be used.
+   * @param {Array<{input:number[],output:number[]}>} [evolve_dataset=dataset] A set to be used for evolving the population, if none is provided the dataset passed to Neat on creation will be used.
    * @param {function} [pickGenome] A custom selection function to pick out unwanted genomes. Accepts a network as a parameter and returns true for selection.
    * @param {function} [adjustGenome=this.template] Accepts a network, modifies it, and returns it. Used to modify unwanted genomes returned by `pickGenome` and reincorporate them into the population. If left unset, unwanted genomes will be replaced with the template Network. Will only run when pickGenome is defined.
    *
@@ -257,13 +257,13 @@ const Neat = function(inputs, outputs, dataset, options) {
    * });
    *
    * // special set to be used when evolving
-   * let evolveSet = [
+   * let evolve_dataset = [
    *  { input: [0], output: [1] },
    *  { input: [1], output: [0] }
    * ]
    *
-   * // evolves using evolveSet INSTEAD of originalSet
-   * neat.evolve(evolveSet)
+   * // evolves using evolve_dataset INSTEAD of originalSet
+   * neat.evolve(evolve_dataset)
    *
    * // evolves using originalSet
    * neat.evolve()
@@ -276,33 +276,46 @@ const Neat = function(inputs, outputs, dataset, options) {
    * neat.evolve(null, filter, adjust)
    *
    */
-  self.evolve = async function(evolveSet, pickGenome, adjustGenome) {
+  self.evolve = async function(evolve_dataset, pickGenome, adjustGenome) {
     // Check if evolve is possible
-    if(self.elitism + self.provenance > self.population_size) throw new Error(`Can't evolve! Elitism + provenance exceeds population size!`);
+    if (self.elitism + self.provenance > self.population_size) {
+      throw new Error(`Can't evolve! Elitism + provenance exceeds population size!`);
+    }
 
-    evolveSet = evolveSet || self.dataset;
+    // evolve dataset is optional, so deal with not having it
+    if (typeof evolve_dataset === `function`) {
+      adjustGenome = pickGenome;
+      pickGenome = evolve_dataset
+    }
+
+    evolve_dataset = evolve_dataset || self.dataset;
 
     // Check population for evaluation
-    if(self.population[self.population.length - 1].score == undefined) await self.evaluate(evolveSet);
+    if (self.population[self.population.length - 1].score == undefined) {
+      await self.evaluate(evolve_dataset);
+    }
     // Check & adjust genomes as needed
-    if(pickGenome) self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome)
+    if (pickGenome) {
+      self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome);
+    }
 
     // Sort in order of fitness (fittest first)
     self.sort();
 
     // Elitism, assumes population is sorted by fitness
     const elitists = [];
-    for(let index = 0; index < self.elitism; index++) elitists.push(self.population[index]);
+    for (let index = 0; index < self.elitism; index++) elitists.push(self.population[index]);
 
     // Provenance
-    let newPopulation = Array(self.provenance).fill(Network.fromJSON(self.template.toJSON()))
+    const new_population = Array(self.provenance).fill(Network.fromJSON(self.template.toJSON()))
 
     // Breed the next individuals
-    for (let i = 0; i < self.population_size - self.elitism - self.provenance; i++)
-      newPopulation.push(self.getOffspring());
+    for (let i = 0; i < self.population_size - self.elitism - self.provenance; i++) {
+      new_population.push(self.getOffspring());
+    }
 
     // Replace the old population with the new population
-    self.population = newPopulation;
+    self.population = new_population;
 
     // Mutate the new population
     self.mutate();
@@ -311,11 +324,10 @@ const Neat = function(inputs, outputs, dataset, options) {
     self.population.push(...elitists);
 
     // evaluate the population
-    await self.evaluate(evolveSet);
-    // await self.evaluate(_.isArray(evolveSet) ? evolveSet : _.isArray(dataset) ? dataset : parameter.is.required("dataset"));
+    await self.evaluate(evolve_dataset);
 
     // Check & adjust genomes as needed
-    if(pickGenome) self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome)
+    if (pickGenome) self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome)
 
     // Sort in order of fitness (fittest first)
     self.sort()
@@ -324,7 +336,7 @@ const Neat = function(inputs, outputs, dataset, options) {
     fittest.score = self.population[0].score;
 
     // Reset the scores
-    for(let i = 0; i < self.population.length; i++) self.population[i].score = undefined;
+    for (let i = 0; i < self.population.length; i++) self.population[i].score = undefined;
 
     self.generation++;
 
