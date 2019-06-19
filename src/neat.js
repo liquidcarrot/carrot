@@ -1,8 +1,8 @@
-const _ = require('lodash');
-const parameter = require('./util/parameter');
-const Network = require('./architecture/network');
-const methods = require('./methods/methods');
-const config = require('./config');
+const _ = require(`lodash`);
+const parameter = require(`./util/parameter`);
+const Network = require(`./architecture/network`);
+const methods = require(`./methods/methods`);
+const config = require(`./config`);
 
 /**
 * Runs the NEAT algorithm on group of neural networks.
@@ -277,7 +277,7 @@ const Neat = function(inputs, outputs, dataset, options) {
    */
   self.evolve = async function(evolveSet, pickGenome, adjustGenome) {
     // Check if evolve is possible
-    if(self.elitism + self.provenance > self.population_size) throw new Error("Can't evolve! Elitism + provenance exceeds population size!");
+    if(self.elitism + self.provenance > self.population_size) throw new Error(`Can't evolve! Elitism + provenance exceeds population size!`);
 
     evolveSet = evolveSet || self.dataset;
 
@@ -341,13 +341,13 @@ const Neat = function(inputs, outputs, dataset, options) {
    */
   self.getParent = function () {
     switch (self.selection.name) {
-      case 'POWER': {
+      case `POWER`: {
         if (self.population[0].score < self.population[1].score) self.sort();
 
         const index = Math.floor(Math.pow(Math.random(), self.selection.power) * self.population.length);
         return self.population[index];
       }
-      case 'FITNESS_PROPORTIONATE': {
+      case `FITNESS_PROPORTIONATE`: {
         // As negative fitnesses are possible
         // https://stackoverflow.com/questions/16186686/genetic-algorithm-handling-negative-fitness-values
         // this is unnecessarily run for every individual, should be changed
@@ -375,9 +375,9 @@ const Neat = function(inputs, outputs, dataset, options) {
         // if all scores equal, return random genome
         return self.population[Math.floor(Math.random() * self.population.length)];
       }
-      case 'TOURNAMENT': {
+      case `TOURNAMENT`: {
         if (self.selection.size > self.population_size) {
-          throw new Error('Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size');
+          throw new Error(`Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size`);
         }
 
         // Create a tournament
@@ -488,7 +488,7 @@ const Neat = function(inputs, outputs, dataset, options) {
   */
   self.getFittest = function () {
     // Check if evaluated. self.evaluate is an async function
-    if (typeof self.population[self.population.length - 1].score === 'undefined')
+    if (typeof self.population[self.population.length - 1].score === `undefined`)
       self.evaluate();
 
     if (self.population[0].score < self.population[1].score) self.sort();
@@ -504,7 +504,7 @@ const Neat = function(inputs, outputs, dataset, options) {
    * @returns {number} Average fitness of the current population
    */
   self.getAverage = function () {
-    if (typeof self.population[self.population.length - 1].score === 'undefined')
+    if (typeof self.population[self.population.length - 1].score === `undefined`)
       self.evaluate(); // self.evaluate is an async function
 
     let score = 0;
