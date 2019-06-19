@@ -139,7 +139,7 @@ const Neat = function(inputs, outputs, dataset, options) {
     for (let i = 0; i < population_size; i++) {
       population.push(Network.fromJSON({ ...network.toJSON(), score: undefined }));
     }
-    
+
     return population;
   };
 
@@ -173,8 +173,6 @@ const Neat = function(inputs, outputs, dataset, options) {
 
   // Initialise the genomes
   self.population = self.population || self.createPopulation(self.template, self.population_size);
-
-
 
   /**
    * Replaces all networks that match the `select` function - _if `transform` is provided networks will be transformed before being filtered out_
@@ -453,15 +451,19 @@ const Neat = function(inputs, outputs, dataset, options) {
     dataset = dataset || self.dataset;
 
     if (self.fitnessPopulation) {
+      // check the clear flag
       if (self.clear) {
-        for (let i = 0; i < self.population.length; i++)
+        for (let i = 0; i < self.population.length; i++) {
           self.population[i].clear();
+        }
       }
+
+      // calculate the fitnesses
       await self.fitness(dataset, self.population);
     } else {
       for (let i = 0; i < self.population.length; i++) {
         const genome = self.population[i];
-        if (self.clear) genome.clear();
+        if (self.clear) genome.clear(); // clear flag
         genome.score = await self.fitness(dataset, genome);
         self.population[i] = genome;
       }
@@ -470,6 +472,7 @@ const Neat = function(inputs, outputs, dataset, options) {
     // Sort the population in order of fitness
     self.sort()
 
+    // return the fitness of the best agent, which represents the fitness of the population
     return self.population[0]
   };
 
