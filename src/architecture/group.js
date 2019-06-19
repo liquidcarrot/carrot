@@ -1,9 +1,9 @@
-module.exports = Group;
+const _ = require("lodash");
+const methods = require('../methods/methods');
+const config = require('../config');
+// const Layer = require('./layer');
+const Node = require('./node');
 
-var methods = require('../methods/methods');
-var config = require('../config');
-var Layer = require('./layer');
-var Node = require('./node');
 
 /**
 * A group instance denotes a group of nodes. Beware: once a group has been used to construct a network, the groups will fall apart into individual nodes. They are purely for the creation and development of networks.
@@ -24,20 +24,24 @@ var Node = require('./node');
 * // A group with 5 nodes
 * let A = new Group(5);
 */
-function Group (size, type) {
-  this.nodes = [];
-  this.connections = {
+function Group(size, type) {
+  const self = this;
+  
+  self.nodes = [];
+  self.connections = {
     in: [],
     out: [],
-    self: []
+    self: [],
+    
+    // (BETA)
+    incoming: [],
+    outgoing: []
   };
 
-  for (var i = 0; i < size; i++) {
-    this.nodes.push(new Node(type));
+  for (let index = 0; index < size; index++) {
+    self.nodes.push(new Node(type));
   }
-}
-
-Group.prototype = {
+  
   /**
   * Activates all the nodes in the group
   *
@@ -53,20 +57,13 @@ Group.prototype = {
   * // or (array length must be same length as nodes in group)
   * myGroup.activate([1, 0, 1]);
   */
-  activate: function (inputs) {
-    var outputs = [];
+  self.activate = function(inputs) {
+    if (inputs != undefined && inputs.length !== self.nodes.length) throw new Error('Array with values should be same as the amount of nodes!');
 
-    if (typeof inputs !== 'undefined' && inputs.length !== this.nodes.length) {
-      throw new Error('Array with values should be same as the amount of nodes!');
-    }
+    const outputs = [];
 
-    for (var i = 0; i < this.nodes.length; i++) {
-      var activation;
-      if (typeof inputs === 'undefined') {
-        activation = this.nodes[i].activate();
-      } else {
-        activation = this.nodes[i].activate(inputs[i]);
-      }
+    for (let index = 0; index < self.nodes.length; index++) {
+      const activation = inputs == undefined ? self.nodes[index].activate() : self.nodes[index].activate(inputs[index]);
 
       outputs.push(activation);
     }
@@ -80,9 +77,11 @@ Group.prototype = {
   * [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one.
   * If you combine a high learning rate with a lot of momentum, you will rush past the minimum with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
   *
-  * @param {number} rate [Learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
-  * @param {number} momentum [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
-  * @param {number|number[]} target Ideal value(s)
+  * @param {number|number[]} [target] Ideal value(s) - _required for output nodes_
+  * @param {Object} [options]
+  * @param {number} [options.rate] [Learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
+  * @param {number} [options.momentum] [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
+  * @param {boolean} [options.update=true]
   *
   * @example
   * let { Layer } = require("@liquid-carrot/carrot");
@@ -98,17 +97,17 @@ Group.prototype = {
   * // Then teach the network with learning rate and wanted output
   * B.propagate(0.3, 0.9, [0,1]);
   */
-  propagate: function(rate, momentum, target) {
-    if (typeof target !== 'undefined' && target.length !== this.nodes.length) {
-      throw new Error('Array with values should be same as the amount of nodes!');
+  self.propagate = function(target, options) {
+    if (!options && _.isPlainObject(target)) {
+      options = target;
+      target = undefined;
     }
+    
+    if (target != undefined && target.length !== self.nodes.length) throw new Error('Array with values should be same as the amount of nodes!');
 
-    for (var i = this.nodes.length - 1; i >= 0; i--) {
-      if (typeof target === 'undefined') {
-        this.nodes[i].propagate(rate, momentum, true);
-      } else {
-        this.nodes[i].propagate(rate, momentum, true, target[i]);
-      }
+    for (let index = self.nodes.length - 1; index >= 0; index--) {
+      if (target == undefined) self.nodes[index].propagate(options);
+      else self.nodes[index].propagate(target[index], options);
     }
   },
 
@@ -129,15 +128,15 @@ Group.prototype = {
   *
   * A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional
   */
-  connect: function(target, method, weight) {
-    let selfTargeted = (this === target)
+  self.connect = function(target, method, weight) {
+    const self_targeted = (self === target);
 
-    var connections = []
-    var i, j;
+    const connections = [];
+    
+    let i, j;
     if (target instanceof Group) {
-      // set default connection methods
-      if (typeof method === 'undefined') {
-        if (selfTargeted) {
+      if (method == undefined) {
+        if (self_targeted) {
           if (config.warnings) console.warn('No group connection specified, using ONE_TO_ONE');
           method = methods.connection.ONE_TO_ONE;
         } else {
@@ -146,40 +145,45 @@ Group.prototype = {
         }
       }
       if (method === methods.connection.ALL_TO_ALL || method === methods.connection.ALL_TO_ELSE) {
-        for (i = 0; i < this.nodes.length; i++) {
-          for (j = 0; j < target.nodes.length; j++) {
-            if (method === methods.connection.ALL_TO_ELSE && this.nodes[i] === target.nodes[j]) continue;
-            let connection = this.nodes[i].connect(target.nodes[j], weight);
-            this.connections.out.push(connection[0]);
-            target.connections.in.push(connection[0]);
-            connections.push(connection[0]);
+        for (let i = 0; i < self.nodes.length; i++) {
+          for (let j = 0; j < target.nodes.length; j++) {
+            if (method === methods.connection.ALL_TO_ELSE && self.nodes[i] === target.nodes[j]) continue;
+            else {
+              let connection = self.nodes[i].connect(target.nodes[j], weight);
+              
+              self.connections.out.push(connection[0]);
+              target.connections.in.push(connection[0]);
+              connections.push(connection[0]);
+            }
           }
         }
       } else if (method === methods.connection.ONE_TO_ONE) {
-        if(selfTargeted){
-          for (i = 0; i < this.nodes.length; i++) {
-            let connection = this.nodes[i].connect(target.nodes[i], weight);
-            this.connections.self.push(connection[0]);
+        if(self_targeted){
+          for (let i = 0; i < self.nodes.length; i++) {
+            const connection = self.nodes[i].connect(target.nodes[i], weight);
+            
+            self.connections.self.push(connection[0]);
             connections.push(connection[0]);
           }
         } else {
-          if (this.nodes.length !== target.nodes.length) {
-            throw new Error('From and To group must be the same size!');
-          }
-          for (i = 0; i < this.nodes.length; i++) {
-            let connection = this.nodes[i].connect(target.nodes[i], weight);
-            this.connections.out.push(connection[0]);
+          if (self.nodes.length !== target.nodes.length) throw new Error('From and To group must be the same size!');
+          
+          for (let i = 0; i < self.nodes.length; i++) {
+            const connection = self.nodes[i].connect(target.nodes[i], weight);
+            
+            self.connections.out.push(connection[0]);
             target.connections.in.push(connection[0]);
             connections.push(connection[0]);
           }
         }
       }
-    } else if (target instanceof Layer) {
-      connections = target.input(this, method, weight);
-    } else if (target instanceof Node) {
-      for (i = 0; i < this.nodes.length; i++) {
-        let connection = this.nodes[i].connect(target, weight);
-        this.connections.out.push(connection[0]);
+    }
+    else if (target instanceof Layer) connections = target.input(self, method, weight);
+    else if (target instanceof Node) {
+      for (let index = 0; index < self.nodes.length; index++) {
+        const connection = self.nodes[index].connect(target, weight);
+        
+        self.connections.out.push(connection[0]);
         connections.push(connection[0]);
       }
     }
@@ -193,21 +197,18 @@ Group.prototype = {
   * @param {Connection[]|Connection} connections Connections to gate
   * @param {gating} method [Gating Method](gating)
   */
-  gate: function(connections, method) {
-    if (typeof method === 'undefined') {
-      throw new Error('Please specify Gating.INPUT, Gating.OUTPUT');
-    }
+  self.gate = function(connections, method) {
+    if (method == undefined) throw new Error('Please specify Gating.INPUT, Gating.OUTPUT');
 
-    if (!Array.isArray(connections)) {
-      connections = [connections];
-    }
+    if (!Array.isArray(connections)) connections = [connections];
 
-    var nodes1 = [];
-    var nodes2 = [];
+    const nodes1 = [];
+    const nodes2 = [];
 
     var i, j;
+    
     for (i = 0; i < connections.length; i++) {
-      var connection = connections[i];
+      const connection = connections[i];
       if (!nodes1.includes(connection.from)) nodes1.push(connection.from);
       if (!nodes2.includes(connection.to)) nodes2.push(connection.to);
     }
@@ -267,14 +268,12 @@ Group.prototype = {
   * // All nodes in 'group' now have a bias of 1
   * group.set({bias: 1});
   */
-  set: function(values) {
-    for(var i = 0; i < this.nodes.length; i++) {
-      if(typeof values.bias !== 'undefined') {
-        this.nodes[i].bias = values.bias;
-      }
+  self.set = function(values) {
+    for (let index = 0; index < self.nodes.length; index++) {
+      if (values.bias != undefined) self.nodes[index].bias = values.bias;
 
-      this.nodes[i].squash = values.squash || this.nodes[i].squash;
-      this.nodes[i].type = values.type || this.nodes[i].type;
+      self.nodes[index].squash = values.squash || self.nodes[index].squash;
+      self.nodes[index].type = values.type || self.nodes[index].type;
     }
   },
 
@@ -284,60 +283,25 @@ Group.prototype = {
   * @param {Group|Node} target Node(s) to remove connections to/from
   * @param {boolean} [twosided=false] Set to true, to disconnect both to and from connections simultaneously (applies to two-sided [Connections](Connection) only)
   */
-  disconnect: function(target, twosided) {
+  self.disconnect = function(target, twosided) {
     twosided = twosided || false;
-
-    // In the future, disconnect will return a connection so indexOf can be used
-    var i, j, k;
+    
     if (target instanceof Group) {
-      for (i = 0; i < this.nodes.length; i++) {
-        for (j = 0; j < target.nodes.length; j++) {
-          this.nodes[i].disconnect(target.nodes[j], twosided);
-
-          for (k = this.connections.out.length - 1; k >= 0; k--) {
-            let conn = this.connections.out[k];
-
-            if (conn.from === this.nodes[i] && conn.to === target.nodes[j]) {
-              this.connections.out.splice(k, 1);
-              break;
-            }
-          }
-
-          if (twosided) {
-            for (k = this.connections.in.length - 1; k >= 0; k--) {
-              let conn = this.connections.in[k];
-
-              if (conn.from === target.nodes[j] && conn.to === this.nodes[i]) {
-                this.connections.in.splice(k, 1);
-                break;
-              }
-            }
-          }
+      for (let i = 0; i < self.nodes.length; i++) {
+        for (let j = 0; j < target.nodes.length; j++) {
+          self.nodes[i].disconnect(target.nodes[j], twosided);
+          
+          if (twosided) self.connections.in = self.connections.in.filter(connection => !(connection.from === target.nodes[j] && connection.to === this.nodes[i]));
+          self.connections.out = self.connections.out.filter(connection => !(connection.from === self.nodes[i] && connection.to === target.nodes[j]));
         }
       }
-    } else if (target instanceof Node) {
-      for (i = 0; i < this.nodes.length; i++) {
-        this.nodes[i].disconnect(target, twosided);
-
-        for (j = this.connections.out.length - 1; j >= 0; j--) {
-          let conn = this.connections.out[j];
-
-          if (conn.from === this.nodes[i] && conn.to === target) {
-            this.connections.out.splice(j, 1);
-            break;
-          }
-        }
-
-        if (twosided) {
-          for (j = this.connections.in.length - 1; j >= 0; j--) {
-            var conn = this.connections.in[j];
-
-            if (conn.from === target && conn.to === this.nodes[i]) {
-              this.connections.in.splice(j, 1);
-              break;
-            }
-          }
-        }
+    }
+    else if (target instanceof Node) {
+      for (let index = 0; index < self.nodes.length; index++) {
+        self.nodes[index].disconnect(target, twosided);
+        
+        if (twosided) self.connections.in = self.connections.in.filter(connection => !(connection.from === target && connection.to === self.nodes[index]));
+        self.connections.out = self.connections.out.filter(connection => !(connection.from === self.nodes[index] && connection.to === target));
       }
     }
   },
@@ -345,9 +309,11 @@ Group.prototype = {
   /**
   * Clear the context of the nodes in this group
   */
-  clear: function () {
-    for (var i = 0; i < this.nodes.length; i++) {
-      this.nodes[i].clear();
+  self.clear = function () {
+    for (let index = 0; index < self.nodes.length; index++) {
+      self.nodes[index].clear();
     }
   }
-};
+}
+
+module.exports = Group;
