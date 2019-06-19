@@ -15,7 +15,7 @@ const _ = require("lodash");
 * let { methods, Node } = require("@liquid-carrot/carrot");
 *
 * // Changing a neuron's activation function
-* var A = new Node();
+* let A = new Node();
 * A.squash = methods.activation.<ACTIVATION_FUNCTION>;
 *
 * // eg.
@@ -29,14 +29,14 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.LOGISTIC;
   */
   LOGISTIC: function (x, derivate) {
@@ -58,7 +58,7 @@ const activation = {
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.TANH;
   */
   TANH: function (x, derivate) {
@@ -75,14 +75,14 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.IDENTITY;
   */
   IDENTITY: function (x, derivate) {
@@ -97,14 +97,14 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.STEP;
   */
   STEP: function (x, derivate) {
@@ -119,14 +119,14 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.RELU;
   */
   RELU: function (x, derivate) {
@@ -141,14 +141,14 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.SOFTSIGN;
   */
   SOFTSIGN: function (x, derivate) {
@@ -163,14 +163,14 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.SINUSOID;
   */
   SINUSOID: function (x, derivate) {
@@ -185,14 +185,14 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.GAUSSIAN;
   */
   GAUSSIAN: function (x, derivate) {
@@ -207,14 +207,14 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.BENT_IDENTITY;
   */
   BENT_IDENTITY: function (x, derivate) {
@@ -229,14 +229,14 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.BIPOLAR;
   */
   BIPOLAR: function (x, derivate) {
@@ -251,14 +251,14 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]}  x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.BIPOLAR_SIGMOID;
   */
   BIPOLAR_SIGMOID: function (x, derivate) {
@@ -273,14 +273,14 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.HARD_TANH;
   */
   HARD_TANH: function (x, derivate) {
@@ -297,14 +297,14 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.ABSOLUTE;
   */
   ABSOLUTE: function (x, derivate) {
@@ -319,14 +319,14 @@ const activation = {
   *
   * @member
   * @function
-  * @param {number} x Input value to activation function
+  * @param {number | number[]} x Input value(s) to activation function
   * @param {boolean} [derivate] Flag to select derivative function
   *
   * @example
   * let { methods, Node } = require("@liquid-carrot/carrot");
   *
   * // Changing a neuron's activation function
-  * var A = new Node();
+  * let A = new Node();
   * A.squash = methods.activation.INVERSE;
   */
   INVERSE: function (x, derivate) {
@@ -345,14 +345,14 @@ const activation = {
    *
    * @member
    * @function
-   * @param {number} x Input value to activation function
+   * @param {number | number[]} x Input value to activation function
    * @param {boolean} [derivate] Flag to select derivative function
    *
    * @example
    * let { methods, Node } = require("@liquid-carrot/carrot");
    *
    * // Changing a neuron's activation function
-   * var A = new Node();
+   * let A = new Node();
    * A.squash = methods.activation.SELU;
    */
   SELU: function (x, derivate) {

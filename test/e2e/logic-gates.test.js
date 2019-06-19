@@ -65,7 +65,6 @@ describe("Logic Gates", function() {
     await population.evolve(data.NOT)
     const final = await population.evolve(data.NOT);
 
-
     // console.log(`Initial Score: ${initial.score}`);
     // console.log(`Final Score: ${final.score}`);
 
