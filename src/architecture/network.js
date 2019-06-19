@@ -2242,7 +2242,7 @@ const Neat = function(dataset, {
    *
    * @return {object[]} A set of genomes (a population) represented as JSON objects.
    */
-  self.toJSON = function exportPopulation() {
+  self.toJSON = function toJSON() {
     var json = [];
     for (let i = 0; i < self.population.length; i++)
       json.push(self.population[i].toJSON());

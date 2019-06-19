@@ -520,11 +520,11 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    * @return {object[]} A set of genomes (a population) represented as JSON objects.
    */
-  self.toJSON = function exportPopulation() {
-    let json = [];
-    for (let i = 0; i < self.population.length; i++)
+  self.toJSON = function toJSON() {
+    const json = [];
+    for (let i = 0; i < self.population.length; i++) {
       json.push(self.population[i].toJSON());
-
+    }
     return json;
   };
 
