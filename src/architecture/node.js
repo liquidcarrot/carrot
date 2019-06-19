@@ -2,7 +2,6 @@ const _ = require("lodash");
 const methods = require('../methods/methods');
 const Connection = require('./connection');
 const config = require('../config');
-// const Group = require()
 
 /**
 * Creates a new neuron/node
