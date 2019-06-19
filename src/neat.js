@@ -344,7 +344,7 @@ const Neat = function(inputs, outputs, dataset, options) {
       case 'POWER': {
         if (self.population[0].score < self.population[1].score) self.sort();
 
-        let index = Math.floor(Math.pow(Math.random(), self.selection.power) * self.population.length);
+        const index = Math.floor(Math.pow(Math.random(), self.selection.power) * self.population.length);
         return self.population[index];
       }
       case 'FITNESS_PROPORTIONATE': {
@@ -352,23 +352,23 @@ const Neat = function(inputs, outputs, dataset, options) {
         // https://stackoverflow.com/questions/16186686/genetic-algorithm-handling-negative-fitness-values
         // this is unnecessarily run for every individual, should be changed
 
-        let totalFitness = 0;
-        let minimalFitness = 0;
+        let total_fitness = 0;
+        let minimum_fitness = 0;
         for (let i = 0; i < self.population.length; i++) {
-          let score = self.population[i].score;
-          minimalFitness = score < minimalFitness ? score : minimalFitness;
-          totalFitness += score;
+          const score = self.population[i].score;
+          minimum_fitness = score < minimum_fitness ? score : minimum_fitness;
+          total_fitness += score;
         }
 
-        minimalFitness = Math.abs(minimalFitness);
-        totalFitness += minimalFitness * self.population.length;
+        minimum_fitness = Math.abs(minimum_fitness);
+        total_fitness += minimum_fitness * self.population.length;
 
-        let random = Math.random() * totalFitness;
+        let random = Math.random() * total_fitness;
         let value = 0;
 
         for (let i = 0; i < self.population.length; i++) {
-          let genome = self.population[i];
-          value += genome.score + minimalFitness;
+          const genome = self.population[i];
+          value += genome.score + minimum_fitness;
           if (random < value) return genome;
         }
 
@@ -381,10 +381,10 @@ const Neat = function(inputs, outputs, dataset, options) {
         }
 
         // Create a tournament
-        let individuals = [];
+        const individuals = [];
         for (let i = 0; i < self.selection.size; i++) {
-          let random = self.population[Math.floor(Math.random() * self.population.length)];
-          individuals.push(random);
+          let random_agent = self.population[Math.floor(Math.random() * self.population.length)];
+          individuals.push(random_agent);
         }
 
         // Sort the tournament individuals by score
@@ -393,8 +393,11 @@ const Neat = function(inputs, outputs, dataset, options) {
         });
 
         // Select an individual
-        for (let i = 0; i < self.selection.size; i++)
-          if (Math.random() < self.selection.probability || i === self.selection.size - 1) return individuals[i];
+        for (let i = 0; i < self.selection.size; i++) {
+          if (Math.random() < self.selection.probability || i === self.selection.size - 1) {
+            return individuals[i];
+          }
+        }
       }
     }
   };
