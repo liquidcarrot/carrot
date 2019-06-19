@@ -13,7 +13,7 @@ const config = require('./config');
 * @param {number} [outputs=1] Size of input layer of the networks in the population
 * @param {Array<{inputs:number[],outputs:number[]}>} [dataset] Dataset used to train networks in the population at first - _other sets of data can be passed to `neat.evolve()` after constuction_
 * @param {Object} options **Configuration Options**
-* @param {number} [options.pop_size=50] Population size of each generation.
+* @param {number} [options.population_size=50] Population size of each generation.
 * @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algortihtms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
 * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
 * @param {number} [options.mutationRate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.4.
@@ -43,7 +43,7 @@ const config = require('./config');
 * let neat = new Neat()
 *
 * // new Neat(options)
-* let neat = new Neat({ pop_size: 100 })
+* let neat = new Neat({ population_size: 100 })
 *
 * // new Neat(dataset)
 * let neat = new Neat([
@@ -62,10 +62,10 @@ const config = require('./config');
 *   { input: [0, 1], output: [1] },
 *   { input: [1, 0], output: [1] },
 *   { input: [1, 1], output: [0] }
-* ], { pop_size: 100 })
+* ], { population_size: 100 })
 *
 * // new Neat(input, output, options)
-* let neat = new Neat(64, 10, { pop_size: 100 })
+* let neat = new Neat(64, 10, { population_size: 100 })
 *
 * // new Neat(input, output, dataset)
 * let neat = new Neat(2, 1, [
@@ -81,7 +81,7 @@ const config = require('./config');
 *   { input: [0, 1], output: [1] },
 *   { input: [1, 0], output: [1] },
 *   { input: [1, 1], output: [0] }
-* ], { pop_size: 100 })
+* ], { population_size: 100 })
 *
 */
 const Neat = function(inputs, outputs, dataset, options) {
@@ -132,10 +132,10 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    * @param {Network} network
    */
-  self.createPool = function createInitialPopulation(network, pop_size) {
+  self.createPool = function createInitialPopulation(network, population_size) {
     const population = [];
 
-    for(let i = 0; i < pop_size; i++) population.push(Network.fromJSON({ ...network.toJSON(), score: undefined }))
+    for(let i = 0; i < population_size; i++) population.push(Network.fromJSON({ ...network.toJSON(), score: undefined }))
 
     return population;
   };
@@ -159,7 +159,7 @@ const Neat = function(inputs, outputs, dataset, options) {
     const population = [];
 
     network = network ? network.clone() : (self.template || new Network(self.inputs, self.outputs));
-    size = size || self.pop_size;
+    size = size || self.population_size;
 
     for(let index = 0; index < size; index++) {
       population.push(network);
@@ -169,7 +169,7 @@ const Neat = function(inputs, outputs, dataset, options) {
   };
 
   // Initialise the genomes
-  self.population = self.population || self.createPopulation(self.template, self.pop_size);
+  self.population = self.population || self.createPopulation(self.template, self.population_size);
 
 
 
@@ -277,7 +277,7 @@ const Neat = function(inputs, outputs, dataset, options) {
    */
   self.evolve = async function(evolveSet, pickGenome, adjustGenome) {
     // Check if evolve is possible
-    if(self.elitism + self.provenance > self.pop_size) throw new Error("Can't evolve! Elitism + provenance exceeds population size!");
+    if(self.elitism + self.provenance > self.population_size) throw new Error("Can't evolve! Elitism + provenance exceeds population size!");
 
     evolveSet = evolveSet || self.dataset;
 
@@ -297,7 +297,7 @@ const Neat = function(inputs, outputs, dataset, options) {
     let newPopulation = Array(self.provenance).fill(Network.fromJSON(self.template.toJSON()))
 
     // Breed the next individuals
-    for (let i = 0; i < self.pop_size - self.elitism - self.provenance; i++)
+    for (let i = 0; i < self.population_size - self.elitism - self.provenance; i++)
       newPopulation.push(self.getOffspring());
 
     // Replace the old population with the new population
@@ -376,7 +376,7 @@ const Neat = function(inputs, outputs, dataset, options) {
         return self.population[Math.floor(Math.random() * self.population.length)];
       }
       case 'TOURNAMENT': {
-        if (self.selection.size > self.pop_size) {
+        if (self.selection.size > self.population_size) {
           throw new Error('Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size');
         }
 
@@ -540,7 +540,7 @@ const Neat = function(inputs, outputs, dataset, options) {
     for (let i = 0; i < json.length; i++)
       population.push(Network.fromJSON(json[i]));
     self.population = population;
-    self.pop_size = population.length;
+    self.population_size = population.length;
   };
 }
 
@@ -551,7 +551,7 @@ Neat.default = {
     // output: 1,
     equal: true,
     clean: false,
-    pop_size: 50,
+    population_size: 50,
     growth: 0.0001,
     cost: methods.cost.MSE,
     amount: 1,

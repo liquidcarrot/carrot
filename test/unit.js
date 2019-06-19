@@ -4,7 +4,7 @@ let { architect, Network, methods, Neat } = require('../src/carrot')
 describe('filterGenome()', async assert => {
   // total nodes length = 200
   let neat = new Neat(100, 100, null, {
-    pop_size: 20
+    population_size: 20
   })
   
   

@@ -77,7 +77,7 @@ Population.prototype = {
         // if all scores equal, return random genome
         return this.population[Math.floor(Math.random() * this.population.length)];
       case selection.TOURNAMENT:
-        if (this.selection.size > this.pop_size) {
+        if (this.selection.size > this.population_size) {
           throw new Error('Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size');
         }
 
