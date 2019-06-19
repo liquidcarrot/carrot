@@ -134,9 +134,9 @@ const Neat = function(inputs, outputs, dataset, options) {
    */
   self.createPool = function createInitialPopulation(network, popsize) {
     const population = [];
-    
+
     for(let i = 0; i < popsize; i++) population.push(Network.from_JSON({ ...network.to_JSON(), score: undefined }))
-    
+
     return population;
   };
 
@@ -157,10 +157,10 @@ const Neat = function(inputs, outputs, dataset, options) {
     }
 
     const population = [];
-    
+
     network = network ? network.clone() : (self.template || new Network(self.inputs, self.outputs));
     size = size || self.popsize;
-    
+
     for(let index = 0; index < size; index++) {
       population.push(network);
     }
@@ -171,8 +171,8 @@ const Neat = function(inputs, outputs, dataset, options) {
   // Initialise the genomes
   self.population = self.population || self.createPopulation(self.template, self.popsize);
 
-  
-  
+
+
   /**
    * Replaces all networks that match the `select` function - _if `transform` is provided networks will be transformed before being filtered out_
    *
@@ -183,7 +183,7 @@ const Neat = function(inputs, outputs, dataset, options) {
    */
   self.replace = function(population, template, select, transform) {
     const filtered = []
-    
+
     for(let index = 0; index < population.length; index++) {
       if(select(population[index])) filtered.push(transform ? transform(population[index]) : population[index]);
     }
@@ -201,7 +201,7 @@ const Neat = function(inputs, outputs, dataset, options) {
   */
   self.mutateRandom = function selectMethodAndMutateNetwork(genome, allowedMutations) {
     let possible = allowedMutations ? [...allowedMutations] : [...self.mutation]
-    
+
     // remove any methods disallowed by user-limits: i.e. maxNodes, maxConns, ...
     possible = possible.filter(function(method) {
       return (
@@ -210,19 +210,20 @@ const Neat = function(inputs, outputs, dataset, options) {
         method !== methods.mutation.ADD_GATE || genome.gates.length < self.maxGates
       )
     })
-    
+
     do {
       const current = possible[Math.floor(Math.random() * possible.length)]
-      
-      console.log("mutation insde Neat.mutateRandom: " + current.name)
+
       // attempt mutation, success: return mutation method, failure: remove from possible methods
-      if(genome.mutate(current)) return current
-      else possible = possible.filter(function(method) { return method.name !== current.name })
-      
-      console.log("mutation failed!")
+      if (genome.mutate(current)){
+        return current;
+      }else {
+        possible = possible.filter(function(method) { return method.name !== current.name });
+      }
+
       // Return null when mutation is impossible
-      if((!possible || possible.length === 0)) return null;
-      
+      if (!possible || possible.length === 0) return null;
+
     } while(true)
   };
 
@@ -444,7 +445,7 @@ const Neat = function(inputs, outputs, dataset, options) {
    */
   self.evaluate = async function (dataset) {
     dataset = dataset || self.dataset;
-    
+
     if (self.fitnessPopulation) {
       if (self.clear) {
         for (let i = 0; i < self.population.length; i++)
