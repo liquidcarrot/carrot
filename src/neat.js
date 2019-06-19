@@ -410,8 +410,8 @@ const Neat = function(inputs, outputs, dataset, options) {
    * @returns {Network} Child network
    */
   self.getOffspring = function () {
-    let parent1 = self.getParent();
-    let parent2 = self.getParent();
+    const parent1 = self.getParent();
+    const parent2 = self.getParent();
 
     return Network.crossOver(parent1, parent2, self.equal);
   };
