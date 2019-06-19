@@ -56,21 +56,21 @@ const architect = {
   */
   Construct: function (list) {
     // Create a network
-    var network = new Network(0, 0);
+    const network = new Network(0, 0);
 
     // Transform all groups into nodes
-    var nodes = [];
+    let nodes = [];
 
-    var i;
+    let i;
+    let j;
     for (i = 0; i < list.length; i++) {
-      let j;
       if (list[i] instanceof Group) {
         for (j = 0; j < list[i].nodes.length; j++) {
           nodes.push(list[i].nodes[j]);
         }
       } else if (list[i] instanceof Layer) {
         for (j = 0; j < list[i].nodes.length; j++) {
-          for (var k = 0; k < list[i].nodes[j].nodes.length; k++) {
+          for (let k = 0; k < list[i].nodes[j].nodes.length; k++) {
             nodes.push(list[i].nodes[j].nodes[k]);
           }
         }
@@ -80,14 +80,14 @@ const architect = {
     }
 
     // check if there are input or output nodes, bc otherwise must guess based on number of outputs
-    let found_output_nodes = _.reduce(nodes, (total_found, node) =>
+    const found_output_nodes = _.reduce(nodes, (total_found, node) =>
       total_found + (node.type === `output`), 0);
-    let found_input_nodes = _.reduce(nodes, (total_found, node) =>
+    const found_input_nodes = _.reduce(nodes, (total_found, node) =>
       total_found + (node.type === `input`), 0);
 
     // Determine input and output nodes
-    var inputs = [];
-    var outputs = [];
+    const inputs = [];
+    const outputs = [];
     for (i = nodes.length - 1; i >= 0; i--) {
       if (nodes[i].type === 'output' || (!found_output_nodes && nodes[i].connections.out.length + nodes[i].connections.gated.length === 0)) {
         nodes[i].type = 'output';
@@ -113,7 +113,6 @@ const architect = {
     }
 
     for (i = 0; i < nodes.length; i++) {
-      let j;
       for (j = 0; j < nodes[i].connections.out.length; j++) {
         network.connections.push(nodes[i].connections.out[j]);
       }
