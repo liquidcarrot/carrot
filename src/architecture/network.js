@@ -1169,7 +1169,7 @@ Network.prototype = {
    * @param {schedule} [options.schedule.function] A function to run every n iterations as set by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
    * @param {boolean} [options.clear=false] If set to true, will clear the network after every activation. This is useful for evolving recurrent networks, more importantly for timeseries prediction.
    * @param {boolean} [options.equal=true] If set to true when [Network.crossOver](Network.crossOver) runs it will assume both genomes are equally fit.
-   * @param {number} [options.popsize=50] Population size of each generation.
+   * @param {number} [options.pop_size=50] Population size of each generation.
    * @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
    * @param {number} [options.provenance=0] Number of genomes inserted into the original network template (Network(input,output)) per evolution.
    * @param {number} [options.mutationRate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated.
@@ -1811,7 +1811,7 @@ module.exports = Network;
 * @param {number} output - The output size of `template` networks.
 * @param {boolean} [options.equal=false] When true [crossover](Network.crossOver) parent genomes are assumed to be equally fit and offspring are built with a random amount of neurons within the range of parents' number of neurons. Set to false to select the "fittest" parent as the neuron amount template.
 * @param {number} [options.clear=false] Clear the context of the population's nodes, basically reverting them to 'new' neurons. Useful for predicting timeseries with LSTM's.
-* @param {number} [options.popsize=50] Population size of each generation.
+* @param {number} [options.pop_size=50] Population size of each generation.
 * @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connectoins.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
 * @param {cost} [options.cost=cost.MSE]  Specify the cost function for the evolution, this tells a genome in the population how well it's performing. Default: methods.cost.MSE (recommended).
 * @param {number} [options.amount=1] Set the amount of times to test the trainingset on a genome each generation. Useful for timeseries. Do not use for regular feedfoward problems.
@@ -1838,7 +1838,7 @@ module.exports = Network;
 * let neat = new Neat(4, 1, dataset, {
 *   elitism: 10,
 *   clear: true,
-*   popsize: 1000
+*   pop_size: 1000
 * });
 */
 const Neat = function(dataset, {
@@ -1847,7 +1847,7 @@ const Neat = function(dataset, {
   output = 1,
   equal = true,
   clean = false,
-  popsize = 50,
+  pop_size = 50,
   growth = 0.0001,
   cost = methods.cost.MSE,
   amount = 1,
@@ -1887,7 +1887,7 @@ const Neat = function(dataset, {
     output,
     equal,
     clean,
-    popsize,
+    pop_size,
     growth,
     cost,
     amount,
@@ -1912,12 +1912,12 @@ const Neat = function(dataset, {
    *
    * @param {Network} network
    */
-  self.createPool = function createInitialPopulation (network, popsize) {
-    return Array(popsize).fill(Network.fromJSON({ ...network.toJSON(), score: undefined }))
+  self.createPool = function createInitialPopulation (network, pop_size) {
+    return Array(pop_size).fill(Network.fromJSON({ ...network.toJSON(), score: undefined }))
   };
 
   // Initialise the genomes
-  self.population = self.createPool(self.template, self.popsize);
+  self.population = self.createPool(self.template, self.pop_size);
 
   self.filterGenome = function(population, template, pickGenome, adjustGenome) {
       let filtered = [...population]; // avoid mutations
@@ -1990,7 +1990,7 @@ const Neat = function(dataset, {
    * let neat = new Neat(dataset, {
    *  elitism: 10,
    *  clear: true,
-   *  popsize: 1000
+   *  pop_size: 1000
    * });
    *
    * let filter = function(genome) {
@@ -2009,7 +2009,7 @@ const Neat = function(dataset, {
   */
   self.evolve = async function (evolveSet, pickGenome, adjustGenome) {
     // Check if evolve is possible
-    if(self.elitism + self.provenance > self.popsize) throw new Error("Can`t evolve! Elitism + provenance exceeds population size!");
+    if(self.elitism + self.provenance > self.pop_size) throw new Error("Can`t evolve! Elitism + provenance exceeds population size!");
 
     evolveSet = evolveSet || self.dataset;
 
@@ -2031,7 +2031,7 @@ const Neat = function(dataset, {
     let newPopulation = Array(self.provenance).fill(Network.fromJSON(self.template.toJSON()))
 
     // Breed the next individuals
-    for (let i = 0; i < self.popsize - self.elitism - self.provenance; i++)
+    for (let i = 0; i < self.pop_size - self.elitism - self.provenance; i++)
       newPopulation.push(self.getOffspring());
 
     // Replace the old population with the new population
@@ -2108,7 +2108,7 @@ const Neat = function(dataset, {
         return self.population[Math.floor(Math.random() * self.population.length)];
       }
       case `TOURNAMENT`: {
-        if (self.selection.size > self.popsize) {
+        if (self.selection.size > self.pop_size) {
           throw new Error(`Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size`);
         }
 
@@ -2260,6 +2260,6 @@ const Neat = function(dataset, {
     for (let i = 0; i < json.length; i++)
       population.push(Network.fromJSON(json[i]));
     self.population = population;
-    self.popsize = population.length;
+    self.pop_size = population.length;
   };
 }
