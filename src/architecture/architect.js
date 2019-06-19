@@ -61,8 +61,7 @@ const architect = {
     // Transform all groups into nodes
     let nodes = [];
 
-    let i;
-    let j;
+    let i, j;
     for (i = 0; i < list.length; i++) {
       if (list[i] instanceof Group) {
         for (j = 0; j < list[i].nodes.length; j++) {

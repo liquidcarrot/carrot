@@ -502,169 +502,172 @@ Network.prototype = {
   mutate: function mutate(method) {
     if (typeof method === 'undefined') throw new Error('Mutate method is undefined!')
 
-    var i, j;
+    let i, j;
     switch (method) {
       case mutation.ADD_NODE: {
         // Look for an existing connection and place a node in between
-        const connection = this.connections[Math.floor(Math.random() * this.connections.length)]
-        this.disconnect(connection.from, connection.to)
+        const connection = this.connections[Math.floor(Math.random() * this.connections.length)];
+        this.disconnect(connection.from, connection.to);
 
         // Insert the new node right before the old connection.to
-        const toIndex = this.nodes.indexOf(connection.to)
-        const node = new Node('hidden')
+        const to_index = this.nodes.indexOf(connection.to);
+        const node = new Node('hidden');
 
-        if(mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION)
+        if (mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION);
 
         // Place it in this.nodes
-        const minBound = Math.min(toIndex, this.nodes.length - this.output_size);
-        this.nodes.splice(minBound, 0, node);
+        const min_bound = Math.min(to_index, this.nodes.length - this.output_size);
+        this.nodes.splice(min_bound, 0, node);
 
         // Now create two new connections
-        const newConn1 = this.connect(connection.from, node)[0]
-        const newConn2 = this.connect(node, connection.to)[0]
+        const new_connection1 = this.connect(connection.from, node)[0];
+        const new_connection2 = this.connect(node, connection.to)[0];
 
-        const gater = connection.gater
+        const gater = connection.gater;
         // Check if the original connection was gated
-        if (gater != null) this.gate(gater, Math.random() >= 0.5 ? newConn1 : newConn2)
+        if (gater != null) this.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2);
 
         return true;
       }
       case mutation.SUB_NODE: {
-        const possible = this.possible(method)
-        if(possible) {
-          this.remove(_.sample(possible))
-          return true
+        const possible = this.possible(method);
+        if (possible) {
+          this.remove(_.sample(possible));
+          return true;
         }
-        return false
+        return false;
       }
       case mutation.ADD_CONN: {
-        const possible = this.possible(method)
-        if(possible) {
-          const pair = possible[Math.floor(Math.random() * possible.length)]
-          this.connect(pair[0], pair[1])
-          return true
+        const possible = this.possible(method);
+        if (possible) {
+          const pair = possible[Math.floor(Math.random() * possible.length)];
+          this.connect(pair[0], pair[1]);
+          return true;
         }
 
-        return false
+        return false;
       }
       case mutation.REMOVE_CONN: // alias for sub_conn
       case mutation.SUB_CONN: {
-        const possible = this.possible(method)
-        if(possible) {
-          const randomConn = possible[Math.floor(Math.random() * possible.length)]
-          this.disconnect(randomConn.from, randomConn.to)
-          return true
+        const possible = this.possible(method);
+        if (possible) {
+          const random_connection = possible[Math.floor(Math.random() * possible.length)];
+          this.disconnect(random_connection.from, random_connection.to);
+          return true;
         }
 
-        return false
+        return false;
       }
       case mutation.MOD_WEIGHT: {
-        const allconnections = this.connections.concat(this.selfconns)
-        const connection = allconnections[Math.floor(Math.random() * allconnections.length)]
+        const allconnections = this.connections.concat(this.selfconns);
+        const connection = allconnections[Math.floor(Math.random() * allconnections.length)];
 
-        connection.weight += Math.random() * (method.max - method.min) + method.min
+        connection.weight += Math.random() * (method.max - method.min) + method.min;
 
-        return true
+        return true;
       }
       case mutation.MOD_BIAS: {
         // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
         this.nodes[Math.floor(Math.random() * (this.nodes.length - this.input_size) + this.input_size)].mutate(method);
 
-        return true
+        return true;
       }
-      case mutation.MOD_ACTIVATION:{
-        if(this.possible(method)) {
-          const possible = _.filter(this.nodes, method.mutateOutput ? (node) => node.type !== 'input' : (node) => node.type !== 'input' && node.type !== 'output')
+      case mutation.MOD_ACTIVATION: {
+        if (this.possible(method)) {
+          const possible = _.filter(this.nodes, method.mutateOutput ?
+            (node) => node.type !== 'input' :
+            (node) => node.type !== 'input' && node.type !== 'output');
 
           // Mutate a random node out of the filtered collection
-          _.sample(possible).mutate(method)
-          return true
+          _.sample(possible).mutate(method);
+          return true;
         }
-        return false
+        return false;
       }
       case mutation.ADD_SELF_CONN: {
-        const possible = this.possible(method)
-        if(possible) {
-          const node = possible[Math.floor(Math.random() * possible.length)]
-          this.connect(node, node) // Create the self-connection
-          return true
+        const possible = this.possible(method);
+        if (possible) {
+          const node = possible[Math.floor(Math.random() * possible.length)];
+          this.connect(node, node); // Create the self-connection
+          return true;
         }
 
-        return false
+        return false;
       }
       case mutation.SUB_SELF_CONN: {
-        if(this.possible(method)) {
-          const conn = this.selfconns[Math.floor(Math.random() * this.selfconns.length)]
-          this.disconnect(conn.from, conn.to)
-          return true
+        if (this.possible(method)) {
+          const conn = this.selfconns[Math.floor(Math.random() * this.selfconns.length)];
+          this.disconnect(conn.from, conn.to);
+          return true;
         }
 
-        return false
+        return false;
       }
       case mutation.ADD_GATE: {
-        const possible = this.possible(method)
-        if(possible) {
+        const possible = this.possible(method);
+        if (possible) {
           // Select a random gater node and connection, can't be gated by input
           const node = this.nodes[Math.floor(Math.random() * (this.nodes.length - this.input_size) + this.input_size)];
           const conn = possible[Math.floor(Math.random() * possible.length)];
 
-          this.gate(node, conn) // Gate the connection with the node
-          return true
+          this.gate(node, conn); // Gate the connection with the node
+          return true;
         }
 
-        return false
+        return false;
       }
       case mutation.SUB_GATE: {
-        if(this.possible(method)) {
-          this.ungate(this.gates[Math.floor(Math.random() * this.gates.length)])
-          return true
+        if (this.possible(method)) {
+          this.ungate(this.gates[Math.floor(Math.random() * this.gates.length)]);
+          return true;
         }
 
-        return false
+        return false;
       }
       case mutation.ADD_BACK_CONN: {
-        const possible = this.possible(method)
-        if(possible) {
+        const possible = this.possible(method);
+        if (possible) {
           const pair = possible[Math.floor(Math.random() * possible.length)]
-          this.connect(pair[0], pair[1])
-          return true
+          this.connect(pair[0], pair[1]);
+          return true;
         }
 
-        return false
+        return false;
       }
       case mutation.SUB_BACK_CONN: {
-        const possible = this.possible(method)
-        if(possible) {
-          const randomConn = possible[Math.floor(Math.random() * possible.length)]
-          this.disconnect(randomConn.from, randomConn.to)
-          return true
+        const possible = this.possible(method);
+        if (possible) {
+          const random_connection = possible[Math.floor(Math.random() * possible.length)];
+          this.disconnect(random_connection.from, random_connection.to);
+          return true;
         }
 
-        return false
+        return false;
       }
       case mutation.SWAP_NODES: {
-        const possible = this.possible(method)
-        if(possible) {
+        const possible = this.possible(method);
+        if (possible) {
           // Return a random node out of the filtered collection
-          const node1 = _.sample(possible)
+          const node1 = _.sample(possible);
 
           // Filter node1 from collection
-          const possible2 = _.filter(possible, function(node, index) { return (node !== node1) })
+          const possible2 = _.filter(possible,
+            function(node, index) { return (node !== node1) });
 
           // Get random node from filtered collection (excludes node1)
-          const node2 = _.sample(possible2)
+          const node2 = _.sample(possible2);
 
-          const biasTemp = node1.bias
-          const squashTemp = node1.squash
+          const bias_temp = node1.bias;
+          const squash_temp = node1.squash;
 
-          node1.bias = node2.bias
-          node1.squash = node2.squash
-          node2.bias = biasTemp
-          node2.squash = squashTemp
-          return true
+          node1.bias = node2.bias;
+          node1.squash = node2.squash;
+          node2.bias = bias_temp;
+          node2.squash = squash_temp;
+          return true;
         }
 
-        return false
+        return false;
       }
     }
   },
@@ -1345,11 +1348,11 @@ Network.prototype = {
       }
     }
 
-    if(options.threads > 1) {
+    if (options.threads > 1) {
       for (let i = 0; i < workers.length; i++) workers[i].terminate();
     }
 
-    if(typeof best_genome !== `undefined`) {
+    if (typeof best_genome !== `undefined`) {
       this.nodes = best_genome.nodes;
       this.connections = best_genome.connections;
       this.selfconns = best_genome.selfconns;
