@@ -2255,7 +2255,7 @@ const Neat = function(dataset, {
    *
    * @param {object[]} json set of genomes (a population) represented as JSON objects.
   */
-  self.fromJSON = function importPopulation(json) {
+  self.fromJSON = function fromJSON(json) {
     var population = [];
     for (let i = 0; i < json.length; i++)
       population.push(Network.fromJSON(json[i]));
