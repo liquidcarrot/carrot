@@ -215,9 +215,9 @@ const Neat = function(inputs, outputs, dataset, options) {
       const current = possible[Math.floor(Math.random() * possible.length)]
 
       // attempt mutation, success: return mutation method, failure: remove from possible methods
-      if (genome.mutate(current)){
+      if (genome.mutate(current)) {
         return current;
-      }else {
+      } else {
         possible = possible.filter(function(method) { return method.name !== current.name });
       }
 

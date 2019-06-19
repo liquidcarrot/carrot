@@ -11,6 +11,7 @@ var Node = require('./node');
 * @constructs Group
 *
 * @param {number} size Amount of nodes to build group with
+* @param {string} [type='hidden'] Type of neurons inside of a group
 *
 * @prop {Nodes[]} [nodes=[]] All nodes within the group
 * @prop {Connection[]} [connections.in=[]] Incoming connections
@@ -23,7 +24,7 @@ var Node = require('./node');
 * // A group with 5 nodes
 * let A = new Group(5);
 */
-function Group (size) {
+function Group (size, type) {
   this.nodes = [];
   this.connections = {
     in: [],
@@ -32,7 +33,7 @@ function Group (size) {
   };
 
   for (var i = 0; i < size; i++) {
-    this.nodes.push(new Node());
+    this.nodes.push(new Node(type));
   }
 }
 
