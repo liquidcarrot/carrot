@@ -488,8 +488,9 @@ const Neat = function(inputs, outputs, dataset, options) {
   */
   self.getFittest = function () {
     // Check if evaluated. self.evaluate is an async function
-    if (typeof self.population[self.population.length - 1].score === `undefined`)
+    if (typeof self.population[self.population.length - 1].score === `undefined`) {
       self.evaluate();
+    }
 
     if (self.population[0].score < self.population[1].score) self.sort();
 
