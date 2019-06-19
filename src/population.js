@@ -20,7 +20,7 @@ function Population({
   _.assignIn(self, {template,size,data,population,fitness});
 
   if(self.template && !self.population.length) _.times(self.size, function() {
-    self.population.push(Network.from_JSON({ ...self.template.to_JSON(), score: undefined }));
+    self.population.push(Network.fromJSON({ ...self.template.toJSON(), score: undefined }));
   });
 }
 
@@ -36,7 +36,7 @@ Population.prototype = {
   // Mates 2 "good genomes"; returns child
   mate: function(genomes, options) {
     let self = this;
-    return Network.cross_over(self.getParent(), self.getParent(), true);
+    return Network.crossOver(self.getParent(), self.getParent(), true);
   },
 
   // Selects a "good genome" by `this.selection`

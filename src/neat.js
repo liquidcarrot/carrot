@@ -19,7 +19,7 @@ const config = require('./config');
 * @param {number} [options.mutationRate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.4.
 * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
 * @param {cost} [options.cost=cost.MSE]  Specify the cost function for the evolution, this tells a genome in the population how well it's performing. Default: methods.cost.MSE (recommended).
-* @param {boolean} [options.equal=false] When true [crossover](Network.cross_over) parent genomes are assumed to be equally fit and offspring are built with a random amount of neurons within the range of parents' number of neurons. Set to false to select the "fittest" parent as the neuron amount template.
+* @param {boolean} [options.equal=false] When true [crossover](Network.crossOver) parent genomes are assumed to be equally fit and offspring are built with a random amount of neurons within the range of parents' number of neurons. Set to false to select the "fittest" parent as the neuron amount template.
 * @param {number} [options.clear=false] Clear the context of the population's nodes, basically reverting them to 'new' neurons. Useful for predicting timeseries with LSTM's.
 * @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connectoins.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
 * @param {number} [options.amount=1] Set the amount of times to test the trainingset on a genome each generation. Useful for timeseries. Do not use for regular feedfoward problems.
@@ -135,7 +135,7 @@ const Neat = function(inputs, outputs, dataset, options) {
   self.createPool = function createInitialPopulation(network, popsize) {
     const population = [];
 
-    for(let i = 0; i < popsize; i++) population.push(Network.from_JSON({ ...network.to_JSON(), score: undefined }))
+    for(let i = 0; i < popsize; i++) population.push(Network.fromJSON({ ...network.toJSON(), score: undefined }))
 
     return population;
   };
@@ -294,7 +294,7 @@ const Neat = function(inputs, outputs, dataset, options) {
     for(let index = 0; index < self.elitism; index++) elitists.push(self.population[index]);
 
     // Provenance
-    let newPopulation = Array(self.provenance).fill(Network.from_JSON(self.template.to_JSON()))
+    let newPopulation = Array(self.provenance).fill(Network.fromJSON(self.template.toJSON()))
 
     // Breed the next individuals
     for (let i = 0; i < self.popsize - self.elitism - self.provenance; i++)
@@ -319,7 +319,7 @@ const Neat = function(inputs, outputs, dataset, options) {
     // Sort in order of fitness (fittest first)
     self.sort()
 
-    const fittest = Network.from_JSON(self.population[0].to_JSON());
+    const fittest = Network.fromJSON(self.population[0].toJSON());
     fittest.score = self.population[0].score;
 
     // Reset the scores
@@ -410,7 +410,7 @@ const Neat = function(inputs, outputs, dataset, options) {
     let parent1 = self.getParent();
     let parent2 = self.getParent();
 
-    return Network.cross_over(parent1, parent2, self.equal);
+    return Network.crossOver(parent1, parent2, self.equal);
   };
 
   /**
@@ -514,16 +514,16 @@ const Neat = function(inputs, outputs, dataset, options) {
   /**
    * Export the current population to a JSON object
    *
-   * Can be used later with `from_JSON(json)` to reload the population
+   * Can be used later with `fromJSON(json)` to reload the population
    *
    * @memberof Neat
    *
    * @return {object[]} A set of genomes (a population) represented as JSON objects.
    */
-  self.to_JSON = function exportPopulation() {
+  self.toJSON = function exportPopulation() {
     let json = [];
     for (let i = 0; i < self.population.length; i++)
-      json.push(self.population[i].to_JSON());
+      json.push(self.population[i].toJSON());
 
     return json;
   };
@@ -535,10 +535,10 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    * @param {object[]} json set of genomes (a population) represented as JSON objects.
   */
-  self.from_JSON = function importPopulation(json) {
+  self.fromJSON = function importPopulation(json) {
     let population = [];
     for (let i = 0; i < json.length; i++)
-      population.push(Network.from_JSON(json[i]));
+      population.push(Network.fromJSON(json[i]));
     self.population = population;
     self.popsize = population.length;
   };

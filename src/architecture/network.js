@@ -125,20 +125,20 @@ Network.prototype = {
    * // Create a network
    * let myNetwork = new Network(3, 2);
    *
-   * myNetwork.no_trace_activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
+   * myNetwork.noTraceActivate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
-  no_trace_activate: function no_trace_activate(input) {
+  noTraceActivate: function noTraceActivate(input) {
     const output = [];
 
     // Activate nodes chronologically for forward feeding
     this.nodes.forEach((node, node_index) => {
       if (node.type === `input`) {
-        node.no_trace_activate(input[node_index]);
+        node.noTraceActivate(input[node_index]);
       } else if (node.type === `output`) {
-        const activation_result = node.no_trace_activate();
+        const activation_result = node.noTraceActivate();
         output.push(activation_result);
       } else {
-        node.no_trace_activate();
+        node.noTraceActivate();
       }
     });
 
@@ -833,7 +833,7 @@ Network.prototype = {
       current_training_rate = options.rate_policy(base_training_rate, iteration_number);
 
       // run on training epoch
-      const train_error = this._train_one_epoch(
+      const train_error = this._trainOneEpoch(
         train_set, options.batch_size, current_training_rate, options.momentum, options.cost);
       if (options.clear) this.clear();
       // Checks if cross validation is enabled
@@ -899,7 +899,7 @@ Network.prototype = {
    *
    * let example = ""
    */
-  _train_one_epoch: function _train_one_epoch(set, batch_size, training_rate, momentum, cost_function) {
+  _trainOneEpoch: function _trainOneEpoch(set, batch_size, training_rate, momentum, cost_function) {
     let error_sum = 0;
     for (var i = 0; i < set.length; i++) {
       const input = set[i].input;
@@ -941,7 +941,7 @@ Network.prototype = {
     _.times(set.length, (index) => {
       let input = set[index].input;
       let target = set[index].output;
-      let output = this.no_trace_activate(input);
+      let output = this.noTraceActivate(input);
       error += cost(target, output);
     });
 
@@ -1075,10 +1075,10 @@ Network.prototype = {
    * @example
    * let { Network } = require("@liquid-carrot/carrot");
    *
-   * let exported = myNetwork.to_JSON();
-   * let imported = Network.from_JSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
+   * let exported = myNetwork.toJSON();
+   * let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
    */
-  to_JSON: function to_JSON() {
+  toJSON: function toJSON() {
     const json = {
       nodes: [],
       connections: [],
@@ -1098,12 +1098,12 @@ Network.prototype = {
 
     for (i = 0; i < this.nodes.length; i++) {
       const node = this.nodes[i];
-      const node_json = node.to_JSON();
+      const node_json = node.toJSON();
       node_json.index = i;
       json.nodes.push(node_json);
 
       if (node.connections.self.weight !== 0) {
-        const connection_json = node.connections.self.to_JSON();
+        const connection_json = node.connections.self.toJSON();
         connection_json.from = i;
         connection_json.to = i;
 
@@ -1114,7 +1114,7 @@ Network.prototype = {
 
     for (i = 0; i < this.connections.length; i++) {
       const connection = this.connections[i];
-      const connection_json = connection.to_JSON();
+      const connection_json = connection.toJSON();
       connection_json.from = connection.from.index;
       connection_json.to = connection.to.index;
 
@@ -1125,11 +1125,6 @@ Network.prototype = {
 
     return json;
   },
-
-  /**
-   * For backward compatibility
-   */
-  toJSON: Network.prototype.to_JSON,
 
   /**
    * Sets the value of a property for every node in this network
@@ -1170,7 +1165,7 @@ Network.prototype = {
    * @param {number} [options.schedule.iterations] You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
    * @param {schedule} [options.schedule.function] A function to run every n iterations as set by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
    * @param {boolean} [options.clear=false] If set to true, will clear the network after every activation. This is useful for evolving recurrent networks, more importantly for timeseries prediction.
-   * @param {boolean} [options.equal=true] If set to true when [Network.cross_over](Network.cross_over) runs it will assume both genomes are equally fit.
+   * @param {boolean} [options.equal=true] If set to true when [Network.crossOver](Network.crossOver) runs it will assume both genomes are equally fit.
    * @param {number} [options.popsize=50] Population size of each generation.
    * @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
    * @param {number} [options.provenance=0] Number of genomes inserted into the original network template (Network(input,output)) per evolution.
@@ -1531,17 +1526,17 @@ Network.prototype = {
  * @example
  * let { Network } = require("@liquid-carrot/carrot");
  *
- * let exported = myNetwork.to_JSON();
- * let imported = Network.from_JSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
+ * let exported = myNetwork.toJSON();
+ * let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
  */
-Network.from_JSON = function(json) {
+Network.fromJSON = function(json) {
   const network = new Network(json.input, json.output);
 
   network.dropout = json.dropout;
   network.nodes = [];
   network.connections = [];
 
-  _.forEach(json.nodes, (node) => network.nodes.push(Node.from_JSON(node)));
+  _.forEach(json.nodes, (node) => network.nodes.push(Node.fromJSON(node)));
 
   _.forEach(json.connections, (json_connection) => {
     const connection =
@@ -1553,11 +1548,6 @@ Network.from_JSON = function(json) {
 
   return network;
 };
-
-/**
- * For backward compatibility
- */
-Network.fromJSON = Network.from_JSON;
 
 /**
  * Merge two networks into one.
@@ -1579,8 +1569,8 @@ Network.fromJSON = Network.from_JSON;
  */
 Network.merge = function(network1, network2) {
   // Create a copy of the networks
-  network1 = Network.from_JSON(network1.to_JSON());
-  network2 = Network.from_JSON(network2.to_JSON());
+  network1 = Network.fromJSON(network1.toJSON());
+  network2 = Network.fromJSON(network2.toJSON());
 
   // Check if output and input size are the same
   if (network1.output_size !== network2.input_size) {
@@ -1637,9 +1627,9 @@ Network.merge = function(network1, network2) {
  * let network2 = new architect.Perceptron(2, 4, 5, 3);
  *
  * // Produce an offspring
- * let network3 = Network.cross_over(network1, network2);
+ * let network3 = Network.crossOver(network1, network2);
  */
-Network.cross_over = function(network1, network2, equal) {
+Network.crossOver = function(network1, network2, equal) {
   if (network1.input_size !== network2.input_size || network1.output_size !== network2.output_size) {
     throw new Error("Networks don`t have the same input/output size!");
   }
@@ -1816,7 +1806,7 @@ module.exports = Network;
 * @param {Object} options - Configuration options
 * @param {number} input - The input size of `template` networks.
 * @param {number} output - The output size of `template` networks.
-* @param {boolean} [options.equal=false] When true [crossover](Network.cross_over) parent genomes are assumed to be equally fit and offspring are built with a random amount of neurons within the range of parents' number of neurons. Set to false to select the "fittest" parent as the neuron amount template.
+* @param {boolean} [options.equal=false] When true [crossover](Network.crossOver) parent genomes are assumed to be equally fit and offspring are built with a random amount of neurons within the range of parents' number of neurons. Set to false to select the "fittest" parent as the neuron amount template.
 * @param {number} [options.clear=false] Clear the context of the population's nodes, basically reverting them to 'new' neurons. Useful for predicting timeseries with LSTM's.
 * @param {number} [options.popsize=50] Population size of each generation.
 * @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connectoins.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
@@ -1920,7 +1910,7 @@ const Neat = function(dataset, {
    * @param {Network} network
    */
   self.createPool = function createInitialPopulation (network, popsize) {
-    return Array(popsize).fill(Network.from_JSON({ ...network.to_JSON(), score: undefined }))
+    return Array(popsize).fill(Network.fromJSON({ ...network.toJSON(), score: undefined }))
   };
 
   // Initialise the genomes
@@ -1946,7 +1936,7 @@ const Neat = function(dataset, {
         }
       } else
           for (let i = 0; i < population.length; i++)
-            if(check(filtered[i])) filtered[i] = Network.from_JSON(template.to_JSON)
+            if(check(filtered[i])) filtered[i] = Network.fromJSON(template.toJSON)
 
       return filtered;
     };
@@ -2035,7 +2025,7 @@ const Neat = function(dataset, {
     for (let i = 0; i < self.elitism; i++) elitists.push(self.population[i]);
 
     // Provenance
-    let newPopulation = Array(self.provenance).fill(Network.from_JSON(self.template.to_JSON()))
+    let newPopulation = Array(self.provenance).fill(Network.fromJSON(self.template.toJSON()))
 
     // Breed the next individuals
     for (let i = 0; i < self.popsize - self.elitism - self.provenance; i++)
@@ -2060,7 +2050,7 @@ const Neat = function(dataset, {
     // Sort in order of fitness (fittest first)
     self.sort()
 
-    const fittest = Network.from_JSON(self.population[0].to_JSON());
+    const fittest = Network.fromJSON(self.population[0].toJSON());
     fittest.score = self.population[0].score;
 
     // Reset the scores
@@ -2147,7 +2137,7 @@ const Neat = function(dataset, {
     var parent1 = self.getParent();
     var parent2 = self.getParent();
 
-    return Network.cross_over(parent1, parent2, self.equal);
+    return Network.crossOver(parent1, parent2, self.equal);
   };
 
   /**
@@ -2245,14 +2235,14 @@ const Neat = function(dataset, {
   /**
    * Export the current population to a JSON object
    *
-   * Can be used later with `from_JSON(json)` to reload the population
+   * Can be used later with `fromJSON(json)` to reload the population
    *
    * @return {object[]} A set of genomes (a population) represented as JSON objects.
    */
-  self.to_JSON = function exportPopulation() {
+  self.toJSON = function exportPopulation() {
     var json = [];
     for (let i = 0; i < self.population.length; i++)
-      json.push(self.population[i].to_JSON());
+      json.push(self.population[i].toJSON());
 
     return json;
   };
@@ -2262,10 +2252,10 @@ const Neat = function(dataset, {
    *
    * @param {object[]} json set of genomes (a population) represented as JSON objects.
   */
-  self.from_JSON = function importPopulation(json) {
+  self.fromJSON = function importPopulation(json) {
     var population = [];
     for (let i = 0; i < json.length; i++)
-      population.push(Network.from_JSON(json[i]));
+      population.push(Network.fromJSON(json[i]));
     self.population = population;
     self.popsize = population.length;
   };

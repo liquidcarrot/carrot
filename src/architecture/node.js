@@ -185,9 +185,9 @@ function Node(type) {
   *
   * let node = new Node();
   *
-  * node.no_trace_activate(); // 0.4923128591923
+  * node.noTraceActivate(); // 0.4923128591923
   */
-  self.no_trace_activate = function(input) {
+  self.noTraceActivate = function(input) {
     // Check if an input is given
     if(!(input == undefined)) {
       if(Number.isFinite(input)) return self.activation = input;
@@ -601,10 +601,10 @@ function Node(type) {
   * @example
   * let { Node } = require("@liquid-carrot/carrot");
   *
-  * let exported = myNode.to_JSON();
-  * let imported = myNode.from_JSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
+  * let exported = myNode.toJSON();
+  * let imported = myNode.fromJSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
   */
-  self.to_JSON = function () {
+  self.toJSON = function () {
     return {
       bias: self.bias,
       type: self.type,
@@ -623,10 +623,10 @@ function Node(type) {
 * @example
 * let { Node } = require("@liquid-carrot/carrot");
 *
-* let exported = myNode.to_JSON();
-* let imported = myNode.from_JSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
+* let exported = myNode.toJSON();
+* let imported = myNode.fromJSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
 */
-Node.from_JSON = function (json) {
+Node.fromJSON = function (json) {
   const node = new Node();
   
   Object.assign(node, { ...json }, {
