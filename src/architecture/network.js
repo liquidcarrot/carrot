@@ -1912,7 +1912,7 @@ const Neat = function(dataset, {
    *
    * @param {Network} network
    */
-  self.createPool = function createInitialPopulation (network, population_size) {
+  self.createPool = function createPool (network, population_size) {
     return Array(population_size).fill(Network.fromJSON({ ...network.toJSON(), score: undefined }))
   };
 

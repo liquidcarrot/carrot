@@ -131,12 +131,15 @@ const Neat = function(inputs, outputs, dataset, options) {
    * @memberof Neat
    *
    * @param {Network} network
+   * @param {Number} population_size the number of types the genome of network will be copied to make the pool
    */
-  self.createPool = function createInitialPopulation(network, population_size) {
+  self.createPool = function createPool(network, population_size) {
     const population = [];
 
-    for(let i = 0; i < population_size; i++) population.push(Network.fromJSON({ ...network.toJSON(), score: undefined }))
-
+    for (let i = 0; i < population_size; i++) {
+      population.push(Network.fromJSON({ ...network.toJSON(), score: undefined }));
+    }
+    
     return population;
   };
 
@@ -150,7 +153,7 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    * @returns {Network[]} Returns an array of networks
    */
-  self.createPopulation = function(network, size) {
+  self.createPopulation = function (network, size) {
     if(!size && Number.isInteger(network)) {
       size = network;
       network = undefined;
