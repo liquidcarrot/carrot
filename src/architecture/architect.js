@@ -430,21 +430,19 @@ const architect = {
   * @returns {Network}
   */
   GRU: function () {
-    var args = Array.prototype.slice.call(arguments);
-    if (args.length < 3) {
-      throw new Error('not enough layers (minimum 3) !!');
-    }
+    const layer_sizes = Array.from(arguments);
+    if (layer_sizes.length < 3) throw new Error('You have to specify at least 3 layer sizes');
 
-    var input_layer = new Group(args.shift()); // first argument
-    var output_layer = new Group(args.pop()); // last argument
-    var blocks = args; // all the arguments in the middle
+    const input_layer = new Group(layer_sizes.shift(), 'input'); // first argument
+    const output_layer = new Group(layer_sizes.pop(), 'output'); // last argument
+    const block_sizes = layer_sizes; // all the arguments in the middle
 
-    var nodes = [];
+    const nodes = [];
     nodes.push(input_layer);
 
-    var previous = input_layer;
+    const previous = input_layer;
     for (var i = 0; i < blocks.length; i++) {
-      var layer = new Layer.GRU(blocks[i]);
+      const layer = new Layer.GRU(block_sizes[i])
       previous.connect(layer);
       previous = layer;
 
