@@ -128,6 +128,8 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    * @function createPool
    *
+   * @deprecated
+   *
    * @memberof Neat
    *
    * @param {Network} network
