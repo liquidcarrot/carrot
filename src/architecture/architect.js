@@ -260,14 +260,16 @@ const architect = {
     const layer_sizes_and_options = Array.from(arguments);
 
     const output_size_or_options = layer_sizes_and_options.slice(-1);
-
+    
+    let layer_sizes, options
+    
     // find out if options were passed
     if (typeof output_size_or_options === 'number') {
-      const layer_sizes = layer_sizes_and_options;
-      let options = {};
+      layer_sizes = layer_sizes_and_options;
+      options = {};
     } else {
-      const layer_sizes = layer_sizes_and_options.slice(layer_sizes_and_options.length - 1);
-      let options = output_size_or_options;
+      layer_sizes = layer_sizes_and_options.slice(layer_sizes_and_options.length - 1);
+      options = output_size_or_options;
     }
 
     if (layer_sizes.length < 3) {
@@ -300,7 +302,7 @@ const architect = {
 
     const block_sizes = layer_sizes; // all the remaining arguments
     const blocks = []; // stores all the nodes of the blocks, to add later to nodes
-    const previous_output = input_layer;
+    let previous_output = input_layer;
     _.times(block_sizes.length, (index) => {
       const block_size = block_sizes[index];
 
@@ -440,7 +442,7 @@ const architect = {
     const nodes = [];
     nodes.push(input_layer);
 
-    const previous = input_layer;
+    let previous = input_layer;
     for (var i = 0; i < blocks.length; i++) {
       const layer = new Layer.GRU(block_sizes[i])
       previous.connect(layer);
