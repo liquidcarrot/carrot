@@ -1,3 +1,5 @@
+const _ = require("lodash");
+
 /**
 * A connection instance describes the connection between two nodes. If you're looking for connections between [Groups](Group) please see [Connection Methods](connection)
 *
@@ -6,6 +8,7 @@
 * @param {Node} from Connection origin node (neuron)
 * @param {Node} to Connection destination node (neuron)
 * @param {number} [weight=random] Weight of the connection
+* @param {Object} [options]
 *
 * @prop {Node} from Connection origin node (neuron)
 * @prop {Node} to Connection destination node (neuron)
@@ -22,44 +25,40 @@
 * @see {@link connection|Connection Methods}
 * @see {@link Node|Node}
 */
-function Connection (from, to, weight) {
-  this.from = from;
-  this.to = to;
-  this.gain = 1;
+function Connection (from, to, weight, options) {
+  let self = this;
 
-  this.weight = (typeof weight === 'undefined') ? Math.random() * 0.2 - 0.1 : weight;
+  _.assignIn(self, _.defaults({ from, to, weight }, { ...options }, {
+    weight: Math.random() * 2 - 1,
+    gain: 1,
+    gater: null,
+    elegibility: 0,
+    previousDeltaWeight: 0, // ALIAS: deltaweight.previous
+    totalDeltaWeight: 0, // ALIAS: deltaweight.total
+    xtrace: {
+      nodes: [],
+      values: []
+    },
 
-  this.gater = null;
-  this.elegibility = 0;
+    // (BETA)
+    delta_weights: {
+      previous: 0,
+      total: 0,
+      all: [],
+    }
+  }));
 
-  // For tracking momentum
-  this.previousDeltaWeight = 0;
-
-  // Batch training
-  this.totalDeltaWeight = 0;
-
-  this.xtrace = {
-    nodes: [],
-    values: []
-  };
-}
-
-Connection.prototype = {
   /**
-   * Converts the connection to a json object
-   *
-   * @memberof Connection
-   *
-   * @returns {object} A connection represented as a JSON object
-   */
-  toJSON: function () {
-    var json = {
-      weight: this.weight
-    };
-
-    return json;
+  * Converts the connection to a json object
+  *
+  * @memberof Connection
+  *
+  * @returns {object} A connection represented as a JSON object
+  */
+  self.to_JSON = function () {
+    return { weight: self.weight };
   }
-};
+}
 
 /**
 * Returns an innovation ID

@@ -1,6 +1,6 @@
 {
   "name": "@liquid-carrot/carrot",
-  "version": "0.2.22",
+  "version": "0.2.24",
   "description": "A Simple Node.js AI Library for Neural Network",
   "main": "src/carrot",
   "scripts": {
@@ -68,6 +68,7 @@
     "lodash": "^4.17.11"
   },
   "devDependencies": {
+    "all-contributors-cli": "^6.7.0",
     "chai": "^4.2.0",
     "chai-each": "0.0.1",
     "chalk": "^2.4.2",
