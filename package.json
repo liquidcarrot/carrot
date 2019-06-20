@@ -17,7 +17,7 @@
     "test": "./node_modules/.bin/nyc --reporter=html --reporter=text mocha --recursive test/ --exclude test/unit.js",
     "test:riteway": "./node_modules/.bin/nyc --reporter=html --reporter=text riteway test/unit.js",
     "test:forever": "./node_modules/.bin/nodemon ./node_modules/.bin/mocha --reporter spec test/",
-    "clean:docfiles": "find . -type f -name '*.html' -exec rm {} + && rm -rf styles/ && rm -rf scripts"
+    "clean:docfiles": "find . -type f -name '*.html' -exec rm {} + && rm -rf styles/ && rm -rf scripts && rm -rf cdn/ && rm -rf img/"
   },
   "repository": {
     "type": "git",
