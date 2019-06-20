@@ -17,10 +17,7 @@ var self = this;
       }
     ?><?js= (data.signature || '') ?>
     <?js if (data.deprecated) { ?>
-      <dt class="important tag-deprecated">Deprecated:</dt><?js
-          if (data.deprecated === true) { ?><dd class="yes-def tag-deprecated"><ul class="dummy"><li>Yes</li></ul></dd><?js }
-          else { ?><dd><ul class="dummy"><li><?js= data.deprecated ?></li></ul></dd><?js }
-      ?>
+      <span class="tag is-danger">Deprecated<?js if (!data.deprecated === true) { ?>: <?js= data.deprecated ?><?js } ?></span>
     <?js } else { ?>
       <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
     <?js } ?>
