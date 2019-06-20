@@ -1172,8 +1172,8 @@ Network.prototype = {
    * @param {number} [options.population_size=50] Population size of each generation.
    * @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
    * @param {number} [options.provenance=0] Number of genomes inserted into the original network template (Network(input,output)) per evolution.
-   * @param {number} [options.mutationRate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated.
-   * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
+   * @param {number} [options.mutation_rate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated.
+   * @param {number} [options.mutation_amount=1] If mutation occurs (randomNumber < mutation_rate), sets amount of times a mutation method will be applied to the network.
    * @param {boolean} [options.fitness_population=false] Flag to return the fitness of a population of genomes. Set this to false to evaluate each genome individually.
    * @param {Function} [options.fitness] - A fitness function to evaluate the networks. Takes a `genome`, i.e. a [network](Network), and a `dataset` and sets the genome's score property
    * @param {string} [options.selection=FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. methods.Selection.FITNESS_PROPORTIONATE).
@@ -1206,7 +1206,7 @@ Network.prototype = {
    *        equal: true,
    *        error: 0.05,
    *        elitism: 5,
-   *        mutationRate: 0.5
+   *        mutation_rate: 0.5
    *    });
    *
    *    network.activate([0,0]); // 0.2413
@@ -1817,8 +1817,8 @@ module.exports = Network;
 * @param {number} [options.amount=1] Set the amount of times to test the trainingset on a genome each generation. Useful for timeseries. Do not use for regular feedfoward problems.
 * @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algortihtms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
 * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
-* @param {number} [options.mutationRate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.4.
-* @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
+* @param {number} [options.mutation_rate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.4.
+* @param {number} [options.mutation_amount=1] If mutation occurs (randomNumber < mutation_rate), sets amount of times a mutation method will be applied to the network.
 * @param {boolean} [options.fitness_population=false] Flag to return the fitness of a population of genomes. Set this to false to evaluate each genome inidividually.
 * @param {Function} [options.fitness] - A fitness function to evaluate the networks. Takes a `dataset` and a `genome` i.e. a [network](Network) or a `population` i.e. an array of networks and sets the genome `.score` property
 * @param {string} [options.selection=FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
@@ -1853,8 +1853,8 @@ const Neat = function(dataset, {
   amount = 1,
   elitism = 1,
   provenance = 0,
-  mutationRate = 0.4,
-  mutationAmount = 1,
+  mutation_rate = 0.4,
+  mutation_amount = 1,
   fitness_population = false,
   fitness = function(set = dataset, genome, amount = 1, cost = methods.cost.MSE, growth = 0.0001) {
     let score = 0;
@@ -1893,8 +1893,8 @@ const Neat = function(dataset, {
     amount,
     elitism,
     provenance,
-    mutationRate,
-    mutationAmount,
+    mutation_rate,
+    mutation_amount,
     fitness_population,
     fitness,
     selection,
@@ -2152,15 +2152,15 @@ const Neat = function(dataset, {
     if(method) {
       // Elitist genomes should not be included
       for(let i = 0; i < self.population.length; i++) {
-        if (Math.random() <= self.mutationRate)
-          for (let j = 0; j < self.mutationAmount; j++)
+        if (Math.random() <= self.mutation_rate)
+          for (let j = 0; j < self.mutation_amount; j++)
             self.population[i].mutate(method)
       }
     } else {
       // Elitist genomes should not be included
       for(let i = 0; i < self.population.length; i++) {
-        if (Math.random() <= self.mutationRate)
-          for (let j = 0; j < self.mutationAmount; j++)
+        if (Math.random() <= self.mutation_rate)
+          for (let j = 0; j < self.mutation_amount; j++)
             self.mutateRandom(self.population[i], self.mutation)
       }
     }

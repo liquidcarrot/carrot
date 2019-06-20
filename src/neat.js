@@ -16,8 +16,8 @@ const config = require(`./config`);
 * @param {number} [options.population_size=50] Population size of each generation.
 * @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algortihtms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
 * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
-* @param {number} [options.mutationRate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.4.
-* @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
+* @param {number} [options.mutation_rate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.4.
+* @param {number} [options.mutation_amount=1] If mutation occurs (randomNumber < mutation_rate), sets amount of times a mutation method will be applied to the network.
 * @param {cost} [options.cost=cost.MSE]  Specify the cost function for the evolution, this tells a genome in the population how well it's performing. Default: methods.cost.MSE (recommended).
 * @param {boolean} [options.equal=false] When true [crossover](Network.crossOver) parent genomes are assumed to be equally fit and offspring are built with a random amount of neurons within the range of parents' number of neurons. Set to false to select the "fittest" parent as the neuron amount template.
 * @param {number} [options.clear=false] Clear the context of the population's nodes, basically reverting them to 'new' neurons. Useful for predicting timeseries with LSTM's.
@@ -437,17 +437,21 @@ const Neat = function(inputs, outputs, dataset, options) {
    * @param {mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
    */
   self.mutate = function (method) {
-    if(method) {
-      for(let i = 0; i < self.population.length; i++) { // Elitist genomes should not be included
-        if (Math.random() <= self.mutationRate)
-          for (let j = 0; j < self.mutationAmount; j++)
-            self.population[i].mutate(method)
+    if (method) {
+      for (let i = 0; i < self.population.length; i++) { // Elitist genomes should not be included
+        if (Math.random() <= self.mutation_rate) {
+          for (let j = 0; j < self.mutation_amount; j++) {
+            self.population[i].mutate(method);
+          }
+        }
       }
     } else {
-      for(let i = 0; i < self.population.length; i++) { // Elitist genomes should not be included
-        if (Math.random() <= self.mutationRate)
-          for (let j = 0; j < self.mutationAmount; j++)
-            self.mutateRandom(self.population[i], self.mutation)
+      for (let i = 0; i < self.population.length; i++) { // Elitist genomes should not be included
+        if (Math.random() <= self.mutation_rate) {
+          for (let j = 0; j < self.mutation_amount; j++) {
+            self.mutateRandom(self.population[i], self.mutation);
+          }
+        }
       }
     }
   };
@@ -579,8 +583,8 @@ Neat.default = {
     amount: 1,
     elitism: 1,
     provenance: 0,
-    mutationRate: 0.4,
-    mutationAmount: 1,
+    mutation_rate: 0.4,
+    mutation_amount: 1,
     fitnessPopulation: false,
     fitness: function(set = dataset, genome, amount = 1, cost = methods.cost.MSE, growth = 0.0001) {
       let score = 0;

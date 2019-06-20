@@ -135,9 +135,9 @@ async function execute () {
        equal: true,
        error: 0.05,
        elitism: 5,
-       mutationRate: 0.5
+       mutation_rate: 0.5
    });
-   
+
    // and it works!
    network.activate([0,0]); // 0.2413
    network.activate([0,1]); // 1.0000
