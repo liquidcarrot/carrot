@@ -26,13 +26,13 @@ const Node = require('./node');
 */
 function Group(size, type) {
   const self = this;
-  
+
   self.nodes = [];
   self.connections = {
     in: [],
     out: [],
     self: [],
-    
+
     // (BETA)
     incoming: [],
     outgoing: []
@@ -41,7 +41,7 @@ function Group(size, type) {
   for (let index = 0; index < size; index++) {
     self.nodes.push(new Node(type));
   }
-  
+
   /**
   * Activates all the nodes in the group
   *
@@ -102,7 +102,7 @@ function Group(size, type) {
       options = target;
       target = undefined;
     }
-    
+
     if (target != undefined && target.length !== self.nodes.length) throw new Error('Array with values should be same as the amount of nodes!');
 
     for (let index = self.nodes.length - 1; index >= 0; index--) {
@@ -132,7 +132,7 @@ function Group(size, type) {
     const self_targeted = (self === target);
 
     const connections = [];
-    
+
     let i, j;
     if (target instanceof Group) {
       if (method == undefined) {
@@ -150,7 +150,7 @@ function Group(size, type) {
             if (method === methods.connection.ALL_TO_ELSE && self.nodes[i] === target.nodes[j]) continue;
             else {
               let connection = self.nodes[i].connect(target.nodes[j], weight);
-              
+
               self.connections.out.push(connection[0]);
               target.connections.in.push(connection[0]);
               connections.push(connection[0]);
@@ -161,16 +161,16 @@ function Group(size, type) {
         if(self_targeted){
           for (let i = 0; i < self.nodes.length; i++) {
             const connection = self.nodes[i].connect(target.nodes[i], weight);
-            
+
             self.connections.self.push(connection[0]);
             connections.push(connection[0]);
           }
         } else {
           if (self.nodes.length !== target.nodes.length) throw new Error('From and To group must be the same size!');
-          
+
           for (let i = 0; i < self.nodes.length; i++) {
             const connection = self.nodes[i].connect(target.nodes[i], weight);
-            
+
             self.connections.out.push(connection[0]);
             target.connections.in.push(connection[0]);
             connections.push(connection[0]);
@@ -182,7 +182,7 @@ function Group(size, type) {
     else if (target instanceof Node) {
       for (let index = 0; index < self.nodes.length; index++) {
         const connection = self.nodes[index].connect(target, weight);
-        
+
         self.connections.out.push(connection[0]);
         connections.push(connection[0]);
       }
@@ -202,48 +202,48 @@ function Group(size, type) {
 
     if (!Array.isArray(connections)) connections = [connections];
 
-    const nodes1 = [];
-    const nodes2 = [];
+    const nodes_from = [];
+    const nodes_to = [];
 
-    var i, j;
-    
+    let i, j;
+
     for (i = 0; i < connections.length; i++) {
       const connection = connections[i];
-      if (!nodes1.includes(connection.from)) nodes1.push(connection.from);
-      if (!nodes2.includes(connection.to)) nodes2.push(connection.to);
+      if (!nodes_from.includes(connection.from)) nodes_from.push(connection.from);
+      if (!nodes_to.includes(connection.to)) nodes_to.push(connection.to);
     }
 
     switch (method) {
       case methods.gating.INPUT:
-        for (i = 0; i < nodes2.length; i++) {
-          let node = nodes2[i];
-          let gater = this.nodes[i % this.nodes.length];
+        for (i = 0; i < nodes_to.length; i++) {
+          const node = nodes_to[i];
+          const gater = this.nodes[i % this.nodes.length];
 
           for (j = 0; j < node.connections.in.length; j++) {
-            let conn = node.connections.in[j];
-            if (connections.includes(conn)) {
-              gater.gate(conn);
+            const connection = node.connections.in[j];
+            if (connections.includes(connection)) {
+              gater.gate(connection);
             }
           }
         }
         break;
       case methods.gating.OUTPUT:
-        for (i = 0; i < nodes1.length; i++) {
-          let node = nodes1[i];
-          let gater = this.nodes[i % this.nodes.length];
+        for (i = 0; i < nodes_from.length; i++) {
+          const node = nodes_from[i];
+          const gater = this.nodes[i % this.nodes.length];
 
           for (j = 0; j < node.connections.out.length; j++) {
-            let conn = node.connections.out[j];
-            if (connections.includes(conn)) {
-              gater.gate(conn);
+            const connection = node.connections.out[j];
+            if (connections.includes(connection)) {
+              gater.gate(connection);
             }
           }
         }
         break;
       case methods.gating.SELF:
-        for (i = 0; i < nodes1.length; i++) {
-          let node = nodes1[i];
-          let gater = this.nodes[i % this.nodes.length];
+        for (i = 0; i < nodes_from.length; i++) {
+          const node = nodes_from[i];
+          const gater = this.nodes[i % this.nodes.length];
 
           if (connections.includes(node.connections.self)) {
             gater.gate(node.connections.self);
@@ -285,12 +285,12 @@ function Group(size, type) {
   */
   self.disconnect = function(target, twosided) {
     twosided = twosided || false;
-    
+
     if (target instanceof Group) {
       for (let i = 0; i < self.nodes.length; i++) {
         for (let j = 0; j < target.nodes.length; j++) {
           self.nodes[i].disconnect(target.nodes[j], twosided);
-          
+
           if (twosided) self.connections.in = self.connections.in.filter(connection => !(connection.from === target.nodes[j] && connection.to === this.nodes[i]));
           self.connections.out = self.connections.out.filter(connection => !(connection.from === self.nodes[i] && connection.to === target.nodes[j]));
         }
@@ -299,7 +299,7 @@ function Group(size, type) {
     else if (target instanceof Node) {
       for (let index = 0; index < self.nodes.length; index++) {
         self.nodes[index].disconnect(target, twosided);
-        
+
         if (twosided) self.connections.in = self.connections.in.filter(connection => !(connection.from === target && connection.to === self.nodes[index]));
         self.connections.out = self.connections.out.filter(connection => !(connection.from === self.nodes[index] && connection.to === target));
       }
