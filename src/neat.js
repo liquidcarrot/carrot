@@ -148,16 +148,18 @@ const Neat = function(inputs, outputs, dataset, options) {
   /**
    * Creates a new population
    *
-   * @memberof Neat
+   * @function createPopulation
    *
    * @alpha
+   *
+   * @memberof Neat
    *
    * @param {Network} network - Template network used to create population - _other networks will be "identical twins"_
    * @param {number} size - Number of network in created population - _how many identical twins created in new population_
    *
    * @returns {Network[]} Returns an array of networks
    */
-  self.createPopulation = function (network, size) {
+  self.createPopulation = function create_networks_for_evolution(network, size) {
     if(!size && Number.isInteger(network)) {
       size = network;
       network = undefined;
@@ -181,12 +183,16 @@ const Neat = function(inputs, outputs, dataset, options) {
   /**
    * Replaces all networks that match the `select` function - _if `transform` is provided networks will be transformed before being filtered out_
    *
+   * @function replace
+   *
+   * @memberof Neat
+   *
    * @param {network[]} population An array (population) of genomes (networks)
    * @param {network} [new_network] Replaces networks from
    * @param {function} [select]
    * @param {function} [transform] A function to change genomes with, takes a genome as a parameter
    */
-  self.replace = function(population, template, select, transform) {
+  self.replace = function replace_selected_genomes(population, template, select, transform) {
     const filtered = []
 
     for(let index = 0; index < population.length; index++) {
@@ -199,16 +205,18 @@ const Neat = function(inputs, outputs, dataset, options) {
   /**
    * Selects a random mutation method for a genome and mutates it
    *
-   * @memberof Neat
+   * @function mutateRandom
    *
    * @beta
+   *
+   * @memberof Neat
    *
    * @param {Network} genome Network to test for possible mutations
    * @param {mutation[]} allowedMutations An array of allowed mutations to pick from
    *
    * @return {mutation} Selected mutation
   */
-  self.mutateRandom = function selectMethodAndMutateNetwork(genome, allowedMutations) {
+  self.mutateRandom = function apply_random_mutation_method_to_genome(genome, allowedMutations) {
     let possible = allowedMutations ? [...allowedMutations] : [...self.mutation]
 
     // remove any methods disallowed by user-limits: i.e. maxNodes, maxConns, ...
@@ -356,11 +364,13 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    * Should be called after `evaluate()`
    *
+   * @function getParent
+   *
    * @memberof Neat
    *
    * @return {Network} Selected genome for offspring generation
    */
-  self.getParent = function () {
+  self.getParent = function get_genome_using_selection_method() {
     switch (self.selection.name) {
       case `POWER`: {
         if (self.population[0].score < self.population[1].score) self.sort();
@@ -426,11 +436,13 @@ const Neat = function(inputs, outputs, dataset, options) {
   /**
    * Selects two genomes from the population with `getParent()`, and returns the offspring from those parents. NOTE: Population MUST be sorted
    *
+   * @function getOffspring
+   *
    * @memberof Neat
    *
    * @returns {Network} Child network
    */
-  self.getOffspring = function () {
+  self.getOffspring = function() {
     const parent1 = self.getParent();
     const parent2 = self.getParent();
 
@@ -440,11 +452,13 @@ const Neat = function(inputs, outputs, dataset, options) {
   /**
    * Mutates the given (or current) population
    *
+   * @function mutate
+   *
    * @memberof Neat
    *
    * @param {mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
    */
-  self.mutate = function (method) {
+  self.mutate = function mutate_population(method) {
     if (method) {
       for (let i = 0; i < self.population.length; i++) { // Elitist genomes should not be included
         if (Math.random() <= self.mutation_rate) {
@@ -466,6 +480,8 @@ const Neat = function(inputs, outputs, dataset, options) {
 
   /**
    * Evaluates the current population, basically sets their `.score` property
+   *
+   * @function evalute
    *
    * @memberof Neat
    *
@@ -502,8 +518,11 @@ const Neat = function(inputs, outputs, dataset, options) {
 
   /**
    * Sorts the population by score
-  */
-  self.sort = function () {
+   *
+   * @function sort
+   *
+   */
+  self.sort = function sort_population_by_fitness() {
     self.population.sort(function (a, b) {
       return b.score - a.score;
     });
@@ -512,11 +531,13 @@ const Neat = function(inputs, outputs, dataset, options) {
   /**
    * Returns the fittest genome of the current population
    *
+   * @function getFittest
+   *
    * @memberof Neat
    *
    * @returns {Network} Current population's fittest genome
   */
-  self.getFittest = function () {
+  self.getFittest = function get_fittest_population_genome() {
     // Check if evaluated. self.evaluate is an async function
     if (typeof self.population[self.population.length - 1].score === `undefined`) {
       self.evaluate();
@@ -530,11 +551,13 @@ const Neat = function(inputs, outputs, dataset, options) {
   /**
    * Returns the average fitness of the current population
    *
+   * @function getAverage
+   *
    * @memberof Neat
    *
    * @returns {number} Average fitness of the current population
    */
-  self.getAverage = function () {
+  self.getAverage = function get_average_population_fitness() {
     if (typeof self.population[self.population.length - 1].score === `undefined`)
       self.evaluate(); // self.evaluate is an async function
 
@@ -550,11 +573,13 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    * Can be used later with `fromJSON(json)` to reload the population
    *
+   * @function toJSON
+   *
    * @memberof Neat
    *
    * @return {object[]} A set of genomes (a population) represented as JSON objects.
    */
-  self.toJSON = function toJSON() {
+  self.toJSON = function export_to_json() {
     const json = [];
     for (let i = 0; i < self.population.length; i++) {
       json.push(self.population[i].toJSON());
@@ -565,11 +590,13 @@ const Neat = function(inputs, outputs, dataset, options) {
   /**
    * Imports population from a json. Must be an array of networks converted to JSON objects.
    *
+   * @function fromJSON
+   *
    * @memberof Neat
    *
    * @param {object[]} json set of genomes (a population) represented as JSON objects.
   */
-  self.fromJSON = function fromJSON(json) {
+  self.fromJSON = function import_from_json(json) {
     const population = [];
     for (let i = 0; i < json.length; i++)
       population.push(Network.fromJSON(json[i]));
