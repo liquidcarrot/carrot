@@ -42,8 +42,7 @@ const activation = {
   LOGISTIC: function (x, derivate) {
     if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
-    const exp = Math.exp(-x);
-    const f = derivate ? (x) => exp / (Math.pow((1 + exp), 2)) : (x) => 1 / (1 + exp);
+    const f = derivate ? (x) => Math.exp(-x) / (Math.pow((1 + Math.exp(-x)), 2)) : (x) => 1 / (1 + Math.exp(-x));
     
     return _.isArray(x) ? _.map(x, f) : f(x);
   },
@@ -265,8 +264,7 @@ const activation = {
   BIPOLAR_SIGMOID: function (x, derivate) {
     if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
-    const exp = Math.exp(-x);
-    const f = derivate ? (x) => (2 * exp) / ((1 + exp) * (1 + exp)) : (x) => 2 / (1 + exp) - 1;
+    const f = derivate ? (x) => (2 * Math.exp(-x)) / (Math.pow((1 + Math.exp(-x)), 2)) : (x) => 2 / (1 + Math.exp(-x)) - 1;
     
     return _.isArray(x) ? _.map(x, f) : f(x);
   },
