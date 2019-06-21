@@ -17,7 +17,7 @@ var self = this;
       }
     ?><?js= (data.signature || '') ?>
     <?js if (data.deprecated) { ?>
-      <span class="tag is-danger">Deprecated<?js if (!data.deprecated === true) { ?>: <?js= data.deprecated ?><?js } ?></span>
+      <span class="bulma-tag is-danger">deprecated<?js if (!data.deprecated === true) { ?>: <?js= data.deprecated ?><?js } ?></span>
     <?js } else { ?>
       <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
     <?js } ?>
