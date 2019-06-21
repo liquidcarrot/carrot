@@ -4984,6 +4984,26 @@ fieldset[disabled] .select select:hover {
   max-width: 100%;
 }
 
+.bulma-tag:not(body) {
+    align-items: center;
+    background-color: #f5f5f5;
+    border-radius: 4px;
+    color: #4a4a4a;
+    display: inline-flex;
+    font-size: .75rem;
+    height: 2em;
+    justify-content: center;
+    line-height: 1.5;
+    padding-left: .75em;
+    padding-right: .75em;
+    white-space: nowrap;
+}
+
+.bulma-tag:not(body).is-danger {
+    background-color: #ff3860;
+    color: #fff;
+}
+
 .tags {
   align-items: center;
   display: flex;
