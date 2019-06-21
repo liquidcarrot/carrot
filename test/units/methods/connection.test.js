@@ -1,17 +1,18 @@
-let { assert, expect } = require('chai');
-let should = require('chai').should();
-let carrot = require('../../../src/carrot');
+const _ = require("lodash");
+const { assert, expect } = require('chai');
+const should = require('chai').should();
+const { methods } = require('../../../src/carrot');
+const { connection } = methods;
 
-/**
- *
- * There are 5 questions every unit test must answer.
- *
- * What is the unit under test (module, function, class, whatever)?
- * What should it do? (Prose description)
- * What was the actual output?
- * What was the expected output?
- * How do you reproduce the failure?
- *
- */
- 
- 
+describe("connection", function() {
+  Object.keys(connection).forEach(function(type) {
+    describe(`connection.${type}`, function() {
+      it(`connection.${type} => {Object}`, function() {
+        expect(connection[type]).to.be.an("object");
+      })
+      it(`connection.${type}.name => {string}`, function() {
+        expect(connection[type].name).to.be.a("string");
+      })
+    })
+  })
+})
