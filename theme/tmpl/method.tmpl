@@ -18,9 +18,12 @@ var self = this;
     ?><?js= (data.signature || '') ?>
     <?js if (data.deprecated) { ?>
       <span class="bulma-tag is-danger">deprecated<?js if (!data.deprecated === true) { ?>: <?js= data.deprecated ?><?js } ?></span>
+    <?js } else if (data.alpha || data.beta) { ?>
+      <span class="bulma-tag <? if (data.alpha) { ?>is-link<? } else if (data.beta) { ?>is-info<? } ?>"><? if (data.alpha) { ?>alpha<? } else if (data.beta) { ?>beta<? } ?></span>
     <?js } else { ?>
       <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
     <?js } ?>
+
     </h4>
 
     <?js if (data.summary) { ?>

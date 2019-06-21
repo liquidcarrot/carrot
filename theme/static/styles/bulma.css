@@ -5004,6 +5004,16 @@ fieldset[disabled] .select select:hover {
     color: #fff;
 }
 
+.bulma-tag:not(body).is-info {
+    background-color: #209cee;
+    color: #fff;
+}
+
+.tag:not(body).is-link {
+    background-color: #3273dc;
+    color: #fff;
+}
+
 .tags {
   align-items: center;
   display: flex;
