@@ -3,7 +3,7 @@ const { assert, expect } = require('chai');
 const should = require('chai').should();
 const { activation } = require('../../../src/carrot');
  
-describe("activation", function(){
+describe("activation", function() {
   describe("activation.LOGISTIC()", function() {
     it("activation.LOGISTIC() => {ReferenceError}", function(){
       const x = _.random(-50, 50, true);
@@ -122,7 +122,7 @@ describe("activation", function(){
     })
     it("activation.RELU(number, derivate=true) => {number}", function(){
       const x = _.random(-50, 50, true);
-      const z = x > 0 ? 1 : 0;  
+      const z = x > 0 ? 1 : 0;
       expect(activation.RELU(x, true)).to.equal(z);
     })
     it("activation.RELU(undefined, derivate=true) => {ReferenceError}",function(){
@@ -301,7 +301,7 @@ describe("activation", function(){
     })
     it("activation.HARD_TANH(number, derivate=true) => {number}", function(){
       const x = _.random(-50, 50, true);
-      const z = x > -1 && x < 1 ? 1 : 0 
+      const z = x > -1 && x < 1 ? 1 : 0
       expect(activation.HARD_TANH(x, true)).to.equal(z) ;
     })
     it("activation.HARD_TANH(undefined, derivate=true) => {ReferenceError}",function(){
