@@ -150,6 +150,8 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    * @memberof Neat
    *
+   * @alpha
+   *
    * @param {Network} network - Template network used to create population - _other networks will be "identical twins"_
    * @param {number} size - Number of network in created population - _how many identical twins created in new population_
    *
@@ -196,6 +198,8 @@ const Neat = function(inputs, outputs, dataset, options) {
 
   /**
    * Selects a random mutation method for a genome and mutates it
+   *
+   * @beta
    *
    * @param {Network} genome Network to test for possible mutations
    * @param {mutation[]} allowedMutations An array of allowed mutations to pick from
