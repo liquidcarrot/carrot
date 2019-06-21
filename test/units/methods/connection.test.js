@@ -1,4 +1,3 @@
-const _ = require("lodash");
 const { assert, expect } = require('chai');
 const should = require('chai').should();
 const { methods } = require('../../../src/carrot');

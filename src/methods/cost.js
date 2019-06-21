@@ -1,7 +1,18 @@
 const _ = require("lodash");
 
+function validate(targets, outputs) {
+  if(targets == undefined || outputs == undefined) throw new ReferenceError("Missing at least one required parameters: `targets`, `outputs`");
+  
+  targets = Array.isArray(targets) ? targets : [targets];
+  outputs = Array.isArray(outputs) ? outputs : [outputs];
+  
+  if(targets.length !== outputs.length) throw new RangeError(`Required "targets.length === outputs.length"; Received "targets.length=${targets.length}" & "outputs.length=${outputs.length}`);
+  
+  return [targets, outputs];
+}
+
 /**
- * Cost functions play an important role in neural networks. They give neural networks an indication of 'how wrong' they are; a.k.a. how far they are from the desired output. Also in fitness functions, cost functions play an important role.
+ * Cost functions play an important role in neural networks. They give neural networks an indication of 'how wrong' they are; a.k.a. how far they are from the desired outputs. Also in fitness functions, cost functions play an important role.
  *
  * @namespace cost
  *
@@ -13,8 +24,8 @@ const cost = {
   * Cross entropy error
   *
   * @see {@link http://bit.ly/2p5W29A|Cross-entropy Error Function}
-  * @param {number[]} target Ideal value
-  * @param {number[]} output Actual values
+  * @param {number[]|number} targets Ideal value
+  * @param {number[]|number} outputs Actual values
   *
   * @returns {number} [Cross entropy error](https://ml-cheatsheet.readthedocs.io/en/latest/loss_functions.html)
   *
@@ -24,17 +35,23 @@ const cost = {
   * let myNetwork = new Network(5, 10, 5);
   * myNetwork.train(trainingData, { cost: methods.cost.CROSS_ENTROPY });
   */
-  CROSS_ENTROPY: function(target, output) {
-    const error = _.reduce(output, (total, value, index) => total -= target[index] * Math.log(Math.max(output[index], 1e-15)) + (1 - target[index]) * Math.log(1 - Math.max(output[index], 1e-15)), 0)
+  CROSS_ENTROPY: function(targets, outputs) {
+    [targets, outputs] = validate(targets, outputs);
     
-    return error / output.length;
+    const error = outputs.reduce(function(total, value, index) {
+      return total -= targets[index] * Math.log(Math.max(outputs[index], 1e-15)) + (1 - targets[index]) * Math.log(1 - Math.max(outputs[index], 1e-15))
+    }, 0)
+    
+    // const error = _.reduce(outputs, (total, value, index) => total -= targets[index] * Math.log(Math.max(outputs[index], 1e-15)) + (1 - targets[index]) * Math.log(1 - Math.max(outputs[index], 1e-15)), 0)
+    
+    return error / outputs.length;
   },
   
   /**
   * Mean Squared Error
   *
-  * @param {number[]} target Ideal value
-  * @param {number[]} output Actual values
+  * @param {number[]|number} targets Ideal value
+  * @param {number[]|number} outputs Actual values
   *
   * @returns {number} [Mean squared error](https://medium.freecodecamp.org/machine-learning-mean-squared-error-regression-line-c7dde9a26b93)
   *
@@ -44,19 +61,21 @@ const cost = {
   * let myNetwork = new Network(5, 10, 5);
   * myNetwork.train(trainingData, { cost: methods.cost.MSE });
   */
-  MSE: function (target, output) {
-    const error = _.reduce(output, (total, value, index) => total += Math.pow(target[index] - output[index], 2), 0)
+  MSE: function(targets, outputs) {
+    [targets, outputs] = validate(targets, outputs);
     
-    return error / output.length;
+    const error = _.reduce(outputs, (total, value, index) => total += Math.pow(targets[index] - outputs[index], 2), 0)
+    
+    return error / outputs.length;
   },
   
   /**
   * Binary Error
   *
-  * @param {number[]} target Ideal value
-  * @param {number[]} output Actual values
+  * @param {number[]|number} targets Ideal value
+  * @param {number[]|number} outputs Actual values
   *
-  * @returns {number} misses The amount of times target value was missed
+  * @returns {number} misses The amount of times targets value was missed
   *
   * @see [Hinge loss on Wikipedia](https://en.wikipedia.org/wiki/Hinge_loss)
   *
@@ -72,8 +91,10 @@ const cost = {
   *   cost: methods.cost.BINARY
   * });
   */
-  BINARY: function (target, output) {
-    const error = _.reduce(output, (total, value, index) => total += Math.round(target[index] * 2) !== Math.round(output[index] * 2), 0)
+  BINARY: function(targets, outputs) {
+    [targets, outputs] = validate(targets, outputs);
+    
+    const error = _.reduce(outputs, (total, value, index) => total += Math.round(targets[index] * 2) !== Math.round(outputs[index] * 2), 0)
     
     return error;
   },
@@ -81,8 +102,8 @@ const cost = {
   /**
   * Mean Absolute Error
   *
-  * @param {number[]} target Ideal value
-  * @param {number[]} output Actual values
+  * @param {number[]|number} targets Ideal value
+  * @param {number[]|number} outputs Actual values
   *
   * @returns {number} [Mean absoulte error](https://en.wikipedia.org/wiki/Mean_absolute_error)
   *
@@ -98,17 +119,19 @@ const cost = {
   *   cost: methods.cost.MAE
   * });
   */
-  MAE: function (target, output) {
-    const error = _.reduce(output, (total, value, index) => total += Math.abs(target[index] - output[index]), 0)
+  MAE: function(targets, outputs) {
+    [targets, outputs] = validate(targets, outputs);
     
-    return error / output.length;
+    const error = _.reduce(outputs, (total, value, index) => total += Math.abs(targets[index] - outputs[index]), 0)
+    
+    return error / outputs.length;
   },
   
   /**
   * Mean Absolute Percentage Error
   *
-  * @param {number[]} target Ideal value
-  * @param {number[]} output Actual values
+  * @param {number[]|number} targets Ideal value
+  * @param {number[]|number} outputs Actual values
   *
   * @returns {number} [Mean absolute percentage error](https://en.wikipedia.org/wiki/Mean_absolute_percentage_error)
   *
@@ -124,17 +147,19 @@ const cost = {
   *   cost: methods.cost.MAPE
   * });
   */
-  MAPE: function (target, output) {
-    const error = _.reduce(output, (total, value, index) => total += Math.abs((output[index] - target[index]) / Math.max(target[index], 1e-15)), 0)
+  MAPE: function(targets, outputs) {
+    [targets, outputs] = validate(targets, outputs);
     
-    return error / output.length;
+    const error = _.reduce(outputs, (total, value, index) => total += Math.abs((outputs[index] - targets[index]) / Math.max(targets[index], 1e-15)), 0)
+    
+    return error / outputs.length;
   },
   
   /**
   * Weighted Absolute Percentage Error (WAPE)
   *
-  * @param {number[]} target Ideal value
-  * @param {number[]} output Actual values
+  * @param {number[]|number} targets Ideal value
+  * @param {number[]|number} outputs Actual values
   *
   * @returns {number} - [Weighted absolute percentage error](https://help.sap.com/doc/saphelp_nw70/7.0.31/en-US/76/487053bbe77c1ee10000000a174cb4/content.htm?no_cache=true)
   *
@@ -146,13 +171,15 @@ const cost = {
   *   cost: methods.cost.WAPE
   * });
   */
-  WAPE: function (target, output) {
+  WAPE: function(targets, outputs) {
+    [targets, outputs] = validate(targets, outputs);
+    
     let error = 0;
     let sum = 0;
     
-    _.times(output.length, (index) => {
-      error += Math.abs(target[index] - output[index]);
-      sum += target[index];
+    _.times(outputs.length, (index) => {
+      error += Math.abs(targets[index] - outputs[index]);
+      sum += targets[index];
     })
     
      return error / sum;
@@ -161,8 +188,8 @@ const cost = {
   /**
   * Mean Squared Logarithmic Error
   *
-  * @param {number[]} target Ideal value
-  * @param {number[]} output Actual values
+  * @param {number[]|number} targets Ideal value
+  * @param {number[]|number} outputs Actual values
   *
   * @returns {number} - [Mean squared logarithmic error](https://peltarion.com/knowledge-center/documentation/modeling-view/build-an-ai-model/loss-functions/mean-squared-logarithmic-error)
   *
@@ -178,8 +205,10 @@ const cost = {
   *   cost: methods.cost.MSLE
   * });
   */
-  MSLE: function (target, output) {
-    const error = _.reduce(output, (total, value, index) => total += Math.log(Math.max(target[index], 1e-15)) - Math.log(Math.max(output[index], 1e-15)), 0)
+  MSLE: function(targets, outputs) {
+    [targets, outputs] = validate(targets, outputs);
+    
+    const error = _.reduce(outputs, (total, value, index) => total += Math.log(Math.max(targets[index], 1e-15)) - Math.log(Math.max(outputs[index], 1e-15)), 0)
     
     return error;
   },
@@ -187,8 +216,8 @@ const cost = {
   /**
   * Hinge loss, for classifiers
   *
-  * @param {number[]} target Ideal value
-  * @param {number[]} output Actual values
+  * @param {number[]|number} targets Ideal value
+  * @param {number[]|number} outputs Actual values
   *
   * @returns {number} - [Hinge loss](https://towardsdatascience.com/support-vector-machines-intuitive-understanding-part-1-3fb049df4ba1)
   *
@@ -204,8 +233,10 @@ const cost = {
   *   cost: methods.cost.HINGE
   * });
   */
-  HINGE: function (target, output) {
-    const error = _.reduce(output, (total, value, index) => total += Math.max(0, 1 - target[index] * output[index]), 0)
+  HINGE: function(targets, outputs) {
+    [targets, outputs] = validate(targets, outputs);
+    
+    const error = _.reduce(outputs, (total, value, index) => total += Math.max(0, 1 - targets[index] * outputs[index]), 0)
     
     return error;
   }
