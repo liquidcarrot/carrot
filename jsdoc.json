@@ -1,11 +1,11 @@
 {
     "tags": {
-        "allowUnknownTags": true
+        "allowUnknownTags": ["alpha", "beta"]
     },
     "source": {
         "include": [
           "./src",
-          "./README.md" 
+          "./README.md"
         ],
         "excludePattern": "(node_modules/|docs)"
     },
