@@ -199,6 +199,8 @@ const Neat = function(inputs, outputs, dataset, options) {
   /**
    * Selects a random mutation method for a genome and mutates it
    *
+   * @memberof Neat
+   *
    * @beta
    *
    * @param {Network} genome Network to test for possible mutations
