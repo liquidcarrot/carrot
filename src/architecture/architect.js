@@ -56,21 +56,20 @@ const architect = {
   */
   Construct: function (list) {
     // Create a network
-    var network = new Network(0, 0);
+    const network = new Network(0, 0);
 
     // Transform all groups into nodes
-    var nodes = [];
+    let nodes = [];
 
-    var i;
+    let i, j;
     for (i = 0; i < list.length; i++) {
-      let j;
       if (list[i] instanceof Group) {
         for (j = 0; j < list[i].nodes.length; j++) {
           nodes.push(list[i].nodes[j]);
         }
       } else if (list[i] instanceof Layer) {
         for (j = 0; j < list[i].nodes.length; j++) {
-          for (var k = 0; k < list[i].nodes[j].nodes.length; k++) {
+          for (let k = 0; k < list[i].nodes[j].nodes.length; k++) {
             nodes.push(list[i].nodes[j].nodes[k]);
           }
         }
@@ -80,14 +79,14 @@ const architect = {
     }
 
     // check if there are input or output nodes, bc otherwise must guess based on number of outputs
-    let found_output_nodes = _.reduce(nodes, (total_found, node) =>
+    const found_output_nodes = _.reduce(nodes, (total_found, node) =>
       total_found + (node.type === `output`), 0);
-    let found_input_nodes = _.reduce(nodes, (total_found, node) =>
+    const found_input_nodes = _.reduce(nodes, (total_found, node) =>
       total_found + (node.type === `input`), 0);
 
     // Determine input and output nodes
-    var inputs = [];
-    var outputs = [];
+    const inputs = [];
+    const outputs = [];
     for (i = nodes.length - 1; i >= 0; i--) {
       if (nodes[i].type === 'output' || (!found_output_nodes && nodes[i].connections.out.length + nodes[i].connections.gated.length === 0)) {
         nodes[i].type = 'output';
@@ -113,7 +112,6 @@ const architect = {
     }
 
     for (i = 0; i < nodes.length; i++) {
-      let j;
       for (j = 0; j < nodes[i].connections.out.length; j++) {
         network.connections.push(nodes[i].connections.out[j]);
       }
@@ -262,14 +260,16 @@ const architect = {
     const layer_sizes_and_options = Array.from(arguments);
 
     const output_size_or_options = layer_sizes_and_options.slice(-1);
-
+    
+    let layer_sizes, options
+    
     // find out if options were passed
     if (typeof output_size_or_options === 'number') {
-      const layer_sizes = layer_sizes_and_options;
-      let options = {};
+      layer_sizes = layer_sizes_and_options;
+      options = {};
     } else {
-      const layer_sizes = layer_sizes_and_options.slice(layer_sizes_and_options.length - 1);
-      let options = output_size_or_options;
+      layer_sizes = layer_sizes_and_options.slice(layer_sizes_and_options.length - 1);
+      options = output_size_or_options;
     }
 
     if (layer_sizes.length < 3) {
@@ -302,7 +302,7 @@ const architect = {
 
     const block_sizes = layer_sizes; // all the remaining arguments
     const blocks = []; // stores all the nodes of the blocks, to add later to nodes
-    const previous_output = input_layer;
+    let previous_output = input_layer;
     _.times(block_sizes.length, (index) => {
       const block_size = block_sizes[index];
 
@@ -432,21 +432,19 @@ const architect = {
   * @returns {Network}
   */
   GRU: function () {
-    var args = Array.prototype.slice.call(arguments);
-    if (args.length < 3) {
-      throw new Error('not enough layers (minimum 3) !!');
-    }
+    const layer_sizes = Array.from(arguments);
+    if (layer_sizes.length < 3) throw new Error('You have to specify at least 3 layer sizes');
 
-    var input_layer = new Group(args.shift()); // first argument
-    var output_layer = new Group(args.pop()); // last argument
-    var blocks = args; // all the arguments in the middle
+    const input_layer = new Group(layer_sizes.shift(), 'input'); // first argument
+    const output_layer = new Group(layer_sizes.pop(), 'output'); // last argument
+    const block_sizes = layer_sizes; // all the arguments in the middle
 
-    var nodes = [];
+    const nodes = [];
     nodes.push(input_layer);
 
-    var previous = input_layer;
+    let previous = input_layer;
     for (var i = 0; i < blocks.length; i++) {
-      var layer = new Layer.GRU(blocks[i]);
+      const layer = new Layer.GRU(block_sizes[i])
       previous.connect(layer);
       previous = layer;
 
@@ -481,22 +479,16 @@ const architect = {
   * @returns {Network}
   */
   Hopfield: function (size) {
-    var input = new Group(size);
-    var output = new Group(size);
+    const input = new Group(size, "input")
+    const output = new Group(size, "output")
 
-    input.connect(output, methods.connection.ALL_TO_ALL);
+    input.connect(output, methods.connection.ALL_TO_ALL)
 
-    input.set({
-      type: 'input'
-    });
     output.set({
-      squash: methods.activation.STEP,
-      type: 'output'
-    });
+      squash: methods.activation.STEP
+    })
 
-    var network = new architect.Construct([input, output]);
-
-    return network;
+    return new architect.Construct([input, output])
   },
 
   /**

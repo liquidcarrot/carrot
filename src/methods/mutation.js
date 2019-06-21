@@ -1,4 +1,4 @@
-var activation = require('./activation');
+const activation = require('./activation');
 
 /**
  *
@@ -29,7 +29,7 @@ var activation = require('./activation');
  *
  * myNode.mutate(methods.mutation.MOD_BIAS);
  */
-var mutation = {
+const mutation = {
   /**
    * @constant
    * @type {object}

@@ -26,7 +26,7 @@ describe('Neat', function () {
       mutation: methods.mutation.FFW,
       equal: true,
       elitism: 10,
-      mutationRate: 0.5,
+      mutation_rate: 0.5,
       error: 0.03,
       threads: 1
     });
@@ -48,7 +48,7 @@ describe('Neat', function () {
       mutation: methods.mutation.FFW,
       equal: true,
       elitism: 10,
-      mutationRate: 0.9,
+      mutation_rate: 0.9,
       error: 0.03,
       threads: 1
     });
@@ -69,7 +69,7 @@ describe('Neat', function () {
       mutation: methods.mutation.FFW,
       equal: true,
       elitism: 10,
-      mutationRate: 0.9,
+      mutation_rate: 0.9,
       error: 0.03,
       efficientMutation: true,
       threads: 1
@@ -92,7 +92,7 @@ describe('Neat', function () {
       mutation: methods.mutation.FFW,
       equal: true,
       elitism: 10,
-      mutationRate: 0.5,
+      mutation_rate: 0.5,
       error: 0.03,
       threads: 1
     });

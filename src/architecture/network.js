@@ -1,10 +1,10 @@
-let _ = require(`lodash`);
-let parameter = require(`../util/parameter`);
-var multi = require(`../multithreading/multi`);
-var methods = require(`../methods/methods`);
-var Connection = require(`./connection`);
-var config = require(`../config`);
-var Node = require(`./node`);
+const _ = require("lodash");
+const parameter = require("../util/parameter");
+const multi = require("../multithreading/multi");
+const methods = require("../methods/methods");
+const Connection = require("./connection");
+const config = require("../config");
+const Node = require("./node");
 
 // Easier variable naming
 const mutation = methods.mutation;
@@ -125,20 +125,20 @@ Network.prototype = {
    * // Create a network
    * let myNetwork = new Network(3, 2);
    *
-   * myNetwork.no_trace_activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
+   * myNetwork.noTraceActivate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
-  no_trace_activate: function no_trace_activate(input) {
+  noTraceActivate: function noTraceActivate(input) {
     const output = [];
 
     // Activate nodes chronologically for forward feeding
     this.nodes.forEach((node, node_index) => {
       if (node.type === `input`) {
-        node.no_trace_activate(input[node_index]);
+        node.noTraceActivate(input[node_index]);
       } else if (node.type === `output`) {
-        const activation_result = node.no_trace_activate();
+        const activation_result = node.noTraceActivate();
         output.push(activation_result);
       } else {
-        node.no_trace_activate();
+        node.noTraceActivate();
       }
     });
 
@@ -391,8 +391,8 @@ Network.prototype = {
 
     // Remove gated connections gated by this node
     for (i = node.connections.gated.length - 1; i >= 0; i--) {
-      let conn = node.connections.gated[i];
-      this.ungate(conn);
+      const connection = node.connections.gated[i];
+      this.ungate(connection);
     }
 
     // Remove selfconnection
@@ -407,7 +407,7 @@ Network.prototype = {
    *
    * @param {mutation} method [Mutation method](mutation)
    *
-   * @returns {false | object[]} candidates to use for a mutation. Entries may be arrays containing paris when appropriate.
+   * @returns {false | object[]} Candidates to use for a mutation. Entries may be arrays containing pairs / tuples when appropriate.
    *
    * @example
    *
@@ -500,9 +500,9 @@ Network.prototype = {
    * myNetwork.mutate(mutation.ADD_GATE) // a random node will gate a random connection within the network
    */
   mutate: function mutate(method) {
-    if (typeof method === `undefined`) throw new Error(`No (correct) mutate method given!`);
+    if (typeof method === 'undefined') throw new Error('Mutate method is undefined!')
 
-    var i, j;
+    let i, j;
     switch (method) {
       case mutation.ADD_NODE: {
         // Look for an existing connection and place a node in between
@@ -510,48 +510,53 @@ Network.prototype = {
         this.disconnect(connection.from, connection.to);
 
         // Insert the new node right before the old connection.to
-        const toIndex = this.nodes.indexOf(connection.to);
-        const node = new Node(`hidden`);
+        const to_index = this.nodes.indexOf(connection.to);
+        const node = new Node('hidden');
 
-        if(mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION);
+        if (mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION);
 
         // Place it in this.nodes
-        const minBound = Math.min(toIndex, this.nodes.length - this.output_size);
-        this.nodes.splice(minBound, 0, node);
+        const min_bound = Math.min(to_index, this.nodes.length - this.output_size);
+        this.nodes.splice(min_bound, 0, node);
 
         // Now create two new connections
-        const newConn1 = this.connect(connection.from, node)[0];
-        const newConn2 = this.connect(node, connection.to)[0];
+        const new_connection1 = this.connect(connection.from, node)[0];
+        const new_connection2 = this.connect(node, connection.to)[0];
 
         const gater = connection.gater;
         // Check if the original connection was gated
-        if (gater != null) this.gate(gater, Math.random() >= 0.5 ? newConn1 : newConn2);
+        if (gater != null) this.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2);
 
-        break;
+        return true;
       }
       case mutation.SUB_NODE: {
-        const possible = this.possible(method)
-        if(possible) this.remove(_.sample(possible));
-
-        break
+        const possible = this.possible(method);
+        if (possible) {
+          this.remove(_.sample(possible));
+          return true;
+        }
+        return false;
       }
       case mutation.ADD_CONN: {
-        const possible = this.possible(method)
-        if(possible) {
+        const possible = this.possible(method);
+        if (possible) {
           const pair = possible[Math.floor(Math.random() * possible.length)];
           this.connect(pair[0], pair[1]);
+          return true;
         }
 
-        break
+        return false;
       }
+      case mutation.REMOVE_CONN: // alias for sub_conn
       case mutation.SUB_CONN: {
-        const possible = this.possible(method)
-        if(possible) {
-          const randomConn = possible[Math.floor(Math.random() * possible.length)];
-          this.disconnect(randomConn.from, randomConn.to);
+        const possible = this.possible(method);
+        if (possible) {
+          const random_connection = possible[Math.floor(Math.random() * possible.length)];
+          this.disconnect(random_connection.from, random_connection.to);
+          return true;
         }
 
-        break
+        return false;
       }
       case mutation.MOD_WEIGHT: {
         const allconnections = this.connections.concat(this.selfconns);
@@ -559,97 +564,110 @@ Network.prototype = {
 
         connection.weight += Math.random() * (method.max - method.min) + method.min;
 
-        break;
+        return true;
       }
       case mutation.MOD_BIAS: {
         // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
         this.nodes[Math.floor(Math.random() * (this.nodes.length - this.input_size) + this.input_size)].mutate(method);
 
-        break;
+        return true;
       }
-      case mutation.MOD_ACTIVATION:{
-        if(this.possible(method)) {
-          const possible = _.filter(this.nodes, method.mutateOutput ? (node) => node.type !== `input` : (node) => node.type !== `input` && node.type !== `output`);
+      case mutation.MOD_ACTIVATION: {
+        if (this.possible(method)) {
+          const possible = _.filter(this.nodes, method.mutateOutput ?
+            (node) => node.type !== 'input' :
+            (node) => node.type !== 'input' && node.type !== 'output');
 
           // Mutate a random node out of the filtered collection
           _.sample(possible).mutate(method);
+          return true;
         }
-        break;
+        return false;
       }
       case mutation.ADD_SELF_CONN: {
-        const possible = this.possible(method)
-        if(possible) {
+        const possible = this.possible(method);
+        if (possible) {
           const node = possible[Math.floor(Math.random() * possible.length)];
           this.connect(node, node); // Create the self-connection
+          return true;
         }
 
-        break
+        return false;
       }
       case mutation.SUB_SELF_CONN: {
-        if(this.possible(method)) {
+        if (this.possible(method)) {
           const conn = this.selfconns[Math.floor(Math.random() * this.selfconns.length)];
           this.disconnect(conn.from, conn.to);
+          return true;
         }
 
-        break
+        return false;
       }
       case mutation.ADD_GATE: {
-        const possible = this.possible(method)
-        if(possible) {
+        const possible = this.possible(method);
+        if (possible) {
           // Select a random gater node and connection, can't be gated by input
           const node = this.nodes[Math.floor(Math.random() * (this.nodes.length - this.input_size) + this.input_size)];
           const conn = possible[Math.floor(Math.random() * possible.length)];
 
           this.gate(node, conn); // Gate the connection with the node
+          return true;
         }
 
-        break
+        return false;
       }
       case mutation.SUB_GATE: {
-        if(this.possible(method)) this.ungate(this.gates[Math.floor(Math.random() * this.gates.length)])
+        if (this.possible(method)) {
+          this.ungate(this.gates[Math.floor(Math.random() * this.gates.length)]);
+          return true;
+        }
 
-        break
+        return false;
       }
       case mutation.ADD_BACK_CONN: {
-        const possible = this.possible(method)
-        if(possible) {
-          const pair = possible[Math.floor(Math.random() * possible.length)];
+        const possible = this.possible(method);
+        if (possible) {
+          const pair = possible[Math.floor(Math.random() * possible.length)]
           this.connect(pair[0], pair[1]);
+          return true;
         }
 
-        break;
+        return false;
       }
-      case mutation.SUB_BACK_CONN:{
-        const possible = this.possible(method)
-        if(possible) {
-          const randomConn = possible[Math.floor(Math.random() * possible.length)];
-          this.disconnect(randomConn.from, randomConn.to);
+      case mutation.SUB_BACK_CONN: {
+        const possible = this.possible(method);
+        if (possible) {
+          const random_connection = possible[Math.floor(Math.random() * possible.length)];
+          this.disconnect(random_connection.from, random_connection.to);
+          return true;
         }
 
-        break;
+        return false;
       }
       case mutation.SWAP_NODES: {
-        const possible = this.possible(method)
-        if(possible) {
+        const possible = this.possible(method);
+        if (possible) {
           // Return a random node out of the filtered collection
-          const node1 = _.sample(possible)
+          const node1 = _.sample(possible);
 
           // Filter node1 from collection
-          const possible2 = _.filter(possible, function(node, index) { return (node !== node1) })
+          const possible2 = _.filter(possible,
+            function(node, index) { return (node !== node1) });
 
           // Get random node from filtered collection (excludes node1)
-          const node2 = _.sample(possible2)
+          const node2 = _.sample(possible2);
 
-          const biasTemp = node1.bias;
-          const squashTemp = node1.squash;
+          const bias_temp = node1.bias;
+          const squash_temp = node1.squash;
 
           node1.bias = node2.bias;
           node1.squash = node2.squash;
-          node2.bias = biasTemp;
-          node2.squash = squashTemp;
+          node2.bias = bias_temp;
+          node2.squash = squash_temp;
+          return true;
         }
 
-        break;
+        return false;
       }
     }
   },
@@ -818,7 +836,7 @@ Network.prototype = {
       current_training_rate = options.rate_policy(base_training_rate, iteration_number);
 
       // run on training epoch
-      const train_error = this._train_one_epoch(
+      const train_error = this._trainOneEpoch(
         train_set, options.batch_size, current_training_rate, options.momentum, options.cost);
       if (options.clear) this.clear();
       // Checks if cross validation is enabled
@@ -884,7 +902,7 @@ Network.prototype = {
    *
    * let example = ""
    */
-  _train_one_epoch: function _train_one_epoch(set, batch_size, training_rate, momentum, cost_function) {
+  _trainOneEpoch: function _trainOneEpoch(set, batch_size, training_rate, momentum, cost_function) {
     let error_sum = 0;
     for (var i = 0; i < set.length; i++) {
       const input = set[i].input;
@@ -926,7 +944,7 @@ Network.prototype = {
     _.times(set.length, (index) => {
       let input = set[index].input;
       let target = set[index].output;
-      let output = this.no_trace_activate(input);
+      let output = this.noTraceActivate(input);
       error += cost(target, output);
     });
 
@@ -1060,10 +1078,10 @@ Network.prototype = {
    * @example
    * let { Network } = require("@liquid-carrot/carrot");
    *
-   * let exported = myNetwork.to_JSON();
-   * let imported = Network.from_JSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
+   * let exported = myNetwork.toJSON();
+   * let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
    */
-  to_JSON: function to_JSON() {
+  toJSON: function toJSON() {
     const json = {
       nodes: [],
       connections: [],
@@ -1083,12 +1101,12 @@ Network.prototype = {
 
     for (i = 0; i < this.nodes.length; i++) {
       const node = this.nodes[i];
-      const node_json = node.to_JSON();
+      const node_json = node.toJSON();
       node_json.index = i;
       json.nodes.push(node_json);
 
       if (node.connections.self.weight !== 0) {
-        const connection_json = node.connections.self.to_JSON();
+        const connection_json = node.connections.self.toJSON();
         connection_json.from = i;
         connection_json.to = i;
 
@@ -1099,7 +1117,7 @@ Network.prototype = {
 
     for (i = 0; i < this.connections.length; i++) {
       const connection = this.connections[i];
-      const connection_json = connection.to_JSON();
+      const connection_json = connection.toJSON();
       connection_json.from = connection.from.index;
       connection_json.to = connection.to.index;
 
@@ -1110,11 +1128,6 @@ Network.prototype = {
 
     return json;
   },
-
-  /**
-   * For backward compatibility
-   */
-  toJSON: Network.prototype.to_JSON,
 
   /**
    * Sets the value of a property for every node in this network
@@ -1155,18 +1168,18 @@ Network.prototype = {
    * @param {number} [options.schedule.iterations] You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
    * @param {schedule} [options.schedule.function] A function to run every n iterations as set by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
    * @param {boolean} [options.clear=false] If set to true, will clear the network after every activation. This is useful for evolving recurrent networks, more importantly for timeseries prediction.
-   * @param {boolean} [options.equal=true] If set to true when [Network.cross_over](Network.cross_over) runs it will assume both genomes are equally fit.
-   * @param {number} [options.popsize=50] Population size of each generation.
+   * @param {boolean} [options.equal=true] If set to true when [Network.crossOver](Network.crossOver) runs it will assume both genomes are equally fit.
+   * @param {number} [options.population_size=50] Population size of each generation.
    * @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
-   * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
-   * @param {number} [options.mutationRate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.3.
-   * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
-   * @param {boolean} [options.fitnessPopulation=false] Flag to return the fitness of a population of genomes. Set this to false to evaluate each genome individually.
+   * @param {number} [options.provenance=0] Number of genomes inserted into the original network template (Network(input,output)) per evolution.
+   * @param {number} [options.mutation_rate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated.
+   * @param {number} [options.mutation_amount=1] If mutation occurs (randomNumber < mutation_rate), sets amount of times a mutation method will be applied to the network.
+   * @param {boolean} [options.fitness_population=false] Flag to return the fitness of a population of genomes. Set this to false to evaluate each genome individually.
    * @param {Function} [options.fitness] - A fitness function to evaluate the networks. Takes a `genome`, i.e. a [network](Network), and a `dataset` and sets the genome's score property
    * @param {string} [options.selection=FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. methods.Selection.FITNESS_PROPORTIONATE).
    * @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
    * @param {Array} [options.mutation] Sets allowed [mutation methods](mutation) for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
-   * @param {number} [options.maxNodes=Infinity] Maximum nodes for a potential network
+   * @param {number} [options.max_nodes=Infinity] Maximum nodes for a potential network
    * @param {number} [options.maxConns=Infinity] Maximum connections for a potential network
    * @param {number} [options.maxGates=Infinity] Maximum gates for a potential network
    * @param {function} [options.mutationSelection=random] Custom mutation selection function if given
@@ -1193,7 +1206,7 @@ Network.prototype = {
    *        equal: true,
    *        error: 0.05,
    *        elitism: 5,
-   *        mutationRate: 0.5
+   *        mutation_rate: 0.5
    *    });
    *
    *    network.activate([0,0]); // 0.2413
@@ -1204,47 +1217,59 @@ Network.prototype = {
    *
    * execute();
    */
-  evolve: async function(set, options) {
-    if(set[0].input.length !== this.input_size || set[0].output.length !== this.output_size) {
+  evolve: async function(dataset, options) {
+    if (dataset[0].input.length !== (this.input_size || this.input) || dataset[0].output.length !== (this.output_size || this.output)) {
       throw new Error(`Dataset input/output size should be same as network input/output size!`);
     }
 
     // Read the options
     options = options || {};
 
+    // Deal with complex default values first (cases where default depends on conditions)
     let target_error;
-
     if (typeof options.iterations === `undefined` && typeof options.error === `undefined`) {
       options.iterations = 1000; // limit in case network is not converging
       target_error = 0.05
     } else if (options.iterations) {
       target_error = -1; // run until iterations
     } else if (options.error) {
-      target_error = options.error
+      target_error = options.error;
       options.iterations = 0; // run until target error
     }
 
-    var growth = typeof options.growth !== `undefined` ? options.growth : 0.0001;
-    var cost = options.cost || methods.cost.MSE;
-    var amount = options.amount || 1;
-    let defaultSet = set;
+    // backward compatibility
+    options = _.defaults(options, {
+      fitness_population: options.fitnessPopulation,
+      max_nodes: options.maxNodes,
+      max_connections: options.maxConns,
+      max_gates: options.maxGates=Infinity,
+      mutation_selection: options.mutationSelection,
+      efficient_mutation: options.efficientMutation,
+    });
 
-    var threads = options.threads;
-    if (typeof threads === `undefined`) {
-      if (typeof window === `undefined`) { // Node.js
-        threads = require(`os`).cpus().length;
-      } else { // Browser
-        threads = navigator.hardwareConcurrency;
-      }
-    }
+    // set default values
+    options = _.defaults(options, {
+      threads: (typeof window === `undefined`) ? require(`os`).cpus().length : navigator.hardwareConcurrency,
+      growth: (typeof options.growth !== `undefined`) ? options.growth : 0.0001,
+      cost: methods.cost.MSE,
+      amount: 1,
+      fitness_population: false,
+      max_nodes: Infinity,
+      max_connections: Infinity,
+      max_gates: Infinity,
+      efficient_mutation: false,
+      // mutation_selection: random // TODO: actually use it
+    });
 
-    var start = Date.now();
+    const default_dataset = dataset;
 
-    if (threads === 1) {
+    const start = Date.now();
+
+    if (options.threads === 1) {
       // Create the fitness function
-      options.fitness = function (set = defaultSet, genome, amount = 1, cost = methods.cost.MSE, growth = 0.0001) {
-        var score = 0;
-        for (var i = 0; i < amount; i++) score -= genome.test(set, cost).error;
+      options.fitness = function (dataset = default_dataset, genome, amount = options.amount, cost = options.cost, growth = options.growth) {
+        let score = 0;
+        for (let i = 0; i < amount; i++) score -= genome.test(dataset, cost).error;
 
         score -= (genome.nodes.length - genome.input - genome.output + genome.connections.length + genome.gates.length) * growth;
         score = isNaN(score) ? -Infinity : score; // this can cause problems with fitness proportionate selection
@@ -1253,65 +1278,65 @@ Network.prototype = {
       };
     } else {
       // Serialize the dataset
-      var converted = multi.serializeDataSet(set);
+      const serialized_dataset = multi.serializeDataSet(dataset);
 
       // Create workers, send datasets
-      var workers = [];
+      const workers = [];
       if (typeof window === `undefined`) {
-        for (var i = 0; i < threads; i++) workers.push(new multi.workers.node.TestWorker(converted, cost));
+        for (var i = 0; i < options.threads; i++) workers.push(new multi.workers.node.TestWorker(serialized_dataset, options.cost));
       } else {
-        for (var i = 0; i < threads; i++) workers.push(new multi.workers.browser.TestWorker(converted, cost));
+        for (var i = 0; i < options.threads; i++) workers.push(new multi.workers.browser.TestWorker(serialized_dataset, options.cost));
       }
 
-      options.fitness = function (set, population) {
+      options.fitness = function (dataset, population) {
         return new Promise((resolve, reject) => {
           // Create a queue
-          var queue = population.slice();
-          var done = 0;
+          const queue = population.slice();
+          let done = 0;
 
           // Start worker function
-          var startWorker = function (worker) {
+          const start_worker = function (worker) {
             if (!queue.length) {
-              if (++done === threads) resolve();
+              if (++done === options.threads) resolve();
               return;
             }
 
-            var genome = queue.shift();
+            const genome = queue.shift();
 
             worker.evaluate(genome).then(function (result) {
               genome.score = -result;
               genome.score -= (genome.nodes.length - genome.input - genome.output +
-                genome.connections.length + genome.gates.length) * growth;
+                genome.connections.length + genome.gates.length) * options.growth;
               genome.score = isNaN(parseFloat(result)) ? -Infinity : genome.score;
-              startWorker(worker);
+              start_worker(worker);
             });
           };
 
-          for (var i = 0; i < workers.length; i++) startWorker(workers[i]);
+          for (var i = 0; i < workers.length; i++) start_worker(workers[i]);
         });
       };
 
-      options.fitnessPopulation = true;
+      options.fitness_population = true;
     }
 
     // Intialise the NEAT instance
     options.network = this;
     options.input = this.input_size;
     options.output = this.output_size;
-    var neat = new Neat(set, options);
+    const neat = new Neat(dataset, options);
 
-    var error = -Infinity;
-    var bestFitness = -Infinity;
-    var bestGenome;
+    let error = -Infinity;
+    let best_fitness = -Infinity;
+    let best_genome;
 
     while (error < -target_error && (options.iterations === 0 || neat.generation < options.iterations)) {
-      let fittest = await neat.evolve();
-      let fitness = fittest.score;
-      error = fitness + (fittest.nodes.length - fittest.input - fittest.output + fittest.connections.length + fittest.gates.length) * growth;
+      const fittest = await neat.evolve();
+      const fitness = fittest.score;
+      error = fitness + (fittest.nodes.length - fittest.input - fittest.output + fittest.connections.length + fittest.gates.length) * options.growth;
 
-      if (fitness > bestFitness) {
-        bestFitness = fitness;
-        bestGenome = fittest;
+      if (fitness > best_fitness) {
+        best_fitness = fitness;
+        best_genome = fittest;
       }
 
       if (options.log && neat.generation % options.log === 0) {
@@ -1323,15 +1348,15 @@ Network.prototype = {
       }
     }
 
-    if(threads > 1) {
-      for (var i = 0; i < workers.length; i++) workers[i].terminate();
+    if (options.threads > 1) {
+      for (let i = 0; i < workers.length; i++) workers[i].terminate();
     }
 
-    if(typeof bestGenome !== `undefined`) {
-      this.nodes = bestGenome.nodes;
-      this.connections = bestGenome.connections;
-      this.selfconns = bestGenome.selfconns;
-      this.gates = bestGenome.gates;
+    if (typeof best_genome !== `undefined`) {
+      this.nodes = best_genome.nodes;
+      this.connections = best_genome.connections;
+      this.selfconns = best_genome.selfconns;
+      this.gates = best_genome.gates;
 
       if(options.clear) this.clear();
     }
@@ -1339,7 +1364,7 @@ Network.prototype = {
     return {
       error: -error,
       iterations: neat.generation,
-      time: Date.now() - start
+      time: Date.now() - start,
     };
   },
 
@@ -1504,17 +1529,17 @@ Network.prototype = {
  * @example
  * let { Network } = require("@liquid-carrot/carrot");
  *
- * let exported = myNetwork.to_JSON();
- * let imported = Network.from_JSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
+ * let exported = myNetwork.toJSON();
+ * let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
  */
-Network.from_JSON = function(json) {
+Network.fromJSON = function(json) {
   const network = new Network(json.input, json.output);
-  
+
   network.dropout = json.dropout;
   network.nodes = [];
   network.connections = [];
 
-  _.forEach(json.nodes, (node) => network.nodes.push(Node.from_JSON(node)));
+  _.forEach(json.nodes, (node) => network.nodes.push(Node.fromJSON(node)));
 
   _.forEach(json.connections, (json_connection) => {
     const connection =
@@ -1526,11 +1551,6 @@ Network.from_JSON = function(json) {
 
   return network;
 };
-
-/**
- * For backward compatibility
- */
-Network.fromJSON = Network.from_JSON;
 
 /**
  * Merge two networks into one.
@@ -1552,23 +1572,23 @@ Network.fromJSON = Network.from_JSON;
  */
 Network.merge = function(network1, network2) {
   // Create a copy of the networks
-  network1 = Network.from_JSON(network1.to_JSON());
-  network2 = Network.from_JSON(network2.to_JSON());
+  network1 = Network.fromJSON(network1.toJSON());
+  network2 = Network.fromJSON(network2.toJSON());
 
   // Check if output and input size are the same
-  if (network1.output !== network2.input) {
+  if (network1.output_size !== network2.input_size) {
     throw new Error(`Output size of network1 should be the same as the input size of network2!`);
   }
 
   // Redirect all connections from network2 input from network1 output
-  var i;
+  let i;
   for (i = 0; i < network2.connections.length; i++) {
-    let conn = network2.connections[i];
-    if (conn.from.type === `input`) {
-      let index = network2.nodes.indexOf(conn.from);
+    const connection = network2.connections[i];
+    if (connection.from.type === `input`) {
+      let index = network2.nodes.indexOf(connection.from);
 
       // redirect
-      conn.from = network1.nodes[network1.nodes.length - 1 - index];
+      connection.from = network1.nodes[network1.nodes.length - 1 - index];
     }
   }
 
@@ -1610,39 +1630,39 @@ Network.merge = function(network1, network2) {
  * let network2 = new architect.Perceptron(2, 4, 5, 3);
  *
  * // Produce an offspring
- * let network3 = Network.cross_over(network1, network2);
+ * let network3 = Network.crossOver(network1, network2);
  */
-Network.cross_over = function(network1, network2, equal) {
-  if (network1.input !== network2.input || network1.output !== network2.output) {
+Network.crossOver = function(network1, network2, equal) {
+  if (network1.input_size !== network2.input_size || network1.output_size !== network2.output_size) {
     throw new Error("Networks don`t have the same input/output size!");
   }
 
   // Initialise offspring
-  var offspring = new Network(network1.input, network1.output);
+  const offspring = new Network(network1.input_size, network1.output_size);
   offspring.connections = [];
   offspring.nodes = [];
 
   // Save scores and create a copy
-  var score1 = network1.score || 0;
-  var score2 = network2.score || 0;
+  const score1 = network1.score || 0;
+  const score2 = network2.score || 0;
 
   // Determine offspring node size
-  var size;
-  if(equal || score1 === score2) {
-    let max = Math.max(network1.nodes.length, network2.nodes.length);
-    let min = Math.min(network1.nodes.length, network2.nodes.length);
+  let size;
+  if (equal || score1 === score2) {
+    const max = Math.max(network1.nodes.length, network2.nodes.length);
+    const min = Math.min(network1.nodes.length, network2.nodes.length);
     size = Math.floor(Math.random() * (max - min + 1) + min);
-  } else if(score1 > score2) {
+  } else if (score1 > score2) {
     size = network1.nodes.length;
   } else {
     size = network2.nodes.length;
   }
 
   // Rename some variables for easier reading
-  var outputSize = network1.output;
+  const output_size = network1.output_size;
 
   // Set indexes so we don't need indexOf
-  var i;
+  let i;
   for (i = 0; i < network1.nodes.length; i++) {
     network1.nodes[i].index = i;
   }
@@ -1654,8 +1674,8 @@ Network.cross_over = function(network1, network2, equal) {
   // Assign nodes from parents to offspring
   for (i = 0; i < size; i++) {
     // Determine if an output node is needed
-    var node;
-    if (i < size - outputSize) {
+    let node;
+    if (i < size - output_size) {
       let random = Math.random();
       node = random >= 0.5 ? network1.nodes[i] : network2.nodes[i];
       let other = random < 0.5 ? network1.nodes[i] : network2.nodes[i];
@@ -1671,104 +1691,104 @@ Network.cross_over = function(network1, network2, equal) {
       }
     }
 
-    var newNode = new Node();
-    newNode.bias = node.bias;
-    newNode.squash = node.squash;
-    newNode.type = node.type;
+    const new_node = new Node();
+    new_node.bias = node.bias;
+    new_node.squash = node.squash;
+    new_node.type = node.type;
 
-    offspring.nodes.push(newNode);
+    offspring.nodes.push(new_node);
   }
 
   // Create arrays of connection genes
-  var n1conns = {};
-  var n2conns = {};
+  const n1connections = {};
+  const n2connections = {};
 
   // Normal connections
   for (i = 0; i < network1.connections.length; i++) {
-    let conn = network1.connections[i];
-    let data = {
-      weight: conn.weight,
-      from: conn.from.index,
-      to: conn.to.index,
-      gater: conn.gater != null ? conn.gater.index : -1
+    const connection = network1.connections[i];
+    const data = {
+      weight: connection.weight,
+      from: connection.from.index,
+      to: connection.to.index,
+      gater: connection.gater != null ? connection.gater.index : -1
     };
-    n1conns[Connection.innovationID(data.from, data.to)] = data;
+    n1connections[Connection.innovationID(data.from, data.to)] = data;
   }
 
   // Selfconnections
   for (i = 0; i < network1.selfconns.length; i++) {
-    let conn = network1.selfconns[i];
-    let data = {
-      weight: conn.weight,
-      from: conn.from.index,
-      to: conn.to.index,
-      gater: conn.gater != null ? conn.gater.index : -1
+    const connection = network1.selfconns[i];
+    const data = {
+      weight: connection.weight,
+      from: connection.from.index,
+      to: connection.to.index,
+      gater: connection.gater != null ? connection.gater.index : -1
     };
-    n1conns[Connection.innovationID(data.from, data.to)] = data;
+    n1connections[Connection.innovationID(data.from, data.to)] = data;
   }
 
   // Normal connections
   for (i = 0; i < network2.connections.length; i++) {
-    let conn = network2.connections[i];
-    let data = {
-      weight: conn.weight,
-      from: conn.from.index,
-      to: conn.to.index,
-      gater: conn.gater != null ? conn.gater.index : -1
+    const connection = network2.connections[i];
+    const data = {
+      weight: connection.weight,
+      from: connection.from.index,
+      to: connection.to.index,
+      gater: connection.gater != null ? connection.gater.index : -1
     };
-    n2conns[Connection.innovationID(data.from, data.to)] = data;
+    n2connections[Connection.innovationID(data.from, data.to)] = data;
   }
 
   // Selfconnections
   for (i = 0; i < network2.selfconns.length; i++) {
-    let conn = network2.selfconns[i];
-    let data = {
-      weight: conn.weight,
-      from: conn.from.index,
-      to: conn.to.index,
-      gater: conn.gater != null ? conn.gater.index : -1
+    const connection = network2.selfconns[i];
+    const data = {
+      weight: connection.weight,
+      from: connection.from.index,
+      to: connection.to.index,
+      gater: connection.gater != null ? connection.gater.index : -1
     };
-    n2conns[Connection.innovationID(data.from, data.to)] = data;
+    n2connections[Connection.innovationID(data.from, data.to)] = data;
   }
 
   // Split common conn genes from disjoint or excess conn genes
   var connections = [];
-  var keys1 = Object.keys(n1conns);
-  var keys2 = Object.keys(n2conns);
+  var keys1 = Object.keys(n1connections);
+  var keys2 = Object.keys(n2connections);
   for (i = keys1.length - 1; i >= 0; i--) {
     // Common gene
-    if (typeof n2conns[keys1[i]] !== `undefined`) {
-      let conn = Math.random() >= 0.5 ? n1conns[keys1[i]] : n2conns[keys1[i]];
-      connections.push(conn);
+    if (typeof n2connections[keys1[i]] !== `undefined`) {
+      const connection = Math.random() >= 0.5 ? n1connections[keys1[i]] : n2connections[keys1[i]];
+      connections.push(connection);
 
       // Because deleting is expensive, just set it to some value
-      n2conns[keys1[i]] = undefined;
+      n2connections[keys1[i]] = undefined;
     } else if (score1 >= score2 || equal) {
-      connections.push(n1conns[keys1[i]]);
+      connections.push(n1connections[keys1[i]]);
     }
   }
 
   // Excess/disjoint gene
   if (score2 >= score1 || equal) {
     for (i = 0; i < keys2.length; i++) {
-      if (typeof n2conns[keys2[i]] !== `undefined`) {
-        connections.push(n2conns[keys2[i]]);
+      if (typeof n2connections[keys2[i]] !== `undefined`) {
+        connections.push(n2connections[keys2[i]]);
       }
     }
   }
 
   // Add common conn genes uniformly
   for (i = 0; i < connections.length; i++) {
-    let connData = connections[i];
-    if (connData.to < size && connData.from < size) {
-      let from = offspring.nodes[connData.from];
-      let to = offspring.nodes[connData.to];
-      let conn = offspring.connect(from, to)[0];
+    let connection_data = connections[i];
+    if (connection_data.to < size && connection_data.from < size) {
+      const from = offspring.nodes[connection_data.from];
+      const to = offspring.nodes[connection_data.to];
+      const connection = offspring.connect(from, to)[0];
 
-      conn.weight = connData.weight;
+      connection.weight = connection_data.weight;
 
-      if (connData.gater !== -1 && connData.gater < size) {
-        offspring.gate(offspring.nodes[connData.gater], conn);
+      if (connection_data.gater !== -1 && connection_data.gater < size) {
+        offspring.gate(offspring.nodes[connection_data.gater], connection);
       }
     }
   }
@@ -1789,25 +1809,24 @@ module.exports = Network;
 * @param {Object} options - Configuration options
 * @param {number} input - The input size of `template` networks.
 * @param {number} output - The output size of `template` networks.
-* @param {boolean} [options.equal=false] When true [crossover](Network.cross_over) parent genomes are assumed to be equally fit and offspring are built with a random amount of neurons within the range of parents' number of neurons. Set to false to select the "fittest" parent as the neuron amount template.
+* @param {boolean} [options.equal=false] When true [crossover](Network.crossOver) parent genomes are assumed to be equally fit and offspring are built with a random amount of neurons within the range of parents' number of neurons. Set to false to select the "fittest" parent as the neuron amount template.
 * @param {number} [options.clear=false] Clear the context of the population's nodes, basically reverting them to 'new' neurons. Useful for predicting timeseries with LSTM's.
-* @param {number} [options.popsize=50] Population size of each generation.
+* @param {number} [options.population_size=50] Population size of each generation.
 * @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connectoins.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
 * @param {cost} [options.cost=cost.MSE]  Specify the cost function for the evolution, this tells a genome in the population how well it's performing. Default: methods.cost.MSE (recommended).
 * @param {number} [options.amount=1] Set the amount of times to test the trainingset on a genome each generation. Useful for timeseries. Do not use for regular feedfoward problems.
 * @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algortihtms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
 * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
-* @param {number} [options.mutationRate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.4.
-* @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
-* @param {boolean} [options.fitnessPopulation=false] Flag to return the fitness of a population of genomes. Set this to false to evaluate each genome inidividually.
+* @param {number} [options.mutation_rate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.4.
+* @param {number} [options.mutation_amount=1] If mutation occurs (randomNumber < mutation_rate), sets amount of times a mutation method will be applied to the network.
+* @param {boolean} [options.fitness_population=false] Flag to return the fitness of a population of genomes. Set this to false to evaluate each genome inidividually.
 * @param {Function} [options.fitness] - A fitness function to evaluate the networks. Takes a `dataset` and a `genome` i.e. a [network](Network) or a `population` i.e. an array of networks and sets the genome `.score` property
 * @param {string} [options.selection=FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
 * @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
 * @param {Network} [options.network=false] Network to start evolution from
-* @param {number} [options.maxNodes=Infinity] Maximum nodes for a potential network
+* @param {number} [options.max_nodes=Infinity] Maximum nodes for a potential network
 * @param {number} [options.maxConns=Infinity] Maximum connections for a potential network
 * @param {number} [options.maxGates=Infinity] Maximum gates for a potential network
-* @param {function} [options.mutationSelection=ALL] Custom mutation selection function if given
 * @param {mutation[]} [options.mutation] Sets allowed [mutation methods](mutation) for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent
 *
 * @prop {number} generation A count of the generations
@@ -1819,7 +1838,7 @@ module.exports = Network;
 * let neat = new Neat(4, 1, dataset, {
 *   elitism: 10,
 *   clear: true,
-*   popsize: 1000
+*   population_size: 1000
 * });
 */
 const Neat = function(dataset, {
@@ -1828,15 +1847,15 @@ const Neat = function(dataset, {
   output = 1,
   equal = true,
   clean = false,
-  popsize = 50,
+  population_size = 50,
   growth = 0.0001,
   cost = methods.cost.MSE,
   amount = 1,
   elitism = 1,
   provenance = 0,
-  mutationRate = 0.4,
-  mutationAmount = 1,
-  fitnessPopulation = false,
+  mutation_rate = 0.4,
+  mutation_amount = 1,
+  fitness_population = false,
   fitness = function(set = dataset, genome, amount = 1, cost = methods.cost.MSE, growth = 0.0001) {
     let score = 0;
     for (let i = 0; i < amount; i++) score -= genome.test(set, cost).error;
@@ -1856,10 +1875,9 @@ const Neat = function(dataset, {
   mutation = methods.mutation.FFW,
   efficientMutation = false,
   template = (new Network(input, output)),
-  maxNodes = Infinity,
+  max_nodes = Infinity,
   maxConns = Infinity,
-  maxGates = Infinity,
-  selectMutationMethod = this.selectMutationMethod
+  maxGates = Infinity
 } = {}) {
   let self = this;
 
@@ -1869,25 +1887,24 @@ const Neat = function(dataset, {
     output,
     equal,
     clean,
-    popsize,
+    population_size,
     growth,
     cost,
     amount,
     elitism,
     provenance,
-    mutationRate,
-    mutationAmount,
-    fitnessPopulation,
+    mutation_rate,
+    mutation_amount,
+    fitness_population,
     fitness,
     selection,
     crossover,
     mutation,
     efficientMutation,
     template,
-    maxNodes,
+    max_nodes,
     maxConns,
-    maxGates,
-    selectMutationMethod
+    maxGates
   });
 
   /**
@@ -1895,12 +1912,12 @@ const Neat = function(dataset, {
    *
    * @param {Network} network
    */
-  self.createPool = function createInitialPopulation (network, popsize) {
-    return Array(popsize).fill(Network.from_JSON({ ...network.to_JSON(), score: undefined }))
+  self.createPool = function createPool (network, population_size) {
+    return Array(population_size).fill(Network.fromJSON({ ...network.toJSON(), score: undefined }))
   };
 
   // Initialise the genomes
-  self.population = self.createPool(self.template, self.popsize);
+  self.population = self.createPool(self.template, self.population_size);
 
   self.filterGenome = function(population, template, pickGenome, adjustGenome) {
       let filtered = [...population]; // avoid mutations
@@ -1922,63 +1939,42 @@ const Neat = function(dataset, {
         }
       } else
           for (let i = 0; i < population.length; i++)
-            if(check(filtered[i])) filtered[i] = Network.from_JSON(template.to_JSON)
+            if(check(filtered[i])) filtered[i] = Network.fromJSON(template.toJSON)
 
       return filtered;
     };
 
   /**
-   * Selects a random mutation method for a genome according to the parameters
+   * Selects a random mutation method for a genome and mutates it
    *
    * @param {Network} genome Network to test for possible mutations
    * @param {mutation[]} allowedMutations An array of allowed mutations to pick from
-   * @param {boolean} efficientMutation A flag to enable checking for possible mutations on a [network](Network)
    *
    * @return {mutation} Selected mutation
   */
-  self.selectMutationMethod = function (genome, allowedMutations, efficientMutation) {
-    efficientMutation = false;
-    if(efficientMutation) {
-      let filtered = allowedMutations ? [...allowedMutations] : [...self.mutation]
-      let success = false
-      while(!success) {
-        const currentMethod = filtered[Math.floor(Math.random() * filtered.length)]
+  self.mutateRandom = function selectMethodAndMutateNetwork(genome, allowedMutations) {
+      let possible = allowedMutations ? [...allowedMutations] : [...self.mutation]
 
-        if(currentMethod === methods.mutation.ADD_NODE && genome.nodes.length >= self.maxNodes || currentMethod === methods.mutation.ADD_CONN && genome.connections.length >= self.maxConns || currentMethod === methods.mutation.ADD_GATE && genome.gates.length >= self.maxGates) {
-          success = false
-        } else {
-          success = genome.mutate(currentMethod) // actual mutation happens
-        }
+      // remove any methods disallowed by user-limits: i.e. maxNodes, maxConns, ...
+      possible = possible.filter(function(method) {
+        return (
+          method !== methods.mutation.ADD_NODE || genome.nodes.length < self.maxNodes ||
+          method !== methods.mutation.ADD_CONN || genome.connections.length < self.maxConns ||
+          method !== methods.mutation.ADD_GATE || genome.gates.length < self.maxGates
+        )
+      })
 
-        // we're done
-        if(success || !filtered || filtered.length === 0) return
+      do {
+        const current = possible[Math.floor(Math.random() * possible.length)]
 
-        // if not, remove the impossible method
-        filtered = filtered.filter(function(value, index, array) {
-          return value.name !== currentMethod.name
-        })
-      }
-    } else {
-      let allowed = allowedMutations ? allowedMutations : self.mutation
-      let current = allowed[Math.floor(Math.random() * allowed.length)]
+        // attempt mutation, success: return mutation method, failure: remove from possible methods
+        if(genome.mutate(current)) return current
+        else possible = possible.filter(function(method) { return method.name !== current.name })
 
-      if (current === methods.mutation.ADD_NODE && genome.nodes.length >= self.maxNodes) {
-        if (config.warnings) console.warn(`maxNodes exceeded!`)
-        return null;
-      }
+        // Return null when mutation is impossible
+        if((!possible || possible.length === 0)) return null;
 
-      if (current === methods.mutation.ADD_CONN && genome.connections.length >= self.maxConns) {
-        if (config.warnings) console.warn(`maxConns exceeded!`);
-        return null;
-      }
-
-      if (current === methods.mutation.ADD_GATE && genome.gates.length >= self.maxGates) {
-        if (config.warnings) console.warn(`maxGates exceeded!`);
-        return null;
-      }
-
-      return current
-    }
+      } while(true)
   };
 
   /**
@@ -1994,7 +1990,7 @@ const Neat = function(dataset, {
    * let neat = new Neat(dataset, {
    *  elitism: 10,
    *  clear: true,
-   *  popsize: 1000
+   *  population_size: 1000
    * });
    *
    * let filter = function(genome) {
@@ -2013,8 +2009,8 @@ const Neat = function(dataset, {
   */
   self.evolve = async function (evolveSet, pickGenome, adjustGenome) {
     // Check if evolve is possible
-    if(self.elitism + self.provenance > self.popsize) throw new Error("Can`t evolve! Elitism + provenance exceeds population size!");
-    
+    if(self.elitism + self.provenance > self.population_size) throw new Error("Can`t evolve! Elitism + provenance exceeds population size!");
+
     evolveSet = evolveSet || self.dataset;
 
     // Check population for evaluation
@@ -2032,10 +2028,10 @@ const Neat = function(dataset, {
     for (let i = 0; i < self.elitism; i++) elitists.push(self.population[i]);
 
     // Provenance
-    let newPopulation = Array(self.provenance).fill(Network.from_JSON(self.template.to_JSON()))
+    let newPopulation = Array(self.provenance).fill(Network.fromJSON(self.template.toJSON()))
 
     // Breed the next individuals
-    for (let i = 0; i < self.popsize - self.elitism - self.provenance; i++)
+    for (let i = 0; i < self.population_size - self.elitism - self.provenance; i++)
       newPopulation.push(self.getOffspring());
 
     // Replace the old population with the new population
@@ -2057,11 +2053,11 @@ const Neat = function(dataset, {
     // Sort in order of fitness (fittest first)
     self.sort()
 
-    const fittest = Network.from_JSON(self.population[0].to_JSON());
+    const fittest = Network.fromJSON(self.population[0].toJSON());
     fittest.score = self.population[0].score;
 
     // Reset the scores
-    for (let i = 0; i < self.population.length; i++) self.population[i].score = undefined;
+    for(let i = 0; i < self.population.length; i++) self.population[i].score = undefined;
 
     self.generation++;
 
@@ -2112,7 +2108,7 @@ const Neat = function(dataset, {
         return self.population[Math.floor(Math.random() * self.population.length)];
       }
       case `TOURNAMENT`: {
-        if (self.selection.size > self.popsize) {
+        if (self.selection.size > self.population_size) {
           throw new Error(`Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size`);
         }
 
@@ -2144,20 +2140,28 @@ const Neat = function(dataset, {
     var parent1 = self.getParent();
     var parent2 = self.getParent();
 
-    return Network.cross_over(parent1, parent2, self.equal);
+    return Network.crossOver(parent1, parent2, self.equal);
   };
 
   /**
    * Mutates the given (or current) population
+   *
+   * @param {mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
    */
-  self.mutate = function () {
-    // Elitist genomes should not be included
-    for (let i = 0; i < self.population.length; i++) {
-      if (Math.random() <= self.mutationRate) {
-        for (let j = 0; j < self.mutationAmount; j++) {
-          const mutationMethod = self.selectMutationMethod(self.population[i], self.mutation, self.efficientMutation);
-          self.efficientMutation ? null : self.population[i].mutate(mutationMethod);
-        }
+  self.mutate = function (method) {
+    if(method) {
+      // Elitist genomes should not be included
+      for(let i = 0; i < self.population.length; i++) {
+        if (Math.random() <= self.mutation_rate)
+          for (let j = 0; j < self.mutation_amount; j++)
+            self.population[i].mutate(method)
+      }
+    } else {
+      // Elitist genomes should not be included
+      for(let i = 0; i < self.population.length; i++) {
+        if (Math.random() <= self.mutation_rate)
+          for (let j = 0; j < self.mutation_amount; j++)
+            self.mutateRandom(self.population[i], self.mutation)
       }
     }
   };
@@ -2169,8 +2173,8 @@ const Neat = function(dataset, {
    */
   self.evaluate = async function(dataset) {
     dataset = dataset || self.dataset;
-    
-    if (self.fitnessPopulation) {
+
+    if (self.fitness_population) {
       if (self.clear) {
         for (let i = 0; i < self.population.length; i++)
           self.population[i].clear();
@@ -2234,14 +2238,14 @@ const Neat = function(dataset, {
   /**
    * Export the current population to a JSON object
    *
-   * Can be used later with `from_JSON(json)` to reload the population
+   * Can be used later with `fromJSON(json)` to reload the population
    *
    * @return {object[]} A set of genomes (a population) represented as JSON objects.
    */
-  self.to_JSON = function exportPopulation() {
+  self.toJSON = function toJSON() {
     var json = [];
     for (let i = 0; i < self.population.length; i++)
-      json.push(self.population[i].to_JSON());
+      json.push(self.population[i].toJSON());
 
     return json;
   };
@@ -2251,11 +2255,11 @@ const Neat = function(dataset, {
    *
    * @param {object[]} json set of genomes (a population) represented as JSON objects.
   */
-  self.from_JSON = function importPopulation(json) {
+  self.fromJSON = function fromJSON(json) {
     var population = [];
     for (let i = 0; i < json.length; i++)
-      population.push(Network.from_JSON(json[i]));
+      population.push(Network.fromJSON(json[i]));
     self.population = population;
-    self.popsize = population.length;
+    self.population_size = population.length;
   };
 }
