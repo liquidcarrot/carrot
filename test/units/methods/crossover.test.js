@@ -1,17 +1,25 @@
-let { assert, expect } = require('chai');
-let should = require('chai').should();
-let carrot = require('../../../src/carrot');
+const { expect } = require('chai');
+const { methods }  = require('../../../src/carrot');
+const { crossover } = methods;
 
-/**
- *
- * There are 5 questions every unit test must answer.
- *
- * What is the unit under test (module, function, class, whatever)?
- * What should it do? (Prose description)
- * What was the actual output?
- * What was the expected output?
- * How do you reproduce the failure?
- *
- */
+describe("crossover", function(){
+  Object.keys(crossover).forEach(function(type) {
+    describe(`crossover.${type}`, function(){
+      it(`crossover.${type} => {Object}`, function() {
+        expect(crossover[type]).to.be.an("object");
+      })
+      it(`crossover.${type}.name => {string}`, function() {
+        expect(crossover[type].name).to.be.a("string");
+      })
+      if(crossover[type].config != undefined) {
+        it(`crossover.${type}.config => {Array}`, function() {
+          expect(crossover[type].config).to.be.an("Array");
+        })
+      }
+    })
+  })
+})
+
+
  
  
