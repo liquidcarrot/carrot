@@ -1,5 +1,4 @@
-const { assert, expect } = require('chai');
-const should = require('chai').should();
+const { expect } = require('chai');
 const { methods } = require('../../../src/carrot');
 const { connection } = methods;
 
