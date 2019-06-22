@@ -19,7 +19,7 @@ const Node = require('./node');
 * @prop {Connection[]} [connections.self=[]] Self connections
 *
 * @example
-* let { Layer } = require("@liquid-carrot/carrot");
+* let { Group } = require("@liquid-carrot/carrot");
 *
 * // A group with 5 nodes
 * let A = new Group(5);
@@ -89,18 +89,21 @@ function Group(size, type) {
   * @param {boolean} [options.update=true]
   *
   * @example
-  * let { Layer } = require("@liquid-carrot/carrot");
+  * let { Group } = require("@liquid-carrot/carrot");
   *
-  * var A = new Group(2);
-  * var B = new Group(3);
+  * let A = new Group(2);
+  * let B = new Group(3);
   *
+  * // Connects group A to group B - creating a "little network"
   * A.connect(B);
   *
-  * A.activate([1,0]); // set the input
-  * B.activate(); // get the output
+  * // Activates the "little network"
+  * A.activate([1,0]);
+  * B.activate();
   *
-  * // Then teach the network with learning rate and wanted output
-  * B.propagate(0.3, 0.9, [0,1]);
+  * // Teaches the network
+  * B.propagate([0,1,0.2]);
+  * A.propagate();
   */
   self.propagate = function(target, options) {
     if (!options && _.isPlainObject(target)) {
@@ -129,7 +132,7 @@ function Group(size, type) {
   * @returns {Connection[]} The formed connections
   *
   * @example
-  * let { Layer } = require("@liquid-carrot/carrot");
+  * let { Group } = require("@liquid-carrot/carrot");
   *
   * let A = new Group(4);
   * let B = new Group(5);
@@ -275,7 +278,7 @@ function Group(size, type) {
   * @param {string} values.type <code>input</code>, <code>hidden</code> or <code>output</code>, should not be used manually (setting to <code>constant</code> will disable bias/weight changes)
   *
   * @example
-  * let { Layer } = require("@liquid-carrot/carrot");
+  * let { Group } = require("@liquid-carrot/carrot");
   *
   * var group = new Group(4);
   *
