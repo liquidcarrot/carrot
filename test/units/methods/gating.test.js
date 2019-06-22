@@ -1,16 +1,16 @@
-let { assert, expect } = require('chai');
-let should = require('chai').should();
-let carrot = require('../../../src/carrot');
+const { expect } = require('chai');
+const { methods } = require('../../../src/carrot');
+const { gating } = methods;
 
-/**
- *
- * There are 5 questions every unit test must answer.
- *
- * What is the unit under test (module, function, class, whatever)?
- * What should it do? (Prose description)
- * What was the actual output?
- * What was the expected output?
- * How do you reproduce the failure?
- *
- */
- 
+describe("gating", function() {
+  Object.keys(gating).forEach(function(type) {
+    describe(`gating.${type}`, function() {
+      it(`gating.${type} => {Object}`, function() {
+        expect(gating[type]).to.be.an("object");
+      })
+      it(`gating.${type}.name => {string}`, function() {
+        expect(gating[type].name).to.be.a("string");
+      })
+    })
+  })
+})
