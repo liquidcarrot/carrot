@@ -1,5 +1,3 @@
-const _ = require("lodash");
-
 function validate(targets, outputs) {
   if(targets == undefined || outputs == undefined) throw new ReferenceError("Missing at least one required parameters: `targets`, `outputs`");
   
@@ -39,10 +37,8 @@ const cost = {
     [targets, outputs] = validate(targets, outputs);
     
     const error = outputs.reduce(function(total, value, index) {
-      return total -= targets[index] * Math.log(Math.max(outputs[index], 1e-15)) + (1 - targets[index]) * Math.log(1 - Math.max(outputs[index], 1e-15))
-    }, 0)
-    
-    // const error = _.reduce(outputs, (total, value, index) => total -= targets[index] * Math.log(Math.max(outputs[index], 1e-15)) + (1 - targets[index]) * Math.log(1 - Math.max(outputs[index], 1e-15)), 0)
+      return total -= targets[index] * Math.log(Math.max(outputs[index], 1e-15)) + (1 - targets[index]) * Math.log(1 - Math.max(outputs[index], 1e-15));
+    }, 0);
     
     return error / outputs.length;
   },
@@ -64,7 +60,9 @@ const cost = {
   MSE: function(targets, outputs) {
     [targets, outputs] = validate(targets, outputs);
     
-    const error = _.reduce(outputs, (total, value, index) => total += Math.pow(targets[index] - outputs[index], 2), 0)
+    const error = outputs.reduce(function(total, value, index) {
+      return total += Math.pow(targets[index] - outputs[index], 2);
+    }, 0);
     
     return error / outputs.length;
   },
@@ -94,7 +92,9 @@ const cost = {
   BINARY: function(targets, outputs) {
     [targets, outputs] = validate(targets, outputs);
     
-    const error = _.reduce(outputs, (total, value, index) => total += Math.round(targets[index] * 2) !== Math.round(outputs[index] * 2), 0)
+    const error = outputs.reduce(function(total, value, index) {
+      return total += Math.round(targets[index] * 2) !== Math.round(outputs[index] * 2);
+    }, 0);
     
     return error;
   },
@@ -122,7 +122,9 @@ const cost = {
   MAE: function(targets, outputs) {
     [targets, outputs] = validate(targets, outputs);
     
-    const error = _.reduce(outputs, (total, value, index) => total += Math.abs(targets[index] - outputs[index]), 0)
+    const error = outputs.reduce(function(total, value, index) {
+      return total += Math.abs(targets[index] - outputs[index]);
+    }, 0);
     
     return error / outputs.length;
   },
@@ -150,7 +152,9 @@ const cost = {
   MAPE: function(targets, outputs) {
     [targets, outputs] = validate(targets, outputs);
     
-    const error = _.reduce(outputs, (total, value, index) => total += Math.abs((outputs[index] - targets[index]) / Math.max(targets[index], 1e-15)), 0)
+    const error = outputs.reduce(function(total, value, index) {
+      return total += Math.abs((outputs[index] - targets[index]) / Math.max(targets[index], 1e-15));
+    }, 0);
     
     return error / outputs.length;
   },
@@ -177,12 +181,12 @@ const cost = {
     let error = 0;
     let sum = 0;
     
-    _.times(outputs.length, (index) => {
+    for (let index = 0; index < outputs.length; index++) {
       error += Math.abs(targets[index] - outputs[index]);
       sum += targets[index];
-    })
+    }
     
-     return error / sum;
+    return error / sum;
   },
   
   /**
@@ -208,7 +212,9 @@ const cost = {
   MSLE: function(targets, outputs) {
     [targets, outputs] = validate(targets, outputs);
     
-    const error = _.reduce(outputs, (total, value, index) => total += Math.log(Math.max(targets[index], 1e-15)) - Math.log(Math.max(outputs[index], 1e-15)), 0)
+    const error = outputs.reduce(function(total, value, index) {
+      return total += Math.log(Math.max(targets[index], 1e-15)) - Math.log(Math.max(outputs[index], 1e-15));
+    }, 0);
     
     return error;
   },
@@ -236,7 +242,9 @@ const cost = {
   HINGE: function(targets, outputs) {
     [targets, outputs] = validate(targets, outputs);
     
-    const error = _.reduce(outputs, (total, value, index) => total += Math.max(0, 1 - targets[index] * outputs[index]), 0)
+    const error = outputs.reduce(function(total, value, index) {
+      return total += Math.max(0, 1 - targets[index] * outputs[index]);
+    }, 0);
     
     return error;
   }
