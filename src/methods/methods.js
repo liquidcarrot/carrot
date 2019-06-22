@@ -13,7 +13,7 @@
 * @prop connection
 * @prop rate
 */
-var methods = {
+const methods = {
   activation: require('./activation'),
   mutation: require('./mutation'),
   selection: require('./selection'),

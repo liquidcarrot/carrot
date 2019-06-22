@@ -1,5 +1,3 @@
-const _ = require("lodash");
-
 /**
 * Activation functions
 *
@@ -39,12 +37,12 @@ const activation = {
   * let A = new Node();
   * A.squash = methods.activation.LOGISTIC;
   */
-  LOGISTIC: function (x, derivate) {
-    if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
+  LOGISTIC: function(x, derivate) {
+    if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
     const f = derivate ? (x) => Math.exp(-x) / (Math.pow((1 + Math.exp(-x)), 2)) : (x) => 1 / (1 + Math.exp(-x));
     
-    return _.isArray(x) ? _.map(x, f) : f(x);
+    return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
   * [TanH function.](https://en.wikipedia.org/wiki/Hyperbolic_function#Hyperbolic_tangent)
@@ -61,12 +59,12 @@ const activation = {
   * let A = new Node();
   * A.squash = methods.activation.TANH;
   */
-  TANH: function (x, derivate) {
-    if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
+  TANH: function(x, derivate) {
+    if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
     const f = derivate ? (x) => 1 - (Math.tanh(x) * Math.tanh(x)) : (x) => Math.tanh(x)
     
-    return _.isArray(x) ? _.map(x, f) : f(x);
+    return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
   * [Identity function.](https://en.wikipedia.org/wiki/Identity_function)
@@ -85,12 +83,12 @@ const activation = {
   * let A = new Node();
   * A.squash = methods.activation.IDENTITY;
   */
-  IDENTITY: function (x, derivate) {
-    if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
+  IDENTITY: function(x, derivate) {
+    if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
     const f = derivate ? (x) =>  1 : (x) => x;
     
-    return _.isArray(x) ? _.map(x, f) : f(x);
+    return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
   * [Step function.](https://en.wikipedia.org/wiki/Heaviside_step_function)
@@ -107,12 +105,12 @@ const activation = {
   * let A = new Node();
   * A.squash = methods.activation.STEP;
   */
-  STEP: function (x, derivate) {
-    if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
+  STEP: function(x, derivate) {
+    if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
     const f = derivate ? (x) => 0 : (x) => x > 0 ? 1 : 0;
     
-    return _.isArray(x) ? _.map(x, f) : f(x);
+    return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
   * [ReLU function.]{@link https://en.wikipedia.org/wiki/Rectifier_(neural_networks)}
@@ -129,12 +127,12 @@ const activation = {
   * let A = new Node();
   * A.squash = methods.activation.RELU;
   */
-  RELU: function (x, derivate) {
-    if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
+  RELU: function(x, derivate) {
+    if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
     const f = derivate ? (x) => x > 0 ? 1 : 0 : (x) => x > 0 ? x : 0;
     
-    return _.isArray(x) ? _.map(x, f) : f(x);
+    return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
   * [Softsign function.](https://en.wikipedia.org/wiki/Activation_function#Comparison_of_activation_functions)
@@ -151,12 +149,12 @@ const activation = {
   * let A = new Node();
   * A.squash = methods.activation.SOFTSIGN;
   */
-  SOFTSIGN: function (x, derivate) {
-    if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
+  SOFTSIGN: function(x, derivate) {
+    if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
     const f = derivate ? (x) => x / ((1 + Math.abs(x)) * (1 + Math.abs(x))) : (x) => x / 1 + Math.abs(x);
     
-    return _.isArray(x) ? _.map(x, f) : f(x);
+    return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
   * [Sinusoid function.](https://en.wikipedia.org/wiki/Sine_wave)
@@ -173,12 +171,12 @@ const activation = {
   * let A = new Node();
   * A.squash = methods.activation.SINUSOID;
   */
-  SINUSOID: function (x, derivate) {
-    if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
+  SINUSOID: function(x, derivate) {
+    if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
     const f = derivate ? (x) => Math.cos(x) : (x) => Math.sin(x);
     
-    return _.isArray(x) ? _.map(x, f) : f(x);
+    return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
   * [Guassian function.](https://en.wikipedia.org/wiki/Gaussian_function)
@@ -195,12 +193,12 @@ const activation = {
   * let A = new Node();
   * A.squash = methods.activation.GAUSSIAN;
   */
-  GAUSSIAN: function (x, derivate) {
-    if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
+  GAUSSIAN: function(x, derivate) {
+    if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
     const f = derivate ? (x) => -2 * x * Math.exp(-(x * x)) : (x) => Math.exp(-(x * x));
     
-    return _.isArray(x) ? _.map(x, f) : f(x);
+    return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
   * [Bent identity function.](https://en.wikipedia.org/wiki/Activation_function#Comparison_of_activation_functions)
@@ -217,12 +215,12 @@ const activation = {
   * let A = new Node();
   * A.squash = methods.activation.BENT_IDENTITY;
   */
-  BENT_IDENTITY: function (x, derivate) {
-    if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
+  BENT_IDENTITY: function(x, derivate) {
+    if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
     const f = derivate ? (x) => x / (2 * Math.sqrt((x * x) + 1)) + 1 : (x) => (Math.sqrt((x * x) + 1) - 1) / 2 + x;
     
-    return _.isArray(x) ? _.map(x, f) : f(x);
+    return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
   * [Bipolar function](https://wagenaartje.github.io/neataptic/docs/methods/activation/), if x > 0 then returns 1, otherwise returns -1
@@ -239,12 +237,12 @@ const activation = {
   * let A = new Node();
   * A.squash = methods.activation.BIPOLAR;
   */
-  BIPOLAR: function (x, derivate) {
-    if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
+  BIPOLAR: function(x, derivate) {
+    if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
     const f = derivate ? (x) => 0 : (x) => x > 0 ? 1 : -1;
     
-    return _.isArray(x) ? _.map(x, f) : f(x);
+    return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
   * [Bipolar sigmoid function.](https://wagenaartje.github.io/neataptic/docs/methods/activation/)
@@ -261,12 +259,12 @@ const activation = {
   * let A = new Node();
   * A.squash = methods.activation.BIPOLAR_SIGMOID;
   */
-  BIPOLAR_SIGMOID: function (x, derivate) {
-    if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
+  BIPOLAR_SIGMOID: function(x, derivate) {
+    if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
     const f = derivate ? (x) => (2 * Math.exp(-x)) / (Math.pow((1 + Math.exp(-x)), 2)) : (x) => 2 / (1 + Math.exp(-x)) - 1;
     
-    return _.isArray(x) ? _.map(x, f) : f(x);
+    return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
   * [Hard tanh function.](https://wagenaartje.github.io/neataptic/docs/methods/activation/)
@@ -283,12 +281,12 @@ const activation = {
   * let A = new Node();
   * A.squash = methods.activation.HARD_TANH;
   */
-  HARD_TANH: function (x, derivate) {
-    if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
+  HARD_TANH: function(x, derivate) {
+    if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
     const f = derivate ? (x) => x > -1 && x < 1 ? 1 : 0 : (x) => Math.max(-1, Math.min(1, x));
     
-    return _.isArray(x) ? _.map(x, f) : f(x);
+    return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
   * [Absolute function.](https://wagenaartje.github.io/neataptic/docs/methods/activation/)
@@ -307,12 +305,12 @@ const activation = {
   * let A = new Node();
   * A.squash = methods.activation.ABSOLUTE;
   */
-  ABSOLUTE: function (x, derivate) {
-    if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
+  ABSOLUTE: function(x, derivate) {
+    if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
     const f = derivate ? (x) => x < 0 ? -1 : 1 : (x) => Math.abs(x);
     
-    return _.isArray(x) ? _.map(x, f) : f(x);
+    return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
   * [Inverse function.](https://wagenaartje.github.io/neataptic/docs/methods/activation/)
@@ -329,12 +327,12 @@ const activation = {
   * let A = new Node();
   * A.squash = methods.activation.INVERSE;
   */
-  INVERSE: function (x, derivate) {
-    if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
+  INVERSE: function(x, derivate) {
+    if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
     const f = derivate ? (x) => -1 : (x) => 1 - x;
     
-    return _.isArray(x) ? _.map(x, f) : f(x);
+    return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
    * [Scaled exponential linear unit.](https://towardsdatascience.com/selu-make-fnns-great-again-snn-8d61526802a9)
@@ -355,15 +353,15 @@ const activation = {
    * let A = new Node();
    * A.squash = methods.activation.SELU;
    */
-  SELU: function (x, derivate) {
-    if(_.isNil(x)) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
+  SELU: function(x, derivate) {
+    if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
     
     const alpha = 1.6732632423543772848170429916717;
     const scale = 1.0507009873554804934193349852946;
     
     const f = derivate ? (x) => x > 0 ? scale : ((x > 0 ? x : alpha * Math.exp(x) - alpha) + alpha) * scale : (x) =>  (x > 0 ? x : alpha * Math.exp(x) - alpha) * scale;
     
-    return _.isArray(x) ? _.map(x, f) : f(x);
+    return Array.isArray(x) ? x.map(f) : f(x);
   }
 };
 

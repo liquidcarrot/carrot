@@ -6,7 +6,7 @@
 * @namespace
 *
 */
-var gating = {
+const gating = {
   /**
    * @constant
    * @type {object}

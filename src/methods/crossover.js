@@ -9,7 +9,7 @@
  *
  * @namespace
  */
-var crossover = {
+const crossover = {
   /**
    * @constant
    * @type {object}
