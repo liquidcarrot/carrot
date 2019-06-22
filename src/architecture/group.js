@@ -45,6 +45,9 @@ function Group(size, type) {
   /**
   * Activates all the nodes in the group
   *
+  * @function activate
+  * @memberof Group
+  *
   * @param {number[]} value Array of values of equal length to number of nodes, nodes are activated with corresponding value (order matters)
   *
   * @returns {number[]} Squashed output values
