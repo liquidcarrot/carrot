@@ -203,7 +203,7 @@ function Group(size, type) {
   * Make nodes from this group gate the given connection(s) between two other groups. You have to specify a [Gating Method](gating)
   *
   * @function gate
-  * @memerof Group
+  * @memberof Group
   *
   * @param {Connection[]|Connection} connections Connections to gate
   * @param {gating} method [Gating Method](gating)
@@ -265,6 +265,9 @@ function Group(size, type) {
 
   /**
   * Sets the value of a property for every node
+  *
+  * @function set
+  * @memberof Group
   *
   * @param {object} values A configuration object
   * @param {number} values.bias [Weight bias](https://deepai.org/machine-learning-glossary-and-terms/bias-vector)
