@@ -51,6 +51,7 @@ function Connection (from, to, weight, options) {
   /**
   * Converts the connection to a json object
   *
+  * @function toJSON
   * @memberof Connection
   *
   * @returns {object} A connection represented as a JSON object

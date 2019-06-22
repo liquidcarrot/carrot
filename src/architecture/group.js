@@ -43,22 +43,21 @@ function Group(size, type) {
   }
 
   /**
-  * Activates all the nodes in the group
+  * Activates all the nodes (neurons) in the group
   *
   * @function activate
   * @memberof Group
   *
-  * @param {number[]} value Array of values of equal length to number of nodes, nodes are activated with corresponding value (order matters)
+  * @param {number[]} inputs Array of inputs (numbers) for the group - _order matters._
   *
   * @returns {number[]} Squashed output values
   *
   * @example
-  * let { Layer } = require("@liquid-carrot/carrot");
+  * let { Group } = require("@liquid-carrot/carrot");
   *
-  * myGroup.activate();
+  * let group = new Group(3);
   *
-  * // or (array length must be same length as nodes in group)
-  * myGroup.activate([1, 0, 1]);
+  * group.activate([1, 0, 1]);
   */
   self.activate = function(inputs) {
     if (inputs != undefined && inputs.length !== self.nodes.length) throw new Error('Array with values should be same as the amount of nodes!');
@@ -79,6 +78,9 @@ function Group(size, type) {
   *
   * [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one.
   * If you combine a high learning rate with a lot of momentum, you will rush past the minimum with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
+  *
+  * @function propagate
+  * @memberof Group
   *
   * @param {number|number[]} [target] Ideal value(s) - _required for output nodes_
   * @param {Object} [options]
@@ -116,6 +118,9 @@ function Group(size, type) {
 
   /**
   * Connects the nodes in this group to nodes in another group or just a node
+  *
+  * @function connect
+  * @memberof Group
   *
   * @param {Group|Layer|Node} target Node(s) to form connections to
   * @param {connection} method [Connection Method](connection), determines how the nodes in this group will connect to the target (e.g. one-to-one, all-to-all)
@@ -196,6 +201,9 @@ function Group(size, type) {
 
   /**
   * Make nodes from this group gate the given connection(s) between two other groups. You have to specify a [Gating Method](gating)
+  *
+  * @function gate
+  * @memerof Group
   *
   * @param {Connection[]|Connection} connections Connections to gate
   * @param {gating} method [Gating Method](gating)
@@ -283,6 +291,9 @@ function Group(size, type) {
   /**
   * *INCOMPLETE* Disconnects all nodes from this group from another given group/node.
   *
+  * @function disconnect
+  * @memberof Group
+  *
   * @param {Group|Node} target Node(s) to remove connections to/from
   * @param {boolean} [twosided=false] Set to true, to disconnect both to and from connections simultaneously (applies to two-sided [Connections](Connection) only)
   */
@@ -311,6 +322,9 @@ function Group(size, type) {
 
   /**
   * Clear the context of the nodes in this group
+  *
+  * @function clear
+  * @memberof Group
   */
   self.clear = function () {
     for (let index = 0; index < self.nodes.length; index++) {

@@ -9,7 +9,6 @@ const Node = require("./node");
 // Easier variable naming
 const mutation = methods.mutation;
 
-
 /**
 * Create a neural network
 *
@@ -38,47 +37,82 @@ const mutation = methods.mutation;
 * let myNetwork = new architect.Perceptron(5, 20, 10, 5, 1);
 */
 function Network(input_size, output_size) {
-  if (typeof input_size === `undefined` || typeof output_size === `undefined`) {
-    throw new Error(`No input or output size given`);
-  }
+  if (typeof input_size === `undefined` || typeof output_size === `undefined`) throw new Error(`No input or output size given`);
+  
+  const self = this;
+  
   // *IDEA*: Store input & output nodes in arrays accessible by this.input and this.output instead of just storing the number
-  this.input_size = input_size;
-  this.output_size = output_size;
+  self.input_size = input_size;
+  self.output_size = output_size;
   // backwards compatibility
-  this.input = input_size;
-  this.output = output_size;
+  self.input = input_size;
+  self.output = output_size;
 
   // Store all the node and connection genes
-  this.nodes = []; // Stored in activation order
-  this.connections = [];
-  this.gates = [];
-  this.selfconns = [];
+  self.nodes = []; // Stored in activation order
+  self.connections = [];
+  self.gates = [];
+  self.selfconns = [];
 
   // Regularization
-  this.dropout = 0;
+  self.dropout = 0;
 
   // Create input and output nodes
-  var i;
-  for (i = 0; i < this.input_size + this.output_size; i++) {
-    var type = i < this.input_size ? `input` : `output`;
-    this.nodes.push(new Node(type));
+  // var i;
+  for (let i = 0; i < self.input_size + self.output_size; i++) {
+    const type = i < self.input_size ? `input` : `output`;
+    self.nodes.push(new Node(type));
   }
 
+  /**
+   * Connects a Node to another Node or Group in the network
+   *
+   * @function connect
+   * @memberof Network
+   *
+   * @param {Node} from The source Node
+   * @param {Node|Group} to The destination Node or Group
+   * @param {number} weight An initial weight for the connections to be formed
+   *
+   * @returns {Connection[]} An array of the formed connections
+   *
+   * @example
+   * let { Network } = require("@liquid-carrot/carrot");
+   *
+   * myNetwork.connect(myNetwork.nodes[4], myNetwork.nodes[5]); // connects network node 4 to network node 5
+   */
+  self.connect = function(from, to, weight) {
+    // many elements if dealing with groups for example
+    let connections = from.connect(to, weight);
+
+    for (let i = 0; i < connections.length; i++) {
+      let connection = connections[i];
+      if (from !== to) {
+        this.connections.push(connection);
+      } else {
+        this.selfconns.push(connection);
+      }
+    }
+
+    return connections;
+  }
+  
   // Connect input nodes with output nodes directly
-  for (i = 0; i < this.input_size; i++) {
-    for (var j = this.input_size; j < this.output_size + this.input_size; j++) {
+  for (let i = 0; i < self.input_size; i++) {
+    for (var j = self.input_size; j < self.output_size + self.input_size; j++) {
       // https://stats.stackexchange.com/a/248040/147931
-      var weight = Math.random() * this.input_size * Math.sqrt(2 / this.input_size);
-      this.connect(this.nodes[i], this.nodes[j], weight);
+      const weight = Math.random() * self.input_size * Math.sqrt(2 / self.input_size);
+      self.connect(self.nodes[i], self.nodes[j], weight);
     }
   }
-}
-
-Network.prototype = {
+  
   /**
    * Activates the network
    *
    * It will activate all the nodes in activation order and produce an output.
+   *
+   * @function activate
+   * @memberof Network
    *
    * @param {number[]} [input] Input values to activate nodes with
    * @param {boolean} training Used to toggle [dropout](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5)
@@ -93,7 +127,7 @@ Network.prototype = {
    *
    * myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
-  activate: function activate(input, training) {
+  self.activate = function(input, training) {
     const output = [];
 
     // Activate nodes chronologically
@@ -110,10 +144,13 @@ Network.prototype = {
     });
 
     return output;
-  },
+  }
 
   /**
    * Activates the network without calculating elegibility traces and such
+   *
+   * @function noTraceActivate
+   * @memberof Network
    *
    * @param {number[]} input An array of input values equal in size to the input layer
    *
@@ -127,7 +164,7 @@ Network.prototype = {
    *
    * myNetwork.noTraceActivate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
-  noTraceActivate: function noTraceActivate(input) {
+  self.noTraceActivate = function(input) {
     const output = [];
 
     // Activate nodes chronologically for forward feeding
@@ -143,10 +180,13 @@ Network.prototype = {
     });
 
     return output;
-  },
+  }
 
   /**
    * Backpropagate the network
+   *
+   * @function propagate
+   * @memberof Network
    *
    * This function allows you to teach the network. If you want to do more complex training, use the `network.train()` function.
    *
@@ -168,7 +208,7 @@ Network.prototype = {
    *  network.propagate(0.3, 0, true, [0]);
    * }
    */
-  propagate: function propagate(rate, momentum, update, target) {
+  self.propagate = function(rate, momentum, update, target) {
     // the or in the if is for backward compatibility
     const output_size = (this.output_size || this.output);
     const input_size = (this.input_size || this.input);
@@ -189,60 +229,39 @@ Network.prototype = {
     for (i = this.nodes.length - output_size - 1; i >= input_size; i--) {
       this.nodes[i].propagate({ rate, momentum, update });
     }
-  },
+  }
 
   /**
    * Clear the context of the network
+   *
+   * @function clear
+   * @memberof Network
    */
-  clear: function clear() {
+  self.clear = function() {
     for (let i = 0; i < this.nodes.length; i++) {
       this.nodes[i].clear();
     }
-  },
+  }
 
   /**
    * Returns a new identical network
    *
+   * @function clone
+   * @memberof Network
+   *
    * @returns {Network} Returns an identical network
    */
-  clone: function clone() {
+  self.clone = function() {
     const self = this;
 
     return new Network(self.input, self.output);
-  },
-
-  /**
-   * Connects a Node to another Node or Group in the network
-   *
-   * @param {Node} from The source Node
-   * @param {Node|Group} to The destination Node or Group
-   * @param {number} weight An initial weight for the connections to be formed
-   *
-   * @returns {Connection[]} An array of the formed connections
-   *
-   * @example
-   * let { Network } = require("@liquid-carrot/carrot");
-   *
-   * myNetwork.connect(myNetwork.nodes[4], myNetwork.nodes[5]); // connects network node 4 to network node 5
-   */
-  connect: function connect(from, to, weight) {
-    // many elements if dealing with groups for example
-    let connections = from.connect(to, weight);
-
-    for (let i = 0; i < connections.length; i++) {
-      let connection = connections[i];
-      if (from !== to) {
-        this.connections.push(connection);
-      } else {
-        this.selfconns.push(connection);
-      }
-    }
-
-    return connections;
-  },
+  }
 
   /**
    * Removes the connection of the `from` node to the `to` node
+   *
+   * @function disconnect
+   * @memberof Network
    *
    * @param {Node} from Source node
    * @param {Node} to Destination node
@@ -251,7 +270,7 @@ Network.prototype = {
    * myNetwork.disconnect(myNetwork.nodes[4], myNetwork.nodes[5]);
    * // now node 4 does not have an effect on the output of node 5 anymore
    */
-  disconnect: function disconnect(from, to) {
+  self.disconnect = function(from, to) {
     // Delete the connection in the network's connection array
     const connections = from === to ? this.selfconns : this.connections;
 
@@ -266,10 +285,13 @@ Network.prototype = {
 
     // Delete the connection at the sending and receiving neuron
     from.disconnect(to);
-  },
+  }
 
   /**
    * Makes a network node gate a connection
+   *
+   * @function gate
+   * @memberof Network
    *
    * @todo Add ability to gate several network connections at once
    *
@@ -282,7 +304,7 @@ Network.prototype = {
    * myNetwork.gate(myNetwork.nodes[1], myNetwork.connections[5])
    * // now: connection 5's weight is multiplied with node 1's activaton
    */
-  gate: function gate(node, connection) {
+  self.gate = function(node, connection) {
     if (this.nodes.indexOf(node) === -1) {
       throw new Error(`This node is not part of the network!`);
     } else if (connection.gater != null) {
@@ -291,10 +313,13 @@ Network.prototype = {
     }
     node.gate(connection);
     this.gates.push(connection);
-  },
+  }
 
   /**
    * Remove the gate of a connection.
+   *
+   * @function ungate
+   * @memberof Network
    *
    * @param {Connection} connection Connection to remove gate from
    *
@@ -309,7 +334,7 @@ Network.prototype = {
    * // Remove the gate from the connection
    * myNetwork.ungate(myNetwork.connections[5]);
    */
-  ungate: function ungate(connection) {
+  self.ungate = function(connection) {
     const index = this.gates.indexOf(connection);
     if (index === -1) {
       throw new Error(`This connection is not gated!`);
@@ -317,10 +342,13 @@ Network.prototype = {
 
     this.gates.splice(index, 1);
     connection.gater.ungate(connection);
-  },
+  }
 
   /**
    * Removes a node from a network, all its connections will be redirected. If it gates a connection, the gate will be removed.
+   *
+   * @function remove
+   * @memberof Network
    *
    * @param {Node} node Node to remove from the network
    *
@@ -332,7 +360,7 @@ Network.prototype = {
    * // Remove a node
    * myNetwork.remove(myNetwork.nodes[2]);
    */
-  remove: function remove(node) {
+  self.remove = function(node) {
     const index = this.nodes.indexOf(node);
 
     if (index === -1) {
@@ -400,10 +428,13 @@ Network.prototype = {
 
     // Remove the node from this.nodes
     this.nodes.splice(index, 1);
-  },
+  }
 
   /**
    * Checks whether a given mutation is possible, returns an array of candidates to use for a mutation when it is.
+   *
+   * @function possible
+   * @memberof Network
    *
    * @param {mutation} method [Mutation method](mutation)
    *
@@ -415,7 +446,7 @@ Network.prototype = {
    *
    * network.possible(mutation.SUB_NODE) // returns an array of nodes that can be removed
    */
-  possible: function mutationIsPossible(method) {
+  self.possible = function(method) {
     const self = this
     let candidates = []
     switch (method) {
@@ -485,10 +516,13 @@ Network.prototype = {
         // Check there are at least two possible nodes
         return (candidates.length >= 2) ? candidates : false
     }
-  },
+  }
 
   /**
    * Mutates the network with the given method
+   *
+   * @function mutate
+   * @memberof Network
    *
    * @param {mutation} method [Mutation method](mutation)
    *
@@ -499,7 +533,7 @@ Network.prototype = {
    *
    * myNetwork.mutate(mutation.ADD_GATE) // a random node will gate a random connection within the network
    */
-  mutate: function mutate(method) {
+  self.mutate = function(method) {
     if (typeof method === 'undefined') throw new Error('Mutate method is undefined!')
 
     let i, j;
@@ -670,10 +704,13 @@ Network.prototype = {
         return false;
       }
     }
-  },
+  }
 
   /**
    * Train the given data to this network
+   *
+   * @function train
+   * @memberof Network
    *
    * @param {Array<{input:number[],output:number[]}>} data A data of input values and ideal output values to train the network with
    * @param {Object} options Options used to train network
@@ -750,7 +787,7 @@ Network.prototype = {
    * });
    *
    */
-  train: function train(data, options) {
+  self.train = function(data, options) {
     // the or in the size is for backward compatibility
     if (data[0].input.length !== (this.input_size || this.input) || data[0].output.length !== (this.output_size || this.output)) {
       throw new Error(`Dataset input/output size should be same as network input/output size!`);
@@ -879,7 +916,7 @@ Network.prototype = {
       iterations: iteration_number,
       time: Date.now() - start
     };
-  },
+  }
 
   /**
    * Performs one training epoch and returns the error - this is a private function used in `this.train`
@@ -902,7 +939,7 @@ Network.prototype = {
    *
    * let example = ""
    */
-  _trainOneEpoch: function _trainOneEpoch(set, batch_size, training_rate, momentum, cost_function) {
+  self._trainOneEpoch = function(set, batch_size, training_rate, momentum, cost_function) {
     let error_sum = 0;
     for (var i = 0; i < set.length; i++) {
       const input = set[i].input;
@@ -917,10 +954,13 @@ Network.prototype = {
       error_sum += cost_function(correct_output, output);
     }
     return error_sum / set.length;
-  },
+  }
 
   /**
    * Tests a set and returns the error and elapsed time
+   *
+   * @function test
+   * @memberof Network
    *
    * @param {Array<{input:number[],output:number[]}>} set A set of input values and ideal output values to test the network against
    * @param {cost} [cost=methods.cost.MSE] The [cost function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
@@ -928,7 +968,7 @@ Network.prototype = {
    * @returns {{error:{number},time:{number}}} A summary object of the network's performance
    *
    */
-  test: function test(set, cost = methods.cost.MSE) {
+  self.test = function(set, cost = methods.cost.MSE) {
     // Check if dropout is enabled, set correct mask
     if (this.dropout) {
       _.times(this.nodes.length, (index) => {
@@ -956,10 +996,13 @@ Network.prototype = {
     };
 
     return results;
-  },
+  }
 
   /**
    * Creates a json that can be used to create a graph with d3 and webcola
+   *
+   * @function graph
+   * @memberof Network
    *
    * @param {number} width Width of the graph
    * @param {number} height Height of the graph
@@ -967,7 +1010,7 @@ Network.prototype = {
    * @returns {{nodes:Array<{id:{number},name:{string},activation:{activation},bias:{number}}>,links:Array<{{source:{number},target:{number},weight:{number},gate:{boolean}}}>,constraints:{Array<{type:{string},axis:{string},offsets:{node:{number},offset:{number}}}>}}}
    *
    */
-  graph: function graph(width, height) {
+  self.graph = function(width, height) {
     let input = 0;
     let output = 0;
 
@@ -1068,10 +1111,13 @@ Network.prototype = {
     }
 
     return graph_json;
-  },
+  }
 
   /**
    * Convert the network to a json object
+   *
+   * @function toJSON
+   * @memberof Network
    *
    * @returns {{node:{object},connections:{object},input_size:{number},output_size:{number},dropout:{number}}} The network represented as a json object
    *
@@ -1081,7 +1127,7 @@ Network.prototype = {
    * let exported = myNetwork.toJSON();
    * let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
    */
-  toJSON: function toJSON() {
+  self.toJSON = function() {
     const json = {
       nodes: [],
       connections: [],
@@ -1127,10 +1173,13 @@ Network.prototype = {
     }
 
     return json;
-  },
+  }
 
   /**
    * Sets the value of a property for every node in this network
+   *
+   * @function set
+   * @memberof Network
    *
    * @param {number} values.bias Bias to set for all network nodes
    * @param {activation} values.squash [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) to set for all network nodes
@@ -1143,17 +1192,20 @@ Network.prototype = {
    * // All nodes in 'network' now have a bias of 1
    * network.set({bias: 1});
    */
-  set: function set(values) {
+  self.set = function(values) {
     this.nodes = _.forEach(this.nodes, (node) => _.defaults(node, {
       bias: values.bias,
       squash: values.squash
     }));
-  },
+  }
 
   /**
    * Evolves the network to reach a lower error on a dataset using the [NEAT algorithm](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf)
    *
    * If both `iterations` and `error` options are unset, evolve will default to `iterations` as an end condition.
+   *
+   * @function evolve
+   * @memberof Network
    *
    * @param {Array<{input:number[],output:number[]}>} set A set of input values and ideal output values to train the network with
    * @param {object} [options] Configuration options
@@ -1217,7 +1269,7 @@ Network.prototype = {
    *
    * execute();
    */
-  evolve: async function(dataset, options) {
+  self.evolve = async function(dataset, options) {
     if (dataset[0].input.length !== (this.input_size || this.input) || dataset[0].output.length !== (this.output_size || this.output)) {
       throw new Error(`Dataset input/output size should be same as network input/output size!`);
     }
@@ -1366,10 +1418,13 @@ Network.prototype = {
       iterations: neat.generation,
       time: Date.now() - start,
     };
-  },
+  }
 
   /**
    * Creates a standalone function of the network which can be run without the need of a library
+   *
+   * @function standalone
+   * @memberof Network
    *
    * @returns {string} Function as a string that can be eval'ed
    *
@@ -1388,7 +1443,7 @@ Network.prototype = {
    * // calls the standalone function
    * activate([0,1]);// [0.24775789809]
    */
-  standalone: function standalone() {
+  self.standalone = function() {
     const present = [];
     const activations = [];
     const states = [];
@@ -1467,14 +1522,14 @@ Network.prototype = {
     total += `function activate(input){\r\n${lines.join(`\r\n`)}\r\n}`;
 
     return total;
-  },
+  }
 
   /**
    * Serialize to send to workers efficiently
    *
    * @returns {Array<number[]>} 3 `Float64Arrays`. Used for transferring networks to other threads fast.
    */
-  serialize: function serialize() {
+  self.serialize = function() {
     const activations = [];
     const states = [];
     const connections = [];
@@ -1517,7 +1572,7 @@ Network.prototype = {
 
     return [activations, states, connections];
   }
-};
+}
 
 /**
  * Convert a json object to a network
