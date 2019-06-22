@@ -95,6 +95,9 @@ function Node(type) {
   *
   * You can also provide the activation (a float between 0 and 1) as a parameter, which is useful for neurons in the input layer.
   *
+  * @function activate
+  * @memberof Node
+  *
   * @param {number} [input] _defaults to `0` when `node.type === "input"`._
   * @param {Object} [options]
   *
@@ -175,6 +178,9 @@ function Node(type) {
   *
   * Calculates the state from all the input connections, adds the bias, and 'squashes' it. Does not calculate traces, so this can't be used to backpropagate afterwards. That's also why it's quite a bit faster than regular `activate`.
   *
+  * @function noTraceActivate
+  * @memberof Node
+  *
   * @param {number} [input] Optional value to be used for an input (or forwarding) neuron
   *
   * @returns {number} A neuron's ['Squashed'](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) output value
@@ -217,6 +223,9 @@ function Node(type) {
   * After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating. [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
   *
   * If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
+  *
+  * @function propagate
+  * @memberof Node
   *
   * @param {number} target The target value
   * @param {Object} options
@@ -321,6 +330,9 @@ function Node(type) {
   * @param {Node|Group} target Node or Group to project connections to
   * @param {number} weight An initial [weight](https://en.wikipedia.org/wiki/Synaptic_weight) for the target Node(s)
   *
+  * @function connect
+  * @memberof Node
+  *
   * @returns {Connection[]}
   *
   * @example <caption>Connecting to other neurons and groups</caption>
@@ -373,6 +385,9 @@ function Node(type) {
   /**
   * Disconnects this node from the other node
   *
+  * @function disconnect
+  * @memberof Node
+  *
   * @param {Node} node
   * @param {boolean} [twosided] If the nodes project a connection to each other (two way connection), set this to true to disconnect both connections at once
   *
@@ -420,6 +435,9 @@ function Node(type) {
   /**
   * Neurons can gate connections. This means that the output (activation value) of a neuron influences the value sent through a connection.
   *
+  * @function gate
+  * @memberof Node
+  *
   * @param {Connection[]|Connection} connections Connections to be gated (influenced) by a neuron
   *
   * @example
@@ -449,6 +467,9 @@ function Node(type) {
 
   /**
   * Removes the gates from this node from the given connection(s)
+  *
+  * @function ungate
+  * @memberof Node
   *
   * @param {Connection[]|Connection} connections Connections to be ungated
   *
@@ -481,6 +502,9 @@ function Node(type) {
 
   /**
   * Clear the context of the node, basically reverting it to a 'new' neuron. Useful for predicting timeseries with LSTM's.
+  *
+  * @function clear
+  * @memberof Node
   */
   self.clear = function() {
     for(let index = 0; index < self.connections.in.length; index++) {
@@ -504,6 +528,9 @@ function Node(type) {
 
   /**
   * Mutates the node with the given method
+  *
+  * @function mutate
+  * @memberof Node
   *
   * @param {mutation} method A [Mutation Method](mutation), either MOD_ACTIVATION or MOD_BIAS
   *
@@ -539,6 +566,9 @@ function Node(type) {
   /**
   * Checks if this node is projecting to the given node
   *
+  * @function isProjectingTo
+  * @memberof Node
+  *
   * @param {Node} node Node to check for a connection to
   * @returns {boolean} True if there is a connection from this node to a given node
   *
@@ -567,6 +597,9 @@ function Node(type) {
   /**
   * Checks if the given node is projecting to this node
   *
+  * @function isProjectedBy
+  * @memberof Node
+  *
   * @param {Node} node Node to check for a connection from
   * @returns {boolean} True if there is a connection from the given node to this node
   *
@@ -594,6 +627,9 @@ function Node(type) {
 
   /**
   * Converts the node to a json object that can later be converted back
+  *
+  * @function toJSON
+  * @memberof Node
   *
   * @returns {object}
   *

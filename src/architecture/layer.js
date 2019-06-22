@@ -52,6 +52,9 @@ function Layer() {
   /**
   * Activates all the nodes in the group
   *
+  * @function activate
+  * @memberof Layer
+  *
   * @param {object[]} value Array with length equal to amount of nodes
   * @returns {number[]} Layer output values
   */
@@ -72,6 +75,9 @@ function Layer() {
   /**
   * Propagates all the node in the group
   *
+  * @function propagate
+  * @memberof Layer
+  *
   * @param {number[]} [target] Ideal/target values - _required for output layers_
   * @param {Object} [options]
   * @param {number} [options.rate=0.3] Sets the [learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10) of the backpropagation process
@@ -90,6 +96,9 @@ function Layer() {
   /**
   * Connects the nodes in this group to nodes in another group or just a node
   *
+  * @function connect
+  * @memberof Layer
+  *
   * @param {Group|Node|Layer} target Node(s) to form connections with
   * @param {connection} method [Connection Methods](connection)
   * @param {number} weight An initial weight to build the connections with
@@ -106,6 +115,9 @@ function Layer() {
   *
   * @see [Synaptic Gating on Wikipedia](https://en.wikipedia.org/wiki/Synaptic_gating)
   *
+  * @function gate
+  * @memberof Layer
+  *
   * @param {Connection[]} connections Connections to gate
   * @param {gating_method} method [Gating Method](gating)
   */
@@ -115,6 +127,9 @@ function Layer() {
 
   /**
   * Sets the value of a property for every node
+  *
+  * @function set
+  * @memberof Layer
   *
   * @param {object[]} values An object with (all optional) bias, squash, and type properties to overwrite in the node
   */
@@ -129,6 +144,9 @@ function Layer() {
 
   /**
   * Disconnects all nodes from this group from another given group/node
+  *
+  * @function disconnect
+  * @memberof Layer
   *
   * @param {Group|Node|Layer} target A Group, Node, or Layer to disconnect from
   * @param {boolean} [twosided=false] Flag indicating incoming connections
@@ -157,6 +175,9 @@ function Layer() {
 
   /**
   * Clear the context of this group
+  *
+  * @function clear
+  * @memberof Layer
   */
   self.clear = function() {
     for(let index = 0; index < self.nodes.length; index++) {

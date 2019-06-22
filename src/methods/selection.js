@@ -7,7 +7,7 @@
  *
  * @example
  * let { architect, methods } = require("@liquid-carrot/carrot");
- * 
+ *
  * let myNetwork = new architect.Perceptron(1,1,1);
  * let myTrainingSet = [{ input:[0], output:[1]}, { input:[1], output:[0]}];
  *
@@ -16,7 +16,7 @@
  *  selection: methods.selection.POWER // eg.
  * });
 */
-var selection = {
+const selection = {
   /**
    * @constant
    * @type {object}
@@ -25,7 +25,7 @@ var selection = {
    *
    * @example
    * let { architect, methods } = require("@liquid-carrot/carrot");
-   * 
+   *
    * let myNetwork = new architect.Perceptron(1,1,1);
    * let myTrainingSet = [{ input:[0], output:[1]}, { input:[1], output:[0]}];
    *
@@ -45,7 +45,7 @@ var selection = {
    *
    * @example
    * let { architect, methods } = require("@liquid-carrot/carrot");
-   * 
+   *
    * let myNetwork = new architect.Perceptron(1,1,1);
    * let myTrainingSet = [{ input:[0], output:[1]}, { input:[1], output:[0]}];
    *
@@ -66,7 +66,7 @@ var selection = {
    *
    * @example
    * let { architect, methods } = require("@liquid-carrot/carrot");
-   * 
+   *
    * let myNetwork = new architect.Perceptron(1,1,1);
    * let myTrainingSet = [{ input:[0], output:[1]}, { input:[1], output:[0]}];
    *
