@@ -302,6 +302,7 @@ const Neat = function(inputs, outputs, dataset, options) {
     if (typeof evolve_dataset === `function`) {
       adjustGenome = pickGenome;
       pickGenome = evolve_dataset
+      evolve_dataset = undefined;
     }
 
     evolve_dataset = evolve_dataset || self.dataset;
