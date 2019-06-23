@@ -1226,7 +1226,7 @@ function Network(input_size, output_size) {
    * @param {number} [options.provenance=0] Number of genomes inserted into the original network template (Network(input,output)) per evolution.
    * @param {number} [options.mutation_rate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated.
    * @param {number} [options.mutation_amount=1] If mutation occurs (randomNumber < mutation_rate), sets amount of times a mutation method will be applied to the network.
-   * @param {boolean} [options.fitness_population=false] Flag to return the fitness of a population of genomes. Set this to false to evaluate each genome individually.
+   * @param {boolean} [options.fitness_population=true] Flag to return the fitness of a population of genomes. false => evaluate each genome individually. true => evaluate entire population. Adjust fitness function accordingly
    * @param {Function} [options.fitness] - A fitness function to evaluate the networks. Takes a `genome`, i.e. a [network](Network), and a `dataset` and sets the genome's score property
    * @param {string} [options.selection=FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. methods.Selection.FITNESS_PROPORTIONATE).
    * @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
@@ -1317,61 +1317,48 @@ function Network(input_size, output_size) {
 
     const start = Date.now();
 
-    // the workers will be created if there's more than one scope
+    // Serialize the dataset
+    const serialized_dataset = multi.serializeDataSet(dataset);
+
+    // Create workers, send datasets
     const workers = [];
-    if (options.threads === 1) {
-      // Create the fitness function
-      options.fitness = function (dataset = default_dataset, genome, amount = options.amount, cost = options.cost, growth = options.growth) {
-        let score = 0;
-        for (let i = 0; i < amount; i++) score -= genome.test(dataset, cost).error;
-
-        score -= (genome.nodes.length - genome.input - genome.output + genome.connections.length + genome.gates.length) * growth;
-        score = isNaN(score) ? -Infinity : score; // this can cause problems with fitness proportionate selection
-
-        return score / amount;
-      };
+    if (typeof window === `undefined`) {
+      for (var i = 0; i < options.threads; i++) workers.push(new multi.workers.node.TestWorker(serialized_dataset, options.cost));
     } else {
-      // Serialize the dataset
-      const serialized_dataset = multi.serializeDataSet(dataset);
-
-      // Create workers, send datasets
-      if (typeof window === `undefined`) {
-        for (var i = 0; i < options.threads; i++) workers.push(new multi.workers.node.TestWorker(serialized_dataset, options.cost));
-      } else {
-        for (var i = 0; i < options.threads; i++) workers.push(new multi.workers.browser.TestWorker(serialized_dataset, options.cost));
-      }
-
-      options.fitness = function (dataset, population) {
-        return new Promise((resolve, reject) => {
-          // Create a queue
-          const queue = population.slice();
-          let done = 0;
-          // Start worker function
-          const start_worker = function (worker) {
-            if (!queue.length) {
-              if (++done === options.threads) resolve();
-              return;
-            }
-
-            const genome = queue.shift();
-
-            worker.evaluate(genome).then(function (result) {
-              genome.score = -result;
-              genome.score -= (genome.nodes.length - genome.input - genome.output +
-                genome.connections.length + genome.gates.length) * options.growth;
-              genome.score = isNaN(parseFloat(result)) ? -Infinity : genome.score;
-              start_worker(worker);
-            });
-          };
-
-          for (let i = 0; i < workers.length; i++) {
-            start_worker(workers[i]);
-          }
-        });
-      };
-
-      options.fitness_population = true;
+      for (var i = 0; i < options.threads; i++) workers.push(new multi.workers.browser.TestWorker(serialized_dataset, options.cost));
     }
+
+    options.fitness = function (dataset, population) {
+      return new Promise((resolve, reject) => {
+        // Create a queue
+        const queue = population.slice();
+        let done = 0;
+        // Start worker function
+        const start_worker = function (worker) {
+          if (!queue.length) {
+            if (++done === options.threads) resolve();
+            return;
+          }
+
+          const genome = queue.shift();
+
+          worker.evaluate(genome).then(function (result) {
+            genome.score = -result;
+            genome.score -= (genome.nodes.length - genome.input - genome.output +
+              genome.connections.length + genome.gates.length) * options.growth;
+            genome.score = isNaN(parseFloat(result)) ? -Infinity : genome.score;
+            start_worker(worker);
+          });
+        };
+
+        for (let i = 0; i < workers.length; i++) {
+          start_worker(workers[i]);
+        }
+      });
+    };
+
+    options.fitness_population = true;
+
 
     // Intialise the NEAT instance
     options.network = this;
@@ -1402,9 +1389,7 @@ function Network(input_size, output_size) {
       }
     }
 
-    if (options.threads > 1) {
-      for (let i = 0; i < workers.length; i++) workers[i].terminate();
-    }
+    for (let i = 0; i < workers.length; i++) workers[i].terminate();
 
     if (typeof best_genome !== `undefined`) {
       this.nodes = best_genome.nodes;
