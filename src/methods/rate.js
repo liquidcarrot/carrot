@@ -1,6 +1,8 @@
 /**
 * Built-in learning rate policies, which allow for a dynamic learning rate during neural network training.
 *
+* @namespace
+*
 * @see [Learning rates and how-to improve performance](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
 * @see [Learning rate policy](https://stackoverflow.com/questions/30033096/what-is-lr-policy-in-caffe/30045244)
 *
@@ -9,18 +11,29 @@
 *
 * let network = new Network(5, 10, 5);
 *
-* network.train(trainingSet, {
-*   rate: 0.3,
-*   ratePolicy: methods.rate.METHOD(options), // replace METHOD with your choice
-* });
+* // OPTION #1: methods.rate.FIXED
+* network.train(dataset, { rate_policy: methods.rate.FIXED });
 *
-* @namespace
+* // OPTION #2: methods.rate.STEP
+* network.train(dataset, { rate_policy: methods.rate.STEP });
+*
+* // OPTION #3: methods.rate.EXP
+* network.train(dataset, { rate_policy: methods.rate.EXP });
+*
+* // OPTION #4: methods.rate.INV
+* network.train(dataset, { rate_policy: methods.rate.INV });
+*
+* // more coming soon...
 */
 const rate = {
   
   /**
+  * Fixed Learning Rate
+  *
   * Default rate policy. Using this will make learning rate static (no change). Useful as a way to update a previous rate policy.
   *
+  * @param {number} base_rate A base learning rate - _0 < `base_rate` < 1_
+  *
   * @returns {function}
   *
   * @example
@@ -28,66 +41,108 @@ const rate = {
   *
   * let network = new Network(10, 1);
   *
-  * network.train(trainingData, { ratePolicy: methods.rate.FIXED() });
+  * network.train(dataset, { rate_policy: methods.rate.FIXED });
   */
-  FIXED: function() {
-    return function (baseRate, iteration) { return baseRate; };
+  FIXED: function(base_rate) {
+    if(base_rate == undefined) throw new ReferenceError("Missing required parameter 'base_rate'")
+    
+    return base_rate;
   },
   
   /**
-  * The rate will 'step down' every `n` iterations.
+  * Step Learning Rate
   *
-  * @param {number} [gamma=0.9] Percentage to decrease learning rate per 'step'
-  * @param {number} [stepSize=100] Amount of iterations before learning rate is updated (a step)
+  * The learning rate will decrease (i.e. 'step down') every `options.step_size` iterations.
+  *
+  * @param {number} base_rate A base learning rate - _0 < `base_rate` < 1_
+  * @param {number} iteration A number - _`iteration` > 0_
+  * @param {Object} [options]
+  * @param {number} [options.gamma=0.9] Learning rate retention per step; - _0 < `options.gamma` < 1_ - _large `options.gamma` CAN cause networks to never converge, low `options.gamma` CAN cause networks to converge too quickly_
+  * @param {number} [options.step_size=100] Learning rate is updated every `options.step_size` iterations
+  *
+  * @returns {function}
   *
   * @example
   * let { Network, methods } = require("@liquid-carrot/carrot");
   *
   * let network = new Network(10, 1);
   *
-  * network.train(trainingData, { ratePolicy: methods.rate.STEP(0.7, 500) });
-  *
-  * @returns {function}
+  * network.train(dataset, { rate_policy: methods.rate.STEP });
   */
-  STEP: function (gamma=0.9, stepSize=100) {
-    return function(baseRate, iteration) { return baseRate * Math.pow(gamma, Math.floor(iteration / stepSize)); }
+  STEP: function(base_rate, iteration, options) {
+    if(base_rate == undefined || iteration == undefined) throw new ReferenceError("Missing required parameter 'base_rate' or 'iteration'");
+    
+    options = Object.assign({
+      gamma: 0.9,
+      step_size: 100
+    }, options);
+    
+    return base_rate * Math.pow(options.gamma, Math.floor(iteration / options.step_size));
   },
   
   /**
-  * The learning rate will exponentially decrease. The rate at a certain iteration is calculated as: <code>rate = baseRate * Math.pow(gamma, iteration)</code>
+  * Exponential Learning Rate
   *
-  * @param {number} [gamma=0.999] Amount to decrease learning rate by, higher numbers mean lower decreases in learning rate. The default gamma of <code>0.999</code> will decrease the current rate by 0.1% every iteration.
+  * The learning rate will exponentially decrease.
+  *
+  * The rate at `iteration` is calculated as: `rate = base_rate * Math.pow(options.gamma, iteration)`
+  *
+  * @param {number} base_rate A base learning rate - _0 < `base_rate` < 1_
+  * @param {number} iteration A number - _`iteration` > 0_
+  * @param {Object} [options]
+  * @param {number} [options.gamma=0.999] Learning rate retention per iteration; - _0 < `options.gamma` < 1_ - _large `options.gamma` CAN cause networks to never converge, low `options.gamma` CAN cause networks to converge too quickly_
+  *
+  * @returns {function}
   *
   * @example
   * let { Network, methods } = require("@liquid-carrot/carrot");
   *
   * let network = new Network(10, 1);
   *
-  * network.train(trainingData, { ratePolicy: methods.rate.EXP(0.98) });
-  *
-  * @returns {function}
+  * network.train(dataset, { rate_policy: methods.rate.EXP });
   */
-  EXP: function(gamma=0.999) {
-    return function(baseRate, iteration) { return baseRate * Math.pow(gamma, iteration); }
+  EXP: function(base_rate, iteration, options) {
+    if(base_rate == undefined || iteration == undefined) throw new ReferenceError("Missing required parameter 'base_rate' or 'iteration'");
+    
+    options = Object.assign({
+      gamma: 0.999
+    }, options);
+    
+    return base_rate * Math.pow(options.gamma, iteration);
   },
+  
   /**
-  * An inverse exponential, the rate at certain iteration is calculated at <code>rate = baseRate * Math.pow(1 + gamma * iteration, -power)</code>
+  * Inverse Exponential Learning Rate
   *
-  * @param {number} [gamma=0.001] Amount to increase base by, lower numbers mean lower decreases in learning rate
-  * @param {number} [power=2] A power that is set to negative, higher numbers mean higher decreases in learning rate
+  * The learning rate will exponentially decrease.
+  *
+  * The rate at `iteration` is calculated as: `rate = baseRate * Math.pow(1 + options.gamma * iteration, -options.power)`
+  *
+  * @param {number} base_rate A base learning rate - _0 < `base_rate` < 1_
+  * @param {number} iteration A number - _`iteration` > 0_
+  * @param {Object} [options]
+  * @param {number} [options.gamma=0.001] Learning rate decay per iteration; - _0 < `options.gamma` < 1_ - _large `options.gamma` CAN cause networks to converge too quickly and stop learning, low `options.gamma` CAN cause networks to converge to learn VERY slowly_
+  * @param {number} [options.power=2] Decay rate per iteration - _0 < `options.power`_ - _large `options.power` CAN cause networks to stop learning quickly, low `options.power` CAN cause networks to learn VERY slowly_
+  *
+  * @returns {function}
   *
   * @example
   * let { Network, methods } = require("@liquid-carrot/carrot");
   *
   * let network = new Network(10, 1);
   *
-  * network.train(trainingData, { ratePolicy: methods.rate.INV(0.002, 3) });
-  *
-  * @returns {function}
+  * network.train(dataset, { rate_policy: methods.rate.INV });
   */
-  INV: function (gamma=0.001, power=2) {
-    return function(baseRate, iteration) { return baseRate * Math.pow(1 + gamma * iteration, -power); }
-  }
+  INV: function(base_rate, iteration, options) {
+    if(base_rate == undefined || iteration == undefined) throw new ReferenceError("Missing required parameter 'base_rate' or 'iteration'");
+    
+    options = Object.assign({
+      gamma: 0.001,
+      power: 2
+    }, options);
+    
+    return base_rate * Math.pow(1 + options.gamma * iteration, -options.power);
+  },
 };
 
 module.exports = rate;

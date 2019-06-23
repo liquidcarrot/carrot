@@ -267,11 +267,11 @@ function Node(type) {
       target = undefined;
     }
     
-    options = Object.assign(options, {
+    options = Object.assign({
       momentum: 0,
       rate: 0.3,
       update: true
-    })
+    }, options)
 
     // Output Node Error (from environment)
     if(self.type === 'output') self.error.responsibility = self.error.projected = target - self.activation;
