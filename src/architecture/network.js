@@ -38,9 +38,9 @@ const mutation = methods.mutation;
 */
 function Network(input_size, output_size) {
   if (typeof input_size === `undefined` || typeof output_size === `undefined`) throw new Error(`No input or output size given`);
-  
+
   const self = this;
-  
+
   // *IDEA*: Store input & output nodes in arrays accessible by this.input and this.output instead of just storing the number
   self.input_size = input_size;
   self.output_size = output_size;
@@ -96,7 +96,7 @@ function Network(input_size, output_size) {
 
     return connections;
   }
-  
+
   // Connect input nodes with output nodes directly
   for (let i = 0; i < self.input_size; i++) {
     for (var j = self.input_size; j < self.output_size + self.input_size; j++) {
@@ -105,7 +105,7 @@ function Network(input_size, output_size) {
       self.connect(self.nodes[i], self.nodes[j], weight);
     }
   }
-  
+
   /**
    * Activates the network
    *
@@ -1317,6 +1317,8 @@ function Network(input_size, output_size) {
 
     const start = Date.now();
 
+    // the workers will be created if there's more than one scope
+    const workers = [];
     if (options.threads === 1) {
       // Create the fitness function
       options.fitness = function (dataset = default_dataset, genome, amount = options.amount, cost = options.cost, growth = options.growth) {
@@ -1333,7 +1335,6 @@ function Network(input_size, output_size) {
       const serialized_dataset = multi.serializeDataSet(dataset);
 
       // Create workers, send datasets
-      const workers = [];
       if (typeof window === `undefined`) {
         for (var i = 0; i < options.threads; i++) workers.push(new multi.workers.node.TestWorker(serialized_dataset, options.cost));
       } else {
@@ -1345,7 +1346,6 @@ function Network(input_size, output_size) {
           // Create a queue
           const queue = population.slice();
           let done = 0;
-
           // Start worker function
           const start_worker = function (worker) {
             if (!queue.length) {
@@ -1364,7 +1364,9 @@ function Network(input_size, output_size) {
             });
           };
 
-          for (var i = 0; i < workers.length; i++) start_worker(workers[i]);
+          for (let i = 0; i < workers.length; i++) {
+            start_worker(workers[i]);
+          }
         });
       };
 
@@ -1529,7 +1531,7 @@ function Network(input_size, output_size) {
    *
    * @returns {Array<number[]>} 3 `Float64Arrays`. Used for transferring networks to other threads fast.
    */
-  self.serialize = function() {
+  self.serialize = function () {
     const activations = [];
     const states = [];
     const connections = [];
@@ -1560,11 +1562,11 @@ function Network(input_size, output_size) {
       connections.push(node.connections.self.gater == null ? -1 : node.connections.self.gater.index);
 
       _.times(node.connections.in.length, (incoming_connections_index) => {
-        const connection = node.connectionections.in[incoming_connectionections_index];
+        const connection = node.connections.in[incoming_connections_index];
 
-        connectionections.push(connection.from.index);
-        connectionections.push(connection.weight);
-        connectionections.push(connection.gater == null ? -1 : connection.gater.index);
+        connections.push(connection.from.index);
+        connections.push(connection.weight);
+        connections.push(connection.gater == null ? -1 : connection.gater.index);
       });
 
       connections.push(-2); // stop token -> next node
@@ -2035,7 +2037,7 @@ const Neat = function(dataset, {
   /**
    * Evaluates, selects, breeds and mutates population
    *
-   * @param {Array<{input:number[],output:number[]}>} [evolveSet=dataset] A set to be used for evolving the population, if none is provided the dataset passed to Neat on creation will be used.
+   * @param {Array<{input:number[],output:number[]}>} [evolve_set=dataset] A set to be used for evolving the population, if none is provided the dataset passed to Neat on creation will be used.
    * @param {function} [pickGenome] A custom selection function to pick out unwanted genomes. Accepts a network as a parameter and returns true for selection.
    * @param {function} [adjustGenome=this.template] Accepts a network, modifies it, and returns it. Used to modify unwanted genomes returned by `pickGenome` and reincorporate them into the population. If left unset, unwanted genomes will be replaced with the template Network. Will only run when pickGenome is defined.
    *
@@ -2058,39 +2060,39 @@ const Neat = function(dataset, {
    *  return genome.clear()
    * }
    *
-   * neat.evolve(evolveSet, filter, adjust).then(function(fittest) {
+   * neat.evolve(evolve_set, filter, adjust).then(function(fittest) {
    *  console.log(fittest)
    * })
   */
-  self.evolve = async function (evolveSet, pickGenome, adjustGenome) {
+  self.evolve = async function (evolve_set, pickGenome, adjustGenome) {
     // Check if evolve is possible
-    if(self.elitism + self.provenance > self.population_size) throw new Error("Can`t evolve! Elitism + provenance exceeds population size!");
+    if (self.elitism + self.provenance > self.population_size) throw new Error("Can`t evolve! Elitism + provenance exceeds population size!");
 
-    evolveSet = evolveSet || self.dataset;
+    evolve_set = evolve_set || self.dataset;
 
     // Check population for evaluation
-    if(typeof self.population[self.population.length - 1].score === `undefined`)
-      await self.evaluate(evolveSet);
-      // await self.evaluate(_.isArray(evolveSet) ? evolveSet : _.isArray(self.dataset) ? self.dataset : parameter.is.required("dataset"));
+    if (typeof self.population[self.population.length - 1].score === `undefined`)
+      await self.evaluate(evolve_set);
+      // await self.evaluate(_.isArray(evolve_set) ? evolve_set : _.isArray(self.dataset) ? self.dataset : parameter.is.required("dataset"));
     // Check & adjust genomes as needed
-    if(pickGenome) self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome)
+    if (pickGenome) self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome)
 
     // Sort in order of fitness (fittest first)
     self.sort();
 
     // Elitism, assumes population is sorted by fitness
-    var elitists = [];
+    const elitists = [];
     for (let i = 0; i < self.elitism; i++) elitists.push(self.population[i]);
 
     // Provenance
-    let newPopulation = Array(self.provenance).fill(Network.fromJSON(self.template.toJSON()))
+    const new_population = Array(self.provenance).fill(Network.fromJSON(self.template.toJSON()))
 
     // Breed the next individuals
     for (let i = 0; i < self.population_size - self.elitism - self.provenance; i++)
-      newPopulation.push(self.getOffspring());
+      new_population.push(self.getOffspring());
 
     // Replace the old population with the new population
-    self.population = newPopulation;
+    self.population = new_population;
 
     // Mutate the new population
     self.mutate();
@@ -2099,11 +2101,11 @@ const Neat = function(dataset, {
     self.population.push(...elitists);
 
     // evaluate the population
-    await self.evaluate(evolveSet);
-    // await self.evaluate(_.isArray(evolveSet) ? evolveSet : _.isArray(self.dataset) ? self.dataset : parameter.is.required("dataset"));
+    await self.evaluate(evolve_set);
+    // await self.evaluate(_.isArray(evolve_set) ? evolve_set : _.isArray(self.dataset) ? self.dataset : parameter.is.required("dataset"));
 
     // Check & adjust genomes as needed
-    if(pickGenome) self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome)
+    if (pickGenome) self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome)
 
     // Sort in order of fitness (fittest first)
     self.sort()
@@ -2112,7 +2114,7 @@ const Neat = function(dataset, {
     fittest.score = self.population[0].score;
 
     // Reset the scores
-    for(let i = 0; i < self.population.length; i++) self.population[i].score = undefined;
+    for (let i = 0; i < self.population.length; i++) self.population[i].score = undefined;
 
     self.generation++;
 
