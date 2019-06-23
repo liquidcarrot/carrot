@@ -9,6 +9,8 @@ const _ = require("lodash");
 * @param {Node} to Connection destination node (neuron)
 * @param {number} [weight=random] Weight of the connection
 * @param {Object} [options]
+* @param {Node} [options.gater] Node will "gate" this connection
+* @param {number} [options.gain=1]
 *
 * @prop {Node} from Connection origin node (neuron)
 * @prop {Node} to Connection destination node (neuron)
@@ -16,37 +18,37 @@ const _ = require("lodash");
 * @prop {Node} gater=null The node gating this connection
 * @prop {number} gain=1 Used for gating, gets multiplied with weight
 * @prop {number} elegibility=0
-* @prop {number} previousDeltaWeight=0 Used for tracking [momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html), basically a log of previous training adjustments
-* @prop {number} totalDeltaWeight=0 Used for tracking [momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html), a log of previous training adjustments for [batch training](https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes)
 * @prop {object} xtrace
 * @prop {Node[]} xtrace.nodes
 * @prop {number[]} xtrace.values
+* @prop {Object} delta_weights
+* @prop {number} delta_weights.previous=0 Tracks [momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html)
+* @prop {number} delta_weights.total=0 Tracks [momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) - _for [batch training](https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes)_
+* @prop {number[]} delta_weights.all
 *
 * @see {@link connection|Connection Methods}
 * @see {@link Node|Node}
 */
 function Connection (from, to, weight, options) {
-  let self = this;
-
-  _.assignIn(self, _.defaults({ from, to, weight }, { ...options }, {
-    weight: Math.random() * 2 - 1,
+  if(from == undefined || to == undefined) throw new ReferenceError("Missing required parameter 'from' or 'to'");
+  
+  const self = this;
+  
+  if(!options && _.isPlainObject(weight)) {
+    options = weight;
+    weight = undefined;
+  }
+  
+  options = options || {}
+  weight = weight || Math.random() * 2 - 1;
+  
+  Object.assign(self, {
     gain: 1,
     gater: null,
     elegibility: 0,
-    previousDeltaWeight: 0, // ALIAS: deltaweight.previous
-    totalDeltaWeight: 0, // ALIAS: deltaweight.total
-    xtrace: {
-      nodes: [],
-      values: []
-    },
-
-    // (BETA)
-    delta_weights: {
-      previous: 0,
-      total: 0,
-      all: [],
-    }
-  }));
+    xtrace: { nodes: [], values: [] },
+    delta_weights: { previous: 0, total: 0, all: [] }
+  }, options, { from, to, weight });
 
   /**
   * Converts the connection to a json object
@@ -54,24 +56,26 @@ function Connection (from, to, weight, options) {
   * @function toJSON
   * @memberof Connection
   *
-  * @returns {object} A connection represented as a JSON object
+  * @returns {object} Returns connection as JSON Object
   */
   self.toJSON = function () {
-    return { weight: self.weight };
+    return { weight, gain, eligibility, delta_weights } = self;
   }
 }
 
 /**
-* Returns an innovation ID
+* Returns an "innovation" ID
 *
 * @see {@link https://en.wikipedia.org/wiki/Pairing_function (Cantor pairing function)|Pairing function (Cantor pairing function)}
 *
-* @param {number} a - A [natural number](https://en.wikipedia.org/wiki/Natural_number), which is an integer greater than or equal to zero
-* @param {number} b - A [natural number](https://en.wikipedia.org/wiki/Natural_number), which is an integer greater than or equal to zero
+* @param {number} a - A [natural number](https://en.wikipedia.org/wiki/Natural_number) (i.e. `Integer => 0`)
+* @param {number} b - A [natural number](https://en.wikipedia.org/wiki/Natural_number) (i.e. `Integer => 0`)
 *
 * @returns {number} - An Integer that uniquely represents a pair of Integers
 */
 Connection.innovationID = function (a, b) {
+  if(a == undefined || b == undefined) throw new ReferenceError("Missing required parameter 'a' or 'b'");
+  
   return 1 / 2 * (a + b) * (a + b + 1) + b;
 };
 

@@ -151,8 +151,6 @@ describe("Node", function() {
   it("[type='hidden'] Node.prototype.propagate(number)"  + chalk.italic(" - 3 neuron"))
   it("[type='input'] Node.prototype.propagate()"  + chalk.italic(" - 3 neuron"))
   it("[type='input'] Node.prototype.propagate(number)"  + chalk.italic(" - 3 neuron"))
-  
-  
 })
 
 
