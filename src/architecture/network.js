@@ -1207,7 +1207,7 @@ function Network(input_size, output_size) {
    * @function evolve
    * @memberof Network
    *
-   * @param {Array<{input:number[],output:number[]}>} set A set of input values and ideal output values to train the network with
+   * @param {Array<{input:number[],output:number[]}>} dataset A set of input values and ideal output values to train the network with
    * @param {object} [options] Configuration options
    * @param {number} [options.iterations=1000] Set the maximum amount of iterations/generations for the algorithm to run.
    * @param {number} [options.error=0.05] Set the target error. The algorithm will stop once this target error has been reached.
