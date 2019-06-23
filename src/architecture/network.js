@@ -821,7 +821,7 @@ function Network(input_size, output_size) {
       dropout: 0,
       momentum: 0,
       batch_size: 1, // online learning
-      rate_policy: methods.rate.FIXED()
+      rate_policy: methods.rate.FIXED
     });
 
     // if cross validation is data, target error might be higher than crossValidate.test_error,
