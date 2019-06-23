@@ -5009,9 +5009,14 @@ fieldset[disabled] .select select:hover {
     color: #fff;
 }
 
-.tag:not(body).is-link {
+.bulma-tag:not(body).is-link {
     background-color: #3273dc;
     color: #fff;
+}
+
+.bulma-tag:not(body).is-warning {
+    background-color: #ffdd57;
+    color: rgba(0,0,0,.7);
 }
 
 .tags {
