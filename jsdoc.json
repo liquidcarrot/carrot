@@ -10,7 +10,8 @@
         "excludePattern": "(node_modules/|docs)"
     },
     "plugins": [
-        "plugins/markdown"
+        "plugins/markdown",
+        "./theme/plugins/custom-tags.js"
     ],
     "opts": {
         "template": "theme/",
