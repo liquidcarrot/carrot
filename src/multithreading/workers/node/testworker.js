@@ -25,9 +25,6 @@ const standard_cost_functions = require('../../../methods/cost');
 function TestWorker (serialized_dataset, cost_function) {
   this.worker = cp.fork(path.join(__dirname, '/worker'));
 
-  // console.log('@testworker, serialized_dataset:', serialized_dataset);
-  // throw new Error('lolololol');
-
   const cost_is_standard = cost_function.name in standard_cost_functions;
 
   // send the initialization (ie 'constructor') info
