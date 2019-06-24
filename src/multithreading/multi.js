@@ -111,8 +111,8 @@ var multi = {
   */
   testSerializedSet: function (set, cost, A, S, data, F) {
 
-    
-    // Calculate how much samples are in the set
+
+    // Calculate how many samples are in the set
     var error = 0;
     for (var i = 0; i < set.length; i += 2) {
       let output = this.activateSerializedNetwork(set[i], A, S, data, F);
