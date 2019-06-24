@@ -1261,6 +1261,23 @@ function Network(input_size, output_size) {
    *        mutation_rate: 0.5
    *    });
    *
+   *    // another option
+   *    // await network.evolve(trainingSet, {
+   *    //     mutation: methods.mutation.FFW,
+   *    //     equal: true,
+   *    //     error: 0.05,
+   *    //     elitism: 5,
+   *    //     mutation_rate: 0.5,
+   *    //     cost: (targets, outputs) => {
+   *    //       const error = outputs.reduce(function(total, value, index) {
+   *    //         return total += Math.pow(targets[index] - outputs[index], 2);
+   *    //       }, 0);
+   *    //
+   *    //       return error / outputs.length;
+   *    //     }
+   *    // });
+   *
+   *
    *    network.activate([0,0]); // 0.2413
    *    network.activate([0,1]); // 1.0000
    *    network.activate([1,0]); // 0.7663
