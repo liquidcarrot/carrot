@@ -16,11 +16,26 @@ async function execute () {
    await network.evolve(trainingSet, {
        mutation: methods.mutation.FFW,
        equal: true,
-       error: 0.0001,
+       error: 0.0000005,
        elitism: 5,
        mutation_rate: 0.5,
-       cost: () => {
-         return 0;
+       // cost: () => {
+       //   console.warn('The custom error function is running!!!!');
+       //   return 0;
+       // }
+       // cost: (targets, outputs) => {
+       //   const error = outputs.reduce(function(total, value, index) {
+       //     return total += Math.pow(targets[index] - outputs[index], 2);
+       //   }, 0);
+       //
+       //   return error / outputs.length;
+       // }
+       cost: (targets, outputs) => {
+         const error = outputs.reduce(function(total, value, index) {
+           return total += Math.abs(value);
+         }, 0);
+
+         return error / outputs.length;
        }
    });
 
