@@ -96,29 +96,31 @@ var multi = {
   },
 
   /**
-* Tests a serialized data set
-*
-* @todo Add `@param` tag descriptions
-* @todo Add `@returns` tag description
-*
-* @param {number[]} set - A dataset serialized by serializeDataSet
-* @param {Function} cost
-* @param {number[]} A
-* @param {number[]} S
-* @param {number[]} data
-* @param {number[]} F
-* @returns {number} - Error
-*/
+  * Tests a serialized data set
+  *
+  * @todo Add `@param` tag descriptions
+  * @todo Add `@returns` tag description
+  *
+  * @param {number[]} set - A dataset serialized by serializeDataSet
+  * @param {Function} cost
+  * @param {number[]} A
+  * @param {number[]} S
+  * @param {number[]} data
+  * @param {number[]} F
+  * @returns {number} - Error
+  */
   testSerializedSet: function (set, cost, A, S, data, F) {
-  // Calculate how much samples are in the set
-  var error = 0;
-  for (var i = 0; i < set.length; i += 2) {
-    let output = this.activateSerializedNetwork(set[i], A, S, data, F);
-    error += cost(set[i + 1], output);
-  }
 
-  return error / (set.length / 2);
-},
+
+    // Calculate how many samples are in the set
+    var error = 0;
+    for (var i = 0; i < set.length; i += 2) {
+      let output = this.activateSerializedNetwork(set[i], A, S, data, F);
+      error += cost(set[i + 1], output);
+    }
+
+    return error / (set.length / 2);
+  },
 
   /**
   * A list of compiled activation functions in a certain order.

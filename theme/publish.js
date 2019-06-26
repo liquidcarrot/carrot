@@ -9,6 +9,8 @@ var path = require('jsdoc/path');
 var taffy = require('taffydb').taffy;
 var template = require('jsdoc/template');
 var util = require('util');
+const node_fs = require('fs');
+const { exec } = require('child_process')
 
 var htmlsafe = helper.htmlsafe;
 var linkto = helper.linkto;
@@ -18,6 +20,12 @@ var hasOwnProp = Object.prototype.hasOwnProperty;
 
 var data;
 var view;
+
+// Source the version names from the stored versions directory
+const versions = node_fs.readdirSync(path.join(__dirname, '/static/versions/'))
+
+// Build docs versions navbar html links
+const versions_html = versions.map(version => `<a href='https://liquidcarrot.io/carrot/versions/${version}/' class="navbar-item">v${version}</a>`).join('\n      ').concat(`\n      <a href='https://liquidcarrot.io/carrot/' class="navbar-item">latest</a>`)
 
 var outdir = path.normalize(env.opts.destination);
 
@@ -242,7 +250,8 @@ function generate(type, title, docs, filename, resolveLinks) {
     var docData = {
         type: type,
         title: title,
-        docs: docs
+        docs: docs,
+        versionsHTML: versions_html
     };
 
     var outpath = path.join(outdir, filename),
@@ -278,16 +287,16 @@ function generateSourceFiles(sourceFiles, encoding) {
 }
 
 /**
- * Look for classes or functions with the same name as modules (which indicates that the module
- * exports only that class or function), then attach the classes or functions to the `module`
- * property of the appropriate module doclets. The name of each class or function is also updated
- * for display purposes. This function mutates the original arrays.
- *
- * @private
- * @param {Array.<module:jsdoc/doclet.Doclet>} doclets - The array of classes and functions to
- * check.
- * @param {Array.<module:jsdoc/doclet.Doclet>} modules - The array of module doclets to search.
- */
+* Look for classes or functions with the same name as modules (which indicates that the module
+* exports only that class or function), then attach the classes or functions to the `module`
+* property of the appropriate module doclets. The name of each class or function is also updated
+* for display purposes. This function mutates the original arrays.
+*
+* @private
+* @param {Array.<module:jsdoc/doclet.Doclet>} doclets - The array of classes and functions to
+* check.
+* @param {Array.<module:jsdoc/doclet.Doclet>} modules - The array of module doclets to search.
+*/
 function attachModuleSymbols(doclets, modules) {
     var symbols = {};
 
@@ -408,19 +417,19 @@ function linktoExternal(longName, name) {
 }
 
 /**
- * Create the navigation sidebar.
- * @param {object} members The members that will be used to create the sidebar.
- * @param {array<object>} members.classes
- * @param {array<object>} members.externals
- * @param {array<object>} members.globals
- * @param {array<object>} members.mixins
- * @param {array<object>} members.modules
- * @param {array<object>} members.namespaces
- * @param {array<object>} members.tutorials
- * @param {array<object>} members.events
- * @param {array<object>} members.interfaces
- * @return {string} The HTML for the navigation sidebar.
- */
+* Create the navigation sidebar.
+* @param {object} members The members that will be used to create the sidebar.
+* @param {array<object>} members.classes
+* @param {array<object>} members.externals
+* @param {array<object>} members.globals
+* @param {array<object>} members.mixins
+* @param {array<object>} members.modules
+* @param {array<object>} members.namespaces
+* @param {array<object>} members.tutorials
+* @param {array<object>} members.events
+* @param {array<object>} members.interfaces
+* @return {string} The HTML for the navigation sidebar.
+*/
 
 function buildNav(members) {
     var nav = '';
@@ -479,7 +488,7 @@ function buildNav(members) {
     @param {TAFFY} taffyData See <http://taffydb.com/>.
     @param {object} opts
     @param {Tutorial} tutorials
- */
+*/
 exports.publish = function(taffyData, opts, tutorials) {
     var docdash = env && env.conf && env.conf.docdash || {};
     data = taffyData;
@@ -515,7 +524,7 @@ exports.publish = function(taffyData, opts, tutorials) {
     var sourceFiles = {};
     var sourceFilePaths = [];
     data().each(function(doclet) {
-         if(docdash.removeQuotes){
+        if(docdash.removeQuotes){
             if(docdash.removeQuotes === "all"){
                 if(doclet.name){
                     doclet.name = doclet.name.replace(/"/g, '');
@@ -536,8 +545,8 @@ exports.publish = function(taffyData, opts, tutorials) {
                     doclet.longname = doclet.longname.replace(/^'(.*)'$/, '$1');
                 }
             }
-         }
-         doclet.attribs = '';
+        }
+        doclet.attribs = '';
 
         if (doclet.examples) {
             doclet.examples = doclet.examples.map(function(example) {
@@ -583,7 +592,7 @@ exports.publish = function(taffyData, opts, tutorials) {
 
     // copy the template's static files to outdir
     var fromDir = path.join(templatePath, 'static');
-    var staticFiles = fs.ls(fromDir, 3);
+    var staticFiles = fs.ls(fromDir, 10);
 
     staticFiles.forEach(function(fileName) {
         var toDir = fs.toDir( fileName.replace(fromDir, outdir) );

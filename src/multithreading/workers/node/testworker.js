@@ -1,7 +1,9 @@
 module.exports = TestWorker;
 
-var cp = require('child_process');
-var path = require('path');
+const cp = require('child_process');
+const path = require('path');
+
+const standard_cost_functions = require('../../../methods/cost');
 
 /**
 * Creates a fork for running tests
@@ -12,17 +14,25 @@ var path = require('path');
 * @todo Add `@param` tag descriptions
 * @todo Add `@param` tag defaults
 * @todo Document `@param` tag "optional" or "required"
+* @todo Add link to network.prototype.evolve for param serialized_dataset
 *
 * @private
 *
 * @constructs TestWorker
-* @param dataSet
-* @param cost
+* @param {Array} serialized_dataset a dataset of the form Array<{input:number[],output:number[]}> serialized by multi.serializeDataSet. Read network.prototype.evolve dataset parameter.
+* @param {Function} cost
 */
-function TestWorker (dataSet, cost) {
+function TestWorker (serialized_dataset, cost_function) {
   this.worker = cp.fork(path.join(__dirname, '/worker'));
 
-  this.worker.send({ set: dataSet, cost: cost.name });
+  const cost_is_standard = cost_function.name in standard_cost_functions;
+
+  // send the initialization (ie 'constructor') info
+  this.worker.send({
+      serialized_dataset: serialized_dataset,
+      cost_function: cost_is_standard ? cost_function.name : cost_function.toString(),
+      cost_is_standard,
+    });
 }
 
 TestWorker.prototype = {

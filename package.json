@@ -4,18 +4,8 @@
   "description": "A Simple Node.js AI Library for Neural Network",
   "main": "src/carrot",
   "scripts": {
-    "preversion:deep": "npm run build:stash && git pull && npm test && git add . && git commit -am 'Auto Sync'; git push;",
-    "version:deep": "npm version $TYPE -no-git-tag-version && ./node_modules/.bin/webpack && git add . && git commit -m 'Version bump'",
-    "postversion:deep": "git push && npm publish && npm run build; npm run build:pop",
-    "jsdoc": "node_modules/.bin/jsdoc -r -c jsdoc.json",
-    "build:stash": "> .temp && git add . && git stash",
-    "build:docs": "npm run jsdoc && npm run deploy:docs",
-    "deploy:docs": "git add . && git stash && git branch -f gh-pages && git checkout gh-pages && git reset --hard origin/master && git merge --squash --strategy-option=theirs stash && git stash drop && git commit -m 'Auto-build' && git push origin gh-pages -f && git checkout -",
-    "build:pop": "git stash pop && rm -f .temp && git add .temp",
-    "build": "npm run build:stash && npm run build:docs; npm run build:pop",
-    "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | coveralls && rm -rf ./src-cov",
+    "deploy:docs": "node theme/deploy-docs.js",
     "test": "./node_modules/.bin/nyc --reporter=html --reporter=text mocha --recursive test/ --exclude test/unit.js",
-    "test:riteway": "./node_modules/.bin/nyc --reporter=html --reporter=text riteway test/unit.js",
     "test:forever": "./node_modules/.bin/nodemon ./node_modules/.bin/mocha --reporter spec test/",
     "clean:docfiles": "find . -type f -name '*.html' -exec rm {} + && rm -rf styles/ && rm -rf scripts && rm -rf cdn/ && rm -rf img/"
   },
@@ -81,7 +71,7 @@
     "nyc": "^13.3.0",
     "riteway": "^6.0.3",
     "webpack": "^4.30.0",
-    "webpack-cli": "^3.3.0"
+    "webpack-cli": "^3.3.5"
   },
   "nyc": {
     "include": [
