@@ -66,6 +66,139 @@ describe("Node", function() {
     })
   })
   
+  describe("node.connect()", function() {
+    it("node.connect() => {ReferenceError}", function() {
+      const node = new Node();
+      
+      expect(() => node.connect()).to.throw(ReferenceError);
+    })
+    it("node.connect(self) => {Connection}", function() {
+      const node = new Node();
+      
+      expect(node.connect(node)).to.be.an.instanceOf(Connection);
+      expect(node.connections_self.weight).to.equal(1);
+    })
+    it("node.connect(node) => {Connection}", function() {
+      const node = new Node();
+      const other = new Node();
+      
+      expect(node.connect(other)).to.be.an.instanceOf(Connection);
+    })
+    it("node.connect(nodes) => {Connection[]}", function() {
+      const node = new Node();
+      const size = Math.floor(Math.random() * 10) + 1;
+      const layer = new Layer.Dense(size);
+      
+      const connections = node.connect(layer.nodes);
+      
+      expect(connections).to.be.an("array");
+      expect(connections.length).to.equal(size);
+      
+      for (let i = 0; i < connections.length; i++) {
+        expect(connections[i]).to.be.an.instanceOf(Connection);
+      }
+    })
+    it("node.connect(node, options={ twosided: true }) => {Connection}", function() {
+      const node = new Node();
+      const other = new Node();
+      const options = {
+        twosided: true
+      }
+      
+      expect(node.connect(other, options)).to.be.an.instanceOf(Connection);
+      expect(node.connections_incoming).to.have.lengthOf(1);
+      expect(node.connections_outgoing).to.have.lengthOf(1);
+    })
+    it("node.connect(nodes, options={ twosided: true }) => {Connection[]}", function() {
+      const node = new Node();
+      const size = Math.floor(Math.random() * 10) + 1;
+      const layer = new Layer.Dense(size);
+      const options = {
+        twosided: true
+      }
+      
+      const connections = node.connect(layer.nodes, options);
+      
+      expect(connections).to.be.an("array");
+      expect(connections.length).to.equal(size);
+      
+      for (let i = 0; i < connections.length; i++) {
+        expect(connections[i]).to.be.an.instanceOf(Connection);
+      }
+      
+      expect(node.connections_incoming).to.have.lengthOf(size);
+      expect(node.connections_outgoing).to.have.lengthOf(size);
+    })
+  })
+  describe("node.disconnect()", function() {
+    it("node.disconnect() => {ReferenceError}", function() {
+      const node = new Node();
+      const other = new Node();
+      
+      expect(() => node.connect()).to.throw(ReferenceError);
+    })
+    it("node.disconnect(self) => {Connection}", function() {
+      const node = new Node();
+      
+      const connection = node.connect(node);
+      
+      expect(node.disconnect(node)).to.be.an.instanceOf(Connection);
+      expect(node.connections_self.weight).to.equal(0);
+    })
+    it("node.disconnect(node) => {Connection}", function() {
+      const node = new Node();
+      const other = new Node();
+      
+      expect(node.connect(other)).to.be.an.instanceOf(Connection);
+    })
+    it("node.disconnect(nodes) => {Connection[]}", function() {
+      const node = new Node();
+      const size = Math.floor(Math.random() * 10) + 1;
+      const layer = new Layer.Dense(size);
+      
+      const connections_initial = node.connect(layer.nodes);
+      const connections = node.disconnect(layer.nodes);
+      
+      expect(connections).to.be.an("array");
+      expect(connections.length).to.equal(size);
+    })
+    it("node.disconnect(node, options={ twosided: true }) => {Connection}", function() {
+      const node = new Node();
+      const other = new Node();
+      const options = {
+        twosided: true
+      }
+      
+      const connection_initial = node.connect(other, options);
+      const connection = node.disconnect(other, options);
+      
+      expect(connection).to.be.an.instanceOf(Connection);
+      
+      expect(node.connections_incoming).to.have.lengthOf(0);
+      expect(node.connections_outgoing).to.have.lengthOf(0);
+    })
+    it("node.disconnect(nodes, options={ twosided: true }) => {Connection[]}", function() {
+      const node = new Node();
+      const size = Math.floor(Math.random() * 10) + 1;
+      const layer = new Layer.Dense(size);
+      const options = {
+        twosided: true
+      }
+      
+      const connections_initial = node.connect(layer.nodes);
+      const connections = node.disconnect(layer.nodes);
+      
+      expect(connections).to.be.an("array");
+      expect(connections.length).to.equal(size);
+      
+      for (let i = 0; i < connections.length; i++) {
+        expect(connections[i]).to.be.an.instanceOf(Connection);
+      }
+      
+      expect(node.connections_incoming).to.have.lengthOf(0);
+      expect(node.connections_outgoing).to.have.lengthOf(0);
+    })
+  })
   describe("node.activate()", function() {
     const input = new Node();
     const hidden = new Node();
@@ -120,40 +253,6 @@ describe("Node", function() {
     it("[type='orphan'] node.propagate() => {number}")
     it("[type='orphan'] node.propagate(number) => {number}")
     it("[type='orphan'] node.propagate(numbers) => {number}")
-  })
-  describe("node.connect()", function() {
-    it("node.connect() => {ReferenceError}", function() {
-      const node = new Node();
-      
-      expect(() => node.connect()).to.throw(ReferenceError);
-    })
-    it("node.connect(node) => {Connection}", function() {
-      const node = new Node();
-      const other = new Node();
-      
-      expect(node.connect(other)).to.be.an.instanceOf(Connection);
-    })
-    it("node.connect(nodes) => {Connection[]}", function() {
-      const node = new Node();
-      const size = Math.floor(Math.random() * 10) + 1;
-      const layer = new Layer.Dense(size);
-      
-      const connections = node.connect(layer.nodes);
-      
-      expect(connections).to.be.an("array");
-      expect(connections.length).to.equal(size);
-    })
-    it("node.connect(node, options) => {Connection}")
-    it("node.connect(nodes, options) => {Connection[]}")
-  })
-  describe("node.disconnect()", function() {
-    it("node.disconnect() => {ReferenceError}")
-    it("node.disconnect(node) => {Connection}")
-    it("node.disconnect(layer) => {Connection[]}")
-    it("node.disconnect(group) => {Connection[]}")
-    it("node.disconnect(node, options) => {Connection}")
-    it("node.disconnect(layer, options) => {Connection[]}")
-    it("node.disconnect(group, options) => {Connection[]}")
   })
   describe("node.gate()", function() {
     it("node.gate() => {ReferenceError}")

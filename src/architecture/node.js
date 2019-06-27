@@ -356,7 +356,7 @@ function Node(options) {
   /**
   * Creates a connection from this node to the given node or group
   *
-  * @param {Node|Node[]} node Node(s) to project connection(s) to
+  * @param {Node|Node[]} nodes Node(s) to project connection(s) to
   * @param {number} weight Initial connection(s) [weight](https://en.wikipedia.org/wiki/Synaptic_weight)
   *
   * @function connect
@@ -364,86 +364,78 @@ function Node(options) {
   *
   * @returns {Connection[]}
   *
-  * @example <caption>Connecting to other neurons and groups</caption>
-  * let { Node } = require("@liquid-carrot/carrot");
+  * @example <caption>Connecting node (neuron) to another node (neuron)</caption>
+  * const { Node } = require("@liquid-carrot/carrot");
   *
-  * let A = new Node();
-  * let B = new Node();
-  * A.connect(B); // A now projects a connection to B
+  * let node = new Node();
+  * let other_node = new Node();
   *
-  * // But you can also connect nodes to groups
-  * let C = new Group(4);
+  * let connection = node.connect(other_node); // Both nodes now share a connection
   *
-  * B.connect(C); // B now projects a connection to all nodes in C
+  * console.log(connection); // Connection { from: [Object object], to: [Object object], ...}
   *
-  * @example <caption>A neuron can also connect to itself, creating a selfconnection</caption>
-  * let { Node } = require("@liquid-carrot/carrot");
+  * @example <caption>Connecting node (neuron) to many nodes (neurons)</caption>
+  * const { Node } = require("@liquid-carrot/carrot");
   *
-  * let A = new Node();
-  * A.connect(A); // A now connects to itself
+  * let node = new Node();
+  * let other_nodes = [new Node(), new Node(), new Node()];
+  *
+  * let connections = node.connect(other_nodes); // Node is connected to all other nodes
+  *
+  * console.log(connections); // [{ from: [Object object], to: [Object object], ...}, ...]
+  *
+  *
+  * @example <caption>Connecting a node (neuron) to itself</caption>
+  * const { Node } = require("@liquid-carrot/carrot");
+  *
+  * let node = new Node();
+  *
+  * let connection = node.connect(node); // Node is connected to itself.
+  *
+  * console.log(connection); // Connection { from: [Object object], to: [Object object], ...}
   */
-  self.connect = function(target, weight, options) {
-    if(target == undefined) throw new ReferenceError("Missing required parameter 'target'");
+  self.connect = function(nodes, weight, options) {
+    if (nodes == undefined) throw new ReferenceError("Missing required parameter 'target'");
     
-    if (target instanceof Node) {
-      if (self.isProjectingTo(target)) throw new ReferenceError("Node is already projecting to 'target'");
-      else if (target === self) {
+    if(options == undefined && typeof weight === "object") {
+      options = weight;
+      weight = undefined;
+    }
+    
+    options = options || {};
+    
+    if (nodes instanceof Node) {
+      if (nodes === self) {
         self.connections_self.weight = weight || 1;
         return self.connections_self;
-      } else {
-        const connection = new Connection(self, target, weight, options);
+      } else if (self.isProjectingTo(nodes)) throw new ReferenceError("Node is already projecting to 'target'");
+      else {
+        const connection = new Connection(self, nodes, weight, options);
         
         self.connections_outgoing.push(connection);
-        target.connections_incoming.push(connection);
+        nodes.connections_incoming.push(connection);
+        
+        if(options.twosided) nodes.connect(self);
         
         return connection;
       }
     }
-    else if (Array.isArray(target)) {
+    else if (Array.isArray(nodes)) {
       const connections = [];
       
-      for (let index = 0; index < target.length; index++) {
-        const connection = new Connection(self, target[index], weight, options);
+      for (let index = 0; index < nodes.length; index++) {
+        const connection = new Connection(self, nodes[index], weight, options);
         
         self.connections_outgoing.push(connection);
-        target[index].connections_incoming.push(connection);
+        nodes[index].connections_incoming.push(connection);
         connections.push(connection);
+        
+        if(options.twosided) nodes[index].connect(self);
       }
       
       return connections;
     }
-    else throw new TypeError(`Parameter 'target': Expected 'Node' or 'Node[]' - but recieved, ${target}`);
-    
-    // const connections = [];
-    
-    // if(target instanceof Node) {
-    //   if(self.isProjectingTo(target)) throw new Error('Already projecting a connection to this node!'); // Should this throw an error or just a "warning" and update `wieght`, `options`?
-    //   if(target === self) {
-    //     self.connections_self.weight = weight || 1;
-    //     return self.connections_self;
-    //   } else {
-    //     const connection = new Connection(self, target, weight, options);
-        
-    //     target.connections_incoming.push(connection);
-    //     self.connections_outgoing.push(connection);
-    //     return connection;
-    //   }
-    // } else if(target instanceof Group) {
-    //   target.nodes.forEach(function(node) {
-    //     const connection = new Connection(self, node, weight, options);
-        
-    //     node.connections_incoming.push(connection);
-    //     self.connections_outgoing.push(connection);
-    //     target.connections_incoming.push(connection);
-    //     connections.push(connection);
-    //   })
-    // } else if(target instanceof Layer) {
-    //   target.nodes.forEach(node => {
-    //     connections.push(node);
-    //   })
-    // }
-    
-    // return connections;
+    else throw new TypeError(`Parameter 'target': Expected 'Node' or 'Node[]' - but recieved, ${nodes}`);
   },
 
   /**
@@ -475,25 +467,55 @@ function Node(options) {
   * // A.disconnect(B)  only disconnects A to B, so use
   * A.disconnect(B, true); // or B.disconnect(A, true)
   */
-  self.disconnect = function(node, twosided) {
-    if(self === node) self.connections_self.weight = 0;
-    else {
-      for(let index = 0; index < self.connections_outgoing.length; index++) {
-        const connection = self.connections_outgoing[index];
-        
-        if(connection.to === node) {
-          self.connections_outgoing.splice(index, 1);
+  self.disconnect = function(nodes, options) {
+    if (nodes == undefined) throw new ReferenceError("Missing required parameter 'target'");
+    
+    options = options || {};
+    
+    if (nodes instanceof Node) {
+      if (nodes === self) {
+        self.connections_self.weight = 0;
+        return self.connections_self;
+      } else {
+        for (let index = 0; index < self.connections_outgoing.length; index++) {
+          const connection = self.connections_outgoing[index];
           
-          connection.to.connections_incoming.splice(connection.to.connections_incoming.indexOf(connection), 1);
-          
-          if(connection.gater !== null) connection.gater.ungate(connection);
-          
-          break;
+          if (connection.to === nodes) {
+            self.connections_outgoing.splice(index, 1);
+            
+            connection.to.connections_incoming.splice(connection.to.connections_incoming.indexOf(connection), 1);
+            
+            if(connection.gater != undefined) connection.gater.ungate(connection);
+            if(options.twosided) nodes.disconnect(self);
+            
+            return connection;
+          }
         }
       }
-
-      if(twosided) node.disconnect(self);
+    } else if (Array.isArray(nodes)) {
+      const connections = [];
+      
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = 0; j < self.connections_outgoing.length; j++) {
+          const connection = self.connections_outgoing[j];
+          
+          if(connection.to === nodes[i]) {
+            self.connections_outgoing.splice(j, 1);
+            connection.to.connections_incoming.splice(connection.to.connections_incoming.indexOf(connection), 1);
+            
+            if(connection.gater != undefined) connection.gater.ungate(connection);
+            if(options.twosided) nodes[i].disconnect(self);
+            
+            connections.push(connection);
+            
+            break;
+          }
+        }
+      }
+      
+      return connections;
     }
+    else throw new TypeError(`Parameter 'target': Expected 'Node' or 'Node[]' - but recieved, ${nodes}`);
   },
 
   /**
