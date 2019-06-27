@@ -194,7 +194,23 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 <script src="scripts/clipboard.min.js"></script>
 <script>
+  // example copying functionality
   const clipboard = new ClipboardJS('code');
+  const clipboard_button = new ClipboardJS('.copy-button');
+
+  clipboard_button.on('success', (e) => {
+    e.trigger.innerText = "Copied!"
+  });
+
+  const copy_buttons = document.querySelectorAll(".copy-button");
+  
+  copy_buttons.forEach(function(btn) {
+    btn.addEventListener("mouseout", function(e) {
+      setTimeout(function() {
+        e.fromElement.innerText = "Copy"
+      }, 300);
+    });
+  });
 </script>
 <script>prettyPrint();</script>
 </body>

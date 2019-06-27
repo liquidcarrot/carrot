@@ -7,7 +7,10 @@
     ?>
         <p class="code-caption"><?js= example.caption ?></p>
     <?js } ?>
-    <pre class="prettyprint"><code data-clipboard-text='<?js= example.code ?>'><?js= self.htmlsafe(example.code) ?></code></pre>
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='<?js= example.code ?>'>Copy</a>
+      <code data-clipboard-text='<?js= example.code ?>'><?js= self.htmlsafe(example.code) ?></code>
+    </pre>
 <?js
     });
 ?>
