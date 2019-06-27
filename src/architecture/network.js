@@ -88,9 +88,9 @@ function Network(input_size, output_size) {
     for (let i = 0; i < connections.length; i++) {
       let connection = connections[i];
       if (from !== to) {
-        this.connections.push(connection);
+        self.connections.push(connection);
       } else {
-        this.selfconns.push(connection);
+        self.selfconns.push(connection);
       }
     }
 
@@ -272,12 +272,12 @@ function Network(input_size, output_size) {
    */
   self.disconnect = function(from, to) {
     // Delete the connection in the network's connection array
-    const connections = from === to ? this.selfconns : this.connections;
+    const connections = from === to ? self.selfconns : self.connections;
 
     for (let i = 0; i < connections.length; i++) {
       const connection = connections[i];
       if (connection.from === from && connection.to === to) {
-        if (connection.gater !== null) this.ungate(connection);
+        if (connection.gater !== null) self.ungate(connection);
         connections.splice(i, 1);
         break;
       }
@@ -305,14 +305,14 @@ function Network(input_size, output_size) {
    * // now: connection 5's weight is multiplied with node 1's activaton
    */
   self.gate = function(node, connection) {
-    if (this.nodes.indexOf(node) === -1) {
+    if (self.nodes.indexOf(node) === -1) {
       throw new Error(`This node is not part of the network!`);
     } else if (connection.gater != null) {
       if (config.warnings) console.warn(`This connection is already gated!`);
       return;
     }
     node.gate(connection);
-    this.gates.push(connection);
+    self.gates.push(connection);
   }
 
   /**
@@ -335,12 +335,12 @@ function Network(input_size, output_size) {
    * myNetwork.ungate(myNetwork.connections[5]);
    */
   self.ungate = function(connection) {
-    const index = this.gates.indexOf(connection);
+    const index = self.gates.indexOf(connection);
     if (index === -1) {
       throw new Error(`This connection is not gated!`);
     }
 
-    this.gates.splice(index, 1);
+    self.gates.splice(index, 1);
     connection.gater.ungate(connection);
   }
 
@@ -2287,7 +2287,7 @@ const Neat = function(dataset, {
     if (typeof self.population[self.population.length - 1].score === `undefined`)
       self.evaluate(); // self.evaluate is an async function
 
-    var score = 0;
+    let score = 0;
     for (let i = 0; i < self.population.length; i++)
       score += self.population[i].score;
 
@@ -2302,7 +2302,7 @@ const Neat = function(dataset, {
    * @return {object[]} A set of genomes (a population) represented as JSON objects.
    */
   self.toJSON = function toJSON() {
-    var json = [];
+    const json = [];
     for (let i = 0; i < self.population.length; i++)
       json.push(self.population[i].toJSON());
 
@@ -2315,7 +2315,7 @@ const Neat = function(dataset, {
    * @param {object[]} json set of genomes (a population) represented as JSON objects.
   */
   self.fromJSON = function fromJSON(json) {
-    var population = [];
+    const population = [];
     for (let i = 0; i < json.length; i++)
       population.push(Network.fromJSON(json[i]));
     self.population = population;

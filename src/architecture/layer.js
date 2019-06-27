@@ -11,6 +11,8 @@ const Node = require("./node");
 *
 * @constructs Layer
 *
+* @param {number} [size=1] Size of the layer (i.e. nodes in the layer)
+*
 * @prop {Node[]} output Output nodes
 * @prop {Node[]} nodes Nodes within the layer
 * @prop {Group[]|Node[]} connections.in Income connections
@@ -32,8 +34,8 @@ const Node = require("./node");
 *
 * let network = architect.Construct([input, hidden1, hidden2, output]);
 */
-function Layer() {
-  const self = this
+function Layer(size, options) {
+  let self = this
   
   self.output = null;
 
@@ -47,7 +49,6 @@ function Layer() {
     incoming: [],
     outgoing: []
   };
-  
   
   /**
   * Activates all the nodes in the group
@@ -106,8 +107,8 @@ function Layer() {
   * @returns {Connection[]} An array of connections between the nodes in this layer and target
   */
   self.connect = function(target, method, weight) {
-    if(target instanceof Group || target instanceof Node) return self.output.connect(target, method, weight);
-    else if(target instanceof Layer) return target.input(self, method, weight);
+    if (target instanceof Group || target instanceof Node) return self.output.connect(target, method, weight);
+    else if (target instanceof Layer) return target.input(self, method, weight);
   },
 
   /**
@@ -134,11 +135,11 @@ function Layer() {
   * @param {object[]} values An object with (all optional) bias, squash, and type properties to overwrite in the node
   */
   self.set = function(values) {
-    for(let i = 0; i < self.nodes.length; i++) {
+    for (let i = 0; i < self.nodes.length; i++) {
       const node = self.nodes[i];
 
-      if(node instanceof Node) Object.assign(node, { ...values });
-      else if(node instanceof Group) node.set(values);
+      if (node instanceof Node) Object.assign(node, { ...values });
+      else if (node instanceof Group) node.set(values);
     }
   },
 
@@ -154,8 +155,8 @@ function Layer() {
   self.disconnect = function(target, twosided) {
     twosided = twosided || false;
 
-    if(target instanceof Group) {
-      for(let i = 0; i < self.nodes.length; i++) {
+    if (target instanceof Group) {
+      for (let i = 0; i < self.nodes.length; i++) {
         for(let j = 0; j < target.nodes.length; j++) {
           self.nodes[i].disconnect(target.nodes[j], twosided);
 
@@ -163,8 +164,8 @@ function Layer() {
           self.connections.out = self.connections.out.filter(connection => !(connection.from === self.nodes[i] && connection.to === target.nodes[j]))
         }
       }
-    } else if(target instanceof Node) {
-      for(let i = 0; i < self.nodes.length; i++) {
+    } else if (target instanceof Node) {
+      for (let i = 0; i < self.nodes.length; i++) {
         self.nodes[i].disconnect(target, twosided);
 
         if(twosided) self.connections.in = self.connections.in .filter(connection => !(connection.from === target && connection.to === self.nodes[i]))
@@ -180,7 +181,7 @@ function Layer() {
   * @memberof Layer
   */
   self.clear = function() {
-    for(let index = 0; index < self.nodes.length; index++) {
+    for (let index = 0; index < self.nodes.length; index++) {
       self.nodes[index].clear();
     }
   }
@@ -205,8 +206,8 @@ Layer.Dense = function(size) {
   // Init required nodes (in activation order)
   const block = new Group(size);
 
-  layer.nodes.push(block);
-  layer.output = block;
+  layer.nodes.push(...block.nodes);
+  layer.output = block.nodes;
 
   layer.input = function(from, method, weight) {
     if(from instanceof Layer) from = from.output;
@@ -369,7 +370,7 @@ Layer.GRU = function(size) {
   layer.output = output;
 
   layer.input = function(from, method, weight) {
-    if(from instanceof Layer) from = from.output;
+    if (from instanceof Layer) from = from.output;
     
     method = method || methods.connection.ALL_TO_ALL;
     

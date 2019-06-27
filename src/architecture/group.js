@@ -231,7 +231,7 @@ function Group(size, type) {
       case methods.gating.INPUT:
         for (i = 0; i < nodes_to.length; i++) {
           const node = nodes_to[i];
-          const gater = this.nodes[i % this.nodes.length];
+          const gater = self.nodes[i % self.nodes.length];
 
           for (j = 0; j < node.connections.in.length; j++) {
             const connection = node.connections.in[j];
@@ -244,7 +244,7 @@ function Group(size, type) {
       case methods.gating.OUTPUT:
         for (i = 0; i < nodes_from.length; i++) {
           const node = nodes_from[i];
-          const gater = this.nodes[i % this.nodes.length];
+          const gater = self.nodes[i % this.nodes.length];
 
           for (j = 0; j < node.connections.out.length; j++) {
             const connection = node.connections.out[j];
@@ -257,7 +257,7 @@ function Group(size, type) {
       case methods.gating.SELF:
         for (i = 0; i < nodes_from.length; i++) {
           const node = nodes_from[i];
-          const gater = this.nodes[i % this.nodes.length];
+          const gater = self.nodes[i % self.nodes.length];
 
           if (connections.includes(node.connections.self)) {
             gater.gate(node.connections.self);
@@ -332,7 +332,7 @@ function Group(size, type) {
   * @function clear
   * @memberof Group
   */
-  self.clear = function () {
+  self.clear = function() {
     for (let index = 0; index < self.nodes.length; index++) {
       self.nodes[index].clear();
     }
