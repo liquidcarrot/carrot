@@ -410,18 +410,95 @@ describe("Node", function() {
   })
   
   describe("node.clear()", function() {
-    it("[type='input'] node.clear() => {undefined}")
-    it("[type='input'] node.clear(options) => {undefined}")
-    it("[type='hidden'] node.clear() => {undefined}")
-    it("[type='hidden'] node.clear(options) => {undefined}")
-    it("[type='output'] node.clear() => {undefined}")
-    it("[type='output'] node.clear(options) => {undefined}")
-    it("[type='orphan'] node.clear() => {undefined}")
-    it("[type='orphan'] node.clear(options) => {undefined}")
+    it("node.clear() => {undefined}", function() {
+      const node = new Node();
+      const number = Math.random() * 10;
+      const other_number = Math.random() * 10;
+      
+      const output = node.activate(number);
+      const error = node.propagate(other_number);
+      
+      node.clear();
+      
+      expect(node.old).to.equal(0);
+      expect(node.state).to.equal(0);
+      expect(node.activation).to.equal(0);
+      expect(node.error_responsibility).to.equal(0);
+      expect(node.error_projected).to.equal(0);
+      expect(node.error_gated).to.equal(0);
+      
+      for (let i = 0; i < node.connections_incoming.length; i++) {
+        expect(node.connections_incoming[i].eligibility).to.equal(0);
+        expect(node.connections_incoming[i].xtrace_nodes).to.be.an("array");
+        expect(node.connections_incoming[i].xtrace_nodes).to.have.lengthOf(0);
+        expect(node.connections_incoming[i].xtrace_values).to.be.an("array");
+        expect(node.connections_incoming[i].xtrace_values).to.have.lengthOf(0);
+      }
+      
+      for (let i = 0; i < node.connections_gated.length; i++) {
+        expect(node.connections_gated[i].gain).to.equal(0);
+      }
+    })
   })
   describe("node.mutate()", function() {
-    it("node.mutate() => {undefined}")
-    it("node.mutate(mutation) => {undefined}")
+    it("node.mutate() => {undefined}", function() {
+      const node = new Node();
+      const { squash, bias } = { ...node };
+      
+      node.mutate();
+      
+      expect(node).to.satisfy(function(node) {
+        return (node.bias != bias) || (node.squash != squash);
+      })
+    })
+    it("node.mutate(options={ method: methods.mutation.MOD_ACTIVATION }) => {undefined}", function() {
+      const node = new Node();
+      const options = {
+        method: methods.mutation.MOD_ACTIVATION
+      }
+      const { squash, bias } = { ...node };
+      
+      node.mutate(options);
+      
+      expect(node.squash).to.not.equal(squash);
+      expect(node.squash).to.not.eql(squash);
+      expect(node.bias).to.equal(bias);
+      expect(node.bias).to.eql(bias);
+    })
+    it("node.mutate(options={ method: methods.mutation.MOD_BIAS, allowed: [ methods.activation.LOGISTIC, methods.activation.RELU ] }) => {undefined}", function() {
+      const node = new Node();
+      const options = {
+        method: methods.mutation.MOD_ACTIVATION,
+        allowed: [
+          methods.activation.LOGISTIC,
+          methods.activation.RELU
+        ]
+      }
+      const { squash, bias } = { ...node };
+      
+      node.mutate(options);
+      
+      expect(node.squash).to.not.equal(squash);
+      expect(node.squash).to.not.eql(squash);
+      expect(node.squash).to.equal(methods.activation.RELU);
+      expect(node.squash).to.eql(methods.activation.RELU);
+      expect(node.bias).to.equal(bias);
+      expect(node.bias).to.eql(bias);
+    })
+    it("node.mutate(options={ method: methods.mutation.MOD_BIAS }) => {undefined}", function() {
+      const node = new Node();
+      const options = {
+        method: methods.mutation.MOD_BIAS
+      }
+      const { squash, bias } = { ...node };
+      
+      node.mutate(options);
+      
+      expect(node.squash).to.equal(squash);
+      expect(node.squash).to.eql(squash);
+      expect(node.bias).to.not.equal(bias);
+      expect(node.bias).to.not.eql(bias);
+    })
   })
   describe("node.isProjectingTo()", function() {
     it("node.isProjectingTo() => {ReferenceError}")
@@ -435,7 +512,6 @@ describe("Node", function() {
     it("node.isProjectedBy(layer) => {boolean}")
     it("node.isProjectedBy(group) => {boolean}")
   })
-  
   describe("node.toJSON()", function() {
     it("node.toJSON() => {Object}")
   })
