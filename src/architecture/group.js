@@ -11,12 +11,11 @@ const Node = require('./node');
 * @constructs Group
 *
 * @param {number} size Amount of nodes to build group with
-* @param {string} [type='hidden'] Type of neurons inside of a group
 *
 * @prop {Nodes[]} [nodes=[]] All nodes within the group
-* @prop {Connection[]} [connections.in=[]] Incoming connections
-* @prop {Connection[]} [connections.out=[]] Outgoing connections
-* @prop {Connection[]} [connections.self=[]] Self connections
+* @prop {Connection[]} [connections_incoming=[]] Incoming connections
+* @prop {Connection[]} [connections_outgoing=[]] Outgoing connections
+* @prop {Connection[]} [connections_self=[]] Self connections
 *
 * @example
 * let { Group } = require("@liquid-carrot/carrot");
@@ -24,22 +23,16 @@ const Node = require('./node');
 * // A group with 5 nodes
 * let A = new Group(5);
 */
-function Group(size, type) {
+function Group(size) {
   const self = this;
 
   self.nodes = [];
-  self.connections = {
-    in: [],
-    out: [],
-    self: [],
-
-    // (BETA)
-    incoming: [],
-    outgoing: []
-  };
+  self.connections_self = [];
+  self.connections_incoming = [];
+  self.connections_outgoing = [];
 
   for (let index = 0; index < size; index++) {
-    self.nodes.push(new Node(type));
+    self.nodes.push(new Node());
   }
 
   /**
@@ -160,11 +153,11 @@ function Group(size, type) {
           for (let j = 0; j < target.nodes.length; j++) {
             if (method === methods.connection.ALL_TO_ELSE && self.nodes[i] === target.nodes[j]) continue;
             else {
-              let connection = self.nodes[i].connect(target.nodes[j], weight);
+              let connection = self.nodes[i].connect(target.nodes[j], weight)[0];
 
-              self.connections.out.push(connection[0]);
-              target.connections.in.push(connection[0]);
-              connections.push(connection[0]);
+              self.connections_outgoing.push(connection);
+              target.connections_incoming.push(connection);
+              connections.push(connection);
             }
           }
         }
@@ -173,7 +166,7 @@ function Group(size, type) {
           for (let i = 0; i < self.nodes.length; i++) {
             const connection = self.nodes[i].connect(target.nodes[i], weight);
 
-            self.connections.self.push(connection[0]);
+            self.connections_self.push(connection[0]);
             connections.push(connection[0]);
           }
         } else {
@@ -182,8 +175,8 @@ function Group(size, type) {
           for (let i = 0; i < self.nodes.length; i++) {
             const connection = self.nodes[i].connect(target.nodes[i], weight);
 
-            self.connections.out.push(connection[0]);
-            target.connections.in.push(connection[0]);
+            self.connections_outgoing.push(connection[0]);
+            target.connections_incoming.push(connection[0]);
             connections.push(connection[0]);
           }
         }
@@ -194,7 +187,7 @@ function Group(size, type) {
       for (let index = 0; index < self.nodes.length; index++) {
         const connection = self.nodes[index].connect(target, weight);
 
-        self.connections.out.push(connection[0]);
+        self.connections_outgoing.push(connection[0]);
         connections.push(connection[0]);
       }
     }
@@ -233,8 +226,8 @@ function Group(size, type) {
           const node = nodes_to[i];
           const gater = self.nodes[i % self.nodes.length];
 
-          for (j = 0; j < node.connections.in.length; j++) {
-            const connection = node.connections.in[j];
+          for (j = 0; j < node.connections_incoming.length; j++) {
+            const connection = node.connections_incoming[j];
             if (connections.includes(connection)) {
               gater.gate(connection);
             }
@@ -246,8 +239,8 @@ function Group(size, type) {
           const node = nodes_from[i];
           const gater = self.nodes[i % this.nodes.length];
 
-          for (j = 0; j < node.connections.out.length; j++) {
-            const connection = node.connections.out[j];
+          for (j = 0; j < node.connections_outgoing.length; j++) {
+            const connection = node.connections_outgoing[j];
             if (connections.includes(connection)) {
               gater.gate(connection);
             }
@@ -259,8 +252,8 @@ function Group(size, type) {
           const node = nodes_from[i];
           const gater = self.nodes[i % self.nodes.length];
 
-          if (connections.includes(node.connections.self)) {
-            gater.gate(node.connections.self);
+          if (connections.includes(node.connections_self)) {
+            gater.gate(node.connections_self);
           }
         }
     }
@@ -275,7 +268,6 @@ function Group(size, type) {
   * @param {object} values A configuration object
   * @param {number} values.bias [Weight bias](https://deepai.org/machine-learning-glossary-and-terms/bias-vector)
   * @param {activation} values.squash [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0)
-  * @param {string} values.type <code>input</code>, <code>hidden</code> or <code>output</code>, should not be used manually (setting to <code>constant</code> will disable bias/weight changes)
   *
   * @example
   * let { Group } = require("@liquid-carrot/carrot");
@@ -290,7 +282,6 @@ function Group(size, type) {
       if (values.bias != undefined) self.nodes[index].bias = values.bias;
 
       self.nodes[index].squash = values.squash || self.nodes[index].squash;
-      self.nodes[index].type = values.type || self.nodes[index].type;
     }
   },
 
@@ -311,8 +302,8 @@ function Group(size, type) {
         for (let j = 0; j < target.nodes.length; j++) {
           self.nodes[i].disconnect(target.nodes[j], twosided);
 
-          if (twosided) self.connections.in = self.connections.in.filter(connection => !(connection.from === target.nodes[j] && connection.to === this.nodes[i]));
-          self.connections.out = self.connections.out.filter(connection => !(connection.from === self.nodes[i] && connection.to === target.nodes[j]));
+          if (twosided) self.connections_incoming = self.connections_incoming.filter(connection => !(connection.from === target.nodes[j] && connection.to === this.nodes[i]));
+          self.connections_outgoing = self.connections_outgoing.filter(connection => !(connection.from === self.nodes[i] && connection.to === target.nodes[j]));
         }
       }
     }
@@ -320,8 +311,8 @@ function Group(size, type) {
       for (let index = 0; index < self.nodes.length; index++) {
         self.nodes[index].disconnect(target, twosided);
 
-        if (twosided) self.connections.in = self.connections.in.filter(connection => !(connection.from === target && connection.to === self.nodes[index]));
-        self.connections.out = self.connections.out.filter(connection => !(connection.from === self.nodes[index] && connection.to === target));
+        if (twosided) self.connections_incoming = self.connections_incoming.filter(connection => !(connection.from === target && connection.to === self.nodes[index]));
+        self.connections_outgoing = self.connections_outgoing.filter(connection => !(connection.from === self.nodes[index] && connection.to === target));
       }
     }
   },
