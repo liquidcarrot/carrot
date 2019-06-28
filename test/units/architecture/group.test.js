@@ -50,16 +50,17 @@ describe("Group", function() {
   }// close of is
 
   // returns {main_group, other_group}
-  function createRandomGroups() {
+  function createRandomGroups(dont_connect) {
     // create the most random group to be returned
     const main_group = new Group(10);
 
     // change the group a bit
     // this other group is used to apply functions to main group
     const other_group = new Group(5);
-
-    main_group.connect(other_group);
-    other_group.connect(main_group);
+    if (!dont_connect) {
+      main_group.connect(other_group);
+      other_group.connect(main_group);
+    }
 
     const random_array = Array(main_group.nodes.length).fill(0).map(() => Math.random());
 
@@ -229,6 +230,18 @@ describe("Group", function() {
 
 
   describe("group.connect()", function() {
-    it("group.connect()")
+    // options
+    // connect(target, methods.connection[any_method_here]), <- no weight
+    // connect(target, methods.connection.ONE_TO_ONE, weight),
+    // connect(target, methods.connection.ALL_TO_ELSE, weight),
+    // connect(target, methods.connection.ALL_TO_ALL, weight)
+    it("group.connect(target, methods.connection.ALL_TO_ALL) => {Connection[]}", function() {
+      let { main_group, other_group } = createRandomGroups(true);
+      main_group.connect(other_group, methods.connection.ALL_TO_ALL);
+
+      main_group.nodes.forEach(node => {
+        expect(node.connections_outgoing.length).equal(other_group.nodes.length);
+      });
+    })
   })
 })
