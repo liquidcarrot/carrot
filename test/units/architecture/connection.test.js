@@ -29,34 +29,34 @@ describe("Connection", function() {
     gater: new Node(),
     gain: Math.random() * 2 - 1
   }
-  
+
   describe("new Connection()", function() {
     it("new Connection() => {ReferenceError}", function() {
       expect(() => new Connection()).to.throw(ReferenceError);
     })
     it(`new Connection(from=${from}, to=${to}) => {Connection}`, function() {
       const connection = new Connection(from, to);
-      
+
       expect(connection).to.be.an.instanceOf(Connection);
       was.connected(connection, from, to);
     })
     it(`new Connection(from=${from}, to=${to}, weight=${weight}) => {Connection}`, function() {
       const connection = new Connection(from, to, weight);
-      
+
       expect(connection).to.be.an.instanceOf(Connection);
       expect(connection.weight).to.equal(weight);
       was.connected(connection, from, to);
     })
     it(`new Connection(from=${from}, to=${to}, options=${options}) => {Connection}`, function() {
       const connection = new Connection(from, to, options);
-      
+
       expect(connection).to.be.an.instanceOf(Connection);
       was.connected(connection, from, to);
       got.options(connection, options);
     })
     it(`new Connection(from=${from}, to=${to}, weight=${weight}, options=${options}) => {Connection}`, function() {
       const connection = new Connection(from, to, weight, options);
-      
+
       expect(connection).to.be.an.instanceOf(Connection);
       expect(connection.weight).to.equal(weight);
       was.connected(connection, from, to);
@@ -67,7 +67,7 @@ describe("Connection", function() {
     it("connection.toJSON() => {Object}", function() {
       const connection = new Connection(from, to);
       const json = connection.toJSON();
-      
+
       expect(json).to.be.an("object");
       expect(json.weight).to.be.a("number");
     })
@@ -78,7 +78,7 @@ describe("Connection", function() {
   describe("Connection.innovationID()", function() {
     const a = Math.round(Math.random() * 100)
     const b = Math.round(Math.random() * 100)
-    
+
     it("Connection.innovationID() => {ReferenceError}", function() {
       expect(() => Connection.innovationID()).to.throw(ReferenceError);
     })

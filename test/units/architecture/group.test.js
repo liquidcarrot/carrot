@@ -36,8 +36,42 @@ describe("Group", function() {
       array_of_arrays.forEach(array_of_connections => array_of_connections.forEach(connection => {
         expect(connection).to.be.an.instanceOf(Connection);
       }));
+    },
+    // checks correct backpropagate returned error
+    // options:
+    // error(error)
+    error: function(error) {
+      expect(error).to.exist;
+      expect(error).to.be.an("object");
+      expect(error.responsibility).to.be.finite;
+      expect(error.projected).to.be.finite;
+      expect(error.gated).to.be.finite;
+      expect(error.responsibility).to.be.finite;
+      expect(error.projected).to.be.finite;
+      expect(error.gated).to.equal(0);
     }
   }// close of is
+
+  // returns {main_group, other_group}
+  function createRandomGroups() {
+    // this function originated in group.clear(), that explains the names
+    const cleared_node = new Node();
+    cleared_node.id = 0;
+    const group_to_clear = new Group(10);
+
+    // change the group a bit
+    const other_group = new Group(5);
+
+    group_to_clear.connect(other_group);
+    other_group.connect(group_to_clear);
+
+    const random_array = Array(group_to_clear.nodes.length).fill(0).map(() => Math.random());
+
+    group_to_clear.activate(random_array);
+    group_to_clear.propagate(random_array);
+
+    return { main_group: group_to_clear, other_group }
+  }
 
   describe("new Group()", function() {
     it("new Group() => {Group}", function() {
@@ -54,9 +88,146 @@ describe("Group", function() {
   })
 
   describe("group.clear()", function() {
-    const cleared_node = new Node();
-    cleared_node.id = 0;
-    // it()
+    it("group.clear() => {Group}", function () {
+
+      const { main_group: group_to_clear, other_group } = createRandomGroups();
+
+      // clear the group
+      expect(group_to_clear.clear()).to.be.an.instanceOf(Group);
+      group_to_clear.nodes.forEach(node => {
+        expect(node.old).to.equal(0);
+        expect(node.state).to.equal(0);
+        expect(node.activation).to.equal(0);
+        expect(node.error_responsibility).to.equal(0);
+        expect(node.error_projected).to.equal(0);
+        expect(node.error_gated).to.equal(0);
+        node.connections_incoming.forEach(connection => {
+          expect(connection.elegibility).to.equal(0);
+          expect(connection.xtrace_nodes).to.be.an('array');
+          expect(connection.xtrace_values).to.be.an('array');
+        });
+        node.connections_gated.forEach(connection => {
+          expect(connection.gain).to.equal(0);
+        });
+      });
+
+    })
   });
 
+  describe("group.activate()", function() {
+    // options:
+    // group.activate(), group.activate(numbers), group.activate(wrong_length_array) => RangeError
+    it("group.activate() => {output_result_array}", function() {
+      const { main_group, other_group } = createRandomGroups();
+      const result = main_group.activate();
+      result.forEach(val => expect(val).to.be.a("number"));
+      expect(result.length).to.equal(main_group.nodes.length);
+    })
+    it("group.activate(input_array) => {output_result_array}", function() {
+      const { main_group, other_group } = createRandomGroups();
+      const random_array = Array(main_group.nodes.length).fill(0).map(() => Math.random());
+      const result = main_group.activate(random_array);
+      result.forEach(val => expect(val).to.be.a("number"));
+      expect(result.length).to.equal(main_group.nodes.length);
+    })
+    it("group.activate(wrong_size_array) => {RangeError}", function() {
+      const { main_group, other_group } = createRandomGroups();
+      const wrong_size_array = [0.1245, 0.95];
+      expect(() => main_group.activate(wrong_size_array)).to.throw(RangeError);
+    })
+  })
+
+  describe("group.propagate()", function() {
+    // options
+    // propagate(), propagate(target), propagate(options), propagate(target, options),
+    // propagate(wrong_length)
+    it("group.propagate() => {error_objects}", function() {
+      const { main_group, other_group } = createRandomGroups();
+      main_group.activate()
+      const errors = main_group.propagate()
+      errors.forEach(error => is.error(error))
+      main_group.nodes.forEach(node => {
+        expect(node.delta_bias_total).to.equal(0);
+        expect(node.delta_bias_previous).to.equal(0);
+      })
+    })
+    it("group.propagate(target) => {error_objects}", function() {
+      const { main_group, other_group } = createRandomGroups();
+
+      const random_numbers = Array(main_group.nodes.length).fill(0).map(() => Math.random() * 10);
+      const other_numbers = Array(main_group.nodes.length).fill(0).map(() => Math.random() * 10);
+
+      main_group.activate(random_numbers);
+      const errors = main_group.propagate(other_numbers);
+
+      errors.forEach((error) => {
+        is.error(error);
+      });
+    })
+    it("group.propagate(options) => {error_objects}", function() {
+      const { main_group, other_group } = createRandomGroups();
+
+      const random_numbers = Array(main_group.nodes.length).fill(0).map(() => Math.random() * 10);
+
+      main_group.activate(random_numbers);
+
+      // first run without an updated
+      const options_without_update = { update: false };
+      let errors = main_group.propagate(options_without_update);
+      expect(errors).to.be.an("array");
+      errors.forEach((error) => {
+        is.error(error);
+      });
+      main_group.nodes.forEach(node => {
+        expect(node.delta_bias_total).to.equal(0);
+        expect(node.delta_bias_previous).to.equal(0);
+      })
+
+      // now try with an update
+      const options_with_update = { update: true };
+      errors = main_group.propagate(options_with_update);
+      expect(errors).to.be.an("array");
+      errors.forEach((error) => {
+        is.error(error);
+      });
+      main_group.nodes.forEach(node => {
+        expect(node.delta_bias_total).to.equal(0);
+        expect(node.delta_bias_previous).to.equal(0);
+      })
+    })
+    it("group.propagate(target, options) => {error_objects}", function() {
+      const { main_group, other_group } = createRandomGroups();
+
+
+      const random_numbers = Array(main_group.nodes.length).fill(0).map(() => Math.random() * 10);
+      const other_numbers = Array(main_group.nodes.length).fill(0).map(() => Math.random() * 10);
+
+      main_group.activate(random_numbers);
+
+      // first run without an updated
+      const options_without_update = { update: false };
+      let errors = main_group.propagate(other_numbers, options_without_update);
+
+      errors.forEach((error) => {
+        is.error(error);
+      });
+
+      // run with update now
+      const options_with_update = { update: true };
+      errors = main_group.propagate(other_numbers, options_with_update);
+
+      errors.forEach((error) => {
+        is.error(error);
+      });
+    })
+    it("group.propagate(wrong_length_array) => {RangeError}", function() {
+      const { main_group, other_group } = createRandomGroups();
+
+      const wrong_length_array = [0.574, 0.76];
+
+      main_group.activate()
+      expect(() => main_group.propagate(wrong_length_array)).to.throw(RangeError);
+    })
+
+  })
 })
