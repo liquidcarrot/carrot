@@ -243,5 +243,26 @@ describe("Group", function() {
         expect(node.connections_outgoing.length).equal(other_group.nodes.length);
       });
     })
+    it("group.connect(target, methods.connection.ALL_TO_ALL, weight) => {Connection[]}", function() {
+      let { main_group, other_group } = createRandomGroups(true);
+      const weight = Math.random();
+      main_group.connect(other_group, methods.connection.ALL_TO_ALL, weight);
+
+      main_group.nodes.forEach(node => {
+        expect(node.connections_outgoing.length).equal(other_group.nodes.length);
+        node.connections_outgoing.forEach(connection => expect(connection.weight).to.equal(weight));
+      });
+    })
+    it("group.connect(target, methods.connection.ALL_TO_ELSE, weight) => {Connection[]}", function() {
+      let { main_group } = createRandomGroups(true);
+      const weight = Math.random();
+      main_group.connect(main_group, methods.connection.ALL_TO_ELSE, weight);
+
+      main_group.nodes.forEach(node => {
+        expect(node.connections_self).to.be.undefined;
+        expect(node.connections_outgoing.length).equal(0);
+      });
+    })
+    // TODO: ONE_TO_ONE
   })
 })
