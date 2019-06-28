@@ -46,9 +46,6 @@ describe("Group", function() {
       expect(error.responsibility).to.be.finite;
       expect(error.projected).to.be.finite;
       expect(error.gated).to.be.finite;
-      expect(error.responsibility).to.be.finite;
-      expect(error.projected).to.be.finite;
-      expect(error.gated).to.equal(0);
     }
   }// close of is
 
@@ -117,13 +114,13 @@ describe("Group", function() {
   describe("group.activate()", function() {
     // options:
     // group.activate(), group.activate(numbers), group.activate(wrong_length_array) => RangeError
-    it("group.activate() => {output_result_array}", function() {
+    it("group.activate() => {number[]}", function() {
       const { main_group, other_group } = createRandomGroups();
       const result = main_group.activate();
       result.forEach(val => expect(val).to.be.a("number"));
       expect(result.length).to.equal(main_group.nodes.length);
     })
-    it("group.activate(input_array) => {output_result_array}", function() {
+    it("group.activate(input_array) => {number[]}", function() {
       const { main_group, other_group } = createRandomGroups();
       const random_array = Array(main_group.nodes.length).fill(0).map(() => Math.random());
       const result = main_group.activate(random_array);
@@ -141,7 +138,7 @@ describe("Group", function() {
     // options
     // propagate(), propagate(target), propagate(options), propagate(target, options),
     // propagate(wrong_length)
-    it("group.propagate() => {error_objects}", function() {
+    it("group.propagate() => {Array<{responsibility: number, projected: number, gated: number}>}", function() {
       const { main_group, other_group } = createRandomGroups();
       main_group.activate()
       const errors = main_group.propagate()
@@ -151,7 +148,7 @@ describe("Group", function() {
         expect(node.delta_bias_previous).to.equal(0);
       })
     })
-    it("group.propagate(target) => {error_objects}", function() {
+    it("group.propagate(target) => {Array<{responsibility: number, projected: number, gated: number}>}", function() {
       const { main_group, other_group } = createRandomGroups();
 
       const random_numbers = Array(main_group.nodes.length).fill(0).map(() => Math.random() * 10);
@@ -164,7 +161,7 @@ describe("Group", function() {
         is.error(error);
       });
     })
-    it("group.propagate(options) => {error_objects}", function() {
+    it("group.propagate(options) => {Array<{responsibility: number, projected: number, gated: number}>}", function() {
       const { main_group, other_group } = createRandomGroups();
 
       const random_numbers = Array(main_group.nodes.length).fill(0).map(() => Math.random() * 10);
@@ -195,7 +192,7 @@ describe("Group", function() {
         expect(node.delta_bias_previous).to.equal(0);
       })
     })
-    it("group.propagate(target, options) => {error_objects}", function() {
+    it("group.propagate(target, options) => {Array<{responsibility: number, projected: number, gated: number}>}", function() {
       const { main_group, other_group } = createRandomGroups();
 
 
@@ -229,5 +226,10 @@ describe("Group", function() {
       expect(() => main_group.propagate(wrong_length_array)).to.throw(RangeError);
     })
 
+  })
+
+
+  describe("group.connect()", function() {
+    it("group.connect()")
   })
 })
