@@ -51,23 +51,22 @@ describe("Group", function() {
 
   // returns {main_group, other_group}
   function createRandomGroups() {
-    // this function originated in group.clear(), that explains the names
-    const cleared_node = new Node();
-    cleared_node.id = 0;
-    const group_to_clear = new Group(10);
+    // create the most random group to be returned
+    const main_group = new Group(10);
 
     // change the group a bit
+    // this other group is used to apply functions to main group
     const other_group = new Group(5);
 
-    group_to_clear.connect(other_group);
-    other_group.connect(group_to_clear);
+    main_group.connect(other_group);
+    other_group.connect(main_group);
 
-    const random_array = Array(group_to_clear.nodes.length).fill(0).map(() => Math.random());
+    const random_array = Array(main_group.nodes.length).fill(0).map(() => Math.random());
 
-    group_to_clear.activate(random_array);
-    group_to_clear.propagate(random_array);
+    main_group.activate(random_array);
+    main_group.propagate(random_array);
 
-    return { main_group: group_to_clear, other_group }
+    return { main_group, other_group }
   }
 
   describe("new Group()", function() {
