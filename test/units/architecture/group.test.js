@@ -254,13 +254,28 @@ describe("Group", function() {
       });
     })
     it("group.connect(target, methods.connection.ALL_TO_ELSE, weight) => {Connection[]}", function() {
-      let { main_group } = createRandomGroups(true);
+      let { main_group, other_group } = createRandomGroups(true);
       const weight = Math.random();
       main_group.connect(main_group, methods.connection.ALL_TO_ELSE, weight);
+      main_group.nodes.forEach(node => {
+        expect(node.connections_outgoing.length).equal(0);
+      });
+
+      ({ main_group, other_group } = createRandomGroups(true));
+      main_group.connect(other_group, methods.connection.ALL_TO_ELSE, weight);
+      main_group.nodes.forEach(node => {
+        expect(node.connections_outgoing.length).equal(other_group.nodes.length);
+      });
+    })
+    it("group.connect(target, methods.connection.ONE_TO_ONE, weight) => {Connection[]}", function() {
+      let { main_group } = createRandomGroups(true);
+      let other_group = new Group(main_group.nodes.length);
+      const weight = Math.random();
+      main_group.connect(other_group, methods.connection.ONE_TO_ONE, weight);
 
       main_group.nodes.forEach(node => {
-        expect(node.connections_self).to.be.undefined;
-        expect(node.connections_outgoing.length).equal(0);
+        expect(node.connections_outgoing.length).equal(1);
+        node.connections_outgoing.forEach(connection => expect(connection.weight).to.equal(weight));
       });
     })
     // TODO: ONE_TO_ONE
