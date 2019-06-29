@@ -64,7 +64,7 @@ describe("Node", function() {
       expect(node.squash).to.equal(other_node.squash);
       expect(node.squash).to.eql(other_node.squash);
     })
-  })
+  });
   describe("node.connect()", function() {
     it("node.connect() => {ReferenceError}", function() {
       const node = new Node();
@@ -128,7 +128,7 @@ describe("Node", function() {
       expect(node.connections_incoming).to.have.lengthOf(size);
       expect(node.connections_outgoing).to.have.lengthOf(size);
     })
-  })
+  });
   describe("node.disconnect()", function() {
     it("node.disconnect() => {ReferenceError}", function() {
       const node = new Node();
@@ -197,7 +197,7 @@ describe("Node", function() {
       expect(node.connections_incoming).to.have.lengthOf(0);
       expect(node.connections_outgoing).to.have.lengthOf(0);
     })
-  })
+  });
   describe("node.activate()", function() {
     it("node.activate() => {number}", function() {
       const node = new Node();
@@ -239,7 +239,7 @@ describe("Node", function() {
       expect(output).to.equal(number);
       expect(node.derivative).to.not.exist;
     })
-  })
+  });
   describe("node.propagate()", function() {
     it("node.propagate() => { responsibility: number, projected: number, gated: number }", function() {
       const node = new Node();
@@ -315,7 +315,7 @@ describe("Node", function() {
       expect(error.gated).to.be.finite;
       expect(node.delta_bias_previous).to.equal(0);
     })
-  })
+  });
   describe("node.gate()", function() {
     it("node.gate() => {ReferenceError}", function() {
       const node = new Node();
@@ -359,7 +359,7 @@ describe("Node", function() {
       
       expect(node.connections_gated).to.have.lengthOf(size);
     })
-  })
+  });
   describe("node.ungate()", function() {
     it("node.ungate() => {ReferenceError}", function() {
       const node = new Node();
@@ -407,7 +407,7 @@ describe("Node", function() {
       
       expect(node.connections_gated).to.have.lengthOf(0);
     })
-  })
+  });
   describe("node.clear()", function() {
     it("node.clear() => {undefined}", function() {
       const node = new Node();
@@ -438,7 +438,7 @@ describe("Node", function() {
         expect(node.connections_gated[i].gain).to.equal(0);
       }
     })
-  })
+  });
   describe("node.mutate()", function() {
     it("node.mutate() => {undefined}", function() {
       const node = new Node();
@@ -498,8 +498,7 @@ describe("Node", function() {
       expect(node.bias).to.not.equal(bias);
       expect(node.bias).to.not.eql(bias);
     })
-  })
-  
+  });
   describe("node.isProjectingTo()", function() {
     it("node.isProjectingTo() => {ReferenceError}", function() {
       const node = new Node();
@@ -541,227 +540,120 @@ describe("Node", function() {
       
       expect(node.isProjectingTo(other)).to.be.true;
     })
-  })
+  });
   describe("node.isProjectedBy()", function() {
-    it("node.isProjectedBy() => {ReferenceError}")
-    it("node.isProjectedBy(node) => {boolean}")
-    it("node.isProjectedBy(layer) => {boolean}")
-    it("node.isProjectedBy(group) => {boolean}")
-  })
+    it("node.isProjectedBy() => {ReferenceError}", function() {
+      const node = new Node();
+      
+      expect(() => node.isProjectedBy()).to.throw(ReferenceError);
+    })
+    it("node.isProjectedBy(self) => {boolean}", function() {
+      const node = new Node();
+      
+      expect(node.isProjectedBy(node)).to.be.false;
+      
+      node.connect(node);
+      
+      expect(node.isProjectedBy(node)).to.be.true;
+    })
+    it("node.isProjectedBy(node) => {boolean}", function() {
+      const node = new Node();
+      const other = new Node();
+      
+      expect(node.isProjectedBy(other)).to.be.false;
+      
+      other.connect(node);
+      
+      expect(node.isProjectedBy(other)).to.be.true;
+    })
+    it("node.isProjectedBy(nodes) => {boolean}", function() {
+      const size = Math.ceil(Math.random() * 10);
+      const node = new Node();
+      const other = [];
+      
+      for (let i = 0; i < size; i++) other.push(new Node());
+      
+      expect(node.isProjectedBy(other)).to.be.false;
+      
+      for (let i = 0; i < size; i++) other[i].connect(node);
+      
+      expect(node.isProjectedBy(other)).to.be.true;
+    })
+  });
   describe("node.toJSON()", function() {
-    it("node.toJSON() => {Object}")
-  })
+    it("node.toJSON() => {Object}", function() {
+      const node = new Node();
+      
+      const json = node.toJSON();
+      
+      expect(json).to.be.an("object");
+      expect(json.bias).to.be.finite;
+      expect(json.squash).to.be.a("string");
+    })
+  });
   describe("Node.fromJSON()", function() {
-    it("node.fromJSON() => {ReferenceError}")
-    it("node.fromJSON(json) => {Node}")
-    it("node.fromJSON(json_string) => {Node}")
-  })
+    it("Node.fromJSON() => {ReferenceError}", function() {
+      expect(() => Node.fromJSON()).to.throw(ReferenceError);
+    })
+    it("Node.fromJSON(json) => {Node}", function() {
+      const node = new Node();
+      const json = node.toJSON();
+      
+      is.node(Node.fromJSON(json));
+    })
+    it("Node.fromJSON(json_string) => {Node}", function() {
+      const node = new Node();
+      const json = JSON.stringify(node.toJSON());
+      
+      is.node(Node.fromJSON(json));
+    })
+  });
   
+  //=========================================
+  // ALPHA ==================================
+  //=========================================
   
-  
-  
-  
-  // (ALPHA): Useful for dynamic detection/conditionals
+  // Useful for dynamic detection/conditionals
+  /**
   describe("node.isInput()", function() {
     it("[type='input'] node.is.input() => {boolean=true}")
     it("[type='hidden'] node.is.input() => {boolean=false}")
     it("[type='output'] node.is.input() => {boolean=false}")
     it("[type='orphan'] node.is.input() => {boolean=false}")
-  })
+  });
   describe("node.isHidden()", function() {
     it("[type='input'] node.is.hidden() => {boolean=false}")
     it("[type='hidden'] node.is.hidden() => {boolean=true}")
     it("[type='output'] node.is.hidden() => {boolean=false}")
     it("[type='orphan'] node.is.hidden() => {boolean=false}")
-  })
+  });
   describe("node.isOutput()", function() {
     it("[type='input'] node.is.output() => {boolean=false}")
     it("[type='hidden'] node.is.output() => {boolean=false}")
     it("[type='output'] node.is.output() => {boolean=true}")
     it("[type='orphan'] node.is.output() => {boolean=false}")
-  })
+  });
   describe("node.isOrphan()", function() {
     it("[type='input'] node.is.orphan() => {boolean=false}")
     it("[type='hidden'] node.is.orphan() => {boolean=false}")
     it("[type='output'] node.is.orphan() => {boolean=false}")
     it("[type='orphan'] node.is.orphan() => {boolean=true}")
-  })
+  });
   describe("node.isGating()", function() {
     it("node.isGating() => {ReferenceError}")
     it("node.isGating(connection) => {boolean}")
     it("node.isGating(connections) => {boolean}")
     it("node.isGating(connections, options) => {boolean}")
-  })
+  });
+  */
   
-  // (ALPHA): Useful in streaming
+  // Useful in streaming
+  /**
   describe("node.canActivate()", function() {
     
-  })
+  });
   describe("node.canPropagate()", function() {
     
-  })
-  
-  
-  // it("new Node()", function() {
-  //   let node = new Node();
-    
-  //   //======================================
-  //   // v0.1.x ==============================
-  //   //======================================
-    
-  //   // Properties
-  //   node.should.be.an.instanceof(Node);
-  //   node.should.have.property("bias"); node.bias.should.be.finite;
-  //   node.should.have.property("squash"); node.squash.should.be.a("function");
-  //   // node.should.have.property("type"); node.type.should.be.a("string");
-  //   node.should.have.property("activation"); node.activation.should.be.finite;
-  //   node.should.have.property("state"); node.state.should.be.finite;
-  //   node.should.have.property("old"); node.old.should.be.finite;
-  //   node.should.have.property("mask"); node.mask.should.be.finite;
-  //   node.should.have.property("previousDeltaBias"); node.previousDeltaBias.should.be.finite; // Could change to `bias.previous`
-  //   node.should.have.property("totalDeltaBias"); node.totalDeltaBias.should.be.finite;  // Could change to `bias.total`
-  //   node.should.have.property("error").be.an("object");
-  //   node.error.responsibility.should.be.finite;
-  //   node.error.projected.should.be.finite;
-  //   node.error.gated.should.be.finite;
-    
-  //   // Instance Functions
-  //   node.should.have.property("activate"); node.activate.should.be.a("function");
-  //   node.should.have.property("propagate");  node.propagate.should.be.a("function");
-  //   // node.should.have.property("evolve");  node.evolve.should.be.a("function"); // Not implemented
-  //   node.should.have.property("connect");  node.connect.should.be.a("function");
-  //   node.should.have.property("disconnect");  node.disconnect.should.be.a("function");
-  //   node.should.have.property("gate");  node.gate.should.be.a("function");
-  //   node.should.have.property("ungate");  node.ungate.should.be.a("function");
-  //   node.should.have.property("toJSON");  node.toJSON.should.be.a("function");
-  //   node.should.have.property("clear");  node.clear.should.be.a("function");
-  //   // node.should.have.property("reset");  node.reset.should.be.a("function"); // Not implemented
-    
-  //   //======================================
-  //   // v0.2.x ==============================
-  //   //======================================
-  //   /*
-  //   // Properties
-  //   node.should.have.property("deltabias").be.an("object").with.property("previous").be.finite;
-  //   node.should.have.property("deltabias").be.an("object").with.property("total").be.finite;
-  //   node.should.have.property("type").equal("input")
-    
-  //   // Instance Functions
-  //   node.should.have.property("is").be.an("object");
-  //   node.is.input.should.be.a("function");
-  //   node.is.output.should.be.a("function");
-  //   node.is.hidden.should.be.a("function");
-  //   node.is.connectedto.should.be.a("function");
-  //   node.is.selfconnectedto.should.be.a("function");
-  //   node.is.selfconnected.should.be.a("function");
-  //   node.is.projectingto.should.be.a("function");
-  //   node.is.projectedtoby.should.be.a("function");
-  //   */
-  // })
-  
-  // it("[type='input'] Node.prototype.activate()" + chalk.italic(" - 1 neuron"), function() {
-  //   let node = new Node("input");
-    
-  //   // node.activate().should.equal(0);
-  // })
-  // it("[type='input'] Node.prototype.activate(number)"  + chalk.italic(" - 1 neuron"), function() {
-  //   let node = new Node("input");
-    
-  //   const number = Math.random();
-    
-  //   node.activate(number).should.equal(number);
-  // })
-  // it("[type='hidden'] Node.prototype.activate()" + chalk.italic(" - 3 neurons"), function() {
-  //   const number = Math.random();
-    
-  //   let input = new Node("input");
-  //   let node = new Node();
-  //   let output = new Node("output");
-    
-  //   input.connect(node);
-  //   node.connect(output);
-    
-  //   input.activate(number);
-    
-  //   //======================================
-  //   // v0.1.x ==============================
-  //   //======================================
-  //   node.activate().should.be.finite.and.be.at.least(-1).and.be.at.most(1).and.not.equal(number);
-  // })
-  // it("[type='hidden'] Node.prototype.activate(number)" + chalk.italic(" - 3 neurons"), function() {
-  //   const number = Math.random();
-    
-  //   let input = new Node("input");
-  //   let node = new Node();
-  //   let output = new Node("output");
-    
-  //   input.connect(node);
-  //   node.connect(output);
-    
-  //   input.activate(number);
-    
-  //   //======================================
-  //   // v0.1.x ==============================
-  //   //======================================
-  //   node.activate(Math.random()).should.be.finite.and.be.at.least(-1).and.be.at.most(1).and.not.equal(number);
-  // })
-  // it("[type='output'] Node.prototype.activate()" + chalk.italic(" - 3 neurons"), function() {
-  //   const number = Math.random();
-    
-  //   let input = new Node("input");
-  //   let hidden = new Node();
-  //   let node = new Node("output");
-    
-  //   input.connect(hidden);
-  //   hidden.connect(node);
-    
-  //   input.activate(number);
-  //   hidden.activate();
-    
-  //   //======================================
-  //   // v0.1.x ==============================
-  //   //======================================
-  //   node.activate().should.be.finite.and.be.at.least(-1).and.be.at.most(1).and.not.equal(number);
-  // })
-  // it("[type='output'] Node.prototype.activate(number)" + chalk.italic(" - 3 neurons"), function() {
-  //   const number = Math.random();
-    
-  //   let input = new Node("input");
-  //   let hidden = new Node();
-  //   let node = new Node("output");
-    
-  //   input.connect(hidden);
-  //   hidden.connect(node);
-    
-  //   input.activate(number);
-  //   hidden.activate();
-    
-  //   //======================================
-  //   // v0.1.x ==============================
-  //   //======================================
-  //   node.activate(Math.random()).should.be.finite.and.be.at.least(-1).and.be.at.most(1).and.not.equal(number);
-  // })
-  
-  // it("[type='output'] Node.prototype.propagate()"  + chalk.italic(" - 1 neuron"))
-  // it("[type='output'] Node.prototype.propagate(number)"  + chalk.italic(" - 1 neuron"))
-  // it("[type='hidden'] Node.prototype.propagate()"  + chalk.italic(" - 3 neuron"))
-  // it("[type='hidden'] Node.prototype.propagate(number)"  + chalk.italic(" - 3 neuron"))
-  // it("[type='input'] Node.prototype.propagate()"  + chalk.italic(" - 3 neuron"))
-  // it("[type='input'] Node.prototype.propagate(number)"  + chalk.italic(" - 3 neuron"))
-})
-
-
-/**
-
-/**
- *
- * There are 5 questions every unit test must answer.
- *
- * What is the unit under test (module, function, class, whatever)?
- * What should it do? (Prose description)
- * What was the actual output?
- * What was the expected output?
- * How do you reproduce the failure?
- *
- */
- 
+  });
+  */
+});

@@ -497,7 +497,8 @@ function Node(options) {
   * @memberof Node
   *
   * @param {Node} node
-  * @param {boolean} [twosided] If the nodes project a connection to each other (two way connection), set this to true to disconnect both connections at once
+  * @param {Object} options
+  * @param {boolean} [options.twosided] If the nodes project a connection to each other (two way connection), set this to true to disconnect both connections at once
   *
   * @example <caption>One sided connection</caption>
   * let { Node } = require("@liquid-carrot/carrot");
@@ -760,7 +761,7 @@ function Node(options) {
   self.isProjectingTo = function(nodes) {
     if (nodes == undefined) throw new ReferenceError("Missing required parameter 'nodes'");
     
-    if(nodes === self) return self.connections_self.weight !== 0;
+    if (nodes === self) return self.connections_self.weight !== 0;
     else if (!Array.isArray(nodes)) {
       for (let i = 0; i < self.connections_outgoing.length; i++) {
         if (self.connections_outgoing[i].to === nodes) return true;
@@ -807,14 +808,39 @@ function Node(options) {
   * A.isProjectedBy(C);// false
   * B.isProjectedBy(A); // true
   */
-  self.isProjectedBy = function(node) {
-    if(node === self && self.connections_self.weight !== 0) return true;
-
-    for(let i = 0; i < self.connections_incoming.length; i++) {
-      if(self.connections_incoming[i].from === node) return true;
+  self.isProjectedBy = function(nodes) {
+    if (nodes == undefined) throw new ReferenceError("Missing required parameter 'nodes'");
+    
+    if (nodes === self) return self.connections_self.weight !== 0;
+    else if (!Array.isArray(nodes)) {
+      for (let i = 0; i < self.connections_incoming.length; i++) {
+        if (self.connections_incoming[i].from === nodes) return true;
+      }
+      return false;
+    } else {
+      // START: nodes.every()
+      let projected_by = 0;
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+        
+        for (let j = 0; j < self.connections_incoming.length; j++) {
+          
+          if (self.connections_incoming[j].from === node) {
+            projected_by++;
+            break;
+          }
+        }
+      }
+      // END: nodes.every()
+      
+      return nodes.length === projected_by ? true : false;
     }
 
-    return false;
+    // for(let i = 0; i < self.connections_incoming.length; i++) {
+    //   if(self.connections_incoming[i].from === node) return true;
+    // }
+
+    // return false;
   },
 
   /**
@@ -854,6 +880,10 @@ function Node(options) {
 * let imported = myNode.fromJSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
 */
 Node.fromJSON = function (json) {
+  if (json == undefined) throw new ReferenceError("Missing required parameter 'json'");
+  
+  if(typeof json === "string") json = JSON.parse(json);
+  
   const node = new Node();
   
   Object.assign(node, { ...json }, {

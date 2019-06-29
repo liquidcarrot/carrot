@@ -54,8 +54,6 @@ function Connection (from, to, weight, options) {
   
   if(options.gater) options.gater.gate(self);
   
-  console.log(`WEIGHT: ${self.weight}`);
-  
   /**
   * Returns the connection as a JSON
   *
