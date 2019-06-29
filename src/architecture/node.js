@@ -661,7 +661,7 @@ function Node(options) {
   * @memberof Node
   */
   self.clear = function() {
-    for(let index = 0; index < self.connections_incoming.length; index++) {
+    for (let index = 0; index < self.connections_incoming.length; index++) {
       const connection = self.connections_incoming[index];
 
       connection.elegibility = 0;
@@ -669,7 +669,7 @@ function Node(options) {
       connection.xtrace_values = [];
     }
 
-    for(let index = 0; index < self.connections_gated.length; index++) {
+    for (let index = 0; index < self.connections_gated.length; index++) {
       const connection = self.connections_gated[index];
       connection.gain = 0;
     }
@@ -679,12 +679,14 @@ function Node(options) {
   },
 
   /**
-  * Mutates the node with the given method
+  * Mutates the node
   *
   * @function mutate
   * @memberof Node
   *
-  * @param {mutation} method A [Mutation Method](mutation), either MOD_ACTIVATION or MOD_BIAS
+  * @param {Object} [options]
+  * @param {string} [options.method] A [mutation method](mutation) - _a random method will chosen if none is passed_
+  * @param {activation[]} [options.allowed] Allowed/possible squash (activation) functions for node (neuron)
   *
   * @example
   * let { Node } = require("@liquid-carrot/carrot");
@@ -698,19 +700,37 @@ function Node(options) {
   *
   * A.mutate(methods.mutation.MOD_ACTIVATION, allowable_methods) // node's squash function is now TANH or RELU
   */
-  self.mutate = function(method) {
-    if(method == undefined) throw new Error('No mutate method given!');
-    // CHECK: https://scotch.io/bar-talk/5-tips-to-write-better-conditionals-in-javascript
-    else if(!(method.name in methods.mutation)) throw new Error('This method does not exist!');
+  self.mutate = function(options) {
+    options = {
+      method: Math.random() < 0.5 ? methods.mutation.MOD_ACTIVATION : methods.mutation.MOD_BIAS,
+      ...options
+    }
+    
+    // options = options || {};
+    // options.method = options.method != undefined ? options.method : Math.random() < 0.5 ? methods.mutation.MOD_ACTIVATION : methods.mutation.MOD_BIAS;
+    
+    // if(method == undefined) throw new Error('No mutate method given!');
+    
+    // // CHECK: https://scotch.io/bar-talk/5-tips-to-write-better-conditionals-in-javascript
+    // else if(!(method.name in methods.mutation)) throw new Error('This method does not exist!');
 
-    switch(method) {
+    // Return a random index - not including `exclude`;
+    function random_index(max, exclude) {
+      return (exclude + Math.floor(Math.random() * (max - 1)) + 1) % max;
+    }
+    
+    // Return a random key - not including `exclude`;
+    function random_key(keys, exclude) {
+      return keys[(keys.indexOf(exclude) + Math.floor(Math.random() * (keys.length - 1)) + 1) % keys.length];
+    }
+
+    switch(options.method) {
       case methods.mutation.MOD_ACTIVATION:
-        // Pick Different Squash
-        // const squash = method.allowed[("exclude current" + "other random index" + "overflow...") % "...control"]
-        self.squash = method.allowed[(method.allowed.indexOf(self.squash) + Math.floor(Math.random() * (method.allowed.length - 1)) + 1) % method.allowed.length];
+        if(options.allowed) self.squash = options.allowed[random_index(options.allowed.length, options.allowed.indexOf(self.squash))];
+        else self.squash = methods.activation[random_key(Object.keys(methods.activation), self.squash.name)]
         break;
       case methods.mutation.MOD_BIAS:
-        self.bias += Math.random() * (method.max - method.min) + method.min;
+        self.bias += Math.random() * (options.method.max - options.method.min) + options.method.min;
         break;
     }
   },
@@ -721,7 +741,8 @@ function Node(options) {
   * @function isProjectingTo
   * @memberof Node
   *
-  * @param {Node} node Node to check for a connection to
+  * @param {Node|Node[]} [nodes] Node to check for a connection to
+  *
   * @returns {boolean} True if there is a connection from this node to a given node
   *
   * @example
@@ -736,14 +757,33 @@ function Node(options) {
   * A.isProjectingTo(B); // true
   * A.isProjectingTo(C); // false
   */
-  self.isProjectingTo = function(node) {
-    if(node === self && self.connections_self.weight !== 0) return true;
-
-    for(let i = 0; i < self.connections_outgoing.length; i++) {
-      if(self.connections_outgoing[i].to === node) return true;
-    }
+  self.isProjectingTo = function(nodes) {
+    if (nodes == undefined) throw new ReferenceError("Missing required parameter 'nodes'");
     
-    return false;
+    if(nodes === self) return self.connections_self.weight !== 0;
+    else if (!Array.isArray(nodes)) {
+      for (let i = 0; i < self.connections_outgoing.length; i++) {
+        if (self.connections_outgoing[i].to === nodes) return true;
+      }
+      return false;
+    } else {
+      // START: nodes.every()
+      let projecting_to = 0;
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+        
+        for (let j = 0; j < self.connections_outgoing.length; j++) {
+          
+          if (self.connections_outgoing[j].to === node) {
+            projecting_to++;
+            break;
+          }
+        }
+      }
+      // END: nodes.every()
+      
+      return nodes.length === projecting_to ? true : false;
+    }
   },
 
   /**
