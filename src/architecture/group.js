@@ -3,7 +3,7 @@ const methods = require('../methods/methods');
 const config = require('../config');
 // const Layer = require('./layer');
 const Node = require('./node');
-
+const Layer = require('./layer');
 
 /**
 * A group instance denotes a group of nodes. Beware: once a group has been used to construct a network, the groups will fall apart into individual nodes. They are purely for the creation and development of networks.
@@ -203,8 +203,8 @@ function Group(size) {
       for (let index = 0; index < self.nodes.length; index++) {
         const connection = self.nodes[index].connect(target, weight);
 
-        self.connections_outgoing.push(connection[0]);
-        connections.push(connection[0]);
+        self.connections_outgoing.push(connection);
+        connections.push(connection);
       }
     }
 
@@ -221,7 +221,7 @@ function Group(size) {
   * @param {gating} method [Gating Method](gating)
   */
   self.gate = function(connections, method) {
-    if (method == undefined) throw new Error('Please specify Gating.INPUT, Gating.OUTPUT');
+    if (method == undefined) throw new TypeError('Please specify Gating.INPUT, Gating.OUTPUT');
 
     if (!Array.isArray(connections)) connections = [connections];
 
@@ -293,11 +293,10 @@ function Group(size) {
   * // All nodes in 'group' now have a bias of 1
   * group.set({bias: 1});
   */
-  self.set = function(values) {
+  self.set = function(options_to_set) {
+    if (typeof options_to_set !== 'object') throw TypeError(`options_to_set has to be an object with the properties to set and the desired values`);
     for (let index = 0; index < self.nodes.length; index++) {
-      if (values.bias != undefined) self.nodes[index].bias = values.bias;
-
-      self.nodes[index].squash = values.squash || self.nodes[index].squash;
+      Object.assign(self.nodes[index], options_to_set);
     }
   },
 
