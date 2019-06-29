@@ -307,4 +307,84 @@ describe("Group", function() {
     })
   })
 
+  describe("group.set()", function () {
+    // options
+    // set(), set(options_to_set)
+    it("group.set(options_to_set)", function () {
+      const { main_group, other_group } = createRandomGroups();
+      const someSquashFunction = (val) => val * Math.random();
+      main_group.set({ bias: 7, squash: someSquashFunction });
+      main_group.nodes.forEach(node => {
+        expect(node.bias).to.equal(7);
+        expect(node.squash).to.equal(someSquashFunction);
+      })
+    })
+
+    it("group.set() => {TypeError}", function () {
+      const { main_group, other_group } = createRandomGroups();
+
+      expect(() => main_group.set()).to.throw(TypeError);
+    })
+
+  })
+
+  describe("group.gate()", function () {
+    // options. gating methods are in methods.gating.xxxxxxxxx
+    // gate(Connection) => {TypeError}
+    // gate(Connection, some_gating_method) <- this tests support for passing a single Connection
+    // gate(Connection[], methods.gating.INPUT)
+    // gate(Connection[], methods.gating.OUTPUT)
+    // gate(Connection[], methods.gating.SELF)
+    it("group.gate(Connection) => {TypeError}", function () {
+      const {main_group, other_group} = createRandomGroups();
+      const connection_to_gate = new Connection(main_group, other_group);
+      expect(() => main_group.gate(connection_to_gate)).to.throw(TypeError);
+    })
+    it("group.gate(Connection, some_gating_method)", function () {
+      const {main_group} = createRandomGroups(true);
+      const to_connect_node = new Node();
+      const connections_to_gate = main_group.connect(to_connect_node);
+
+      main_group.gate(connections_to_gate, methods.gating.OUTPUT);
+      main_group.nodes.forEach(node => node.connections_outgoing.forEach(connection => {
+        expect(connection.gater).to.be.an.instanceOf(Node);
+      }))
+    })
+    it("group.gate(Connection, methods.gating.INPUT)", function () {
+      const {main_group} = createRandomGroups(true);
+      const to_connect_node = new Node();
+      const connections_to_gate = main_group.connect(to_connect_node);
+
+      // console.log(main_group.nodes[0])
+      main_group.gate(connections_to_gate, methods.gating.INPUT);
+      // console.log(main_group.nodes[0])
+      main_group.nodes.forEach(node => node.connections_outgoing.forEach(connection => {
+        expect(connection.gater).to.be.an.instanceOf(Node);
+      }))
+    })
+    it("group.gate(Connection, methods.gating.OUTPUT)", function () {
+      const {main_group} = createRandomGroups(true);
+      const to_connect_node = new Node();
+      const connections_to_gate = main_group.connect(to_connect_node);
+
+      // console.log(main_group.nodes[0])
+      main_group.gate(connections_to_gate, methods.gating.OUTPUT);
+      // console.log(main_group.nodes[0])
+      main_group.nodes.forEach(node => node.connections_outgoing.forEach(connection => {
+        expect(connection.gater).to.be.an.instanceOf(Node);
+      }))
+    })
+    it("group.gate(Connection, methods.gating.SELF)", function () {
+      const {main_group} = createRandomGroups(true);
+      const to_connect_node = new Node();
+      // const connections_to_gate = main_group.connect(to_connect_node);
+      const connections_to_gate = main_group.connect(main_group);
+      main_group.gate(connections_to_gate, methods.gating.SELF);
+
+      main_group.nodes.forEach(node => node.connections_outgoing.forEach(connection => {
+        expect(connection.gater).to.be.an.instanceOf(Node);
+      }))
+    })
+  })
+
 })

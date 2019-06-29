@@ -170,7 +170,7 @@ function Group(size) {
 
           // connect the nodes
           for (let i = 0; i < self.nodes.length; i++) {
-            let connection = self.nodes[i].connect(target.nodes[j], weight)[0];
+            let connection = self.nodes[i].connect(target.nodes[j], weight);
 
             self.connections_outgoing.push(connection);
             target.connections_incoming.push(connection);
@@ -182,8 +182,8 @@ function Group(size) {
           for (let i = 0; i < self.nodes.length; i++) {
             const connection = self.nodes[i].connect(target.nodes[i], weight);
 
-            self.connections_self.push(connection[0]);
-            connections.push(connection[0]);
+            self.connections_self.push(connection);
+            connections.push(connection);
           }
         } else {
           if (self.nodes.length !== target.nodes.length) throw new Error('From and To group must be the same size!');
@@ -191,9 +191,9 @@ function Group(size) {
           for (let i = 0; i < self.nodes.length; i++) {
             const connection = self.nodes[i].connect(target.nodes[i], weight);
 
-            self.connections_outgoing.push(connection[0]);
-            target.connections_incoming.push(connection[0]);
-            connections.push(connection[0]);
+            self.connections_outgoing.push(connection);
+            target.connections_incoming.push(connection);
+            connections.push(connection);
           }
         }
       }
