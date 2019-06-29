@@ -53,7 +53,7 @@ function Group(size) {
   * group.activate([1, 0, 1]);
   */
   self.activate = function(inputs) {
-    if (inputs != undefined && inputs.length !== self.nodes.length) throw new Error('Array with values should be same as the amount of nodes!');
+    if (inputs != undefined && inputs.length !== self.nodes.length) throw new RangeError('Array with values should be same as the amount of nodes!');
 
     const outputs = [];
 
@@ -81,6 +81,8 @@ function Group(size) {
   * @param {number} [options.momentum] [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
   * @param {boolean} [options.update=true]
   *
+  * @returns {Array<{responsibility: number, projected: number, gated: number}>} The errors created by backpropagating
+  *
   * @example
   * let { Group } = require("@liquid-carrot/carrot");
   *
@@ -104,12 +106,15 @@ function Group(size) {
       target = undefined;
     }
 
-    if (target != undefined && target.length !== self.nodes.length) throw new Error('Array with values should be same as the amount of nodes!');
+    if (target != undefined && target.length !== self.nodes.length) throw new RangeError('Array with values should be same as the amount of nodes!');
 
+    const errors = [];
     for (let index = self.nodes.length - 1; index >= 0; index--) {
-      if (target == undefined) self.nodes[index].propagate(options);
-      else self.nodes[index].propagate(target[index], options);
+      if (target == undefined) errors.push(self.nodes[index].propagate(options));
+      else errors.push(self.nodes[index].propagate(target[index], options));
     }
+
+    return errors;
   },
 
   /**
@@ -149,16 +154,27 @@ function Group(size) {
         }
       }
       if (method === methods.connection.ALL_TO_ALL || method === methods.connection.ALL_TO_ELSE) {
-        for (let i = 0; i < self.nodes.length; i++) {
-          for (let j = 0; j < target.nodes.length; j++) {
-            if (method === methods.connection.ALL_TO_ELSE && self.nodes[i] === target.nodes[j]) continue;
-            else {
-              let connection = self.nodes[i].connect(target.nodes[j], weight)[0];
 
-              self.connections_outgoing.push(connection);
-              target.connections_incoming.push(connection);
-              connections.push(connection);
+        for (let j = 0; j < target.nodes.length; j++) {
+          // slow as fuck. TODO: improve performance. e.g. have a map of owned nodes
+          if (method === methods.connection.ALL_TO_ELSE) {
+            let should_skip = false;
+            for (let i = 0; i < self.nodes.length; i++) {
+              if (target.nodes[j] == self.nodes[i]) {
+                should_skip = true;
+                break;
+              }
             }
+            if (should_skip) continue;
+          }
+
+          // connect the nodes
+          for (let i = 0; i < self.nodes.length; i++) {
+            let connection = self.nodes[i].connect(target.nodes[j], weight)[0];
+
+            self.connections_outgoing.push(connection);
+            target.connections_incoming.push(connection);
+            connections.push(connection);
           }
         }
       } else if (method === methods.connection.ONE_TO_ONE) {
@@ -300,16 +316,26 @@ function Group(size) {
     if (target instanceof Group) {
       for (let i = 0; i < self.nodes.length; i++) {
         for (let j = 0; j < target.nodes.length; j++) {
-          self.nodes[i].disconnect(target.nodes[j], twosided);
+          self.nodes[i].disconnect(target.nodes[j], { twosided });
 
-          if (twosided) self.connections_incoming = self.connections_incoming.filter(connection => !(connection.from === target.nodes[j] && connection.to === this.nodes[i]));
-          self.connections_outgoing = self.connections_outgoing.filter(connection => !(connection.from === self.nodes[i] && connection.to === target.nodes[j]));
+          if (twosided) {
+            self.connections_incoming = self.connections_incoming.filter(connection => {
+              // this is a quick patch, there shouldnt be undefines here
+              if (!connection) return false;
+              return !(connection.from === target.nodes[j] && connection.to === this.nodes[i])
+            });
+          }
+          self.connections_outgoing = self.connections_outgoing.filter(connection => {
+            // this is a quick patch, there shouldnt be undefines here
+            if (!connection) return false;
+            return !(connection.from === self.nodes[i] && connection.to === target.nodes[j]);
+          });
         }
       }
     }
     else if (target instanceof Node) {
       for (let index = 0; index < self.nodes.length; index++) {
-        self.nodes[index].disconnect(target, twosided);
+        self.nodes[index].disconnect(target, { twosided });
 
         if (twosided) self.connections_incoming = self.connections_incoming.filter(connection => !(connection.from === target && connection.to === self.nodes[index]));
         self.connections_outgoing = self.connections_outgoing.filter(connection => !(connection.from === self.nodes[index] && connection.to === target));
@@ -322,11 +348,14 @@ function Group(size) {
   *
   * @function clear
   * @memberof Group
+  *
+  * @returns {Group} The group itself
   */
   self.clear = function() {
     for (let index = 0; index < self.nodes.length; index++) {
       self.nodes[index].clear();
     }
+    return self;
   }
 }
 
