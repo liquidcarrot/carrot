@@ -39,7 +39,7 @@ function Connection (from, to, weight, options) {
   }
   
   options = options || {};
-  weight = weight || Math.random() * 2 - 1,
+  weight = weight == undefined ? Math.random() * 2 - 1 : weight;
   
   Object.assign(self, {
     gain: 1,
@@ -53,6 +53,8 @@ function Connection (from, to, weight, options) {
   }, options, { from, to, weight});
   
   if(options.gater) options.gater.gate(self);
+  
+  console.log(`WEIGHT: ${self.weight}`);
   
   /**
   * Returns the connection as a JSON

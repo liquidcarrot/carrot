@@ -741,7 +741,8 @@ function Node(options) {
   * @function isProjectingTo
   * @memberof Node
   *
-  * @param {Node} node Node to check for a connection to
+  * @param {Node|Node[]} [nodes] Node to check for a connection to
+  *
   * @returns {boolean} True if there is a connection from this node to a given node
   *
   * @example
@@ -756,14 +757,33 @@ function Node(options) {
   * A.isProjectingTo(B); // true
   * A.isProjectingTo(C); // false
   */
-  self.isProjectingTo = function(node) {
-    if(node === self && self.connections_self.weight !== 0) return true;
-
-    for(let i = 0; i < self.connections_outgoing.length; i++) {
-      if(self.connections_outgoing[i].to === node) return true;
-    }
+  self.isProjectingTo = function(nodes) {
+    if (nodes == undefined) throw new ReferenceError("Missing required parameter 'nodes'");
     
-    return false;
+    if(nodes === self) return self.connections_self.weight !== 0;
+    else if (!Array.isArray(nodes)) {
+      for (let i = 0; i < self.connections_outgoing.length; i++) {
+        if (self.connections_outgoing[i].to === nodes) return true;
+      }
+      return false;
+    } else {
+      // START: nodes.every()
+      let projecting_to = 0;
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+        
+        for (let j = 0; j < self.connections_outgoing.length; j++) {
+          
+          if (self.connections_outgoing[j].to === node) {
+            projecting_to++;
+            break;
+          }
+        }
+      }
+      // END: nodes.every()
+      
+      return nodes.length === projecting_to ? true : false;
+    }
   },
 
   /**

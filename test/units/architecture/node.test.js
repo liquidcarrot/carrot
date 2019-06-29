@@ -408,7 +408,6 @@ describe("Node", function() {
       expect(node.connections_gated).to.have.lengthOf(0);
     })
   })
-  
   describe("node.clear()", function() {
     it("node.clear() => {undefined}", function() {
       const node = new Node();
@@ -500,11 +499,48 @@ describe("Node", function() {
       expect(node.bias).to.not.eql(bias);
     })
   })
+  
   describe("node.isProjectingTo()", function() {
-    it("node.isProjectingTo() => {ReferenceError}")
-    it("node.isProjectingTo(node) => {boolean}")
-    it("node.isProjectingTo(layer) => {boolean}")
-    it("node.isProjectingTo(group) => {boolean}")
+    it("node.isProjectingTo() => {ReferenceError}", function() {
+      const node = new Node();
+      const other = new Node();
+      
+      const connection = node.connect(other);
+      
+      expect(() => node.isProjectingTo()).to.throw(ReferenceError);
+    })
+    it("node.isProjectingTo(self) => {boolean}", function() {
+      const node = new Node();
+      
+      expect(node.isProjectingTo(node)).to.be.false;
+      
+      node.connect(node);
+      
+      expect(node.isProjectingTo(node)).to.be.true;
+    })
+    it("node.isProjectingTo(node) => {boolean}", function() {
+      const node = new Node();
+      const other = new Node();
+      
+      expect(node.isProjectingTo(other)).to.be.false;
+      
+      node.connect(other);
+      
+      expect(node.isProjectingTo(other)).to.be.true;
+    })
+    it("node.isProjectingTo(nodes) => {boolean}", function() {
+      const size = Math.ceil(Math.random() * 10);
+      const node = new Node();
+      const other = [];
+      
+      for (let i = 0; i < size; i++) other.push(new Node());
+      
+      expect(node.isProjectingTo(other)).to.be.false;
+      
+      node.connect(other);
+      
+      expect(node.isProjectingTo(other)).to.be.true;
+    })
   })
   describe("node.isProjectedBy()", function() {
     it("node.isProjectedBy() => {ReferenceError}")
