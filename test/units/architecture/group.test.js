@@ -228,8 +228,7 @@ describe("Group", function() {
 
   })
 
-
-  describe("group.connect()", function() {
+  describe("group.connect()", function () {
     // options
     // connect(target, methods.connection[any_method_here]), <- no weight
     // connect(target, methods.connection.ONE_TO_ONE, weight),
@@ -280,4 +279,32 @@ describe("Group", function() {
     })
     // TODO: ONE_TO_ONE
   })
+
+  describe("group.disconnect()", function () {
+    // options
+    // disconnect(target, not_twosided (false)), disconnect(target, twosided)
+    it("group.disconnect(target)", function () {
+      const { main_group, other_group } = createRandomGroups();
+
+      main_group.disconnect(other_group);
+      main_group.nodes.forEach(node => {
+        expect(node.connections_outgoing.length).to.equal(0);
+      })
+      other_group.nodes.forEach(node => {
+        expect(node.connections_outgoing.length).to.equal(main_group.nodes.length);
+      })
+    })
+    it("group.disconnect(target, twosided)", function () {
+      const { main_group, other_group } = createRandomGroups();
+
+      main_group.disconnect(other_group, true);
+      main_group.nodes.forEach(node => {
+        expect(node.connections_outgoing.length).to.equal(0);
+      })
+      other_group.nodes.forEach(node => {
+        expect(node.connections_outgoing.length).to.equal(0);
+      })
+    })
+  })
+
 })
