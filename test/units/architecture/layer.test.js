@@ -276,7 +276,7 @@ describe("Layer", function() {
         node.connections_outgoing.forEach(connection => expect(connection.weight).to.equal(weight));
       });
     })
-    
+
   })
 
   describe("layer.disconnect()", function () {
@@ -387,7 +387,7 @@ describe("Layer", function() {
   })
 
   describe("Layer.someLayerConstructor()", function () {
-    const layer_types_to_test = ['Dense'];
+    const layer_types_to_test = ['Dense', 'LSTM'];
     layer_types_to_test.forEach(layer_type => {
       // each test here performs a basic chain of layers and activates them to see
       // if layers were correctly chained and working

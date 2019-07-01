@@ -68,83 +68,78 @@ class Layer extends Group {
 
     return new_dense_layer;
   }
+
+  /**
+  * Creates an LSTM layer.
+  *
+  * LSTM layers are useful for detecting and predicting patterns over long time lags. This is a recurrent layer.
+  *
+  * Note: architect.LSTM currently performs better than an equivalent network built with LSTM Layers.
+  *
+  * @param {number} size Amount of nodes to build the layer with
+  *
+  * @returns {Layer} LSTM layer
+  *
+  * @example
+  * let { Layer } = require("@liquid-carrot/carrot");
+  *
+  * let layer = new Layer.LSTM(size);
+  */
+  static LSTM(size) {
+    // Create the layer
+    const new_lstm_layer = new Layer();
+
+    // Init required nodes (in activation order)
+    const input_group = new Group(size);
+    const input_gate = new Group(size);
+    const forget_gate = new Group(size);
+    const memory_cell = new Group(size);
+    const output_gate = new Group(size);
+    const output_block = new Group(size);
+
+    input_gate.set({
+      bias: 1
+    });
+    forget_gate.set({
+      bias: 1
+    });
+    output_gate.set({
+      bias: 1
+    });
+
+    // Set up internal connections
+    memory_cell.connect(input_gate, methods.connection.ALL_TO_ALL);
+    memory_cell.connect(forget_gate, methods.connection.ALL_TO_ALL);
+    memory_cell.connect(output_gate, methods.connection.ALL_TO_ALL);
+    const forget_connections = memory_cell.connect(memory_cell, methods.connection.ONE_TO_ONE);
+    const output_connections = memory_cell.connect(output_block, methods.connection.ALL_TO_ALL);
+
+    input_group.connect(memory_cell, methods.connection.ALL_TO_ALL);
+    input_group.connect(input_gate, methods.connection.ALL_TO_ALL),
+    input_group.connect(output_gate, methods.connection.ALL_TO_ALL),
+    input_group.connect(forget_gate, methods.connection.ALL_TO_ALL)
+
+    input_gate.gate(input_group, methods.gating.INPUT);
+
+    // Set up gates
+    forget_gate.gate(forget_connections, methods.gating.SELF);
+    output_gate.gate(output_connections, methods.gating.OUTPUT);
+
+    // Add the nodes to the layer
+    new_lstm_layer.addNodes(input_group);
+    new_lstm_layer.addNodes(input_gate);
+    new_lstm_layer.addNodes(forget_gate);
+    new_lstm_layer.addNodes(memory_cell);
+    new_lstm_layer.addNodes(output_gate);
+    new_lstm_layer.addNodes(output_block);
+
+    // Define input and output nodes
+    new_lstm_layer.input_nodes.push(input_group.nodes);
+    new_lstm_layer.output_nodes.push(output_block.nodes);
+
+    return new_lstm_layer;
+  }
 }
-
-
-/**
-* Creates an LSTM layer.
-*
-* LSTM layers are useful for detecting and predicting patterns over long time lags. This is a recurrent layer.
-*
-* Note: architect.LSTM currently performs better than an equivalent network built with LSTM Layers.
-*
-* @param {number} size Amount of nodes to build the layer with
-*
-* @returns {Layer} LSTM layer
-*
-* @example
-* let { Layer } = require("@liquid-carrot/carrot");
-*
-* let layer = new Layer.LSTM(size);
-*/
-Layer.LSTM = function(size) {
-  // Create the layer
-  const layer = new Layer();
-
-  // Init required nodes (in activation order)
-  const input_gate = new Group(size);
-  const forget_gate = new Group(size);
-  const memory_cell = new Group(size);
-  const output_gate = new Group(size);
-  const output_block = new Group(size);
-
-  input_gate.set({
-    bias: 1
-  });
-  forget_gate.set({
-    bias: 1
-  });
-  output_gate.set({
-    bias: 1
-  });
-
-  // Set up internal connections
-  memory_cell.connect(input_gate, methods.connection.ALL_TO_ALL);
-  memory_cell.connect(forget_gate, methods.connection.ALL_TO_ALL);
-  memory_cell.connect(output_gate, methods.connection.ALL_TO_ALL);
-  const forget = memory_cell.connect(memory_cell, methods.connection.ONE_TO_ONE);
-  const output = memory_cell.connect(output_block, methods.connection.ALL_TO_ALL);
-
-  // Set up gates
-  forget_gate.gate(forget, methods.gating.SELF);
-  output_gate.gate(output, methods.gating.OUTPUT);
-
-  // Add to nodes array
-  layer.nodes = [input_gate, forget_gate, memory_cell, output_gate, output_block];
-
-  // Define output
-  layer.output = output_block;
-
-  layer.input = function(from, method, weight) {
-    if(from instanceof Layer) from = from.output;
-    method = method || methods.connection.ALL_TO_ALL;
-
-    const input = from.connect(memory_cell, method, weight);
-
-    const connections = [
-      input,
-      from.connect(input_gate, method, weight),
-      from.connect(output_gate, method, weight),
-      from.connect(forget_gate, method, weight)
-    ];
-
-    input_gate.gate(input, methods.gating.INPUT);
-
-    return connections;
-  };
-
-  return layer;
-};
 
 /**
 * Creates a GRU layer.
