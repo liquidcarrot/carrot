@@ -1,9 +1,7 @@
 const _ = require("lodash");
 const methods = require('../methods/methods');
 const config = require('../config');
-// const Layer = require('./layer');
 const Node = require('./node');
-const Layer = require('./layer');
 
 /**
 * A group instance denotes a group of nodes. Beware: once a group has been used to construct a network, the groups will fall apart into individual nodes. They are purely for the creation and development of networks.
@@ -138,21 +136,92 @@ function Group(size) {
   * A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional
   */
   self.connect = function(target, method, weight) {
-    const self_targeted = (self === target);
+    const self_targeted = target.nodes ? self.nodes == target.nodes : false;
+    // in the future this check could be replaced by id checking (source.id == target.id)
+
+    // set a default for method, although it should be provided
+    if (method == undefined) {
+      if (self_targeted) {
+        if (config.warnings) console.warn('No group connection specified, using ONE_TO_ONE');
+        method = methods.connection.ONE_TO_ONE;
+      } else {
+        if (config.warnings) console.warn('No group connection specified, using ALL_TO_ALL');
+        method = methods.connection.ALL_TO_ALL;
+      }
+    }
 
     const connections = [];
 
-    let i, j;
-    if (target instanceof Group) {
-      if (method == undefined) {
-        if (self_targeted) {
-          if (config.warnings) console.warn('No group connection specified, using ONE_TO_ONE');
-          method = methods.connection.ONE_TO_ONE;
-        } else {
-          if (config.warnings) console.warn('No group connection specified, using ALL_TO_ALL');
-          method = methods.connection.ALL_TO_ALL;
+    // will be assigned after checking the type of target
+    let source_nodes = [];
+    let target_nodes = [];
+
+    // assign source and target nodes
+    // when inherited, the children may add the properties input_nodes and output_nodes
+    if (self.output_nodes) source_nodes = self.output_nodes;
+    else source_nodes = self.nodes;
+    if (target.input_nodes) target_nodes = target.input_nodes;
+    else if (target.nodes) target_nodes = target.nodes;
+    else if (target instanceof Node) target_nodes = [target];
+    else throw new TypeError("Type of target not supported");
+
+    // lengths should match if one to one
+    if (method === methods.connection.ONE_TO_ONE && source_nodes.length !== target_nodes.length) {
+      throw new RangeError("Method is one-to-one but there are unequal number of source and target nodes");
+    }
+
+    // the created connections will be added here. after the
+    // loops the connections will be added correspondingly
+    const new_connections = [];
+    for (let i = 0; i < target_nodes.length; i++) {
+      // check that the target node is not in the source nodes (because its ALL TO ELSE)
+      if (method === methods.connection.ALL_TO_ELSE) {
+        // slow as fuck. TODO: improve performance. e.g. have a map of owned nodes
+        let should_skip = false;
+        for (let j = 0; j < source_nodes.length; j++) {
+          if (target_nodes[i] == source_nodes[j]) {
+            should_skip = true;
+            break;
+          }
+        }
+        if (should_skip) continue;
+      }
+      // if ONE TO ONE
+      if (method === methods.connection.ONE_TO_ONE) {
+        // when one to one, we use the same index for source and target
+        // we checked before that the lengths match
+        let connection = source_nodes[i].connect(target_nodes[i], weight);
+        new_connections.push(connection);
+      }
+      // else (ALL_TO_ELSE or ALL_TO_ALL)
+      else {
+        for (let j = 0; j < source_nodes.length; j++) {
+          // create the connection
+          let connection = source_nodes[j].connect(target_nodes[i], weight);
+          new_connections.push(connection);
         }
       }
+    }
+
+    // add the connections to source and targets connections
+    for (let i = 0; i < new_connections.length; i++) {
+      const connection = new_connections[i];
+      if (self_targeted) {
+        self.connections_self.push(connection);
+      }
+      else {
+        self.connections_outgoing.push(connection);
+        target.connections_incoming.push(connection);
+      }
+    }
+
+    // before adding the connections to the target, check
+    // that not self targeted
+    // if (self_targeted) {}
+
+    /*
+    let i, j;
+    if (target instanceof Group) {
       if (method === methods.connection.ALL_TO_ALL || method === methods.connection.ALL_TO_ELSE) {
 
         for (let j = 0; j < target.nodes.length; j++) {
@@ -198,7 +267,7 @@ function Group(size) {
         }
       }
     }
-    else if (target instanceof Layer) connections = target.input(self, method, weight);
+    // else if (target instanceof Layer) connections = target.input(self, method, weight);
     else if (target instanceof Node) {
       for (let index = 0; index < self.nodes.length; index++) {
         const connection = self.nodes[index].connect(target, weight);
@@ -207,6 +276,7 @@ function Group(size) {
         connections.push(connection);
       }
     }
+    */
 
     return connections;
   },
