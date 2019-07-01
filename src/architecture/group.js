@@ -150,8 +150,6 @@ function Group(size) {
       }
     }
 
-    const connections = [];
-
     // will be assigned after checking the type of target
     let source_nodes = [];
     let target_nodes = [];
@@ -215,70 +213,7 @@ function Group(size) {
       }
     }
 
-    // before adding the connections to the target, check
-    // that not self targeted
-    // if (self_targeted) {}
-
-    /*
-    let i, j;
-    if (target instanceof Group) {
-      if (method === methods.connection.ALL_TO_ALL || method === methods.connection.ALL_TO_ELSE) {
-
-        for (let j = 0; j < target.nodes.length; j++) {
-          // slow as fuck. TODO: improve performance. e.g. have a map of owned nodes
-          if (method === methods.connection.ALL_TO_ELSE) {
-            let should_skip = false;
-            for (let i = 0; i < self.nodes.length; i++) {
-              if (target.nodes[j] == self.nodes[i]) {
-                should_skip = true;
-                break;
-              }
-            }
-            if (should_skip) continue;
-          }
-
-          // connect the nodes
-          for (let i = 0; i < self.nodes.length; i++) {
-            let connection = self.nodes[i].connect(target.nodes[j], weight);
-
-            self.connections_outgoing.push(connection);
-            target.connections_incoming.push(connection);
-            connections.push(connection);
-          }
-        }
-      } else if (method === methods.connection.ONE_TO_ONE) {
-        if(self_targeted){
-          for (let i = 0; i < self.nodes.length; i++) {
-            const connection = self.nodes[i].connect(target.nodes[i], weight);
-
-            self.connections_self.push(connection);
-            connections.push(connection);
-          }
-        } else {
-          if (self.nodes.length !== target.nodes.length) throw new Error('From and To group must be the same size!');
-
-          for (let i = 0; i < self.nodes.length; i++) {
-            const connection = self.nodes[i].connect(target.nodes[i], weight);
-
-            self.connections_outgoing.push(connection);
-            target.connections_incoming.push(connection);
-            connections.push(connection);
-          }
-        }
-      }
-    }
-    // else if (target instanceof Layer) connections = target.input(self, method, weight);
-    else if (target instanceof Node) {
-      for (let index = 0; index < self.nodes.length; index++) {
-        const connection = self.nodes[index].connect(target, weight);
-
-        self.connections_outgoing.push(connection);
-        connections.push(connection);
-      }
-    }
-    */
-
-    return connections;
+    return new_connections;
   },
 
   /**
