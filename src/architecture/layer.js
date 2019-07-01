@@ -1,7 +1,7 @@
 const _ = require("lodash");
 const methods = require("../methods/methods");
-const Group = require("./group");
 const Node = require("./node");
+let Group; // will be imported later for circular dependency issues
 
 
 /**
@@ -11,13 +11,12 @@ const Node = require("./node");
 *
 * @constructs Layer
 *
-* @param {number} [size=1] Size of the layer (i.e. nodes in the layer)
 *
 * @prop {Node[]} output Output nodes
 * @prop {Node[]} nodes Nodes within the layer
-* @prop {Group[]|Node[]} connections.in Income connections
-* @prop {Group[]|Node[]} connections.out Outgoing connections
-* @prop {Group[]|Node[]} connections.self Self connections
+* @prop {Group[]|Node[]} connections_incoming Incoming connections
+* @prop {Group[]|Node[]} connections_outgoing Outgoing connections
+* @prop {Group[]|Node[]} connections_self Self connections
 *
 * @example <caption>Custom architecture built with layers</caption>
 * let { Layer } = require("@liquid-carrot/carrot");
@@ -34,22 +33,20 @@ const Node = require("./node");
 *
 * let network = architect.Construct([input, hidden1, hidden2, output]);
 */
-function Layer(size, options) {
+function Layer() {
   let self = this
-  
+
+  // temporal patch, for cicular dependency issues
+  Group = Group || require("./group");
+
+
   self.output = null;
 
   self.nodes = [];
-  self.connections = {
-    in: [],
-    out: [],
-    self: [],
-    
-    // (BETA)
-    incoming: [],
-    outgoing: []
-  };
-  
+  self.connections_incoming = [];
+  self.connections_outgoing = [];
+  self.connections_self = [];
+
   /**
   * Activates all the nodes in the group
   *
@@ -66,7 +63,7 @@ function Layer(size, options) {
 
     for(let index = 0; index < self.nodes.length; index++) {
       const activation = (inputs == undefined) ? self.nodes[index].activate() : self.nodes[index].activate(inputs[index]);
-      
+
       values.push(activation);
     }
 
@@ -160,16 +157,16 @@ function Layer(size, options) {
         for(let j = 0; j < target.nodes.length; j++) {
           self.nodes[i].disconnect(target.nodes[j], twosided);
 
-          if(twosided) self.connections.in = self.connections.in .filter(connection => !(connection.from === target.nodes[j] && connection.to === self.nodes[i]))
-          self.connections.out = self.connections.out.filter(connection => !(connection.from === self.nodes[i] && connection.to === target.nodes[j]))
+          if(twosided) self.connections_incoming = self.connections_incoming .filter(connection => !(connection.from === target.nodes[j] && connection.to === self.nodes[i]))
+          self.connections_out = self.connections_out.filter(connection => !(connection.from === self.nodes[i] && connection.to === target.nodes[j]))
         }
       }
     } else if (target instanceof Node) {
       for (let i = 0; i < self.nodes.length; i++) {
         self.nodes[i].disconnect(target, twosided);
 
-        if(twosided) self.connections.in = self.connections.in .filter(connection => !(connection.from === target && connection.to === self.nodes[i]))
-        self.connections.out = self.connections.out.filter(connection => !(connection.from === self.nodes[i] && connection.to === target))
+        if(twosided) self.connections_incoming = self.connections_incoming .filter(connection => !(connection.from === target && connection.to === self.nodes[i]))
+        self.connections_out = self.connections_out.filter(connection => !(connection.from === self.nodes[i] && connection.to === target))
       }
     }
   },
@@ -179,12 +176,33 @@ function Layer(size, options) {
   *
   * @function clear
   * @memberof Layer
+  *
+  * @returns {Layer} This (the object itself)
   */
   self.clear = function() {
     for (let index = 0; index < self.nodes.length; index++) {
       self.nodes[index].clear();
     }
+    return self;
   }
+
+  /**
+   * Reverse of connect: connects from to the layer. Custom layers rewrite this
+   * @param  {Node|Group|Layer} from   The source of the input
+   * @param  {Function} method Same options as in connect (methods.connection.xxxxxxxxx)
+   * @param  {Number} weight Weight to be assigned to the connections
+   * @return {Coonection[]}  The formed connections
+   */
+  self.input = function(from, method, weight) {
+    if(from instanceof Layer) from = from.output;
+
+    method = method || methods.connection.ALL_TO_ALL;
+
+    return from.connect(block, method, weight);
+  };
+
+  // The output nodes of the layer. Custom layers rewrite this
+  self.output = self.nodes;
 }
 
 /**
@@ -211,10 +229,21 @@ Layer.Dense = function(size) {
 
   layer.input = function(from, method, weight) {
     if(from instanceof Layer) from = from.output;
-    
+
     method = method || methods.connection.ALL_TO_ALL;
-    
-    return from.connect(block, method, weight);
+
+    let returned_connections = [];
+    // this if was added later because .from was being called
+    // from an array (Array().from) and it was crashing
+    if (Array.isArray(from)) {
+      for (let i = 0; i < from.length; i++) {
+        const connection = from[i].connect(block, method, weight);
+        returned_connections.push(connection);
+      }
+    } else {
+      returned_connections = from.connect(block, method, weight);
+    }
+    return returned_connections;
   };
 
   return layer;
@@ -279,7 +308,7 @@ Layer.LSTM = function(size) {
     method = method || methods.connection.ALL_TO_ALL;
 
     const input = from.connect(memory_cell, method, weight);
-    
+
     const connections = [
       input,
       from.connect(input_gate, method, weight),
@@ -371,9 +400,9 @@ Layer.GRU = function(size) {
 
   layer.input = function(from, method, weight) {
     if (from instanceof Layer) from = from.output;
-    
+
     method = method || methods.connection.ALL_TO_ALL;
-    
+
     const connections = [
       from.connect(updateGate, method, weight),
       from.connect(resetGate, method, weight),
@@ -430,7 +459,7 @@ Layer.Memory = function(size, memory) {
     layer.nodes[index].nodes.reverse();
     output_group.nodes = output_group.nodes.concat(layer.nodes[index].nodes);
   }
-  
+
   layer.output = output_group;
 
   layer.input = function(from, method, weight) {
