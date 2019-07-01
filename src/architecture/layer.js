@@ -34,6 +34,10 @@ const Group = require("./Group"); // will be imported later for circular depende
 * let network = architect.Construct([input, hidden1, hidden2, output]);
 */
 class Layer extends Group {
+
+  /**
+   * Accepts the same arguments as Group, since it inherits from Group
+   */
   constructor() {
     super(...arguments);
 
@@ -43,54 +47,29 @@ class Layer extends Group {
     this.output_nodes = [];
   }
 
+  /**
+  * Creates a regular (dense) layer.
+  *
+  * @param {number} size Amount of nodes to build the layer with
+  *
+  * @returns {Layer} Plain layer
+  *
+  * @example
+  * let { Layer } = require("@liquid-carrot/carrot");
+  *
+  * let layer = new Layer.Dense(size);
+  */
   static Dense(size) {
-    // TODO: Write
+    // Create the layer
+    const new_dense_layer = new Layer(size);
+
+    new_dense_layer.input_nodes = new_dense_layer.nodes;
+    new_dense_layer.output_nodes = new_dense_layer.nodes;
+
+    return new_dense_layer;
   }
 }
 
-/**
-* Creates a regular (dense) layer.
-*
-* @param {number} size Amount of nodes to build the layer with
-*
-* @returns {Layer} Plain layer
-*
-* @example
-* let { Layer } = require("@liquid-carrot/carrot");
-*
-* let layer = new Layer.Dense(size);
-*/
-Layer.Dense = function(size) {
-  // Create the layer
-  const layer = new Layer();
-
-  // Init required nodes (in activation order)
-  const block = new Group(size);
-
-  layer.nodes.push(...block.nodes);
-  layer.output = block.nodes;
-
-  layer.input = function(from, method, weight) {
-    if(from instanceof Layer) from = from.output;
-
-    method = method || methods.connection.ALL_TO_ALL;
-
-    let returned_connections = [];
-    // this if was added later because .from was being called
-    // from an array (Array().from) and it was crashing
-    if (Array.isArray(from)) {
-      for (let i = 0; i < from.length; i++) {
-        const connection = from[i].connect(block, method, weight);
-        returned_connections.push(connection);
-      }
-    } else {
-      returned_connections = from.connect(block, method, weight);
-    }
-    return returned_connections;
-  };
-
-  return layer;
-};
 
 /**
 * Creates an LSTM layer.

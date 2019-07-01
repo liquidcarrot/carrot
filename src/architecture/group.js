@@ -8,7 +8,7 @@ const Node = require('./node');
 *
 * @constructs Group
 *
-* @param {number} size Amount of nodes to build group with
+* @param {number} [size=0] Amount of nodes to build group with
 *
 * @prop {Nodes[]} [nodes=[]] All nodes within the group
 * @prop {Connection[]} [connections_incoming=[]] Incoming connections
@@ -24,6 +24,8 @@ const Node = require('./node');
 function Group(size) {
   const self = this;
 
+  // Important:
+  // The order of the nodes dictates the ideal order of activation
   self.nodes = [];
   self.connections_self = [];
   self.connections_incoming = [];
@@ -360,6 +362,16 @@ function Group(size) {
       self.nodes[index].clear();
     }
     return self;
+  }
+
+  /**
+   * Add the nodes to the group
+   * @param  {Node|Node[]} nodes_to_add The ndoes to add
+   * @return {Group} A self reference for chaining
+   */
+  self.addNodes = function(nodes_to_add) {
+    if (nodes_to_add instanceof Node) nodes_to_add = [nodes_to_add];
+    self.nodes.push(...nodes_to_add);
   }
 }
 

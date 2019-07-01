@@ -386,4 +386,40 @@ describe("Layer", function() {
     })
   })
 
+  describe("Layer.someLayerConstructor()", function () {
+    const layer_types_to_test = ['Dense'];
+    layer_types_to_test.forEach(layer_type => {
+      // each test here performs a basic chain of layers and activates them to see
+      // if layers were correctly chained and working
+      // Does not test individual kind of layer functionality
+      it("Layer." + layer_type + "() => {Layer}", function () {
+        // get the constructor function
+        const layerConstructor = Layer[layer_type];
+        const layer_size = 10;
+
+        // create the layer
+        const main_created_layer = layerConstructor(layer_size);
+
+        // set up testing objects/environment
+        const group_for_input = new Group(10);
+        const group_for_output = new Group(10);
+        const input_connections_weight = Math.random();
+        const output_connections_weight = Math.random();
+
+        group_for_input.connect(main_created_layer, methods.connection.ALL_TO_ALL, input_connections_weight);
+        main_created_layer.connect(group_for_output, methods.connection.ALL_TO_ALL, output_connections_weight);
+
+        const chain_input = Array(10).fill(0).map(() => Math.random());
+
+        // test the chain
+        group_for_input.activate(chain_input);
+        main_created_layer.activate();
+        const chain_output = group_for_output.activate();
+
+        // check results
+        expect(chain_output).to.be.of.length(10);
+        chain_output.forEach((out_number) => expect(out_number).to.be.a("number"));
+      })
+    });
+  })
 })
