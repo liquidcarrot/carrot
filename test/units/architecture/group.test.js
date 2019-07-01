@@ -344,10 +344,9 @@ describe("Group", function() {
       const {main_group} = createRandomGroups(true);
       const to_connect_node = new Node();
       const connections_to_gate = main_group.connect(to_connect_node);
-      
+
       main_group.gate(connections_to_gate, methods.gating.OUTPUT);
       main_group.nodes.forEach(node => node.connections_outgoing.forEach(connection => {
-        console.log(connection)
         expect(connection.gater).to.be.an.instanceOf(Node);
       }))
     })

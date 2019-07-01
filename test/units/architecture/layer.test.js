@@ -51,11 +51,11 @@ describe("Layer", function() {
   // returns {main_layer, other_layer}
   function createRandomLayers(dont_connect) {
     // create the most random layer to be returned
-    const main_layer = new Layer(10);
+    const main_layer = Layer.Dense(10);
 
     // change the layer a bit
     // this other layer is used to apply functions to main layer
-    const other_layer = new Layer(5);
+    const other_layer = Layer.Dense(5);
     if (!dont_connect) {
       main_layer.connect(other_layer);
       other_layer.connect(main_layer);
@@ -235,8 +235,8 @@ describe("Layer", function() {
     // connect(target, methods.connection.ALL_TO_ALL, weight)
     it("layer.connect(target, methods.connection.ALL_TO_ALL) => {Connection[]}", function() {
       let { main_layer, other_layer } = createRandomLayers(true);
-      main_layer.connect(other_layer, methods.connection.ALL_TO_ALL);
 
+      main_layer.connect(other_layer, methods.connection.ALL_TO_ALL);
       main_layer.nodes.forEach(node => {
         expect(node.connections_outgoing.length).equal(other_layer.nodes.length);
       });
@@ -267,7 +267,7 @@ describe("Layer", function() {
     })
     it("layer.connect(target, methods.connection.ONE_TO_ONE, weight) => {Connection[]}", function() {
       let { main_layer } = createRandomLayers(true);
-      let other_layer = new Layer(main_layer.nodes.length);
+      let other_layer = Layer.Dense(main_layer.nodes.length);
       const weight = Math.random();
       main_layer.connect(other_layer, methods.connection.ONE_TO_ONE, weight);
 
@@ -399,6 +399,7 @@ describe("Layer", function() {
 
         // create the layer
         const main_created_layer = layerConstructor(layer_size);
+        expect(main_created_layer).to.be.an.instanceOf(Layer);
 
         // set up testing objects/environment
         const group_for_input = new Group(10);
