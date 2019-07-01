@@ -1,7 +1,7 @@
 const _ = require("lodash");
 const methods = require("../methods/methods");
 const Node = require("./node");
-let Group; // will be imported later for circular dependency issues
+const Group = require("./Group"); // will be imported later for circular dependency issues
 
 
 /**
@@ -33,176 +33,19 @@ let Group; // will be imported later for circular dependency issues
 *
 * let network = architect.Construct([input, hidden1, hidden2, output]);
 */
-function Layer() {
-  let self = this
+class Layer extends Group {
+  constructor() {
+    super(...arguments);
 
-  // temporal patch, for cicular dependency issues
-  Group = Group || require("./group");
-
-
-  self.output = null;
-
-  self.nodes = [];
-  self.connections_incoming = [];
-  self.connections_outgoing = [];
-  self.connections_self = [];
-
-  /**
-  * Activates all the nodes in the group
-  *
-  * @function activate
-  * @memberof Layer
-  *
-  * @param {object[]} value Array with length equal to amount of nodes
-  * @returns {number[]} Layer output values
-  */
-  self.activate = function(inputs) {
-    const values = [];
-
-    if(inputs != undefined && inputs.length !== self.nodes.length) throw new Error('Array with values should be same as the amount of nodes!');
-
-    for(let index = 0; index < self.nodes.length; index++) {
-      const activation = (inputs == undefined) ? self.nodes[index].activate() : self.nodes[index].activate(inputs[index]);
-
-      values.push(activation);
-    }
-
-    return values;
-  },
-
-  /**
-  * Propagates all the node in the group
-  *
-  * @function propagate
-  * @memberof Layer
-  *
-  * @param {number[]} [target] Ideal/target values - _required for output layers_
-  * @param {Object} [options]
-  * @param {number} [options.rate=0.3] Sets the [learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10) of the backpropagation process
-  * @param {number} [options.momentum=0] [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html). Adds a fraction of the previous weight update to the current one.
-  * @param {boolean} [options.update=true]
-  */
-  self.propagate = function(targets, options) {
-    if(targets != undefined && targets.length !== self.nodes.length) throw new Error('Array with values should be same as the amount of nodes!');
-
-    for(let index = self.nodes.length - 1; index >= 0; index--) {
-      if(targets == undefined) self.nodes[index].propagate(options);
-      else self.nodes[index].propagate(targets[index], options);
-    }
-  },
-
-  /**
-  * Connects the nodes in this group to nodes in another group or just a node
-  *
-  * @function connect
-  * @memberof Layer
-  *
-  * @param {Group|Node|Layer} target Node(s) to form connections with
-  * @param {connection} method [Connection Methods](connection)
-  * @param {number} weight An initial weight to build the connections with
-  *
-  * @returns {Connection[]} An array of connections between the nodes in this layer and target
-  */
-  self.connect = function(target, method, weight) {
-    if (target instanceof Group || target instanceof Node) return self.output.connect(target, method, weight);
-    else if (target instanceof Layer) return target.input(self, method, weight);
-  },
-
-  /**
-  * Make nodes from this group gate the given connection(s)
-  *
-  * @see [Synaptic Gating on Wikipedia](https://en.wikipedia.org/wiki/Synaptic_gating)
-  *
-  * @function gate
-  * @memberof Layer
-  *
-  * @param {Connection[]} connections Connections to gate
-  * @param {gating_method} method [Gating Method](gating)
-  */
-  self.gate = function(connections, method) {
-    self.output.gate(connections, method);
-  },
-
-  /**
-  * Sets the value of a property for every node
-  *
-  * @function set
-  * @memberof Layer
-  *
-  * @param {object[]} values An object with (all optional) bias, squash, and type properties to overwrite in the node
-  */
-  self.set = function(values) {
-    for (let i = 0; i < self.nodes.length; i++) {
-      const node = self.nodes[i];
-
-      if (node instanceof Node) Object.assign(node, { ...values });
-      else if (node instanceof Group) node.set(values);
-    }
-  },
-
-  /**
-  * Disconnects all nodes from this group from another given group/node
-  *
-  * @function disconnect
-  * @memberof Layer
-  *
-  * @param {Group|Node|Layer} target A Group, Node, or Layer to disconnect from
-  * @param {boolean} [twosided=false] Flag indicating incoming connections
-  */
-  self.disconnect = function(target, twosided) {
-    twosided = twosided || false;
-
-    if (target instanceof Group) {
-      for (let i = 0; i < self.nodes.length; i++) {
-        for(let j = 0; j < target.nodes.length; j++) {
-          self.nodes[i].disconnect(target.nodes[j], twosided);
-
-          if(twosided) self.connections_incoming = self.connections_incoming .filter(connection => !(connection.from === target.nodes[j] && connection.to === self.nodes[i]))
-          self.connections_out = self.connections_out.filter(connection => !(connection.from === self.nodes[i] && connection.to === target.nodes[j]))
-        }
-      }
-    } else if (target instanceof Node) {
-      for (let i = 0; i < self.nodes.length; i++) {
-        self.nodes[i].disconnect(target, twosided);
-
-        if(twosided) self.connections_incoming = self.connections_incoming .filter(connection => !(connection.from === target && connection.to === self.nodes[i]))
-        self.connections_out = self.connections_out.filter(connection => !(connection.from === self.nodes[i] && connection.to === target))
-      }
-    }
-  },
-
-  /**
-  * Clear the context of this group
-  *
-  * @function clear
-  * @memberof Layer
-  *
-  * @returns {Layer} This (the object itself)
-  */
-  self.clear = function() {
-    for (let index = 0; index < self.nodes.length; index++) {
-      self.nodes[index].clear();
-    }
-    return self;
+    // the difference between Layer and Group is that Layer
+    // has special input and output nodes, used when connecting out or in
+    this.input_nodes = [];
+    this.output_nodes = [];
   }
 
-  /**
-   * Reverse of connect: connects from to the layer. Custom layers rewrite this
-   * @param  {Node|Group|Layer} from   The source of the input
-   * @param  {Function} method Same options as in connect (methods.connection.xxxxxxxxx)
-   * @param  {Number} weight Weight to be assigned to the connections
-   * @return {Coonection[]}  The formed connections
-   */
-  self.input = function(from, method, weight) {
-    if(from instanceof Layer) from = from.output;
-
-    method = method || methods.connection.ALL_TO_ALL;
-
-    return from.connect(block, method, weight);
-  };
-
-  // The output nodes of the layer. Custom layers rewrite this
-  self.output = self.nodes;
+  static Dense(size) {
+    // TODO: Write
+  }
 }
 
 /**
