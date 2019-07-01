@@ -68,48 +68,6 @@ function Node(options) {
     error_gated: 0,
     ...options
   })
-  
-  // Object.assign(self, { type }, {
-  //   bias: self.type === 'input' ? 0 : Math.random() * 2 - 1,
-  //   squash: methods.activation.LOGISTIC,
-  //   activation: 0,
-  //   state: 0,
-  //   old: 0,
-    
-  //   // PURPOSE: Dropout
-  //   mask: 1,
-    
-  //   // PURPOSE: Tracking Momentum
-  //   previousDeltaBias: 0, // ALIAS: delta_bias
-    
-  //   // PURPOSE: Batch Training
-  //   totalDeltaBias: 0, // ALIAS: delta_bias
-  //   connections: {
-  //     in: [],
-  //     out: [],
-  //     gated: [],
-  //     self: new Connection(this, this, 0),
-      
-  //     // (BETA)
-  //     incoming: [],
-  //     outgoing: [],
-  //     gates: []
-  //   },
-    
-  //   // Backpropagation Data
-  //   error: {
-  //     responsibility: 0,
-  //     projected: 0,
-  //     gated: 0
-  //   },
-    
-  //   // (BETA)
-  //   delta_bias: {
-  //     previous: 0,
-  //     total: 0,
-  //     all: []
-  //   }
-  // });
 
   /**
   * Actives the node.
@@ -123,7 +81,7 @@ function Node(options) {
   *
   * @todo Support vector/tensor/array activation
   *
-  * @param {number} [input] _defaults to `0` when `node.type === "input"`._
+  * @param {number} [input] Environment signal (i.e. optional numerical value passed to the network as input)  - _should only be passed in input neurons_
   * @param {Object} [options]
   * @param {boolean} [options.trace]
   *
@@ -246,7 +204,7 @@ function Node(options) {
   *
   * @deprecated
   *
-  * @param {number} [input] Optional value to be used for an input (or forwarding) neuron
+  * @param {number} [input] Optional value to be used for an input (or forwarding) neuron - _should only be passed in input neurons_
   *
   * @returns {number} A neuron's ['Squashed'](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) output value
   *
@@ -292,7 +250,7 @@ function Node(options) {
   * @function propagate
   * @memberof Node
   *
-  * @param {number} target The target value
+  * @param {number} target The target value (i.e. "the value the network SHOULD have given")
   * @param {Object} options
   * @param {number} [options.rate=0.3] [Learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
   * @param {number} [options.momentum=0] [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one.
@@ -406,10 +364,12 @@ function Node(options) {
   },
 
   /**
-  * Creates a connection from this node to the given node or group
+  * Connects this node to the given node(s)
   *
   * @param {Node|Node[]} nodes Node(s) to project connection(s) to
-  * @param {number} weight Initial connection(s) [weight](https://en.wikipedia.org/wiki/Synaptic_weight)
+  * @param {number} [weight] Initial connection(s) [weight](https://en.wikipedia.org/wiki/Synaptic_weight)
+  * @param {Object} [options={}]
+  * @param {boolean} [twosided] If `true` connect nodes to each other
   *
   * @function connect
   * @memberof Node
@@ -491,34 +451,52 @@ function Node(options) {
   },
 
   /**
-  * Disconnects this node from the other node
+  * Disconnects this node from the given node(s)
   *
   * @function disconnect
   * @memberof Node
   *
-  * @param {Node} node
+  * @param {Node|Node[]} node Node(s) to remove connection(s) to
   * @param {Object} options
-  * @param {boolean} [options.twosided] If the nodes project a connection to each other (two way connection), set this to true to disconnect both connections at once
+  * @param {boolean} [options.twosided=false] If `true` disconnects nodes from each other (i.e. both sides)
   *
-  * @example <caption>One sided connection</caption>
-  * let { Node } = require("@liquid-carrot/carrot");
+  * @example <caption>Disconnect from one <code>node</code></caption>
+  * const { Node } = require("@liquid-carrot/carrot");
   *
-  * let A = new Node();
-  * let B = new Node();
-  * A.connect(B); // A now projects a connection to B
+  * let node = new Node();
+  * let other = new Node();
   *
-  * A.disconnect(B); // no connection between A and B anymore
+  * node.connect(other); // `node` now connected to `other`
   *
-  * @example <caption>Two-sided connection</caption>
-  * let { Node } = require("@liquid-carrot/carrot");
+  * console.log(node.connections_incoming.length); // 0
+  * console.log(node.connections_outgoing.length); // 1
   *
-  * let A = new Node();
-  * let B = new Node();
-  * A.connect(B); // A now projects a connection to B
-  * B.connect(A); // B now projects a connection to A
+  * node.disconnect(other); // `node` is now disconnected from `other`
   *
-  * // A.disconnect(B)  only disconnects A to B, so use
-  * A.disconnect(B, true); // or B.disconnect(A, true)
+  * console.log(node.connections_incoming.length); // 0
+  * console.log(node.connections_outgoing.length); // 0
+  *
+  * @example <caption>Connect to one <code>node</code> - <em>two-sided</em></caption>
+  * const { Node } = require("@liquid-carrot/carrot");
+  *
+  * let node = new Node();
+  * let other = new Node();
+  *
+  * // `node` & `other` are now connected to each other
+  * node.connect(other, {
+  *   twosided: true
+  * });
+  *
+  * console.log(node.connections_incoming.length); // 1
+  * console.log(node.connections_outgoing.length); // 1
+  *
+  * // `node` & `other` are now disconnected from each other
+  * node.disconnect(other, {
+  *   twosided: true
+  * });
+  *
+  * console.log(node.connections_incoming.length); // 0
+  * console.log(node.connections_outgoing.length); // 0
   */
   self.disconnect = function(nodes, options) {
     if (nodes == undefined) throw new ReferenceError("Missing required parameter 'target'");
@@ -572,26 +550,27 @@ function Node(options) {
   },
 
   /**
-  * Neurons can gate connections. This means that the output (activation value) of a neuron influences the value sent through a connection.
+  * This node gates (influences) the given connection(s)
   *
   * @function gate
   * @memberof Node
   *
-  * @param {Connection[]|Connection} connections Connections to be gated (influenced) by a neuron
+  * @param {Connection|Connection[]} connections Connections to be gated (influenced) by a neuron
   *
-  * @example
-  * let { Node } = require("@liquid-carrot/carrot");
+  * @example <caption>Gate one <code>connection</code></caption>
+  * const { Node } = require("@liquid-carrot/carrot");
   *
-  * let A = new Node();
-  * let B = new Node();
-  * let C = new Node();
+  * let input = new Node();
+  * let output = new Node();
+  * let connection = input.connect(output);
   *
-  * connections = A.connect(B);
+  * let node = new Node();
   *
-  * // Now gate the connection(s)
-  * C.gate(connections);
+  * console.log(connection.gater === node); // false
   *
-  * // Now the weight of the connection from A to B will always be multiplied by the activation of node C.
+  * node.gate(connection); // Node now gates (manipulates) `connection`
+  *
+  * console.log(connection.gater === node); // true
   */
   self.gate = function(connections) {
     if (connections == undefined) throw new ReferenceError("Missing required parameter 'connections'");
@@ -613,26 +592,33 @@ function Node(options) {
   },
 
   /**
-  * Removes the gates from this node from the given connection(s)
+  * Stops this node from gating (manipulating) the given connection(s)
   *
   * @function ungate
   * @memberof Node
   *
-  * @param {Connection[]|Connection} connections Connections to be ungated
+  * @param {Connection|Connection[]} connections Connections to ungate - _i.e. remove this node from_
   *
-  * @example
-  * let { Node } = require("@liquid-carrot/carrot");
+  * @returns {Connection|Connection[]} Returns connection(s) that were ungated
   *
-  * let A = new Node();
-  * let B = new Node();
-  * let C = new Node();
-  * let connections = A.connect(B);
+  * @example <caption>Ungate one <code>connection</code></caption>
+  * const { Node } = require("@liquid-carrot/carrot");
   *
-  * // Now gate the connection(s)
-  * C.gate(connections);
+  * let input = new Node();
+  * let output = new Node();
+  * let connection = input.connect(output);
   *
-  * // Now ungate those connections
-  * C.ungate(connections);
+  * let node = new Node();
+  *
+  * console.log(connection.gater === node); // false
+  *
+  * node.gate(connection); // Node now gates (manipulates) `connection`
+  *
+  * console.log(connection.gater === node); // true
+  *
+  * node.ungate(connection); // Node is removed from `connection`
+  *
+  * console.log(connection.gater === node); // false
   */
   self.ungate = function(connections) {
     if (connections == undefined) throw new ReferenceError("Missing required parameter 'connections'");
@@ -656,10 +642,26 @@ function Node(options) {
   },
 
   /**
-  * Clear the context of the node, basically reverting it to a 'new' neuron. Useful for predicting timeseries with LSTM's.
+  * Clears this node's state information - _i.e. resets node and its connections to "factory settings"_
+  *
+  * `node.clear()` is useful for predicting timeseries with LSTMs.
   *
   * @function clear
   * @memberof Node
+  *
+  * @example
+  * const { Node } = require("@liquid-carrot/carrot");
+  *
+  * let node = new Node();
+  *
+  * node.activate([1, 0]);
+  * node.propagate([1]);
+  *
+  * console.log(node); // Node has state information (e.g. `node.derivative`)
+  *
+  * node.clear(); // Factory resets node
+  *
+  * console.log(node); // Node has no state information
   */
   self.clear = function() {
     for (let index = 0; index < self.connections_incoming.length; index++) {
@@ -680,7 +682,7 @@ function Node(options) {
   },
 
   /**
-  * Mutates the node
+  * Mutates the node - _i.e. changes node's squash function or bias_
   *
   * @function mutate
   * @memberof Node
@@ -690,16 +692,13 @@ function Node(options) {
   * @param {activation[]} [options.allowed] Allowed/possible squash (activation) functions for node (neuron)
   *
   * @example
-  * let { Node } = require("@liquid-carrot/carrot");
+  * const { Node } = require("@liquid-carrot/carrot");
   *
-  * let A = new Node(); // a Node with the default LOGISTIC squash function
+  * let node = new Node();
   *
-  * let allowable_methods = [
-  *   activation.TANH,
-  *   activation.RELU,
-  * ]
+  * console.log(node);
   *
-  * A.mutate(methods.mutation.MOD_ACTIVATION, allowable_methods) // node's squash function is now TANH or RELU
+  * node.mutate(); // Changes node's squash function or bias
   */
   self.mutate = function(options) {
     options = {
@@ -737,26 +736,33 @@ function Node(options) {
   },
 
   /**
-  * Checks if this node is projecting to the given node
+  * Checks if this node has an outgoing connection(s) into the given node(s)
   *
   * @function isProjectingTo
   * @memberof Node
   *
-  * @param {Node|Node[]} [nodes] Node to check for a connection to
+  * @param {Node|Node[]} nodes Checks if this node has outgoing connection(s) into `node(s)`
   *
-  * @returns {boolean} True if there is a connection from this node to a given node
+  * @returns {boolean} Returns true, iff this node has an outgoing connection into every node(s)
   *
-  * @example
-  * let { Node } = require("@liquid-carrot/carrot");
+  * @example <caption>Check one <code>node</code></caption>
+  * const { Node } = require("@liquid-carrot/carrot");
   *
-  * let A = new Node();
-  * let B = new Node();
-  * let C = new Node();
-  * A.connect(B);
-  * B.connect(C);
+  * let other_node = new Node();
+  * let node = new Node();
+  * node.connect(other_node);
   *
-  * A.isProjectingTo(B); // true
-  * A.isProjectingTo(C); // false
+  * console.log(node.isProjectingTo(other_node)); // true
+  *
+  * @example <caption>Check many <code>nodes</code></caption>
+  * const { Node } = require("@liquid-carrot/carrot");
+  *
+  * let other_nodes = Array.from({ length: 5 }, () => new Node());
+  * let node = new Node();
+  *
+  * other_nodes.forEach(other_node => node.connect(other_node));
+  *
+  * console.log(node.isProjectingTo(other_nodes)); // true
   */
   self.isProjectingTo = function(nodes) {
     if (nodes == undefined) throw new ReferenceError("Missing required parameter 'nodes'");
@@ -788,25 +794,33 @@ function Node(options) {
   },
 
   /**
-  * Checks if the given node is projecting to this node
+  * Checks if the given node(s) are have outgoing connections to this node
   *
   * @function isProjectedBy
   * @memberof Node
   *
-  * @param {Node} node Node to check for a connection from
-  * @returns {boolean} True if there is a connection from the given node to this node
+  * @param {Node|Node[]} nodes Checks if `node(s)` have outgoing connections into this node
   *
-  * @example
-  * let { Node } = require("@liquid-carrot/carrot");
+  * @returns {boolean} Returns true, iff every node(s) has an outgoing connection into this node
   *
-  * let A = new Node();
-  * let B = new Node();
-  * let C = new Node();
-  * A.connect(B);
-  * B.connect(C);
+  * @example <caption>Check one <code>node</code></caption>
+  * const { Node } = require("@liquid-carrot/carrot");
   *
-  * A.isProjectedBy(C);// false
-  * B.isProjectedBy(A); // true
+  * let other_node = new Node();
+  * let node = new Node();
+  * other_node.connect(node);
+  *
+  * console.log(node.isProjectedBy(other_node)); // true
+  *
+  * @example <caption>Check many <code>nodes</code></caption>
+  * const { Node } = require("@liquid-carrot/carrot");
+  *
+  * let other_nodes = Array.from({ length: 5 }, () => new Node());
+  * let node = new Node();
+  *
+  * other_nodes.forEach(other_node => other_node.connect(node));
+  *
+  * console.log(node.isProjectedBy(other_nodes)); // true
   */
   self.isProjectedBy = function(nodes) {
     if (nodes == undefined) throw new ReferenceError("Missing required parameter 'nodes'");
@@ -852,10 +866,11 @@ function Node(options) {
   * @returns {object}
   *
   * @example
-  * let { Node } = require("@liquid-carrot/carrot");
+  * const { Node } = require("@liquid-carrot/carrot");
   *
-  * let exported = myNode.toJSON();
-  * let imported = myNode.fromJSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
+  * let node = new Node();
+  *
+  * console.log(node.toJSON());
   */
   self.toJSON = function () {
     return {
@@ -871,13 +886,35 @@ function Node(options) {
 * Convert a json object to a node
 *
 * @param {object} json A node represented as a JSON object
+*
 * @returns {Node} A reconstructed node
 *
-* @example
-* let { Node } = require("@liquid-carrot/carrot");
+* @example <caption>From Object</caption>
+* const { Node } = require("@liquid-carrot/carrot");
 *
-* let exported = myNode.toJSON();
-* let imported = myNode.fromJSON(exported); // imported will be a new instance of Node that is an exact clone of myNode.
+* let json = { bias: 0.35 };
+* let node = Node.fromJSON(json);
+*
+* console.log(node);
+*
+* @example <caption>From Node.toJSON()</caption>
+* const { Node } = require("@liquid-carrot/carrot");
+*
+* let other_node = new Node();
+* let json = other_node.toJSON();
+* let node = Node.fromJSON(json);
+*
+* console.log(node);
+*
+* @example <caption>From JSON string</caption>
+* const { Node } = require("@liquid-carrot/carrot");
+*
+* let other = new Node();
+* let json = other_node.toJSON();
+* let string = JSON.stringify(json);
+* let node = Node.fromJSON(string);
+*
+* console.log(node);
 */
 Node.fromJSON = function (json) {
   if (json == undefined) throw new ReferenceError("Missing required parameter 'json'");
