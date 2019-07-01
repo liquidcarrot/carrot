@@ -276,7 +276,7 @@ describe("Layer", function() {
         node.connections_outgoing.forEach(connection => expect(connection.weight).to.equal(weight));
       });
     })
-    // TODO: ONE_TO_ONE
+    
   })
 
   describe("layer.disconnect()", function () {
