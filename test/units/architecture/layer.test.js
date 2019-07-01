@@ -397,6 +397,8 @@ describe("Layer", function() {
         const layerConstructor = Layer[layer_type];
         const layer_size = 10;
 
+        debugger;
+
         // create the layer
         const main_created_layer = layerConstructor(layer_size);
         expect(main_created_layer).to.be.an.instanceOf(Layer);

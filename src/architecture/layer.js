@@ -115,15 +115,15 @@ class Layer extends Group {
     const output_connections = memory_cell.connect(output_block, methods.connection.ALL_TO_ALL);
 
     input_group.connect(memory_cell, methods.connection.ALL_TO_ALL);
-    input_group.connect(input_gate, methods.connection.ALL_TO_ALL),
     input_group.connect(output_gate, methods.connection.ALL_TO_ALL),
-    input_group.connect(forget_gate, methods.connection.ALL_TO_ALL)
+    input_group.connect(forget_gate, methods.connection.ALL_TO_ALL);
+    const input_gate_connections = input_group.connect(input_gate, methods.connection.ALL_TO_ALL);
 
-    input_gate.gate(input_group, methods.gating.INPUT);
 
     // Set up gates
     forget_gate.gate(forget_connections, methods.gating.SELF);
     output_gate.gate(output_connections, methods.gating.OUTPUT);
+    input_gate.gate(input_gate_connections, methods.gating.INPUT);
 
     // Add the nodes to the layer
     new_lstm_layer.addNodes(input_group);
@@ -134,8 +134,8 @@ class Layer extends Group {
     new_lstm_layer.addNodes(output_block);
 
     // Define input and output nodes
-    new_lstm_layer.input_nodes.push(input_group.nodes);
-    new_lstm_layer.output_nodes.push(output_block.nodes);
+    new_lstm_layer.input_nodes.push(...input_group.nodes);
+    new_lstm_layer.output_nodes.push(...output_block.nodes);
 
     return new_lstm_layer;
   }
