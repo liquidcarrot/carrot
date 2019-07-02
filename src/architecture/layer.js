@@ -139,6 +139,98 @@ class Layer extends Group {
 
     return new_lstm_layer;
   }
+
+  /**
+  * Creates a GRU layer.
+  *
+  * The GRU layer is similar to the LSTM layer, however it has no memory cell and only two gates. It is also a recurrent layer that is excellent for timeseries prediction.
+  *
+  * @param {number} size Amount of nodes to build the layer with
+  *
+  * @returns {Layer} GRU layer
+  *
+  * @example
+  * let { Layer } = require("@liquid-carrot/carrot");
+  *
+  * let layer = new Layer.GRU(size);
+  */
+  static GRU(size) {
+    // Create the layer
+    const new_gru_layer = new Layer();
+
+    const input_group = new Group(size);
+    const update_gate = new Group(size);
+    const inverse_update_gate = new Group(size);
+    const reset_gate = new Group(size);
+    const memory_cell = new Group(size);
+    const output_group = new Group(size);
+    const previous_output = new Group(size);
+
+    previous_output.set({
+      bias: 0,
+      squash: methods.activation.IDENTITY,
+      type: 'constant'
+    });
+    memory_cell.set({
+      squash: methods.activation.TANH
+    });
+    inverse_update_gate.set({
+      bias: 0,
+      squash: methods.activation.INVERSE,
+      type: 'constant'
+    });
+    update_gate.set({
+      bias: 1
+    });
+    reset_gate.set({
+      bias: 0
+    });
+
+    // Initial input forwarding
+    input_group.connect(update_gate, methods.connection.ALL_TO_ALL),
+    input_group.connect(reset_gate, methods.connection.ALL_TO_ALL),
+    input_group.connect(memory_cell, methods.connection.ALL_TO_ALL)
+
+    // Update gate calculation
+    previous_output.connect(update_gate, methods.connection.ALL_TO_ALL);
+
+    // Inverse update gate calculation
+    update_gate.connect(inverse_update_gate, methods.connection.ONE_TO_ONE, 1);
+
+    // Reset gate calculation
+    previous_output.connect(reset_gate, methods.connection.ALL_TO_ALL);
+
+    // Memory calculation
+    const reset = previous_output.connect(memory_cell, methods.connection.ALL_TO_ALL);
+
+    reset_gate.gate(reset, methods.gating.OUTPUT); // gate
+
+    // Output calculation
+    const update1 = previous_output.connect(output_group, methods.connection.ALL_TO_ALL);
+    const update2 = memory_cell.connect(output_group, methods.connection.ALL_TO_ALL);
+
+    update_gate.gate(update1, methods.gating.OUTPUT);
+    inverse_update_gate.gate(update2, methods.gating.OUTPUT);
+
+    // Previous output_group calculation
+    output_group.connect(previous_output, methods.connection.ONE_TO_ONE, 1);
+
+    // Add to nodes array in the correct order
+    new_gru_layer.addNodes(input_group);
+    new_gru_layer.addNodes(update_gate);
+    new_gru_layer.addNodes(inverse_update_gate);
+    new_gru_layer.addNodes(reset_gate);
+    new_gru_layer.addNodes(memory_cell);
+    new_gru_layer.addNodes(output_group);
+    new_gru_layer.addNodes(previous_output);
+
+    // set the input and output nodes
+    new_gru_layer.input_nodes.push(...input_group.nodes);
+    new_gru_layer.output_nodes.push(...output_group.nodes);
+
+
+    return new_gru_layer;
+  }
 }
 
 /**
