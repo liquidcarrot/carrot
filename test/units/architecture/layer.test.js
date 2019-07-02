@@ -387,8 +387,13 @@ describe("Layer", function() {
   })
 
   describe("Layer.someLayerConstructor()", function () {
-    const layer_types_to_test = ['Dense', 'LSTM', 'GRU'];
+    const layer_types_to_test = ['Dense', 'LSTM', 'GRU', {type: 'Memory', extra_args: [5]}];
     layer_types_to_test.forEach(layer_type => {
+      const extra_layer_args = [];
+      if (typeof layer_type === 'object') {
+        extra_layer_args.push(...layer_type.extra_args);
+        layer_type = layer_type.type;
+      }
       // each test here performs a basic chain of layers and activates them to see
       // if layers were correctly chained and working
       // Does not test individual kind of layer functionality
@@ -400,7 +405,7 @@ describe("Layer", function() {
         debugger;
 
         // create the layer
-        const main_created_layer = layerConstructor(layer_size);
+        const main_created_layer = layerConstructor(layer_size, ...extra_layer_args);
         expect(main_created_layer).to.be.an.instanceOf(Layer);
 
         // set up testing objects/environment

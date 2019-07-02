@@ -231,156 +231,57 @@ class Layer extends Group {
 
     return new_gru_layer;
   }
+
+  /**
+  * Creates a Memory layer.
+  *
+  * The Memory layer makes networks remember a number of previous inputs in an absolute way. For example, if you set the memory option to 3, it will remember the last 3 inputs in the same state as they were inputted.
+  *
+  * @param {number} size Amount of nodes to build the layer with
+  * @param {number} memory_size Number of previous inputs to remember
+  *
+  * @returns {Layer} Layer with nodes that store previous inputs
+  *
+  * @example
+  * let { Layer } = require("@liquid-carrot/carrot");
+  *
+  * let layer = new Layer.Memory(size, memory);
+  */
+  static Memory(size, memory_size) {
+    // Create the layer
+    const new_memory_layer = new Layer();
+    // Because the output can only be one group, we have to put the nodes all in one group
+
+    const input_group = new Group(size);
+
+    let previous = input_group;
+    const added_groups = [];
+    // this array is created to add the nodes to the layer later
+    // to be able to have the memory effect the nodes have to be added in reverse order
+    for (let index = 0; index < memory_size; index++) {
+      const block = new Group(size);
+
+      block.set({
+        squash: methods.activation.IDENTITY,
+        bias: 0,
+        type: 'constant'
+      });
+
+      previous.connect(block, methods.connection.ONE_TO_ONE, 1);
+
+      added_groups.nodes.push(block);
+      previous = block;
+    }
+
+    // set up input and output nodes
+    new_memory_layer.input_nodes.push(...input_group.nodes)
+    new_memory_layer.output_nodes.push(...added_groups.slice(-1)[0].nodes)
+
+    // the order of activation has to be the reverse of the connection order to have a memory effect
+    added_groups.reverse().forEach(group => new_memory_layer.addNodes(group));;
+
+    return new_memory_layer;
+  }
 }
-
-/**
-* Creates a GRU layer.
-*
-* The GRU layer is similar to the LSTM layer, however it has no memory cell and only two gates. It is also a recurrent layer that is excellent for timeseries prediction.
-*
-* @param {number} size Amount of nodes to build the layer with
-*
-* @returns {Layer} GRU layer
-*
-* @example
-* let { Layer } = require("@liquid-carrot/carrot");
-*
-* let layer = new Layer.GRU(size);
-*/
-Layer.GRU = function(size) {
-  // Create the layer
-  const layer = new Layer();
-
-  const update_gate = new Group(size);
-  const inverse_update_gate = new Group(size);
-  const reset_gate = new Group(size);
-  const memory_cell = new Group(size);
-  const output = new Group(size);
-  const previous_output = new Group(size);
-
-  previous_output.set({
-    bias: 0,
-    squash: methods.activation.IDENTITY,
-    type: 'constant'
-  });
-  memory_cell.set({
-    squash: methods.activation.TANH
-  });
-  inverse_update_gate.set({
-    bias: 0,
-    squash: methods.activation.INVERSE,
-    type: 'constant'
-  });
-  update_gate.set({
-    bias: 1
-  });
-  reset_gate.set({
-    bias: 0
-  });
-
-  // Update gate calculation
-  previous_output.connect(update_gate, methods.connection.ALL_TO_ALL);
-
-  // Inverse update gate calculation
-  update_gate.connect(inverse_update_gate, methods.connection.ONE_TO_ONE, 1);
-
-  // Reset gate calculation
-  previous_output.connect(reset_gate, methods.connection.ALL_TO_ALL);
-
-  // Memory calculation
-  const reset = previous_output.connect(memory_cell, methods.connection.ALL_TO_ALL);
-
-  reset_gate.gate(reset, methods.gating.OUTPUT); // gate
-
-  // Output calculation
-  const update1 = previous_output.connect(output, methods.connection.ALL_TO_ALL);
-  const update2 = memory_cell.connect(output, methods.connection.ALL_TO_ALL);
-
-  update_gate.gate(update1, methods.gating.OUTPUT);
-  inverse_update_gate.gate(update2, methods.gating.OUTPUT);
-
-  // Previous output calculation
-  output.connect(previous_output, methods.connection.ONE_TO_ONE, 1);
-
-  // Add to nodes array
-  layer.nodes = [update_gate, inverse_update_gate, reset_gate, memory_cell, output, previous_output];
-
-  layer.output = output;
-
-  layer.input = function(from, method, weight) {
-    if (from instanceof Layer) from = from.output;
-
-    method = method || methods.connection.ALL_TO_ALL;
-
-    const connections = [
-      from.connect(updateGate, method, weight),
-      from.connect(resetGate, method, weight),
-      from.connect(memoryCell, method, weight)
-    ];
-
-    return connections;
-  };
-
-  return layer;
-};
-
-/**
-* Creates a Memory layer.
-*
-* The Memory layer makes networks remember a number of previous inputs in an absolute way. For example, if you set the memory option to 3, it will remember the last 3 inputs in the same state as they were inputted.
-*
-* @param {number} size Amount of nodes to build the layer with
-* @param {number} memory Number of previous inputs to remember
-*
-* @returns {Layer} Layer with nodes that store previous inputs
-*
-* @example
-* let { Layer } = require("@liquid-carrot/carrot");
-*
-* let layer = new Layer.Memory(size, memory);
-*/
-Layer.Memory = function(size, memory) {
-  // Create the layer
-  const layer = new Layer();
-  // Because the output can only be one group, we have to put the nodes all in óne group
-
-  let previous;
-  for (let index = 0; index < memory; index++) {
-    const block = new Group(size);
-
-    block.set({
-      squash: methods.activation.IDENTITY,
-      bias: 0,
-      type: 'constant'
-    });
-
-    if (previous != undefined) previous.connect(block, methods.connection.ONE_TO_ONE, 1);
-
-    layer.nodes.push(block);
-    previous = block;
-  }
-
-  layer.nodes.reverse();
-
-  // Because output can only be óne group, fit all memory nodes in óne group
-  const output_group = new Group(0);
-  for (let index = 0; index < layer.nodes.length; index++) {
-    layer.nodes[index].nodes.reverse();
-    output_group.nodes = output_group.nodes.concat(layer.nodes[index].nodes);
-  }
-
-  layer.output = output_group;
-
-  layer.input = function(from, method, weight) {
-    if (from instanceof Layer) from = from.output;
-    method = method || methods.connection.ALL_TO_ALL;
-
-    if (from.nodes.length !== layer.nodes[layer.nodes.length - 1].nodes.length) throw new Error('Previous layer size must be same as memory size');
-
-    return from.connect(layer.nodes[layer.nodes.length - 1], methods.connection.ONE_TO_ONE, 1);
-  };
-
-  return layer;
-};
 
 module.exports = Layer;
