@@ -26,7 +26,7 @@ describe("Node", function() {
       expect(node.error_gated).to.be.finite;
     }
   }
-  
+
   describe("new Node()", function() {
     const other_node = new Node();
     const json = {
@@ -38,17 +38,17 @@ describe("Node", function() {
       squash: methods.activation.TANH
     }
     const types = ["input", "hidden", "output", "orphan"]; // (DEPRECATED)
-    
+
     it("new Node() => {Node}", function() {
       const node = new Node();
-      
+
       is.node(node);
     })
     it("new Node(json) => {Node}", function() {
       const node = new Node(json);
-      
+
       is.node(node);
-      
+
       Object.keys(json).forEach(function(key) {
         expect(node[key]).to.equal(json[key]);
         expect(node[key]).to.eql(json[key]);
@@ -56,9 +56,9 @@ describe("Node", function() {
     })
     it("new Node(node) => {Node}", function() {
       const node = new Node(other_node);
-      
+
       is.node(node);
-      
+
       expect(node.bias).to.equal(other_node.bias);
       expect(node.bias).to.eql(other_node.bias);
       expect(node.squash).to.equal(other_node.squash);
@@ -68,31 +68,31 @@ describe("Node", function() {
   describe("node.connect()", function() {
     it("node.connect() => {ReferenceError}", function() {
       const node = new Node();
-      
+
       expect(() => node.connect()).to.throw(ReferenceError);
     })
     it("node.connect(self) => {Connection}", function() {
       const node = new Node();
-      
+
       expect(node.connect(node)).to.be.an.instanceOf(Connection);
       expect(node.connections_self.weight).to.equal(1);
     })
     it("node.connect(node) => {Connection}", function() {
       const node = new Node();
       const other = new Node();
-      
+
       expect(node.connect(other)).to.be.an.instanceOf(Connection);
     })
     it("node.connect(nodes) => {Connection[]}", function() {
       const node = new Node();
       const size = Math.floor(Math.random() * 10) + 1;
-      const layer = new Layer.Dense(size);
-      
+      const layer = Layer.Dense(size);
+
       const connections = node.connect(layer.nodes);
-      
+
       expect(connections).to.be.an("array");
       expect(connections.length).to.equal(size);
-      
+
       for (let i = 0; i < connections.length; i++) {
         expect(connections[i]).to.be.an.instanceOf(Connection);
       }
@@ -103,7 +103,7 @@ describe("Node", function() {
       const options = {
         twosided: true
       }
-      
+
       expect(node.connect(other, options)).to.be.an.instanceOf(Connection);
       expect(node.connections_incoming).to.have.lengthOf(1);
       expect(node.connections_outgoing).to.have.lengthOf(1);
@@ -111,20 +111,20 @@ describe("Node", function() {
     it("node.connect(nodes, options={ twosided: true }) => {Connection[]}", function() {
       const node = new Node();
       const size = Math.floor(Math.random() * 10) + 1;
-      const layer = new Layer.Dense(size);
+      const layer = Layer.Dense(size);
       const options = {
         twosided: true
       }
-      
+
       const connections = node.connect(layer.nodes, options);
-      
+
       expect(connections).to.be.an("array");
       expect(connections.length).to.equal(size);
-      
+
       for (let i = 0; i < connections.length; i++) {
         expect(connections[i]).to.be.an.instanceOf(Connection);
       }
-      
+
       expect(node.connections_incoming).to.have.lengthOf(size);
       expect(node.connections_outgoing).to.have.lengthOf(size);
     })
@@ -133,31 +133,31 @@ describe("Node", function() {
     it("node.disconnect() => {ReferenceError}", function() {
       const node = new Node();
       const other = new Node();
-      
+
       expect(() => node.connect()).to.throw(ReferenceError);
     })
     it("node.disconnect(self) => {Connection}", function() {
       const node = new Node();
-      
+
       const connection = node.connect(node);
-      
+
       expect(node.disconnect(node)).to.be.an.instanceOf(Connection);
       expect(node.connections_self.weight).to.equal(0);
     })
     it("node.disconnect(node) => {Connection}", function() {
       const node = new Node();
       const other = new Node();
-      
+
       expect(node.connect(other)).to.be.an.instanceOf(Connection);
     })
     it("node.disconnect(nodes) => {Connection[]}", function() {
       const node = new Node();
       const size = Math.floor(Math.random() * 10) + 1;
-      const layer = new Layer.Dense(size);
-      
+      const layer = Layer.Dense(size);
+
       const connections_initial = node.connect(layer.nodes);
       const connections = node.disconnect(layer.nodes);
-      
+
       expect(connections).to.be.an("array");
       expect(connections.length).to.equal(size);
     })
@@ -167,33 +167,33 @@ describe("Node", function() {
       const options = {
         twosided: true
       }
-      
+
       const connection_initial = node.connect(other, options);
       const connection = node.disconnect(other, options);
-      
+
       expect(connection).to.be.an.instanceOf(Connection);
-      
+
       expect(node.connections_incoming).to.have.lengthOf(0);
       expect(node.connections_outgoing).to.have.lengthOf(0);
     })
     it("node.disconnect(nodes, options={ twosided: true }) => {Connection[]}", function() {
       const node = new Node();
       const size = Math.floor(Math.random() * 10) + 1;
-      const layer = new Layer.Dense(size);
+      const layer = Layer.Dense(size);
       const options = {
         twosided: true
       }
-      
+
       const connections_initial = node.connect(layer.nodes);
       const connections = node.disconnect(layer.nodes);
-      
+
       expect(connections).to.be.an("array");
       expect(connections.length).to.equal(size);
-      
+
       for (let i = 0; i < connections.length; i++) {
         expect(connections[i]).to.be.an.instanceOf(Connection);
       }
-      
+
       expect(node.connections_incoming).to.have.lengthOf(0);
       expect(node.connections_outgoing).to.have.lengthOf(0);
     })
@@ -201,17 +201,17 @@ describe("Node", function() {
   describe("node.activate()", function() {
     it("node.activate() => {number}", function() {
       const node = new Node();
-      
+
       const output = node.activate();
-      
+
       expect(output).to.be.finite;
     })
     it("node.activate(number) => {number}", function() {
       const node = new Node();
       const number = Math.random() * 10;
-      
+
       const output = node.activate(number);
-      
+
       expect(output).to.be.finite;
       expect(output).to.equal(number);
     })
@@ -220,9 +220,9 @@ describe("Node", function() {
       const options = {
         trace: false
       }
-      
+
       const output = node.activate(options);
-      
+
       expect(output).to.be.finite;
       expect(node.derivative).to.not.exist;
     })
@@ -232,9 +232,9 @@ describe("Node", function() {
       const options = {
         trace: false
       }
-      
+
       const output = node.activate(number, options);
-      
+
       expect(output).to.be.finite;
       expect(output).to.equal(number);
       expect(node.derivative).to.not.exist;
@@ -248,10 +248,10 @@ describe("Node", function() {
       const options = {
         update: false
       }
-      
+
       const output = node.activate(number);
       const error = node.propagate();
-      
+
       expect(error).to.exist;
       expect(error).to.be.an("object");
       expect(error.responsibility).to.be.finite;
@@ -265,10 +265,10 @@ describe("Node", function() {
       const options = {
         update: false
       }
-      
+
       const output = node.activate(number);
       const error = node.propagate(other_number);
-      
+
       expect(error).to.exist;
       expect(error).to.be.an("object");
       expect(error.responsibility).to.be.finite;
@@ -285,10 +285,10 @@ describe("Node", function() {
       const options = {
         update: false
       }
-      
+
       const output = node.activate(number);
       const error = node.propagate(options);
-      
+
       expect(error).to.exist;
       expect(error).to.be.an("object");
       expect(error.responsibility).to.be.finite;
@@ -304,10 +304,10 @@ describe("Node", function() {
       const options = {
         update: false
       }
-      
+
       const output = node.activate(number);
       const error = node.propagate(other_number, options);
-      
+
       expect(error).to.exist;
       expect(error).to.be.an("object");
       expect(error.responsibility).to.be.finite;
@@ -319,7 +319,7 @@ describe("Node", function() {
   describe("node.gate()", function() {
     it("node.gate() => {ReferenceError}", function() {
       const node = new Node();
-      
+
       expect(() => node.gate()).to.throw(ReferenceError);
     })
     it("node.gate(connection) => {Connection}", function() {
@@ -327,9 +327,9 @@ describe("Node", function() {
       const output = new Node();
       const connection = input.connect(output);
       const node = new Node();
-      
+
       const gate = node.gate(connection);
-      
+
       expect(gate).to.be.an.instanceof(Connection);
       expect(gate.gater).to.eql(node);
       expect(node.connections_gated).to.have.lengthOf(1);
@@ -340,30 +340,30 @@ describe("Node", function() {
       const outputs = [];
       const connections = [];
       const node = new Node();
-      
+
       for (let i = 0; i < size; i++) {
         inputs.push(new Node());
         outputs.push(new Node());
         connections.push(new Connection(inputs[i], outputs[i]));
       }
-      
+
       const gates = node.gate(connections);
-      
+
       expect(gates).to.be.an("array");
       expect(gates).to.have.lengthOf(size);
-      
+
       for (let i = 0; i < gates.length; i++) {
         expect(gates[i]).to.be.an.instanceOf(Connection);
         expect(gates[i].gater).to.eql(node);
       }
-      
+
       expect(node.connections_gated).to.have.lengthOf(size);
     })
   });
   describe("node.ungate()", function() {
     it("node.ungate() => {ReferenceError}", function() {
       const node = new Node();
-      
+
       expect(() => node.ungate()).to.throw(ReferenceError);
     })
     it("node.ungate(connection) => {Connection}", function() {
@@ -371,11 +371,11 @@ describe("Node", function() {
       const output = new Node();
       const node = new Node();
       const connection = input.connect(output);
-      
+
       node.gate(connection);
-      
+
       const gate = node.ungate(connection);
-      
+
       expect(gate).to.be.an.instanceof(Connection);
       expect(gate.gater).to.not.exist;
       expect(node.connections_gated).to.have.lengthOf(0);
@@ -386,25 +386,25 @@ describe("Node", function() {
       const outputs = [];
       const connections = [];
       const node = new Node();
-      
+
       for (let i = 0; i < size; i++) {
         inputs.push(new Node());
         outputs.push(new Node());
         connections.push(new Connection(inputs[i], outputs[i]));
       }
-      
+
       node.gate(connections);
-      
+
       const gates = node.ungate(connections);
-      
+
       expect(gates).to.be.an("array");
       expect(gates).to.have.lengthOf(size);
-      
+
       for (let i = 0; i < gates.length; i++) {
         expect(gates[i]).to.be.an.instanceOf(Connection);
         expect(gates[i].gater).to.not.exist;
       }
-      
+
       expect(node.connections_gated).to.have.lengthOf(0);
     })
   });
@@ -413,19 +413,19 @@ describe("Node", function() {
       const node = new Node();
       const number = Math.random() * 10;
       const other_number = Math.random() * 10;
-      
+
       const output = node.activate(number);
       const error = node.propagate(other_number);
-      
+
       node.clear();
-      
+
       expect(node.old).to.equal(0);
       expect(node.state).to.equal(0);
       expect(node.activation).to.equal(0);
       expect(node.error_responsibility).to.equal(0);
       expect(node.error_projected).to.equal(0);
       expect(node.error_gated).to.equal(0);
-      
+
       for (let i = 0; i < node.connections_incoming.length; i++) {
         expect(node.connections_incoming[i].eligibility).to.equal(0);
         expect(node.connections_incoming[i].xtrace_nodes).to.be.an("array");
@@ -433,7 +433,7 @@ describe("Node", function() {
         expect(node.connections_incoming[i].xtrace_values).to.be.an("array");
         expect(node.connections_incoming[i].xtrace_values).to.have.lengthOf(0);
       }
-      
+
       for (let i = 0; i < node.connections_gated.length; i++) {
         expect(node.connections_gated[i].gain).to.equal(0);
       }
@@ -443,9 +443,9 @@ describe("Node", function() {
     it("node.mutate() => {undefined}", function() {
       const node = new Node();
       const { squash, bias } = { ...node };
-      
+
       node.mutate();
-      
+
       expect(node).to.satisfy(function(node) {
         return (node.bias != bias) || (node.squash != squash);
       })
@@ -456,9 +456,9 @@ describe("Node", function() {
         method: methods.mutation.MOD_ACTIVATION
       }
       const { squash, bias } = { ...node };
-      
+
       node.mutate(options);
-      
+
       expect(node.squash).to.not.equal(squash);
       expect(node.squash).to.not.eql(squash);
       expect(node.bias).to.equal(bias);
@@ -474,9 +474,9 @@ describe("Node", function() {
         ]
       }
       const { squash, bias } = { ...node };
-      
+
       node.mutate(options);
-      
+
       expect(node.squash).to.not.equal(squash);
       expect(node.squash).to.not.eql(squash);
       expect(node.squash).to.equal(methods.activation.RELU);
@@ -490,9 +490,9 @@ describe("Node", function() {
         method: methods.mutation.MOD_BIAS
       }
       const { squash, bias } = { ...node };
-      
+
       node.mutate(options);
-      
+
       expect(node.squash).to.equal(squash);
       expect(node.squash).to.eql(squash);
       expect(node.bias).to.not.equal(bias);
@@ -503,89 +503,89 @@ describe("Node", function() {
     it("node.isProjectingTo() => {ReferenceError}", function() {
       const node = new Node();
       const other = new Node();
-      
+
       const connection = node.connect(other);
-      
+
       expect(() => node.isProjectingTo()).to.throw(ReferenceError);
     })
     it("node.isProjectingTo(self) => {boolean}", function() {
       const node = new Node();
-      
+
       expect(node.isProjectingTo(node)).to.be.false;
-      
+
       node.connect(node);
-      
+
       expect(node.isProjectingTo(node)).to.be.true;
     })
     it("node.isProjectingTo(node) => {boolean}", function() {
       const node = new Node();
       const other = new Node();
-      
+
       expect(node.isProjectingTo(other)).to.be.false;
-      
+
       node.connect(other);
-      
+
       expect(node.isProjectingTo(other)).to.be.true;
     })
     it("node.isProjectingTo(nodes) => {boolean}", function() {
       const size = Math.ceil(Math.random() * 10);
       const node = new Node();
       const other = [];
-      
+
       for (let i = 0; i < size; i++) other.push(new Node());
-      
+
       expect(node.isProjectingTo(other)).to.be.false;
-      
+
       node.connect(other);
-      
+
       expect(node.isProjectingTo(other)).to.be.true;
     })
   });
   describe("node.isProjectedBy()", function() {
     it("node.isProjectedBy() => {ReferenceError}", function() {
       const node = new Node();
-      
+
       expect(() => node.isProjectedBy()).to.throw(ReferenceError);
     })
     it("node.isProjectedBy(self) => {boolean}", function() {
       const node = new Node();
-      
+
       expect(node.isProjectedBy(node)).to.be.false;
-      
+
       node.connect(node);
-      
+
       expect(node.isProjectedBy(node)).to.be.true;
     })
     it("node.isProjectedBy(node) => {boolean}", function() {
       const node = new Node();
       const other = new Node();
-      
+
       expect(node.isProjectedBy(other)).to.be.false;
-      
+
       other.connect(node);
-      
+
       expect(node.isProjectedBy(other)).to.be.true;
     })
     it("node.isProjectedBy(nodes) => {boolean}", function() {
       const size = Math.ceil(Math.random() * 10);
       const node = new Node();
       const other = [];
-      
+
       for (let i = 0; i < size; i++) other.push(new Node());
-      
+
       expect(node.isProjectedBy(other)).to.be.false;
-      
+
       for (let i = 0; i < size; i++) other[i].connect(node);
-      
+
       expect(node.isProjectedBy(other)).to.be.true;
     })
   });
   describe("node.toJSON()", function() {
     it("node.toJSON() => {Object}", function() {
       const node = new Node();
-      
+
       const json = node.toJSON();
-      
+
       expect(json).to.be.an("object");
       expect(json.bias).to.be.finite;
       expect(json.squash).to.be.a("string");
@@ -598,21 +598,21 @@ describe("Node", function() {
     it("Node.fromJSON(json) => {Node}", function() {
       const node = new Node();
       const json = node.toJSON();
-      
+
       is.node(Node.fromJSON(json));
     })
     it("Node.fromJSON(json_string) => {Node}", function() {
       const node = new Node();
       const json = JSON.stringify(node.toJSON());
-      
+
       is.node(Node.fromJSON(json));
     })
   });
-  
+
   //=========================================
   // ALPHA ==================================
   //=========================================
-  
+
   // Useful for dynamic detection/conditionals
   /**
   describe("node.isInput()", function() {
@@ -646,14 +646,14 @@ describe("Node", function() {
     it("node.isGating(connections, options) => {boolean}")
   });
   */
-  
+
   // Useful in streaming
   /**
   describe("node.canActivate()", function() {
-    
+
   });
   describe("node.canPropagate()", function() {
-    
+
   });
   */
 });
