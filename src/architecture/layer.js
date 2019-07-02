@@ -269,7 +269,7 @@ class Layer extends Group {
 
       previous.connect(block, methods.connection.ONE_TO_ONE, 1);
 
-      added_groups.nodes.push(block);
+      added_groups.push(block);
       previous = block;
     }
 
