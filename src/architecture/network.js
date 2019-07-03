@@ -25,7 +25,6 @@ const mutation = methods.mutation;
 * @prop {Array<Node>} nodes Nodes currently within the network
 * @prop {Array<Node>} gates Gates within the network
 * @prop {Array<Connection>} connections Connections within the network
-* @prop {Array<Connection>} selfconns Self-connections within the network
 *
 * @example
 * let { Network, architect } = require("@liquid-carrot/carrot");
@@ -52,7 +51,6 @@ function Network(input_size, output_size) {
   self.nodes = []; // Stored in activation order
   self.connections = [];
   self.gates = [];
-  self.selfconns = [];
 
   // Regularization
   self.dropout = 0;
@@ -87,11 +85,7 @@ function Network(input_size, output_size) {
 
     for (let i = 0; i < connections.length; i++) {
       let connection = connections[i];
-      if (from !== to) {
-        self.connections.push(connection);
-      } else {
-        self.selfconns.push(connection);
-      }
+      self.connections.push(connection);
     }
 
     return connections;
@@ -272,7 +266,7 @@ function Network(input_size, output_size) {
    */
   self.disconnect = function(from, to) {
     // Delete the connection in the network's connection array
-    const connections = from === to ? self.selfconns : self.connections;
+    const connections = self.connections;
 
     for (let i = 0; i < connections.length; i++) {
       const connection = connections[i];
@@ -370,7 +364,8 @@ function Network(input_size, output_size) {
     // Keep track of gates
     const gates = [];
 
-    // Remove selfconnections from this.selfconns
+    // Remove self recursive connections - these would not be able
+    // to connect/disconnect to/from other nodes
     this.disconnect(node, node);
 
     // Get all its inputting nodes
@@ -422,9 +417,6 @@ function Network(input_size, output_size) {
       const connection = node.connections.gated[i];
       this.ungate(connection);
     }
-
-    // Remove selfconnection
-    this.disconnect(node, node);
 
     // Remove the node from this.nodes
     this.nodes.splice(index, 1);
@@ -480,11 +472,23 @@ function Network(input_size, output_size) {
         }
 
         return candidates.length ? candidates : false
-      case mutation.SUB_SELF_CONN: return (this.selfconns.length > 0) ? [] : false
+      case mutation.SUB_SELF_CONN:
+        for (let i = 0; i < self.connections.length; i++) {
+          const current_connection = self.connections[i];
+          if (current_connection.from == current_connection.to) {
+            return true;
+          }
+        }
+        return false;
       case mutation.ADD_GATE:
-        const allconnections = this.connections.concat(this.selfconns);
-
-        _.each(allconnections, (conn) => { if(conn.gater === null) candidates.push(conn) })
+        for (let i = 0; i < self.connections.length; i++) {
+          const current_connection = self.connections[i];
+          if (current_connection.from == current_connection.to) {
+            return true;
+          }
+        }
+        return false;
+        _.each(all_connections, (conn) => { if(conn.gater === null) candidates.push(conn) })
 
         return candidates.length ? candidates : false
       case mutation.SUB_GATE: return (this.gates.length > 0) ? [] : false
@@ -593,10 +597,10 @@ function Network(input_size, output_size) {
         return false;
       }
       case mutation.MOD_WEIGHT: {
-        const allconnections = this.connections.concat(this.selfconns);
-        const connection = allconnections[Math.floor(Math.random() * allconnections.length)];
+        const all_connections = this.connections;
+        const chosen_connection = all_connections[Math.floor(Math.random() * allconnections.length)];
 
-        connection.weight += Math.random() * (method.max - method.min) + method.min;
+        chosen_connection.weight += Math.random() * (method.max - method.min) + method.min;
 
         return true;
       }
@@ -629,9 +633,19 @@ function Network(input_size, output_size) {
         return false;
       }
       case mutation.SUB_SELF_CONN: {
+        // very slow implementation.
+        // TODO: Huge speed up by storing a map is_self_connection<id -> node>
+        const self_connections = [];
+        for (let i = 0; i < self.connections.length; i++) {
+          const current_connection = self.connections[i];
+          if (current_connection.from == current_connection.to) {
+            self_connections.push(current_connection);
+          }
+        }
+
         if (this.possible(method)) {
-          const conn = this.selfconns[Math.floor(Math.random() * this.selfconns.length)];
-          this.disconnect(conn.from, conn.to);
+          const chosen_connection = self_connections[Math.floor(Math.random() * self_connections.length)];
+          this.disconnect(chosen_connection.from, chosen_connection.to);
           return true;
         }
 
@@ -1074,7 +1088,7 @@ function Network(input_size, output_size) {
       });
     }
 
-    const connections = this.connections.concat(this.selfconns);
+    const connections = this.connections;
     for (i = 0; i < connections.length; i++) {
       const connection = connections[i];
       if (connection.gater == null) {
@@ -1388,6 +1402,7 @@ function Network(input_size, output_size) {
     let best_genome;
 
     while (error < -target_error && (options.iterations === 0 || neat.generation < options.iterations)) {
+      // neat.evolve returns a network
       const fittest = await neat.evolve();
       const fitness = fittest.score;
       error = fitness + (fittest.nodes.length - fittest.input - fittest.output + fittest.connections.length + fittest.gates.length) * options.growth;
@@ -1411,7 +1426,6 @@ function Network(input_size, output_size) {
     if (typeof best_genome !== `undefined`) {
       this.nodes = best_genome.nodes;
       this.connections = best_genome.connections;
-      this.selfconns = best_genome.selfconns;
       this.gates = best_genome.gates;
 
       if(options.clear) this.clear();
@@ -1762,7 +1776,7 @@ Network.crossOver = function(network1, network2, equal) {
   const n1connections = {};
   const n2connections = {};
 
-  // Normal connections
+  // Add the connections of network 1
   for (i = 0; i < network1.connections.length; i++) {
     const connection = network1.connections[i];
     const data = {
@@ -1774,33 +1788,9 @@ Network.crossOver = function(network1, network2, equal) {
     n1connections[Connection.innovationID(data.from, data.to)] = data;
   }
 
-  // Selfconnections
-  for (i = 0; i < network1.selfconns.length; i++) {
-    const connection = network1.selfconns[i];
-    const data = {
-      weight: connection.weight,
-      from: connection.from.index,
-      to: connection.to.index,
-      gater: connection.gater != null ? connection.gater.index : -1
-    };
-    n1connections[Connection.innovationID(data.from, data.to)] = data;
-  }
-
-  // Normal connections
+  // Add the connections of network 2
   for (i = 0; i < network2.connections.length; i++) {
     const connection = network2.connections[i];
-    const data = {
-      weight: connection.weight,
-      from: connection.from.index,
-      to: connection.to.index,
-      gater: connection.gater != null ? connection.gater.index : -1
-    };
-    n2connections[Connection.innovationID(data.from, data.to)] = data;
-  }
-
-  // Selfconnections
-  for (i = 0; i < network2.selfconns.length; i++) {
-    const connection = network2.selfconns[i];
     const data = {
       weight: connection.weight,
       from: connection.from.index,

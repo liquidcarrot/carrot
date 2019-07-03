@@ -24,6 +24,19 @@ let mutation = methods.mutation;
  */
 
  describe('Network', function(){
+
+   describe('new Network()', function () {
+     it('new Network() => {Network}', function () {
+       const network = new Network(10, 20);
+       expect(network).to.be.an.instanceOf(Network);
+       expect(network.nodes).to.be.of.length(30);
+     })
+   })
+
+   describe('network.connect()', function () {
+
+   })
+
    describe('.mutate()', function() {
 
      describe('mutation.SUB_NODE', function() {
