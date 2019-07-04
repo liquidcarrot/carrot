@@ -366,7 +366,7 @@ function Group(size) {
 
   /**
    * Add the nodes to the group
-   * @param  {Node|Node[]|Group} nodes_to_add The ndoes to add
+   * @param  {Node|Node[]|Group} nodes_to_add The nodes to add
    * @return {Group} A self reference for chaining
    */
   self.addNodes = function(nodes_to_add) {

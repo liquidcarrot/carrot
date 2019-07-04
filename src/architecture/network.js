@@ -70,7 +70,7 @@ function Network(input_size, output_size) {
    *
    * @param {Node} from The source Node
    * @param {Node|Group} to The destination Node or Group
-   * @param {number} weight An initial weight for the connections to be formed
+   * @param {number} [weight] An initial weight for the connections to be formed
    *
    * @returns {Connection[]} An array of the formed connections
    *
@@ -82,6 +82,7 @@ function Network(input_size, output_size) {
   self.connect = function(from, to, weight) {
     // many elements if dealing with groups for example
     let connections = from.connect(to, weight);
+    if (connections instanceof Connection) connections = [connections];
 
     for (let i = 0; i < connections.length; i++) {
       let connection = connections[i];
@@ -109,7 +110,7 @@ function Network(input_size, output_size) {
    * @memberof Network
    *
    * @param {number[]} [input] Input values to activate nodes with
-   * @param {boolean} training Used to toggle [dropout](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5)
+   * @param {boolean} [training] Used to toggle [dropout](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5)
    *
    * @returns {number[]} Squashed output values
    *
@@ -1589,6 +1590,22 @@ function Network(input_size, output_size) {
     }
 
     return [activations, states, connections];
+  }
+
+  /**
+   * Add the nodes to the network
+   * @param  {Node|Node[]|Group} nodes_to_add The nodes to add
+   * @return {Group} A self reference for chaining
+   */
+  self.addNode = function (node_to_add) {
+    if (nodes_to_add instanceof Node) nodes_to_add = [nodes_to_add];
+    else if (nodes_to_add instanceof Group) nodes_to_add = nodes_to_add.nodes;
+    self.nodes.push(...nodes_to_add);
+    for (let i = 0; i < nodes_to_add.length; i++) {
+      const current_node = nodes_to_add[i];
+      self.connections.push(...current_node.connections_incoming);
+      self.connections.push(...current_node.connections_outgoing);
+    }
   }
 }
 

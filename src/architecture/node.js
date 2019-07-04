@@ -31,10 +31,10 @@ const config = require('../config');
 * @prop {number} mask=1 Used for dropout. This is either 0 (ignored) or 1 (included) during training and is used to avoid [overfit](https://www.kdnuggets.com/2015/04/preventing-overfitting-neural-networks.html).
 * @prop {number} previousDeltaBias
 * @prop {number} totalDeltaBias
-* @prop {Array<Connection>} connections.in Incoming connections to this node
-* @prop {Array<Connection>} connections.out Outgoing connections from this node
+* @prop {Array<Connection>} connections_incoming Incoming connections to this node
+* @prop {Array<Connection>} connections_outgoing connections from this node
 * @prop {Array<Connection>} connections.gated Connections this node gates
-* @prop {Connection} connections.self A self-connection
+* @prop {Connection} connections_self A self-connection
 * @prop {number} error.responsibility
 * @prop {number} error.projected
 * @prop {number} error.gated
@@ -46,9 +46,9 @@ const config = require('../config');
 */
 function Node(options) {
   let self = this;
-  
+
   // type = type || 'hidden';
-  
+
   Object.assign(self, {
     bias: Math.random() * 2 - 1,
     squash: methods.activation.LOGISTIC,
@@ -102,63 +102,63 @@ function Node(options) {
       options = input;
       input = undefined;
     }
-    
+
     options = options || {}
     options = {
       trace: true,
       ...options
     }
-    
+
     if(input != undefined && Number.isFinite(input)) {
       return self.activation = input;
     } else if(options.trace) {
       // Update traces
       const nodes = [];
       const influences = [];
-  
+
       self.old = self.state;
-  
+
       // Activate (from self)
       self.state = self.connections_self.gain * self.connections_self.weight * self.state + self.bias;
-      
+
       // Activate (from incoming connections)
       for (let i = 0; i < self.connections_incoming.length; i++) {
         const connection = self.connections_incoming[i];
-        
+
         self.state += connection.from.activation * connection.weight * connection.gain;
       }
-  
+
       // Squash Activation
       self.activation = self.squash(self.state) * self.mask;
       self.derivative = self.squash(self.state, true);
-  
+
       // Adjusting `gain` (to gated connections)
       for (let i = 0; i < self.connections_gated.length; i++) {
         const connection = self.connections_gated[i];
         const index = nodes.indexOf(connection.to);
-        
+
         if(index > -1) influences[index] += connection.weight * connection.from.activation;
         else {
           nodes.push(connection.to);
           influences.push(connection.weight * connection.from.activation + (connection.to.connections_self.gater === self ? connection.to.old : 0));
         }
-        
+
         // Adjust `gain`
         connection.gain = self.activation;
       }
-  
+
       // Forwarding `xtrace` (to incoming connections)
       for (let i = 0; i < self.connections_incoming.length; i++) {
         const connection = self.connections_incoming[i];
-        
+
         // Trace Elegibility
         connection.elegibility = self.connections_self.gain * self.connections_self.weight * connection.elegibility + connection.from.activation * connection.gain;
-        
+
         for(let j = 0; j < nodes.length; j++) {
           const [ node, influence ]  = [nodes[j], influences[j]];
-          
+
           const index = connection.xtrace_nodes.indexOf(node);
-          
+
           if(index > -1) connection.xtrace_values[index] = node.connections_self.gain * node.connections_self.weight * connection.xtrace_values[index] + self.derivative * connection.elegibility * influence;
           else {
             connection.xtrace_nodes.push(node);
@@ -166,30 +166,30 @@ function Node(options) {
           }
         }
       }
-  
+
       return self.activation;
     } else {
       // Activate (from self)
       self.state = self.connections_self.gain * self.connections_self.weight * self.state + self.bias;
-      
+
       // Activate (from incoming connections)
       for (let i = 0; i < self.connections_incoming.length; i++) {
         const connection = self.connections[i];
-        
+
         self.state += connection.from.activation * connection.weight * connection.gain;
       }
       // self.connections_incoming.forEach(function(connection, index) {
       //   self.state += connection.from.activation * connection.weight * connection.gain;
       // })
-  
+
       // Squash Activation
       self.activation = self.squash(self.state);
-  
+
       // Adjusting `gain` (to gated connections)
       self.connections_gated.forEach(function(gate) {
         gate.gain = self.activation;
       })
-      
+
       return self.activation;
     }
   },
@@ -224,7 +224,7 @@ function Node(options) {
 
     // Activate (from self)
     self.state = self.connections_self.gain * self.connections_self.weight * self.state + self.bias;
-    
+
     // Activate (from incoming connections)
     self.connections_incoming.forEach(function(connection, index) {
       self.state += connection.from.activation * connection.weight * connection.gain;
@@ -288,7 +288,7 @@ function Node(options) {
       options = target;
       target = undefined;
     }
-    
+
     options = options || {}
     options = {
       momentum: 0,
@@ -296,7 +296,7 @@ function Node(options) {
       update: true,
       ...options
     }
-    
+
     // Output Node Error (from environment)
     if (target != undefined && Number.isFinite(target)) {
       self.error_responsibility = self.error_projected = target - self.activation;
@@ -307,36 +307,36 @@ function Node(options) {
       self.error_projected = 0;
       for (let i = 0; i < self.connections_outgoing.length; i++) {
         const connection = self.connections_outgoing[i];
-        
+
         self.error_projected += connection.to.error_responsibility * connection.weight * connection.gain;
       }
       self.error_projected *= self.derivative || 1;
-      
+
       // Gated Error Responsibility (from gated connections)
       self.error_gated = 0;
       for (let i = 0; i < self.connections_gated.length; i++) {
         const connection = self.connections_gated[i];
         const node = connection.to;
         const influence = (node.connections_self.gater === self ? node.old : 0) + connection.weight * connection.from.activation;
-        
+
         self.error_gated += node.error_reponsibility * influence;
       }
       self.error_gated *= self.derivative || 1;
-      
+
       // Error Responsibility
       self.error_responsibility = self.error_projected + self.error_gated;
     }
-    
+
     // Adjust Incoming Connections
     for (let i = 0; i < self.connections_incoming.length; i++) {
       const connection = self.connections_incoming[i];
       let gradient = self.error_projected * connection.elegibility;
       for (let j = 0; j < connection.xtrace_nodes.length; j++) {
         const node = connection.xtrace_nodes[i];
-        
+
         gradient += node.error_responsibility * connection.xtrace_values[i];
       }
-      
+
       // Adjust Weight ()
       connection.delta_weights_total += options.rate * gradient * self.mask;
       if (options.update) {
@@ -346,7 +346,7 @@ function Node(options) {
         connection.delta_weights_total = 0;
       }
     }
-    
+
     // Adjust Bias
     self.delta_bias_total += options.rate * self.error_responsibility;
     if (options.update) {
@@ -374,7 +374,7 @@ function Node(options) {
   * @function connect
   * @memberof Node
   *
-  * @returns {Connection[]}
+  * @returns {Connection[]|Connection}
   *
   * @example <caption>Connecting node (neuron) to another node (neuron)</caption>
   * const { Node } = require("@liquid-carrot/carrot");
@@ -408,14 +408,14 @@ function Node(options) {
   */
   self.connect = function(nodes, weight, options) {
     if (nodes == undefined) throw new ReferenceError("Missing required parameter 'nodes'");
-    
+
     if(options == undefined && typeof weight === "object") {
       options = weight;
       weight = undefined;
     }
-    
+
     options = options || {};
-    
+
     if (nodes instanceof Node) {
       if (nodes === self) {
         self.connections_self.weight = weight || 1;
@@ -423,28 +423,28 @@ function Node(options) {
       } else if (self.isProjectingTo(nodes)) throw new ReferenceError("Node is already projecting to 'target'");
       else {
         const connection = new Connection(self, nodes, weight, options);
-        
+
         self.connections_outgoing.push(connection);
         nodes.connections_incoming.push(connection);
-        
+
         if(options.twosided) nodes.connect(self);
-        
+
         return connection;
       }
     }
     else if (Array.isArray(nodes)) {
       const connections = [];
-      
+
       for (let index = 0; index < nodes.length; index++) {
         const connection = new Connection(self, nodes[index], weight, options);
-        
+
         self.connections_outgoing.push(connection);
         nodes[index].connections_incoming.push(connection);
         connections.push(connection);
-        
+
         if(options.twosided) nodes[index].connect(self);
       }
-      
+
       return connections;
     }
     else throw new TypeError(`Parameter 'target': Expected 'Node' or 'Node[]' - but recieved, ${nodes}`);
@@ -500,9 +500,9 @@ function Node(options) {
   */
   self.disconnect = function(nodes, options) {
     if (nodes == undefined) throw new ReferenceError("Missing required parameter 'target'");
-    
+
     options = options || {};
-    
+
     if (nodes instanceof Node) {
       if (nodes === self) {
         self.connections_self.weight = 0;
@@ -510,40 +510,40 @@ function Node(options) {
       } else {
         for (let index = 0; index < self.connections_outgoing.length; index++) {
           const connection = self.connections_outgoing[index];
-          
+
           if (connection.to === nodes) {
             self.connections_outgoing.splice(index, 1);
-            
+
             connection.to.connections_incoming.splice(connection.to.connections_incoming.indexOf(connection), 1);
-            
+
             if(connection.gater != undefined) connection.gater.ungate(connection);
             if(options.twosided) nodes.disconnect(self);
-            
+
             return connection;
           }
         }
       }
     } else if (Array.isArray(nodes)) {
       const connections = [];
-      
+
       for (let i = 0; i < nodes.length; i++) {
         for (let j = 0; j < self.connections_outgoing.length; j++) {
           const connection = self.connections_outgoing[j];
-          
+
           if(connection.to === nodes[i]) {
             self.connections_outgoing.splice(j, 1);
             connection.to.connections_incoming.splice(connection.to.connections_incoming.indexOf(connection), 1);
-            
+
             if(connection.gater != undefined) connection.gater.ungate(connection);
             if(options.twosided) nodes[i].disconnect(self);
-            
+
             connections.push(connection);
-            
+
             break;
           }
         }
       }
-      
+
       return connections;
     }
     else throw new TypeError(`Parameter 'target': Expected 'Node' or 'Node[]' - but recieved, ${nodes}`);
@@ -574,20 +574,20 @@ function Node(options) {
   */
   self.gate = function(connections) {
     if (connections == undefined) throw new ReferenceError("Missing required parameter 'connections'");
-    
-    
+
+
     if (!Array.isArray(connections)) {
       self.connections_gated.push(connections);
       connections.gater = self;
     } else {
       for (let index = 0; index < connections.length; index++) {
         const connection = connections[index];
-  
+
         self.connections_gated.push(connection);
         connection.gater = self;
       }
     }
-    
+
     return connections;
   },
 
@@ -622,7 +622,7 @@ function Node(options) {
   */
   self.ungate = function(connections) {
     if (connections == undefined) throw new ReferenceError("Missing required parameter 'connections'");
-    
+
     if (!Array.isArray(connections)) {
       self.connections_gated.splice(self.connections_gated.indexOf(connections), 1);
       connections.gater = null;
@@ -631,13 +631,13 @@ function Node(options) {
       for (let i = 0; i < connections.length; i++) {
       // for (let index = connections.length - 1; index >= 0; index--) {
         const connection = connections[i];
-  
+
         self.connections_gated.splice(self.connections_gated.indexOf(connection), 1);
         connection.gater = null;
         connection.gain = 1;
       }
     }
-    
+
     return connections;
   },
 
@@ -705,12 +705,12 @@ function Node(options) {
       method: Math.random() < 0.5 ? methods.mutation.MOD_ACTIVATION : methods.mutation.MOD_BIAS,
       ...options
     }
-    
+
     // options = options || {};
     // options.method = options.method != undefined ? options.method : Math.random() < 0.5 ? methods.mutation.MOD_ACTIVATION : methods.mutation.MOD_BIAS;
-    
+
     // if(method == undefined) throw new Error('No mutate method given!');
-    
+
     // // CHECK: https://scotch.io/bar-talk/5-tips-to-write-better-conditionals-in-javascript
     // else if(!(method.name in methods.mutation)) throw new Error('This method does not exist!');
 
@@ -718,7 +718,7 @@ function Node(options) {
     function random_index(max, exclude) {
       return (exclude + Math.floor(Math.random() * (max - 1)) + 1) % max;
     }
-    
+
     // Return a random key - not including `exclude`;
     function random_key(keys, exclude) {
       return keys[(keys.indexOf(exclude) + Math.floor(Math.random() * (keys.length - 1)) + 1) % keys.length];
@@ -766,7 +766,7 @@ function Node(options) {
   */
   self.isProjectingTo = function(nodes) {
     if (nodes == undefined) throw new ReferenceError("Missing required parameter 'nodes'");
-    
+
     if (nodes === self) return self.connections_self.weight !== 0;
     else if (!Array.isArray(nodes)) {
       for (let i = 0; i < self.connections_outgoing.length; i++) {
@@ -778,9 +778,9 @@ function Node(options) {
       let projecting_to = 0;
       for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
-        
+
         for (let j = 0; j < self.connections_outgoing.length; j++) {
-          
+
           if (self.connections_outgoing[j].to === node) {
             projecting_to++;
             break;
@@ -788,7 +788,7 @@ function Node(options) {
         }
       }
       // END: nodes.every()
-      
+
       return nodes.length === projecting_to ? true : false;
     }
   },
@@ -824,7 +824,7 @@ function Node(options) {
   */
   self.isProjectedBy = function(nodes) {
     if (nodes == undefined) throw new ReferenceError("Missing required parameter 'nodes'");
-    
+
     if (nodes === self) return self.connections_self.weight !== 0;
     else if (!Array.isArray(nodes)) {
       for (let i = 0; i < self.connections_incoming.length; i++) {
@@ -836,9 +836,9 @@ function Node(options) {
       let projected_by = 0;
       for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
-        
+
         for (let j = 0; j < self.connections_incoming.length; j++) {
-          
+
           if (self.connections_incoming[j].from === node) {
             projected_by++;
             break;
@@ -846,7 +846,7 @@ function Node(options) {
         }
       }
       // END: nodes.every()
-      
+
       return nodes.length === projected_by ? true : false;
     }
 
@@ -918,11 +918,11 @@ function Node(options) {
 */
 Node.fromJSON = function (json) {
   if (json == undefined) throw new ReferenceError("Missing required parameter 'json'");
-  
+
   if(typeof json === "string") json = JSON.parse(json);
-  
+
   const node = new Node();
-  
+
   Object.assign(node, { ...json }, {
     squash: methods.activation[json.squash]
   });
