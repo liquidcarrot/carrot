@@ -26,15 +26,16 @@ const mutation = methods.mutation;
  */
 describe('Network', function(){
   describe('new Network()', function () {
-    it('new Network() => {Network}', function () {
+    it('new Network() => {TypeError}', function () {
+      // missing input or output size
+      expect(() => new Network()).to.throw(TypeError);
+      expect(() => new Network(3461)).to.throw(TypeError);
+    })
+
+    it('new Network(input_size, output_size) => {Network}', function () {
       const network = new Network(10, 20);
       expect(network).to.be.an.instanceOf(Network);
       expect(network.nodes).to.be.of.length(30);
-
-
-      const empty_network = new Network();
-      expect(empty_network).to.be.an.instanceOf(Network);
-      expect(empty_network.nodes).to.be.of.length(0);
     })
   })
 
@@ -57,12 +58,39 @@ describe('Network', function(){
 
   describe('network.activate()', function () {
     it('network.activate(Array<Number>) => {Array<Number>}', function () {
+      const network = new Network(10, 20);
+      const input = Array(10).fill(0).map(() => Math.random());
+      const simple_case_output = network.activate(input);
+      expect(simple_case_output).to.be.an("array");
+      simple_case_output.forEach((val) => expect(val).to.be.a('number'));
+
+      // add a node and check that the output changed
+      const new_node = new Node();
+      network.addNodes(new_node);
+      network.nodes[7].connect(new_node);
+      new_node.connect(network.nodes[24]);
+      const added_node_output = network.activate(input);
+      for (let i = 0; i < 10; i++) {
+        expect(simple_case_output[i]).to.not.equal(added_node_output[i]);
+      }
+
+      // run again (without changing the network) and check that the output hasn't changed
+      const rerun_output = network.activate(input);
+      for (let i = 0; i < 10; i++) {
+        expect(rerun_output[i]).to.equal(added_node_output[i]);
+      }
+
+      // const source_node = new Node();
+      // network.addNodes(source_node);
+      // const target_node = network.nodes[25];
+      // network.connect(source_node, target_node, 7);
     })
     it('network.activate(Array<Number>, bool) => {Array<Number>}', function () {
+
     })
   })
 
-  describe('.mutate()', function() {
+  describe('network.mutate()', function() {
     describe('mutation.SUB_NODE', function() {
       it('given a network with 7 nodes, should produce a network with 6', function(){
         // const network = new architect.Random(2,3,2);

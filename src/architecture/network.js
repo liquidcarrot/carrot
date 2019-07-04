@@ -36,7 +36,7 @@ const mutation = methods.mutation;
 * let myNetwork = new architect.Perceptron(5, 20, 10, 5, 1);
 */
 function Network(input_size, output_size) {
-  if (typeof input_size === `undefined` || typeof output_size === `undefined`) throw new Error(`No input or output size given`);
+  if (typeof input_size === `undefined` || typeof output_size === `undefined`) throw new TypeError(`No input or output size given`);
 
   const self = this;
 
@@ -47,7 +47,11 @@ function Network(input_size, output_size) {
   self.input = input_size;
   self.output = output_size;
 
-  // Store all the node and connection genes
+  // keep track of the input and output nodes
+  self.input_nodes = new Set();
+  self.output_nodes = new Set();
+
+  // Store all the nodes and connection genes
   self.nodes = []; // Stored in activation order
   self.connections = [];
   self.gates = [];
@@ -56,10 +60,15 @@ function Network(input_size, output_size) {
   self.dropout = 0;
 
   // Create input and output nodes
-  // var i;
-  for (let i = 0; i < self.input_size + self.output_size; i++) {
-    const type = i < self.input_size ? `input` : `output`;
-    self.nodes.push(new Node(type));
+  for (let i = 0; i < input_size; i++) {
+    const new_node = new Node();
+    self.nodes.push(new_node);
+    self.input_nodes.add(new_node);
+  }
+  for (let i = 0; i < output_size; i++) {
+    const new_node = new Node();
+    self.nodes.push(new_node);
+    self.output_nodes.add(new_node);
   }
 
   /**
@@ -123,21 +132,26 @@ function Network(input_size, output_size) {
    * myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
   self.activate = function(input, training) {
-    const output = [];
-
-    // Activate nodes chronologically
-    this.nodes.forEach((node, node_index) => {
-      if (node.type === `input`) {
-        node.activate(input[node_index]);
-      } else if (node.type === `output`) {
-        const activation_result = node.activate();
-        output.push(activation_result);
-      } else {
-        if (training) node.mask = Math.random() < this.dropout ? 0 : 1;
-        node.activate();
-      }
+    // Activate nodes chronologically - first input, then hidden, then output
+    // activate input nodes
+    let input_node_index = 0;
+    this.input_nodes.forEach(node => {
+      node.activate(input[input_node_index++]);
     });
 
+    // activate hidden nodes
+    this.nodes.forEach((node, node_index) => {
+      // check that is not input nor output
+      if (self.input_nodes.has(node) || self.output_nodes.has(node)) return;
+
+      if (training) node.mask = Math.random() < self.dropout ? 0 : 1;
+      node.activate();
+    });
+
+    const output = [];
+    this.input_nodes.forEach(node => {
+      output.push(node.activate());
+    });
     return output;
   }
 
@@ -444,7 +458,7 @@ function Network(input_size, output_size) {
     let candidates = []
     switch (method) {
       case mutation.SUB_NODE:
-        candidates = _.filter(this.nodes, function(node) { return (node.type !== `output` && node.type !== `input`) }) // assumes input & output node 'type' has been set
+        candidates = _.filter(this.nodes, function(node) { return (!self.input_nodes.has(node) && !self.output_nodes.has(node)) }) // assumes input & output node 'type' has been set
         return candidates.length ? candidates : false
       case mutation.ADD_CONN:
         for (let i = 0; i < this.nodes.length - this.output_size; i++) {
@@ -1597,7 +1611,7 @@ function Network(input_size, output_size) {
    * @param  {Node|Node[]|Group} nodes_to_add The nodes to add
    * @return {Group} A self reference for chaining
    */
-  self.addNode = function (node_to_add) {
+  self.addNodes = function (nodes_to_add) {
     if (nodes_to_add instanceof Node) nodes_to_add = [nodes_to_add];
     else if (nodes_to_add instanceof Group) nodes_to_add = nodes_to_add.nodes;
     self.nodes.push(...nodes_to_add);
