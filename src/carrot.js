@@ -10,6 +10,7 @@ const Carrot = {
   Layer: require('./architecture/layer'),
   Node: require('./architecture/node'),
   Neat: require('./neat'),
+  Population: require('./architecture/population'),
   GAN: require('./gan'),
   multi: require('./multithreading/multi')
 };
