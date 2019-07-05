@@ -120,10 +120,12 @@ describe('Network', function(){
       const first_full_dropout_output = network.activate(input, all_nodes_dropped_options);
       const second_full_dropout_output = network.activate(input, all_nodes_dropped_options);
 
-      // TODO: Uncomment tests!
-      // expect(first_dropout_off_output).to.eql(second_dropout_off_output);
-      // expect(first_dropout_off_output).to.not.eql(first_dropout_on_output);
-      // expect(first_dropout_on_output).to.not.eql(second_dropout_on_output);
+      // check the results..
+      expect(first_dropout_off_output).to.eql(second_dropout_off_output);
+      expect(first_dropout_off_output).to.not.eql(first_dropout_on_output);
+      expect(first_dropout_on_output).to.not.eql(second_dropout_on_output);
+      expect(first_dropout_on_output).to.not.eql(first_full_dropout_output);
+      expect(first_full_dropout_output).to.eql(second_full_dropout_output);
     })
   })
 
