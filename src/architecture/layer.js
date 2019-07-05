@@ -1,7 +1,7 @@
 const _ = require("lodash");
 const methods = require("../methods/methods");
 const Node = require("./node");
-const Group = require("./Group"); // will be imported later for circular dependency issues
+const Group = require("./group"); // will be imported later for circular dependency issues
 
 
 /**
