@@ -5,6 +5,7 @@ const methods = require("../methods/methods");
 const Connection = require("./connection");
 const config = require("../config");
 const Node = require("./node");
+const Group = require("./group")
 
 // Easier variable naming
 const mutation = methods.mutation;
@@ -57,6 +58,7 @@ function Network(input_size, output_size) {
   self.gates = [];
 
   // Regularization
+  // TODO: remove dropout as a prop and move to execution prop (so passed to activate as option)
   self.dropout = 0;
 
   // Create input and output nodes
@@ -105,7 +107,7 @@ function Network(input_size, output_size) {
   for (let i = 0; i < self.input_size; i++) {
     for (var j = self.input_size; j < self.output_size + self.input_size; j++) {
       // https://stats.stackexchange.com/a/248040/147931
-      const weight = Math.random() * self.input_size * Math.sqrt(2 / self.input_size);
+      const weight = (Math.random() - 0.5) * self.input_size * Math.sqrt(2 / self.input_size);
       self.connect(self.nodes[i], self.nodes[j], weight);
     }
   }

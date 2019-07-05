@@ -71,8 +71,6 @@ describe('Network', function(){
       network.nodes[7].connect(new_node);
       new_node.connect(network.nodes[24]);
 
-      debugger;
-
       const added_node_output = network.activate(input);
 
       for (let i = 0; i < 20; i++) {
@@ -88,14 +86,37 @@ describe('Network', function(){
       for (let i = 0; i < 20; i++) {
         expect(rerun_output[i]).to.equal(added_node_output[i]);
       }
-
-      // const source_node = new Node();
-      // network.addNodes(source_node);
-      // const target_node = network.nodes[25];
-      // network.connect(source_node, target_node, 7);
     })
     it('network.activate(Array<Number>, bool) => {Array<Number>}', function () {
+      // check that droupout=false (so training=false) returns same values twice
+      // check that droupout=true returns different from drouput=false, and different again on rerun
+      const network = new Network(10, 20);
 
+      // add some nodes that will (or not) be dropped out
+      const new_nodes = Array(10).fill({}).map(() => new Node());
+      network.addNodes(new_nodes);
+      // connect the nodes randomly
+      new_nodes.forEach(node => {
+        const input_node_index = Math.floor(Math.random() * 10);
+        const output_node_index = 10 + Math.floor(Math.random() * 20);
+        network.nodes[input_node_index].connect(node);
+        node.connect(network.nodes[output_node_index]);
+      });
+
+      // generate random input to test the network
+      const input = Array(10).fill(0).map(() => Math.random());
+
+      debugger;
+
+      // outputs to test (in)equality
+      const first_dropout_off_output = network.activate(input, false);
+      const second_dropout_off_output = network.activate(input, false);
+      const first_dropout_on_output = network.activate(input, true);
+      const second_dropout_on_output = network.activate(input, true);
+
+      expect(first_dropout_off_output).to.eql(second_dropout_off_output);
+      expect(first_dropout_off_output).to.not.eql(first_dropout_on_output);
+      expect(first_dropout_on_output).to.not.eql(second_dropout_on_output);
     })
   })
 
