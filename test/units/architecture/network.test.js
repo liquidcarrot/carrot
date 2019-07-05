@@ -71,10 +71,12 @@ describe('Network', function(){
       network.nodes[7].connect(new_node);
       new_node.connect(network.nodes[24]);
 
+      debugger;
+
       const added_node_output = network.activate(input);
 
       for (let i = 0; i < 20; i++) {
-        if (i !== 15) {
+        if (i !== 14) { // the added node was connected to output 14 (node 24 in the network)
           expect(simple_case_output[i]).to.equal(added_node_output[i]);
         } else {
           expect(simple_case_output[i]).to.not.equal(added_node_output[i]);
