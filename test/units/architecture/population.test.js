@@ -5,8 +5,30 @@ const chalk = require('chalk');
 const { Population } = require('../../../src/carrot');
 
 describe("Population", () => {
-  describe("new Population", () => {})
-  describe("population.activate()", () => {})
+  describe("new Population", () => {
+    it("new Population()", () => {})
+    it("new Population(dataset)", () => {})
+    it("new Population(options)", () => {})
+    it("new Population(network)", () => {})
+    it("new Population(population)", () => {})
+    it("new Population(inputs, outputs)", () => {})
+    
+    it("new Population(network, dataset)", () => {})
+    it("new Population(population, dataset)", () => {})
+    it("new Population(inputs, outputs, dataset)", () => {})
+    
+    it("new Population(dataset, options)", () => {})
+    it("new Population(network, options)", () => {})
+    it("new Population(population, options)", () => {})
+    it("new Population(inputs, outputs, options)", () => {})
+    
+    
+    it("new Population(network, dataset, options)", () => {})
+    it("new Population(population, dataset, options)", () => {})
+    it("new Population(inputs, outputs, dataset, options)", () => {})
+  })
+  describe("population.activate()", () => {
+  })
   describe("population.propagate()", () => {})
   describe("population.replace()", () => {})
   describe("population.mutate()", () => {})
@@ -19,74 +41,13 @@ describe("Population", () => {
   describe("population.getAverage()", () => {})
   describe("population.toJSON()", () => {})
   describe("Population.fromJSON()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("population.()", () => {})
-  describe("Population.()", () => {})
-  describe("Population.()", () => {})
-  describe("Population.()", () => {})
-  describe("Population.()", () => {})
-  describe("Population.()", () => {})
-  describe("Population.()", () => {})
-  describe("Population.()", () => {})
-  describe("Population.()", () => {})
-  describe("Population.()", () => {})
-  describe("Population.()", () => {})
-  describe("Population.()", () => {})
-  describe("Population.()", () => {})
-  describe("Population.()", () => {})
-  describe("Population.()", () => {})
 })
 
 //=======================================
 // OLD TESTS v0.1.0 =====================
 //=======================================
 
+/*
 describe("Neat", function() {
   it("new Neat()", function() {
     const neat = new Neat();
@@ -179,3 +140,4 @@ describe("Neat", function() {
     is.neat(neat);
   })
 })
+*/
