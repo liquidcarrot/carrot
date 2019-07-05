@@ -22,7 +22,6 @@ const mutation = methods.mutation;
 *
 * @prop {number} input_size Size of input layer AKA neurons in input layer
 * @prop {number} output_size Size of output layer AKA neurons in output layer
-* @prop {number} dropout [Dropout rate](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5) likelihood for any given neuron to be ignored during network training. Must be between zero and one, numbers closer to one will result in more neurons ignored.
 * @prop {Array<Node>} nodes Nodes currently within the network
 * @prop {Array<Node>} gates Gates within the network
 * @prop {Array<Connection>} connections Connections within the network
@@ -56,10 +55,6 @@ function Network(input_size, output_size) {
   self.nodes = []; // Stored in activation order
   self.connections = [];
   self.gates = [];
-
-  // Regularization
-  // TODO: remove dropout as a prop and move to execution prop (so passed to activate as option)
-  self.dropout = 0;
 
   // Create input and output nodes
   for (let i = 0; i < input_size; i++) {
@@ -121,8 +116,8 @@ function Network(input_size, output_size) {
    * @memberof Network
    *
    * @param {number[]} [input] Input values to activate nodes with
-   * @param {boolean} [training] Used to toggle [dropout](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5)
-   *
+   * @param {Number} [options.dropout_rate=0] The dropout rate. [dropout](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5)
+   * @param {bool} [options.no_trace=false] Activate without leaving a trace (trace is meta information left behind for different uses, e.g. backpropagation).
    * @returns {number[]} Squashed output values
    *
    * @example
@@ -133,12 +128,16 @@ function Network(input_size, output_size) {
    *
    * myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
-  self.activate = function(input, training) {
+  self.activate = function(input, { dropout_rate = 0, no_trace = false } = {}) {
     // Activate nodes chronologically - first input, then hidden, then output
     // activate input nodes
     let input_node_index = 0;
     this.input_nodes.forEach(node => {
-      node.activate(input[input_node_index++]);
+      if (no_trace) {
+        node.noTraceActivate(input[input_node_index++]);
+      } else {
+        node.activate(input[input_node_index++]);
+      }
     });
 
     // activate hidden nodes
@@ -146,19 +145,29 @@ function Network(input_size, output_size) {
       // check that is not input nor output
       if (self.input_nodes.has(node) || self.output_nodes.has(node)) return;
 
-      if (training) node.mask = Math.random() < self.dropout ? 0 : 1;
-      node.activate();
+      if (dropout_rate) node.mask = Math.random() < dropout_rate ? 0 : 1;
+      if (no_trace) {
+        node.noTraceActivate();
+      } else {
+        node.activate();
+      }
     });
 
     const output = [];
     this.output_nodes.forEach(node => {
-      output.push(node.activate());
+      let node_output;
+      if (no_trace) {
+        node_output = node.noTraceActivate();
+      } else {
+        node_output = node.activate();
+      }
+      output.push(node_output);
     });
     return output;
   }
 
   /**
-   * Activates the network without calculating elegibility traces and such
+   * Backwards compatibility only. Simply calls activate with option no_trace: true
    *
    * @function noTraceActivate
    * @memberof Network
@@ -176,21 +185,7 @@ function Network(input_size, output_size) {
    * myNetwork.noTraceActivate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
   self.noTraceActivate = function(input) {
-    const output = [];
-
-    // Activate nodes chronologically for forward feeding
-    this.nodes.forEach((node, node_index) => {
-      if (node.type === `input`) {
-        node.noTraceActivate(input[node_index]);
-      } else if (node.type === `output`) {
-        const activation_result = node.noTraceActivate();
-        output.push(activation_result);
-      } else {
-        node.noTraceActivate();
-      }
-    });
-
-    return output;
+    return self.activate(input, {no_trace: true});
   }
 
   /**
@@ -878,9 +873,7 @@ function Network(input_size, output_size) {
       options.iterations = 0; // run until target error
     }
 
-    // Save to network
-    this.dropout = options.dropout;
-
+    // get cross validation error (if on)
     let training_set_size, train_set, test_set;
     if (options.cross_validate) {
       training_set_size = Math.ceil((1 - options.cross_validate.testSize) * data.length);
@@ -905,7 +898,7 @@ function Network(input_size, output_size) {
 
       // run on training epoch
       const train_error = this._trainOneEpoch(
-        train_set, options.batch_size, current_training_rate, options.momentum, options.cost);
+        train_set, options.batch_size, current_training_rate, options.momentum, options.cost, {dropout_rate: options.dropout});
       if (options.clear) this.clear();
       // Checks if cross validation is enabled
       if (options.cross_validate) {
@@ -934,14 +927,6 @@ function Network(input_size, output_size) {
 
     if (options.clear) this.clear();
 
-    if (options.dropout) {
-      for (i = 0; i < this.nodes.length; i++) {
-        if (this.nodes[i].type === `hidden` || this.nodes[i].type === `constant`) {
-          this.nodes[i].mask = 1 - this.dropout;
-        }
-      }
-    }
-
     return {
       error: error,
       iterations: iteration_number,
@@ -962,6 +947,7 @@ function Network(input_size, output_size) {
    * @param {number} current_training_rate
    * @param {number} momentum
    * @param {cost} cost_function
+   * @param {number} [options.dropout_rate=0.5] The dropout rate to use when training
    *
    * @returns {number}
    *
@@ -970,7 +956,7 @@ function Network(input_size, output_size) {
    *
    * let example = ""
    */
-  self._trainOneEpoch = function(set, batch_size, training_rate, momentum, cost_function) {
+  self._trainOneEpoch = function(set, batch_size, training_rate, momentum, cost_function, { dropout_rate = 0.5 } = {}) {
     let error_sum = 0;
     for (var i = 0; i < set.length; i++) {
       const input = set[i].input;
@@ -979,7 +965,7 @@ function Network(input_size, output_size) {
       // the !! turns to boolean
       const update = !!((i + 1) % batch_size === 0 || (i + 1) === set.length);
 
-      const output = this.activate(input, true);
+      const output = this.activate(input, { dropout_rate: options.dropout_rate });
       this.propagate(training_rate, momentum, update, correct_output);
 
       error_sum += cost_function(correct_output, output);
@@ -1000,22 +986,13 @@ function Network(input_size, output_size) {
    *
    */
   self.test = function(set, cost = methods.cost.MSE) {
-    // Check if dropout is enabled, set correct mask
-    if (this.dropout) {
-      _.times(this.nodes.length, (index) => {
-        if (this.nodes[index].type === `hidden` || this.nodes[index].type === `constant`) {
-          this.nodes[index].mask = 1 - this.dropout;
-        }
-      });
-    }
-
     let error = 0;
     let start = Date.now();
 
     _.times(set.length, (index) => {
       let input = set[index].input;
       let target = set[index].output;
-      let output = this.noTraceActivate(input);
+      let output = this.activate(input, {no_trace: true});
       error += cost(target, output);
     });
 

@@ -217,7 +217,7 @@ function Node(options) {
   */
   self.noTraceActivate = function(input) {
     // Check if an input is given
-    if(!(input == undefined)) {
+    if (input != undefined) {
       if(Number.isFinite(input)) return self.activation = input;
       else throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
     } else if(self.type === "input") return self.activation = 0;
