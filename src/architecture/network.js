@@ -149,7 +149,7 @@ function Network(input_size, output_size) {
     });
 
     const output = [];
-    this.input_nodes.forEach(node => {
+    this.output_nodes.forEach(node => {
       output.push(node.activate());
     });
     return output;

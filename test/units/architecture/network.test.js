@@ -62,6 +62,7 @@ describe('Network', function(){
       const input = Array(10).fill(0).map(() => Math.random());
       const simple_case_output = network.activate(input);
       expect(simple_case_output).to.be.an("array");
+      expect(simple_case_output).to.be.of.length(20);
       simple_case_output.forEach((val) => expect(val).to.be.a('number'));
 
       // add a node and check that the output changed
@@ -69,14 +70,20 @@ describe('Network', function(){
       network.addNodes(new_node);
       network.nodes[7].connect(new_node);
       new_node.connect(network.nodes[24]);
+
       const added_node_output = network.activate(input);
-      for (let i = 0; i < 10; i++) {
-        expect(simple_case_output[i]).to.not.equal(added_node_output[i]);
+
+      for (let i = 0; i < 20; i++) {
+        if (i !== 15) {
+          expect(simple_case_output[i]).to.equal(added_node_output[i]);
+        } else {
+          expect(simple_case_output[i]).to.not.equal(added_node_output[i]);
+        }
       }
 
       // run again (without changing the network) and check that the output hasn't changed
       const rerun_output = network.activate(input);
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 20; i++) {
         expect(rerun_output[i]).to.equal(added_node_output[i]);
       }
 
