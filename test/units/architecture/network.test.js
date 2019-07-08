@@ -294,4 +294,32 @@ describe('Network', function(){
     })
   })
 
+  describe('network.propagate()', function () {
+    it('network.propagate(rate, momentum, update, target_output) => {undefined}', function () {
+      const upper_test_epoch_limit = 1000; // will attempt to propagate this many times
+
+      const test_network = createUsedNetwork();
+
+      // train the network to output all 1s.
+      const input_size = test_network.input_nodes.size;
+      const output_size = test_network.output_nodes.size;
+      const ideal_output = Array(output_size).fill(1);
+
+      for (let i = 0; i < upper_test_epoch_limit; i++) {
+        const random_input = Array(input_size).fill(0).map(() => Math.random());
+        test_network.activate(random_input);
+        test_network.propagate(0.05, 0.0001, true, ideal_output);
+      }
+
+      const random_input = Array(input_size).fill(0).map(() => Math.random());
+      const test_output = test_network.activate(random_input);
+
+      const epsilon = 0.05;
+      test_output.forEach((value, index) => {
+        expect(value).to.be.closeTo(ideal_output[index], epsilon);
+      });
+
+    })
+  })
+
 })
