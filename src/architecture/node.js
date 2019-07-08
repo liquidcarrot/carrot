@@ -350,10 +350,10 @@ function Node(options) {
     // Adjust Bias
     self.delta_bias_total += options.rate * self.error_responsibility;
     if (options.update) {
-      self.delta_bais_total += options.momentum * self.delta_bais_previous;
-      self.bias += self.delta_bais_total;
-      self.delta_bais_previous = self.delta_bais_total;
-      self.delta_bais_total = 0;
+      self.delta_bias_total += options.momentum * self.delta_bias_previous;
+      self.bias += self.delta_bias_total;
+      self.delta_bias_previous = self.delta_bias_total;
+      self.delta_bias_total = 0;
     }
 
     return {

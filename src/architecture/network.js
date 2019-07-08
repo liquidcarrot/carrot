@@ -223,18 +223,30 @@ function Network(input_size, output_size) {
     }
 
     // index used to iterate through the target array when updating
-    let target_index = target.length;
+    let target_index = 0;
 
-    // propagate output nodes
-    let i;
-    for (i = this.nodes.length - 1; i >= this.nodes.length - output_size; i--) {
-      this.nodes[i].propagate(target[--target_index], { rate, momentum, update });
+    // Propagate output nodes
+    for (let i = 0; target_index < output_size; i++) {
+      if (self.output_nodes.has(this.nodes[i])) {
+        this.nodes[i].propagate(target[target_index], { rate, momentum, update });
+        target_index++;
+      }
     }
 
-    // Propagate hidden and input nodes
-    for (i = this.nodes.length - output_size - 1; i >= input_size; i--) {
-      this.nodes[i].propagate({ rate, momentum, update });
+    // Propagate hidden nodes
+    for (let i = self.nodes.length - 1; i >= 0 ; i--) {
+      const current_node = self.nodes[i];
+      if (self.input_nodes.has(current_node) || self.output_nodes.has(current_node)) {
+        continue;
+      }
+      current_node.propagate({ rate, momentum, update });
     }
+
+    // Propagate input nodes
+    self.input_nodes.forEach(node => {
+      // update order should not matter because they are the last ones and do(/should) not interact 
+      node.propagate({ rate, momentum, update });
+    })
   }
 
   /**
