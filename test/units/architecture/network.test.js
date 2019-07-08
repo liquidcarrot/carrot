@@ -25,6 +25,30 @@ const mutation = methods.mutation;
  *
  */
 describe('Network', function(){
+  // a helper function to facilitate testing
+  // creates a network with hidden nodes and uses it a little bit
+  function createUsedNetwork() {
+    const network = new Network(10, 20);
+
+    // add some nodes that will (or not) be dropped out
+    const new_nodes = Array(10).fill({}).map(() => new Node());
+    network.addNodes(new_nodes);
+    // connect the nodes randomly
+    new_nodes.forEach(node => {
+      const input_node_index = Math.floor(Math.random() * 10);
+      const output_node_index = 10 + Math.floor(Math.random() * 20);
+      network.nodes[input_node_index].connect(node);
+      node.connect(network.nodes[output_node_index]);
+    });
+
+    // generate random input to test the network
+    const input = Array(10).fill(0).map(() => Math.random());
+
+    const output = network.activate(input, { dropout_rate: 0.5 });
+
+    return network;
+  }
+
   describe('new Network()', function () {
     it('new Network() => {TypeError}', function () {
       // missing input or output size
@@ -106,8 +130,6 @@ describe('Network', function(){
       // generate random input to test the network
       const input = Array(10).fill(0).map(() => Math.random());
 
-      debugger;
-
       // outputs to test (in)equality
       const no_dropout_options = {dropout_rate: 0};
       const normal_dropout_options = {dropout_rate: 0.5};
@@ -126,6 +148,22 @@ describe('Network', function(){
       expect(first_dropout_on_output).to.not.eql(second_dropout_on_output);
       expect(first_dropout_on_output).to.not.eql(first_full_dropout_output);
       expect(first_full_dropout_output).to.eql(second_full_dropout_output);
+    })
+  })
+
+  describe('network.clear()', function () {
+    it('network.clear() => {undefined}', function () {
+      const test_network = createUsedNetwork();
+
+      test_network.clear();
+      test_network.nodes.forEach(node => {
+        expect(node.error_responsibility).to.equal(0);
+        expect(node.error_projected).to.equal(0);
+        expect(node.error_gated).to.equal(0);
+        expect(node.old).to.equal(0);
+        expect(node.state).to.equal(0);
+        expect(node.activation).to.equal(0);
+      });
     })
   })
 
