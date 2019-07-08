@@ -204,8 +204,15 @@ describe('Network', function(){
       })
 
     });
-  });
-  describe("network.clone()", function() {
+  })
 
+  describe("network.clone() - WIP", function() {
+    it('network.clone() => {Network}', function () {
+      const test_origin_network = createUsedNetwork();
+      const cloned_network = test_origin_network.clone();
+
+      expect(cloned_network.input_nodes.size).to.equal(test_origin_network.input_nodes.size);
+      expect(cloned_network.output_nodes.size).to.equal(test_origin_network.output_nodes.size);
+    })
   })
 })
