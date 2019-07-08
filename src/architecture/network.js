@@ -1590,7 +1590,7 @@ function Network(input_size, output_size) {
   /**
    * Add the nodes to the network
    * @param  {Node|Node[]|Group} nodes_to_add The nodes to add
-   * @return {Group} A self reference for chaining
+   * @return {Network} A self reference for chaining
    */
   self.addNodes = function (nodes_to_add) {
     if (nodes_to_add instanceof Node) nodes_to_add = [nodes_to_add];

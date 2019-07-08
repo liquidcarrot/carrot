@@ -7,7 +7,8 @@ const {
   config,
   architect,
   Node,
-  Connection
+  Connection,
+  Group
 } = require('../../../src/carrot')
 
 
@@ -206,7 +207,7 @@ describe('Network', function(){
     });
   })
 
-  describe("network.clone() - WIP", function() {
+  describe('network.clone() - WIP', function() {
     it('network.clone() => {Network}', function () {
       const test_origin_network = createUsedNetwork();
       const cloned_network = test_origin_network.clone();
@@ -215,4 +216,82 @@ describe('Network', function(){
       expect(cloned_network.output_nodes.size).to.equal(test_origin_network.output_nodes.size);
     })
   })
+
+  describe('network.addNodes()', function () {
+    it('network.addNodes(Node) => {Network}', function () {
+      const test_network = new Network(10, 20);
+
+      // test the network before adding the nodes
+      // generate random input to test the network
+      const random_input = Array(10).fill(0).map(() => Math.random());
+      const original_output = test_network.activate(random_input, { dropout_rate: 0 });
+
+      // add the nodes
+      const test_node = new Node();
+      test_network.nodes[7].connect(test_node);
+      test_node.connect(test_network.nodes[27]);
+      test_network.addNodes(test_node);
+
+      // test the network after adding the nodes. The output should be different
+      expect(test_network.nodes).to.be.of.length(31);
+      const new_output = test_network.activate(random_input, { dropout_rate: 0 });
+      expect(new_output).to.not.eql(original_output);
+
+    })
+
+    it('network.addNodes(Node[]) => {Network}', function () {
+      const test_network = new Network(10, 20);
+
+      // test the network before adding the nodes
+      // generate random input to test the network
+      const random_input = Array(10).fill(0).map(() => Math.random());
+      const original_output = test_network.activate(random_input, { dropout_rate: 0 });
+
+      // add the nodes
+      const test_node = new Node();
+      test_network.nodes[7].connect(test_node);
+      test_node.connect(test_network.nodes[27]);
+
+      const test_node2 = new Node();
+      test_network.nodes[5].connect(test_node2);
+      test_node2.connect(test_network.nodes[25]);
+
+      const node_array = [test_node, test_node2];
+      test_network.addNodes(node_array);
+
+      // test the network after adding the nodes. The output should be different
+      expect(test_network.nodes).to.be.of.length(32);
+      const new_output = test_network.activate(random_input, { dropout_rate: 0 });
+      expect(new_output).to.not.eql(original_output);
+    })
+
+    it('network.addNodes(Group) => {Network}', function () {
+      const test_network = new Network(10, 20);
+
+      // test the network before adding the nodes
+      // generate random input to test the network
+      const random_input = Array(10).fill(0).map(() => Math.random());
+      const original_output = test_network.activate(random_input, { dropout_rate: 0 });
+
+      // add the nodes
+      const test_group = new Group(2);
+      const test_node = test_group.nodes[0];
+
+
+      test_network.nodes[7].connect(test_node);
+      test_node.connect(test_network.nodes[27]);
+
+      const test_node2 = test_group.nodes[1];
+      test_network.nodes[5].connect(test_node2);
+      test_node2.connect(test_network.nodes[25]);
+
+      test_network.addNodes(test_group);
+
+      // test the network after adding the nodes. The output should be different
+      expect(test_network.nodes).to.be.of.length(32);
+      const new_output = test_network.activate(random_input, { dropout_rate: 0 });
+      expect(new_output).to.not.eql(original_output);
+    })
+  })
+
 })
