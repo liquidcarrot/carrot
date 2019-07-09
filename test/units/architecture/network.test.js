@@ -447,6 +447,7 @@ describe('Network', function(){
   })
 
   describe('network.train()', function () {
+    it('network.train(dataset) => {{error:{number},iterations:{number},time:{number}}}', function () {
       const network = new Network(4,4);
 
       // reverse input
@@ -458,10 +459,14 @@ describe('Network', function(){
       ];
 
       const initial = network.test(dataset);
-      network.train(dataset);
+      const test_return = network.train(dataset);
       const final = network.test(dataset);
 
+      expect(test_return.error).to.be.a('number');
+      expect(test_return.iterations).to.be.a('number');
+      expect(test_return.time).to.be.a('number');
       expect(final.error).to.be.at.most(initial.error / 4);
+    })
   })
 
 })
