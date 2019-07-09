@@ -438,4 +438,12 @@ describe('Network', function(){
     })
   })
 
+  describe('network.set()', function () {
+    const test_network = createUsedNetwork();
+    test_network.set({ bias: 1.3 });
+    test_network.nodes.forEach(node => {
+      expect(node.bias).to.equal(1.3);
+    })
+  })
+
 })

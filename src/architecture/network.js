@@ -1217,7 +1217,7 @@ function Network(input_size, output_size) {
    * network.set({bias: 1});
    */
   self.set = function(values) {
-    this.nodes = _.forEach(this.nodes, (node) => _.defaults(node, {
+    self.nodes.forEach(node => Object.assign(node, {
       bias: values.bias,
       squash: values.squash
     }));
