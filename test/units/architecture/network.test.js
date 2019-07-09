@@ -322,4 +322,24 @@ describe('Network', function(){
     })
   })
 
+  describe('network.disconnect()', function () {
+    it('network.disconnect(Node, Node) => {undefined}', function () {
+      const test_network = createUsedNetwork();
+      const test_node = new Node();
+      test_network.nodes[2].connect(test_node);
+      test_node.connect(test_network.nodes[16]);
+      test_network.addNodes(test_node);
+
+      const before_network_connection_size = test_network.connections.length;
+
+      test_network.disconnect(test_node, test_network.nodes[16]);
+      test_network.disconnect(test_network.nodes[2], test_node);
+
+      expect(test_network.connections.length).to.equal(before_network_connection_size - 2);
+      expect(test_node.connections_outgoing).to.be.empty;
+    })
+  })
+
+  // describe('network.gate')
+
 })
