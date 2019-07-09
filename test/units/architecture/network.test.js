@@ -446,4 +446,22 @@ describe('Network', function(){
     })
   })
 
+  describe('network.train()', function () {
+      const network = new Network(4,4);
+
+      // reverse input
+      const dataset = [
+        { input: [1,0,0,0], output: [0,0,0,1]},
+        { input: [0,1,0,0], output: [0,0,1,0]},
+        { input: [0,0,1,0], output: [0,1,0,0]},
+        { input: [0,0,0,1], output: [1,0,0,0]},
+      ];
+
+      const initial = network.test(dataset);
+      network.train(dataset);
+      const final = network.test(dataset);
+
+      expect(final.error).to.be.at.most(initial.error / 4);
+  })
+
 })

@@ -981,7 +981,7 @@ function Network(input_size, output_size) {
       // the !! turns to boolean
       const update = !!((i + 1) % batch_size === 0 || (i + 1) === set.length);
 
-      const output = this.activate(input, { dropout_rate: options.dropout_rate });
+      const output = this.activate(input, { dropout_rate: dropout_rate });
       this.propagate(training_rate, momentum, update, correct_output);
 
       error_sum += cost_function(correct_output, output);
