@@ -340,6 +340,50 @@ describe('Network', function(){
     })
   })
 
-  // describe('network.gate')
+  describe('network.gate()', function () {
+    it('network.gate(node_not_in_network, Connection) => {ReferenceError}', function () {
+      const test_network = createUsedNetwork();
+      const new_node = new Node();
+      const connection = new_node.connect(test_network.nodes[20]);
+
+      expect(() => {test_network.gate(new_node, connection)}).to.throw(ReferenceError);
+    })
+    it('network.gate(Node, Connection) => {undefined}', function () {
+      const test_network = createUsedNetwork();
+      const new_node = new Node();
+      const connection = new_node.connect(test_network.nodes[20]);
+      test_network.addNodes(new_node);
+
+      const before_number_of_gates = test_network.gates.length;
+      test_network.gate(new_node, connection);
+      expect(test_network.gates).to.be.of.length(before_number_of_gates + 1);
+      expect(connection.gater).to.eql(new_node);
+      expect(new_node.connections_gated).to.have.lengthOf(1);
+    })
+  })
+
+  describe('network.ungate()', function () {
+    it('network.ungate(connection_not_in_network) => {ReferenceError}', function () {
+      const test_network = createUsedNetwork();
+      const new_node = new Node();
+      const connection = new_node.connect(test_network.nodes[20]);
+      new_node.gate(connection);
+
+      expect(() => {test_network.ungate(connection)}).to.throw(Error);
+    })
+    it('network.ungate(Connection) => {undefined}', function () {
+      const test_network = createUsedNetwork();
+      const new_node = new Node();
+      const connection = new_node.connect(test_network.nodes[20]);
+      test_network.addNodes(new_node);
+      test_network.gate(new_node, connection);
+
+      const before_number_of_gates = test_network.gates.length;
+      test_network.ungate(connection);
+      expect(test_network.gates).to.be.of.length(before_number_of_gates - 1);
+      expect(connection.gater).to.not.exist;
+      expect(new_node.connections_gated).to.have.lengthOf(0);
+    })
+  })
 
 })

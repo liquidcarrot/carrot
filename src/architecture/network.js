@@ -244,7 +244,7 @@ function Network(input_size, output_size) {
 
     // Propagate input nodes
     self.input_nodes.forEach(node => {
-      // update order should not matter because they are the last ones and do(/should) not interact 
+      // update order should not matter because they are the last ones and do(/should) not interact
       node.propagate({ rate, momentum, update });
     })
   }
@@ -326,7 +326,7 @@ function Network(input_size, output_size) {
    */
   self.gate = function(node, connection) {
     if (self.nodes.indexOf(node) === -1) {
-      throw new Error(`This node is not part of the network!`);
+      throw new ReferenceError(`This node is not part of the network!`);
     } else if (connection.gater != null) {
       if (config.warnings) console.warn(`This connection is already gated!`);
       return;
