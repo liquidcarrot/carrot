@@ -33,7 +33,7 @@ const config = require('../config');
 * @prop {number} totalDeltaBias
 * @prop {Array<Connection>} connections_incoming Incoming connections to this node
 * @prop {Array<Connection>} connections_outgoing connections from this node
-* @prop {Array<Connection>} connections.gated Connections this node gates
+* @prop {Array<Connection>} connections_gated Connections this node gates
 * @prop {Connection} connections_self A self-connection
 * @prop {number} error.responsibility
 * @prop {number} error.projected

@@ -296,7 +296,7 @@ describe('Network', function(){
 
   describe('network.propagate()', function () {
     it('network.propagate(rate, momentum, update, target_output) => {undefined}', function () {
-      const upper_test_epoch_limit = 1000; // will attempt to propagate this many times
+      const upper_test_epoch_limit = 2000; // will attempt to propagate this many times
 
       const test_network = createUsedNetwork();
 
@@ -308,13 +308,13 @@ describe('Network', function(){
       for (let i = 0; i < upper_test_epoch_limit; i++) {
         const random_input = Array(input_size).fill(0).map(() => Math.random());
         test_network.activate(random_input);
-        test_network.propagate(0.05, 0.0001, true, ideal_output);
+        test_network.propagate(0.25, 0.01, true, ideal_output);
       }
 
       const random_input = Array(input_size).fill(0).map(() => Math.random());
       const test_output = test_network.activate(random_input);
 
-      const epsilon = 0.05;
+      const epsilon = 0.08;
       test_output.forEach((value, index) => {
         expect(value).to.be.closeTo(ideal_output[index], epsilon);
       });
@@ -383,6 +383,58 @@ describe('Network', function(){
       expect(test_network.gates).to.be.of.length(before_number_of_gates - 1);
       expect(connection.gater).to.not.exist;
       expect(new_node.connections_gated).to.have.lengthOf(0);
+    })
+  })
+
+  describe('network.remove()', function () {
+    it('network.remove(node_not_in_network) => {ReferenceError}', function () {
+      const test_network = createUsedNetwork();
+      const node_not_in_network = new Node();
+
+      expect(() => {test_network.remove(node_not_in_network)}).to.throw(ReferenceError);
+    })
+
+    it('network.remove(Node) => {undefined}', function () {
+      const test_network = createUsedNetwork();
+      const new_node = new Node();
+
+      // set up the connections to test their status after removing the node
+      test_network.nodes[1].connect(new_node);
+      test_network.nodes[2].connect(new_node);
+      new_node.connect(test_network.nodes[24]);
+      new_node.connect(test_network.nodes[25]);
+      new_node.connect(test_network.nodes[26]);
+      new_node.connect(test_network.nodes[30]);
+
+      test_network.addNodes(new_node);
+
+      // remove the node and check that it's not part of the network anymore and that the
+      // connections were redirected
+      const before_size = test_network.nodes.length;
+
+      test_network.remove(new_node);
+      expect(test_network.nodes).to.be.of.length(before_size - 1);
+
+      const input_node_ids_to_test = [1, 2];
+      const output_node_ids_to_test = [24, 25, 26, 30];
+      const i_max = input_node_ids_to_test.length;
+      const j_max = output_node_ids_to_test.length;
+      // this check is a mess because of how carrot deals with connections...
+      // if the connection list were unique ids of the target nodes this would be so much easier..
+      for (let i = 0; i < i_max; i++) {
+        for (let j = 0; j < j_max; j++) {
+          const from_node = test_network.nodes[input_node_ids_to_test[i]];
+          const to_node = test_network.nodes[output_node_ids_to_test[j]];
+          // cycle through from_node connections_outgoing until to_node is found
+          let is_connected = false;
+          from_node.connections_outgoing.forEach(connection => {
+            if (connection.to == to_node) {
+              is_connected = true;
+            }
+          })
+          expect(is_connected).to.be.ok;
+        }
+      }
     })
   })
 

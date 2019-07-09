@@ -381,10 +381,10 @@ function Network(input_size, output_size) {
    * myNetwork.remove(myNetwork.nodes[2]);
    */
   self.remove = function(node) {
-    const index = this.nodes.indexOf(node);
+    const index = self.nodes.indexOf(node);
 
     if (index === -1) {
-      throw new Error(`This node does not exist in the network!`);
+      throw new ReferenceError(`This node does not exist in the network!`);
     }
 
     // Keep track of gates
@@ -392,29 +392,31 @@ function Network(input_size, output_size) {
 
     // Remove self recursive connections - these would not be able
     // to connect/disconnect to/from other nodes
-    this.disconnect(node, node);
+    self.disconnect(node, node);
 
     // Get all its inputting nodes
     const inputs = [];
     // unsure why not regular forEach
-    _.forEachRight(node.connections.in, (connection) => {
+    _.forEachRight(node.connections_incoming, (connection) => {
       if (mutation.SUB_NODE.keep_gates && connection.gater !== null && connection.gater !== node) {
+        // the condition mutation.SUB_NODE.keep_gates seems
+        // useless - probably it should be an option
         gates.push(connection.gater);
       }
       inputs.push(connection.from);
-      this.disconnect(connection.from, node);
+      self.disconnect(connection.from, node);
     });
 
 
     // Get all its outputing nodes
     const outputs = [];
     // unsure why not regular forEach
-    _.forEachRight(node.connections.out, (connection) => {
+    _.forEachRight(node.connections_outgoing, (connection) => {
       if (mutation.SUB_NODE.keep_gates && connection.gater !== null && connection.gater !== node) {
         gates.push(connection.gater);
       }
       outputs.push(connection.to);
-      this.disconnect(node, connection.to);
+      self.disconnect(node, connection.to);
     });
 
     // Connect the input nodes to the output nodes (if not already connected)
@@ -422,7 +424,7 @@ function Network(input_size, output_size) {
     _.forEach(inputs, (input) => {
       _.forEach(outputs, (output) => {
         if (!input.isProjectingTo(output)) {
-          const connection = this.connect(input, output);
+          const connection = self.connect(input, output);
           connections.push(connection[0]);
         }
       });
@@ -434,18 +436,18 @@ function Network(input_size, output_size) {
       const gate = gates.shift();
       const connection_to_gate_index = Math.floor(Math.random() * connections.length);
 
-      this.gate(gate, connections[connection_to_gate_index]);
+      self.gate(gate, connections[connection_to_gate_index]);
       connections.splice(connection_to_gate_index, 1);
     }
 
     // Remove gated connections gated by this node
-    for (i = node.connections.gated.length - 1; i >= 0; i--) {
-      const connection = node.connections.gated[i];
-      this.ungate(connection);
+    for (i = node.connections_gated.length - 1; i >= 0; i--) {
+      const connection = node.connections_gated[i];
+      self.ungate(connection);
     }
 
-    // Remove the node from this.nodes
-    this.nodes.splice(index, 1);
+    // Remove the node from self.nodes
+    self.nodes.splice(index, 1);
   }
 
   /**
@@ -484,7 +486,7 @@ function Network(input_size, output_size) {
       case mutation.SUB_CONN:
         _.each(self.connections, (conn) => {
           // Check if it is not disabling a node
-          if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && self.nodes.indexOf(conn.to) > self.nodes.indexOf(conn.from))
+          if (conn.from.connections_outgoing.length > 1 && conn.to.connections_incoming.length > 1 && self.nodes.indexOf(conn.to) > self.nodes.indexOf(conn.from))
             candidates.push(conn)
         })
 
@@ -530,7 +532,7 @@ function Network(input_size, output_size) {
         return candidates.length ? candidates : false
       case mutation.SUB_BACK_CONN:
         _.each(self.connections, (conn) => {
-          if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && self.nodes.indexOf(conn.from) > self.nodes.indexOf(conn.to))
+          if (conn.from.connections_outgoing.length > 1 && conn.to.connections_incoming.length > 1 && self.nodes.indexOf(conn.from) > self.nodes.indexOf(conn.to))
             candidates.push(conn)
         })
 
@@ -1504,8 +1506,8 @@ function Network(input_size, output_size) {
       }
 
       const incoming = [];
-      for (var j = 0; j < node.connections.in.length; j++) {
-        const connection = node.connections.in[j];
+      for (var j = 0; j < node.connections_incoming.length; j++) {
+        const connection = node.connections_incoming[j];
         let computation = `A[${connection.from.index}] * ${connection.weight}`;
 
         if (connection.gater != null) {
@@ -1585,8 +1587,8 @@ function Network(input_size, output_size) {
       connections.push(node.connections.self.weight);
       connections.push(node.connections.self.gater == null ? -1 : node.connections.self.gater.index);
 
-      _.times(node.connections.in.length, (incoming_connections_index) => {
-        const connection = node.connections.in[incoming_connections_index];
+      _.times(node.connections_incoming.length, (incoming_connections_index) => {
+        const connection = node.connections_incoming[incoming_connections_index];
 
         connections.push(connection.from.index);
         connections.push(connection.weight);
