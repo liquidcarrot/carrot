@@ -496,7 +496,7 @@ function Network(input_size, output_size) {
 
         for (let i = this.input_size; i < this.nodes.length; i++) {
           const node = this.nodes[i]
-          if (node.connections.self.weight === 0) candidates.push(node)
+          if (node.connections_self.weight === 0) candidates.push(node)
         }
 
         return candidates.length ? candidates : false
@@ -1175,12 +1175,12 @@ function Network(input_size, output_size) {
       node_json.index = i;
       json.nodes.push(node_json);
 
-      if (node.connections.self.weight !== 0) {
-        const connection_json = node.connections.self.toJSON();
+      if (node.connections_self.weight !== 0) {
+        const connection_json = node.connections_self.toJSON();
         connection_json.from = i;
         connection_json.to = i;
 
-        connection_json.gater = node.connections.self.gater != null ? node.connections.self.gater.index : null;
+        connection_json.gater = node.connections_self.gater != null ? node.connections_self.gater.index : null;
         json.connections.push(connection_json);
       }
     }
@@ -1517,8 +1517,8 @@ function Network(input_size, output_size) {
         incoming.push(computation);
       }
 
-      if (node.connections.self.weight) {
-        const connection = node.connections.self;
+      if (node.connections_self.weight) {
+        const connection = node.connections_self;
         let computation = `S[${i}] * ${connection.weight}`;
 
         if (connection.gater != null) {
@@ -1584,8 +1584,8 @@ function Network(input_size, output_size) {
       connections.push(node.bias);
       connections.push(squashes.indexOf(node.squash.name));
 
-      connections.push(node.connections.self.weight);
-      connections.push(node.connections.self.gater == null ? -1 : node.connections.self.gater.index);
+      connections.push(node.connections_self.weight);
+      connections.push(node.connections_self.gater == null ? -1 : node.connections_self.gater.index);
 
       _.times(node.connections_incoming.length, (incoming_connections_index) => {
         const connection = node.connections_incoming[incoming_connections_index];

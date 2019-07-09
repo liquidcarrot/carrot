@@ -88,12 +88,12 @@ const architect = {
     const inputs = [];
     const outputs = [];
     for (i = nodes.length - 1; i >= 0; i--) {
-      if (nodes[i].type === 'output' || (!found_output_nodes && nodes[i].connections.out.length + nodes[i].connections.gated.length === 0)) {
+      if (nodes[i].type === 'output' || (!found_output_nodes && nodes[i].connections_outgoing.length + nodes[i].connections_gated.length === 0)) {
         nodes[i].type = 'output';
         network.output_size++;
         outputs.push(nodes[i]);
         nodes.splice(i, 1);
-      } else if (nodes[i].type === 'input' || (!found_input_nodes && !nodes[i].connections.in.length)) {
+      } else if (nodes[i].type === 'input' || (!found_input_nodes && !nodes[i].connections_incoming.length)) {
         nodes[i].type = 'input';
         network.input_size++;
         inputs.push(nodes[i]);
@@ -112,14 +112,14 @@ const architect = {
     }
 
     for (i = 0; i < nodes.length; i++) {
-      for (j = 0; j < nodes[i].connections.out.length; j++) {
-        network.connections.push(nodes[i].connections.out[j]);
+      for (j = 0; j < nodes[i].connections_outgoing.length; j++) {
+        network.connections.push(nodes[i].connections_outgoing[j]);
       }
-      for (j = 0; j < nodes[i].connections.gated.length; j++) {
-        network.gates.push(nodes[i].connections.gated[j]);
+      for (j = 0; j < nodes[i].connections_gated.length; j++) {
+        network.gates.push(nodes[i].connections_gated[j]);
       }
-      if (nodes[i].connections.self.weight !== 0) {
-        network.selfconns.push(nodes[i].connections.self);
+      if (nodes[i].connections_self.weight !== 0) {
+        network.selfconns.push(nodes[i].connections_self);
       }
     }
 
@@ -260,9 +260,9 @@ const architect = {
     const layer_sizes_and_options = Array.from(arguments);
 
     const output_size_or_options = layer_sizes_and_options.slice(-1);
-    
+
     let layer_sizes, options
-    
+
     // find out if options were passed
     if (typeof output_size_or_options === 'number') {
       layer_sizes = layer_sizes_and_options;
