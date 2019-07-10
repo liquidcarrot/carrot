@@ -469,4 +469,35 @@ describe('Network', function(){
     })
   })
 
+  describe('network.evolve()', function () {
+    // similar to network.train, with the difference that this dataset requires
+    // evolving the network to be solvable
+    it('network.evolve(dataset) => {{error:{number},iterations:{number},time:{number}}}', async function (done) {
+      const network = new Network(2,1);
+
+      // multiplies the two inputs
+      const dataset = [
+        { input: [1,0], output: [0]},
+        { input: [0,1], output: [0]},
+        { input: [1,1], output: [1]},
+        { input: [2,1], output: [2]},
+        { input: [2,2], output: [4]},
+        { input: [2,3], output: [6]},
+        { input: [3,3], output: [9]},
+        { input: [-3,3], output: [-9]},
+      ];
+
+      const initial = network.test(dataset);
+      const test_return = await network.evolve(dataset, { iterations: 10000 });
+      const final = network.test(dataset);
+
+      expect(test_return.error).to.be.a('number');
+      expect(test_return.iterations).to.be.a('number');
+      expect(test_return.time).to.be.a('number');
+      expect(final.error).to.be.at.most(initial.error / 4);
+
+      done();
+    })
+  })
+
 })

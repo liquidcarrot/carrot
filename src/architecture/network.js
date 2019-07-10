@@ -568,11 +568,36 @@ function Network(input_size, output_size) {
   self.mutate = function(method) {
     if (typeof method === 'undefined') throw new Error('Mutate method is undefined!')
 
+    // gets a random connection. TODO: Read the comment inside
+    const getRandomConnection = () => {
+      if (self.nodes.length <= self.input_size) throw Error('No connections can be chosen');
+      // get a random connection. this method does not choose from a uniform distribution
+      // TODO: make the distribution uniform among connections (atm connections connected
+      // to nodes with a small degree are more likely to be chosen)
+      const chosen_node_index = Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size);
+      const connection_node = self.nodes[chosen_node_index];
+      // at the moment does not mutate self connections. TODO: mutate self connections!
+      // first try outgoing then incoming - one of them has to work
+      let chosen_connection;
+      if (connection_node.connections_outgoing.length > 0) {
+        const chosen_connection_index =
+          Math.floor(Math.random() * connection_node.connections_outgoing.length);
+        chosen_connection = connection_node.connections_outgoing[chosen_connection_index];
+      } else {
+        const chosen_connection_index =
+          Math.floor(Math.random() * connection_node.connections_incoming.length);
+        chosen_connection = connection_node.connections_incoming[chosen_connection_index];
+      }
+
+      return chosen_connection;
+    };
+
     let i, j;
     switch (method) {
       case mutation.ADD_NODE: {
+        if (self.nodes.length <= self.input_size) return false;
         // Look for an existing connection and place a node in between
-        const connection = this.connections[Math.floor(Math.random() * this.connections.length)];
+        const connection = getRandomConnection();
         this.disconnect(connection.from, connection.to);
 
         // Insert the new node right before the old connection.to
@@ -625,16 +650,21 @@ function Network(input_size, output_size) {
         return false;
       }
       case mutation.MOD_WEIGHT: {
-        const all_connections = this.connections;
-        const chosen_connection = all_connections[Math.floor(Math.random() * allconnections.length)];
+        if (self.nodes.length <= self.input_size) return false;
+
+        // get a random connection to modify weight
+        const chosen_connection = getRandomConnection();
 
         chosen_connection.weight += Math.random() * (method.max - method.min) + method.min;
 
         return true;
       }
       case mutation.MOD_BIAS: {
+        if (self.nodes.length <= self.input_size) return false;
         // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
-        this.nodes[Math.floor(Math.random() * (this.nodes.length - this.input_size) + this.input_size)].mutate(method);
+        const chosen_node_index = Math.floor(Math.random() * (this.nodes.length - this.input_size) + this.input_size);
+        const node_to_mutate = self.nodes[chosen_node_index];
+        node_to_mutate.mutate(method);
 
         return true;
       }
@@ -1632,15 +1662,15 @@ function Network(input_size, output_size) {
  * let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
  */
 Network.fromJSON = function(json) {
-  const network = new Network(json.input, json.output);
+  const network = new Network(json.input_size, json.output_size);
 
   network.dropout = json.dropout;
   network.nodes = [];
   network.connections = [];
 
-  _.forEach(json.nodes, (node) => network.nodes.push(Node.fromJSON(node)));
+  json.nodes.forEach((node_json) => network.nodes.push(Node.fromJSON(node_json)));
 
-  _.forEach(json.connections, (json_connection) => {
+  json.connections.forEach((json_connection) => {
     const connection =
       network.connect(network.nodes[json_connection.from], network.nodes[json_connection.to])[0];
     connection.weight = json_connection.weight;
@@ -1987,14 +2017,15 @@ const Neat = function(dataset, {
    *
    * @param {Network} network
    */
-  self.createPool = function createPool (network, population_size) {
-    return Array(population_size).fill(Network.fromJSON({ ...network.toJSON(), score: undefined }))
+  self.createPool = function createPool(network, population_size) {
+    const pool = Array(population_size).fill(Network.fromJSON({ ...network.toJSON(), score: undefined }));
+    return pool;
   };
 
   // Initialise the genomes
   self.population = self.createPool(self.template, self.population_size);
 
-  self.filterGenome = function(population, template, pickGenome, adjustGenome) {
+  self.filterGenome = function (population, template, pickGenome, adjustGenome) {
       let filtered = [...population]; // avoid mutations
 
       // Check for correct return type from pickGenome
@@ -2014,7 +2045,7 @@ const Neat = function(dataset, {
         }
       } else
           for (let i = 0; i < population.length; i++)
-            if(check(filtered[i])) filtered[i] = Network.fromJSON(template.toJSON)
+            if(check(filtered[i])) filtered[i] = Network.fromJSON(template.toJSON())
 
       return filtered;
     };
@@ -2027,7 +2058,7 @@ const Neat = function(dataset, {
    *
    * @return {mutation} Selected mutation
   */
-  self.mutateRandom = function selectMethodAndMutateNetwork(genome, allowedMutations) {
+  self.mutateRandom = function (genome, allowedMutations) {
       let possible = allowedMutations ? [...allowedMutations] : [...self.mutation]
 
       // remove any methods disallowed by user-limits: i.e. maxNodes, maxConns, ...
@@ -2042,14 +2073,19 @@ const Neat = function(dataset, {
       do {
         const current = possible[Math.floor(Math.random() * possible.length)]
 
-        // attempt mutation, success: return mutation method, failure: remove from possible methods
-        if(genome.mutate(current)) return current
-        else possible = possible.filter(function(method) { return method.name !== current.name })
+        try {
+          // attempt mutation, success: return mutation method, failure: remove from possible methods
+          if (genome.mutate(current)) return current
+          else possible = possible.filter(function(method) { return method.name !== current.name })
+        } catch (e) {
+          console.error('attempted mutation', current, 'but failed with error', e);
+          debugger;
+          genome.mutate(current);
+        }
 
-        // Return null when mutation is impossible
-        if((!possible || possible.length === 0)) return null;
-
-      } while(true)
+      } while((possible && possible.length > 0))
+      // Return null when all the mutations have been attempted
+      return null;
   };
 
   /**
