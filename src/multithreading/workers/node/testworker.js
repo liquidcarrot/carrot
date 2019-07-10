@@ -31,7 +31,6 @@ function TestWorker (serialized_dataset, cost_function) {
   if (is_debug) {
     this.worker = cp.fork(path.join(__dirname, '/worker'), [], {
       execArgv: ['--inspect=' + (fork_port++)],
-      // using this option activates inspector only when inspector is running on parent
     });
   } else {
     this.worker = cp.fork(path.join(__dirname, '/worker'));

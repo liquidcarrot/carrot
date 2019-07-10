@@ -29,18 +29,18 @@ const _ = require("lodash");
 */
 function Connection (from, to, weight, options) {
   if(from == undefined || to == undefined) throw new ReferenceError("Missing required parameter 'from' or 'to'");
-  
+
   let self = this;
-  
+
   // CHECK: https://gist.github.com/Salakar/1d7137de9cb8b704e48a
   if(!options && _.isPlainObject(weight)) {
     options = weight;
     weight = undefined;
   }
-  
+
   options = options || {};
   weight = weight == undefined ? Math.random() * 2 - 1 : weight;
-  
+
   Object.assign(self, {
     gain: 1,
     gater: null,
@@ -51,9 +51,9 @@ function Connection (from, to, weight, options) {
     xtrace_nodes: [],
     xtrace_values: []
   }, options, { from, to, weight});
-  
+
   if(options.gater) options.gater.gate(self);
-  
+
   /**
   * Returns the connection as a JSON
   *
@@ -63,7 +63,7 @@ function Connection (from, to, weight, options) {
   * @returns {object} Returns connection as a JSON
   */
   self.toJSON = function () {
-    return { weight } = self;
+    return { weight: self.weight };
   }
 }
 
@@ -79,7 +79,7 @@ function Connection (from, to, weight, options) {
 */
 Connection.innovationID = function (a, b) {
   if(a == undefined || b == undefined) throw new ReferenceError("Missing required parameter 'a' or 'b'");
-  
+
   return 1 / 2 * (a + b) * (a + b + 1) + b;
 };
 
