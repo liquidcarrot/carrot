@@ -491,9 +491,7 @@ describe('Network', function(){
       ];
 
       const initial = network.test(dataset);
-      const test_return = await network.evolve(dataset, { iterations: 5 });
-
-      // the evolve.error has different units compared to test.error
+      const test_return = await network.evolve(dataset, { iterations: 30 });
       const final = network.test(dataset);
 
       expect(test_return.error).to.be.a('number');

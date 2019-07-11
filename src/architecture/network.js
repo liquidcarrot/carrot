@@ -1848,7 +1848,6 @@ Network.crossOver = function(network1, network2, equal) {
         j++;
         if (j >= source_network.nodes.length) {
           // something is wrong...
-          debugger;
           throw RangeError('something is wrong with the size of the input');
         }
         if (source_network.input_nodes.has(source_network.nodes[j])) {
@@ -1869,7 +1868,6 @@ Network.crossOver = function(network1, network2, equal) {
         j++;
         if (j >= source_network.nodes.length) {
           // something is wrong...
-          debugger;
           throw RangeError('something is wrong with the size of the output');
         }
         if (source_network.output_nodes.has(source_network.nodes[j])) {
