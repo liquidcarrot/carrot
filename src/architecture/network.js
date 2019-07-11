@@ -1185,6 +1185,8 @@ function Network(input_size, output_size) {
     const json = {
       nodes: [],
       connections: [],
+      input_nodes: [],
+      output_nodes: [],
       input_size: this.input_size,
       output_size: this.output_size,
       dropout: this.dropout,
@@ -1193,10 +1195,16 @@ function Network(input_size, output_size) {
       output: this.output_size,
     };
 
-    // So we don't have to use expensive .indexOf()
     let i;
     for (i = 0; i < this.nodes.length; i++) {
+      // So we don't have to use expensive .indexOf()
       this.nodes[i].index = i;
+      if (self.input_nodes.has(self.nodes[i])) {
+        json.input_nodes.push(i);
+      }
+      if (self.output_nodes.has(self.nodes[i])) {
+        json.output_nodes.push(i);
+      }
     }
 
     for (i = 0; i < this.nodes.length; i++) {
@@ -1341,6 +1349,7 @@ function Network(input_size, output_size) {
    * execute();
    */
   self.evolve = async function(dataset, options) {
+    // debugger;
     if (dataset[0].input.length !== (this.input_size || this.input) || dataset[0].output.length !== (this.output_size || this.output)) {
       throw new Error(`Dataset input/output size should be same as network input/output size!`);
     }
@@ -1415,7 +1424,7 @@ function Network(input_size, output_size) {
 
           worker.evaluate(genome).then(function (result) {
             genome.score = -result;
-            genome.score -= (genome.nodes.length - genome.input - genome.output +
+            genome.score -= (genome.nodes.length - genome.input_size - genome.output_size +
               genome.connections.length + genome.gates.length) * options.growth;
             genome.score = isNaN(parseFloat(result)) ? -Infinity : genome.score;
             start_worker(worker);
@@ -1442,6 +1451,7 @@ function Network(input_size, output_size) {
     let best_genome;
 
     while (error < -target_error && (options.iterations === 0 || neat.generation < options.iterations)) {
+      // debugger;
       // neat.evolve returns a network
       const fittest = await neat.evolve();
       const fitness = fittest.score;
@@ -1464,9 +1474,12 @@ function Network(input_size, output_size) {
     for (let i = 0; i < workers.length; i++) workers[i].terminate();
 
     if (typeof best_genome !== `undefined`) {
+      // copy the best network into this one
       this.nodes = best_genome.nodes;
       this.connections = best_genome.connections;
       this.gates = best_genome.gates;
+      this.input_nodes = best_genome.input_nodes;
+      this.output_nodes = best_genome.output_nodes;
 
       if(options.clear) this.clear();
     }
@@ -1662,13 +1675,21 @@ function Network(input_size, output_size) {
  * let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
  */
 Network.fromJSON = function(json) {
+  // TODO: Match new network input/output nodes with json.input nodes and json.output nodes
+
   const network = new Network(json.input_size, json.output_size);
 
   network.dropout = json.dropout;
   network.nodes = [];
   network.connections = [];
+  network.input_nodes = new Set();
+  network.output_nodes = new Set();
 
-  json.nodes.forEach((node_json) => network.nodes.push(Node.fromJSON(node_json)));
+  json.nodes.forEach((node_json, index) => {
+    const node = Node.fromJSON(node_json);
+    node.index = index;
+    network.nodes.push(node);
+  });
 
   json.connections.forEach((json_connection) => {
     const connection =
@@ -1677,6 +1698,9 @@ Network.fromJSON = function(json) {
 
     if(json_connection.gater != null) network.gate(network.nodes[json_connection.gater], connection);
   });
+
+  json.input_nodes.forEach(node_index => network.input_nodes.add(network.nodes[node_index]))
+  json.output_nodes.forEach(node_index => network.output_nodes.add(network.nodes[node_index]))
 
   return network;
 };
@@ -1762,6 +1786,8 @@ Network.merge = function(network1, network2) {
  * let network3 = Network.crossOver(network1, network2);
  */
 Network.crossOver = function(network1, network2, equal) {
+  // crossover works really really bad - although it works (I guess)
+  // TODO: refactor
   if (network1.input_size !== network2.input_size || network1.output_size !== network2.output_size) {
     throw new Error("Networks don`t have the same input/output size!");
   }
@@ -1770,24 +1796,28 @@ Network.crossOver = function(network1, network2, equal) {
   const offspring = new Network(network1.input_size, network1.output_size);
   offspring.connections = [];
   offspring.nodes = [];
+  offspring.input_nodes = new Set();
+  offspring.output_nodes = new Set();
 
   // Save scores and create a copy
   const score1 = network1.score || 0;
   const score2 = network2.score || 0;
 
   // Determine offspring node size
-  let size;
+  let offspring_size;
   if (equal || score1 === score2) {
     const max = Math.max(network1.nodes.length, network2.nodes.length);
     const min = Math.min(network1.nodes.length, network2.nodes.length);
-    size = Math.floor(Math.random() * (max - min + 1) + min);
+    offspring_size = Math.floor(Math.random() * (max - min + 1) + min);
   } else if (score1 > score2) {
-    size = network1.nodes.length;
+    offspring_size = network1.nodes.length;
   } else {
-    size = network2.nodes.length;
+    offspring_size = network2.nodes.length;
   }
 
   // Rename some variables for easier reading
+  // both networks (should) have equal input/output size
+  const input_size = network1.input_size;
   const output_size = network1.output_size;
 
   // Set indexes so we don't need indexOf
@@ -1801,29 +1831,89 @@ Network.crossOver = function(network1, network2, equal) {
   }
 
   // Assign nodes from parents to offspring
-  for (i = 0; i < size; i++) {
-    // Determine if an output node is needed
-    let node;
-    if (i < size - output_size) {
-      let random = Math.random();
-      node = random >= 0.5 ? network1.nodes[i] : network2.nodes[i];
-      let other = random < 0.5 ? network1.nodes[i] : network2.nodes[i];
+  for (i = 0; i < offspring_size; i++) {
+    // TODO: First assign input and output nodes, then get hidden nodes
+    // SUPER WIP
+    let chosen_node;
+    let chosen_node_type = ''; // will be one of 'input', 'output', 'hidden'
 
-      if (typeof node === `undefined` || node.type === `output`) {
-        node = other;
+    // first select input nodes
+    if (i < input_size) {
+      chosen_node_type = 'input';
+      // choose if the chosen input node will come from network 1 or 2
+      // then go to the i-th input node of the selected network and choose the node
+      const source_network = Math.random() >= 0.5 ? network1 : network2;
+      // get the i-th input node
+      let input_number = -1;
+      let j = -1; // index to scroll through the source network's nodes
+      while (input_number < i) { // basically move forward until desired input number is found
+        j++;
+        if (j >= source_network.nodes.length) {
+          // something is wrong...
+          debugger;
+          throw RangeError('something is wrong with the size of the input');
+        }
+        if (source_network.input_nodes.has(source_network.nodes[j])) {
+          input_number++;
+        }
       }
+      // now j is the index of the i-th input in the source network
+      chosen_node = source_network.nodes[j];
+    } else if (i < input_size + output_size) { // now select output nodes
+      chosen_node_type = 'output';
+      // choose if the chosen output node will come from network 1 or 2
+      // then go to the i-th output node of the selected network and choose the node
+      const source_network = Math.random() >= 0.5 ? network1 : network2;
+      // get the i-th output node
+      let output_number = -1;
+      let j = -1; // index to scroll through the source network's nodes
+      while (output_number < i - input_size) { // basically move forward until desired output number is found
+        j++;
+        if (j >= source_network.nodes.length) {
+          // something is wrong...
+          debugger;
+          throw RangeError('something is wrong with the size of the output');
+        }
+        if (source_network.output_nodes.has(source_network.nodes[j])) {
+          output_number++;
+        }
+      }
+      // now j is the index of the i-th output in the source network
+      chosen_node = source_network.nodes[j];
     } else {
-      if (Math.random() >= 0.5) {
-        node = network1.nodes[network1.nodes.length + i - size];
+      chosen_node_type = 'hidden';
+      // now select hidden nodes
+      let source_network;
+      if (i >= network1.nodes.length) {
+        source_network = network2;
+      } else if (i >= network2.nodes.length) {
+        source_network = network1;
       } else {
-        node = network2.nodes[network2.nodes.length + i - size];
+        source_network = Math.random() >= 0.5 ? network1 : network2;
       }
+      // consider adding a hidden nodes array
+      const chosen_node_index = Math.floor(Math.random() * source_network.nodes.length);
+      chosen_node = source_network.nodes[chosen_node_index];
     }
 
-    const new_node = new Node();
-    new_node.bias = node.bias;
-    new_node.squash = node.squash;
-    new_node.type = node.type;
+    // debugger; // super wip
+
+    if (chosen_node == undefined) {
+      debugger;
+    }
+
+    const new_node = new Node({
+      bias: chosen_node.bias,
+      squash: chosen_node.squash,
+      type: chosen_node.type,
+    });
+
+    // add to the corresponding set if input or output
+    if (chosen_node_type === 'input') {
+      offspring.input_nodes.add(new_node);
+    } else if (chosen_node_type === 'output') {
+      offspring.output_nodes.add(new_node);
+    }
 
     offspring.nodes.push(new_node);
   }
@@ -1885,14 +1975,14 @@ Network.crossOver = function(network1, network2, equal) {
   // Add common conn genes uniformly
   for (i = 0; i < connections.length; i++) {
     let connection_data = connections[i];
-    if (connection_data.to < size && connection_data.from < size) {
+    if (connection_data.to < offspring_size && connection_data.from < offspring_size) {
       const from = offspring.nodes[connection_data.from];
       const to = offspring.nodes[connection_data.to];
       const connection = offspring.connect(from, to)[0];
 
       connection.weight = connection_data.weight;
 
-      if (connection_data.gater !== -1 && connection_data.gater < size) {
+      if (connection_data.gater !== -1 && connection_data.gater < offspring_size) {
         offspring.gate(offspring.nodes[connection_data.gater], connection);
       }
     }
@@ -2018,6 +2108,7 @@ const Neat = function(dataset, {
    * @param {Network} network
    */
   self.createPool = function createPool(network, population_size) {
+    // debugger;
     const pool = Array(population_size).fill(Network.fromJSON({ ...network.toJSON(), score: undefined }));
     return pool;
   };
@@ -2026,29 +2117,31 @@ const Neat = function(dataset, {
   self.population = self.createPool(self.template, self.population_size);
 
   self.filterGenome = function (population, template, pickGenome, adjustGenome) {
-      let filtered = [...population]; // avoid mutations
+    let filtered = [...population]; // avoid mutations
 
-      // Check for correct return type from pickGenome
-      const check = function checkPick(genome) {
-        const pick = pickGenome(genome)
-        if (typeof pick !== "boolean") throw new Error("pickGenome must always return a boolean!")
-        return pick
-      }
+    // Check for correct return type from pickGenome
+    const check = function checkPick(genome) {
+      const pick = pickGenome(genome)
+      if (typeof pick !== "boolean") throw new Error("pickGenome must always return a boolean!")
+      return pick
+    }
 
-      if(adjustGenome){
-        for (let i = 0; i < population.length; i++) {
-          if(check(filtered[i])) {
-            const result = adjustGenome(filtered[i])
-            if (!(result instanceof Network)) throw new Error("adjustGenome must always return a network!")
-            filtered[i] = result
-          }
+    if(adjustGenome){
+      for (let i = 0; i < population.length; i++) {
+        if(check(filtered[i])) {
+          const result = adjustGenome(filtered[i])
+          if (!(result instanceof Network)) throw new Error("adjustGenome must always return a network!")
+          filtered[i] = result
         }
-      } else
-          for (let i = 0; i < population.length; i++)
-            if(check(filtered[i])) filtered[i] = Network.fromJSON(template.toJSON())
+      }
+    } else {
+      for (let i = 0; i < population.length; i++){
+        if(check(filtered[i])) filtered[i] = Network.fromJSON(template.toJSON())
+      }
+    }
 
-      return filtered;
-    };
+    return filtered;
+  };
 
   /**
    * Selects a random mutation method for a genome and mutates it
@@ -2119,6 +2212,12 @@ const Neat = function(dataset, {
    * })
   */
   self.evolve = async function (evolve_set, pickGenome, adjustGenome) {
+    // debugger;
+    // TODO: fix networks losing track of input and output nodes
+    // useful functions:
+    // broken1 = (n) => !n.input_nodes.has(n.nodes[0]) || !n.input_nodes.has(n.nodes[1])
+    // broken2 = (n) => !n.output_nodes.has(n.nodes[2])
+
     // Check if evolve is possible
     if (self.elitism + self.provenance > self.population_size) throw new Error("Can`t evolve! Elitism + provenance exceeds population size!");
 
@@ -2248,6 +2347,7 @@ const Neat = function(dataset, {
    * @returns {Network} Child network
    */
   self.getOffspring = function () {
+    // debugger;
     var parent1 = self.getParent();
     var parent2 = self.getParent();
 
