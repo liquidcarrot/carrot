@@ -478,8 +478,6 @@ describe('Network', function(){
         network.mutate(mutation.ADD_NODE)
       }
 
-      // debugger;
-
       // multiplies the two inputs
       const dataset = [
         { input: [1,0], output: [0]},
@@ -494,7 +492,7 @@ describe('Network', function(){
 
       const initial = network.test(dataset);
       const test_return = await network.evolve(dataset, { iterations: 5 });
-      debugger;
+
       // the evolve.error has different units compared to test.error
       const final = network.test(dataset);
 

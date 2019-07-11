@@ -1349,7 +1349,6 @@ function Network(input_size, output_size) {
    * execute();
    */
   self.evolve = async function(dataset, options) {
-    // debugger;
     if (dataset[0].input.length !== (this.input_size || this.input) || dataset[0].output.length !== (this.output_size || this.output)) {
       throw new Error(`Dataset input/output size should be same as network input/output size!`);
     }
@@ -1451,7 +1450,6 @@ function Network(input_size, output_size) {
     let best_genome;
 
     while (error < -target_error && (options.iterations === 0 || neat.generation < options.iterations)) {
-      // debugger;
       // neat.evolve returns a network
       const fittest = await neat.evolve();
       const fitness = fittest.score;
@@ -1896,12 +1894,6 @@ Network.crossOver = function(network1, network2, equal) {
       chosen_node = source_network.nodes[chosen_node_index];
     }
 
-    // debugger; // super wip
-
-    if (chosen_node == undefined) {
-      debugger;
-    }
-
     const new_node = new Node({
       bias: chosen_node.bias,
       squash: chosen_node.squash,
@@ -2108,7 +2100,6 @@ const Neat = function(dataset, {
    * @param {Network} network
    */
   self.createPool = function createPool(network, population_size) {
-    // debugger;
     const pool = Array(population_size).fill(Network.fromJSON({ ...network.toJSON(), score: undefined }));
     return pool;
   };
@@ -2166,16 +2157,9 @@ const Neat = function(dataset, {
       do {
         const current = possible[Math.floor(Math.random() * possible.length)]
 
-        try {
-          // attempt mutation, success: return mutation method, failure: remove from possible methods
-          if (genome.mutate(current)) return current
-          else possible = possible.filter(function(method) { return method.name !== current.name })
-        } catch (e) {
-          console.error('attempted mutation', current, 'but failed with error', e);
-          debugger;
-          genome.mutate(current);
-        }
-
+        // attempt mutation, success: return mutation method, failure: remove from possible methods
+        if (genome.mutate(current)) return current
+        else possible = possible.filter(function(method) { return method.name !== current.name })
       } while((possible && possible.length > 0))
       // Return null when all the mutations have been attempted
       return null;
@@ -2212,12 +2196,6 @@ const Neat = function(dataset, {
    * })
   */
   self.evolve = async function (evolve_set, pickGenome, adjustGenome) {
-    // debugger;
-    // TODO: fix networks losing track of input and output nodes
-    // useful functions:
-    // broken1 = (n) => !n.input_nodes.has(n.nodes[0]) || !n.input_nodes.has(n.nodes[1])
-    // broken2 = (n) => !n.output_nodes.has(n.nodes[2])
-
     // Check if evolve is possible
     if (self.elitism + self.provenance > self.population_size) throw new Error("Can`t evolve! Elitism + provenance exceeds population size!");
 
@@ -2347,7 +2325,6 @@ const Neat = function(dataset, {
    * @returns {Network} Child network
    */
   self.getOffspring = function () {
-    // debugger;
     var parent1 = self.getParent();
     var parent2 = self.getParent();
 
