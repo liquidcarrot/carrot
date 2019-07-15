@@ -1,7 +1,7 @@
 /* Import */
 var chai = require('chai');
 var assert = chai.assert;
-let carrot = require('../src/carrot')
+let carrot = require('../../../src/carrot')
 
 /* Shorten var names */
 var { architect, Network, methods, config } = carrot;
