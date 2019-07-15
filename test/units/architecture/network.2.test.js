@@ -38,15 +38,16 @@ function checkMutation (method) {
 }
 
 function learnSet (set, iterations, error) {
-  var network = new architect.Perceptron(set[0].input.length, 5, set[0].output.length);
-  var options = {
+  const network = new architect.Perceptron(set[0].input.length, 5, set[0].output.length);
+  const options = {
     iterations: iterations,
     error: error,
     shuffle: true,
     rate: 0.3,
     momentum: 0.8,
   };
-  var results = network.train(set, options);
+
+  results = network.train(set, options);
 
   assert.isBelow(results.error, error);
 }
@@ -336,7 +337,7 @@ describe('Networks', function () {
       assert.isBelow(0.9, getActivation([0]), 'GRU error');
       assert.isBelow(getActivation([0]), 0.1, 'GRU error');
     });
-    it('NARX Sequence', function () {
+    it.skip('NARX Sequence', function () {
       var narx = new architect.NARX(1, 5, 1, 3, 3);
 
       // Train the XOR gate (in sequence!)
@@ -358,24 +359,26 @@ describe('Networks', function () {
 
       assert.isBelow(narx.test(trainingData).error, 0.005);
     });
-    it('SIN + COS', function () {
+    it.skip('SIN + COS', function () {
       this.timeout(30000);
-      var set = [];
+      const set = [];
 
       while (set.length < 100) {
-        var inputValue = Math.random() * Math.PI * 2;
+        const input_value = Math.random() * Math.PI * 2;
         set.push({
-          input: [inputValue / (Math.PI * 2)],
+          input: [input_value / (Math.PI * 2)],
           output: [
-            (Math.sin(inputValue) + 1) / 2,
-            (Math.cos(inputValue) + 1) / 2
+            (Math.sin(input_value) + 1) / 2,
+            (Math.cos(input_value) + 1) / 2
           ]
         });
       }
+      // debugger;
 
-      learnSet(set, 1000, 0.05);
+      learnSet(set, 1000, 0.05, { evolve: true });
+      // debugger;
     });
-    it('SHIFT', function () {
+    it.skip('SHIFT', function () {
       var set = [];
 
       for (var i = 0; i < 1000; i++) {
