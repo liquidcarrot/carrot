@@ -509,15 +509,11 @@ function Network(input_size, output_size) {
         }
         return false;
       case mutation.ADD_GATE:
-        for (let i = 0; i < self.connections.length; i++) {
-          const current_connection = self.connections[i];
-          if (current_connection.from == current_connection.to) {
-            return true;
+        self.connections.forEach((conn) => {
+          if (conn.gater === null) {
+            candidates.push(conn);
           }
-        }
-        return false;
-        _.each(all_connections, (conn) => { if(conn.gater === null) candidates.push(conn) })
-
+        });
         return candidates.length ? candidates : false
       case mutation.SUB_GATE: return (this.gates.length > 0) ? [] : false
       case mutation.ADD_BACK_CONN:
@@ -796,9 +792,9 @@ function Network(input_size, output_size) {
    * @param {number} [options.batch_size=1] Sets the (mini-) batch size of your training. Default: 1 [(online training)](https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes)
    * @param {number} [options.cross_validate.testSize] Sets the amount of test cases that should be assigned to cross validation. If data to 0.4, 40% of the given data will be used for cross validation.
    * @param {number} [options.cross_validate.test_error] Sets the target error of the validation data.
-   * @param {boolean} [options.clear=false] If data to true, will clear the network after every activation. This is useful for training LSTM's, more importantly for timeseries prediction.
-   * @param {boolean} [options.shuffle=false] When data to true, will shuffle the training data every iteration_number. Good option to use if the network is performing worse in [cross validation](https://artint.info/html/ArtInt_189.html) than in the real training data.
-   * @param {number|boolean} [options.log=false] If data to n, outputs training status every n iterations. Setting `log` to 1 will log the status every iteration_number
+   * @param {boolean} [options.clear=false] If set to true, will clear the network after every activation. This is useful for training LSTM's, more importantly for timeseries prediction.
+   * @param {boolean} [options.shuffle=false] When set to true, will shuffle the training data every iteration_number. Good option to use if the network is performing worse in [cross validation](https://artint.info/html/ArtInt_189.html) than in the real training data.
+   * @param {number|boolean} [options.log=false] If set to n, outputs training status every n iterations. Setting `log` to 1 will log the status every iteration_number
    * @param {number} [options.schedule.iterations] You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
    * @param {schedule} [options.schedule.function] A function to run every n iterations as data by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
    *

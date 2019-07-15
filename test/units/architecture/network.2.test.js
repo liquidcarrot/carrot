@@ -39,15 +39,13 @@ function checkMutation (method) {
 
 function learnSet (set, iterations, error) {
   var network = new architect.Perceptron(set[0].input.length, 5, set[0].output.length);
-
   var options = {
     iterations: iterations,
     error: error,
     shuffle: true,
     rate: 0.3,
-    momentum: 0.8
+    momentum: 0.8,
   };
-
   var results = network.train(set, options);
 
   assert.isBelow(results.error, error);

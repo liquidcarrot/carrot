@@ -58,19 +58,19 @@ const architect = {
     // Create a network
     const network = new Network(0, 0);
 
-    // Transform all groups into nodes
+    // Transform all groups into nodes, set input and output nodes to the network
+    // TODO: improve how it is communicated which nodes are input and output
     let nodes = [];
 
     let i, j;
     for (i = 0; i < list.length; i++) {
-      if (list[i] instanceof Group) {
+      if (list[i] instanceof Group || list[i] instanceof Layer) {
         for (j = 0; j < list[i].nodes.length; j++) {
           nodes.push(list[i].nodes[j]);
-        }
-      } else if (list[i] instanceof Layer) {
-        for (j = 0; j < list[i].nodes.length; j++) {
-          for (let k = 0; k < list[i].nodes[j].nodes.length; k++) {
-            nodes.push(list[i].nodes[j].nodes[k]);
+          if (i === 0) { // assume input nodes. TODO: improve.
+            network.input_nodes.add(list[i].nodes[j]);
+          } else if (i === list.length - 1) {
+            network.output_nodes.add(list[i].nodes[j]);
           }
         }
       } else if (list[i] instanceof Node) {
@@ -123,7 +123,7 @@ const architect = {
       }
     }
 
-    network.nodes = nodes;
+    network.addNodes(nodes);
 
     return network;
   },
@@ -531,17 +531,17 @@ const architect = {
 
     const nodes = [];
 
-    const input_layer = new Layer.Dense(input_size);
-    const input_memory = new Layer.Memory(input_size, input_memory_size);
+    const input_layer = Layer.Dense(input_size);
+    const input_memory = Layer.Memory(input_size, input_memory_size);
 
     const hidden_layers = [];
     // create the hidden layers
     _.times(hidden_sizes.length, (index) => {
-      hidden_layers.push(new Layer.Dense(hidden_sizes[index]));
+      hidden_layers.push(Layer.Dense(hidden_sizes[index]));
     });
 
-    const output_layer = new Layer.Dense(output_size);
-    const output_memory = new Layer.Memory(output_size, output_memory_size);
+    const output_layer = Layer.Dense(output_size);
+    const output_memory = Layer.Memory(output_size, output_memory_size);
 
     // add the input connections and add to the list of nodes
     input_layer.connect(hidden_layers[0], methods.connection.ALL_TO_ALL);
