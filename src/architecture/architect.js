@@ -445,8 +445,8 @@ const architect = {
     nodes.push(input_layer);
 
     let previous = input_layer;
-    for (var i = 0; i < blocks.length; i++) {
-      const layer = new Layer.GRU(block_sizes[i])
+    for (var i = 0; i < block_sizes.length; i++) {
+      const layer = Layer.GRU(block_sizes[i])
       previous.connect(layer);
       previous = layer;
 
