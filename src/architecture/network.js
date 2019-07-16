@@ -1567,6 +1567,7 @@ function Network(input_size, output_size) {
       const incoming = [];
       for (var j = 0; j < node.connections_incoming.length; j++) {
         const connection = node.connections_incoming[j];
+        if (connection.from.index === undefined) debugger;
         let computation = `A[${connection.from.index}] * ${connection.weight}`;
 
         if (connection.gater != null) {

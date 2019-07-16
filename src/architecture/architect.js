@@ -495,6 +495,7 @@ const architect = {
 
   /**
   * Creates a NARX network (remember previous inputs/outputs)
+  * @alpha cannot make standalone network. TODO: be able to make standalone network
   *
   * @param {number} input Number of input nodes
   * @param {number[]|number} hidden Array of hidden layer sizes, e.g. [10,20,10] If only one hidden layer, can be a number (of nodes)
@@ -538,9 +539,9 @@ const architect = {
 
     const hidden_layers = [];
     // create the hidden layers
-    _.times(hidden_sizes.length, (index) => {
+    for (let index = 0; index < hidden_sizes.length; index++) {
       hidden_layers.push(Layer.Dense(hidden_sizes[index]));
-    });
+    }
 
     const output_layer = Layer.Dense(output_size);
     const output_memory = Layer.Memory(output_size, output_memory_size);
@@ -557,7 +558,7 @@ const architect = {
     nodes.push(output_memory);
 
     // feed forward the hidden layers
-    _.times(hidden_layers.length, (index) => {
+    for (let index = 0; index < hidden_layers.length; index++) {
       if (index < hidden_layers.length - 1) { // do not connect to next if last
         hidden_layers[index].connect(hidden_layers[index + 1], methods.connection.ALL_TO_ALL);
       } else { // if last, connect to output
@@ -565,7 +566,7 @@ const architect = {
       }
 
       nodes.push(hidden_layers[index]);
-    });
+    }
 
     // finally, connect output to memory
     output_layer.connect(output_memory, methods.connection.ONE_TO_ONE, 1);
