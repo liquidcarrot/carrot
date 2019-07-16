@@ -1556,7 +1556,7 @@ function Network(input_size, output_size) {
       activations.push(node.activation);
       states.push(node.state);
 
-      const function_index = present.indexOf(node.squash.name);
+      let function_index = present.indexOf(node.squash.name);
 
       if (function_index === -1) {
         function_index = present.length;
@@ -1707,17 +1707,13 @@ Network.fromJSON = function(json) {
     node.index = index;
     network.nodes.push(node);
   });
-  // debugger;
-  json.connections.forEach((json_connection) => {
-    try {
-      const connection =
-      network.connect(network.nodes[json_connection.from], network.nodes[json_connection.to])[0];
-      connection.weight = json_connection.weight;
 
-      if (json_connection.gater != null) network.gate(network.nodes[json_connection.gater], connection);
-    } catch (e) {
-      debugger;
-    }
+  json.connections.forEach((json_connection) => {
+    const connection =
+    network.connect(network.nodes[json_connection.from], network.nodes[json_connection.to])[0];
+    connection.weight = json_connection.weight;
+
+    if (json_connection.gater != null) network.gate(network.nodes[json_connection.gater], connection);
   });
 
   json.input_nodes.forEach(node_index => network.input_nodes.add(network.nodes[node_index]))
