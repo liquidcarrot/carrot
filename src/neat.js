@@ -154,8 +154,8 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    * @memberof Neat
    *
-   * @param {Network} network - Template network used to create population - _other networks will be "identical twins"_
-   * @param {number} size - Number of network in created population - _how many identical twins created in new population_
+   * @param {Network} [network] - Template network used to create population - _other networks will be "identical twins"_ - _will use `this.template`, if `network` is not defined_
+   * @param {number} [size=50] - Number of network in created population - _how many identical twins created in new population_
    *
    * @returns {Network[]} Returns an array of networks
    */
@@ -244,6 +244,35 @@ const Neat = function(inputs, outputs, dataset, options) {
     } while(true)
   };
 
+  /**
+   * Mutates the given (or current) population
+   *
+   * @function mutate
+   *
+   * @memberof Neat
+   *
+   * @param {mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
+   */
+  self.mutate = function mutate_population(method) {
+    if (method) {
+      for (let i = 0; i < self.population.length; i++) { // Elitist genomes should not be included
+        if (Math.random() <= self.mutation_rate) {
+          for (let j = 0; j < self.mutation_amount; j++) {
+            self.population[i].mutate(method);
+          }
+        }
+      }
+    } else {
+      for (let i = 0; i < self.population.length; i++) { // Elitist genomes should not be included
+        if (Math.random() <= self.mutation_rate) {
+          for (let j = 0; j < self.mutation_amount; j++) {
+            self.mutateRandom(self.population[i], self.mutation);
+          }
+        }
+      }
+    }
+  };
+  
   /**
    * Evaluates, selects, breeds and mutates population
    *
@@ -451,42 +480,18 @@ const Neat = function(inputs, outputs, dataset, options) {
   };
 
   /**
-   * Mutates the given (or current) population
-   *
-   * @function mutate
-   *
-   * @memberof Neat
-   *
-   * @param {mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
-   */
-  self.mutate = function mutate_population(method) {
-    if (method) {
-      for (let i = 0; i < self.population.length; i++) { // Elitist genomes should not be included
-        if (Math.random() <= self.mutation_rate) {
-          for (let j = 0; j < self.mutation_amount; j++) {
-            self.population[i].mutate(method);
-          }
-        }
-      }
-    } else {
-      for (let i = 0; i < self.population.length; i++) { // Elitist genomes should not be included
-        if (Math.random() <= self.mutation_rate) {
-          for (let j = 0; j < self.mutation_amount; j++) {
-            self.mutateRandom(self.population[i], self.mutation);
-          }
-        }
-      }
-    }
-  };
-
-  /**
    * Evaluates the current population, basically sets their `.score` property
    *
    * @function evalute
    *
    * @memberof Neat
    *
-   * @return {Network} Fittest Network
+   * @param {Object[]} [dataset]
+   * @param {Object} [options]
+   * @param {boolean} [options.clear=false]
+   * @param {boolean} [options.networks=false]
+   *
+   * @return {{ "best": {number|Network}, "average": {number|Network}, "worst": {number|Network} }} Return the performance metrics/benchmarks of the networks - _returns networks iff `options.networks === true`_
    */
   self.evaluate = async function (dataset) {
     dataset = dataset || self.dataset;
