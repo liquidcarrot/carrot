@@ -111,10 +111,12 @@ const architect = {
       throw new Error('Given nodes have no clear input/output node!');
     }
 
+    // TODO: network.addNodes should do all of these automatically, not only add connections
     for (i = 0; i < nodes.length; i++) {
-      for (j = 0; j < nodes[i].connections_outgoing.length; j++) {
-        network.connections.push(nodes[i].connections_outgoing[j]);
-      }
+      // this commented for is added automatically by network.addNodes
+      // for (j = 0; j < nodes[i].connections_outgoing.length; j++) {
+      //   network.connections.push(nodes[i].connections_outgoing[j]);
+      // }
       for (j = 0; j < nodes[i].connections_gated.length; j++) {
         network.gates.push(nodes[i].connections_gated[j]);
       }

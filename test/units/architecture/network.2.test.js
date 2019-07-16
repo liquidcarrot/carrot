@@ -56,12 +56,12 @@ function testEquality (original, copied) {
   for (var j = 0; j < 50; j++) {
     var input = [];
     var a;
-    for (a = 0; a < original.input; a++) {
+    for (a = 0; a < original.input_size; a++) {
       input.push(Math.random());
     }
 
-    var ORout = original.activate([input]);
-    var COout = copied instanceof Network ? copied.activate([input]) : copied([input]);
+    var ORout = original.activate(input);
+    var COout = copied instanceof Network ? copied.activate(input) : copied(input);
 
     for (a = 0; a < original.output; a++) {
       ORout[a] = ORout[a].toFixed(9);
@@ -152,11 +152,12 @@ describe('Networks', function () {
         assert.isBelow(from, to, 'network is not feeding forward correctly');
       }
     });
-    it.skip('from/toJSON equivalency', function () {
+    it('from/toJSON equivalency', function () {
       this.timeout(10000);
-      var original, copy;
+      let original, copy;
       original = new architect.Perceptron(Math.floor(Math.random() * 5 + 1), Math.floor(Math.random() * 5 + 1), Math.floor(Math.random() * 5 + 1));
-      copy = Network.fromJSON(original.toJSON());
+      let original_JSON = original.toJSON();
+      copy = Network.fromJSON(original_JSON);
       testEquality(original, copy);
 
       original = new Network(Math.floor(Math.random() * 5 + 1), Math.floor(Math.random() * 5 + 1));

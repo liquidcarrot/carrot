@@ -131,17 +131,27 @@ function Network(input_size, output_size) {
   self.activate = function(input, { dropout_rate = 0, no_trace = false } = {}) {
     // Activate nodes chronologically - first input, then hidden, then output
     // activate input nodes
+    // TODO: fix, this should be activated according to nodes order
     let input_node_index = 0;
-    this.input_nodes.forEach(node => {
+    for (let i = 0; i < self.nodes.length; i++) {
+      if (input_node_index === self.input_nodes.size) {
+        break; // all the input nodes have been activated
+      }
+      const node = self.nodes[i];
+      if (!self.input_nodes.has(node)) continue;
+      // only activate input nodes this run
       if (no_trace) {
         node.noTraceActivate(input[input_node_index++]);
       } else {
         node.activate(input[input_node_index++]);
       }
-    });
+    }
+    if (input_node_index !== input.length) {
+      throw Error(`There are ${input_node_index} input nodes, but ${input.length} inputs were passed`);
+    }
 
     // activate hidden nodes
-    this.nodes.forEach((node, node_index) => {
+    self.nodes.forEach((node, node_index) => {
       // check that is not input nor output
       if (self.input_nodes.has(node) || self.output_nodes.has(node)) return;
 
@@ -154,7 +164,13 @@ function Network(input_size, output_size) {
     });
 
     const output = [];
-    this.output_nodes.forEach(node => {
+    for (let i = 0; i < self.nodes.length; i++) {
+      if (output.length === self.output_nodes.size) {
+        break; // all the output nodes have been activated
+      }
+      const node = self.nodes[i];
+      if (!self.output_nodes.has(node)) continue;
+      // only activate output nodes this run
       let node_output;
       if (no_trace) {
         node_output = node.noTraceActivate();
@@ -162,7 +178,10 @@ function Network(input_size, output_size) {
         node_output = node.activate();
       }
       output.push(node_output);
-    });
+    }
+    if (output.length !== self.output_nodes.size) {
+      throw Error(`There are ${self.output_nodes.size} output nodes, but ${output.length} outputs were passed`);
+    }
     return output;
   }
 
@@ -1178,6 +1197,9 @@ function Network(input_size, output_size) {
    * let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
    */
   self.toJSON = function() {
+    // 0, 1, 2, 3, 16, 17, 18, 19, 20, 24, 28, 32. all of these leave from node 0, but
+    // node 0 only has 4 outgoing connections..
+
     const json = {
       nodes: [],
       connections: [],
@@ -1649,7 +1671,8 @@ function Network(input_size, output_size) {
     self.nodes.push(...nodes_to_add);
     for (let i = 0; i < nodes_to_add.length; i++) {
       const current_node = nodes_to_add[i];
-      self.connections.push(...current_node.connections_incoming);
+      // not required to push connections incoming. by pushing every outgoing connection,
+      // every incoming connection will be pushed as well. pushing both causes duplicates
       self.connections.push(...current_node.connections_outgoing);
     }
   }
@@ -1684,13 +1707,17 @@ Network.fromJSON = function(json) {
     node.index = index;
     network.nodes.push(node);
   });
-
+  // debugger;
   json.connections.forEach((json_connection) => {
-    const connection =
+    try {
+      const connection =
       network.connect(network.nodes[json_connection.from], network.nodes[json_connection.to])[0];
-    connection.weight = json_connection.weight;
+      connection.weight = json_connection.weight;
 
-    if(json_connection.gater != null) network.gate(network.nodes[json_connection.gater], connection);
+      if (json_connection.gater != null) network.gate(network.nodes[json_connection.gater], connection);
+    } catch (e) {
+      debugger;
+    }
   });
 
   json.input_nodes.forEach(node_index => network.input_nodes.add(network.nodes[node_index]))
