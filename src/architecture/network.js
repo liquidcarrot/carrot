@@ -291,8 +291,6 @@ function Network(input_size, output_size) {
    * @returns {Network} Returns an identical network
    */
   self.clone = function() {
-    const self = this;
-
     return new Network(self.input, self.output);
   }
 

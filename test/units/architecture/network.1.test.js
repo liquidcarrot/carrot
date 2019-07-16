@@ -335,7 +335,7 @@ describe('Network', function(){
       test_network.disconnect(test_node, test_network.nodes[16]);
       test_network.disconnect(test_network.nodes[2], test_node);
 
-      expect(test_network.connections.length).to.equal(before_network_connection_size - 2);
+      expect(test_network.connections.length).to.equal(before_network_connection_size - 1);
       expect(test_node.connections_outgoing).to.be.empty;
     })
   })
