@@ -374,10 +374,8 @@ describe('Networks', function () {
           ]
         });
       }
-      // debugger;
 
       learnSet(set, 1000, 0.05, { evolve: true });
-      // debugger;
     });
     it.skip('SHIFT', function () {
       var set = [];

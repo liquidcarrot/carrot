@@ -121,7 +121,7 @@ const architect = {
         network.gates.push(nodes[i].connections_gated[j]);
       }
       if (nodes[i].connections_self.weight !== 0) {
-        network.selfconns.push(nodes[i].connections_self);
+        network.connections.push(nodes[i].connections_self);
       }
     }
 
@@ -261,7 +261,7 @@ const architect = {
   LSTM: function () {
     const layer_sizes_and_options = Array.from(arguments);
 
-    const output_size_or_options = layer_sizes_and_options.slice(-1);
+    const output_size_or_options = layer_sizes_and_options.slice(-1)[0];
 
     let layer_sizes, options
 
@@ -275,7 +275,7 @@ const architect = {
     }
 
     if (layer_sizes.length < 3) {
-      throw new Error('You have to specify at least 3 layer_sizes');
+      throw new Error('You have to specify at least 3 layer sizes, one for each of 1.inputs, 2. hidden, 3. output');
     }
 
     options = _.defaults(options, {
