@@ -282,7 +282,6 @@ function Network(input_size, output_size) {
 
   /**
    * Returns a new identical network.
-   * WIP on actually cloning, for now only has the same number of inputs and outputs.
    * @alpha
    *
    * @function clone
@@ -291,7 +290,7 @@ function Network(input_size, output_size) {
    * @returns {Network} Returns an identical network
    */
   self.clone = function() {
-    return new Network(self.input, self.output);
+    return Network.fromJSON(self.toJSON());
   }
 
   /**
