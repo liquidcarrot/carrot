@@ -187,17 +187,48 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    * @memberof Neat
    *
-   * @param {network[]} population An array (population) of genomes (networks)
-   * @param {network} [new_network] Replaces networks from
-   * @param {function} [select]
-   * @param {function} [transform] A function to change genomes with, takes a genome as a parameter
+   * @param {Network[]} [population] An array (population) of genomes (networks)
+   * @param {number|Network|Function} [filter] An index, network, or function used to pick out replaceable genome(s) from the population - _invoked `filter(network, index, population)`_
+   * @param {Network|Function} [transform] A network used to replace filtered genomes or a function used to mutate filtered genomes - _invoked `transform(network, index, population)`_
+   *
+   * @return {Network[]} Returns the new genome
    */
-  self.replace = function replace_selected_genomes(population, template, select, transform) {
-    const filtered = []
-
-    for(let index = 0; index < population.length; index++) {
-      if(select(population[index])) filtered.push(transform ? transform(population[index]) : population[index]);
+  self.replace = function(population, filter, transform) {
+    if(population == undefined && filter == undefined && transform == undefined) throw new ReferenceError("Missing required parameter 'transform'")
+    
+    function _transform(t) {
+      const transformer = t instanceof Network ? (() => t) : typeof t === "function" ? t : new TypeError(`Expected ${t} to be a {Network|Function}`);
+      return transformer;
     }
+    function _filter(f) {
+      const filter = Number.isFinite(f) ? (network, index, population) => index === f
+        : f instanceof Network ? (network, index, population) => network === f
+        : typeof f === "function" ? f
+        : f == undefined ? () => true
+        : new TypeError(`Expected ${t} to be a {Number|Network|Function|undefined}`);
+      return filter;
+    }
+    
+    if (filter == undefined && transform == undefined) {
+      transform = _transform(population);
+      filter = _filter();
+      population = self.population;
+    }
+    else if (transform == undefined) {
+      transform = _transform(filter);
+      filter = _filter(population);
+      population = self.population;
+    } else {
+      transform = _transform(transform);
+      filter = _filter(filter);
+      population = population || self.population;
+    }
+    
+    const filtered = [...self.population];
+
+    for (let genome = 0; genome < population.length; genome++)
+      if (filter(population[genome], genome, population))
+        filtered[genome] = transform(population[genome], genome, population);
 
     return filtered;
   };

@@ -164,15 +164,213 @@ describe("Neat", function() {
     })
   })
   describe("neat.replace()", function() {
-    it("neat.replace() => {ReferenceError}")
-    it("neat.replace(transform=Network) => {Network[]}")
-    it("neat.replace(transform=Function) => {Network[]}")
+    it("neat.replace() => {ReferenceError}", function() {
+      const neat = new Neat();
+      
+      expect(() => neat.replace()).to.throw(ReferenceError);
+    })
+    
+    it("neat.replace(transform=Network) => {Network[]}", function() {
+      const inputs = Math.ceil(Math.random() * 10);
+      const outputs = Math.ceil(Math.random() * 10);
+      const network = new Network(inputs, outputs);
+      
+      const neat = new Neat();
+      const population = neat.replace(network);
+      
+      expect(population).to.be.an.instanceOf(Array);
+      expect(population).to.have.lengthOf(neat.population.length);
+      
+      for (let genome = 0; genome < population; genome++) {
+        expect(population[genome]).to.be.an.instanceOf(Network);
+        expect(population[genome]).to.not.eql(neat.population[genome]);
+      }
+    })
+    it("neat.replace(transform=Function) => {Network[]}", function() {
+      const transform = function(network, index, population) {
+        network["RANDOM_KEY"] = index;
+      }
+      
+      const neat = new Neat();
+      const population = neat.replace(transform);
+      
+      expect(population).to.be.an.instanceOf(Array);
+      expect(population).to.be.an.lengthOf(neat.population.length);
+      
+      for (let genome = 0; genome < population; genome++) {
+        expect(population[genome]).to.be.an.instanceOf(Network);
+        expect(population[genome]["RANDOM_KEY"]).to.equal(genome);
+      }
+    })
+    
+    it("neat.replace(filter=number, transform=Network) => {Network[]}", function() {
+      const index = Math.ceil(Math.random() * 50);
+      const inputs = Math.ceil(Math.random() * 10);
+      const outputs = Math.ceil(Math.random() * 10);
+      const network = new Network(inputs, outputs);
+      
+      const neat = new Neat();
+      const population = neat.replace(index, network);
+      
+      expect(population).to.be.an.instanceOf(Array);
+      expect(population).to.have.lengthOf(neat.population.length);
+      
+      for (let genome = 0; genome < population; genome++) {
+        expect(population[genome]).to.be.an.instanceOf(Network);
+        
+        if(genome === index) {
+          expect(population[genome]).to.not.eql(neat.population[genome]);
+          expect(population[genome]).to.eql(network);
+        } else {
+          expect(population[genome]).to.equal(neat.population[genome]);
+        }
+      }
+    })
+    it("neat.replace(filter=number, transform=Function) => {Network[]}", function() {
+      const index = Math.ceil(Math.random() * 50);
+      const transform = function(network, index, population) {
+        network["RANDOM_KEY"] = index;
+      }
+      
+      const neat = new Neat();
+      const population = neat.replace(index, transform);
+      
+      expect(population).to.be.an.instanceOf(Array);
+      expect(population).to.have.lengthOf(neat.population.length);
+      
+      for (let genome = 0; genome < population; genome++) {
+        expect(population[genome]).to.be.an.instanceOf(Network);
+        
+        if(genome === index) {
+          expect(population[genome]).to.not.eql(neat.population[genome]);
+          expect(population[genome]["RANDOM_KEY"]).to.equal(genome);
+        } else {
+          expect(population[genome]).to.equal(neat.population[genome]);
+        }
+      }
+    })
+    
+    it("neat.replace(filter=Network, transform=Network) => {Network[]}", function() {
+      const neat = new Neat();
+      
+      const index = Math.floor(Math.random() * neat.population.length);
+      const network = neat.population[index];
+      
+      const inputs = Math.ceil(Math.random() * 10);
+      const outputs = Math.ceil(Math.random() * 10);
+      const other_network = new Network(inputs, outputs);
+      
+      const population = neat.replace(network, other_network);
+      
+      expect(population).to.be.an.instanceOf(Array);
+      expect(population).to.have.lengthOf(neat.population.length);
+      
+      for (let genome = 0; genome < population; genome++) {
+        expect(population[genome]).to.be.an.instanceOf(Network);
+        
+        if(genome === index) {
+          expect(population[genome]).to.not.eql(neat.population[genome]);
+          expect(population[genome]).to.eql(network);
+        } else {
+          expect(population[genome]).to.equal(neat.population[genome]);
+        }
+      }
+    })
+    it("neat.replace(filter=Network, transform=Function) => {Network[]}", function() {
+      const neat = new Neat();
+      
+      const index = Math.floor(Math.random() * neat.population.length);
+      const network = neat.population[index];
+      
+      const other_index = Math.ceil(Math.random() * 50);
+      const transform = function(network, index, population) {
+        network["RANDOM_KEY"] = index;
+      }
+      
+      const population = neat.replace(network, transform);
+      
+      expect(population).to.be.an.instanceOf(Array);
+      expect(population).to.have.lengthOf(neat.population.length);
+      
+      for (let genome = 0; genome < population; genome++) {
+        expect(population[genome]).to.be.an.instanceOf(Network);
+        
+        if(genome === index) {
+          expect(population[genome]).to.eql(neat.population[genome]);
+          expect(population[genome]).to.eql(network);
+          expect(population[genome]["RANDOM_KEY"]).to.equal(genome);
+        } else {
+          expect(population[genome]).to.equal(neat.population[genome]);
+        }
+      }
+    })
+    
+    it("neat.replace(filter=Function, transform=Network) => {Network[]}", function() {
+      const indexes = [3, 6];
+      const filter = function(network, index, population) {
+        const indexes = [3, 6];
+        return indexes.includes(index);
+      }
+      
+      const inputs = Math.ceil(Math.random() * 10);
+      const outputs = Math.ceil(Math.random() * 10);
+      const network = new Network(inputs, outputs);
+      
+      const neat = new Neat();
+      
+      const population = neat.replace(filter, network);
+      
+      expect(population).to.be.an.instanceOf(Array);
+      expect(population).to.have.lengthOf(neat.population.length);
+      
+      for (let genome = 0; genome < population; genome++) {
+        expect(population[genome]).to.be.an.instanceOf(Network);
+        
+        if(indexes.includes(genome)) {
+          expect(population[genome]).to.not.eql(neat.population[genome]);
+          expect(population[genome]).to.eql(network);
+        } else {
+          expect(population[genome]).to.equal(neat.population[genome]);
+        }
+      }
+    })
+    it("neat.replace(filter=Function, transform=Function) => {Network[]}", function() {
+      const indexes = [3, 6];
+      const filter = function(network, index, population) {
+        const indexes = [3, 6];
+        return indexes.includes(index);
+      }
+      
+      const index = Math.ceil(Math.random() * 50);
+      const transform = function(network, index, population) {
+        network["RANDOM_KEY"] = index;
+      }
+      
+      const neat = new Neat();
+      
+      const population = neat.replace(filter, transform);
+      
+      expect(population).to.be.an.instanceOf(Array);
+      expect(population).to.have.lengthOf(neat.population.length);
+      
+      for (let genome = 0; genome < population; genome++) {
+        expect(population[genome]).to.be.an.instanceOf(Network);
+        
+        if(indexes.includes(genome)) {
+          expect(population[genome]).to.eql(neat.population[genome]);
+          expect(population[genome]).to.eql(network);
+          expect(population[genome]["RANDOM_KEY"]).to.equal(genome);
+        } else {
+          expect(population[genome]).to.equal(neat.population[genome]);
+        }
+      }
+    })
+    
+    // STATIC - Should be static functions
     it("neat.replace(population, transform=Network) => {Network[]}")
     it("neat.replace(population, transform=Function) => {Network[]}")
-    it("neat.replace(filter=Network, transform=Network) => {Network[]}")
-    it("neat.replace(filter=Network, transform=Function) => {Network[]}")
-    it("neat.replace(filter=Function, transform=Network) => {Network[]}")
-    it("neat.replace(filter=Function, transform=Function) => {Network[]}")
+    it("neat.replace(population, filter=number, transform=Network) => {Network[]}")
+    it("neat.replace(population, filter=number, transform=Function) => {Network[]}")
     it("neat.replace(population, filter=Network, transform=Network) => {Network[]}")
     it("neat.replace(population, filter=Network, transform=Function) => {Network[]}")
     it("neat.replace(population, filter=Function, transform=Network) => {Network[]}")
