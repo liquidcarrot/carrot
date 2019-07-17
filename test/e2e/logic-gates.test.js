@@ -57,7 +57,17 @@ describe("Logic Gates", function() {
 
     expect(final.error).to.be.at.most(initial.error);
   });
-  it("[NOT] Network.evolve()");
+  it("[NOT] Network.evolve()", async function() {
+    this.timeout(10000);
+    
+    const network = new Network(1,1);
+
+    const initial = network.test(data.NOT);
+    await network.evolve(data.NOT)
+    const final = network.test(data.NOT);
+    
+    expect(final.error).to.be.at.most(initial.error);
+  });
   it("[NOT] Neat.evolve()", async function() {
     const population = new Neat(1,1, data.NOT);
 

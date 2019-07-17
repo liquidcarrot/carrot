@@ -118,6 +118,7 @@ const Neat = function(inputs, outputs, dataset, options) {
   // new Neat(input, output, dataset, options)
   inputs = inputs || 1;
   outputs = outputs || 1;
+  dataset = dataset || [];
   options = _.defaultsDeep(options, Neat.default.options);
   options.template = options.template || new Network(inputs, outputs);
 
@@ -312,10 +313,10 @@ const Neat = function(inputs, outputs, dataset, options) {
    * @alias evolve
    *
    * @param {Array<{input:number[],output:number[]}>} [evolve_dataset=dataset] A set to be used for evolving the population, if none is provided the dataset passed to Neat on creation will be used.
-   * @param {function} [pickGenome] A custom selection function to pick out unwanted genomes. Accepts a network as a parameter and returns true for selection.
-   * @param {function} [adjustGenome=this.template] Accepts a network, modifies it, and returns it. Used to modify unwanted genomes returned by `pickGenome` and reincorporate them into the population. If left unset, unwanted genomes will be replaced with the template Network. Will only run when pickGenome is defined.
+   * @param {Object} [options]
+   * @param {boolean} [options.networks=false] Iff `options.networks === true` `neat.evolve()` will return networks, instead of their performance
    *
-   * @returns {Network} Fittest network
+   * @returns {{ "best": {number}, "average": {number}, "worst": {number}}|{ "best": {Network}, "average": {Network}, "worst": {Network}} Returns
    *
    * @example
    *
@@ -352,7 +353,120 @@ const Neat = function(inputs, outputs, dataset, options) {
    * neat.evolve(null, filter, adjust)
    *
    */
-  self.evolve = async function(evolve_dataset, pickGenome, adjustGenome) {
+  self.evolve = async function(evolve_dataset, pickGenome, filterGenome) {
+    /*
+    // // Check if evolve is possible
+    // if (self.elitism + self.provenance > self.population_size) throw new Error("Can`t evolve! Elitism + provenance exceeds population size!");
+
+    // dataset = dataset || self.dataset;
+    
+    
+    // // Reset the scores
+    // for (let i = 0; i < self.population.length; i++) self.population[i].score = undefined;
+
+    // // Check population for evaluation
+    // // if (typeof self.population[self.population.length - 1].score === `undefined`)
+    // await self.evaluate(dataset);
+    
+    // console.log(self.population[0].score);
+
+    // // Sort in order of fitness (fittest first)
+    // self.sort();
+
+    // // Elitism, assumes population is sorted by fitness
+    // const elitists = [];
+    // for (let i = 0; i < self.elitism; i++) elitists.push(self.population[i]);
+
+    // // Provenance
+    // const new_population = Array(self.provenance).fill(Network.fromJSON(self.template.toJSON()))
+
+    // // Breed the next individuals
+    // for (let i = 0; i < self.population_size - self.elitism - self.provenance; i++)
+    //   new_population.push(self.getOffspring());
+
+    // // Replace the old population with the new population
+    // self.population = new_population;
+
+    // // Mutate the new population
+    // self.mutate();
+
+    // // Add the elitists
+    // self.population.push(...elitists);
+
+    // // evaluate the population
+    // await self.evaluate(dataset);
+
+    // // Sort in order of fitness (fittest first)
+    // self.sort()
+
+    // const fittest = Network.fromJSON(self.population[0].toJSON());
+    // fittest.score = self.population[0].score;
+
+    // const best = Network.fromJSON(self.population[0].toJSON());
+    // best.score = self.population[0].score
+    // const worst = Network.fromJSON(self.population[self.population.length - 1].toJSON());
+    // worst.score = self.population[self.population.length - 1].score
+    // const median = Network.fromJSON(self.population[Math.floor(self.population.length / 2)].toJSON());
+    // median.score = self.population[Math.floor(self.population.length / 2)].score
+
+
+    // self.generation++;
+
+    // if (options && options.networks) {
+    //   return { best, median, worst }
+    // } else {
+    //   return {
+    //     best: best.score,
+    //     median: median.score,
+    //     worst: worst.score
+    //   }
+    // }
+    
+    //==========================================================
+    
+    // console.log(dataset);
+    // console.log(options);
+    
+    // if (options == undefined && !Array.isArray(dataset) && typeof dataset === "object") {
+    //   options = dataset;
+    //   dataset = self.dataset;
+    // }
+    
+    // options = options || {};
+    // dataset = dataset || self.dataset || [];
+    
+    
+    // console.log(dataset);
+    // console.log(options);
+    
+    // console.log(dataset == undefined);
+    // console.log(!dataset.length);
+    
+    // if (dataset == undefined || !dataset.length) throw new ReferenceError("'dataset' was not passed to 'neat.evolve()' or 'new Neat'");
+    
+    
+    
+    // for (let index = 0; index < self.population.length; index++) {
+    //   await self.population[index].evolve(dataset);
+    // }
+    
+    // const best = self.population[0];
+    // const worst = self.population[self.population.length - 1];
+    // const median = self.population[Math.floor(self.population.length / 2)];
+    
+    // if (options && options.networks) {
+    //   return { best, median, worst }
+    // } else {
+    //   return {
+    //     best: best.score,
+    //     median: median.score,
+    //     worst: worst.score
+    //   }
+    // }
+    
+    //==========================================================
+    */
+    
     // Check if evolve is possible
     if (self.elitism + self.provenance > self.population_size) {
       throw new Error(`Can't evolve! Elitism + provenance exceeds population size!`);

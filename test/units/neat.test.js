@@ -379,23 +379,43 @@ describe("Neat", function() {
   describe("neat.mutate()", function() {
     it("neat.mutate() => {Network[]}")
     
-    it("neat.mutate(genomes=Network) => {Network}") // Should be static
-    it("neat.mutate(genomes=Network[]) => {Network[]}") // Should be static
-     
     it("neat.mutate(methods=mutation) => {Network[]}")
     it("neat.mutate(methods=mutation[]) => {Network[]}")
     
-    it("neat.mutate(genomes=Network, methods=mutation) => {Network}") // Should be static
-    it("neat.mutate(genomes=Network, methods=mutation[]) => {Network}") // Should be static
-    
-    it("neat.mutate(genomes=Network[], methods=mutation) => {Network[]}") // Should be static
-    it("neat.mutate(genomes=Network[], methods=mutation[]) => {Network[]}") // Should be static
+    // STATIC - Should be static functions
+    it("neat.mutate(genomes=Network) => {Network}")
+    it("neat.mutate(genomes=Network[]) => {Network[]}") // Sh
+    it("neat.mutate(genomes=Network, methods=mutation) => {Network}")
+    it("neat.mutate(genomes=Network, methods=mutation[]) => {Network}")
+    it("neat.mutate(genomes=Network[], methods=mutation) => {Network[]}")
+    it("neat.mutate(genomes=Network[], methods=mutation[]) => {Network[]}")
   })
   describe("neat.mutateRandom()", function() {
     // Could ignore this if `neat.mutate()` is done effectively
   })
-  describe("neat.evolve()", function() {
-    it("neat.evolve() => {Network}")
+  describe.skip("neat.evolve()", function() {
+    async function areSorted(genomes) {
+      let previous = genomes[0];
+      for (let genome = 1; genome < genomes.length; genome++) {
+        expect(genomes[genome].score).be.at.most(previous.score);
+      }
+    }
+    async function areScored(genomes) {
+      for (let genome = 0; genome < genomes.length; genome++) {
+        expect(genomes[genome]).to.exist;
+        expect(genomes[genome].score).to.be.finite
+      }
+    }
+    it("neat.evolve() => {Network}", async function() {
+      this.timeout(40000);
+      
+      const neat = new Neat(2,1);
+      
+      const best = await neat.evolve(data.XNOR);
+      
+      await areScored(neat.population);
+      await areSorted(neat.population);
+    })
     it("neat.evolve(dataset) => {Network}")
     it("neat.evolve(options) => {Network}")
     it("neat.evolve(dataset, options) => {Network}")
@@ -403,7 +423,7 @@ describe("Neat", function() {
   })
   describe("neat.getParent()", function() {
     it("neat.getParent() => {Network}")
-    it("neat.getParent(method) => {Network}")
+    it("neat.getParent(method) => {Network}") // Hard to test the marginal functionallity over `neat.getParent()`
   })
   describe("neat.getOffspring()", function() {
     it("neat.getOffspring() => {Network}")
