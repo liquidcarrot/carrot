@@ -313,10 +313,10 @@ const Neat = function(inputs, outputs, dataset, options) {
    * @alias evolve
    *
    * @param {Array<{input:number[],output:number[]}>} [evolve_dataset=dataset] A set to be used for evolving the population, if none is provided the dataset passed to Neat on creation will be used.
-   * @param {Object} [options]
-   * @param {boolean} [options.networks=false] Iff `options.networks === true` `neat.evolve()` will return networks, instead of their performance
+   * @param {Function} pickGenome
+   * @param {Function} filterGenome
    *
-   * @returns {{ "best": {number}, "average": {number}, "worst": {number}}|{ "best": {Network}, "average": {Network}, "worst": {Network}} Returns
+   * @returns {Object}
    *
    * @example
    *
@@ -636,7 +636,7 @@ const Neat = function(inputs, outputs, dataset, options) {
    * @param {boolean} [options.clear=false]
    * @param {boolean} [options.networks=false]
    *
-   * @return {{ "best": {number|Network}, "average": {number|Network}, "worst": {number|Network} }} Return the performance metrics/benchmarks of the networks - _returns networks iff `options.networks === true`_
+   * @return {Object} Return the performance metrics/benchmarks of the networks - _returns networks iff `options.networks === true`_
    */
   self.evaluate = async function (dataset) {
     dataset = dataset || self.dataset;
