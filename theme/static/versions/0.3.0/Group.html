@@ -70,6 +70,7 @@
         
         <div class="navbar-dropdown">
           <a href='https://liquidcarrot.io/carrot/versions/0.2.27/' class="navbar-item">v0.2.27</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.2.28/' class="navbar-item">v0.2.28</a>
       <a href='https://liquidcarrot.io/carrot/' class="navbar-item">latest</a>
         </div>
       </div>
@@ -231,10 +232,20 @@
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Group } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Group } = require("@liquid-carrot/carrot");
 
 // A group with 5 nodes
-let A = new Group(5);</code></pre>
+let A = new Group(5);'>Copy</a>
+      <code data-clipboard-text='let { Group } = require("@liquid-carrot/carrot");
+
+// A group with 5 nodes
+let A = new Group(5);'>let { Group } = require("@liquid-carrot/carrot");
+
+// A group with 5 nodes
+let A = new Group(5);</code>
+    </pre>
+
 
 
 
@@ -592,11 +603,23 @@ let A = new Group(5);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Group } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Group } = require("@liquid-carrot/carrot");
 
 let group = new Group(3);
 
-group.activate([1, 0, 1]);</code></pre>
+group.activate([1, 0, 1]);'>Copy</a>
+      <code data-clipboard-text='let { Group } = require("@liquid-carrot/carrot");
+
+let group = new Group(3);
+
+group.activate([1, 0, 1]);'>let { Group } = require("@liquid-carrot/carrot");
+
+let group = new Group(3);
+
+group.activate([1, 0, 1]);</code>
+    </pre>
+
 
 
 
@@ -912,12 +935,26 @@ group.activate([1, 0, 1]);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Group } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Group } = require("@liquid-carrot/carrot");
 
 let A = new Group(4);
 let B = new Group(5);
 
-A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional</code></pre>
+A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional'>Copy</a>
+      <code data-clipboard-text='let { Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional'>let { Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional</code>
+    </pre>
+
 
 
 
@@ -1621,7 +1658,8 @@ If you combine a high learning rate with a lot of momentum, you will rush past t
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Group } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Group } = require("@liquid-carrot/carrot");
 
 let A = new Group(2);
 let B = new Group(3);
@@ -1635,7 +1673,38 @@ B.activate();
 
 // Teaches the network
 B.propagate([0,1,0.2]);
-A.propagate();</code></pre>
+A.propagate();'>Copy</a>
+      <code data-clipboard-text='let { Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(2);
+let B = new Group(3);
+
+// Connects group A to group B - creating a "little network"
+A.connect(B);
+
+// Activates the "little network"
+A.activate([1,0]);
+B.activate();
+
+// Teaches the network
+B.propagate([0,1,0.2]);
+A.propagate();'>let { Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(2);
+let B = new Group(3);
+
+// Connects group A to group B - creating a "little network"
+A.connect(B);
+
+// Activates the "little network"
+A.activate([1,0]);
+B.activate();
+
+// Teaches the network
+B.propagate([0,1,0.2]);
+A.propagate();</code>
+    </pre>
+
 
 
 
@@ -1852,12 +1921,26 @@ A.propagate();</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Group } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Group } = require("@liquid-carrot/carrot");
 
 var group = new Group(4);
 
 // All nodes in 'group' now have a bias of 1
-group.set({bias: 1});</code></pre>
+group.set({bias: 1});'>Copy</a>
+      <code data-clipboard-text='let { Group } = require("@liquid-carrot/carrot");
+
+var group = new Group(4);
+
+// All nodes in 'group' now have a bias of 1
+group.set({bias: 1});'>let { Group } = require("@liquid-carrot/carrot");
+
+var group = new Group(4);
+
+// All nodes in 'group' now have a bias of 1
+group.set({bias: 1});</code>
+    </pre>
+
 
 
 
@@ -1941,7 +2024,7 @@ group.set({bias: 1});</code></pre>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Thu Jul 18 2019 16:21:34 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Thu Jul 18 2019 16:51:36 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 <script src="scripts/linenumber.js"></script>
 
@@ -1982,6 +2065,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+</script>
+<script src="scripts/clipboard.min.js"></script>
+<script>
+  // example copying functionality
+  const clipboard = new ClipboardJS('code');
+  const clipboard_button = new ClipboardJS('.copy-button');
+
+  clipboard_button.on('success', (e) => {
+    e.trigger.innerText = "Copied!"
+  });
+
+  const copy_buttons = document.querySelectorAll(".copy-button");
+  
+  copy_buttons.forEach(function(btn) {
+    btn.addEventListener("mouseout", function(e) {
+      setTimeout(function() {
+        e.fromElement.innerText = "Copy"
+      }, 200);
+    });
+  });
 </script>
 <script>prettyPrint();</script>
 </body>

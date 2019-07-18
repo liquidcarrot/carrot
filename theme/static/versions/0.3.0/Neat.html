@@ -70,6 +70,7 @@
         
         <div class="navbar-dropdown">
           <a href='https://liquidcarrot.io/carrot/versions/0.2.27/' class="navbar-item">v0.2.27</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.2.28/' class="navbar-item">v0.2.28</a>
       <a href='https://liquidcarrot.io/carrot/' class="navbar-item">latest</a>
         </div>
       </div>
@@ -1128,7 +1129,8 @@
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>const { Neat } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Neat } = require("@liquid-carrot/carrot");
 
 // new Neat()
 let neat = new Neat()
@@ -1172,7 +1174,98 @@ let neat = new Neat(2, 1, [
   { input: [0, 1], output: [1] },
   { input: [1, 0], output: [1] },
   { input: [1, 1], output: [0] }
-], { population_size: 100 })</code></pre>
+], { population_size: 100 })'>Copy</a>
+      <code data-clipboard-text='const { Neat } = require("@liquid-carrot/carrot");
+
+// new Neat()
+let neat = new Neat()
+
+// new Neat(options)
+let neat = new Neat({ population_size: 100 })
+
+// new Neat(dataset)
+let neat = new Neat([
+  { input: [0, 0], output: [0] },
+  { input: [0, 1], output: [1] },
+  { input: [1, 0], output: [1] },
+  { input: [1, 1], output: [0] }
+])
+
+// new Neat(input, output)
+let neat = new Neat(64, 10)
+
+// new Neat(dataset, options)
+let neat = new Neat([
+  { input: [0, 0], output: [0] },
+  { input: [0, 1], output: [1] },
+  { input: [1, 0], output: [1] },
+  { input: [1, 1], output: [0] }
+], { population_size: 100 })
+
+// new Neat(input, output, options)
+let neat = new Neat(64, 10, { population_size: 100 })
+
+// new Neat(input, output, dataset)
+let neat = new Neat(2, 1, [
+  { input: [0, 0], output: [0] },
+  { input: [0, 1], output: [1] },
+  { input: [1, 0], output: [1] },
+  { input: [1, 1], output: [0] }
+])
+
+// new Neat(input, output, dataset, options)
+let neat = new Neat(2, 1, [
+  { input: [0, 0], output: [0] },
+  { input: [0, 1], output: [1] },
+  { input: [1, 0], output: [1] },
+  { input: [1, 1], output: [0] }
+], { population_size: 100 })'>const { Neat } = require("@liquid-carrot/carrot");
+
+// new Neat()
+let neat = new Neat()
+
+// new Neat(options)
+let neat = new Neat({ population_size: 100 })
+
+// new Neat(dataset)
+let neat = new Neat([
+  { input: [0, 0], output: [0] },
+  { input: [0, 1], output: [1] },
+  { input: [1, 0], output: [1] },
+  { input: [1, 1], output: [0] }
+])
+
+// new Neat(input, output)
+let neat = new Neat(64, 10)
+
+// new Neat(dataset, options)
+let neat = new Neat([
+  { input: [0, 0], output: [0] },
+  { input: [0, 1], output: [1] },
+  { input: [1, 0], output: [1] },
+  { input: [1, 1], output: [0] }
+], { population_size: 100 })
+
+// new Neat(input, output, options)
+let neat = new Neat(64, 10, { population_size: 100 })
+
+// new Neat(input, output, dataset)
+let neat = new Neat(2, 1, [
+  { input: [0, 0], output: [0] },
+  { input: [0, 1], output: [1] },
+  { input: [1, 0], output: [1] },
+  { input: [1, 1], output: [0] }
+])
+
+// new Neat(input, output, dataset, options)
+let neat = new Neat(2, 1, [
+  { input: [0, 0], output: [0] },
+  { input: [0, 1], output: [1] },
+  { input: [1, 0], output: [1] },
+  { input: [1, 1], output: [0] }
+], { population_size: 100 })</code>
+    </pre>
+
 
 
 
@@ -1335,7 +1428,7 @@ let neat = new Neat(2, 1, [
 
     <h4 class="name" id="evolve"><span class="type-signature"></span>evolve
     
-    <span class="signature mobile-break">(evolve_dataset<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>)</span><span class="type-signature mobile-break"></span>
+    <span class="signature mobile-break">(evolve_dataset<span class="signature-attributes">opt</span>, pickGenome, filterGenome)</span><span class="type-signature mobile-break"> &rarr; {Object}</span>
 
     
       <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
@@ -1419,53 +1512,18 @@ let neat = new Neat(2, 1, [
 
         <tr>
             
-                <td class="name"><code>options</code></td>
-            
-
-            
-
-            
-                <td colspan="2" class="description last">
-                    
-                    <h6>Properties</h6>
-                    
-<div class="table-overflow">
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>networks</code></td>
+                <td class="name"><code>pickGenome</code></td>
             
 
             
                 <td class="type">
                 
                     
-<span class="param-type">boolean</span>
+<span class="param-type">function</span>
 
 
                 
                 
-                    
-                        <span class="attribute">&lt;optional&gt;</span>
                     
 
                     
@@ -1480,23 +1538,47 @@ let neat = new Neat(2, 1, [
             
                 <td class="default">
                 
-                    <code>false</code>
+                </td>
+            
+            
+                <td class="description last"></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>filterGenome</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">function</span>
+
+
+                
+                
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
                 
                 </td>
             
             
-                <td class="description last"><p>Iff <code>options.networks === true</code> <code>neat.evolve()</code> will return networks, instead of their performance</p></td>
-            
-        </tr>
-
-    
-    </tbody>
-</table>
-</div>
-                </td>
-            
-
-            
+                <td class="description last"></td>
             
         </tr>
 
@@ -1507,14 +1589,6 @@ let neat = new Neat(2, 1, [
 
 
 
-<h5>Returns:</h5>
-
-        
-<div class="param-desc">
-    <p>{{ &quot;best&quot;: {number}, &quot;average&quot;: {number}, &quot;worst&quot;: {number}}|{ &quot;best&quot;: {Network}, &quot;average&quot;: {Network}, &quot;worst&quot;: {Network}} Returns</p>
-</div>
-
-    
 
 
 
@@ -1525,7 +1599,8 @@ let neat = new Neat(2, 1, [
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// original
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='// original
 let originalSet = [
  { input: [0,0], output: [0] },
  { input: [0,1], output: [1] },
@@ -1555,7 +1630,70 @@ let pick = function pickGenome(genome) return genome.nodes.length > 100 ? true :
 let adjust = function adjustGenome(genome) return genome.clear() // clear the nodes
 
 // evolves using originalSet
-neat.evolve(null, filter, adjust)</code></pre>
+neat.evolve(null, filter, adjust)'>Copy</a>
+      <code data-clipboard-text='// original
+let originalSet = [
+ { input: [0,0], output: [0] },
+ { input: [0,1], output: [1] },
+ { input: [1,0], output: [1] },
+ { input: [1,1], output: [0] },
+]
+
+let neat = new Neat(originalSet, {
+ input: 1,
+ output: 2
+});
+
+// special set to be used when evolving
+let evolve_dataset = [
+ { input: [0], output: [1] },
+ { input: [1], output: [0] }
+]
+
+// evolves using evolve_dataset INSTEAD of originalSet
+neat.evolve(evolve_dataset)
+
+// evolves using originalSet
+neat.evolve()
+
+let pick = function pickGenome(genome) return genome.nodes.length > 100 ? true : false // Remove genomes with more than 100 nodes
+
+let adjust = function adjustGenome(genome) return genome.clear() // clear the nodes
+
+// evolves using originalSet
+neat.evolve(null, filter, adjust)'>// original
+let originalSet = [
+ { input: [0,0], output: [0] },
+ { input: [0,1], output: [1] },
+ { input: [1,0], output: [1] },
+ { input: [1,1], output: [0] },
+]
+
+let neat = new Neat(originalSet, {
+ input: 1,
+ output: 2
+});
+
+// special set to be used when evolving
+let evolve_dataset = [
+ { input: [0], output: [1] },
+ { input: [1], output: [0] }
+]
+
+// evolves using evolve_dataset INSTEAD of originalSet
+neat.evolve(evolve_dataset)
+
+// evolves using originalSet
+neat.evolve()
+
+let pick = function pickGenome(genome) return genome.nodes.length > 100 ? true : false // Remove genomes with more than 100 nodes
+
+let adjust = function adjustGenome(genome) return genome.clear() // clear the nodes
+
+// evolves using originalSet
+neat.evolve(null, filter, adjust)</code>
+    </pre>
+
 
 
 
@@ -1998,7 +2136,7 @@ neat.evolve(null, filter, adjust)</code></pre>
 
     <h4 class="name" id=".evaluate"><span class="type-signature">(static) </span>evaluate
     
-    <span class="signature mobile-break">(dataset<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>)</span><span class="type-signature mobile-break"></span>
+    <span class="signature mobile-break">(dataset<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>)</span><span class="type-signature mobile-break"> &rarr; {Object}</span>
 
     
       <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
@@ -2203,6 +2341,14 @@ neat.evolve(null, filter, adjust)</code></pre>
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Return the performance metrics/benchmarks of the networks - <em>returns networks iff <code>options.networks === true</code></em></p>
+</div>
+
+    
 
 
 
@@ -3504,7 +3650,7 @@ neat.evolve(null, filter, adjust)</code></pre>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Thu Jul 18 2019 16:21:33 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Thu Jul 18 2019 16:51:36 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 <script src="scripts/linenumber.js"></script>
 
@@ -3545,6 +3691,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+</script>
+<script src="scripts/clipboard.min.js"></script>
+<script>
+  // example copying functionality
+  const clipboard = new ClipboardJS('code');
+  const clipboard_button = new ClipboardJS('.copy-button');
+
+  clipboard_button.on('success', (e) => {
+    e.trigger.innerText = "Copied!"
+  });
+
+  const copy_buttons = document.querySelectorAll(".copy-button");
+  
+  copy_buttons.forEach(function(btn) {
+    btn.addEventListener("mouseout", function(e) {
+      setTimeout(function() {
+        e.fromElement.innerText = "Copy"
+      }, 200);
+    });
+  });
 </script>
 <script>prettyPrint();</script>
 </body>

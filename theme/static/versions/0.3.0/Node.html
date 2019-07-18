@@ -70,6 +70,7 @@
         
         <div class="navbar-dropdown">
           <a href='https://liquidcarrot.io/carrot/versions/0.2.27/' class="navbar-item">v0.2.27</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.2.28/' class="navbar-item">v0.2.28</a>
       <a href='https://liquidcarrot.io/carrot/' class="navbar-item">latest</a>
         </div>
       </div>
@@ -274,9 +275,17 @@
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Node } = require("@liquid-carrot/carrot");
 
-let node = new Node();</code></pre>
+let node = new Node();'>Copy</a>
+      <code data-clipboard-text='let { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();'>let { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();</code>
+    </pre>
+
 
 
 
@@ -1005,14 +1014,32 @@ let node = new Node();</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Node } = require("@liquid-carrot/carrot");
 
 let A = new Node();
 let B = new Node();
 
 A.connect(B);
 A.activate(0.5); // 0.5
-B.activate(); // 0.3244554645</code></pre>
+B.activate(); // 0.3244554645'>Copy</a>
+      <code data-clipboard-text='let { Node } = require("@liquid-carrot/carrot");
+
+let A = new Node();
+let B = new Node();
+
+A.connect(B);
+A.activate(0.5); // 0.5
+B.activate(); // 0.3244554645'>let { Node } = require("@liquid-carrot/carrot");
+
+let A = new Node();
+let B = new Node();
+
+A.connect(B);
+A.activate(0.5); // 0.5
+B.activate(); // 0.3244554645</code>
+    </pre>
+
 
 
 
@@ -1117,7 +1144,8 @@ B.activate(); // 0.3244554645</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>const { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
 
 let node = new Node();
 
@@ -1128,7 +1156,32 @@ console.log(node); // Node has state information (e.g. `node.derivative`)
 
 node.clear(); // Factory resets node
 
-console.log(node); // Node has no state information</code></pre>
+console.log(node); // Node has no state information'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+node.activate([1, 0]);
+node.propagate([1]);
+
+console.log(node); // Node has state information (e.g. `node.derivative`)
+
+node.clear(); // Factory resets node
+
+console.log(node); // Node has no state information'>const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+node.activate([1, 0]);
+node.propagate([1]);
+
+console.log(node); // Node has state information (e.g. `node.derivative`)
+
+node.clear(); // Factory resets node
+
+console.log(node); // Node has no state information</code>
+    </pre>
+
 
 
 
@@ -1412,35 +1465,85 @@ console.log(node); // Node has no state information</code></pre>
     
         <p class="code-caption">Connecting node (neuron) to another node (neuron)</p>
     
-    <pre class="prettyprint"><code>const { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
 
 let node = new Node();
 let other_node = new Node();
 
 let connection = node.connect(other_node); // Both nodes now share a connection
 
-console.log(connection); // Connection { from: [Object object], to: [Object object], ...}</code></pre>
+console.log(connection); // Connection { from: [Object object], to: [Object object], ...}'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+let other_node = new Node();
+
+let connection = node.connect(other_node); // Both nodes now share a connection
+
+console.log(connection); // Connection { from: [Object object], to: [Object object], ...}'>const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+let other_node = new Node();
+
+let connection = node.connect(other_node); // Both nodes now share a connection
+
+console.log(connection); // Connection { from: [Object object], to: [Object object], ...}</code>
+    </pre>
 
         <p class="code-caption">Connecting node (neuron) to many nodes (neurons)</p>
     
-    <pre class="prettyprint"><code>const { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
 
 let node = new Node();
 let other_nodes = [new Node(), new Node(), new Node()];
 
 let connections = node.connect(other_nodes); // Node is connected to all other nodes
 
-console.log(connections); // [{ from: [Object object], to: [Object object], ...}, ...]</code></pre>
+console.log(connections); // [{ from: [Object object], to: [Object object], ...}, ...]'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+let other_nodes = [new Node(), new Node(), new Node()];
+
+let connections = node.connect(other_nodes); // Node is connected to all other nodes
+
+console.log(connections); // [{ from: [Object object], to: [Object object], ...}, ...]'>const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+let other_nodes = [new Node(), new Node(), new Node()];
+
+let connections = node.connect(other_nodes); // Node is connected to all other nodes
+
+console.log(connections); // [{ from: [Object object], to: [Object object], ...}, ...]</code>
+    </pre>
 
         <p class="code-caption">Connecting a node (neuron) to itself</p>
     
-    <pre class="prettyprint"><code>const { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
 
 let node = new Node();
 
 let connection = node.connect(node); // Node is connected to itself.
 
-console.log(connection); // Connection { from: [Object object], to: [Object object], ...}</code></pre>
+console.log(connection); // Connection { from: [Object object], to: [Object object], ...}'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+let connection = node.connect(node); // Node is connected to itself.
+
+console.log(connection); // Connection { from: [Object object], to: [Object object], ...}'>const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+let connection = node.connect(node); // Node is connected to itself.
+
+console.log(connection); // Connection { from: [Object object], to: [Object object], ...}</code>
+    </pre>
+
 
 
 
@@ -1678,7 +1781,8 @@ console.log(connection); // Connection { from: [Object object], to: [Object obje
     
         <p class="code-caption">Disconnect from one <code>node</code></p>
     
-    <pre class="prettyprint"><code>const { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
 
 let node = new Node();
 let other = new Node();
@@ -1691,11 +1795,79 @@ console.log(node.connections_outgoing.length); // 1
 node.disconnect(other); // `node` is now disconnected from `other`
 
 console.log(node.connections_incoming.length); // 0
-console.log(node.connections_outgoing.length); // 0</code></pre>
+console.log(node.connections_outgoing.length); // 0'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+let other = new Node();
+
+node.connect(other); // `node` now connected to `other`
+
+console.log(node.connections_incoming.length); // 0
+console.log(node.connections_outgoing.length); // 1
+
+node.disconnect(other); // `node` is now disconnected from `other`
+
+console.log(node.connections_incoming.length); // 0
+console.log(node.connections_outgoing.length); // 0'>const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+let other = new Node();
+
+node.connect(other); // `node` now connected to `other`
+
+console.log(node.connections_incoming.length); // 0
+console.log(node.connections_outgoing.length); // 1
+
+node.disconnect(other); // `node` is now disconnected from `other`
+
+console.log(node.connections_incoming.length); // 0
+console.log(node.connections_outgoing.length); // 0</code>
+    </pre>
 
         <p class="code-caption">Connect to one <code>node</code> - <em>two-sided</em></p>
     
-    <pre class="prettyprint"><code>const { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+let other = new Node();
+
+// `node` & `other` are now connected to each other
+node.connect(other, {
+  twosided: true
+});
+
+console.log(node.connections_incoming.length); // 1
+console.log(node.connections_outgoing.length); // 1
+
+// `node` & `other` are now disconnected from each other
+node.disconnect(other, {
+  twosided: true
+});
+
+console.log(node.connections_incoming.length); // 0
+console.log(node.connections_outgoing.length); // 0'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+let other = new Node();
+
+// `node` & `other` are now connected to each other
+node.connect(other, {
+  twosided: true
+});
+
+console.log(node.connections_incoming.length); // 1
+console.log(node.connections_outgoing.length); // 1
+
+// `node` & `other` are now disconnected from each other
+node.disconnect(other, {
+  twosided: true
+});
+
+console.log(node.connections_incoming.length); // 0
+console.log(node.connections_outgoing.length); // 0'>const { Node } = require("@liquid-carrot/carrot");
 
 let node = new Node();
 let other = new Node();
@@ -1714,7 +1886,9 @@ node.disconnect(other, {
 });
 
 console.log(node.connections_incoming.length); // 0
-console.log(node.connections_outgoing.length); // 0</code></pre>
+console.log(node.connections_outgoing.length); // 0</code>
+    </pre>
+
 
 
 
@@ -1872,33 +2046,79 @@ console.log(node.connections_outgoing.length); // 0</code></pre>
     
         <p class="code-caption">From Object</p>
     
-    <pre class="prettyprint"><code>const { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
 
 let json = { bias: 0.35 };
 let node = Node.fromJSON(json);
 
-console.log(node);</code></pre>
+console.log(node);'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let json = { bias: 0.35 };
+let node = Node.fromJSON(json);
+
+console.log(node);'>const { Node } = require("@liquid-carrot/carrot");
+
+let json = { bias: 0.35 };
+let node = Node.fromJSON(json);
+
+console.log(node);</code>
+    </pre>
 
         <p class="code-caption">From Node.toJSON()</p>
     
-    <pre class="prettyprint"><code>const { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
 
 let other_node = new Node();
 let json = other_node.toJSON();
 let node = Node.fromJSON(json);
 
-console.log(node);</code></pre>
+console.log(node);'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let other_node = new Node();
+let json = other_node.toJSON();
+let node = Node.fromJSON(json);
+
+console.log(node);'>const { Node } = require("@liquid-carrot/carrot");
+
+let other_node = new Node();
+let json = other_node.toJSON();
+let node = Node.fromJSON(json);
+
+console.log(node);</code>
+    </pre>
 
         <p class="code-caption">From JSON string</p>
     
-    <pre class="prettyprint"><code>const { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
 
 let other = new Node();
 let json = other_node.toJSON();
 let string = JSON.stringify(json);
 let node = Node.fromJSON(string);
 
-console.log(node);</code></pre>
+console.log(node);'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let other = new Node();
+let json = other_node.toJSON();
+let string = JSON.stringify(json);
+let node = Node.fromJSON(string);
+
+console.log(node);'>const { Node } = require("@liquid-carrot/carrot");
+
+let other = new Node();
+let json = other_node.toJSON();
+let string = JSON.stringify(json);
+let node = Node.fromJSON(string);
+
+console.log(node);</code>
+    </pre>
+
 
 
 
@@ -2051,7 +2271,8 @@ console.log(node);</code></pre>
     
         <p class="code-caption">Gate one <code>connection</code></p>
     
-    <pre class="prettyprint"><code>const { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
 
 let input = new Node();
 let output = new Node();
@@ -2063,7 +2284,34 @@ console.log(connection.gater === node); // false
 
 node.gate(connection); // Node now gates (manipulates) `connection`
 
-console.log(connection.gater === node); // true</code></pre>
+console.log(connection.gater === node); // true'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let input = new Node();
+let output = new Node();
+let connection = input.connect(output);
+
+let node = new Node();
+
+console.log(connection.gater === node); // false
+
+node.gate(connection); // Node now gates (manipulates) `connection`
+
+console.log(connection.gater === node); // true'>const { Node } = require("@liquid-carrot/carrot");
+
+let input = new Node();
+let output = new Node();
+let connection = input.connect(output);
+
+let node = new Node();
+
+console.log(connection.gater === node); // false
+
+node.gate(connection); // Node now gates (manipulates) `connection`
+
+console.log(connection.gater === node); // true</code>
+    </pre>
+
 
 
 
@@ -2224,24 +2472,57 @@ console.log(connection.gater === node); // true</code></pre>
     
         <p class="code-caption">Check one <code>node</code></p>
     
-    <pre class="prettyprint"><code>const { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
 
 let other_node = new Node();
 let node = new Node();
 other_node.connect(node);
 
-console.log(node.isProjectedBy(other_node)); // true</code></pre>
+console.log(node.isProjectedBy(other_node)); // true'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let other_node = new Node();
+let node = new Node();
+other_node.connect(node);
+
+console.log(node.isProjectedBy(other_node)); // true'>const { Node } = require("@liquid-carrot/carrot");
+
+let other_node = new Node();
+let node = new Node();
+other_node.connect(node);
+
+console.log(node.isProjectedBy(other_node)); // true</code>
+    </pre>
 
         <p class="code-caption">Check many <code>nodes</code></p>
     
-    <pre class="prettyprint"><code>const { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
 
 let other_nodes = Array.from({ length: 5 }, () => new Node());
 let node = new Node();
 
 other_nodes.forEach(other_node => other_node.connect(node));
 
-console.log(node.isProjectedBy(other_nodes)); // true</code></pre>
+console.log(node.isProjectedBy(other_nodes)); // true'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let other_nodes = Array.from({ length: 5 }, () => new Node());
+let node = new Node();
+
+other_nodes.forEach(other_node => other_node.connect(node));
+
+console.log(node.isProjectedBy(other_nodes)); // true'>const { Node } = require("@liquid-carrot/carrot");
+
+let other_nodes = Array.from({ length: 5 }, () => new Node());
+let node = new Node();
+
+other_nodes.forEach(other_node => other_node.connect(node));
+
+console.log(node.isProjectedBy(other_nodes)); // true</code>
+    </pre>
+
 
 
 
@@ -2402,24 +2683,57 @@ console.log(node.isProjectedBy(other_nodes)); // true</code></pre>
     
         <p class="code-caption">Check one <code>node</code></p>
     
-    <pre class="prettyprint"><code>const { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
 
 let other_node = new Node();
 let node = new Node();
 node.connect(other_node);
 
-console.log(node.isProjectingTo(other_node)); // true</code></pre>
+console.log(node.isProjectingTo(other_node)); // true'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let other_node = new Node();
+let node = new Node();
+node.connect(other_node);
+
+console.log(node.isProjectingTo(other_node)); // true'>const { Node } = require("@liquid-carrot/carrot");
+
+let other_node = new Node();
+let node = new Node();
+node.connect(other_node);
+
+console.log(node.isProjectingTo(other_node)); // true</code>
+    </pre>
 
         <p class="code-caption">Check many <code>nodes</code></p>
     
-    <pre class="prettyprint"><code>const { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
 
 let other_nodes = Array.from({ length: 5 }, () => new Node());
 let node = new Node();
 
 other_nodes.forEach(other_node => node.connect(other_node));
 
-console.log(node.isProjectingTo(other_nodes)); // true</code></pre>
+console.log(node.isProjectingTo(other_nodes)); // true'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let other_nodes = Array.from({ length: 5 }, () => new Node());
+let node = new Node();
+
+other_nodes.forEach(other_node => node.connect(other_node));
+
+console.log(node.isProjectingTo(other_nodes)); // true'>const { Node } = require("@liquid-carrot/carrot");
+
+let other_nodes = Array.from({ length: 5 }, () => new Node());
+let node = new Node();
+
+other_nodes.forEach(other_node => node.connect(other_node));
+
+console.log(node.isProjectingTo(other_nodes)); // true</code>
+    </pre>
+
 
 
 
@@ -2652,13 +2966,29 @@ console.log(node.isProjectingTo(other_nodes)); // true</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>const { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
 
 let node = new Node();
 
 console.log(node);
 
-node.mutate(); // Changes node's squash function or bias</code></pre>
+node.mutate(); // Changes node's squash function or bias'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+console.log(node);
+
+node.mutate(); // Changes node's squash function or bias'>const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+console.log(node);
+
+node.mutate(); // Changes node's squash function or bias</code>
+    </pre>
+
 
 
 
@@ -2823,11 +3153,23 @@ node.mutate(); // Changes node's squash function or bias</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Node } = require("@liquid-carrot/carrot");
 
 let node = new Node();
 
-node.noTraceActivate(); // 0.4923128591923</code></pre>
+node.noTraceActivate(); // 0.4923128591923'>Copy</a>
+      <code data-clipboard-text='let { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+node.noTraceActivate(); // 0.4923128591923'>let { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+node.noTraceActivate(); // 0.4923128591923</code>
+    </pre>
+
 
 
 
@@ -3144,7 +3486,51 @@ node.noTraceActivate(); // 0.4923128591923</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Node } = require("@liquid-carrot/carrot");
+
+let A = new Node();
+let B = new Node('output');
+A.connect(B);
+
+let learningRate = .3;
+let momentum = 0;
+
+for(let i = 0; i < 20000; i++)
+{
+  // when A activates 1
+  A.activate(1);
+
+  // train B to activate 0
+  B.activate();
+  B.propagate(learningRate, momentum, true, 0);
+}
+
+// test it
+A.activate(1);
+B.activate(); // 0.006540565760853365'>Copy</a>
+      <code data-clipboard-text='let { Node } = require("@liquid-carrot/carrot");
+
+let A = new Node();
+let B = new Node('output');
+A.connect(B);
+
+let learningRate = .3;
+let momentum = 0;
+
+for(let i = 0; i < 20000; i++)
+{
+  // when A activates 1
+  A.activate(1);
+
+  // train B to activate 0
+  B.activate();
+  B.propagate(learningRate, momentum, true, 0);
+}
+
+// test it
+A.activate(1);
+B.activate(); // 0.006540565760853365'>let { Node } = require("@liquid-carrot/carrot");
 
 let A = new Node();
 let B = new Node('output');
@@ -3165,7 +3551,9 @@ for(let i = 0; i &lt; 20000; i++)
 
 // test it
 A.activate(1);
-B.activate(); // 0.006540565760853365</code></pre>
+B.activate(); // 0.006540565760853365</code>
+    </pre>
+
 
 
 
@@ -3271,11 +3659,23 @@ B.activate(); // 0.006540565760853365</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>const { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
 
 let node = new Node();
 
-console.log(node.toJSON());</code></pre>
+console.log(node.toJSON());'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+console.log(node.toJSON());'>const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+console.log(node.toJSON());</code>
+    </pre>
+
 
 
 
@@ -3436,7 +3836,8 @@ console.log(node.toJSON());</code></pre>
     
         <p class="code-caption">Ungate one <code>connection</code></p>
     
-    <pre class="prettyprint"><code>const { Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
 
 let input = new Node();
 let output = new Node();
@@ -3452,7 +3853,42 @@ console.log(connection.gater === node); // true
 
 node.ungate(connection); // Node is removed from `connection`
 
-console.log(connection.gater === node); // false</code></pre>
+console.log(connection.gater === node); // false'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let input = new Node();
+let output = new Node();
+let connection = input.connect(output);
+
+let node = new Node();
+
+console.log(connection.gater === node); // false
+
+node.gate(connection); // Node now gates (manipulates) `connection`
+
+console.log(connection.gater === node); // true
+
+node.ungate(connection); // Node is removed from `connection`
+
+console.log(connection.gater === node); // false'>const { Node } = require("@liquid-carrot/carrot");
+
+let input = new Node();
+let output = new Node();
+let connection = input.connect(output);
+
+let node = new Node();
+
+console.log(connection.gater === node); // false
+
+node.gate(connection); // Node now gates (manipulates) `connection`
+
+console.log(connection.gater === node); // true
+
+node.ungate(connection); // Node is removed from `connection`
+
+console.log(connection.gater === node); // false</code>
+    </pre>
+
 
 
 
@@ -3536,7 +3972,7 @@ console.log(connection.gater === node); // false</code></pre>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Thu Jul 18 2019 16:21:34 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Thu Jul 18 2019 16:51:37 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 <script src="scripts/linenumber.js"></script>
 
@@ -3577,6 +4013,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+</script>
+<script src="scripts/clipboard.min.js"></script>
+<script>
+  // example copying functionality
+  const clipboard = new ClipboardJS('code');
+  const clipboard_button = new ClipboardJS('.copy-button');
+
+  clipboard_button.on('success', (e) => {
+    e.trigger.innerText = "Copied!"
+  });
+
+  const copy_buttons = document.querySelectorAll(".copy-button");
+  
+  copy_buttons.forEach(function(btn) {
+    btn.addEventListener("mouseout", function(e) {
+      setTimeout(function() {
+        e.fromElement.innerText = "Copy"
+      }, 200);
+    });
+  });
 </script>
 <script>prettyPrint();</script>
 </body>

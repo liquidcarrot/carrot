@@ -56,7 +56,7 @@ $ npm i @liquid-carrot/carrot
 Carrot files are hosted by GitHub Pages, just copy this link into the `<head>` tag:
 
 ```html
-<script src="https://liquidcarrot.io/carrot/cdn/0.2.28/carrot.js"></script>
+<script src="https://liquidcarrot.io/carrot/cdn/0.3.0/carrot.js"></script>
 ```
 
 ## Getting Started

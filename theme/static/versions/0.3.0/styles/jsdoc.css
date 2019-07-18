@@ -396,6 +396,14 @@ h4.name a.issue-button:hover {
 
 .prettyprint {
   font-size: 14px;
+  position: relative;
+}
+
+.copy-button {
+ position:absolute;
+ right:2em;
+ top:4em;
+ transition: all .5s;
 }
 
 .prettyprint.source {

@@ -70,6 +70,7 @@
         
         <div class="navbar-dropdown">
           <a href='https://liquidcarrot.io/carrot/versions/0.2.27/' class="navbar-item">v0.2.27</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.2.28/' class="navbar-item">v0.2.28</a>
       <a href='https://liquidcarrot.io/carrot/' class="navbar-item">latest</a>
         </div>
       </div>
@@ -331,7 +332,8 @@
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 myNetwork.train(trainingData, {
@@ -340,7 +342,28 @@ myNetwork.train(trainingData, {
   error: 0.03,
   rate: 0.05,
   cost: methods.cost.BINARY
-});</code></pre>
+});'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+myNetwork.train(trainingData, {
+  log: 1,
+  iterations: 500,
+  error: 0.03,
+  rate: 0.05,
+  cost: methods.cost.BINARY
+});'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+myNetwork.train(trainingData, {
+  log: 1,
+  iterations: 500,
+  error: 0.03,
+  rate: 0.05,
+  cost: methods.cost.BINARY
+});</code>
+    </pre>
+
 
 
 
@@ -536,10 +559,20 @@ myNetwork.train(trainingData, {
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
-myNetwork.train(trainingData, { cost: methods.cost.CROSS_ENTROPY });</code></pre>
+myNetwork.train(trainingData, { cost: methods.cost.CROSS_ENTROPY });'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+myNetwork.train(trainingData, { cost: methods.cost.CROSS_ENTROPY });'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+myNetwork.train(trainingData, { cost: methods.cost.CROSS_ENTROPY });</code>
+    </pre>
+
 
 
 
@@ -737,7 +770,8 @@ myNetwork.train(trainingData, { cost: methods.cost.CROSS_ENTROPY });</code></pre
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 myNetwork.train(trainingData, {
@@ -746,7 +780,28 @@ myNetwork.train(trainingData, {
   error: 0.03,
   rate: 0.05,
   cost: methods.cost.HINGE
-});</code></pre>
+});'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+myNetwork.train(trainingData, {
+  log: 1,
+  iterations: 500,
+  error: 0.03,
+  rate: 0.05,
+  cost: methods.cost.HINGE
+});'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+myNetwork.train(trainingData, {
+  log: 1,
+  iterations: 500,
+  error: 0.03,
+  rate: 0.05,
+  cost: methods.cost.HINGE
+});</code>
+    </pre>
+
 
 
 
@@ -935,7 +990,8 @@ myNetwork.train(trainingData, {
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 myNetwork.train(trainingData, {
@@ -944,7 +1000,28 @@ myNetwork.train(trainingData, {
   error: 0.03,
   rate: 0.05,
   cost: methods.cost.MAE
-});</code></pre>
+});'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+myNetwork.train(trainingData, {
+  log: 1,
+  iterations: 500,
+  error: 0.03,
+  rate: 0.05,
+  cost: methods.cost.MAE
+});'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+myNetwork.train(trainingData, {
+  log: 1,
+  iterations: 500,
+  error: 0.03,
+  rate: 0.05,
+  cost: methods.cost.MAE
+});</code>
+    </pre>
+
 
 
 
@@ -1133,7 +1210,8 @@ myNetwork.train(trainingData, {
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 myNetwork.train(trainingData, {
@@ -1142,7 +1220,28 @@ myNetwork.train(trainingData, {
   error: 0.03,
   rate: 0.05,
   cost: methods.cost.MAPE
-});</code></pre>
+});'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+myNetwork.train(trainingData, {
+  log: 1,
+  iterations: 500,
+  error: 0.03,
+  rate: 0.05,
+  cost: methods.cost.MAPE
+});'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+myNetwork.train(trainingData, {
+  log: 1,
+  iterations: 500,
+  error: 0.03,
+  rate: 0.05,
+  cost: methods.cost.MAPE
+});</code>
+    </pre>
+
 
 
 
@@ -1331,10 +1430,20 @@ myNetwork.train(trainingData, {
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
-myNetwork.train(trainingData, { cost: methods.cost.MSE });</code></pre>
+myNetwork.train(trainingData, { cost: methods.cost.MSE });'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+myNetwork.train(trainingData, { cost: methods.cost.MSE });'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+myNetwork.train(trainingData, { cost: methods.cost.MSE });</code>
+    </pre>
+
 
 
 
@@ -1525,7 +1634,8 @@ myNetwork.train(trainingData, { cost: methods.cost.MSE });</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 myNetwork.train(trainingData, {
@@ -1534,7 +1644,28 @@ myNetwork.train(trainingData, {
   error: 0.03,
   rate: 0.05,
   cost: methods.cost.MSLE
-});</code></pre>
+});'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+myNetwork.train(trainingData, {
+  log: 1,
+  iterations: 500,
+  error: 0.03,
+  rate: 0.05,
+  cost: methods.cost.MSLE
+});'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+myNetwork.train(trainingData, {
+  log: 1,
+  iterations: 500,
+  error: 0.03,
+  rate: 0.05,
+  cost: methods.cost.MSLE
+});</code>
+    </pre>
+
 
 
 
@@ -1725,12 +1856,26 @@ myNetwork.train(trainingData, {
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 myNetwork.train(trainingData, {
   cost: methods.cost.WAPE
-});</code></pre>
+});'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+myNetwork.train(trainingData, {
+  cost: methods.cost.WAPE
+});'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+myNetwork.train(trainingData, {
+  cost: methods.cost.WAPE
+});</code>
+    </pre>
+
 
 
 
@@ -1814,7 +1959,7 @@ myNetwork.train(trainingData, {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Thu Jul 18 2019 16:21:33 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Thu Jul 18 2019 16:51:36 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 <script src="scripts/linenumber.js"></script>
 
@@ -1855,6 +2000,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+</script>
+<script src="scripts/clipboard.min.js"></script>
+<script>
+  // example copying functionality
+  const clipboard = new ClipboardJS('code');
+  const clipboard_button = new ClipboardJS('.copy-button');
+
+  clipboard_button.on('success', (e) => {
+    e.trigger.innerText = "Copied!"
+  });
+
+  const copy_buttons = document.querySelectorAll(".copy-button");
+  
+  copy_buttons.forEach(function(btn) {
+    btn.addEventListener("mouseout", function(e) {
+      setTimeout(function() {
+        e.fromElement.innerText = "Copy"
+      }, 200);
+    });
+  });
 </script>
 <script>prettyPrint();</script>
 </body>

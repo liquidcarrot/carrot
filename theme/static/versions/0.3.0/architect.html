@@ -70,6 +70,7 @@
         
         <div class="navbar-dropdown">
           <a href='https://liquidcarrot.io/carrot/versions/0.2.27/' class="navbar-item">v0.2.27</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.2.28/' class="navbar-item">v0.2.28</a>
       <a href='https://liquidcarrot.io/carrot/' class="navbar-item">latest</a>
         </div>
       </div>
@@ -292,7 +293,8 @@
     
         <p class="code-caption">A Network built with Nodes</p>
     
-    <pre class="prettyprint"><code>let { architect } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { architect } = require("@liquid-carrot/carrot");
 
 var A = new Node();
 var B = new Node();
@@ -306,11 +308,42 @@ B.connect(D);
 C.connect(D);
 
 // Construct a network
-var network = architect.Construct([A, B, C, D]);</code></pre>
+var network = architect.Construct([A, B, C, D]);'>Copy</a>
+      <code data-clipboard-text='let { architect } = require("@liquid-carrot/carrot");
+
+var A = new Node();
+var B = new Node();
+var C = new Node();
+var D = new Node();
+
+// Create connections
+A.connect(B);
+A.connect(C);
+B.connect(D);
+C.connect(D);
+
+// Construct a network
+var network = architect.Construct([A, B, C, D]);'>let { architect } = require("@liquid-carrot/carrot");
+
+var A = new Node();
+var B = new Node();
+var C = new Node();
+var D = new Node();
+
+// Create connections
+A.connect(B);
+A.connect(C);
+B.connect(D);
+C.connect(D);
+
+// Construct a network
+var network = architect.Construct([A, B, C, D]);</code>
+    </pre>
 
         <p class="code-caption">A Network built with Groups</p>
     
-    <pre class="prettyprint"><code>let { architect } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { architect } = require("@liquid-carrot/carrot");
 
 var A = new Group(4);
 var B = new Group(2);
@@ -322,7 +355,34 @@ A.connect(C);
 B.connect(C);
 
 // Construct a square-looking network
-var network = architect.Construct([A, B, C, D]);</code></pre>
+var network = architect.Construct([A, B, C, D]);'>Copy</a>
+      <code data-clipboard-text='let { architect } = require("@liquid-carrot/carrot");
+
+var A = new Group(4);
+var B = new Group(2);
+var C = new Group(6);
+
+// Create connections between the groups
+A.connect(B);
+A.connect(C);
+B.connect(C);
+
+// Construct a square-looking network
+var network = architect.Construct([A, B, C, D]);'>let { architect } = require("@liquid-carrot/carrot");
+
+var A = new Group(4);
+var B = new Group(2);
+var C = new Group(6);
+
+// Create connections between the groups
+A.connect(B);
+A.connect(C);
+B.connect(C);
+
+// Construct a square-looking network
+var network = architect.Construct([A, B, C, D]);</code>
+    </pre>
+
 
 
 
@@ -546,17 +606,33 @@ var network = architect.Construct([A, B, C, D]);</code></pre>
     
         <p class="code-caption">GRU is being tested, and may not always work for your dataset.</p>
     
-    <pre class="prettyprint"><code>let { architect } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { architect } = require("@liquid-carrot/carrot");
 
 // Input, gated recurrent unit layer, output
 let my_LSTM = new architect.GRU(2,6,1);
 
 // with multiple layers of gated recurrent units
-let my_LSTM = new architect.GRU(2, 4, 4, 4, 1);</code></pre>
+let my_LSTM = new architect.GRU(2, 4, 4, 4, 1);'>Copy</a>
+      <code data-clipboard-text='let { architect } = require("@liquid-carrot/carrot");
+
+// Input, gated recurrent unit layer, output
+let my_LSTM = new architect.GRU(2,6,1);
+
+// with multiple layers of gated recurrent units
+let my_LSTM = new architect.GRU(2, 4, 4, 4, 1);'>let { architect } = require("@liquid-carrot/carrot");
+
+// Input, gated recurrent unit layer, output
+let my_LSTM = new architect.GRU(2,6,1);
+
+// with multiple layers of gated recurrent units
+let my_LSTM = new architect.GRU(2, 4, 4, 4, 1);</code>
+    </pre>
 
         <p class="code-caption">Training XOR gate</p>
     
-    <pre class="prettyprint"><code>let { architect } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { architect } = require("@liquid-carrot/carrot");
 
 var training_set = [
   { input: [0], output: [0]},
@@ -575,7 +651,48 @@ network.train(training_set, {
   error: 0.005,
   iterations: 3000,
   clear: true // set to true while training
-});</code></pre>
+});'>Copy</a>
+      <code data-clipboard-text='let { architect } = require("@liquid-carrot/carrot");
+
+var training_set = [
+  { input: [0], output: [0]},
+  { input: [1], output: [1]},
+  { input: [1], output: [0]},
+  { input: [0], output: [1]},
+  { input: [0], output: [0]}
+];
+
+var network = new architect.GRU(1,1,1);
+
+// Train a sequence: 00100100..
+network.train(training_set, {
+  log: 1,
+  rate: 0.1, // lower rates work best
+  error: 0.005,
+  iterations: 3000,
+  clear: true // set to true while training
+});'>let { architect } = require("@liquid-carrot/carrot");
+
+var training_set = [
+  { input: [0], output: [0]},
+  { input: [1], output: [1]},
+  { input: [1], output: [0]},
+  { input: [0], output: [1]},
+  { input: [0], output: [0]}
+];
+
+var network = new architect.GRU(1,1,1);
+
+// Train a sequence: 00100100..
+network.train(training_set, {
+  log: 1,
+  rate: 0.1, // lower rates work best
+  error: 0.005,
+  iterations: 3000,
+  clear: true // set to true while training
+});</code>
+    </pre>
+
 
 
 
@@ -725,7 +842,8 @@ network.train(training_set, {
     
         <p class="code-caption">Output will always be binary due to `Activation.STEP` function.</p>
     
-    <pre class="prettyprint"><code>let { architect } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { architect } = require("@liquid-carrot/carrot");
 
 var network = architect.Hopfield(10);
 var training_set = [
@@ -736,7 +854,32 @@ var training_set = [
 network.train(training_set);
 
 network.activate([0,1,0,1,0,1,0,1,1,1]); // [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-network.activate([1,1,1,1,1,0,0,1,0,0]); // [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]</code></pre>
+network.activate([1,1,1,1,1,0,0,1,0,0]); // [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]'>Copy</a>
+      <code data-clipboard-text='let { architect } = require("@liquid-carrot/carrot");
+
+var network = architect.Hopfield(10);
+var training_set = [
+  { input: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1], output: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1] },
+  { input: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0], output: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0] }
+];
+
+network.train(training_set);
+
+network.activate([0,1,0,1,0,1,0,1,1,1]); // [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+network.activate([1,1,1,1,1,0,0,1,0,0]); // [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]'>let { architect } = require("@liquid-carrot/carrot");
+
+var network = architect.Hopfield(10);
+var training_set = [
+  { input: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1], output: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1] },
+  { input: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0], output: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0] }
+];
+
+network.train(training_set);
+
+network.activate([0,1,0,1,0,1,0,1,1,1]); // [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+network.activate([1,1,1,1,1,0,0,1,0,0]); // [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]</code>
+    </pre>
+
 
 
 
@@ -1304,7 +1447,8 @@ network.activate([1,1,1,1,1,0,0,1,0,0]); // [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]</code
     
         <p class="code-caption">While training sequences or timeseries prediction, set the clear option to true in training</p>
     
-    <pre class="prettyprint"><code>let { architect } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { architect } = require("@liquid-carrot/carrot");
 
 // Input, memory block_size layer, output
 let my_LSTM = new architect.LSTM(2,6,1);
@@ -1321,7 +1465,44 @@ var options = {
   input_to_deep: true         // default
 };
 
-let my_LSTM = new architect.LSTM(2, 4, 4, 4, 1, options);</code></pre>
+let my_LSTM = new architect.LSTM(2, 4, 4, 4, 1, options);'>Copy</a>
+      <code data-clipboard-text='let { architect } = require("@liquid-carrot/carrot");
+
+// Input, memory block_size layer, output
+let my_LSTM = new architect.LSTM(2,6,1);
+
+// with multiple memory block_size layer_sizes
+let my_LSTM = new architect.LSTM(2, 4, 4, 4, 1);
+
+// with options
+var options = {
+  memory_to_memory: false,    // default
+  output_to_memory: false,    // default
+  output_to_gates: false,     // default
+  input_to_output: true,      // default
+  input_to_deep: true         // default
+};
+
+let my_LSTM = new architect.LSTM(2, 4, 4, 4, 1, options);'>let { architect } = require("@liquid-carrot/carrot");
+
+// Input, memory block_size layer, output
+let my_LSTM = new architect.LSTM(2,6,1);
+
+// with multiple memory block_size layer_sizes
+let my_LSTM = new architect.LSTM(2, 4, 4, 4, 1);
+
+// with options
+var options = {
+  memory_to_memory: false,    // default
+  output_to_memory: false,    // default
+  output_to_gates: false,     // default
+  input_to_output: true,      // default
+  input_to_deep: true         // default
+};
+
+let my_LSTM = new architect.LSTM(2, 4, 4, 4, 1, options);</code>
+    </pre>
+
 
 
 
@@ -1587,7 +1768,8 @@ let my_LSTM = new architect.LSTM(2, 4, 4, 4, 1, options);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { architect } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { architect } = require("@liquid-carrot/carrot");
 
 let narx = new architect.NARX(1, 5, 1, 3, 3);
 
@@ -1606,7 +1788,48 @@ narx.train(training_data, {
   iterations: 3000,
   error: 0.03,
   rate: 0.05
-});</code></pre>
+});'>Copy</a>
+      <code data-clipboard-text='let { architect } = require("@liquid-carrot/carrot");
+
+let narx = new architect.NARX(1, 5, 1, 3, 3);
+
+// Training a sequence
+let training_data = [
+  { input: [0], output: [0] },
+  { input: [0], output: [0] },
+  { input: [0], output: [1] },
+  { input: [1], output: [0] },
+  { input: [0], output: [0] },
+  { input: [0], output: [0] },
+  { input: [0], output: [1] },
+];
+narx.train(training_data, {
+  log: 1,
+  iterations: 3000,
+  error: 0.03,
+  rate: 0.05
+});'>let { architect } = require("@liquid-carrot/carrot");
+
+let narx = new architect.NARX(1, 5, 1, 3, 3);
+
+// Training a sequence
+let training_data = [
+  { input: [0], output: [0] },
+  { input: [0], output: [0] },
+  { input: [0], output: [1] },
+  { input: [1], output: [0] },
+  { input: [0], output: [0] },
+  { input: [0], output: [0] },
+  { input: [0], output: [1] },
+];
+narx.train(training_data, {
+  log: 1,
+  iterations: 3000,
+  error: 0.03,
+  rate: 0.05
+});</code>
+    </pre>
+
 
 
 
@@ -1770,13 +1993,29 @@ narx.train(training_data, {
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { architect } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { architect } = require("@liquid-carrot/carrot");
 
 // Input 2 neurons, Hidden layer: 3 neurons, Output: 1 neuron
 let my_perceptron = new architect.Perceptron(2,3,1);
 
 // Input: 2 neurons, 4 Hidden layers: 10 neurons, Output: 1 neuron
-let my_perceptron = new architect.Perceptron(2, 10, 10, 10, 10, 1);</code></pre>
+let my_perceptron = new architect.Perceptron(2, 10, 10, 10, 10, 1);'>Copy</a>
+      <code data-clipboard-text='let { architect } = require("@liquid-carrot/carrot");
+
+// Input 2 neurons, Hidden layer: 3 neurons, Output: 1 neuron
+let my_perceptron = new architect.Perceptron(2,3,1);
+
+// Input: 2 neurons, 4 Hidden layers: 10 neurons, Output: 1 neuron
+let my_perceptron = new architect.Perceptron(2, 10, 10, 10, 10, 1);'>let { architect } = require("@liquid-carrot/carrot");
+
+// Input 2 neurons, Hidden layer: 3 neurons, Output: 1 neuron
+let my_perceptron = new architect.Perceptron(2,3,1);
+
+// Input: 2 neurons, 4 Hidden layers: 10 neurons, Output: 1 neuron
+let my_perceptron = new architect.Perceptron(2, 10, 10, 10, 10, 1);</code>
+    </pre>
+
 
 
 
@@ -2206,13 +2445,29 @@ let my_perceptron = new architect.Perceptron(2, 10, 10, 10, 10, 1);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { architect } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { architect } = require("@liquid-carrot/carrot");
 
 let network = architect.Random(1, 20, 2, {
   connections: 40,
   gates: 4,
   selfconnections: 4
-});</code></pre>
+});'>Copy</a>
+      <code data-clipboard-text='let { architect } = require("@liquid-carrot/carrot");
+
+let network = architect.Random(1, 20, 2, {
+  connections: 40,
+  gates: 4,
+  selfconnections: 4
+});'>let { architect } = require("@liquid-carrot/carrot");
+
+let network = architect.Random(1, 20, 2, {
+  connections: 40,
+  gates: 4,
+  selfconnections: 4
+});</code>
+    </pre>
+
 
 
 
@@ -2296,7 +2551,7 @@ let network = architect.Random(1, 20, 2, {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Thu Jul 18 2019 16:21:33 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Thu Jul 18 2019 16:51:36 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 <script src="scripts/linenumber.js"></script>
 
@@ -2337,6 +2592,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+</script>
+<script src="scripts/clipboard.min.js"></script>
+<script>
+  // example copying functionality
+  const clipboard = new ClipboardJS('code');
+  const clipboard_button = new ClipboardJS('.copy-button');
+
+  clipboard_button.on('success', (e) => {
+    e.trigger.innerText = "Copied!"
+  });
+
+  const copy_buttons = document.querySelectorAll(".copy-button");
+  
+  copy_buttons.forEach(function(btn) {
+    btn.addEventListener("mouseout", function(e) {
+      setTimeout(function() {
+        e.fromElement.innerText = "Copy"
+      }, 200);
+    });
+  });
 </script>
 <script>prettyPrint();</script>
 </body>

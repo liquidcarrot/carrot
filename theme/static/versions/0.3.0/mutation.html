@@ -70,6 +70,7 @@
         
         <div class="navbar-dropdown">
           <a href='https://liquidcarrot.io/carrot/versions/0.2.27/' class="navbar-item">v0.2.27</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.2.28/' class="navbar-item">v0.2.28</a>
       <a href='https://liquidcarrot.io/carrot/' class="navbar-item">latest</a>
         </div>
       </div>
@@ -187,7 +188,8 @@
                 
         <p class="code-caption">Mutation methods with networks</p>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 
@@ -197,15 +199,49 @@ myNetwork.mutate(methods.mutation.ADD_NODE);
 // specifying a list of network mutation methods to use during evolution
 myNetwork.evolve(trainingset, {
  mutation: [methods.mutation.MOD_BIAS, methods.mutation.ADD_NODE]
-}</code></pre>
-
-        <p class="code-caption">Using a mutation method with a neuron</p>
-    
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+}'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 
-myNode.mutate(methods.mutation.MOD_BIAS);</code></pre>
+// Setting a mutation method for a network
+myNetwork.mutate(methods.mutation.ADD_NODE);
+
+// specifying a list of network mutation methods to use during evolution
+myNetwork.evolve(trainingset, {
+ mutation: [methods.mutation.MOD_BIAS, methods.mutation.ADD_NODE]
+}'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+// Setting a mutation method for a network
+myNetwork.mutate(methods.mutation.ADD_NODE);
+
+// specifying a list of network mutation methods to use during evolution
+myNetwork.evolve(trainingset, {
+ mutation: [methods.mutation.MOD_BIAS, methods.mutation.ADD_NODE]
+}</code>
+    </pre>
+
+        <p class="code-caption">Using a mutation method with a neuron</p>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNode.mutate(methods.mutation.MOD_BIAS);'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNode.mutate(methods.mutation.MOD_BIAS);'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNode.mutate(methods.mutation.MOD_BIAS);</code>
+    </pre>
+
 
             
         
@@ -256,11 +292,23 @@ myNode.mutate(methods.mutation.MOD_BIAS);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 
-myNetwork.mutate(methods.mutation.ADD_BACK_CONN);</code></pre>
+myNetwork.mutate(methods.mutation.ADD_BACK_CONN);'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.ADD_BACK_CONN);'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.ADD_BACK_CONN);</code>
+    </pre>
+
 
 
 
@@ -342,11 +390,23 @@ myNetwork.mutate(methods.mutation.ADD_BACK_CONN);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 
-myNetwork.mutate(methods.mutation.ADD_CONN);</code></pre>
+myNetwork.mutate(methods.mutation.ADD_CONN);'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.ADD_CONN);'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.ADD_CONN);</code>
+    </pre>
+
 
 
 
@@ -428,11 +488,23 @@ myNetwork.mutate(methods.mutation.ADD_CONN);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 
-myNetwork.mutate(methods.mutation.ADD_GATE);</code></pre>
+myNetwork.mutate(methods.mutation.ADD_GATE);'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.ADD_GATE);'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.ADD_GATE);</code>
+    </pre>
+
 
 
 
@@ -514,11 +586,23 @@ myNetwork.mutate(methods.mutation.ADD_GATE);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 
-myNetwork.mutate(methods.mutation.ADD_NODE);</code></pre>
+myNetwork.mutate(methods.mutation.ADD_NODE);'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.ADD_NODE);'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.ADD_NODE);</code>
+    </pre>
+
 
 
 
@@ -661,11 +745,23 @@ myNetwork.mutate(methods.mutation.ADD_NODE);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 
-myNetwork.mutate(methods.mutation.ADD_SELF_CONN);</code></pre>
+myNetwork.mutate(methods.mutation.ADD_SELF_CONN);'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.ADD_SELF_CONN);'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.ADD_SELF_CONN);</code>
+    </pre>
+
 
 
 
@@ -749,13 +845,29 @@ myNetwork.mutate(methods.mutation.ADD_SELF_CONN);</code></pre>
     
         <p class="code-caption">A group of mutation methods for evolution</p>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 
 network.evolve(trainingset, {
  mutation: methods.mutation.ALL // all mutation methods
-}</code></pre>
+}'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+network.evolve(trainingset, {
+ mutation: methods.mutation.ALL // all mutation methods
+}'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+network.evolve(trainingset, {
+ mutation: methods.mutation.ALL // all mutation methods
+}</code>
+    </pre>
+
 
 
 
@@ -852,13 +964,29 @@ network.evolve(trainingset, {
     
         <p class="code-caption">A group of mutation methods for evolution</p>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 
 network.evolve(trainingset, {
  mutation: methods.mutation.FFW// all feedforward mutation methods
-}</code></pre>
+}'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+network.evolve(trainingset, {
+ mutation: methods.mutation.FFW// all feedforward mutation methods
+}'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+network.evolve(trainingset, {
+ mutation: methods.mutation.FFW// all feedforward mutation methods
+}</code>
+    </pre>
+
 
 
 
@@ -949,23 +1077,54 @@ network.evolve(trainingset, {
     
         <p class="code-caption">Mutating the activation function of a node</p>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 
 let myNode = new Node();
 
-myNode.mutate(methods.mutation.MOD_ACTIVATION);</code></pre>
+myNode.mutate(methods.mutation.MOD_ACTIVATION);'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+let myNode = new Node();
+
+myNode.mutate(methods.mutation.MOD_ACTIVATION);'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+let myNode = new Node();
+
+myNode.mutate(methods.mutation.MOD_ACTIVATION);</code>
+    </pre>
 
         <p class="code-caption">Mutating the activation function of a network's nodes</p>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 
 let myNode = new Node();
 
-myNode.mutate(methods.mutation.MOD_ACTIVATION);</code></pre>
+myNode.mutate(methods.mutation.MOD_ACTIVATION);'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+let myNode = new Node();
+
+myNode.mutate(methods.mutation.MOD_ACTIVATION);'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+let myNode = new Node();
+
+myNode.mutate(methods.mutation.MOD_ACTIVATION);</code>
+    </pre>
+
 
 
 
@@ -1154,13 +1313,29 @@ myNode.mutate(methods.mutation.MOD_ACTIVATION);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 
 let myNode = new Node();
 
-myNode.mutate(methods.mutation.MOD_BIAS);</code></pre>
+myNode.mutate(methods.mutation.MOD_BIAS);'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+let myNode = new Node();
+
+myNode.mutate(methods.mutation.MOD_BIAS);'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+let myNode = new Node();
+
+myNode.mutate(methods.mutation.MOD_BIAS);</code>
+    </pre>
+
 
 
 
@@ -1333,11 +1508,23 @@ myNode.mutate(methods.mutation.MOD_BIAS);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 
-myNetwork.mutate(methods.mutation.MOD_WEIGHT);</code></pre>
+myNetwork.mutate(methods.mutation.MOD_WEIGHT);'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.MOD_WEIGHT);'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.MOD_WEIGHT);</code>
+    </pre>
+
 
 
 
@@ -1510,11 +1697,23 @@ myNetwork.mutate(methods.mutation.MOD_WEIGHT);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 
-myNetwork.mutate(methods.mutation.SUB_BACK_CONN);</code></pre>
+myNetwork.mutate(methods.mutation.SUB_BACK_CONN);'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.SUB_BACK_CONN);'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.SUB_BACK_CONN);</code>
+    </pre>
+
 
 
 
@@ -1596,11 +1795,23 @@ myNetwork.mutate(methods.mutation.SUB_BACK_CONN);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 
-myNetwork.mutate(methods.mutation.SUB_CONN);</code></pre>
+myNetwork.mutate(methods.mutation.SUB_CONN);'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.SUB_CONN);'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.SUB_CONN);</code>
+    </pre>
+
 
 
 
@@ -1682,11 +1893,23 @@ myNetwork.mutate(methods.mutation.SUB_CONN);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 
-myNetwork.mutate(methods.mutation.SUB_GATE);</code></pre>
+myNetwork.mutate(methods.mutation.SUB_GATE);'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.SUB_GATE);'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.SUB_GATE);</code>
+    </pre>
+
 
 
 
@@ -1768,11 +1991,23 @@ myNetwork.mutate(methods.mutation.SUB_GATE);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 
-myNetwork.mutate(methods.mutation.SUB_NODE);</code></pre>
+myNetwork.mutate(methods.mutation.SUB_NODE);'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.SUB_NODE);'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.SUB_NODE);</code>
+    </pre>
+
 
 
 
@@ -1915,11 +2150,23 @@ myNetwork.mutate(methods.mutation.SUB_NODE);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 
-myNetwork.mutate(methods.mutation.SUB_SELF_CONN);</code></pre>
+myNetwork.mutate(methods.mutation.SUB_SELF_CONN);'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.SUB_SELF_CONN);'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.SUB_SELF_CONN);</code>
+    </pre>
+
 
 
 
@@ -2001,11 +2248,23 @@ myNetwork.mutate(methods.mutation.SUB_SELF_CONN);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let myNetwork = new Network(5, 10, 5);
 
-myNetwork.mutate(methods.mutation.SWAP_NODES);</code></pre>
+myNetwork.mutate(methods.mutation.SWAP_NODES);'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.SWAP_NODES);'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let myNetwork = new Network(5, 10, 5);
+
+myNetwork.mutate(methods.mutation.SWAP_NODES);</code>
+    </pre>
+
 
 
 
@@ -2145,7 +2404,7 @@ myNetwork.mutate(methods.mutation.SWAP_NODES);</code></pre>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Thu Jul 18 2019 16:21:34 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Thu Jul 18 2019 16:51:36 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 <script src="scripts/linenumber.js"></script>
 
@@ -2186,6 +2445,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+</script>
+<script src="scripts/clipboard.min.js"></script>
+<script>
+  // example copying functionality
+  const clipboard = new ClipboardJS('code');
+  const clipboard_button = new ClipboardJS('.copy-button');
+
+  clipboard_button.on('success', (e) => {
+    e.trigger.innerText = "Copied!"
+  });
+
+  const copy_buttons = document.querySelectorAll(".copy-button");
+  
+  copy_buttons.forEach(function(btn) {
+    btn.addEventListener("mouseout", function(e) {
+      setTimeout(function() {
+        e.fromElement.innerText = "Copy"
+      }, 200);
+    });
+  });
 </script>
 <script>prettyPrint();</script>
 </body>

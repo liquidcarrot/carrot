@@ -70,6 +70,7 @@
         
         <div class="navbar-dropdown">
           <a href='https://liquidcarrot.io/carrot/versions/0.2.27/' class="navbar-item">v0.2.27</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.2.28/' class="navbar-item">v0.2.28</a>
       <a href='https://liquidcarrot.io/carrot/' class="navbar-item">latest</a>
         </div>
       </div>
@@ -185,7 +186,8 @@
             
                 <h3>Example</h3>
                 
-    <pre class="prettyprint"><code>let { methods, Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
 
 let network = new Network(5, 10, 5);
 
@@ -201,7 +203,42 @@ network.train(dataset, { rate_policy: methods.rate.EXP });
 // OPTION #4: methods.rate.INV
 network.train(dataset, { rate_policy: methods.rate.INV });
 
-// more coming soon...</code></pre>
+// more coming soon...'>Copy</a>
+      <code data-clipboard-text='let { methods, Network } = require("@liquid-carrot/carrot");
+
+let network = new Network(5, 10, 5);
+
+// OPTION #1: methods.rate.FIXED
+network.train(dataset, { rate_policy: methods.rate.FIXED });
+
+// OPTION #2: methods.rate.STEP
+network.train(dataset, { rate_policy: methods.rate.STEP });
+
+// OPTION #3: methods.rate.EXP
+network.train(dataset, { rate_policy: methods.rate.EXP });
+
+// OPTION #4: methods.rate.INV
+network.train(dataset, { rate_policy: methods.rate.INV });
+
+// more coming soon...'>let { methods, Network } = require("@liquid-carrot/carrot");
+
+let network = new Network(5, 10, 5);
+
+// OPTION #1: methods.rate.FIXED
+network.train(dataset, { rate_policy: methods.rate.FIXED });
+
+// OPTION #2: methods.rate.STEP
+network.train(dataset, { rate_policy: methods.rate.STEP });
+
+// OPTION #3: methods.rate.EXP
+network.train(dataset, { rate_policy: methods.rate.EXP });
+
+// OPTION #4: methods.rate.INV
+network.train(dataset, { rate_policy: methods.rate.INV });
+
+// more coming soon...</code>
+    </pre>
+
 
             
         
@@ -439,11 +476,23 @@ network.train(dataset, { rate_policy: methods.rate.INV });
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Network, methods } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network, methods } = require("@liquid-carrot/carrot");
 
 let network = new Network(10, 1);
 
-network.train(dataset, { rate_policy: methods.rate.EXP });</code></pre>
+network.train(dataset, { rate_policy: methods.rate.EXP });'>Copy</a>
+      <code data-clipboard-text='let { Network, methods } = require("@liquid-carrot/carrot");
+
+let network = new Network(10, 1);
+
+network.train(dataset, { rate_policy: methods.rate.EXP });'>let { Network, methods } = require("@liquid-carrot/carrot");
+
+let network = new Network(10, 1);
+
+network.train(dataset, { rate_policy: methods.rate.EXP });</code>
+    </pre>
+
 
 
 
@@ -592,11 +641,23 @@ network.train(dataset, { rate_policy: methods.rate.EXP });</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Network, methods } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network, methods } = require("@liquid-carrot/carrot");
 
 let network = new Network(10, 1);
 
-network.train(dataset, { rate_policy: methods.rate.FIXED });</code></pre>
+network.train(dataset, { rate_policy: methods.rate.FIXED });'>Copy</a>
+      <code data-clipboard-text='let { Network, methods } = require("@liquid-carrot/carrot");
+
+let network = new Network(10, 1);
+
+network.train(dataset, { rate_policy: methods.rate.FIXED });'>let { Network, methods } = require("@liquid-carrot/carrot");
+
+let network = new Network(10, 1);
+
+network.train(dataset, { rate_policy: methods.rate.FIXED });</code>
+    </pre>
+
 
 
 
@@ -911,11 +972,23 @@ network.train(dataset, { rate_policy: methods.rate.FIXED });</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Network, methods } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network, methods } = require("@liquid-carrot/carrot");
 
 let network = new Network(10, 1);
 
-network.train(dataset, { rate_policy: methods.rate.INV });</code></pre>
+network.train(dataset, { rate_policy: methods.rate.INV });'>Copy</a>
+      <code data-clipboard-text='let { Network, methods } = require("@liquid-carrot/carrot");
+
+let network = new Network(10, 1);
+
+network.train(dataset, { rate_policy: methods.rate.INV });'>let { Network, methods } = require("@liquid-carrot/carrot");
+
+let network = new Network(10, 1);
+
+network.train(dataset, { rate_policy: methods.rate.INV });</code>
+    </pre>
+
 
 
 
@@ -1229,11 +1302,23 @@ network.train(dataset, { rate_policy: methods.rate.INV });</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Network, methods } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network, methods } = require("@liquid-carrot/carrot");
 
 let network = new Network(10, 1);
 
-network.train(dataset, { rate_policy: methods.rate.STEP });</code></pre>
+network.train(dataset, { rate_policy: methods.rate.STEP });'>Copy</a>
+      <code data-clipboard-text='let { Network, methods } = require("@liquid-carrot/carrot");
+
+let network = new Network(10, 1);
+
+network.train(dataset, { rate_policy: methods.rate.STEP });'>let { Network, methods } = require("@liquid-carrot/carrot");
+
+let network = new Network(10, 1);
+
+network.train(dataset, { rate_policy: methods.rate.STEP });</code>
+    </pre>
+
 
 
 
@@ -1317,7 +1402,7 @@ network.train(dataset, { rate_policy: methods.rate.STEP });</code></pre>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Thu Jul 18 2019 16:21:34 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Thu Jul 18 2019 16:51:37 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 <script src="scripts/linenumber.js"></script>
 
@@ -1358,6 +1443,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+</script>
+<script src="scripts/clipboard.min.js"></script>
+<script>
+  // example copying functionality
+  const clipboard = new ClipboardJS('code');
+  const clipboard_button = new ClipboardJS('.copy-button');
+
+  clipboard_button.on('success', (e) => {
+    e.trigger.innerText = "Copied!"
+  });
+
+  const copy_buttons = document.querySelectorAll(".copy-button");
+  
+  copy_buttons.forEach(function(btn) {
+    btn.addEventListener("mouseout", function(e) {
+      setTimeout(function() {
+        e.fromElement.innerText = "Copy"
+      }, 200);
+    });
+  });
 </script>
 <script>prettyPrint();</script>
 </body>
