@@ -1,0 +1,1988 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Liquid Carrot - Group - Documentation</title>
+    <link rel="shortcut icon" href="/liquid-carrot-favicon.png" />
+    
+    
+    
+    
+    
+    <meta property="og:title" content=""/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content=""/>
+    
+    <meta property="og:url" content=""/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="styles/bulma.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/ionicons/2.0.1/css/ionicons.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger">
+  <div class="fixed-action-btn">
+    <div class="button-floating">
+      <!--
+      <label for="nav-trigger" class="navicon-button x">
+        <div class="navicon"></div>
+      </label>
+      -->
+        <i class="ion-ios-book" aria-hidden="true"></i>
+    </div>
+  </div>
+</label>
+<label for="nav-trigger" class="overlay"></label>
+
+<div class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="#" style="padding:0">
+      <img src="img/carrot-logo.png" height="28">
+    </a>
+
+    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+
+  <div id="navbarBasicExample" class="navbar-menu">
+    <div class="navbar-start">
+      <a class="navbar-item" href="/">Home</a>
+      <a class="navbar-item" href="/carrot">Docs</a>
+      <a class="navbar-item" href="https://github.com/liquidcarrot/carrot" target="_blank"><i class="ion-social-github" aria-hidden="true"></i></a>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          Versions
+        </a>
+        
+        <div class="navbar-dropdown">
+          <a href='https://liquidcarrot.io/carrot/versions/0.2.27/' class="navbar-item">v0.2.27</a>
+      <a href='https://liquidcarrot.io/carrot/' class="navbar-item">latest</a>
+        </div>
+      </div>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More
+        </a>
+
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="mailto:people@liquidcarrot.io?subject=Contact%20From%20Docs">
+            Contact
+          </a>
+          <hr class="navbar-divider">
+          <a class="navbar-item" href="https://github.com/liquidcarrot/carrot/issues/new">
+            Report an issue
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <input type="text" id="nav-search" placeholder="Search" autofocus>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav >
+    <h3>Classes</h3><ul><li><a href="Connection.html">Connection</a><ul class='methods'><li data-type='method'><a href="Connection.html#.innovationID">innovationID</a></li><li data-type='method'><a href="Connection.html#.toJSON">toJSON</a></li></ul></li><li><a href="Group.html">Group</a><ul class='methods'><li data-type='method'><a href="Group.html#.activate">activate</a></li><li data-type='method'><a href="Group.html#.clear">clear</a></li><li data-type='method'><a href="Group.html#.connect">connect</a></li><li data-type='method'><a href="Group.html#.disconnect">disconnect</a></li><li data-type='method'><a href="Group.html#.gate">gate</a></li><li data-type='method'><a href="Group.html#.propagate">propagate</a></li><li data-type='method'><a href="Group.html#.set">set</a></li></ul></li><li><a href="Layer.html">Layer</a><ul class='methods'><li data-type='method'><a href="Layer.html#.Dense">Dense</a></li><li data-type='method'><a href="Layer.html#.GRU">GRU</a></li><li data-type='method'><a href="Layer.html#.LSTM">LSTM</a></li><li data-type='method'><a href="Layer.html#.Memory">Memory</a></li></ul></li><li><a href="Neat.html">Neat</a><ul class='methods'><li data-type='method'><a href="Neat.html">evolve</a></li><li data-type='method'><a href="Neat.html#.createPool">createPool</a></li><li data-type='method'><a href="Neat.html#.createPopulation">createPopulation</a></li><li data-type='method'><a href="Neat.html#.evaluate">evaluate</a></li><li data-type='method'><a href="Neat.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Neat.html#.getAverage">getAverage</a></li><li data-type='method'><a href="Neat.html#.getFittest">getFittest</a></li><li data-type='method'><a href="Neat.html#.getOffspring">getOffspring</a></li><li data-type='method'><a href="Neat.html#.getParent">getParent</a></li><li data-type='method'><a href="Neat.html#.mutate">mutate</a></li><li data-type='method'><a href="Neat.html#.mutateRandom">mutateRandom</a></li><li data-type='method'><a href="Neat.html#.replace">replace</a></li><li data-type='method'><a href="Neat.html#.toJSON">toJSON</a></li></ul></li><li><a href="Network.html">Network</a><ul class='methods'><li data-type='method'><a href="Network.html#.activate">activate</a></li><li data-type='method'><a href="Network.html#.clear">clear</a></li><li data-type='method'><a href="Network.html#.clone">clone</a></li><li data-type='method'><a href="Network.html#.connect">connect</a></li><li data-type='method'><a href="Network.html#.crossOver">crossOver</a></li><li data-type='method'><a href="Network.html#.disconnect">disconnect</a></li><li data-type='method'><a href="Network.html#.evolve">evolve</a></li><li data-type='method'><a href="Network.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Network.html#.gate">gate</a></li><li data-type='method'><a href="Network.html#.graph">graph</a></li><li data-type='method'><a href="Network.html#.merge">merge</a></li><li data-type='method'><a href="Network.html#.mutate">mutate</a></li><li data-type='method'><a href="Network.html#.noTraceActivate">noTraceActivate</a></li><li data-type='method'><a href="Network.html#.possible">possible</a></li><li data-type='method'><a href="Network.html#.remove">remove</a></li><li data-type='method'><a href="Network.html#.set">set</a></li><li data-type='method'><a href="Network.html#.standalone">standalone</a></li><li data-type='method'><a href="Network.html#.test">test</a></li><li data-type='method'><a href="Network.html#.toJSON">toJSON</a></li><li data-type='method'><a href="Network.html#.train">train</a></li><li data-type='method'><a href="Network.html#.ungate">ungate</a></li></ul></li><li><a href="Node.html">Node</a><ul class='methods'><li data-type='method'><a href="Node.html#.activate">activate</a></li><li data-type='method'><a href="Node.html#.clear">clear</a></li><li data-type='method'><a href="Node.html#.connect">connect</a></li><li data-type='method'><a href="Node.html#.disconnect">disconnect</a></li><li data-type='method'><a href="Node.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Node.html#.gate">gate</a></li><li data-type='method'><a href="Node.html#.isProjectedBy">isProjectedBy</a></li><li data-type='method'><a href="Node.html#.isProjectingTo">isProjectingTo</a></li><li data-type='method'><a href="Node.html#.mutate">mutate</a></li><li data-type='method'><a href="Node.html#.noTraceActivate">noTraceActivate</a></li><li data-type='method'><a href="Node.html#.propagate">propagate</a></li><li data-type='method'><a href="Node.html#.toJSON">toJSON</a></li><li data-type='method'><a href="Node.html#.ungate">ungate</a></li></ul></li></ul><h3>Namespaces</h3><ul><li><a href="activation.html">activation</a><ul class='methods'><li data-type='method'><a href="activation.html#.ABSOLUTE">ABSOLUTE</a></li><li data-type='method'><a href="activation.html#.BENT_IDENTITY">BENT_IDENTITY</a></li><li data-type='method'><a href="activation.html#.BIPOLAR">BIPOLAR</a></li><li data-type='method'><a href="activation.html#.BIPOLAR_SIGMOID">BIPOLAR_SIGMOID</a></li><li data-type='method'><a href="activation.html#.GAUSSIAN">GAUSSIAN</a></li><li data-type='method'><a href="activation.html#.HARD_TANH">HARD_TANH</a></li><li data-type='method'><a href="activation.html#.IDENTITY">IDENTITY</a></li><li data-type='method'><a href="activation.html#.INVERSE">INVERSE</a></li><li data-type='method'><a href="activation.html#.LOGISTIC">LOGISTIC</a></li><li data-type='method'><a href="activation.html#.RELU">RELU</a></li><li data-type='method'><a href="activation.html#.SELU">SELU</a></li><li data-type='method'><a href="activation.html#.SINUSOID">SINUSOID</a></li><li data-type='method'><a href="activation.html#.SOFTSIGN">SOFTSIGN</a></li><li data-type='method'><a href="activation.html#.STEP">STEP</a></li><li data-type='method'><a href="activation.html#.TANH">TANH</a></li></ul></li><li><a href="architect.html">architect</a><ul class='methods'><li data-type='method'><a href="architect.html#.Construct">Construct</a></li><li data-type='method'><a href="architect.html#.GRU">GRU</a></li><li data-type='method'><a href="architect.html#.Hopfield">Hopfield</a></li><li data-type='method'><a href="architect.html#.Liquid">Liquid</a></li><li data-type='method'><a href="architect.html#.LSTM">LSTM</a></li><li data-type='method'><a href="architect.html#.NARX">NARX</a></li><li data-type='method'><a href="architect.html#.Perceptron">Perceptron</a></li><li data-type='method'><a href="architect.html#.Random">Random</a></li></ul></li><li><a href="connection_.html">connection</a><ul class='members'><li data-type='member'><a href="connection_.html#.ALL_TO_ALL">ALL_TO_ALL</a></li><li data-type='member'><a href="connection_.html#.ALL_TO_ELSE">ALL_TO_ELSE</a></li><li data-type='member'><a href="connection_.html#.ONE_TO_ONE">ONE_TO_ONE</a></li></ul></li><li><a href="cost.html">cost</a><ul class='methods'><li data-type='method'><a href="cost.html#.BINARY">BINARY</a></li><li data-type='method'><a href="cost.html#.CROSS_ENTROPY">CROSS_ENTROPY</a></li><li data-type='method'><a href="cost.html#.HINGE">HINGE</a></li><li data-type='method'><a href="cost.html#.MAE">MAE</a></li><li data-type='method'><a href="cost.html#.MAPE">MAPE</a></li><li data-type='method'><a href="cost.html#.MSE">MSE</a></li><li data-type='method'><a href="cost.html#.MSLE">MSLE</a></li><li data-type='method'><a href="cost.html#.WAPE">WAPE</a></li></ul></li><li><a href="crossover.html">crossover</a><ul class='members'><li data-type='member'><a href="crossover.html#.AVERAGE">AVERAGE</a></li><li data-type='member'><a href="crossover.html#.SINGLE_POINT">SINGLE_POINT</a></li><li data-type='member'><a href="crossover.html#.TWO_POINT">TWO_POINT</a></li><li data-type='member'><a href="crossover.html#.UNIFORM">UNIFORM</a></li></ul></li><li><a href="gating.html">gating</a><ul class='members'><li data-type='member'><a href="gating.html#.INPUT">INPUT</a></li><li data-type='member'><a href="gating.html#.OUTPUT">OUTPUT</a></li><li data-type='member'><a href="gating.html#.SELF">SELF</a></li></ul></li><li><a href="mutation.html">mutation</a><ul class='members'><li data-type='member'><a href="mutation.html#.ADD_BACK_CONN">ADD_BACK_CONN</a></li><li data-type='member'><a href="mutation.html#.ADD_CONN">ADD_CONN</a></li><li data-type='member'><a href="mutation.html#.ADD_GATE">ADD_GATE</a></li><li data-type='member'><a href="mutation.html#.ADD_NODE">ADD_NODE</a></li><li data-type='member'><a href="mutation.html#.ADD_SELF_CONN">ADD_SELF_CONN</a></li><li data-type='member'><a href="mutation.html#.ALL">ALL</a></li><li data-type='member'><a href="mutation.html#.FFW">FFW</a></li><li data-type='member'><a href="mutation.html#.MOD_ACTIVATION">MOD_ACTIVATION</a></li><li data-type='member'><a href="mutation.html#.MOD_BIAS">MOD_BIAS</a></li><li data-type='member'><a href="mutation.html#.MOD_WEIGHT">MOD_WEIGHT</a></li><li data-type='member'><a href="mutation.html#.SUB_BACK_CONN">SUB_BACK_CONN</a></li><li data-type='member'><a href="mutation.html#.SUB_CONN">SUB_CONN</a></li><li data-type='member'><a href="mutation.html#.SUB_GATE">SUB_GATE</a></li><li data-type='member'><a href="mutation.html#.SUB_NODE">SUB_NODE</a></li><li data-type='member'><a href="mutation.html#.SUB_SELF_CONN">SUB_SELF_CONN</a></li><li data-type='member'><a href="mutation.html#.SWAP_NODES">SWAP_NODES</a></li></ul></li><li><a href="rate.html">rate</a><ul class='methods'><li data-type='method'><a href="rate.html#.EXP">EXP</a></li><li data-type='method'><a href="rate.html#.FIXED">FIXED</a></li><li data-type='method'><a href="rate.html#.INV">INV</a></li><li data-type='method'><a href="rate.html#.STEP">STEP</a></li></ul></li><li><a href="selection.html">selection</a><ul class='members'><li data-type='member'><a href="selection.html#.FITNESS_PROPORTIONATE">FITNESS_PROPORTIONATE</a></li><li data-type='member'><a href="selection.html#.POWER">POWER</a></li><li data-type='member'><a href="selection.html#.TOURNAMENT">TOURNAMENT</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#config">config</a></li><li><a href="global.html#GAN">GAN</a></li><li><a href="global.html#sort">sort</a></li></ul>
+</nav>
+
+<div id="main">
+    <div class="columns">
+        <div class="column is-hidden-touch"></div>
+        <div class="column is-11-desktop is-10-widescreen">
+
+            
+                <h1 class="page-title">Group</h1>
+            
+
+            
+
+
+
+
+<section>
+
+<header>
+    
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+
+    
+
+    <h4 class="name" id="Group"><span class="type-signature"></span>new Group
+    
+    <span class="signature mobile-break">(size<span class="signature-attributes">opt</span>)</span><span class="type-signature mobile-break"></span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>A group instance denotes a group of nodes. Beware: once a group has been used to construct a network, the groups will fall apart into individual nodes. They are purely for the creation and development of networks.</p>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>size</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">number</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                    <code>0</code>
+                
+                </td>
+            
+            
+                <td class="description last"><p>Amount of nodes to build group with</p></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>let { Group } = require("@liquid-carrot/carrot");
+
+// A group with 5 nodes
+let A = new Group(5);</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>nodes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Nodes></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>[]</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>All nodes within the group</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>connections_incoming</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="Connection.html">Connection</a>></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>[]</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Incoming connections</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>connections_outgoing</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="Connection.html">Connection</a>></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>[]</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Outgoing connections</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>connections_self</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="Connection.html">Connection</a>></span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>[]</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Self connections</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_group.js.html">architecture/group.js</a>, <a href="architecture_group.js.html#line24">line 24</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="main-subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".activate"><span class="type-signature">(static) </span>activate
+    
+    <span class="signature mobile-break">(inputs)</span><span class="type-signature mobile-break"> &rarr; {Array.&lt;number>}</span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Activates all the nodes (neurons) in the group</p>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>inputs</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">Array.&lt;number></span>
+
+
+                
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>Array of inputs (numbers) for the group - <em>order matters.</em></p></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Squashed output values</p>
+</div>
+
+    
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>let { Group } = require("@liquid-carrot/carrot");
+
+let group = new Group(3);
+
+group.activate([1, 0, 1]);</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_group.js.html">architecture/group.js</a>, <a href="architecture_group.js.html#line38">line 38</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".clear"><span class="type-signature">(static) </span>clear
+    
+    <span class="signature mobile-break">()</span><span class="type-signature mobile-break"> &rarr; {<a href="Group.html">Group</a>}</span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Clear the context of the nodes in this group</p>
+</div>
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The group itself</p>
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_group.js.html">architecture/group.js</a>, <a href="architecture_group.js.html#line352">line 352</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".connect"><span class="type-signature">(static) </span>connect
+    
+    <span class="signature mobile-break">(target, method, weight)</span><span class="type-signature mobile-break"> &rarr; {Array.&lt;<a href="Connection.html">Connection</a>>}</span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Connects the nodes in this group to nodes in another group or just a node</p>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>target</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type"><a href="Group.html">Group</a></span>
+|
+
+<span class="param-type"><a href="Layer.html">Layer</a></span>
+|
+
+<span class="param-type"><a href="Node.html">Node</a></span>
+
+
+                
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>Node(s) to form connections to</p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>method</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type"><a href="connection_.html">connection</a></span>
+
+
+                
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p><a href="connection">Connection Method</a>, determines how the nodes in this group will connect to the target (e.g. one-to-one, all-to-all)</p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>weight</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">number</span>
+
+
+                
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>Weight of the connection(s)</p></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The formed connections</p>
+</div>
+
+    
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>let { Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_group.js.html">architecture/group.js</a>, <a href="architecture_group.js.html#line120">line 120</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".disconnect"><span class="type-signature">(static) </span>disconnect
+    
+    <span class="signature mobile-break">(target, twosided<span class="signature-attributes">opt</span>)</span><span class="type-signature mobile-break"></span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p><em>INCOMPLETE</em> Disconnects all nodes from this group from another given group/node.</p>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>target</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type"><a href="Group.html">Group</a></span>
+|
+
+<span class="param-type"><a href="Node.html">Node</a></span>
+
+
+                
+                
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+            
+                <td class="description last"><p>Node(s) to remove connections to/from</p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>twosided</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">boolean</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                    <code>false</code>
+                
+                </td>
+            
+            
+                <td class="description last"><p>Set to true, to disconnect both to and from connections simultaneously (applies to two-sided <a href="Connection">Connections</a> only)</p></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_group.js.html">architecture/group.js</a>, <a href="architecture_group.js.html#line310">line 310</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".gate"><span class="type-signature">(static) </span>gate
+    
+    <span class="signature mobile-break">(connections, method)</span><span class="type-signature mobile-break"></span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Make nodes from this group gate the given connection(s) between two other groups. You have to specify a <a href="gating">Gating Method</a></p>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>connections</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">Array.&lt;<a href="Connection.html">Connection</a>></span>
+|
+
+<span class="param-type"><a href="Connection.html">Connection</a></span>
+
+
+                
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>Connections to gate</p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>method</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type"><a href="gating.html">gating</a></span>
+
+
+                
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p><a href="gating">Gating Method</a></p></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_group.js.html">architecture/group.js</a>, <a href="architecture_group.js.html#line221">line 221</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".propagate"><span class="type-signature">(static) </span>propagate
+    
+    <span class="signature mobile-break">(target<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>)</span><span class="type-signature mobile-break"> &rarr; {Array.&lt;{responsibility: number, projected: number, gated: number}>}</span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Will backpropagate all the node in the group -- make sure the group receives input from another group or node.</p>
+<p><a href="https://www.willamette.edu/~gorr/classes/cs449/momrate.html">Momentum</a> adds a fraction of the previous weight update to the current one.
+If you combine a high learning rate with a lot of momentum, you will rush past the minimum with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).</p>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>target</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">number</span>
+|
+
+<span class="param-type">Array.&lt;number></span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>Ideal value(s) - <em>required for output nodes</em></p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            
+
+            
+                <td colspan="2" class="description last">
+                    
+                    <h6>Properties</h6>
+                    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>rate</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">number</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+            
+                <td class="description last"><p><a href="https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10">Learning rate</a></p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>momentum</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">number</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+            
+                <td class="description last"><p><a href="https://www.willamette.edu/~gorr/classes/cs449/momrate.html">Momentum</a> adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.</p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>update</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">boolean</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                    <code>true</code>
+                
+                </td>
+            
+            
+                <td class="description last"></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+                </td>
+            
+
+            
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The errors created by backpropagating</p>
+</div>
+
+    
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>let { Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(2);
+let B = new Group(3);
+
+// Connects group A to group B - creating a "little network"
+A.connect(B);
+
+// Activates the "little network"
+A.activate([1,0]);
+B.activate();
+
+// Teaches the network
+B.propagate([0,1,0.2]);
+A.propagate();</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_group.js.html">architecture/group.js</a>, <a href="architecture_group.js.html#line69">line 69</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".set"><span class="type-signature">(static) </span>set
+    
+    <span class="signature mobile-break">(values)</span><span class="type-signature mobile-break"></span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Sets the value of a property for every node</p>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>values</code></td>
+            
+
+            
+
+            
+                <td colspan="2" class="description last">
+                    <p>A configuration object</p>
+                    <h6>Properties</h6>
+                    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>bias</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">number</span>
+
+
+                
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p><a href="https://deepai.org/machine-learning-glossary-and-terms/bias-vector">Weight bias</a></p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>squash</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type"><a href="activation.html">activation</a></span>
+
+
+                
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p><a href="https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0">Activation function</a></p></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+                </td>
+            
+
+            
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint"><code>let { Group } = require("@liquid-carrot/carrot");
+
+var group = new Group(4);
+
+// All nodes in 'group' now have a bias of 1
+group.set({bias: 1});</code></pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_group.js.html">architecture/group.js</a>, <a href="architecture_group.js.html#line285">line 285</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+            
+
+        </div>
+        <div class="column is-hidden-touch"></div>
+    </div>
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Wed Jul 17 2019 20:10:34 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/jquery-3.1.1.min.js"></script>
+
+<script src="scripts/search.js"></script>
+
+
+
+
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+  heap.load("1195922815");
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Get all "navbar-burger" elements
+  const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+  // Check if there are any navbar burgers
+  if ($navbarBurgers.length > 0) {
+
+    // Add a click event on each of them
+    $navbarBurgers.forEach( el => {
+      el.addEventListener('click', () => {
+
+        // Get the target from the "data-target" attribute
+        const target = el.dataset.target;
+        const $target = document.getElementById(target);
+
+        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+        el.classList.toggle('is-active');
+        $target.classList.toggle('is-active');
+
+      });
+    });
+  }
+
+});
+</script>
+<script>prettyPrint();</script>
+</body>
+</html>
