@@ -10,7 +10,7 @@ const config = require(`./config`);
 * @constructs Neat
 *
 * @param {number} [inputs=1] Size of input layer of the networks in the population
-* @param {number} [outputs=1] Size of input layer of the networks in the population
+* @param {number} [outputs=1] Size of output layer of the networks in the population
 * @param {Array<{inputs:number[],outputs:number[]}>} [dataset] Dataset used to train networks in the population at first - _other sets of data can be passed to `neat.evolve()` after constuction_
 * @param {Object} options **Configuration Options**
 * @param {number} [options.population_size=50] Population size of each generation.
@@ -627,7 +627,7 @@ const Neat = function(inputs, outputs, dataset, options) {
   /**
    * Evaluates the current population, basically sets their `.score` property
    *
-   * @function evalute
+   * @function evaluate
    *
    * @memberof Neat
    *

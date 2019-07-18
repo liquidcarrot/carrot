@@ -37,7 +37,7 @@ function TestWorker (serialized_dataset, cost_function) {
   }
 
   const cost_is_standard = cost_function.name in standard_cost_functions;
-
+  
   // send the initialization (ie 'constructor') info
   this.worker.send({
       serialized_dataset: serialized_dataset,

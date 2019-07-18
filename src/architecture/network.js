@@ -1438,8 +1438,7 @@ function Network(input_size, output_size) {
 
           worker.evaluate(genome).then(function (result) {
             genome.score = -result;
-            genome.score -= (genome.nodes.length - genome.input_size - genome.output_size +
-              genome.connections.length + genome.gates.length) * options.growth;
+            genome.score -= (genome.nodes.length - genome.input_size - genome.output_size + genome.connections.length + genome.gates.length) * options.growth;
             genome.score = isNaN(parseFloat(result)) ? -Infinity : genome.score;
             start_worker(worker);
           });
