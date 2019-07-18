@@ -70,6 +70,7 @@
         
         <div class="navbar-dropdown">
           <a href='https://liquidcarrot.io/carrot/versions/0.2.27/' class="navbar-item">v0.2.27</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.2.28/' class="navbar-item">v0.2.28</a>
       <a href='https://liquidcarrot.io/carrot/' class="navbar-item">latest</a>
         </div>
       </div>
@@ -190,14 +191,32 @@
             
                 <h3>Example</h3>
                 
-    <pre class="prettyprint"><code>let { methods, Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.<ACTIVATION_FUNCTION>;
+
+// eg.
+A.squash = methods.activation.LOGISTIC;'>Copy</a>
+      <code data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.<ACTIVATION_FUNCTION>;
+
+// eg.
+A.squash = methods.activation.LOGISTIC;'>let { methods, Node } = require("@liquid-carrot/carrot");
 
 // Changing a neuron's activation function
 let A = new Node();
 A.squash = methods.activation.&lt;ACTIVATION_FUNCTION>;
 
 // eg.
-A.squash = methods.activation.LOGISTIC;</code></pre>
+A.squash = methods.activation.LOGISTIC;</code>
+    </pre>
+
 
             
         
@@ -354,11 +373,23 @@ A.squash = methods.activation.LOGISTIC;</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
 
 // Changing a neuron's activation function
 let A = new Node();
-A.squash = methods.activation.ABSOLUTE;</code></pre>
+A.squash = methods.activation.ABSOLUTE;'>Copy</a>
+      <code data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.ABSOLUTE;'>let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.ABSOLUTE;</code>
+    </pre>
+
 
 
 
@@ -550,11 +581,23 @@ A.squash = methods.activation.ABSOLUTE;</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
 
 // Changing a neuron's activation function
 let A = new Node();
-A.squash = methods.activation.BENT_IDENTITY;</code></pre>
+A.squash = methods.activation.BENT_IDENTITY;'>Copy</a>
+      <code data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.BENT_IDENTITY;'>let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.BENT_IDENTITY;</code>
+    </pre>
+
 
 
 
@@ -746,11 +789,23 @@ A.squash = methods.activation.BENT_IDENTITY;</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
 
 // Changing a neuron's activation function
 let A = new Node();
-A.squash = methods.activation.BIPOLAR;</code></pre>
+A.squash = methods.activation.BIPOLAR;'>Copy</a>
+      <code data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.BIPOLAR;'>let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.BIPOLAR;</code>
+    </pre>
+
 
 
 
@@ -942,11 +997,23 @@ A.squash = methods.activation.BIPOLAR;</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
 
 // Changing a neuron's activation function
 let A = new Node();
-A.squash = methods.activation.BIPOLAR_SIGMOID;</code></pre>
+A.squash = methods.activation.BIPOLAR_SIGMOID;'>Copy</a>
+      <code data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.BIPOLAR_SIGMOID;'>let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.BIPOLAR_SIGMOID;</code>
+    </pre>
+
 
 
 
@@ -1138,11 +1205,23 @@ A.squash = methods.activation.BIPOLAR_SIGMOID;</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
 
 // Changing a neuron's activation function
 let A = new Node();
-A.squash = methods.activation.GAUSSIAN;</code></pre>
+A.squash = methods.activation.GAUSSIAN;'>Copy</a>
+      <code data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.GAUSSIAN;'>let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.GAUSSIAN;</code>
+    </pre>
+
 
 
 
@@ -1334,11 +1413,23 @@ A.squash = methods.activation.GAUSSIAN;</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
 
 // Changing a neuron's activation function
 let A = new Node();
-A.squash = methods.activation.HARD_TANH;</code></pre>
+A.squash = methods.activation.HARD_TANH;'>Copy</a>
+      <code data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.HARD_TANH;'>let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.HARD_TANH;</code>
+    </pre>
+
 
 
 
@@ -1531,11 +1622,23 @@ A.squash = methods.activation.HARD_TANH;</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
 
 // Changing a neuron's activation function
 let A = new Node();
-A.squash = methods.activation.IDENTITY;</code></pre>
+A.squash = methods.activation.IDENTITY;'>Copy</a>
+      <code data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.IDENTITY;'>let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.IDENTITY;</code>
+    </pre>
+
 
 
 
@@ -1727,11 +1830,23 @@ A.squash = methods.activation.IDENTITY;</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
 
 // Changing a neuron's activation function
 let A = new Node();
-A.squash = methods.activation.INVERSE;</code></pre>
+A.squash = methods.activation.INVERSE;'>Copy</a>
+      <code data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.INVERSE;'>let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.INVERSE;</code>
+    </pre>
+
 
 
 
@@ -1923,11 +2038,23 @@ A.squash = methods.activation.INVERSE;</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
 
 // Changing a neuron's activation function
 let A = new Node();
-A.squash = methods.activation.LOGISTIC;</code></pre>
+A.squash = methods.activation.LOGISTIC;'>Copy</a>
+      <code data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.LOGISTIC;'>let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.LOGISTIC;</code>
+    </pre>
+
 
 
 
@@ -2119,11 +2246,23 @@ A.squash = methods.activation.LOGISTIC;</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
 
 // Changing a neuron's activation function
 let A = new Node();
-A.squash = methods.activation.RELU;</code></pre>
+A.squash = methods.activation.RELU;'>Copy</a>
+      <code data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.RELU;'>let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.RELU;</code>
+    </pre>
+
 
 
 
@@ -2316,11 +2455,23 @@ A.squash = methods.activation.RELU;</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
 
 // Changing a neuron's activation function
 let A = new Node();
-A.squash = methods.activation.SELU;</code></pre>
+A.squash = methods.activation.SELU;'>Copy</a>
+      <code data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.SELU;'>let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.SELU;</code>
+    </pre>
+
 
 
 
@@ -2519,11 +2670,23 @@ A.squash = methods.activation.SELU;</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
 
 // Changing a neuron's activation function
 let A = new Node();
-A.squash = methods.activation.SINUSOID;</code></pre>
+A.squash = methods.activation.SINUSOID;'>Copy</a>
+      <code data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.SINUSOID;'>let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.SINUSOID;</code>
+    </pre>
+
 
 
 
@@ -2715,11 +2878,23 @@ A.squash = methods.activation.SINUSOID;</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
 
 // Changing a neuron's activation function
 let A = new Node();
-A.squash = methods.activation.SOFTSIGN;</code></pre>
+A.squash = methods.activation.SOFTSIGN;'>Copy</a>
+      <code data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.SOFTSIGN;'>let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.SOFTSIGN;</code>
+    </pre>
+
 
 
 
@@ -2911,11 +3086,23 @@ A.squash = methods.activation.SOFTSIGN;</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
 
 // Changing a neuron's activation function
 let A = new Node();
-A.squash = methods.activation.STEP;</code></pre>
+A.squash = methods.activation.STEP;'>Copy</a>
+      <code data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.STEP;'>let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.STEP;</code>
+    </pre>
+
 
 
 
@@ -3107,11 +3294,23 @@ A.squash = methods.activation.STEP;</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { methods, Node } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
 
 // Changing a neuron's activation function
 let A = new Node();
-A.squash = methods.activation.TANH;</code></pre>
+A.squash = methods.activation.TANH;'>Copy</a>
+      <code data-clipboard-text='let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.TANH;'>let { methods, Node } = require("@liquid-carrot/carrot");
+
+// Changing a neuron's activation function
+let A = new Node();
+A.squash = methods.activation.TANH;</code>
+    </pre>
+
 
 
 
@@ -3195,7 +3394,7 @@ A.squash = methods.activation.TANH;</code></pre>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Thu Jul 18 2019 16:21:33 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Thu Jul 18 2019 16:51:36 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 <script src="scripts/linenumber.js"></script>
 
@@ -3236,6 +3435,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+</script>
+<script src="scripts/clipboard.min.js"></script>
+<script>
+  // example copying functionality
+  const clipboard = new ClipboardJS('code');
+  const clipboard_button = new ClipboardJS('.copy-button');
+
+  clipboard_button.on('success', (e) => {
+    e.trigger.innerText = "Copied!"
+  });
+
+  const copy_buttons = document.querySelectorAll(".copy-button");
+  
+  copy_buttons.forEach(function(btn) {
+    btn.addEventListener("mouseout", function(e) {
+      setTimeout(function() {
+        e.fromElement.innerText = "Copy"
+      }, 200);
+    });
+  });
 </script>
 <script>prettyPrint();</script>
 </body>

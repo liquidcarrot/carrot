@@ -70,6 +70,7 @@
         
         <div class="navbar-dropdown">
           <a href='https://liquidcarrot.io/carrot/versions/0.2.27/' class="navbar-item">v0.2.27</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.2.28/' class="navbar-item">v0.2.28</a>
       <a href='https://liquidcarrot.io/carrot/' class="navbar-item">latest</a>
         </div>
       </div>
@@ -243,13 +244,29 @@
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Network, architect } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network, architect } = require("@liquid-carrot/carrot");
 
 // Network with 2 input neurons and 1 output neuron
 let myNetwork = new Network(2, 1);
 
 // and a multi-layered network
-let myNetwork = new architect.Perceptron(5, 20, 10, 5, 1);</code></pre>
+let myNetwork = new architect.Perceptron(5, 20, 10, 5, 1);'>Copy</a>
+      <code data-clipboard-text='let { Network, architect } = require("@liquid-carrot/carrot");
+
+// Network with 2 input neurons and 1 output neuron
+let myNetwork = new Network(2, 1);
+
+// and a multi-layered network
+let myNetwork = new architect.Perceptron(5, 20, 10, 5, 1);'>let { Network, architect } = require("@liquid-carrot/carrot");
+
+// Network with 2 input neurons and 1 output neuron
+let myNetwork = new Network(2, 1);
+
+// and a multi-layered network
+let myNetwork = new architect.Perceptron(5, 20, 10, 5, 1);</code>
+    </pre>
+
 
 
 
@@ -667,12 +684,26 @@ let myNetwork = new architect.Perceptron(5, 20, 10, 5, 1);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network } = require("@liquid-carrot/carrot");
 
 // Create a network
 let myNetwork = new Network(3, 2);
 
-myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]</code></pre>
+myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]'>Copy</a>
+      <code data-clipboard-text='let { Network } = require("@liquid-carrot/carrot");
+
+// Create a network
+let myNetwork = new Network(3, 2);
+
+myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]'>let { Network } = require("@liquid-carrot/carrot");
+
+// Create a network
+let myNetwork = new Network(3, 2);
+
+myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]</code>
+    </pre>
+
 
 
 
@@ -1097,9 +1128,17 @@ myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network } = require("@liquid-carrot/carrot");
 
-myNetwork.connect(myNetwork.nodes[4], myNetwork.nodes[5]); // connects network node 4 to network node 5</code></pre>
+myNetwork.connect(myNetwork.nodes[4], myNetwork.nodes[5]); // connects network node 4 to network node 5'>Copy</a>
+      <code data-clipboard-text='let { Network } = require("@liquid-carrot/carrot");
+
+myNetwork.connect(myNetwork.nodes[4], myNetwork.nodes[5]); // connects network node 4 to network node 5'>let { Network } = require("@liquid-carrot/carrot");
+
+myNetwork.connect(myNetwork.nodes[4], myNetwork.nodes[5]); // connects network node 4 to network node 5</code>
+    </pre>
+
 
 
 
@@ -1330,14 +1369,32 @@ myNetwork.connect(myNetwork.nodes[4], myNetwork.nodes[5]); // connects network n
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Network, architect } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network, architect } = require("@liquid-carrot/carrot");
 
 // Initialise two parent networks
 let network1 = new architect.Perceptron(2, 4, 3);
 let network2 = new architect.Perceptron(2, 4, 5, 3);
 
 // Produce an offspring
-let network3 = Network.crossOver(network1, network2);</code></pre>
+let network3 = Network.crossOver(network1, network2);'>Copy</a>
+      <code data-clipboard-text='let { Network, architect } = require("@liquid-carrot/carrot");
+
+// Initialise two parent networks
+let network1 = new architect.Perceptron(2, 4, 3);
+let network2 = new architect.Perceptron(2, 4, 5, 3);
+
+// Produce an offspring
+let network3 = Network.crossOver(network1, network2);'>let { Network, architect } = require("@liquid-carrot/carrot");
+
+// Initialise two parent networks
+let network1 = new architect.Perceptron(2, 4, 3);
+let network2 = new architect.Perceptron(2, 4, 5, 3);
+
+// Produce an offspring
+let network3 = Network.crossOver(network1, network2);</code>
+    </pre>
+
 
 
 
@@ -1519,8 +1576,14 @@ let network3 = Network.crossOver(network1, network2);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>myNetwork.disconnect(myNetwork.nodes[4], myNetwork.nodes[5]);
-// now node 4 does not have an effect on the output of node 5 anymore</code></pre>
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='myNetwork.disconnect(myNetwork.nodes[4], myNetwork.nodes[5]);
+// now node 4 does not have an effect on the output of node 5 anymore'>Copy</a>
+      <code data-clipboard-text='myNetwork.disconnect(myNetwork.nodes[4], myNetwork.nodes[5]);
+// now node 4 does not have an effect on the output of node 5 anymore'>myNetwork.disconnect(myNetwork.nodes[4], myNetwork.nodes[5]);
+// now node 4 does not have an effect on the output of node 5 anymore</code>
+    </pre>
+
 
 
 
@@ -2823,7 +2886,8 @@ let network3 = Network.crossOver(network1, network2);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Network, methods } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network, methods } = require("@liquid-carrot/carrot");
 
 async function execute () {
    var network = new Network(2,1);
@@ -2867,7 +2931,98 @@ async function execute () {
    network.activate([1,1]); // -0.008
 }
 
-execute();</code></pre>
+execute();'>Copy</a>
+      <code data-clipboard-text='let { Network, methods } = require("@liquid-carrot/carrot");
+
+async function execute () {
+   var network = new Network(2,1);
+
+   // XOR dataset
+   var trainingSet = [
+       { input: [0,0], output: [0] },
+       { input: [0,1], output: [1] },
+       { input: [1,0], output: [1] },
+       { input: [1,1], output: [0] }
+   ];
+
+   await network.evolve(trainingSet, {
+       mutation: methods.mutation.FFW,
+       equal: true,
+       error: 0.05,
+       elitism: 5,
+       mutation_rate: 0.5
+   });
+
+   // another option
+   // await network.evolve(trainingSet, {
+   //     mutation: methods.mutation.FFW,
+   //     equal: true,
+   //     error: 0.05,
+   //     elitism: 5,
+   //     mutation_rate: 0.5,
+   //     cost: (targets, outputs) => {
+   //       const error = outputs.reduce(function(total, value, index) {
+   //         return total += Math.pow(targets[index] - outputs[index], 2);
+   //       }, 0);
+   //
+   //       return error / outputs.length;
+   //     }
+   // });
+
+
+   network.activate([0,0]); // 0.2413
+   network.activate([0,1]); // 1.0000
+   network.activate([1,0]); // 0.7663
+   network.activate([1,1]); // -0.008
+}
+
+execute();'>let { Network, methods } = require("@liquid-carrot/carrot");
+
+async function execute () {
+   var network = new Network(2,1);
+
+   // XOR dataset
+   var trainingSet = [
+       { input: [0,0], output: [0] },
+       { input: [0,1], output: [1] },
+       { input: [1,0], output: [1] },
+       { input: [1,1], output: [0] }
+   ];
+
+   await network.evolve(trainingSet, {
+       mutation: methods.mutation.FFW,
+       equal: true,
+       error: 0.05,
+       elitism: 5,
+       mutation_rate: 0.5
+   });
+
+   // another option
+   // await network.evolve(trainingSet, {
+   //     mutation: methods.mutation.FFW,
+   //     equal: true,
+   //     error: 0.05,
+   //     elitism: 5,
+   //     mutation_rate: 0.5,
+   //     cost: (targets, outputs) => {
+   //       const error = outputs.reduce(function(total, value, index) {
+   //         return total += Math.pow(targets[index] - outputs[index], 2);
+   //       }, 0);
+   //
+   //       return error / outputs.length;
+   //     }
+   // });
+
+
+   network.activate([0,0]); // 0.2413
+   network.activate([0,1]); // 1.0000
+   network.activate([1,0]); // 0.7663
+   network.activate([1,1]); // -0.008
+}
+
+execute();</code>
+    </pre>
+
 
 
 
@@ -3023,10 +3178,20 @@ execute();</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network } = require("@liquid-carrot/carrot");
 
 let exported = myNetwork.toJSON();
-let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork</code></pre>
+let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork'>Copy</a>
+      <code data-clipboard-text='let { Network } = require("@liquid-carrot/carrot");
+
+let exported = myNetwork.toJSON();
+let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork'>let { Network } = require("@liquid-carrot/carrot");
+
+let exported = myNetwork.toJSON();
+let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork</code>
+    </pre>
+
 
 
 
@@ -3201,10 +3366,20 @@ let imported = Network.fromJSON(exported) // imported will be a new instance of 
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network } = require("@liquid-carrot/carrot");
 
 myNetwork.gate(myNetwork.nodes[1], myNetwork.connections[5])
-// now: connection 5's weight is multiplied with node 1's activaton</code></pre>
+// now: connection 5's weight is multiplied with node 1's activaton'>Copy</a>
+      <code data-clipboard-text='let { Network } = require("@liquid-carrot/carrot");
+
+myNetwork.gate(myNetwork.nodes[1], myNetwork.connections[5])
+// now: connection 5's weight is multiplied with node 1's activaton'>let { Network } = require("@liquid-carrot/carrot");
+
+myNetwork.gate(myNetwork.nodes[1], myNetwork.connections[5])
+// now: connection 5's weight is multiplied with node 1's activaton</code>
+    </pre>
+
 
 
 
@@ -3565,13 +3740,29 @@ myNetwork.gate(myNetwork.nodes[1], myNetwork.connections[5])
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Network, architect } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network, architect } = require("@liquid-carrot/carrot");
 
 let XOR = architect.Perceptron(2,4,1); // assume this is a trained XOR
 let NOT = architect.Perceptron(1,2,1); // assume this is a trained NOT
 
 // combining these will create an XNOR
-let XNOR = Network.merge(XOR, NOT);</code></pre>
+let XNOR = Network.merge(XOR, NOT);'>Copy</a>
+      <code data-clipboard-text='let { Network, architect } = require("@liquid-carrot/carrot");
+
+let XOR = architect.Perceptron(2,4,1); // assume this is a trained XOR
+let NOT = architect.Perceptron(1,2,1); // assume this is a trained NOT
+
+// combining these will create an XNOR
+let XNOR = Network.merge(XOR, NOT);'>let { Network, architect } = require("@liquid-carrot/carrot");
+
+let XOR = architect.Perceptron(2,4,1); // assume this is a trained XOR
+let NOT = architect.Perceptron(1,2,1); // assume this is a trained NOT
+
+// combining these will create an XNOR
+let XNOR = Network.merge(XOR, NOT);</code>
+    </pre>
+
 
 
 
@@ -3727,9 +3918,17 @@ let XNOR = Network.merge(XOR, NOT);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network } = require("@liquid-carrot/carrot");
 
-myNetwork.mutate(mutation.ADD_GATE) // a random node will gate a random connection within the network</code></pre>
+myNetwork.mutate(mutation.ADD_GATE) // a random node will gate a random connection within the network'>Copy</a>
+      <code data-clipboard-text='let { Network } = require("@liquid-carrot/carrot");
+
+myNetwork.mutate(mutation.ADD_GATE) // a random node will gate a random connection within the network'>let { Network } = require("@liquid-carrot/carrot");
+
+myNetwork.mutate(mutation.ADD_GATE) // a random node will gate a random connection within the network</code>
+    </pre>
+
 
 
 
@@ -3885,12 +4084,26 @@ myNetwork.mutate(mutation.ADD_GATE) // a random node will gate a random connecti
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network } = require("@liquid-carrot/carrot");
 
 // Create a network
 let myNetwork = new Network(3, 2);
 
-myNetwork.noTraceActivate([0.8, 1, 0.21]); // gives: [0.49, 0.51]</code></pre>
+myNetwork.noTraceActivate([0.8, 1, 0.21]); // gives: [0.49, 0.51]'>Copy</a>
+      <code data-clipboard-text='let { Network } = require("@liquid-carrot/carrot");
+
+// Create a network
+let myNetwork = new Network(3, 2);
+
+myNetwork.noTraceActivate([0.8, 1, 0.21]); // gives: [0.49, 0.51]'>let { Network } = require("@liquid-carrot/carrot");
+
+// Create a network
+let myNetwork = new Network(3, 2);
+
+myNetwork.noTraceActivate([0.8, 1, 0.21]); // gives: [0.49, 0.51]</code>
+    </pre>
+
 
 
 
@@ -4046,9 +4259,17 @@ myNetwork.noTraceActivate([0.8, 1, 0.21]); // gives: [0.49, 0.51]</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>const network = new architect.Perceptron(2,3,1)
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const network = new architect.Perceptron(2,3,1)
 
-network.possible(mutation.SUB_NODE) // returns an array of nodes that can be removed</code></pre>
+network.possible(mutation.SUB_NODE) // returns an array of nodes that can be removed'>Copy</a>
+      <code data-clipboard-text='const network = new architect.Perceptron(2,3,1)
+
+network.possible(mutation.SUB_NODE) // returns an array of nodes that can be removed'>const network = new architect.Perceptron(2,3,1)
+
+network.possible(mutation.SUB_NODE) // returns an array of nodes that can be removed</code>
+    </pre>
+
 
 
 
@@ -4196,12 +4417,26 @@ network.possible(mutation.SUB_NODE) // returns an array of nodes that can be rem
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Network, architect } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network, architect } = require("@liquid-carrot/carrot");
 
 let myNetwork = new architect.Perceptron(1,4,1);
 
 // Remove a node
-myNetwork.remove(myNetwork.nodes[2]);</code></pre>
+myNetwork.remove(myNetwork.nodes[2]);'>Copy</a>
+      <code data-clipboard-text='let { Network, architect } = require("@liquid-carrot/carrot");
+
+let myNetwork = new architect.Perceptron(1,4,1);
+
+// Remove a node
+myNetwork.remove(myNetwork.nodes[2]);'>let { Network, architect } = require("@liquid-carrot/carrot");
+
+let myNetwork = new architect.Perceptron(1,4,1);
+
+// Remove a node
+myNetwork.remove(myNetwork.nodes[2]);</code>
+    </pre>
+
 
 
 
@@ -4376,12 +4611,26 @@ myNetwork.remove(myNetwork.nodes[2]);</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Network, architect } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network, architect } = require("@liquid-carrot/carrot");
 
 var network = new architect.Random(4, 4, 1);
 
 // All nodes in 'network' now have a bias of 1
-network.set({bias: 1});</code></pre>
+network.set({bias: 1});'>Copy</a>
+      <code data-clipboard-text='let { Network, architect } = require("@liquid-carrot/carrot");
+
+var network = new architect.Random(4, 4, 1);
+
+// All nodes in 'network' now have a bias of 1
+network.set({bias: 1});'>let { Network, architect } = require("@liquid-carrot/carrot");
+
+var network = new architect.Random(4, 4, 1);
+
+// All nodes in 'network' now have a bias of 1
+network.set({bias: 1});</code>
+    </pre>
+
 
 
 
@@ -4486,7 +4735,8 @@ network.set({bias: 1});</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Network, architect } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network, architect } = require("@liquid-carrot/carrot");
 
 var myNetwork = new architect.Perceptron(2,4,1);
 myNetwork.activate([0,1]); // [0.24775789809]
@@ -4498,7 +4748,34 @@ var standalone = myNetwork.standalone();
 eval(standalone);
 
 // calls the standalone function
-activate([0,1]);// [0.24775789809]</code></pre>
+activate([0,1]);// [0.24775789809]'>Copy</a>
+      <code data-clipboard-text='let { Network, architect } = require("@liquid-carrot/carrot");
+
+var myNetwork = new architect.Perceptron(2,4,1);
+myNetwork.activate([0,1]); // [0.24775789809]
+
+// a string
+var standalone = myNetwork.standalone();
+
+// turns your network into an 'activate' function
+eval(standalone);
+
+// calls the standalone function
+activate([0,1]);// [0.24775789809]'>let { Network, architect } = require("@liquid-carrot/carrot");
+
+var myNetwork = new architect.Perceptron(2,4,1);
+myNetwork.activate([0,1]); // [0.24775789809]
+
+// a string
+var standalone = myNetwork.standalone();
+
+// turns your network into an 'activate' function
+eval(standalone);
+
+// calls the standalone function
+activate([0,1]);// [0.24775789809]</code>
+    </pre>
+
 
 
 
@@ -4807,10 +5084,20 @@ activate([0,1]);// [0.24775789809]</code></pre>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Network } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network } = require("@liquid-carrot/carrot");
 
 let exported = myNetwork.toJSON();
-let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork</code></pre>
+let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork'>Copy</a>
+      <code data-clipboard-text='let { Network } = require("@liquid-carrot/carrot");
+
+let exported = myNetwork.toJSON();
+let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork'>let { Network } = require("@liquid-carrot/carrot");
+
+let exported = myNetwork.toJSON();
+let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork</code>
+    </pre>
+
 
 
 
@@ -5620,7 +5907,8 @@ let imported = Network.fromJSON(exported) // imported will be a new instance of 
     
         <p class="code-caption">Training with Defaults</p>
     
-    <pre class="prettyprint"><code>let { Network, architect } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network, architect } = require("@liquid-carrot/carrot");
 
 let network = new architect.Perceptron(2,4,1);
 
@@ -5630,11 +5918,34 @@ network.train([{ input: [0,0], output: [0] },
                { input: [1,0], output: [1] },
                { input: [1,1], output: [0] }]);
 
-network.activate([0,1]); // 0.9824...</code></pre>
+network.activate([0,1]); // 0.9824...'>Copy</a>
+      <code data-clipboard-text='let { Network, architect } = require("@liquid-carrot/carrot");
+
+let network = new architect.Perceptron(2,4,1);
+
+// Train the XOR gate
+network.train([{ input: [0,0], output: [0] },
+               { input: [0,1], output: [1] },
+               { input: [1,0], output: [1] },
+               { input: [1,1], output: [0] }]);
+
+network.activate([0,1]); // 0.9824...'>let { Network, architect } = require("@liquid-carrot/carrot");
+
+let network = new architect.Perceptron(2,4,1);
+
+// Train the XOR gate
+network.train([{ input: [0,0], output: [0] },
+               { input: [0,1], output: [1] },
+               { input: [1,0], output: [1] },
+               { input: [1,1], output: [0] }]);
+
+network.activate([0,1]); // 0.9824...</code>
+    </pre>
 
         <p class="code-caption">Training with Options</p>
     
-    <pre class="prettyprint"><code>let { Network, architect } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network, architect } = require("@liquid-carrot/carrot");
 
 let network = new architect.Perceptron(2,4,1);
 
@@ -5651,11 +5962,48 @@ network.train(trainingSet, {
    iterations: 1000,
    error: 0.0001,
    rate: 0.2
-});</code></pre>
+});'>Copy</a>
+      <code data-clipboard-text='let { Network, architect } = require("@liquid-carrot/carrot");
+
+let network = new architect.Perceptron(2,4,1);
+
+let trainingSet = [
+   { input: [0,0], output: [0] },
+   { input: [0,1], output: [1] },
+   { input: [1,0], output: [1] },
+   { input: [1,1], output: [0] }
+];
+
+// Train the XNOR gate
+network.train(trainingSet, {
+   log: 1,
+   iterations: 1000,
+   error: 0.0001,
+   rate: 0.2
+});'>let { Network, architect } = require("@liquid-carrot/carrot");
+
+let network = new architect.Perceptron(2,4,1);
+
+let trainingSet = [
+   { input: [0,0], output: [0] },
+   { input: [0,1], output: [1] },
+   { input: [1,0], output: [1] },
+   { input: [1,1], output: [0] }
+];
+
+// Train the XNOR gate
+network.train(trainingSet, {
+   log: 1,
+   iterations: 1000,
+   error: 0.0001,
+   rate: 0.2
+});</code>
+    </pre>
 
         <p class="code-caption">Cross Validation Example</p>
     
-    <pre class="prettyprint"><code>let { Network, architect } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network, architect } = require("@liquid-carrot/carrot");
 
 let network = new architect.Perceptron(2,4,1);
 
@@ -5673,7 +6021,46 @@ network.train(trainingSet, {
      testSize: 0.4,
      test_error: 0.02
    }
-});</code></pre>
+});'>Copy</a>
+      <code data-clipboard-text='let { Network, architect } = require("@liquid-carrot/carrot");
+
+let network = new architect.Perceptron(2,4,1);
+
+let trainingSet = [ // PS: don't use cross validation for small sets, this is just an example
+ { input: [0,0], output: [1] },
+ { input: [0,1], output: [0] },
+ { input: [1,0], output: [0] },
+ { input: [1,1], output: [1] }
+];
+
+// Train the XNOR gate
+network.train(trainingSet, {
+ crossValidate:
+   {
+     testSize: 0.4,
+     test_error: 0.02
+   }
+});'>let { Network, architect } = require("@liquid-carrot/carrot");
+
+let network = new architect.Perceptron(2,4,1);
+
+let trainingSet = [ // PS: don't use cross validation for small sets, this is just an example
+ { input: [0,0], output: [1] },
+ { input: [0,1], output: [0] },
+ { input: [1,0], output: [0] },
+ { input: [1,1], output: [1] }
+];
+
+// Train the XNOR gate
+network.train(trainingSet, {
+ crossValidate:
+   {
+     testSize: 0.4,
+     test_error: 0.02
+   }
+});</code>
+    </pre>
+
 
 
 
@@ -5821,7 +6208,8 @@ network.train(trainingSet, {
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>let { Network, architect } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Network, architect } = require("@liquid-carrot/carrot");
 
 let myNetwork = new architect.Perceptron(1, 4, 2);
 
@@ -5829,7 +6217,26 @@ let myNetwork = new architect.Perceptron(1, 4, 2);
 myNetwork.gate(myNetwork.nodes[2], myNetwork.connections[5]);
 
 // Remove the gate from the connection
-myNetwork.ungate(myNetwork.connections[5]);</code></pre>
+myNetwork.ungate(myNetwork.connections[5]);'>Copy</a>
+      <code data-clipboard-text='let { Network, architect } = require("@liquid-carrot/carrot");
+
+let myNetwork = new architect.Perceptron(1, 4, 2);
+
+// Gate a connection
+myNetwork.gate(myNetwork.nodes[2], myNetwork.connections[5]);
+
+// Remove the gate from the connection
+myNetwork.ungate(myNetwork.connections[5]);'>let { Network, architect } = require("@liquid-carrot/carrot");
+
+let myNetwork = new architect.Perceptron(1, 4, 2);
+
+// Gate a connection
+myNetwork.gate(myNetwork.nodes[2], myNetwork.connections[5]);
+
+// Remove the gate from the connection
+myNetwork.ungate(myNetwork.connections[5]);</code>
+    </pre>
+
 
 
 
@@ -5913,7 +6320,7 @@ myNetwork.ungate(myNetwork.connections[5]);</code></pre>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Thu Jul 18 2019 16:21:34 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Thu Jul 18 2019 16:51:36 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 <script src="scripts/linenumber.js"></script>
 
@@ -5954,6 +6361,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+</script>
+<script src="scripts/clipboard.min.js"></script>
+<script>
+  // example copying functionality
+  const clipboard = new ClipboardJS('code');
+  const clipboard_button = new ClipboardJS('.copy-button');
+
+  clipboard_button.on('success', (e) => {
+    e.trigger.innerText = "Copied!"
+  });
+
+  const copy_buttons = document.querySelectorAll(".copy-button");
+  
+  copy_buttons.forEach(function(btn) {
+    btn.addEventListener("mouseout", function(e) {
+      setTimeout(function() {
+        e.fromElement.innerText = "Copy"
+      }, 200);
+    });
+  });
 </script>
 <script>prettyPrint();</script>
 </body>

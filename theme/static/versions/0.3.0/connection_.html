@@ -70,6 +70,7 @@
         
         <div class="navbar-dropdown">
           <a href='https://liquidcarrot.io/carrot/versions/0.2.27/' class="navbar-item">v0.2.27</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.2.28/' class="navbar-item">v0.2.28</a>
       <a href='https://liquidcarrot.io/carrot/' class="navbar-item">latest</a>
         </div>
       </div>
@@ -180,20 +181,45 @@
                 
         <p class="code-caption">Connection between two Groups</p>
     
-    <pre class="prettyprint"><code>let { methods, Group } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
 
 let A = new Group(4);
 let B = new Group(5);
 
-A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional</code></pre>
+A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional'>Copy</a>
+      <code data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional'>let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional</code>
+    </pre>
 
         <p class="code-caption">Group connection with itself</p>
     
-    <pre class="prettyprint"><code>let { methods, Group } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
 
 let A = new Group(4);
 
-A.connect(A, methods.connection.ALL_TO_ALL);</code></pre>
+A.connect(A, methods.connection.ALL_TO_ALL);'>Copy</a>
+      <code data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+
+A.connect(A, methods.connection.ALL_TO_ALL);'>let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+
+A.connect(A, methods.connection.ALL_TO_ALL);</code>
+    </pre>
+
 
             
         
@@ -246,12 +272,26 @@ A.connect(A, methods.connection.ALL_TO_ALL);</code></pre>
     
         <p class="code-caption">Connection between two Groups</p>
     
-    <pre class="prettyprint"><code>let { methods, Group } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
 
 let A = new Group(4);
 let B = new Group(5);
 
-A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional</code></pre>
+A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional'>Copy</a>
+      <code data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional'>let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional</code>
+    </pre>
+
 
 
 
@@ -335,12 +375,26 @@ A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional<
     
         <p class="code-caption">Connection between two Groups</p>
     
-    <pre class="prettyprint"><code>let { methods, Group } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
 
 let A = new Group(4);
 let B = new Group(5);
 
-A.connect(B, methods.connection.ALL_TO_ELSE); // specifying a method is optional</code></pre>
+A.connect(B, methods.connection.ALL_TO_ELSE); // specifying a method is optional'>Copy</a>
+      <code data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(B, methods.connection.ALL_TO_ELSE); // specifying a method is optional'>let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(B, methods.connection.ALL_TO_ELSE); // specifying a method is optional</code>
+    </pre>
+
 
 
 
@@ -424,12 +478,26 @@ A.connect(B, methods.connection.ALL_TO_ELSE); // specifying a method is optional
     
         <p class="code-caption">Connection between two Groups</p>
     
-    <pre class="prettyprint"><code>let { methods, Group } = require("@liquid-carrot/carrot");
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
 
 let A = new Group(4);
 let B = new Group(5);
 
-A.connect(A, methods.connection.ONE_TO_ONE); // specifying a method is optional</code></pre>
+A.connect(A, methods.connection.ONE_TO_ONE); // specifying a method is optional'>Copy</a>
+      <code data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(A, methods.connection.ONE_TO_ONE); // specifying a method is optional'>let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(A, methods.connection.ONE_TO_ONE); // specifying a method is optional</code>
+    </pre>
+
 
 
 
@@ -508,7 +576,7 @@ A.connect(A, methods.connection.ONE_TO_ONE); // specifying a method is optional<
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Thu Jul 18 2019 16:21:33 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.1</a> on Thu Jul 18 2019 16:51:36 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 <script src="scripts/linenumber.js"></script>
 
@@ -549,6 +617,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
 });
+</script>
+<script src="scripts/clipboard.min.js"></script>
+<script>
+  // example copying functionality
+  const clipboard = new ClipboardJS('code');
+  const clipboard_button = new ClipboardJS('.copy-button');
+
+  clipboard_button.on('success', (e) => {
+    e.trigger.innerText = "Copied!"
+  });
+
+  const copy_buttons = document.querySelectorAll(".copy-button");
+  
+  copy_buttons.forEach(function(btn) {
+    btn.addEventListener("mouseout", function(e) {
+      setTimeout(function() {
+        e.fromElement.innerText = "Copy"
+      }, 200);
+    });
+  });
 </script>
 <script>prettyPrint();</script>
 </body>
