@@ -1,5 +1,5 @@
 const _ = require(`lodash`);
-const parameter = require(`./util/parameter`);
+// const parameter = require(`./util/parameter`);
 const Network = require(`./architecture/network`);
 const methods = require(`./methods/methods`);
 const config = require(`./config`);
@@ -118,6 +118,7 @@ const Neat = function(inputs, outputs, dataset, options) {
   // new Neat(input, output, dataset, options)
   inputs = inputs || 1;
   outputs = outputs || 1;
+  dataset = dataset || [];
   options = _.defaultsDeep(options, Neat.default.options);
   options.template = options.template || new Network(inputs, outputs);
 
@@ -154,8 +155,8 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    * @memberof Neat
    *
-   * @param {Network} network - Template network used to create population - _other networks will be "identical twins"_
-   * @param {number} size - Number of network in created population - _how many identical twins created in new population_
+   * @param {Network} [network] - Template network used to create population - _other networks will be "identical twins"_ - _will use `this.template`, if `network` is not defined_
+   * @param {number} [size=50] - Number of network in created population - _how many identical twins created in new population_
    *
    * @returns {Network[]} Returns an array of networks
    */
@@ -187,17 +188,48 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    * @memberof Neat
    *
-   * @param {network[]} population An array (population) of genomes (networks)
-   * @param {network} [new_network] Replaces networks from
-   * @param {function} [select]
-   * @param {function} [transform] A function to change genomes with, takes a genome as a parameter
+   * @param {Network[]} [population] An array (population) of genomes (networks)
+   * @param {number|Network|Function} [filter] An index, network, or function used to pick out replaceable genome(s) from the population - _invoked `filter(network, index, population)`_
+   * @param {Network|Function} [transform] A network used to replace filtered genomes or a function used to mutate filtered genomes - _invoked `transform(network, index, population)`_
+   *
+   * @return {Network[]} Returns the new genome
    */
-  self.replace = function replace_selected_genomes(population, template, select, transform) {
-    const filtered = []
-
-    for(let index = 0; index < population.length; index++) {
-      if(select(population[index])) filtered.push(transform ? transform(population[index]) : population[index]);
+  self.replace = function(population, filter, transform) {
+    if(population == undefined && filter == undefined && transform == undefined) throw new ReferenceError("Missing required parameter 'transform'")
+    
+    function _transform(t) {
+      const transformer = t instanceof Network ? (() => t) : typeof t === "function" ? t : new TypeError(`Expected ${t} to be a {Network|Function}`);
+      return transformer;
     }
+    function _filter(f) {
+      const filter = Number.isFinite(f) ? (network, index, population) => index === f
+        : f instanceof Network ? (network, index, population) => network === f
+        : typeof f === "function" ? f
+        : f == undefined ? () => true
+        : new TypeError(`Expected ${t} to be a {Number|Network|Function|undefined}`);
+      return filter;
+    }
+    
+    if (filter == undefined && transform == undefined) {
+      transform = _transform(population);
+      filter = _filter();
+      population = self.population;
+    }
+    else if (transform == undefined) {
+      transform = _transform(filter);
+      filter = _filter(population);
+      population = self.population;
+    } else {
+      transform = _transform(transform);
+      filter = _filter(filter);
+      population = population || self.population;
+    }
+    
+    const filtered = [...self.population];
+
+    for (let genome = 0; genome < population.length; genome++)
+      if (filter(population[genome], genome, population))
+        filtered[genome] = transform(population[genome], genome, population);
 
     return filtered;
   };
@@ -245,6 +277,35 @@ const Neat = function(inputs, outputs, dataset, options) {
   };
 
   /**
+   * Mutates the given (or current) population
+   *
+   * @function mutate
+   *
+   * @memberof Neat
+   *
+   * @param {mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
+   */
+  self.mutate = function mutate_population(method) {
+    if (method) {
+      for (let i = 0; i < self.population.length; i++) { // Elitist genomes should not be included
+        if (Math.random() <= self.mutation_rate) {
+          for (let j = 0; j < self.mutation_amount; j++) {
+            self.population[i].mutate(method);
+          }
+        }
+      }
+    } else {
+      for (let i = 0; i < self.population.length; i++) { // Elitist genomes should not be included
+        if (Math.random() <= self.mutation_rate) {
+          for (let j = 0; j < self.mutation_amount; j++) {
+            self.mutateRandom(self.population[i], self.mutation);
+          }
+        }
+      }
+    }
+  };
+  
+  /**
    * Evaluates, selects, breeds and mutates population
    *
    * @memberof Neat
@@ -252,10 +313,10 @@ const Neat = function(inputs, outputs, dataset, options) {
    * @alias evolve
    *
    * @param {Array<{input:number[],output:number[]}>} [evolve_dataset=dataset] A set to be used for evolving the population, if none is provided the dataset passed to Neat on creation will be used.
-   * @param {function} [pickGenome] A custom selection function to pick out unwanted genomes. Accepts a network as a parameter and returns true for selection.
-   * @param {function} [adjustGenome=this.template] Accepts a network, modifies it, and returns it. Used to modify unwanted genomes returned by `pickGenome` and reincorporate them into the population. If left unset, unwanted genomes will be replaced with the template Network. Will only run when pickGenome is defined.
+   * @param {Object} [options]
+   * @param {boolean} [options.networks=false] Iff `options.networks === true` `neat.evolve()` will return networks, instead of their performance
    *
-   * @returns {Network} Fittest network
+   * @returns {{ "best": {number}, "average": {number}, "worst": {number}}|{ "best": {Network}, "average": {Network}, "worst": {Network}} Returns
    *
    * @example
    *
@@ -292,7 +353,120 @@ const Neat = function(inputs, outputs, dataset, options) {
    * neat.evolve(null, filter, adjust)
    *
    */
-  self.evolve = async function(evolve_dataset, pickGenome, adjustGenome) {
+  self.evolve = async function(evolve_dataset, pickGenome, filterGenome) {
+    /*
+    // // Check if evolve is possible
+    // if (self.elitism + self.provenance > self.population_size) throw new Error("Can`t evolve! Elitism + provenance exceeds population size!");
+
+    // dataset = dataset || self.dataset;
+    
+    
+    // // Reset the scores
+    // for (let i = 0; i < self.population.length; i++) self.population[i].score = undefined;
+
+    // // Check population for evaluation
+    // // if (typeof self.population[self.population.length - 1].score === `undefined`)
+    // await self.evaluate(dataset);
+    
+    // console.log(self.population[0].score);
+
+    // // Sort in order of fitness (fittest first)
+    // self.sort();
+
+    // // Elitism, assumes population is sorted by fitness
+    // const elitists = [];
+    // for (let i = 0; i < self.elitism; i++) elitists.push(self.population[i]);
+
+    // // Provenance
+    // const new_population = Array(self.provenance).fill(Network.fromJSON(self.template.toJSON()))
+
+    // // Breed the next individuals
+    // for (let i = 0; i < self.population_size - self.elitism - self.provenance; i++)
+    //   new_population.push(self.getOffspring());
+
+    // // Replace the old population with the new population
+    // self.population = new_population;
+
+    // // Mutate the new population
+    // self.mutate();
+
+    // // Add the elitists
+    // self.population.push(...elitists);
+
+    // // evaluate the population
+    // await self.evaluate(dataset);
+
+    // // Sort in order of fitness (fittest first)
+    // self.sort()
+
+    // const fittest = Network.fromJSON(self.population[0].toJSON());
+    // fittest.score = self.population[0].score;
+
+    // const best = Network.fromJSON(self.population[0].toJSON());
+    // best.score = self.population[0].score
+    // const worst = Network.fromJSON(self.population[self.population.length - 1].toJSON());
+    // worst.score = self.population[self.population.length - 1].score
+    // const median = Network.fromJSON(self.population[Math.floor(self.population.length / 2)].toJSON());
+    // median.score = self.population[Math.floor(self.population.length / 2)].score
+
+
+    // self.generation++;
+
+    // if (options && options.networks) {
+    //   return { best, median, worst }
+    // } else {
+    //   return {
+    //     best: best.score,
+    //     median: median.score,
+    //     worst: worst.score
+    //   }
+    // }
+    
+    //==========================================================
+    
+    // console.log(dataset);
+    // console.log(options);
+    
+    // if (options == undefined && !Array.isArray(dataset) && typeof dataset === "object") {
+    //   options = dataset;
+    //   dataset = self.dataset;
+    // }
+    
+    // options = options || {};
+    // dataset = dataset || self.dataset || [];
+    
+    
+    // console.log(dataset);
+    // console.log(options);
+    
+    // console.log(dataset == undefined);
+    // console.log(!dataset.length);
+    
+    // if (dataset == undefined || !dataset.length) throw new ReferenceError("'dataset' was not passed to 'neat.evolve()' or 'new Neat'");
+    
+    
+    
+    // for (let index = 0; index < self.population.length; index++) {
+    //   await self.population[index].evolve(dataset);
+    // }
+    
+    // const best = self.population[0];
+    // const worst = self.population[self.population.length - 1];
+    // const median = self.population[Math.floor(self.population.length / 2)];
+    
+    // if (options && options.networks) {
+    //   return { best, median, worst }
+    // } else {
+    //   return {
+    //     best: best.score,
+    //     median: median.score,
+    //     worst: worst.score
+    //   }
+    // }
+    
+    //==========================================================
+    */
+    
     // Check if evolve is possible
     if (self.elitism + self.provenance > self.population_size) {
       throw new Error(`Can't evolve! Elitism + provenance exceeds population size!`);
@@ -451,42 +625,18 @@ const Neat = function(inputs, outputs, dataset, options) {
   };
 
   /**
-   * Mutates the given (or current) population
-   *
-   * @function mutate
-   *
-   * @memberof Neat
-   *
-   * @param {mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
-   */
-  self.mutate = function mutate_population(method) {
-    if (method) {
-      for (let i = 0; i < self.population.length; i++) { // Elitist genomes should not be included
-        if (Math.random() <= self.mutation_rate) {
-          for (let j = 0; j < self.mutation_amount; j++) {
-            self.population[i].mutate(method);
-          }
-        }
-      }
-    } else {
-      for (let i = 0; i < self.population.length; i++) { // Elitist genomes should not be included
-        if (Math.random() <= self.mutation_rate) {
-          for (let j = 0; j < self.mutation_amount; j++) {
-            self.mutateRandom(self.population[i], self.mutation);
-          }
-        }
-      }
-    }
-  };
-
-  /**
    * Evaluates the current population, basically sets their `.score` property
    *
    * @function evaluate
    *
    * @memberof Neat
    *
-   * @return {Network} Fittest Network
+   * @param {Object[]} [dataset]
+   * @param {Object} [options]
+   * @param {boolean} [options.clear=false]
+   * @param {boolean} [options.networks=false]
+   *
+   * @return {{ "best": {number|Network}, "average": {number|Network}, "worst": {number|Network} }} Return the performance metrics/benchmarks of the networks - _returns networks iff `options.networks === true`_
    */
   self.evaluate = async function (dataset) {
     dataset = dataset || self.dataset;

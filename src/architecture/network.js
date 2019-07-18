@@ -5,6 +5,7 @@ const methods = require("../methods/methods");
 const Connection = require("./connection");
 const config = require("../config");
 const Node = require("./node");
+const Group = require("./group")
 
 // Easier variable naming
 const mutation = methods.mutation;
@@ -21,11 +22,9 @@ const mutation = methods.mutation;
 *
 * @prop {number} input_size Size of input layer AKA neurons in input layer
 * @prop {number} output_size Size of output layer AKA neurons in output layer
-* @prop {number} dropout [Dropout rate](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5) likelihood for any given neuron to be ignored during network training. Must be between zero and one, numbers closer to one will result in more neurons ignored.
 * @prop {Array<Node>} nodes Nodes currently within the network
 * @prop {Array<Node>} gates Gates within the network
 * @prop {Array<Connection>} connections Connections within the network
-* @prop {Array<Connection>} selfconns Self-connections within the network
 *
 * @example
 * let { Network, architect } = require("@liquid-carrot/carrot");
@@ -37,7 +36,7 @@ const mutation = methods.mutation;
 * let myNetwork = new architect.Perceptron(5, 20, 10, 5, 1);
 */
 function Network(input_size, output_size) {
-  if (typeof input_size === `undefined` || typeof output_size === `undefined`) throw new Error(`No input or output size given`);
+  if (typeof input_size === `undefined` || typeof output_size === `undefined`) throw new TypeError(`No input or output size given`);
 
   const self = this;
 
@@ -48,20 +47,25 @@ function Network(input_size, output_size) {
   self.input = input_size;
   self.output = output_size;
 
-  // Store all the node and connection genes
+  // keep track of the input and output nodes
+  self.input_nodes = new Set();
+  self.output_nodes = new Set();
+
+  // Store all the nodes and connection genes
   self.nodes = []; // Stored in activation order
   self.connections = [];
   self.gates = [];
-  self.selfconns = [];
-
-  // Regularization
-  self.dropout = 0;
 
   // Create input and output nodes
-  // var i;
-  for (let i = 0; i < self.input_size + self.output_size; i++) {
-    const type = i < self.input_size ? `input` : `output`;
-    self.nodes.push(new Node(type));
+  for (let i = 0; i < input_size; i++) {
+    const new_node = new Node();
+    self.nodes.push(new_node);
+    self.input_nodes.add(new_node);
+  }
+  for (let i = 0; i < output_size; i++) {
+    const new_node = new Node();
+    self.nodes.push(new_node);
+    self.output_nodes.add(new_node);
   }
 
   /**
@@ -72,7 +76,7 @@ function Network(input_size, output_size) {
    *
    * @param {Node} from The source Node
    * @param {Node|Group} to The destination Node or Group
-   * @param {number} weight An initial weight for the connections to be formed
+   * @param {number} [weight] An initial weight for the connections to be formed
    *
    * @returns {Connection[]} An array of the formed connections
    *
@@ -84,14 +88,11 @@ function Network(input_size, output_size) {
   self.connect = function(from, to, weight) {
     // many elements if dealing with groups for example
     let connections = from.connect(to, weight);
+    if (connections instanceof Connection) connections = [connections];
 
     for (let i = 0; i < connections.length; i++) {
       let connection = connections[i];
-      if (from !== to) {
-        this.connections.push(connection);
-      } else {
-        this.selfconns.push(connection);
-      }
+      self.connections.push(connection);
     }
 
     return connections;
@@ -101,7 +102,7 @@ function Network(input_size, output_size) {
   for (let i = 0; i < self.input_size; i++) {
     for (var j = self.input_size; j < self.output_size + self.input_size; j++) {
       // https://stats.stackexchange.com/a/248040/147931
-      const weight = Math.random() * self.input_size * Math.sqrt(2 / self.input_size);
+      const weight = (Math.random() - 0.5) * self.input_size * Math.sqrt(2 / self.input_size);
       self.connect(self.nodes[i], self.nodes[j], weight);
     }
   }
@@ -115,8 +116,8 @@ function Network(input_size, output_size) {
    * @memberof Network
    *
    * @param {number[]} [input] Input values to activate nodes with
-   * @param {boolean} training Used to toggle [dropout](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5)
-   *
+   * @param {Number} [options.dropout_rate=0] The dropout rate. [dropout](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5)
+   * @param {bool} [options.no_trace=false] Activate without leaving a trace (trace is meta information left behind for different uses, e.g. backpropagation).
    * @returns {number[]} Squashed output values
    *
    * @example
@@ -127,27 +128,65 @@ function Network(input_size, output_size) {
    *
    * myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
-  self.activate = function(input, training) {
-    const output = [];
-
-    // Activate nodes chronologically
-    this.nodes.forEach((node, node_index) => {
-      if (node.type === `input`) {
-        node.activate(input[node_index]);
-      } else if (node.type === `output`) {
-        const activation_result = node.activate();
-        output.push(activation_result);
+  self.activate = function(input, { dropout_rate = 0, no_trace = false } = {}) {
+    // Activate nodes chronologically - first input, then hidden, then output
+    // activate input nodes
+    // TODO: fix, this should be activated according to nodes order
+    let input_node_index = 0;
+    for (let i = 0; i < self.nodes.length; i++) {
+      if (input_node_index === self.input_nodes.size) {
+        break; // all the input nodes have been activated
+      }
+      const node = self.nodes[i];
+      if (!self.input_nodes.has(node)) continue;
+      // only activate input nodes this run
+      if (no_trace) {
+        node.noTraceActivate(input[input_node_index++]);
       } else {
-        if (training) node.mask = Math.random() < this.dropout ? 0 : 1;
+        node.activate(input[input_node_index++]);
+      }
+    }
+    if (input_node_index !== input.length) {
+      throw Error(`There are ${input_node_index} input nodes, but ${input.length} inputs were passed`);
+    }
+
+    // activate hidden nodes
+    self.nodes.forEach((node, node_index) => {
+      // check that is not input nor output
+      if (self.input_nodes.has(node) || self.output_nodes.has(node)) return;
+
+      if (dropout_rate) node.mask = Math.random() < dropout_rate ? 0 : 1;
+      if (no_trace) {
+        node.noTraceActivate();
+      } else {
         node.activate();
       }
     });
 
+    const output = [];
+    for (let i = 0; i < self.nodes.length; i++) {
+      if (output.length === self.output_nodes.size) {
+        break; // all the output nodes have been activated
+      }
+      const node = self.nodes[i];
+      if (!self.output_nodes.has(node)) continue;
+      // only activate output nodes this run
+      let node_output;
+      if (no_trace) {
+        node_output = node.noTraceActivate();
+      } else {
+        node_output = node.activate();
+      }
+      output.push(node_output);
+    }
+    if (output.length !== self.output_nodes.size) {
+      throw Error(`There are ${self.output_nodes.size} output nodes, but ${output.length} outputs were passed`);
+    }
     return output;
   }
 
   /**
-   * Activates the network without calculating elegibility traces and such
+   * Backwards compatibility only. Simply calls activate with option no_trace: true
    *
    * @function noTraceActivate
    * @memberof Network
@@ -165,21 +204,7 @@ function Network(input_size, output_size) {
    * myNetwork.noTraceActivate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
   self.noTraceActivate = function(input) {
-    const output = [];
-
-    // Activate nodes chronologically for forward feeding
-    this.nodes.forEach((node, node_index) => {
-      if (node.type === `input`) {
-        node.noTraceActivate(input[node_index]);
-      } else if (node.type === `output`) {
-        const activation_result = node.noTraceActivate();
-        output.push(activation_result);
-      } else {
-        node.noTraceActivate();
-      }
-    });
-
-    return output;
+    return self.activate(input, {no_trace: true});
   }
 
   /**
@@ -217,18 +242,30 @@ function Network(input_size, output_size) {
     }
 
     // index used to iterate through the target array when updating
-    let target_index = target.length;
+    let target_index = 0;
 
-    // propagate output nodes
-    let i;
-    for (i = this.nodes.length - 1; i >= this.nodes.length - output_size; i--) {
-      this.nodes[i].propagate(target[--target_index], { rate, momentum, update });
+    // Propagate output nodes
+    for (let i = 0; target_index < output_size; i++) {
+      if (self.output_nodes.has(this.nodes[i])) {
+        this.nodes[i].propagate(target[target_index], { rate, momentum, update });
+        target_index++;
+      }
     }
 
-    // Propagate hidden and input nodes
-    for (i = this.nodes.length - output_size - 1; i >= input_size; i--) {
-      this.nodes[i].propagate({ rate, momentum, update });
+    // Propagate hidden nodes
+    for (let i = self.nodes.length - 1; i >= 0 ; i--) {
+      const current_node = self.nodes[i];
+      if (self.input_nodes.has(current_node) || self.output_nodes.has(current_node)) {
+        continue;
+      }
+      current_node.propagate({ rate, momentum, update });
     }
+
+    // Propagate input nodes
+    self.input_nodes.forEach(node => {
+      // update order should not matter because they are the last ones and do(/should) not interact
+      node.propagate({ rate, momentum, update });
+    })
   }
 
   /**
@@ -244,7 +281,8 @@ function Network(input_size, output_size) {
   }
 
   /**
-   * Returns a new identical network
+   * Returns a new identical network.
+   * @alpha
    *
    * @function clone
    * @memberof Network
@@ -252,9 +290,7 @@ function Network(input_size, output_size) {
    * @returns {Network} Returns an identical network
    */
   self.clone = function() {
-    const self = this;
-
-    return new Network(self.input, self.output);
+    return Network.fromJSON(self.toJSON());
   }
 
   /**
@@ -272,12 +308,12 @@ function Network(input_size, output_size) {
    */
   self.disconnect = function(from, to) {
     // Delete the connection in the network's connection array
-    const connections = from === to ? this.selfconns : this.connections;
+    const connections = self.connections;
 
     for (let i = 0; i < connections.length; i++) {
       const connection = connections[i];
       if (connection.from === from && connection.to === to) {
-        if (connection.gater !== null) this.ungate(connection);
+        if (connection.gater !== null) self.ungate(connection);
         connections.splice(i, 1);
         break;
       }
@@ -305,14 +341,14 @@ function Network(input_size, output_size) {
    * // now: connection 5's weight is multiplied with node 1's activaton
    */
   self.gate = function(node, connection) {
-    if (this.nodes.indexOf(node) === -1) {
-      throw new Error(`This node is not part of the network!`);
+    if (self.nodes.indexOf(node) === -1) {
+      throw new ReferenceError(`This node is not part of the network!`);
     } else if (connection.gater != null) {
       if (config.warnings) console.warn(`This connection is already gated!`);
       return;
     }
     node.gate(connection);
-    this.gates.push(connection);
+    self.gates.push(connection);
   }
 
   /**
@@ -335,12 +371,12 @@ function Network(input_size, output_size) {
    * myNetwork.ungate(myNetwork.connections[5]);
    */
   self.ungate = function(connection) {
-    const index = this.gates.indexOf(connection);
+    const index = self.gates.indexOf(connection);
     if (index === -1) {
       throw new Error(`This connection is not gated!`);
     }
 
-    this.gates.splice(index, 1);
+    self.gates.splice(index, 1);
     connection.gater.ungate(connection);
   }
 
@@ -361,39 +397,42 @@ function Network(input_size, output_size) {
    * myNetwork.remove(myNetwork.nodes[2]);
    */
   self.remove = function(node) {
-    const index = this.nodes.indexOf(node);
+    const index = self.nodes.indexOf(node);
 
     if (index === -1) {
-      throw new Error(`This node does not exist in the network!`);
+      throw new ReferenceError(`This node does not exist in the network!`);
     }
 
     // Keep track of gates
     const gates = [];
 
-    // Remove selfconnections from this.selfconns
-    this.disconnect(node, node);
+    // Remove self recursive connections - these would not be able
+    // to connect/disconnect to/from other nodes
+    self.disconnect(node, node);
 
     // Get all its inputting nodes
     const inputs = [];
     // unsure why not regular forEach
-    _.forEachRight(node.connections.in, (connection) => {
+    _.forEachRight(node.connections_incoming, (connection) => {
       if (mutation.SUB_NODE.keep_gates && connection.gater !== null && connection.gater !== node) {
+        // the condition mutation.SUB_NODE.keep_gates seems
+        // useless - probably it should be an option
         gates.push(connection.gater);
       }
       inputs.push(connection.from);
-      this.disconnect(connection.from, node);
+      self.disconnect(connection.from, node);
     });
 
 
     // Get all its outputing nodes
     const outputs = [];
     // unsure why not regular forEach
-    _.forEachRight(node.connections.out, (connection) => {
+    _.forEachRight(node.connections_outgoing, (connection) => {
       if (mutation.SUB_NODE.keep_gates && connection.gater !== null && connection.gater !== node) {
         gates.push(connection.gater);
       }
       outputs.push(connection.to);
-      this.disconnect(node, connection.to);
+      self.disconnect(node, connection.to);
     });
 
     // Connect the input nodes to the output nodes (if not already connected)
@@ -401,7 +440,7 @@ function Network(input_size, output_size) {
     _.forEach(inputs, (input) => {
       _.forEach(outputs, (output) => {
         if (!input.isProjectingTo(output)) {
-          const connection = this.connect(input, output);
+          const connection = self.connect(input, output);
           connections.push(connection[0]);
         }
       });
@@ -413,21 +452,18 @@ function Network(input_size, output_size) {
       const gate = gates.shift();
       const connection_to_gate_index = Math.floor(Math.random() * connections.length);
 
-      this.gate(gate, connections[connection_to_gate_index]);
+      self.gate(gate, connections[connection_to_gate_index]);
       connections.splice(connection_to_gate_index, 1);
     }
 
     // Remove gated connections gated by this node
-    for (i = node.connections.gated.length - 1; i >= 0; i--) {
-      const connection = node.connections.gated[i];
-      this.ungate(connection);
+    for (i = node.connections_gated.length - 1; i >= 0; i--) {
+      const connection = node.connections_gated[i];
+      self.ungate(connection);
     }
 
-    // Remove selfconnection
-    this.disconnect(node, node);
-
-    // Remove the node from this.nodes
-    this.nodes.splice(index, 1);
+    // Remove the node from self.nodes
+    self.nodes.splice(index, 1);
   }
 
   /**
@@ -451,7 +487,7 @@ function Network(input_size, output_size) {
     let candidates = []
     switch (method) {
       case mutation.SUB_NODE:
-        candidates = _.filter(this.nodes, function(node) { return (node.type !== `output` && node.type !== `input`) }) // assumes input & output node 'type' has been set
+        candidates = _.filter(this.nodes, function(node) { return (!self.input_nodes.has(node) && !self.output_nodes.has(node)) }) // assumes input & output node 'type' has been set
         return candidates.length ? candidates : false
       case mutation.ADD_CONN:
         for (let i = 0; i < this.nodes.length - this.output_size; i++) {
@@ -466,7 +502,7 @@ function Network(input_size, output_size) {
       case mutation.SUB_CONN:
         _.each(self.connections, (conn) => {
           // Check if it is not disabling a node
-          if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && self.nodes.indexOf(conn.to) > self.nodes.indexOf(conn.from))
+          if (conn.from.connections_outgoing.length > 1 && conn.to.connections_incoming.length > 1 && self.nodes.indexOf(conn.to) > self.nodes.indexOf(conn.from))
             candidates.push(conn)
         })
 
@@ -476,16 +512,24 @@ function Network(input_size, output_size) {
 
         for (let i = this.input_size; i < this.nodes.length; i++) {
           const node = this.nodes[i]
-          if (node.connections.self.weight === 0) candidates.push(node)
+          if (node.connections_self.weight === 0) candidates.push(node)
         }
 
         return candidates.length ? candidates : false
-      case mutation.SUB_SELF_CONN: return (this.selfconns.length > 0) ? [] : false
+      case mutation.SUB_SELF_CONN:
+        for (let i = 0; i < self.connections.length; i++) {
+          const current_connection = self.connections[i];
+          if (current_connection.from == current_connection.to) {
+            return true;
+          }
+        }
+        return false;
       case mutation.ADD_GATE:
-        const allconnections = this.connections.concat(this.selfconns);
-
-        _.each(allconnections, (conn) => { if(conn.gater === null) candidates.push(conn) })
-
+        self.connections.forEach((conn) => {
+          if (conn.gater === null) {
+            candidates.push(conn);
+          }
+        });
         return candidates.length ? candidates : false
       case mutation.SUB_GATE: return (this.gates.length > 0) ? [] : false
       case mutation.ADD_BACK_CONN:
@@ -500,7 +544,7 @@ function Network(input_size, output_size) {
         return candidates.length ? candidates : false
       case mutation.SUB_BACK_CONN:
         _.each(self.connections, (conn) => {
-          if (conn.from.connections.out.length > 1 && conn.to.connections.in.length > 1 && self.nodes.indexOf(conn.from) > self.nodes.indexOf(conn.to))
+          if (conn.from.connections_outgoing.length > 1 && conn.to.connections_incoming.length > 1 && self.nodes.indexOf(conn.from) > self.nodes.indexOf(conn.to))
             candidates.push(conn)
         })
 
@@ -536,11 +580,36 @@ function Network(input_size, output_size) {
   self.mutate = function(method) {
     if (typeof method === 'undefined') throw new Error('Mutate method is undefined!')
 
+    // gets a random connection. TODO: Read the comment inside
+    const getRandomConnection = () => {
+      if (self.nodes.length <= self.input_size) throw Error('No connections can be chosen');
+      // get a random connection. this method does not choose from a uniform distribution
+      // TODO: make the distribution uniform among connections (atm connections connected
+      // to nodes with a small degree are more likely to be chosen)
+      const chosen_node_index = Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size);
+      const connection_node = self.nodes[chosen_node_index];
+      // at the moment does not mutate self connections. TODO: mutate self connections!
+      // first try outgoing then incoming - one of them has to work
+      let chosen_connection;
+      if (connection_node.connections_outgoing.length > 0) {
+        const chosen_connection_index =
+          Math.floor(Math.random() * connection_node.connections_outgoing.length);
+        chosen_connection = connection_node.connections_outgoing[chosen_connection_index];
+      } else {
+        const chosen_connection_index =
+          Math.floor(Math.random() * connection_node.connections_incoming.length);
+        chosen_connection = connection_node.connections_incoming[chosen_connection_index];
+      }
+
+      return chosen_connection;
+    };
+
     let i, j;
     switch (method) {
       case mutation.ADD_NODE: {
+        if (self.nodes.length <= self.input_size) return false;
         // Look for an existing connection and place a node in between
-        const connection = this.connections[Math.floor(Math.random() * this.connections.length)];
+        const connection = getRandomConnection();
         this.disconnect(connection.from, connection.to);
 
         // Insert the new node right before the old connection.to
@@ -593,16 +662,21 @@ function Network(input_size, output_size) {
         return false;
       }
       case mutation.MOD_WEIGHT: {
-        const allconnections = this.connections.concat(this.selfconns);
-        const connection = allconnections[Math.floor(Math.random() * allconnections.length)];
+        if (self.nodes.length <= self.input_size) return false;
 
-        connection.weight += Math.random() * (method.max - method.min) + method.min;
+        // get a random connection to modify weight
+        const chosen_connection = getRandomConnection();
+
+        chosen_connection.weight += Math.random() * (method.max - method.min) + method.min;
 
         return true;
       }
       case mutation.MOD_BIAS: {
+        if (self.nodes.length <= self.input_size) return false;
         // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
-        this.nodes[Math.floor(Math.random() * (this.nodes.length - this.input_size) + this.input_size)].mutate(method);
+        const chosen_node_index = Math.floor(Math.random() * (this.nodes.length - this.input_size) + this.input_size);
+        const node_to_mutate = self.nodes[chosen_node_index];
+        node_to_mutate.mutate(method);
 
         return true;
       }
@@ -629,9 +703,19 @@ function Network(input_size, output_size) {
         return false;
       }
       case mutation.SUB_SELF_CONN: {
+        // very slow implementation.
+        // TODO: Huge speed up by storing a map is_self_connection<id -> node>
+        const self_connections = [];
+        for (let i = 0; i < self.connections.length; i++) {
+          const current_connection = self.connections[i];
+          if (current_connection.from == current_connection.to) {
+            self_connections.push(current_connection);
+          }
+        }
+
         if (this.possible(method)) {
-          const conn = this.selfconns[Math.floor(Math.random() * this.selfconns.length)];
-          this.disconnect(conn.from, conn.to);
+          const chosen_connection = self_connections[Math.floor(Math.random() * self_connections.length)];
+          this.disconnect(chosen_connection.from, chosen_connection.to);
           return true;
         }
 
@@ -724,9 +808,9 @@ function Network(input_size, output_size) {
    * @param {number} [options.batch_size=1] Sets the (mini-) batch size of your training. Default: 1 [(online training)](https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes)
    * @param {number} [options.cross_validate.testSize] Sets the amount of test cases that should be assigned to cross validation. If data to 0.4, 40% of the given data will be used for cross validation.
    * @param {number} [options.cross_validate.test_error] Sets the target error of the validation data.
-   * @param {boolean} [options.clear=false] If data to true, will clear the network after every activation. This is useful for training LSTM's, more importantly for timeseries prediction.
-   * @param {boolean} [options.shuffle=false] When data to true, will shuffle the training data every iteration_number. Good option to use if the network is performing worse in [cross validation](https://artint.info/html/ArtInt_189.html) than in the real training data.
-   * @param {number|boolean} [options.log=false] If data to n, outputs training status every n iterations. Setting `log` to 1 will log the status every iteration_number
+   * @param {boolean} [options.clear=false] If set to true, will clear the network after every activation. This is useful for training LSTM's, more importantly for timeseries prediction.
+   * @param {boolean} [options.shuffle=false] When set to true, will shuffle the training data every iteration_number. Good option to use if the network is performing worse in [cross validation](https://artint.info/html/ArtInt_189.html) than in the real training data.
+   * @param {number|boolean} [options.log=false] If set to n, outputs training status every n iterations. Setting `log` to 1 will log the status every iteration_number
    * @param {number} [options.schedule.iterations] You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
    * @param {schedule} [options.schedule.function] A function to run every n iterations as data by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
    *
@@ -847,9 +931,7 @@ function Network(input_size, output_size) {
       options.iterations = 0; // run until target error
     }
 
-    // Save to network
-    this.dropout = options.dropout;
-
+    // get cross validation error (if on)
     let training_set_size, train_set, test_set;
     if (options.cross_validate) {
       training_set_size = Math.ceil((1 - options.cross_validate.testSize) * data.length);
@@ -874,7 +956,7 @@ function Network(input_size, output_size) {
 
       // run on training epoch
       const train_error = this._trainOneEpoch(
-        train_set, options.batch_size, current_training_rate, options.momentum, options.cost);
+        train_set, options.batch_size, current_training_rate, options.momentum, options.cost, {dropout_rate: options.dropout});
       if (options.clear) this.clear();
       // Checks if cross validation is enabled
       if (options.cross_validate) {
@@ -903,14 +985,6 @@ function Network(input_size, output_size) {
 
     if (options.clear) this.clear();
 
-    if (options.dropout) {
-      for (i = 0; i < this.nodes.length; i++) {
-        if (this.nodes[i].type === `hidden` || this.nodes[i].type === `constant`) {
-          this.nodes[i].mask = 1 - this.dropout;
-        }
-      }
-    }
-
     return {
       error: error,
       iterations: iteration_number,
@@ -931,6 +1005,7 @@ function Network(input_size, output_size) {
    * @param {number} current_training_rate
    * @param {number} momentum
    * @param {cost} cost_function
+   * @param {number} [options.dropout_rate=0.5] The dropout rate to use when training
    *
    * @returns {number}
    *
@@ -939,7 +1014,7 @@ function Network(input_size, output_size) {
    *
    * let example = ""
    */
-  self._trainOneEpoch = function(set, batch_size, training_rate, momentum, cost_function) {
+  self._trainOneEpoch = function(set, batch_size, training_rate, momentum, cost_function, { dropout_rate = 0.5 } = {}) {
     let error_sum = 0;
     for (var i = 0; i < set.length; i++) {
       const input = set[i].input;
@@ -948,7 +1023,7 @@ function Network(input_size, output_size) {
       // the !! turns to boolean
       const update = !!((i + 1) % batch_size === 0 || (i + 1) === set.length);
 
-      const output = this.activate(input, true);
+      const output = this.activate(input, { dropout_rate: dropout_rate });
       this.propagate(training_rate, momentum, update, correct_output);
 
       error_sum += cost_function(correct_output, output);
@@ -969,22 +1044,13 @@ function Network(input_size, output_size) {
    *
    */
   self.test = function(set, cost = methods.cost.MSE) {
-    // Check if dropout is enabled, set correct mask
-    if (this.dropout) {
-      _.times(this.nodes.length, (index) => {
-        if (this.nodes[index].type === `hidden` || this.nodes[index].type === `constant`) {
-          this.nodes[index].mask = 1 - this.dropout;
-        }
-      });
-    }
-
     let error = 0;
     let start = Date.now();
 
     _.times(set.length, (index) => {
       let input = set[index].input;
       let target = set[index].output;
-      let output = this.noTraceActivate(input);
+      let output = this.activate(input, {no_trace: true});
       error += cost(target, output);
     });
 
@@ -1074,7 +1140,7 @@ function Network(input_size, output_size) {
       });
     }
 
-    const connections = this.connections.concat(this.selfconns);
+    const connections = this.connections;
     for (i = 0; i < connections.length; i++) {
       const connection = connections[i];
       if (connection.gater == null) {
@@ -1128,9 +1194,14 @@ function Network(input_size, output_size) {
    * let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
    */
   self.toJSON = function() {
+    // 0, 1, 2, 3, 16, 17, 18, 19, 20, 24, 28, 32. all of these leave from node 0, but
+    // node 0 only has 4 outgoing connections..
+
     const json = {
       nodes: [],
       connections: [],
+      input_nodes: [],
+      output_nodes: [],
       input_size: this.input_size,
       output_size: this.output_size,
       dropout: this.dropout,
@@ -1139,10 +1210,16 @@ function Network(input_size, output_size) {
       output: this.output_size,
     };
 
-    // So we don't have to use expensive .indexOf()
     let i;
     for (i = 0; i < this.nodes.length; i++) {
+      // So we don't have to use expensive .indexOf()
       this.nodes[i].index = i;
+      if (self.input_nodes.has(self.nodes[i])) {
+        json.input_nodes.push(i);
+      }
+      if (self.output_nodes.has(self.nodes[i])) {
+        json.output_nodes.push(i);
+      }
     }
 
     for (i = 0; i < this.nodes.length; i++) {
@@ -1151,12 +1228,12 @@ function Network(input_size, output_size) {
       node_json.index = i;
       json.nodes.push(node_json);
 
-      if (node.connections.self.weight !== 0) {
-        const connection_json = node.connections.self.toJSON();
+      if (node.connections_self.weight !== 0) {
+        const connection_json = node.connections_self.toJSON();
         connection_json.from = i;
         connection_json.to = i;
 
-        connection_json.gater = node.connections.self.gater != null ? node.connections.self.gater.index : null;
+        connection_json.gater = node.connections_self.gater != null ? node.connections_self.gater.index : null;
         json.connections.push(connection_json);
       }
     }
@@ -1193,7 +1270,7 @@ function Network(input_size, output_size) {
    * network.set({bias: 1});
    */
   self.set = function(values) {
-    this.nodes = _.forEach(this.nodes, (node) => _.defaults(node, {
+    self.nodes.forEach(node => Object.assign(node, {
       bias: values.bias,
       squash: values.squash
     }));
@@ -1361,8 +1438,7 @@ function Network(input_size, output_size) {
 
           worker.evaluate(genome).then(function (result) {
             genome.score = -result;
-            genome.score -= (genome.nodes.length - genome.input - genome.output +
-              genome.connections.length + genome.gates.length) * options.growth;
+            genome.score -= (genome.nodes.length - genome.input_size - genome.output_size + genome.connections.length + genome.gates.length) * options.growth;
             genome.score = isNaN(parseFloat(result)) ? -Infinity : genome.score;
             start_worker(worker);
           });
@@ -1388,6 +1464,7 @@ function Network(input_size, output_size) {
     let best_genome;
 
     while (error < -target_error && (options.iterations === 0 || neat.generation < options.iterations)) {
+      // neat.evolve returns a network
       const fittest = await neat.evolve();
       const fitness = fittest.score;
       error = fitness + (fittest.nodes.length - fittest.input - fittest.output + fittest.connections.length + fittest.gates.length) * options.growth;
@@ -1409,10 +1486,12 @@ function Network(input_size, output_size) {
     for (let i = 0; i < workers.length; i++) workers[i].terminate();
 
     if (typeof best_genome !== `undefined`) {
+      // copy the best network into this one
       this.nodes = best_genome.nodes;
       this.connections = best_genome.connections;
-      this.selfconns = best_genome.selfconns;
       this.gates = best_genome.gates;
+      this.input_nodes = best_genome.input_nodes;
+      this.output_nodes = best_genome.output_nodes;
 
       if(options.clear) this.clear();
     }
@@ -1473,7 +1552,7 @@ function Network(input_size, output_size) {
       activations.push(node.activation);
       states.push(node.state);
 
-      const function_index = present.indexOf(node.squash.name);
+      let function_index = present.indexOf(node.squash.name);
 
       if (function_index === -1) {
         function_index = present.length;
@@ -1482,8 +1561,9 @@ function Network(input_size, output_size) {
       }
 
       const incoming = [];
-      for (var j = 0; j < node.connections.in.length; j++) {
-        const connection = node.connections.in[j];
+      for (var j = 0; j < node.connections_incoming.length; j++) {
+        const connection = node.connections_incoming[j];
+        if (connection.from.index === undefined) debugger;
         let computation = `A[${connection.from.index}] * ${connection.weight}`;
 
         if (connection.gater != null) {
@@ -1493,8 +1573,8 @@ function Network(input_size, output_size) {
         incoming.push(computation);
       }
 
-      if (node.connections.self.weight) {
-        const connection = node.connections.self;
+      if (node.connections_self.weight) {
+        const connection = node.connections_self;
         let computation = `S[${i}] * ${connection.weight}`;
 
         if (connection.gater != null) {
@@ -1560,11 +1640,11 @@ function Network(input_size, output_size) {
       connections.push(node.bias);
       connections.push(squashes.indexOf(node.squash.name));
 
-      connections.push(node.connections.self.weight);
-      connections.push(node.connections.self.gater == null ? -1 : node.connections.self.gater.index);
+      connections.push(node.connections_self.weight);
+      connections.push(node.connections_self.gater == null ? -1 : node.connections_self.gater.index);
 
-      _.times(node.connections.in.length, (incoming_connections_index) => {
-        const connection = node.connections.in[incoming_connections_index];
+      _.times(node.connections_incoming.length, (incoming_connections_index) => {
+        const connection = node.connections_incoming[incoming_connections_index];
 
         connections.push(connection.from.index);
         connections.push(connection.weight);
@@ -1575,6 +1655,23 @@ function Network(input_size, output_size) {
     }
 
     return [activations, states, connections];
+  }
+
+  /**
+   * Add the nodes to the network
+   * @param  {Node|Node[]|Group} nodes_to_add The nodes to add
+   * @return {Network} A self reference for chaining
+   */
+  self.addNodes = function (nodes_to_add) {
+    if (nodes_to_add instanceof Node) nodes_to_add = [nodes_to_add];
+    else if (nodes_to_add instanceof Group) nodes_to_add = nodes_to_add.nodes;
+    self.nodes.push(...nodes_to_add);
+    for (let i = 0; i < nodes_to_add.length; i++) {
+      const current_node = nodes_to_add[i];
+      // not required to push connections incoming. by pushing every outgoing connection,
+      // every incoming connection will be pushed as well. pushing both causes duplicates
+      self.connections.push(...current_node.connections_outgoing);
+    }
   }
 }
 
@@ -1592,21 +1689,32 @@ function Network(input_size, output_size) {
  * let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
  */
 Network.fromJSON = function(json) {
-  const network = new Network(json.input, json.output);
+  // TODO: Match new network input/output nodes with json.input nodes and json.output nodes
+
+  const network = new Network(json.input_size, json.output_size);
 
   network.dropout = json.dropout;
   network.nodes = [];
   network.connections = [];
+  network.input_nodes = new Set();
+  network.output_nodes = new Set();
 
-  _.forEach(json.nodes, (node) => network.nodes.push(Node.fromJSON(node)));
+  json.nodes.forEach((node_json, index) => {
+    const node = Node.fromJSON(node_json);
+    node.index = index;
+    network.nodes.push(node);
+  });
 
-  _.forEach(json.connections, (json_connection) => {
+  json.connections.forEach((json_connection) => {
     const connection =
-      network.connect(network.nodes[json_connection.from], network.nodes[json_connection.to])[0];
+    network.connect(network.nodes[json_connection.from], network.nodes[json_connection.to])[0];
     connection.weight = json_connection.weight;
 
-    if(json_connection.gater != null) network.gate(network.nodes[json_connection.gater], connection);
+    if (json_connection.gater != null) network.gate(network.nodes[json_connection.gater], connection);
   });
+
+  json.input_nodes.forEach(node_index => network.input_nodes.add(network.nodes[node_index]))
+  json.output_nodes.forEach(node_index => network.output_nodes.add(network.nodes[node_index]))
 
   return network;
 };
@@ -1692,6 +1800,8 @@ Network.merge = function(network1, network2) {
  * let network3 = Network.crossOver(network1, network2);
  */
 Network.crossOver = function(network1, network2, equal) {
+  // crossover works really really bad - although it works (I guess)
+  // TODO: refactor
   if (network1.input_size !== network2.input_size || network1.output_size !== network2.output_size) {
     throw new Error("Networks don`t have the same input/output size!");
   }
@@ -1700,24 +1810,28 @@ Network.crossOver = function(network1, network2, equal) {
   const offspring = new Network(network1.input_size, network1.output_size);
   offspring.connections = [];
   offspring.nodes = [];
+  offspring.input_nodes = new Set();
+  offspring.output_nodes = new Set();
 
   // Save scores and create a copy
   const score1 = network1.score || 0;
   const score2 = network2.score || 0;
 
   // Determine offspring node size
-  let size;
+  let offspring_size;
   if (equal || score1 === score2) {
     const max = Math.max(network1.nodes.length, network2.nodes.length);
     const min = Math.min(network1.nodes.length, network2.nodes.length);
-    size = Math.floor(Math.random() * (max - min + 1) + min);
+    offspring_size = Math.floor(Math.random() * (max - min + 1) + min);
   } else if (score1 > score2) {
-    size = network1.nodes.length;
+    offspring_size = network1.nodes.length;
   } else {
-    size = network2.nodes.length;
+    offspring_size = network2.nodes.length;
   }
 
   // Rename some variables for easier reading
+  // both networks (should) have equal input/output size
+  const input_size = network1.input_size;
   const output_size = network1.output_size;
 
   // Set indexes so we don't need indexOf
@@ -1731,29 +1845,81 @@ Network.crossOver = function(network1, network2, equal) {
   }
 
   // Assign nodes from parents to offspring
-  for (i = 0; i < size; i++) {
-    // Determine if an output node is needed
-    let node;
-    if (i < size - output_size) {
-      let random = Math.random();
-      node = random >= 0.5 ? network1.nodes[i] : network2.nodes[i];
-      let other = random < 0.5 ? network1.nodes[i] : network2.nodes[i];
+  for (i = 0; i < offspring_size; i++) {
+    // TODO: First assign input and output nodes, then get hidden nodes
+    // SUPER WIP
+    let chosen_node;
+    let chosen_node_type = ''; // will be one of 'input', 'output', 'hidden'
 
-      if (typeof node === `undefined` || node.type === `output`) {
-        node = other;
+    // first select input nodes
+    if (i < input_size) {
+      chosen_node_type = 'input';
+      // choose if the chosen input node will come from network 1 or 2
+      // then go to the i-th input node of the selected network and choose the node
+      const source_network = Math.random() >= 0.5 ? network1 : network2;
+      // get the i-th input node
+      let input_number = -1;
+      let j = -1; // index to scroll through the source network's nodes
+      while (input_number < i) { // basically move forward until desired input number is found
+        j++;
+        if (j >= source_network.nodes.length) {
+          // something is wrong...
+          throw RangeError('something is wrong with the size of the input');
+        }
+        if (source_network.input_nodes.has(source_network.nodes[j])) {
+          input_number++;
+        }
       }
+      // now j is the index of the i-th input in the source network
+      chosen_node = source_network.nodes[j];
+    } else if (i < input_size + output_size) { // now select output nodes
+      chosen_node_type = 'output';
+      // choose if the chosen output node will come from network 1 or 2
+      // then go to the i-th output node of the selected network and choose the node
+      const source_network = Math.random() >= 0.5 ? network1 : network2;
+      // get the i-th output node
+      let output_number = -1;
+      let j = -1; // index to scroll through the source network's nodes
+      while (output_number < i - input_size) { // basically move forward until desired output number is found
+        j++;
+        if (j >= source_network.nodes.length) {
+          // something is wrong...
+          throw RangeError('something is wrong with the size of the output');
+        }
+        if (source_network.output_nodes.has(source_network.nodes[j])) {
+          output_number++;
+        }
+      }
+      // now j is the index of the i-th output in the source network
+      chosen_node = source_network.nodes[j];
     } else {
-      if (Math.random() >= 0.5) {
-        node = network1.nodes[network1.nodes.length + i - size];
+      chosen_node_type = 'hidden';
+      // now select hidden nodes
+      let source_network;
+      if (i >= network1.nodes.length) {
+        source_network = network2;
+      } else if (i >= network2.nodes.length) {
+        source_network = network1;
       } else {
-        node = network2.nodes[network2.nodes.length + i - size];
+        source_network = Math.random() >= 0.5 ? network1 : network2;
       }
+      // consider adding a hidden nodes array
+      const chosen_node_index = Math.floor(Math.random() * source_network.nodes.length);
+      chosen_node = source_network.nodes[chosen_node_index];
     }
 
-    const new_node = new Node();
-    new_node.bias = node.bias;
-    new_node.squash = node.squash;
-    new_node.type = node.type;
+    const new_node = new Node({
+      bias: chosen_node.bias,
+      squash: chosen_node.squash,
+      type: chosen_node.type,
+    });
+
+    // add to the corresponding set if input or output
+    if (chosen_node_type === 'input') {
+      offspring.input_nodes.add(new_node);
+    } else if (chosen_node_type === 'output') {
+      offspring.output_nodes.add(new_node);
+    }
 
     offspring.nodes.push(new_node);
   }
@@ -1762,7 +1928,7 @@ Network.crossOver = function(network1, network2, equal) {
   const n1connections = {};
   const n2connections = {};
 
-  // Normal connections
+  // Add the connections of network 1
   for (i = 0; i < network1.connections.length; i++) {
     const connection = network1.connections[i];
     const data = {
@@ -1774,33 +1940,9 @@ Network.crossOver = function(network1, network2, equal) {
     n1connections[Connection.innovationID(data.from, data.to)] = data;
   }
 
-  // Selfconnections
-  for (i = 0; i < network1.selfconns.length; i++) {
-    const connection = network1.selfconns[i];
-    const data = {
-      weight: connection.weight,
-      from: connection.from.index,
-      to: connection.to.index,
-      gater: connection.gater != null ? connection.gater.index : -1
-    };
-    n1connections[Connection.innovationID(data.from, data.to)] = data;
-  }
-
-  // Normal connections
+  // Add the connections of network 2
   for (i = 0; i < network2.connections.length; i++) {
     const connection = network2.connections[i];
-    const data = {
-      weight: connection.weight,
-      from: connection.from.index,
-      to: connection.to.index,
-      gater: connection.gater != null ? connection.gater.index : -1
-    };
-    n2connections[Connection.innovationID(data.from, data.to)] = data;
-  }
-
-  // Selfconnections
-  for (i = 0; i < network2.selfconns.length; i++) {
-    const connection = network2.selfconns[i];
     const data = {
       weight: connection.weight,
       from: connection.from.index,
@@ -1839,14 +1981,14 @@ Network.crossOver = function(network1, network2, equal) {
   // Add common conn genes uniformly
   for (i = 0; i < connections.length; i++) {
     let connection_data = connections[i];
-    if (connection_data.to < size && connection_data.from < size) {
+    if (connection_data.to < offspring_size && connection_data.from < offspring_size) {
       const from = offspring.nodes[connection_data.from];
       const to = offspring.nodes[connection_data.to];
       const connection = offspring.connect(from, to)[0];
 
       connection.weight = connection_data.weight;
 
-      if (connection_data.gater !== -1 && connection_data.gater < size) {
+      if (connection_data.gater !== -1 && connection_data.gater < offspring_size) {
         offspring.gate(offspring.nodes[connection_data.gater], connection);
       }
     }
@@ -1971,37 +2113,40 @@ const Neat = function(dataset, {
    *
    * @param {Network} network
    */
-  self.createPool = function createPool (network, population_size) {
-    return Array(population_size).fill(Network.fromJSON({ ...network.toJSON(), score: undefined }))
+  self.createPool = function createPool(network, population_size) {
+    const pool = Array(population_size).fill(Network.fromJSON({ ...network.toJSON(), score: undefined }));
+    return pool;
   };
 
   // Initialise the genomes
   self.population = self.createPool(self.template, self.population_size);
 
-  self.filterGenome = function(population, template, pickGenome, adjustGenome) {
-      let filtered = [...population]; // avoid mutations
+  self.filterGenome = function (population, template, pickGenome, adjustGenome) {
+    let filtered = [...population]; // avoid mutations
 
-      // Check for correct return type from pickGenome
-      const check = function checkPick(genome) {
-        const pick = pickGenome(genome)
-        if (typeof pick !== "boolean") throw new Error("pickGenome must always return a boolean!")
-        return pick
-      }
+    // Check for correct return type from pickGenome
+    const check = function checkPick(genome) {
+      const pick = pickGenome(genome)
+      if (typeof pick !== "boolean") throw new Error("pickGenome must always return a boolean!")
+      return pick
+    }
 
-      if(adjustGenome){
-        for (let i = 0; i < population.length; i++) {
-          if(check(filtered[i])) {
-            const result = adjustGenome(filtered[i])
-            if (!(result instanceof Network)) throw new Error("adjustGenome must always return a network!")
-            filtered[i] = result
-          }
+    if(adjustGenome){
+      for (let i = 0; i < population.length; i++) {
+        if(check(filtered[i])) {
+          const result = adjustGenome(filtered[i])
+          if (!(result instanceof Network)) throw new Error("adjustGenome must always return a network!")
+          filtered[i] = result
         }
-      } else
-          for (let i = 0; i < population.length; i++)
-            if(check(filtered[i])) filtered[i] = Network.fromJSON(template.toJSON)
+      }
+    } else {
+      for (let i = 0; i < population.length; i++){
+        if(check(filtered[i])) filtered[i] = Network.fromJSON(template.toJSON())
+      }
+    }
 
-      return filtered;
-    };
+    return filtered;
+  };
 
   /**
    * Selects a random mutation method for a genome and mutates it
@@ -2011,7 +2156,7 @@ const Neat = function(dataset, {
    *
    * @return {mutation} Selected mutation
   */
-  self.mutateRandom = function selectMethodAndMutateNetwork(genome, allowedMutations) {
+  self.mutateRandom = function (genome, allowedMutations) {
       let possible = allowedMutations ? [...allowedMutations] : [...self.mutation]
 
       // remove any methods disallowed by user-limits: i.e. maxNodes, maxConns, ...
@@ -2027,13 +2172,11 @@ const Neat = function(dataset, {
         const current = possible[Math.floor(Math.random() * possible.length)]
 
         // attempt mutation, success: return mutation method, failure: remove from possible methods
-        if(genome.mutate(current)) return current
+        if (genome.mutate(current)) return current
         else possible = possible.filter(function(method) { return method.name !== current.name })
-
-        // Return null when mutation is impossible
-        if((!possible || possible.length === 0)) return null;
-
-      } while(true)
+      } while((possible && possible.length > 0))
+      // Return null when all the mutations have been attempted
+      return null;
   };
 
   /**
@@ -2287,7 +2430,7 @@ const Neat = function(dataset, {
     if (typeof self.population[self.population.length - 1].score === `undefined`)
       self.evaluate(); // self.evaluate is an async function
 
-    var score = 0;
+    let score = 0;
     for (let i = 0; i < self.population.length; i++)
       score += self.population[i].score;
 
@@ -2302,7 +2445,7 @@ const Neat = function(dataset, {
    * @return {object[]} A set of genomes (a population) represented as JSON objects.
    */
   self.toJSON = function toJSON() {
-    var json = [];
+    const json = [];
     for (let i = 0; i < self.population.length; i++)
       json.push(self.population[i].toJSON());
 
@@ -2315,7 +2458,7 @@ const Neat = function(dataset, {
    * @param {object[]} json set of genomes (a population) represented as JSON objects.
   */
   self.fromJSON = function fromJSON(json) {
-    var population = [];
+    const population = [];
     for (let i = 0; i < json.length; i++)
       population.push(Network.fromJSON(json[i]));
     self.population = population;

@@ -9,52 +9,58 @@ const _ = require("lodash");
 * @param {Node} to Connection destination node (neuron)
 * @param {number} [weight=random] Weight of the connection
 * @param {Object} [options]
+* @param {number} [options.gain=1]
+* @parma {Node} [options.gater]
 *
 * @prop {Node} from Connection origin node (neuron)
 * @prop {Node} to Connection destination node (neuron)
 * @prop {number} weight=random Weight of the connection
-* @prop {Node} gater=null The node gating this connection
 * @prop {number} gain=1 Used for gating, gets multiplied with weight
+* @prop {Node} gater=null The node gating this connection
 * @prop {number} elegibility=0
-* @prop {number} previousDeltaWeight=0 Used for tracking [momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html), basically a log of previous training adjustments
-* @prop {number} totalDeltaWeight=0 Used for tracking [momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html), a log of previous training adjustments for [batch training](https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes)
-* @prop {object} xtrace
-* @prop {Node[]} xtrace.nodes
-* @prop {number[]} xtrace.values
+* @prop {Node[]} xtrace_nodes
+* @prop {number[]} xtrace_values
+* @prop {number[]} delta_weights
+* @prop {number} delta_weights_previous=0 Tracks [momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html)
+* @prop {number} delta_weights_total=0 Tracks [momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) - _for [batch training](https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes)_
 *
 * @see {@link connection|Connection Methods}
 * @see {@link Node|Node}
 */
 function Connection (from, to, weight, options) {
+  if(from == undefined || to == undefined) throw new ReferenceError("Missing required parameter 'from' or 'to'");
+
   let self = this;
 
-  _.assignIn(self, _.defaults({ from, to, weight }, { ...options }, {
-    weight: Math.random() * 2 - 1,
+  // CHECK: https://gist.github.com/Salakar/1d7137de9cb8b704e48a
+  if(!options && _.isPlainObject(weight)) {
+    options = weight;
+    weight = undefined;
+  }
+
+  options = options || {};
+  weight = weight == undefined ? Math.random() * 2 - 1 : weight;
+
+  Object.assign(self, {
     gain: 1,
     gater: null,
     elegibility: 0,
-    previousDeltaWeight: 0, // ALIAS: deltaweight.previous
-    totalDeltaWeight: 0, // ALIAS: deltaweight.total
-    xtrace: {
-      nodes: [],
-      values: []
-    },
+    delta_weights_previous: 0,
+    delta_weights_total: 0,
+    delta_weights: [],
+    xtrace_nodes: [],
+    xtrace_values: []
+  }, options, { from, to, weight});
 
-    // (BETA)
-    delta_weights: {
-      previous: 0,
-      total: 0,
-      all: [],
-    }
-  }));
+  if(options.gater) options.gater.gate(self);
 
   /**
-  * Converts the connection to a json object
+  * Returns the connection as a JSON
   *
   * @function toJSON
   * @memberof Connection
   *
-  * @returns {object} A connection represented as a JSON object
+  * @returns {object} Returns connection as a JSON
   */
   self.toJSON = function () {
     return { weight: self.weight };
@@ -72,7 +78,11 @@ function Connection (from, to, weight, options) {
 * @returns {number} - An Integer that uniquely represents a pair of Integers
 */
 Connection.innovationID = function (a, b) {
+  if(a == undefined || b == undefined) throw new ReferenceError("Missing required parameter 'a' or 'b'");
+
   return 1 / 2 * (a + b) * (a + b + 1) + b;
 };
+
+
 
 module.exports = Connection;
