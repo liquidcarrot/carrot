@@ -58,19 +58,19 @@ const architect = {
     // Create a network
     const network = new Network(0, 0);
 
-    // Transform all groups into nodes
+    // Transform all groups into nodes, set input and output nodes to the network
+    // TODO: improve how it is communicated which nodes are input and output
     let nodes = [];
 
     let i, j;
     for (i = 0; i < list.length; i++) {
-      if (list[i] instanceof Group) {
+      if (list[i] instanceof Group || list[i] instanceof Layer) {
         for (j = 0; j < list[i].nodes.length; j++) {
           nodes.push(list[i].nodes[j]);
-        }
-      } else if (list[i] instanceof Layer) {
-        for (j = 0; j < list[i].nodes.length; j++) {
-          for (let k = 0; k < list[i].nodes[j].nodes.length; k++) {
-            nodes.push(list[i].nodes[j].nodes[k]);
+          if (i === 0) { // assume input nodes. TODO: improve.
+            network.input_nodes.add(list[i].nodes[j]);
+          } else if (i === list.length - 1) {
+            network.output_nodes.add(list[i].nodes[j]);
           }
         }
       } else if (list[i] instanceof Node) {
@@ -88,12 +88,12 @@ const architect = {
     const inputs = [];
     const outputs = [];
     for (i = nodes.length - 1; i >= 0; i--) {
-      if (nodes[i].type === 'output' || (!found_output_nodes && nodes[i].connections.out.length + nodes[i].connections.gated.length === 0)) {
+      if (nodes[i].type === 'output' || (!found_output_nodes && nodes[i].connections_outgoing.length + nodes[i].connections_gated.length === 0)) {
         nodes[i].type = 'output';
         network.output_size++;
         outputs.push(nodes[i]);
         nodes.splice(i, 1);
-      } else if (nodes[i].type === 'input' || (!found_input_nodes && !nodes[i].connections.in.length)) {
+      } else if (nodes[i].type === 'input' || (!found_input_nodes && !nodes[i].connections_incoming.length)) {
         nodes[i].type = 'input';
         network.input_size++;
         inputs.push(nodes[i]);
@@ -111,19 +111,21 @@ const architect = {
       throw new Error('Given nodes have no clear input/output node!');
     }
 
+    // TODO: network.addNodes should do all of these automatically, not only add connections
     for (i = 0; i < nodes.length; i++) {
-      for (j = 0; j < nodes[i].connections.out.length; j++) {
-        network.connections.push(nodes[i].connections.out[j]);
+      // this commented for is added automatically by network.addNodes
+      // for (j = 0; j < nodes[i].connections_outgoing.length; j++) {
+      //   network.connections.push(nodes[i].connections_outgoing[j]);
+      // }
+      for (j = 0; j < nodes[i].connections_gated.length; j++) {
+        network.gates.push(nodes[i].connections_gated[j]);
       }
-      for (j = 0; j < nodes[i].connections.gated.length; j++) {
-        network.gates.push(nodes[i].connections.gated[j]);
-      }
-      if (nodes[i].connections.self.weight !== 0) {
-        network.selfconns.push(nodes[i].connections.self);
+      if (nodes[i].connections_self.weight !== 0) {
+        network.connections.push(nodes[i].connections_self);
       }
     }
 
-    network.nodes = nodes;
+    network.addNodes(nodes);
 
     return network;
   },
@@ -259,10 +261,10 @@ const architect = {
   LSTM: function () {
     const layer_sizes_and_options = Array.from(arguments);
 
-    const output_size_or_options = layer_sizes_and_options.slice(-1);
-    
+    const output_size_or_options = layer_sizes_and_options.slice(-1)[0];
+
     let layer_sizes, options
-    
+
     // find out if options were passed
     if (typeof output_size_or_options === 'number') {
       layer_sizes = layer_sizes_and_options;
@@ -273,7 +275,7 @@ const architect = {
     }
 
     if (layer_sizes.length < 3) {
-      throw new Error('You have to specify at least 3 layer_sizes');
+      throw new Error('You have to specify at least 3 layer sizes, one for each of 1.inputs, 2. hidden, 3. output');
     }
 
     options = _.defaults(options, {
@@ -443,8 +445,8 @@ const architect = {
     nodes.push(input_layer);
 
     let previous = input_layer;
-    for (var i = 0; i < blocks.length; i++) {
-      const layer = new Layer.GRU(block_sizes[i])
+    for (var i = 0; i < block_sizes.length; i++) {
+      const layer = Layer.GRU(block_sizes[i])
       previous.connect(layer);
       previous = layer;
 
@@ -493,6 +495,7 @@ const architect = {
 
   /**
   * Creates a NARX network (remember previous inputs/outputs)
+  * @alpha cannot make standalone network. TODO: be able to make standalone network
   *
   * @param {number} input Number of input nodes
   * @param {number[]|number} hidden Array of hidden layer sizes, e.g. [10,20,10] If only one hidden layer, can be a number (of nodes)
@@ -531,17 +534,17 @@ const architect = {
 
     const nodes = [];
 
-    const input_layer = new Layer.Dense(input_size);
-    const input_memory = new Layer.Memory(input_size, input_memory_size);
+    const input_layer = Layer.Dense(input_size);
+    const input_memory = Layer.Memory(input_size, input_memory_size);
 
     const hidden_layers = [];
     // create the hidden layers
-    _.times(hidden_sizes.length, (index) => {
-      hidden_layers.push(new Layer.Dense(hidden_sizes[index]));
-    });
+    for (let index = 0; index < hidden_sizes.length; index++) {
+      hidden_layers.push(Layer.Dense(hidden_sizes[index]));
+    }
 
-    const output_layer = new Layer.Dense(output_size);
-    const output_memory = new Layer.Memory(output_size, output_memory_size);
+    const output_layer = Layer.Dense(output_size);
+    const output_memory = Layer.Memory(output_size, output_memory_size);
 
     // add the input connections and add to the list of nodes
     input_layer.connect(hidden_layers[0], methods.connection.ALL_TO_ALL);
@@ -555,7 +558,7 @@ const architect = {
     nodes.push(output_memory);
 
     // feed forward the hidden layers
-    _.times(hidden_layers.length, (index) => {
+    for (let index = 0; index < hidden_layers.length; index++) {
       if (index < hidden_layers.length - 1) { // do not connect to next if last
         hidden_layers[index].connect(hidden_layers[index + 1], methods.connection.ALL_TO_ALL);
       } else { // if last, connect to output
@@ -563,7 +566,7 @@ const architect = {
       }
 
       nodes.push(hidden_layers[index]);
-    });
+    }
 
     // finally, connect output to memory
     output_layer.connect(output_memory, methods.connection.ONE_TO_ONE, 1);

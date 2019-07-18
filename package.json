@@ -1,11 +1,12 @@
 {
   "name": "@liquid-carrot/carrot",
-  "version": "0.2.27",
+  "version": "0.3.0",
   "description": "A Simple Node.js AI Library for Neural Network",
   "main": "src/carrot",
   "scripts": {
     "deploy:docs": "node theme/deploy-docs.js",
-    "test": "./node_modules/.bin/nyc --reporter=html --reporter=text mocha --recursive test/ --exclude test/unit.js",
+    "test": "./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha --recursive test/ --exclude test/unit.js",
+    "test:debug": "./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha inspect --recursive test/ --exclude test/unit.js",
     "test:forever": "./node_modules/.bin/nodemon ./node_modules/.bin/mocha --reporter spec test/",
     "clean:docfiles": "find . -type f -name '*.html' -exec rm {} + && rm -rf styles/ && rm -rf scripts && rm -rf cdn/ && rm -rf img/"
   },
@@ -55,6 +56,7 @@
   "homepage": "https://liquidcarrot.io/",
   "dependencies": {
     "bignumber.js": "^8.1.1",
+    "eslint": "^6.0.1",
     "lodash": "^4.17.11"
   },
   "devDependencies": {
@@ -62,15 +64,15 @@
     "chai": "^4.2.0",
     "chai-each": "0.0.1",
     "chalk": "^2.4.2",
-    "copy-webpack-plugin": "^5.0.2",
-    "coveralls": "^3.0.3",
+    "copy-webpack-plugin": "^5.0.3",
+    "coveralls": "^3.0.4",
     "faker": "^4.1.0",
-    "jsdoc": "^3.6.1",
-    "mocha": "^5.2.0",
-    "nodemon": "^1.19.0",
+    "jsdoc": "^3.6.2",
+    "mocha": "^6.1.4",
+    "nodemon": "^1.19.1",
     "nyc": "^13.3.0",
     "riteway": "^6.0.3",
-    "webpack": "^4.30.0",
+    "webpack": "^4.35.2",
     "webpack-cli": "^3.3.5"
   },
   "nyc": {

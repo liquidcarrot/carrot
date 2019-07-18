@@ -24,10 +24,10 @@ process.on('message', function (e) {
   if (e.conns) { // this means that activations, states, and conns were provided
     var A = e.activations;
     var S = e.states;
-    var data = e.conns;
+    var connections = e.conns;
 
     // the dataset does not have to be serialized. I think that only the data param
-    var result = multi.testSerializedSet(dataset, cost_function, A, S, data, F);
+    var result = multi.testSerializedSet(dataset, cost_function, A, S, connections, F);
 
     process.send(result);
   }

@@ -284,8 +284,8 @@ without needing any other steps like setting git upstreams! :sparkles:
 Special thanks to [Hoodie](https://github.com/hoodiehq/hoodie) for the great
 CONTRIBUTING.md template.
 
-[1]:
-[5]:
+[1]: https://liquidcarrot.io/carrot
+[5]: https://liquidcarrot.io/carrot
 [6]: https://github.com/liquidcarrot/carrot/blob/master/CODE_OF_CONDUCT.md
-[7]:
+[7]: https://liquidcarrot.io/carrot
 [8]: https://gitter.im/carrot-ai/community?utm_source=share-link&utm_medium=link&utm_campaign=share-link
