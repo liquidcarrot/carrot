@@ -6,7 +6,7 @@ const { has, is, data, random } = require('../../util');
 const { Network, Neat, methods, config, architect } = require('../../src/carrot');
 
 describe("Neat", function() {
-  describe.skip("new Neat()", function() {
+  describe("new Neat()", function() {
     it("new Neat()", function() {
       const neat = new Neat();
       is.neat(neat);
@@ -97,10 +97,10 @@ describe("Neat", function() {
     //   is.neat(neat);
     // })
   })
-  describe.skip("neat.createPool()", function() {
+  describe("neat.createPool()", function() {
     // Should ignore for `neat.createPopulation()`...
   })
-  describe.skip("neat.createPopulation()", function() {
+  describe("neat.createPopulation()", function() {
     it("neat.createPopulation() => {Network[]}", function() {
       const neat = new Neat();
       const population = neat.createPopulation();
@@ -163,7 +163,7 @@ describe("Neat", function() {
       }
     })
   })
-  describe.skip("neat.replace()", function() {
+  describe("neat.replace()", function() {
     it("neat.replace() => {ReferenceError}", function() {
       const neat = new Neat();
       
@@ -471,34 +471,33 @@ describe("Neat", function() {
     it("neat.evolve(dataset, options) => {Network}")
     it("neat.evolve(genomes, dataset, options) => {Network}") // Should be static
   })
-  
-  // unskip
-  describe.skip("neat.getParent()", function() {
+
+  describe("neat.getParent()", function() {
     it("neat.getParent() => {Network}")
     it("neat.getParent(method) => {Network}") // Hard to test the marginal functionallity over `neat.getParent()`
   })
-  describe.skip("neat.getOffspring()", function() {
+  describe("neat.getOffspring()", function() {
     it("neat.getOffspring() => {Network}")
   })
-  describe.skip("neat.evaluate()", function() {
+  describe("neat.evaluate()", function() {
     it("neat.evaluate() => {Network[]}")
     it("neat.evaluate(dataset) => {Object}")
     it("neat.evaluate(options={ 'clear': true, networks': true }) => {{ 'best': Network, 'average': Network, 'worst': Network }}")
     it("neat.evaluate(dataset, { 'clear': true, networks': true }) => {{ 'best': Network, 'average': Network, 'worst': Network }}")
   })
-  describe.skip("neat.sort()", function() {
+  describe("neat.sort()", function() {
     it("neat.sort() => {Network[]}")
   })
-  describe.skip("neat.getFittest()", function() {
+  describe("neat.getFittest()", function() {
     it("neat.getFittest() => {Network}")
   })
-  describe.skip("neat.getAverage()", function() {
+  describe("neat.getAverage()", function() {
     it("neat.getAverage() => {Network}")
   })
-  describe.skip("neat.toJSON()", function() {
+  describe("neat.toJSON()", function() {
     it("neat.toJSON() => {Object}")
   })
-  describe.skip("Neat.fromJSON()", function() {
+  describe("Neat.fromJSON()", function() {
     it("neat.fromJSON() => {ReferenceError}")
     it("neat.fromJSON(json) => {Neat}")
   })
