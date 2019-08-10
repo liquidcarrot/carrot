@@ -583,9 +583,9 @@ function Network(input_size, output_size) {
    *
    * @param {mutation} method [Mutation method](mutation)
    * @param {object} options
-   * @param {number} [maxNodes=Infinity] Maximum amount of [Nodes](node) a network can grow to
-   * @param {number} [maxConns=Infinity] Maximum amount of [Connections](connection) a network can grow to
-   * @param {number} [maxGates=Infinity] Maximum amount of Gates a network can grow to
+   * @param {number} [options.maxNodes=Infinity] Maximum amount of [Nodes](node) a network can grow to
+   * @param {number} [options.maxConns=Infinity] Maximum amount of [Connections](connection) a network can grow to
+   * @param {number} [options.maxGates=Infinity] Maximum amount of Gates a network can grow to
    *
    * @returns {boolean} Whether or not a mutation was achieved
    *
@@ -835,9 +835,9 @@ function Network(input_size, output_size) {
    *
    * @param {mutation[]} allowedMethods=methods.mutation.ALL An array of [Mutation methods](mutation) to automatically pick from
    * @param {object} options
-   * @param {number} [maxNodes=Infinity] Maximum amount of [Nodes](node) a network can grow to
-   * @param {number} [maxConns=Infinity] Maximum amount of [Connections](connection) a network can grow to
-   * @param {number} [maxGates=Infinity] Maximum amount of Gates a network can grow to
+   * @param {number} [options.maxNodes=Infinity] Maximum amount of [Nodes](node) a network can grow to
+   * @param {number} [options.maxConns=Infinity] Maximum amount of [Connections](connection) a network can grow to
+   * @param {number} [options.maxGates=Infinity] Maximum amount of Gates a network can grow to
    *
    * @returns {network} A mutated version of this network
    */
