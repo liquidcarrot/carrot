@@ -422,6 +422,14 @@ describe("Neat", function() {
       expect(neat.population[0].nodes.length).equal(12)
     })
     
+    it("neat.mutate(mutation) & Neat({ mutation_amount: 10, mutation_rate: 1, maxNodes: 8 }) | Networks should have 8 nodes", function() {
+      const neat = new Neat({ population_size: 1, mutation_amount: 10, mutation_rate: 1, maxNodes: 8 })
+      
+      neat.mutate(methods.mutation.ADD_NODE)
+      
+      expect(neat.population[0].nodes.length).equal(8)
+    })
+    
     // To be implemented
     it.skip("neat.mutate(mutation[]) => {Network[]}", function() {
       

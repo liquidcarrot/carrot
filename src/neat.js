@@ -245,10 +245,16 @@ const Neat = function(inputs, outputs, dataset, options) {
    */
   self.mutate = function mutate_population(method) {
     
+    const options = {
+      maxNodes: self.maxNodes,
+      maxConns: self.maxConns,
+      maxGates: self.maxGates
+    }
+    
     // Change execution based on arguments
     const mutateGenome = method
-      ? (genome, method) => { genome.mutate(method) }
-      : (genome, methods) => { genome.mutateRandom(methods) }
+      ? (genome, method, options) => { genome.mutate(method, options) }
+      : (genome, methods, options) => { genome.mutateRandom(methods, options) }
     
     method = method ? method : self.mutation
     
@@ -257,7 +263,7 @@ const Neat = function(inputs, outputs, dataset, options) {
     for (let i = 0; i < population.length; i++) { // Elitist genomes should not be included
       if (Math.random() <= rate) {
         for(let j =0; j < times; j++) {
-          mutateGenome(population[i], method)
+          mutateGenome(population[i], method, options)
         }
       }
     }
