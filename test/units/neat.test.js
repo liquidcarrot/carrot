@@ -376,23 +376,73 @@ describe("Neat", function() {
     it("neat.replace(population, filter=Function, transform=Network) => {Network[]}")
     it("neat.replace(population, filter=Function, transform=Function) => {Network[]}")
   })
+  
   describe("neat.mutate()", function() {
-    it("neat.mutate() => {Network[]}")
+    it.skip("neat.mutate() => {Network[]}", function() {
+      const neat = new Neat()
+      
+      expect(neat.mutate()).to.be.an('array')
+    })
     
-    it("neat.mutate(methods=mutation) => {Network[]}")
-    it("neat.mutate(methods=mutation[]) => {Network[]}")
+    it("neat.mutate() | original != new", function() {
+      const neat = new Neat()
+      
+      const original = neat.population.map(function(network) {
+        return _.cloneDeep(network)
+      })
+      
+      neat.mutate()
+      
+      expect(neat.population[0]).not.eql(original[0])
+    })
     
-    // STATIC - Should be static functions
-    it("neat.mutate(genomes=Network) => {Network}")
-    it("neat.mutate(genomes=Network[]) => {Network[]}") // Sh
-    it("neat.mutate(genomes=Network, methods=mutation) => {Network}")
-    it("neat.mutate(genomes=Network, methods=mutation[]) => {Network}")
-    it("neat.mutate(genomes=Network[], methods=mutation) => {Network[]}")
-    it("neat.mutate(genomes=Network[], methods=mutation[]) => {Network[]}")
+    it.skip("neat.mutate(mutation) => {Network[]}", function() {
+      const neat = new Neat()
+      
+      expect(neat.mutate(methods.mutation.ADD_NODE)).to.be.an('array')
+    })
+    
+    it("neat.mutate(mutation) | original != new", function() {
+      const neat = new Neat()
+      
+      const original = neat.population.map(function(network) {
+        return _.cloneDeep(network)
+      })
+      
+      neat.mutate(methods.mutation.ADD_NODE)
+      
+      expect(neat.population[0]).not.eql(original[0])
+    })
+    
+    it("neat.mutate(mutation) & Neat({ mutation_amount: 10, mutation_rate: 1 }) | Should mutate 10 times", function() {
+      const neat = new Neat({ population_size: 1, mutation_amount: 10, mutation_rate: 1 })
+      
+      neat.mutate(methods.mutation.ADD_NODE)
+      
+      expect(neat.population[0].nodes.length).equal(12)
+    })
+    
+    it("neat.mutate(mutation) & Neat({ mutation_amount: 10, mutation_rate: 1, maxNodes: 8 }) | Networks should have 8 nodes", function() {
+      const neat = new Neat({ population_size: 1, mutation_amount: 10, mutation_rate: 1, maxNodes: 8 })
+      
+      neat.mutate(methods.mutation.ADD_NODE)
+      
+      expect(neat.population[0].nodes.length).equal(8)
+    })
+    
+    // To be implemented
+    it.skip("neat.mutate(mutation[]) => {Network[]}", function() {
+      
+    })
+    it.skip("neat.mutate(genomes=Network) => {Network}", function () {})
+    it.skip("neat.mutate(genomes=Network[]) => {Network[]}", function () {})
+    it.skip("neat.mutate(genomes=Network, methods=mutation) => {Network}", function () {})
+    it.skip("neat.mutate(genomes=Network, methods=mutation[]) => {Network}", function () {})
+    it.skip("neat.mutate(genomes=Network[], methods=mutation) => {Network[]}", function () {})
+    it.skip("neat.mutate(genomes=Network[], methods=mutation[]) => {Network[]}", function () {})
   })
-  describe("neat.mutateRandom()", function() {
-    // Could ignore this if `neat.mutate()` is done effectively
-  })
+  
+  // keep skipped
   describe.skip("neat.evolve()", function() {
     async function areSorted(genomes) {
       let previous = genomes[0];
@@ -421,6 +471,7 @@ describe("Neat", function() {
     it("neat.evolve(dataset, options) => {Network}")
     it("neat.evolve(genomes, dataset, options) => {Network}") // Should be static
   })
+
   describe("neat.getParent()", function() {
     it("neat.getParent() => {Network}")
     it("neat.getParent(method) => {Network}") // Hard to test the marginal functionallity over `neat.getParent()`

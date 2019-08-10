@@ -31,7 +31,7 @@ const config = require(`./config`);
 * @param {number} [options.maxNodes=Infinity] Maximum nodes for a potential network
 * @param {number} [options.maxConns=Infinity] Maximum connections for a potential network
 * @param {number} [options.maxGates=Infinity] Maximum gates for a potential network
-* @param {mutation[]} [options.mutation] Sets allowed [mutation methods](mutation) for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent
+* @param {mutation[]} [options.mutation] A set of allowed [mutation methods](mutation) for evolution. If unset a random mutation method from all possible mutation methods will be chosen when mutation occurs.
 *
 * @prop {number} generation A count of the generations
 * @prop {Network[]} population The current population for the neat instance. Accessible through `neat.population`
@@ -235,48 +235,6 @@ const Neat = function(inputs, outputs, dataset, options) {
   };
 
   /**
-   * Selects a random mutation method for a genome and mutates it
-   *
-   * @function mutateRandom
-   *
-   * @beta
-   *
-   * @memberof Neat
-   *
-   * @param {Network} genome Network to test for possible mutations
-   * @param {mutation[]} allowedMutations An array of allowed mutations to pick from
-   *
-   * @return {mutation} Selected mutation
-  */
-  self.mutateRandom = function apply_random_mutation_method_to_genome(genome, allowedMutations) {
-    let possible = allowedMutations ? [...allowedMutations] : [...self.mutation]
-
-    // remove any methods disallowed by user-limits: i.e. maxNodes, maxConns, ...
-    possible = possible.filter(function(method) {
-      return (
-        method !== methods.mutation.ADD_NODE || genome.nodes.length < self.maxNodes ||
-        method !== methods.mutation.ADD_CONN || genome.connections.length < self.maxConns ||
-        method !== methods.mutation.ADD_GATE || genome.gates.length < self.maxGates
-      )
-    })
-
-    do {
-      const current = possible[Math.floor(Math.random() * possible.length)]
-
-      // attempt mutation, success: return mutation method, failure: remove from possible methods
-      if (genome.mutate(current)) {
-        return current;
-      } else {
-        possible = possible.filter(function(method) { return method.name !== current.name });
-      }
-
-      // Return null when mutation is impossible
-      if (!possible || possible.length === 0) return null;
-
-    } while(true)
-  };
-
-  /**
    * Mutates the given (or current) population
    *
    * @function mutate
@@ -286,23 +244,31 @@ const Neat = function(inputs, outputs, dataset, options) {
    * @param {mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
    */
   self.mutate = function mutate_population(method) {
-    if (method) {
-      for (let i = 0; i < self.population.length; i++) { // Elitist genomes should not be included
-        if (Math.random() <= self.mutation_rate) {
-          for (let j = 0; j < self.mutation_amount; j++) {
-            self.population[i].mutate(method);
-          }
-        }
-      }
-    } else {
-      for (let i = 0; i < self.population.length; i++) { // Elitist genomes should not be included
-        if (Math.random() <= self.mutation_rate) {
-          for (let j = 0; j < self.mutation_amount; j++) {
-            self.mutateRandom(self.population[i], self.mutation);
-          }
+    
+    const options = {
+      maxNodes: self.maxNodes,
+      maxConns: self.maxConns,
+      maxGates: self.maxGates
+    }
+    
+    // Change execution based on arguments
+    const mutateGenome = method
+      ? (genome, method, options) => { genome.mutate(method, options) }
+      : (genome, methods, options) => { genome.mutateRandom(methods, options) }
+    
+    method = method ? method : self.mutation
+    
+    let { population, mutation_rate: rate, mutation_amount: times } = self
+    
+    for (let i = 0; i < population.length; i++) { // Elitist genomes should not be included
+      if (Math.random() <= rate) {
+        for(let j =0; j < times; j++) {
+          mutateGenome(population[i], method, options)
         }
       }
     }
+    
+    return population
   };
   
   /**
@@ -788,7 +754,7 @@ Neat.default = {
       methods.crossover.UNIFORM,
       methods.crossover.AVERAGE
     ],
-    mutation: methods.mutation.FFW,
+    mutation: methods.mutation.ALL,
     // template: new Network(this.input, this.output)
     maxNodes: Infinity,
     maxConns: Infinity,
