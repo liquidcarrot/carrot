@@ -827,7 +827,7 @@ function Network(input_size, output_size) {
   /**
    * Selects a random mutation method and returns a mutated copy of the network. Warning! Mutates network directly.
    *
-   * @function mutate
+   * @function mutateRandom
    *
    * @alpha
    *
