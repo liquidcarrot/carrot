@@ -485,11 +485,12 @@ function Network(input_size, output_size) {
   self.possible = function(method) {
     const self = this
     let candidates = []
-    switch (method) {
-      case mutation.SUB_NODE:
+    switch (method.name) {
+      case "SUB_NODE": {
         candidates = _.filter(this.nodes, function(node) { return (!self.input_nodes.has(node) && !self.output_nodes.has(node)) }) // assumes input & output node 'type' has been set
         return candidates.length ? candidates : false
-      case mutation.ADD_CONN:
+      }
+      case "ADD_CONN": {
         for (let i = 0; i < this.nodes.length - this.output_size; i++) {
           const node1 = this.nodes[i]
           for (let j = Math.max(i + 1, this.input_size); j < this.nodes.length; j++) {
@@ -499,7 +500,8 @@ function Network(input_size, output_size) {
         }
 
         return candidates.length ? candidates : false
-      case mutation.SUB_CONN:
+      }
+      case "SUB_CONN": {
         _.each(self.connections, (conn) => {
           // Check if it is not disabling a node
           if (conn.from.connections_outgoing.length > 1 && conn.to.connections_incoming.length > 1 && self.nodes.indexOf(conn.to) > self.nodes.indexOf(conn.from))
@@ -507,16 +509,20 @@ function Network(input_size, output_size) {
         })
 
         return candidates.length ? candidates : false
-      case mutation.MOD_ACTIVATION: return (method.mutateOutput || this.nodes.length > this.input_size + this.output_size) ? [] : false
-      case mutation.ADD_SELF_CONN:
-
+      }
+      case "MOD_ACTIVATION": {
+        return (method.mutateOutput || this.nodes.length > this.input_size + this.output_size) ? [] : false
+      }
+      case "ADD_SELF_CONN": {
+        
         for (let i = this.input_size; i < this.nodes.length; i++) {
           const node = this.nodes[i]
           if (node.connections_self.weight === 0) candidates.push(node)
         }
 
         return candidates.length ? candidates : false
-      case mutation.SUB_SELF_CONN:
+      }
+      case "SUB_SELF_CONN": {
         for (let i = 0; i < self.connections.length; i++) {
           const current_connection = self.connections[i];
           if (current_connection.from == current_connection.to) {
@@ -524,15 +530,19 @@ function Network(input_size, output_size) {
           }
         }
         return false;
-      case mutation.ADD_GATE:
+      }
+      case "ADD_GATE": {
         self.connections.forEach((conn) => {
           if (conn.gater === null) {
             candidates.push(conn);
           }
         });
         return candidates.length ? candidates : false
-      case mutation.SUB_GATE: return (this.gates.length > 0) ? [] : false
-      case mutation.ADD_BACK_CONN:
+      }
+      case "SUB_GATE": {
+        return (this.gates.length > 0) ? [] : false
+      }
+      case "ADD_BACK_CONN": {
         for (let i = this.input_size; i < this.nodes.length; i++) {
           const node1 = this.nodes[i]
           for (let j = this.input_size; j < i; j++) {
@@ -542,14 +552,16 @@ function Network(input_size, output_size) {
         }
 
         return candidates.length ? candidates : false
-      case mutation.SUB_BACK_CONN:
+      }
+      case "SUB_BACK_CONN": {
         _.each(self.connections, (conn) => {
           if (conn.from.connections_outgoing.length > 1 && conn.to.connections_incoming.length > 1 && self.nodes.indexOf(conn.from) > self.nodes.indexOf(conn.to))
             candidates.push(conn)
         })
 
         return candidates.length ? candidates : false
-      case mutation.SWAP_NODES:
+      }
+      case "SWAP_NODES": {
         // break out early if there aren't enough nodes to swap
         if((this.nodes.length - 1) - this.input_size - (method.mutateOutput ? 0 : this.output_size) < 2) return false;
 
@@ -559,16 +571,21 @@ function Network(input_size, output_size) {
 
         // Check there are at least two possible nodes
         return (candidates.length >= 2) ? candidates : false
+      }
     }
   }
 
   /**
-   * Mutates the network with the given method
+   * Mutates the network with the given method. Warning! Mutates network directly.
    *
    * @function mutate
    * @memberof Network
    *
    * @param {mutation} method [Mutation method](mutation)
+   * @param {object} options
+   * @param {number} [maxNodes=Infinity] Maximum amount of [Nodes](node) a network can grow to
+   * @param {number} [maxConns=Infinity] Maximum amount of [Connections](connection) a network can grow to
+   * @param {number} [maxGates=Infinity] Maximum amount of Gates a network can grow to
    *
    * @returns {boolean} Whether or not a mutation was achieved
    *
@@ -577,10 +594,12 @@ function Network(input_size, output_size) {
    *
    * myNetwork.mutate(mutation.ADD_GATE) // a random node will gate a random connection within the network
    */
-  self.mutate = function(method) {
+  self.mutate = function(method, options) {
     if (typeof method === 'undefined') throw new Error('Mutate method is undefined!')
-
-    // gets a random connection. TODO: Read the comment inside
+    
+    const { maxNodes, maxConns, maxGates } = options || {}
+    
+    // Helper function. TODO: Read the comment inside
     const getRandomConnection = () => {
       if (self.nodes.length <= self.input_size) throw Error('No connections can be chosen');
       // get a random connection. this method does not choose from a uniform distribution
@@ -605,9 +624,18 @@ function Network(input_size, output_size) {
     };
 
     let i, j;
-    switch (method) {
-      case mutation.ADD_NODE: {
+    switch (method.name) {
+      case "ADD_NODE": {
+        /**
+         * This is a sloppy fix, even if amount of nodes is equal to input
+         * should still add a output / hidden node
+         * or throw an error
+         */
         if (self.nodes.length <= self.input_size) return false;
+        
+        // Check user constraint
+        if(self.nodes.length >= maxNodes) return false;
+        
         // Look for an existing connection and place a node in between
         const connection = getRandomConnection();
         this.disconnect(connection.from, connection.to);
@@ -632,7 +660,7 @@ function Network(input_size, output_size) {
 
         return true;
       }
-      case mutation.SUB_NODE: {
+      case "SUB_NODE": {
         const possible = this.possible(method);
         if (possible) {
           this.remove(_.sample(possible));
@@ -640,7 +668,10 @@ function Network(input_size, output_size) {
         }
         return false;
       }
-      case mutation.ADD_CONN: {
+      case "ADD_CONN": {
+        // Check user constraint
+        if(self.connections.length >= maxConns) return false
+        
         const possible = this.possible(method);
         if (possible) {
           const pair = possible[Math.floor(Math.random() * possible.length)];
@@ -650,8 +681,8 @@ function Network(input_size, output_size) {
 
         return false;
       }
-      case mutation.REMOVE_CONN: // alias for sub_conn
-      case mutation.SUB_CONN: {
+      case "REMOVE_CONN": // alias for sub_conn
+      case "SUB_CONN": {
         const possible = this.possible(method);
         if (possible) {
           const random_connection = possible[Math.floor(Math.random() * possible.length)];
@@ -661,7 +692,7 @@ function Network(input_size, output_size) {
 
         return false;
       }
-      case mutation.MOD_WEIGHT: {
+      case "MOD_WEIGHT": {
         if (self.nodes.length <= self.input_size) return false;
 
         // get a random connection to modify weight
@@ -671,7 +702,7 @@ function Network(input_size, output_size) {
 
         return true;
       }
-      case mutation.MOD_BIAS: {
+      case "MOD_BIAS": {
         if (self.nodes.length <= self.input_size) return false;
         // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
         const chosen_node_index = Math.floor(Math.random() * (this.nodes.length - this.input_size) + this.input_size);
@@ -680,8 +711,8 @@ function Network(input_size, output_size) {
 
         return true;
       }
-      case mutation.MOD_ACTIVATION: {
-        if (this.possible(method)) {
+      case "MOD_ACTIVATION": {
+        if (self.possible(method)) {
           const possible = _.filter(this.nodes, method.mutateOutput ?
             (node) => node.type !== 'input' :
             (node) => node.type !== 'input' && node.type !== 'output');
@@ -692,7 +723,7 @@ function Network(input_size, output_size) {
         }
         return false;
       }
-      case mutation.ADD_SELF_CONN: {
+      case "ADD_SELF_CONN": {
         const possible = this.possible(method);
         if (possible) {
           const node = possible[Math.floor(Math.random() * possible.length)];
@@ -702,7 +733,7 @@ function Network(input_size, output_size) {
 
         return false;
       }
-      case mutation.SUB_SELF_CONN: {
+      case "SUB_SELF_CONN": {
         // very slow implementation.
         // TODO: Huge speed up by storing a map is_self_connection<id -> node>
         const self_connections = [];
@@ -721,7 +752,10 @@ function Network(input_size, output_size) {
 
         return false;
       }
-      case mutation.ADD_GATE: {
+      case "ADD_GATE": {
+        // Check user constraint
+        if(self.gates.length >= maxGates) return false
+        
         const possible = this.possible(method);
         if (possible) {
           // Select a random gater node and connection, can't be gated by input
@@ -734,7 +768,7 @@ function Network(input_size, output_size) {
 
         return false;
       }
-      case mutation.SUB_GATE: {
+      case "SUB_GATE": {
         if (this.possible(method)) {
           this.ungate(this.gates[Math.floor(Math.random() * this.gates.length)]);
           return true;
@@ -742,7 +776,7 @@ function Network(input_size, output_size) {
 
         return false;
       }
-      case mutation.ADD_BACK_CONN: {
+      case "ADD_BACK_CONN": {
         const possible = this.possible(method);
         if (possible) {
           const pair = possible[Math.floor(Math.random() * possible.length)]
@@ -752,7 +786,7 @@ function Network(input_size, output_size) {
 
         return false;
       }
-      case mutation.SUB_BACK_CONN: {
+      case "SUB_BACK_CONN": {
         const possible = this.possible(method);
         if (possible) {
           const random_connection = possible[Math.floor(Math.random() * possible.length)];
@@ -762,7 +796,7 @@ function Network(input_size, output_size) {
 
         return false;
       }
-      case mutation.SWAP_NODES: {
+      case "SWAP_NODES": {
         const possible = this.possible(method);
         if (possible) {
           // Return a random node out of the filtered collection
@@ -788,6 +822,39 @@ function Network(input_size, output_size) {
         return false;
       }
     }
+  }
+  
+  /**
+   * Selects a random mutation method and returns a mutated copy of the network. Warning! Mutates network directly.
+   *
+   * @function mutate
+   *
+   * @alpha
+   *
+   * @memberof Network
+   *
+   * @param {mutation[]} allowedMethods=methods.mutation.ALL An array of [Mutation methods](mutation) to automatically pick from
+   * @param {object} options
+   * @param {number} [maxNodes=Infinity] Maximum amount of [Nodes](node) a network can grow to
+   * @param {number} [maxConns=Infinity] Maximum amount of [Connections](connection) a network can grow to
+   * @param {number} [maxGates=Infinity] Maximum amount of Gates a network can grow to
+   *
+   * @returns {network} A mutated version of this network
+   */
+  self.mutateRandom = function(allowedMethods, options) {
+    const possible = (Array.isArray(allowedMethods) && allowedMethods.length) ? _.cloneDeep(allowedMethods) : _.cloneDeep(methods.mutation.ALL)
+    
+    while(possible.length > 0) {
+      const x = Math.floor(Math.random() * possible.length)
+      const current = possible[x]
+      
+      if(self.mutate(current, options)) return self
+      
+      possible.splice(x,1)
+    }
+    
+    // Return null when mutation is impossible
+    return null
   }
 
   /**

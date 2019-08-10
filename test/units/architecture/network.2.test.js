@@ -1,6 +1,7 @@
 /* Import */
+const _ = require('lodash');
 var chai = require('chai');
-var assert = chai.assert;
+const { expect, assert } = chai;
 let carrot = require('../../../src/carrot')
 
 /* Shorten var names */
@@ -78,8 +79,8 @@ function testEquality (original, copied) {
                           Test the performance of networks
 *******************************************************************************************/
 
-describe('Networks', function () {
-  describe('Mutation', function () {
+describe('Network', function () {
+  describe('Network.mutate()', function () {
     it('ADD_NODE', function () {
       checkMutation(methods.mutation.ADD_NODE);
     });
@@ -123,6 +124,70 @@ describe('Networks', function () {
       checkMutation(methods.mutation.SWAP_NODES);
     });
   });
+  describe('Network.mutateRandom()', function () {
+    it('() => {Network}', function () {
+      let template = new Network(1,2)
+      let network = new architect.Perceptron(2,3,2)
+      
+      expect(network.mutateRandom()).to.include.keys(Object.keys(template))
+    })
+    
+    it('([]) => {Network}', function () {
+      let template = new Network(1,2)
+      let network = new architect.Perceptron(2,3,2)
+      
+      expect(network.mutateRandom([])).to.include.keys(Object.keys(template))
+    })
+    
+    it('originalNetwork !== newNetwork', function () {
+      let network = new architect.Perceptron(2,3,2)
+      const copy = _.cloneDeep(network);
+      
+      // in place mutation (instead of reassignment)
+      network.mutateRandom();
+      
+      expect(copy).to.not.eql(network) // eql: check for content equality (instead of for the same point in memory)
+    })
+    
+    it("Shouldn't add node when at max nodes", function () {
+      let network = new architect.Perceptron(2,3,2)
+      
+      network.mutateRandom([methods.mutation.ADD_NODE], { maxNodes: 7 })
+      
+      expect(network.nodes.length).equal(7)
+    })
+    
+    it("Shouldn't add connections when at max connections", function () {
+      let network = new architect.Perceptron(1,2,2)
+      
+      network.mutateRandom([methods.mutation.ADD_CONN], { maxConns: 6 })
+      
+      // natural max is 9
+      expect(network.connections.length).equal(6)
+    })
+    
+    it("Shouldn't add connections when at max gates", function () {
+      let network = new architect.Perceptron(1,2,2)
+      
+      // directly depends on .mutate(), not ideal
+      network.mutate(methods.mutation.ADD_GATE)
+      
+      network.mutateRandom([methods.mutation.ADD_GATE], { maxGates: 1 })
+      
+      // natural max is 5
+      expect(network.gates.length).equal(1)
+    })
+    
+    it("Shouldn't change network when all methods impossible", function () {
+      let network = new architect.Perceptron(2,3,2)
+      const copy = _.cloneDeep(network);
+      
+      // impossible mutation method
+      network.mutateRandom([methods.mutation.SUB_GATE])
+      
+      expect(copy).to.eql(network) // eql: check for content equality (instead of for the same point in memory)
+    })
+  })
   describe('Structure', function () {
     it('Feed-forward', function () {
       this.timeout(30000);
