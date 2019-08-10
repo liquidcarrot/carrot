@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Liquid Carrot - neat.js - Documentation</title>
+    <link rel="shortcut icon" href="/liquid-carrot-favicon.png" />
+    
+    
+    
+    
+    
+    <meta property="og:title" content=""/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content=""/>
+    
+    <meta property="og:url" content=""/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="styles/bulma.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/ionicons/2.0.1/css/ionicons.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger">
+  <div class="fixed-action-btn">
+    <div class="button-floating">
+      <!--
+      <label for="nav-trigger" class="navicon-button x">
+        <div class="navicon"></div>
+      </label>
+      -->
+        <i class="ion-ios-book" aria-hidden="true"></i>
+    </div>
+  </div>
+</label>
+<label for="nav-trigger" class="overlay"></label>
+
+<div class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="#" style="padding:0">
+      <img src="img/carrot-logo.png" height="28">
+    </a>
+
+    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+
+  <div id="navbarBasicExample" class="navbar-menu">
+    <div class="navbar-start">
+      <a class="navbar-item" href="/">Home</a>
+      <a class="navbar-item" href="/carrot">Docs</a>
+      <a class="navbar-item" href="https://github.com/liquidcarrot/carrot" target="_blank"><i class="ion-social-github" aria-hidden="true"></i></a>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          Versions
+        </a>
+        
+        <div class="navbar-dropdown">
+          <a href='https://liquidcarrot.io/carrot/versions/0.2.27/' class="navbar-item">v0.2.27</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.2.28/' class="navbar-item">v0.2.28</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.0/' class="navbar-item">v0.3.0</a>
+      <a href='https://liquidcarrot.io/carrot/' class="navbar-item">latest</a>
+        </div>
+      </div>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More
+        </a>
+
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="mailto:people@liquidcarrot.io?subject=Contact%20From%20Docs">
+            Contact
+          </a>
+          <hr class="navbar-divider">
+          <a class="navbar-item" href="https://github.com/liquidcarrot/carrot/issues/new">
+            Report an issue
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <input type="text" id="nav-search" placeholder="Search" autofocus>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav >
+    <h3>Classes</h3><ul><li><a href="Connection_.html">Connection</a><ul class='methods'><li data-type='method'><a href="Connection_.html#.innovationID">innovationID</a></li><li data-type='method'><a href="Connection_.html#.toJSON">toJSON</a></li></ul></li><li><a href="Group.html">Group</a><ul class='methods'><li data-type='method'><a href="Group.html#.activate">activate</a></li><li data-type='method'><a href="Group.html#.clear">clear</a></li><li data-type='method'><a href="Group.html#.connect">connect</a></li><li data-type='method'><a href="Group.html#.disconnect">disconnect</a></li><li data-type='method'><a href="Group.html#.gate">gate</a></li><li data-type='method'><a href="Group.html#.propagate">propagate</a></li><li data-type='method'><a href="Group.html#.set">set</a></li></ul></li><li><a href="Layer.html">Layer</a><ul class='methods'><li data-type='method'><a href="Layer.html#.Dense">Dense</a></li><li data-type='method'><a href="Layer.html#.GRU">GRU</a></li><li data-type='method'><a href="Layer.html#.LSTM">LSTM</a></li><li data-type='method'><a href="Layer.html#.Memory">Memory</a></li></ul></li><li><a href="Neat.html">Neat</a><ul class='methods'><li data-type='method'><a href="Neat.html">evolve</a></li><li data-type='method'><a href="Neat.html#.createPool">createPool</a></li><li data-type='method'><a href="Neat.html#.createPopulation">createPopulation</a></li><li data-type='method'><a href="Neat.html#.evaluate">evaluate</a></li><li data-type='method'><a href="Neat.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Neat.html#.getAverage">getAverage</a></li><li data-type='method'><a href="Neat.html#.getFittest">getFittest</a></li><li data-type='method'><a href="Neat.html#.getOffspring">getOffspring</a></li><li data-type='method'><a href="Neat.html#.getParent">getParent</a></li><li data-type='method'><a href="Neat.html#.mutate">mutate</a></li><li data-type='method'><a href="Neat.html#.replace">replace</a></li><li data-type='method'><a href="Neat.html#.toJSON">toJSON</a></li></ul></li><li><a href="Network.html">Network</a><ul class='methods'><li data-type='method'><a href="Network.html#.activate">activate</a></li><li data-type='method'><a href="Network.html#.clear">clear</a></li><li data-type='method'><a href="Network.html#.clone">clone</a></li><li data-type='method'><a href="Network.html#.connect">connect</a></li><li data-type='method'><a href="Network.html#.crossOver">crossOver</a></li><li data-type='method'><a href="Network.html#.disconnect">disconnect</a></li><li data-type='method'><a href="Network.html#.evolve">evolve</a></li><li data-type='method'><a href="Network.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Network.html#.gate">gate</a></li><li data-type='method'><a href="Network.html#.graph">graph</a></li><li data-type='method'><a href="Network.html#.merge">merge</a></li><li data-type='method'><a href="Network.html#.mutate">mutate</a></li><li data-type='method'><a href="Network.html#.mutate">mutate</a></li><li data-type='method'><a href="Network.html#.noTraceActivate">noTraceActivate</a></li><li data-type='method'><a href="Network.html#.possible">possible</a></li><li data-type='method'><a href="Network.html#.remove">remove</a></li><li data-type='method'><a href="Network.html#.set">set</a></li><li data-type='method'><a href="Network.html#.standalone">standalone</a></li><li data-type='method'><a href="Network.html#.test">test</a></li><li data-type='method'><a href="Network.html#.toJSON">toJSON</a></li><li data-type='method'><a href="Network.html#.train">train</a></li><li data-type='method'><a href="Network.html#.ungate">ungate</a></li></ul></li><li><a href="Node.html">Node</a><ul class='methods'><li data-type='method'><a href="Node.html#.activate">activate</a></li><li data-type='method'><a href="Node.html#.clear">clear</a></li><li data-type='method'><a href="Node.html#.connect">connect</a></li><li data-type='method'><a href="Node.html#.disconnect">disconnect</a></li><li data-type='method'><a href="Node.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Node.html#.gate">gate</a></li><li data-type='method'><a href="Node.html#.isProjectedBy">isProjectedBy</a></li><li data-type='method'><a href="Node.html#.isProjectingTo">isProjectingTo</a></li><li data-type='method'><a href="Node.html#.mutate">mutate</a></li><li data-type='method'><a href="Node.html#.noTraceActivate">noTraceActivate</a></li><li data-type='method'><a href="Node.html#.propagate">propagate</a></li><li data-type='method'><a href="Node.html#.toJSON">toJSON</a></li><li data-type='method'><a href="Node.html#.ungate">ungate</a></li></ul></li></ul><h3>Namespaces</h3><ul><li><a href="activation.html">activation</a><ul class='methods'><li data-type='method'><a href="activation.html#.ABSOLUTE">ABSOLUTE</a></li><li data-type='method'><a href="activation.html#.BENT_IDENTITY">BENT_IDENTITY</a></li><li data-type='method'><a href="activation.html#.BIPOLAR">BIPOLAR</a></li><li data-type='method'><a href="activation.html#.BIPOLAR_SIGMOID">BIPOLAR_SIGMOID</a></li><li data-type='method'><a href="activation.html#.GAUSSIAN">GAUSSIAN</a></li><li data-type='method'><a href="activation.html#.HARD_TANH">HARD_TANH</a></li><li data-type='method'><a href="activation.html#.IDENTITY">IDENTITY</a></li><li data-type='method'><a href="activation.html#.INVERSE">INVERSE</a></li><li data-type='method'><a href="activation.html#.LOGISTIC">LOGISTIC</a></li><li data-type='method'><a href="activation.html#.RELU">RELU</a></li><li data-type='method'><a href="activation.html#.SELU">SELU</a></li><li data-type='method'><a href="activation.html#.SINUSOID">SINUSOID</a></li><li data-type='method'><a href="activation.html#.SOFTSIGN">SOFTSIGN</a></li><li data-type='method'><a href="activation.html#.STEP">STEP</a></li><li data-type='method'><a href="activation.html#.TANH">TANH</a></li></ul></li><li><a href="architect.html">architect</a><ul class='methods'><li data-type='method'><a href="architect.html#.Construct">Construct</a></li><li data-type='method'><a href="architect.html#.GRU">GRU</a></li><li data-type='method'><a href="architect.html#.Hopfield">Hopfield</a></li><li data-type='method'><a href="architect.html#.Liquid">Liquid</a></li><li data-type='method'><a href="architect.html#.LSTM">LSTM</a></li><li data-type='method'><a href="architect.html#.NARX">NARX</a></li><li data-type='method'><a href="architect.html#.Perceptron">Perceptron</a></li><li data-type='method'><a href="architect.html#.Random">Random</a></li></ul></li><li><a href="connection.html">connection</a><ul class='members'><li data-type='member'><a href="connection.html#.ALL_TO_ALL">ALL_TO_ALL</a></li><li data-type='member'><a href="connection.html#.ALL_TO_ELSE">ALL_TO_ELSE</a></li><li data-type='member'><a href="connection.html#.ONE_TO_ONE">ONE_TO_ONE</a></li></ul></li><li><a href="cost.html">cost</a><ul class='methods'><li data-type='method'><a href="cost.html#.BINARY">BINARY</a></li><li data-type='method'><a href="cost.html#.CROSS_ENTROPY">CROSS_ENTROPY</a></li><li data-type='method'><a href="cost.html#.HINGE">HINGE</a></li><li data-type='method'><a href="cost.html#.MAE">MAE</a></li><li data-type='method'><a href="cost.html#.MAPE">MAPE</a></li><li data-type='method'><a href="cost.html#.MSE">MSE</a></li><li data-type='method'><a href="cost.html#.MSLE">MSLE</a></li><li data-type='method'><a href="cost.html#.WAPE">WAPE</a></li></ul></li><li><a href="crossover.html">crossover</a><ul class='members'><li data-type='member'><a href="crossover.html#.AVERAGE">AVERAGE</a></li><li data-type='member'><a href="crossover.html#.SINGLE_POINT">SINGLE_POINT</a></li><li data-type='member'><a href="crossover.html#.TWO_POINT">TWO_POINT</a></li><li data-type='member'><a href="crossover.html#.UNIFORM">UNIFORM</a></li></ul></li><li><a href="gating.html">gating</a><ul class='members'><li data-type='member'><a href="gating.html#.INPUT">INPUT</a></li><li data-type='member'><a href="gating.html#.OUTPUT">OUTPUT</a></li><li data-type='member'><a href="gating.html#.SELF">SELF</a></li></ul></li><li><a href="mutation.html">mutation</a><ul class='members'><li data-type='member'><a href="mutation.html#.ADD_BACK_CONN">ADD_BACK_CONN</a></li><li data-type='member'><a href="mutation.html#.ADD_CONN">ADD_CONN</a></li><li data-type='member'><a href="mutation.html#.ADD_GATE">ADD_GATE</a></li><li data-type='member'><a href="mutation.html#.ADD_NODE">ADD_NODE</a></li><li data-type='member'><a href="mutation.html#.ADD_SELF_CONN">ADD_SELF_CONN</a></li><li data-type='member'><a href="mutation.html#.ALL">ALL</a></li><li data-type='member'><a href="mutation.html#.FFW">FFW</a></li><li data-type='member'><a href="mutation.html#.MOD_ACTIVATION">MOD_ACTIVATION</a></li><li data-type='member'><a href="mutation.html#.MOD_BIAS">MOD_BIAS</a></li><li data-type='member'><a href="mutation.html#.MOD_WEIGHT">MOD_WEIGHT</a></li><li data-type='member'><a href="mutation.html#.SUB_BACK_CONN">SUB_BACK_CONN</a></li><li data-type='member'><a href="mutation.html#.SUB_CONN">SUB_CONN</a></li><li data-type='member'><a href="mutation.html#.SUB_GATE">SUB_GATE</a></li><li data-type='member'><a href="mutation.html#.SUB_NODE">SUB_NODE</a></li><li data-type='member'><a href="mutation.html#.SUB_SELF_CONN">SUB_SELF_CONN</a></li><li data-type='member'><a href="mutation.html#.SWAP_NODES">SWAP_NODES</a></li></ul></li><li><a href="rate.html">rate</a><ul class='methods'><li data-type='method'><a href="rate.html#.EXP">EXP</a></li><li data-type='method'><a href="rate.html#.FIXED">FIXED</a></li><li data-type='method'><a href="rate.html#.INV">INV</a></li><li data-type='method'><a href="rate.html#.STEP">STEP</a></li></ul></li><li><a href="selection.html">selection</a><ul class='members'><li data-type='member'><a href="selection.html#.FITNESS_PROPORTIONATE">FITNESS_PROPORTIONATE</a></li><li data-type='member'><a href="selection.html#.POWER">POWER</a></li><li data-type='member'><a href="selection.html#.TOURNAMENT">TOURNAMENT</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#config">config</a></li><li><a href="global.html#GAN">GAN</a></li><li><a href="global.html#sort">sort</a></li></ul>
+</nav>
+
+<div id="main">
+    <div class="columns">
+        <div class="column is-hidden-touch"></div>
+        <div class="column is-11-desktop is-10-widescreen">
+
+            
+                <h1 class="page-title">neat.js</h1>
+            
+
+            
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const _ = require(`lodash`);
+// const parameter = require(`./util/parameter`);
+const Network = require(`./architecture/network`);
+const methods = require(`./methods/methods`);
+const config = require(`./config`);
+
+/**
+* Runs the NEAT algorithm on group of neural networks.
+*
+* @constructs Neat
+*
+* @param {number} [inputs=1] Size of input layer of the networks in the population
+* @param {number} [outputs=1] Size of output layer of the networks in the population
+* @param {Array&lt;{inputs:number[],outputs:number[]}>} [dataset] Dataset used to train networks in the population at first - _other sets of data can be passed to `neat.evolve()` after constuction_
+* @param {Object} options **Configuration Options**
+* @param {number} [options.population_size=50] Population size of each generation.
+* @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algortihtms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
+* @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
+* @param {number} [options.mutation_rate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.4.
+* @param {number} [options.mutation_amount=1] If mutation occurs (randomNumber &lt; mutation_rate), sets amount of times a mutation method will be applied to the network.
+* @param {cost} [options.cost=cost.MSE]  Specify the cost function for the evolution, this tells a genome in the population how well it's performing. Default: methods.cost.MSE (recommended).
+* @param {boolean} [options.equal=false] When true [crossover](Network.crossOver) parent genomes are assumed to be equally fit and offspring are built with a random amount of neurons within the range of parents' number of neurons. Set to false to select the "fittest" parent as the neuron amount template.
+* @param {number} [options.clear=false] Clear the context of the population's nodes, basically reverting them to 'new' neurons. Useful for predicting timeseries with LSTM's.
+* @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connectoins.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
+* @param {number} [options.amount=1] Set the amount of times to test the trainingset on a genome each generation. Useful for timeseries. Do not use for regular feedfoward problems.
+* @param {boolean} [options.fitnessPopulation=false] Flag to return the fitness of a population of genomes. Set this to false to evaluate each genome inidividually.
+* @param {Function} [options.fitness] - A fitness function to evaluate the networks. Takes a `dataset` and a `genome` i.e. a [network](Network) or a `population` i.e. an array of networks and sets the genome `.score` property
+* @param {string} [options.selection=FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
+* @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
+* @param {Network} [options.network=false] Network to start evolution from
+* @param {number} [options.maxNodes=Infinity] Maximum nodes for a potential network
+* @param {number} [options.maxConns=Infinity] Maximum connections for a potential network
+* @param {number} [options.maxGates=Infinity] Maximum gates for a potential network
+* @param {mutation[]} [options.mutation] A set of allowed [mutation methods](mutation) for evolution. If unset a random mutation method from all possible mutation methods will be chosen when mutation occurs.
+*
+* @prop {number} generation A count of the generations
+* @prop {Network[]} population The current population for the neat instance. Accessible through `neat.population`
+*
+* @example
+* const { Neat } = require("@liquid-carrot/carrot");
+*
+* // new Neat()
+* let neat = new Neat()
+*
+* // new Neat(options)
+* let neat = new Neat({ population_size: 100 })
+*
+* // new Neat(dataset)
+* let neat = new Neat([
+*   { input: [0, 0], output: [0] },
+*   { input: [0, 1], output: [1] },
+*   { input: [1, 0], output: [1] },
+*   { input: [1, 1], output: [0] }
+* ])
+*
+* // new Neat(input, output)
+* let neat = new Neat(64, 10)
+*
+* // new Neat(dataset, options)
+* let neat = new Neat([
+*   { input: [0, 0], output: [0] },
+*   { input: [0, 1], output: [1] },
+*   { input: [1, 0], output: [1] },
+*   { input: [1, 1], output: [0] }
+* ], { population_size: 100 })
+*
+* // new Neat(input, output, options)
+* let neat = new Neat(64, 10, { population_size: 100 })
+*
+* // new Neat(input, output, dataset)
+* let neat = new Neat(2, 1, [
+*   { input: [0, 0], output: [0] },
+*   { input: [0, 1], output: [1] },
+*   { input: [1, 0], output: [1] },
+*   { input: [1, 1], output: [0] }
+* ])
+*
+* // new Neat(input, output, dataset, options)
+* let neat = new Neat(2, 1, [
+*   { input: [0, 0], output: [0] },
+*   { input: [0, 1], output: [1] },
+*   { input: [1, 0], output: [1] },
+*   { input: [1, 1], output: [0] }
+* ], { population_size: 100 })
+*
+*/
+const Neat = function(inputs, outputs, dataset, options) {
+  const self = this;
+
+  // new Neat(dataset) || new Neat(options)
+  if(!(outputs || dataset || options)) {
+    if(_.isPlainObject(inputs)) options = inputs;
+    else if(Array.isArray(inputs)) dataset = inputs;
+
+    inputs = undefined;
+  }
+
+  // new Neat(dataset, options)
+  else if(!(dataset || options) &amp;&amp; Array.isArray(inputs) &amp;&amp; _.isPlainObject(outputs)) {
+    dataset = inputs;
+    options = outputs;
+    inputs = outputs = undefined;
+  }
+
+  // new Neat(input, output, options)
+  else if(!(options) &amp;&amp; _.isInteger(inputs) &amp;&amp; _.isInteger(outputs) &amp;&amp; _.isPlainObject(dataset)) {
+    options = dataset;
+    dataset = undefined;
+  }
+
+  // new Neat()
+  // new Neat(population) - leave out for now
+  // new Neat(input, output)
+  // new Neat(population, options) - leave out for now
+  // new Neat(population, dataset) - leave out for now
+  // new Neat(input, output, dataset)
+  // new Neat(population, dataset, options) - leave out for now
+  // new Neat(input, output, dataset, options)
+  inputs = inputs || 1;
+  outputs = outputs || 1;
+  dataset = dataset || [];
+  options = _.defaultsDeep(options, Neat.default.options);
+  options.template = options.template || new Network(inputs, outputs);
+
+  Object.assign(self, { inputs, outputs, dataset, ...options});
+
+  /**
+   * Create the initial pool of genomes
+   *
+   * @function createPool
+   *
+   * @deprecated
+   *
+   * @memberof Neat
+   *
+   * @param {Network} network
+   * @param {Number} population_size the number of types the genome of network will be copied to make the pool
+   */
+  self.createPool = function createPool(network, population_size) {
+    const population = [];
+
+    for (let i = 0; i &lt; population_size; i++) {
+      population.push(Network.fromJSON({ ...network.toJSON(), score: undefined }));
+    }
+
+    return population;
+  };
+
+  /**
+   * Creates a new population
+   *
+   * @function createPopulation
+   *
+   * @alpha
+   *
+   * @memberof Neat
+   *
+   * @param {Network} [network] - Template network used to create population - _other networks will be "identical twins"_ - _will use `this.template`, if `network` is not defined_
+   * @param {number} [size=50] - Number of network in created population - _how many identical twins created in new population_
+   *
+   * @returns {Network[]} Returns an array of networks
+   */
+  self.createPopulation = function create_networks_for_evolution(network, size) {
+    if(!size &amp;&amp; Number.isInteger(network)) {
+      size = network;
+      network = undefined;
+    }
+
+    const population = [];
+
+    network = network ? network.clone() : (self.template || new Network(self.inputs, self.outputs));
+    size = size || self.population_size;
+
+    for(let index = 0; index &lt; size; index++) {
+      population.push(network);
+    }
+
+    return population;
+  };
+
+  // Initialise the genomes
+  self.population = self.population || self.createPopulation(self.template, self.population_size);
+
+  /**
+   * Replaces all networks that match the `select` function - _if `transform` is provided networks will be transformed before being filtered out_
+   *
+   * @function replace
+   *
+   * @memberof Neat
+   *
+   * @param {Network[]} [population] An array (population) of genomes (networks)
+   * @param {number|Network|Function} [filter] An index, network, or function used to pick out replaceable genome(s) from the population - _invoked `filter(network, index, population)`_
+   * @param {Network|Function} [transform] A network used to replace filtered genomes or a function used to mutate filtered genomes - _invoked `transform(network, index, population)`_
+   *
+   * @return {Network[]} Returns the new genome
+   */
+  self.replace = function(population, filter, transform) {
+    if(population == undefined &amp;&amp; filter == undefined &amp;&amp; transform == undefined) throw new ReferenceError("Missing required parameter 'transform'")
+    
+    function _transform(t) {
+      const transformer = t instanceof Network ? (() => t) : typeof t === "function" ? t : new TypeError(`Expected ${t} to be a {Network|Function}`);
+      return transformer;
+    }
+    function _filter(f) {
+      const filter = Number.isFinite(f) ? (network, index, population) => index === f
+        : f instanceof Network ? (network, index, population) => network === f
+        : typeof f === "function" ? f
+        : f == undefined ? () => true
+        : new TypeError(`Expected ${t} to be a {Number|Network|Function|undefined}`);
+      return filter;
+    }
+    
+    if (filter == undefined &amp;&amp; transform == undefined) {
+      transform = _transform(population);
+      filter = _filter();
+      population = self.population;
+    }
+    else if (transform == undefined) {
+      transform = _transform(filter);
+      filter = _filter(population);
+      population = self.population;
+    } else {
+      transform = _transform(transform);
+      filter = _filter(filter);
+      population = population || self.population;
+    }
+    
+    const filtered = [...self.population];
+
+    for (let genome = 0; genome &lt; population.length; genome++)
+      if (filter(population[genome], genome, population))
+        filtered[genome] = transform(population[genome], genome, population);
+
+    return filtered;
+  };
+
+  /**
+   * Mutates the given (or current) population
+   *
+   * @function mutate
+   *
+   * @memberof Neat
+   *
+   * @param {mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
+   */
+  self.mutate = function mutate_population(method) {
+    
+    const options = {
+      maxNodes: self.maxNodes,
+      maxConns: self.maxConns,
+      maxGates: self.maxGates
+    }
+    
+    // Change execution based on arguments
+    const mutateGenome = method
+      ? (genome, method, options) => { genome.mutate(method, options) }
+      : (genome, methods, options) => { genome.mutateRandom(methods, options) }
+    
+    method = method ? method : self.mutation
+    
+    let { population, mutation_rate: rate, mutation_amount: times } = self
+    
+    for (let i = 0; i &lt; population.length; i++) { // Elitist genomes should not be included
+      if (Math.random() &lt;= rate) {
+        for(let j =0; j &lt; times; j++) {
+          mutateGenome(population[i], method, options)
+        }
+      }
+    }
+    
+    return population
+  };
+  
+  /**
+   * Evaluates, selects, breeds and mutates population
+   *
+   * @memberof Neat
+   *
+   * @alias evolve
+   *
+   * @param {Array&lt;{input:number[],output:number[]}>} [evolve_dataset=dataset] A set to be used for evolving the population, if none is provided the dataset passed to Neat on creation will be used.
+   * @param {Function} pickGenome
+   * @param {Function} filterGenome
+   *
+   * @returns {Object}
+   *
+   * @example
+   *
+   * // original
+   * let originalSet = [
+   *  { input: [0,0], output: [0] },
+   *  { input: [0,1], output: [1] },
+   *  { input: [1,0], output: [1] },
+   *  { input: [1,1], output: [0] },
+   * ]
+   *
+   * let neat = new Neat(originalSet, {
+   *  input: 1,
+   *  output: 2
+   * });
+   *
+   * // special set to be used when evolving
+   * let evolve_dataset = [
+   *  { input: [0], output: [1] },
+   *  { input: [1], output: [0] }
+   * ]
+   *
+   * // evolves using evolve_dataset INSTEAD of originalSet
+   * neat.evolve(evolve_dataset)
+   *
+   * // evolves using originalSet
+   * neat.evolve()
+   *
+   * let pick = function pickGenome(genome) return genome.nodes.length > 100 ? true : false // Remove genomes with more than 100 nodes
+   *
+   * let adjust = function adjustGenome(genome) return genome.clear() // clear the nodes
+   *
+   * // evolves using originalSet
+   * neat.evolve(null, filter, adjust)
+   *
+   */
+  self.evolve = async function(evolve_dataset, pickGenome, filterGenome) {
+    /*
+    // // Check if evolve is possible
+    // if (self.elitism + self.provenance > self.population_size) throw new Error("Can`t evolve! Elitism + provenance exceeds population size!");
+
+    // dataset = dataset || self.dataset;
+    
+    
+    // // Reset the scores
+    // for (let i = 0; i &lt; self.population.length; i++) self.population[i].score = undefined;
+
+    // // Check population for evaluation
+    // // if (typeof self.population[self.population.length - 1].score === `undefined`)
+    // await self.evaluate(dataset);
+    
+    // console.log(self.population[0].score);
+
+    // // Sort in order of fitness (fittest first)
+    // self.sort();
+
+    // // Elitism, assumes population is sorted by fitness
+    // const elitists = [];
+    // for (let i = 0; i &lt; self.elitism; i++) elitists.push(self.population[i]);
+
+    // // Provenance
+    // const new_population = Array(self.provenance).fill(Network.fromJSON(self.template.toJSON()))
+
+    // // Breed the next individuals
+    // for (let i = 0; i &lt; self.population_size - self.elitism - self.provenance; i++)
+    //   new_population.push(self.getOffspring());
+
+    // // Replace the old population with the new population
+    // self.population = new_population;
+
+    // // Mutate the new population
+    // self.mutate();
+
+    // // Add the elitists
+    // self.population.push(...elitists);
+
+    // // evaluate the population
+    // await self.evaluate(dataset);
+
+    // // Sort in order of fitness (fittest first)
+    // self.sort()
+
+    // const fittest = Network.fromJSON(self.population[0].toJSON());
+    // fittest.score = self.population[0].score;
+
+    // const best = Network.fromJSON(self.population[0].toJSON());
+    // best.score = self.population[0].score
+    // const worst = Network.fromJSON(self.population[self.population.length - 1].toJSON());
+    // worst.score = self.population[self.population.length - 1].score
+    // const median = Network.fromJSON(self.population[Math.floor(self.population.length / 2)].toJSON());
+    // median.score = self.population[Math.floor(self.population.length / 2)].score
+
+
+    // self.generation++;
+
+    // if (options &amp;&amp; options.networks) {
+    //   return { best, median, worst }
+    // } else {
+    //   return {
+    //     best: best.score,
+    //     median: median.score,
+    //     worst: worst.score
+    //   }
+    // }
+    
+    //==========================================================
+    
+    // console.log(dataset);
+    // console.log(options);
+    
+    // if (options == undefined &amp;&amp; !Array.isArray(dataset) &amp;&amp; typeof dataset === "object") {
+    //   options = dataset;
+    //   dataset = self.dataset;
+    // }
+    
+    // options = options || {};
+    // dataset = dataset || self.dataset || [];
+    
+    
+    // console.log(dataset);
+    // console.log(options);
+    
+    // console.log(dataset == undefined);
+    // console.log(!dataset.length);
+    
+    // if (dataset == undefined || !dataset.length) throw new ReferenceError("'dataset' was not passed to 'neat.evolve()' or 'new Neat'");
+    
+    
+    
+    // for (let index = 0; index &lt; self.population.length; index++) {
+    //   await self.population[index].evolve(dataset);
+    // }
+    
+    // const best = self.population[0];
+    // const worst = self.population[self.population.length - 1];
+    // const median = self.population[Math.floor(self.population.length / 2)];
+    
+    // if (options &amp;&amp; options.networks) {
+    //   return { best, median, worst }
+    // } else {
+    //   return {
+    //     best: best.score,
+    //     median: median.score,
+    //     worst: worst.score
+    //   }
+    // }
+    
+    //==========================================================
+    */
+    
+    // Check if evolve is possible
+    if (self.elitism + self.provenance > self.population_size) {
+      throw new Error(`Can't evolve! Elitism + provenance exceeds population size!`);
+    }
+
+    // evolve dataset is optional, so deal with not having it
+    if (typeof evolve_dataset === `function`) {
+      adjustGenome = pickGenome;
+      pickGenome = evolve_dataset
+      evolve_dataset = undefined;
+    }
+
+    evolve_dataset = evolve_dataset || self.dataset;
+
+    // Check population for evaluation
+    if (self.population[self.population.length - 1].score == undefined) {
+      await self.evaluate(evolve_dataset);
+    }
+    // Check &amp; adjust genomes as needed
+    if (pickGenome) {
+      self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome);
+    }
+
+    // Sort in order of fitness (fittest first)
+    self.sort();
+
+    // Elitism, assumes population is sorted by fitness
+    const elitists = [];
+    for (let index = 0; index &lt; self.elitism; index++) elitists.push(self.population[index]);
+
+    // Provenance
+    const new_population = Array(self.provenance).fill(Network.fromJSON(self.template.toJSON()))
+
+    // Breed the next individuals
+    for (let i = 0; i &lt; self.population_size - self.elitism - self.provenance; i++) {
+      new_population.push(self.getOffspring());
+    }
+
+    // Replace the old population with the new population
+    self.population = new_population;
+
+    // Mutate the new population
+    self.mutate();
+
+    // Add the elitists
+    self.population.push(...elitists);
+
+    // evaluate the population
+    await self.evaluate(evolve_dataset);
+
+    // Check &amp; adjust genomes as needed
+    if (pickGenome) self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome)
+
+    // Sort in order of fitness (fittest first)
+    self.sort()
+
+    const fittest = Network.fromJSON(self.population[0].toJSON());
+    fittest.score = self.population[0].score;
+
+    // Reset the scores
+    for (let i = 0; i &lt; self.population.length; i++) self.population[i].score = undefined;
+
+    self.generation++;
+
+    return fittest;
+  };
+
+  /**
+   * Returns a genome for recombination (crossover) based on one of the [selection methods](selection) provided.
+   *
+   * Should be called after `evaluate()`
+   *
+   * @function getParent
+   *
+   * @memberof Neat
+   *
+   * @return {Network} Selected genome for offspring generation
+   */
+  self.getParent = function get_genome_using_selection_method() {
+    switch (self.selection.name) {
+      case `POWER`: {
+        if (self.population[0].score &lt; self.population[1].score) self.sort();
+
+        const index = Math.floor(Math.pow(Math.random(), self.selection.power) * self.population.length);
+        return self.population[index];
+      }
+      case `FITNESS_PROPORTIONATE`: {
+        // As negative fitnesses are possible
+        // https://stackoverflow.com/questions/16186686/genetic-algorithm-handling-negative-fitness-values
+        // this is unnecessarily run for every individual, should be changed
+
+        let total_fitness = 0;
+        let minimum_fitness = 0;
+        for (let i = 0; i &lt; self.population.length; i++) {
+          const score = self.population[i].score;
+          minimum_fitness = score &lt; minimum_fitness ? score : minimum_fitness;
+          total_fitness += score;
+        }
+
+        minimum_fitness = Math.abs(minimum_fitness);
+        total_fitness += minimum_fitness * self.population.length;
+
+        let random = Math.random() * total_fitness;
+        let value = 0;
+
+        for (let i = 0; i &lt; self.population.length; i++) {
+          const genome = self.population[i];
+          value += genome.score + minimum_fitness;
+          if (random &lt; value) return genome;
+        }
+
+        // if all scores equal, return random genome
+        return self.population[Math.floor(Math.random() * self.population.length)];
+      }
+      case `TOURNAMENT`: {
+        if (self.selection.size > self.population_size) {
+          throw new Error(`Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size`);
+        }
+
+        // Create a tournament
+        const individuals = [];
+        for (let i = 0; i &lt; self.selection.size; i++) {
+          let random_agent = self.population[Math.floor(Math.random() * self.population.length)];
+          individuals.push(random_agent);
+        }
+
+        // Sort the tournament individuals by score
+        individuals.sort(function (a, b) {
+          return b.score - a.score;
+        });
+
+        // Select an individual
+        for (let i = 0; i &lt; self.selection.size; i++) {
+          if (Math.random() &lt; self.selection.probability || i === self.selection.size - 1) {
+            return individuals[i];
+          }
+        }
+      }
+    }
+  };
+
+  /**
+   * Selects two genomes from the population with `getParent()`, and returns the offspring from those parents. NOTE: Population MUST be sorted
+   *
+   * @function getOffspring
+   *
+   * @memberof Neat
+   *
+   * @returns {Network} Child network
+   */
+  self.getOffspring = function() {
+    const parent1 = self.getParent();
+    const parent2 = self.getParent();
+
+    return Network.crossOver(parent1, parent2, self.equal);
+  };
+
+  /**
+   * Evaluates the current population, basically sets their `.score` property
+   *
+   * @function evaluate
+   *
+   * @memberof Neat
+   *
+   * @param {Object[]} [dataset]
+   * @param {Object} [options]
+   * @param {boolean} [options.clear=false]
+   * @param {boolean} [options.networks=false]
+   *
+   * @return {Object} Return the performance metrics/benchmarks of the networks - _returns networks iff `options.networks === true`_
+   */
+  self.evaluate = async function (dataset) {
+    dataset = dataset || self.dataset;
+
+    if (self.fitnessPopulation) {
+      // check the clear flag
+      if (self.clear) {
+        for (let i = 0; i &lt; self.population.length; i++) {
+          self.population[i].clear();
+        }
+      }
+
+      // calculate the fitnesses
+      await self.fitness(dataset, self.population);
+    } else {
+      for (let i = 0; i &lt; self.population.length; i++) {
+        const genome = self.population[i];
+        if (self.clear) genome.clear(); // clear flag
+        genome.score = await self.fitness(dataset, genome);
+        self.population[i] = genome;
+      }
+    }
+
+    // Sort the population in order of fitness
+    self.sort()
+
+    // return the fitness of the best agent, which represents the fitness of the population
+    return self.population[0]
+  };
+
+  /**
+   * Sorts the population by score
+   *
+   * @function sort
+   *
+   */
+  self.sort = function sort_population_by_fitness() {
+    self.population.sort(function (a, b) {
+      return b.score - a.score;
+    });
+  };
+
+  /**
+   * Returns the fittest genome of the current population
+   *
+   * @function getFittest
+   *
+   * @memberof Neat
+   *
+   * @returns {Network} Current population's fittest genome
+  */
+  self.getFittest = function get_fittest_population_genome() {
+    // Check if evaluated. self.evaluate is an async function
+    if (typeof self.population[self.population.length - 1].score === `undefined`) {
+      self.evaluate();
+    }
+
+    if (self.population[0].score &lt; self.population[1].score) self.sort();
+
+    return self.population[0];
+  };
+
+  /**
+   * Returns the average fitness of the current population
+   *
+   * @function getAverage
+   *
+   * @memberof Neat
+   *
+   * @returns {number} Average fitness of the current population
+   */
+  self.getAverage = function get_average_population_fitness() {
+    if (typeof self.population[self.population.length - 1].score === `undefined`)
+      self.evaluate(); // self.evaluate is an async function
+
+    let score = 0;
+    for (let i = 0; i &lt; self.population.length; i++)
+      score += self.population[i].score;
+
+    return score / self.population.length;
+  };
+
+  /**
+   * Export the current population to a JSON object
+   *
+   * Can be used later with `fromJSON(json)` to reload the population
+   *
+   * @function toJSON
+   *
+   * @memberof Neat
+   *
+   * @return {object[]} A set of genomes (a population) represented as JSON objects.
+   */
+  self.toJSON = function export_to_json() {
+    const json = [];
+    for (let i = 0; i &lt; self.population.length; i++) {
+      json.push(self.population[i].toJSON());
+    }
+    return json;
+  };
+
+  /**
+   * Imports population from a json. Must be an array of networks converted to JSON objects.
+   *
+   * @function fromJSON
+   *
+   * @memberof Neat
+   *
+   * @param {object[]} json set of genomes (a population) represented as JSON objects.
+  */
+  self.fromJSON = function import_from_json(json) {
+    const population = [];
+    for (let i = 0; i &lt; json.length; i++)
+      population.push(Network.fromJSON(json[i]));
+    self.population = population;
+    self.population_size = population.length;
+  };
+}
+
+Neat.default = {
+  options: {
+    generation: 0, // internal variable
+    // input: 1,
+    // output: 1,
+    equal: true,
+    clean: false,
+    population_size: 50,
+    growth: 0.0001,
+    cost: methods.cost.MSE,
+    amount: 1,
+    elitism: 1,
+    provenance: 0,
+    mutation_rate: 0.4,
+    mutation_amount: 1,
+    fitnessPopulation: false,
+    fitness: function(set = dataset, genome, amount = 1, cost = methods.cost.MSE, growth = 0.0001) {
+      let score = 0;
+      for (let i = 0; i &lt; amount; i++) score -= genome.test(set, cost).error;
+
+      score -= (genome.nodes.length - genome.input - genome.output + genome.connections.length + genome.gates.length) * growth;
+      score = isNaN(score) ? -Infinity : score; // this can cause problems with fitness proportionate selection
+
+      return score / amount;
+    },
+    selection: methods.selection.POWER,
+    crossover: [
+      methods.crossover.SINGLE_POINT,
+      methods.crossover.TWO_POINT,
+      methods.crossover.UNIFORM,
+      methods.crossover.AVERAGE
+    ],
+    mutation: methods.mutation.ALL,
+    // template: new Network(this.input, this.output)
+    maxNodes: Infinity,
+    maxConns: Infinity,
+    maxGates: Infinity
+  }
+}
+
+module.exports = Neat;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+
+            
+
+        </div>
+        <div class="column is-hidden-touch"></div>
+    </div>
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a> on Sat Aug 10 2019 17:33:11 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/jquery-3.1.1.min.js"></script>
+
+<script src="scripts/search.js"></script>
+
+
+
+
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+  heap.load("1195922815");
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Get all "navbar-burger" elements
+  const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+  // Check if there are any navbar burgers
+  if ($navbarBurgers.length > 0) {
+
+    // Add a click event on each of them
+    $navbarBurgers.forEach( el => {
+      el.addEventListener('click', () => {
+
+        // Get the target from the "data-target" attribute
+        const target = el.dataset.target;
+        const $target = document.getElementById(target);
+
+        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+        el.classList.toggle('is-active');
+        $target.classList.toggle('is-active');
+
+      });
+    });
+  }
+
+});
+</script>
+<script src="scripts/clipboard.min.js"></script>
+<script>
+  // example copying functionality
+  const clipboard = new ClipboardJS('code');
+  const clipboard_button = new ClipboardJS('.copy-button');
+
+  clipboard_button.on('success', (e) => {
+    e.trigger.innerText = "Copied!"
+  });
+
+  const copy_buttons = document.querySelectorAll(".copy-button");
+  
+  copy_buttons.forEach(function(btn) {
+    btn.addEventListener("mouseout", function(e) {
+      setTimeout(function() {
+        e.fromElement.innerText = "Copy"
+      }, 200);
+    });
+  });
+</script>
+<script>prettyPrint();</script>
+</body>
+</html>
