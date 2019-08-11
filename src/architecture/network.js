@@ -281,8 +281,8 @@ function Network(input_size, output_size) {
   }
 
   /**
-   * Returns a new identical network.
-   * @alpha
+   * Returns a deep copy of Network.
+   * @beta
    *
    * @function clone
    * @memberof Network
