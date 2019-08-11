@@ -207,13 +207,13 @@ describe('Network', function(){
     });
   })
 
-  describe('network.clone() - WIP', function() {
+  describe('network.clone()', function() {
     it('network.clone() => {Network}', function () {
-      const test_origin_network = createUsedNetwork();
-      const cloned_network = test_origin_network.clone();
-
-      expect(cloned_network.input_nodes.size).to.equal(test_origin_network.input_nodes.size);
-      expect(cloned_network.output_nodes.size).to.equal(test_origin_network.output_nodes.size);
+      const original = new architect.Perceptron(2,3,1)
+      
+      const copy = original.clone()
+      
+      expect(copy).eql(original)
     })
   })
 

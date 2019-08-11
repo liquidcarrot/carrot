@@ -290,7 +290,7 @@ function Network(input_size, output_size) {
    * @returns {Network} Returns an identical network
    */
   self.clone = function() {
-    return Network.fromJSON(self.toJSON());
+    return _.cloneDeep(self)
   }
 
   /**
