@@ -26,8 +26,8 @@ describe("Neat", function() {
       has.dataset(neat, dataset);
     })
     it("new Neat(input, output)", function() {
-      const inputs = _.random(50);
-      const outputs = _.random(50)
+      const inputs = _.random(1,50);
+      const outputs = _.random(1,50)
       const neat = new Neat(inputs, outputs);
       
       is.neat(neat);
@@ -45,8 +45,8 @@ describe("Neat", function() {
       
     })
     it("new Neat(input, output, options)", function() {
-      const inputs = _.random(50);
-      const outputs = _.random(50);
+      const inputs = _.random(1,50);
+      const outputs = _.random(1,50);
       const options = random.options.neat();
       
       const neat = new Neat(inputs, outputs, options);
@@ -56,8 +56,8 @@ describe("Neat", function() {
       has.dimensions(neat, inputs, outputs);
     })
     it("new Neat(input, output, dataset)", function() {
-      const inputs = _.random(50);
-      const outputs = _.random(50);
+      const inputs = _.random(1,50);
+      const outputs = _.random(1,50);
       const dataset = data.XNOR;
       
       const neat = new Neat(inputs, outputs, dataset);
@@ -67,8 +67,8 @@ describe("Neat", function() {
       has.dimensions(neat, inputs, outputs);
     })
     it("new Neat(input, output, dataset, options)", function() {
-      const inputs = _.random(50);
-      const outputs = _.random(50);
+      const inputs = _.random(1, 50);
+      const outputs = _.random(1, 50);
       const dataset = data.XNOR;
       const options = random.options.neat();
       
@@ -112,6 +112,14 @@ describe("Neat", function() {
         expect(population[genome]).to.be.an.instanceOf(Network);
       }
     })
+    
+    it("neat.createPopulation() | Shouldn't return shallow copies", function() {
+      const neat = new Neat()
+      const population = neat.createPopulation()
+      
+      expect(population[0]).not.equal(population[1])
+    })
+    
     it("neat.createPopulation(network) => {Network[]}", function() {
       const inputs = Math.ceil(Math.random() * 10);
       const outputs = Math.ceil(Math.random() * 10);
@@ -130,6 +138,18 @@ describe("Neat", function() {
         expect(population[genome].output_size).to.equal(outputs);
       }
     })
+    
+    it("neat.createPopulation(network) | Shouldn't return shallow copies", function() {
+      const inputs = Math.ceil(Math.random() * 10);
+      const outputs = Math.ceil(Math.random() * 10);
+      const network = new Network(inputs, outputs);
+      
+      const neat = new Neat();
+      const population = neat.createPopulation(network);
+      
+      expect(population[0]).not.equal(population[1]);
+    })
+    
     it("neat.createPopulation(size) => {Network[]}", function() {
       const size = Math.ceil(Math.random() * 100);
       
@@ -143,6 +163,16 @@ describe("Neat", function() {
         expect(population[genome]).to.be.an.instanceOf(Network);
       }
     })
+    
+    it("neat.createPopulation(size) | Shouldn't return shallow copies", function() {
+      const size = Math.ceil(Math.random() * 100);
+      
+      const neat = new Neat();
+      const population = neat.createPopulation(size);
+      
+      expect(population[0]).not.equal(population[1]);
+    })
+    
     it("neat.createPopulation(network, size) => {Network[]}", function() {
       const size = Math.ceil(Math.random() * 100);
       
@@ -162,6 +192,20 @@ describe("Neat", function() {
         expect(population[genome].output_size).to.equal(outputs);
       }
     })
+    
+    it("neat.createPopulation(network, size) | Shouldn't return shallow copies", function() {
+      const size = Math.ceil(Math.random() * 100);
+      
+      const inputs = Math.ceil(Math.random() * 10);
+      const outputs = Math.ceil(Math.random() * 10);
+      const network = new Network(inputs, outputs);
+      
+      const neat = new Neat();
+      const population = neat.createPopulation(network, size);
+      
+      expect(population[0]).not.equal(population[1]);
+    })
+    
   })
   describe("neat.replace()", function() {
     it("neat.replace() => {ReferenceError}", function() {
@@ -384,15 +428,21 @@ describe("Neat", function() {
       expect(neat.mutate()).to.be.an('array')
     })
     
-    it("neat.mutate() | original != new", function() {
-      const neat = new Neat()
+    it("neat.mutate({ mutation_rate: 1 }) | original != new", function() {
+      const neat = new Neat({ mutation_rate: 1 })
       
       const original = neat.population.map(function(network) {
         return _.cloneDeep(network)
       })
       
-      neat.mutate()
+      // ensure deep copies
+      expect(neat.population[0]).not.equal(original[0])
+      expect(neat.population[0]).not.equal(neat.population[1])
       
+      // create mutations
+      neat.population = neat.mutate()
+      
+      // they should be different
       expect(neat.population[0]).not.eql(original[0])
     })
     
@@ -409,7 +459,7 @@ describe("Neat", function() {
         return _.cloneDeep(network)
       })
       
-      neat.mutate(methods.mutation.ADD_NODE)
+      neat.population = neat.mutate(methods.mutation.ADD_NODE)
       
       expect(neat.population[0]).not.eql(original[0])
     })
@@ -417,7 +467,7 @@ describe("Neat", function() {
     it("neat.mutate(mutation) & Neat({ mutation_amount: 10, mutation_rate: 1 }) | Should mutate 10 times", function() {
       const neat = new Neat({ population_size: 1, mutation_amount: 10, mutation_rate: 1 })
       
-      neat.mutate(methods.mutation.ADD_NODE)
+      neat.population = neat.mutate(methods.mutation.ADD_NODE)
       
       expect(neat.population[0].nodes.length).equal(12)
     })
@@ -425,7 +475,7 @@ describe("Neat", function() {
     it("neat.mutate(mutation) & Neat({ mutation_amount: 10, mutation_rate: 1, maxNodes: 8 }) | Networks should have 8 nodes", function() {
       const neat = new Neat({ population_size: 1, mutation_amount: 10, mutation_rate: 1, maxNodes: 8 })
       
-      neat.mutate(methods.mutation.ADD_NODE)
+      neat.population = neat.mutate(methods.mutation.ADD_NODE)
       
       expect(neat.population[0].nodes.length).equal(8)
     })
@@ -501,8 +551,5 @@ describe("Neat", function() {
     it("neat.fromJSON() => {ReferenceError}")
     it("neat.fromJSON(json) => {Neat}")
   })
-  
-  
-  
-  
+
 })

@@ -215,6 +215,14 @@ describe('Network', function(){
       
       expect(copy).eql(original)
     })
+    
+    it("network.clone() | Shouldn't return a shallow copy", function () {
+      const original = new architect.Perceptron(2,3,1)
+      
+      const copy = original.clone()
+      
+      expect(copy).not.equal(original)
+    })
   })
 
   describe('network.addNodes()', function () {

@@ -40,7 +40,7 @@ function Network(input_size, output_size) {
 
   const self = this;
 
-  // *IDEA*: Store input & output nodes in arrays accessible by this.input and this.output instead of just storing the number
+  // *IDEA*: Store input & output nodes in arrays accessible by self.input and self.output instead of just storing the number
   self.input_size = input_size;
   self.output_size = output_size;
   // backwards compatibility
@@ -234,9 +234,9 @@ function Network(input_size, output_size) {
    * }
    */
   self.propagate = function(rate, momentum, update, target) {
-    // the or in the if is for backward compatibility
-    const output_size = (this.output_size || this.output);
-    const input_size = (this.input_size || this.input);
+    // "OR" added for backward compatibility
+    const output_size = (self.output_size || self.output)
+    const input_size = (self.input_size || self.input)
     if (typeof target === `undefined` || target.length !== output_size) {
       throw new Error(`Output target length should match network output length`);
     }
@@ -246,8 +246,8 @@ function Network(input_size, output_size) {
 
     // Propagate output nodes
     for (let i = 0; target_index < output_size; i++) {
-      if (self.output_nodes.has(this.nodes[i])) {
-        this.nodes[i].propagate(target[target_index], { rate, momentum, update });
+      if (self.output_nodes.has(self.nodes[i])) {
+        self.nodes[i].propagate(target[target_index], { rate, momentum, update });
         target_index++;
       }
     }
@@ -275,8 +275,8 @@ function Network(input_size, output_size) {
    * @memberof Network
    */
   self.clear = function() {
-    for (let i = 0; i < this.nodes.length; i++) {
-      this.nodes[i].clear();
+    for (let i = 0; i < self.nodes.length; i++) {
+      self.nodes[i].clear();
     }
   }
 
@@ -487,14 +487,14 @@ function Network(input_size, output_size) {
     let candidates = []
     switch (method.name) {
       case "SUB_NODE": {
-        candidates = _.filter(this.nodes, function(node) { return (!self.input_nodes.has(node) && !self.output_nodes.has(node)) }) // assumes input & output node 'type' has been set
+        candidates = _.filter(self.nodes, function(node) { return (!self.input_nodes.has(node) && !self.output_nodes.has(node)) }) // assumes input & output node 'type' has been set
         return candidates.length ? candidates : false
       }
       case "ADD_CONN": {
-        for (let i = 0; i < this.nodes.length - this.output_size; i++) {
-          const node1 = this.nodes[i]
-          for (let j = Math.max(i + 1, this.input_size); j < this.nodes.length; j++) {
-            const node2 = this.nodes[j]
+        for (let i = 0; i < self.nodes.length - self.output_size; i++) {
+          const node1 = self.nodes[i]
+          for (let j = Math.max(i + 1, self.input_size); j < self.nodes.length; j++) {
+            const node2 = self.nodes[j]
             if (!node1.isProjectingTo(node2)) candidates.push([node1, node2])
           }
         }
@@ -511,12 +511,12 @@ function Network(input_size, output_size) {
         return candidates.length ? candidates : false
       }
       case "MOD_ACTIVATION": {
-        return (method.mutateOutput || this.nodes.length > this.input_size + this.output_size) ? [] : false
+        return (method.mutateOutput || self.nodes.length > self.input_size + self.output_size) ? [] : false
       }
       case "ADD_SELF_CONN": {
         
-        for (let i = this.input_size; i < this.nodes.length; i++) {
-          const node = this.nodes[i]
+        for (let i = self.input_size; i < self.nodes.length; i++) {
+          const node = self.nodes[i]
           if (node.connections_self.weight === 0) candidates.push(node)
         }
 
@@ -540,13 +540,13 @@ function Network(input_size, output_size) {
         return candidates.length ? candidates : false
       }
       case "SUB_GATE": {
-        return (this.gates.length > 0) ? [] : false
+        return (self.gates.length > 0) ? [] : false
       }
       case "ADD_BACK_CONN": {
-        for (let i = this.input_size; i < this.nodes.length; i++) {
-          const node1 = this.nodes[i]
-          for (let j = this.input_size; j < i; j++) {
-            const node2 = this.nodes[j]
+        for (let i = self.input_size; i < self.nodes.length; i++) {
+          const node1 = self.nodes[i]
+          for (let j = self.input_size; j < i; j++) {
+            const node2 = self.nodes[j]
             if (!node1.isProjectingTo(node2)) candidates.push([node1, node2])
           }
         }
@@ -563,11 +563,11 @@ function Network(input_size, output_size) {
       }
       case "SWAP_NODES": {
         // break out early if there aren't enough nodes to swap
-        if((this.nodes.length - 1) - this.input_size - (method.mutateOutput ? 0 : this.output_size) < 2) return false;
+        if((self.nodes.length - 1) - self.input_size - (method.mutateOutput ? 0 : self.output_size) < 2) return false;
 
         const filterFn = (method.mutateOutput) ? (node) => (node.type !== `input`) : (node) => (node.type !== `input` && node.type !== `output`)
 
-        candidates = _.filter(this.nodes, filterFn)
+        candidates = _.filter(self.nodes, filterFn)
 
         // Check there are at least two possible nodes
         return (candidates.length >= 2) ? candidates : false
@@ -576,7 +576,7 @@ function Network(input_size, output_size) {
   }
 
   /**
-   * Mutates the network with the given method. Warning! Mutates network directly.
+   * Mutates the network with the given method.
    *
    * @function mutate
    * @memberof Network
@@ -587,12 +587,14 @@ function Network(input_size, output_size) {
    * @param {number} [options.maxConns=Infinity] Maximum amount of [Connections](connection) a network can grow to
    * @param {number} [options.maxGates=Infinity] Maximum amount of Gates a network can grow to
    *
-   * @returns {boolean} Whether or not a mutation was achieved
+   * @returns {network} A mutated version of this network
    *
    * @example
-   * let { Network } = require("@liquid-carrot/carrot");
+   * let { Network, architect } = require("@liquid-carrot/carrot");
    *
-   * myNetwork.mutate(mutation.ADD_GATE) // a random node will gate a random connection within the network
+   * let myNetwork = new architect.Perceptron(2,2)
+   *
+   * myNetwork = myNetwork.mutate(mutation.ADD_GATE) // returns a mutated network with an added gate
    */
   self.mutate = function(method, options) {
     if (typeof method === 'undefined') throw new Error('Mutate method is undefined!')
@@ -631,89 +633,89 @@ function Network(input_size, output_size) {
          * should still add a output / hidden node
          * or throw an error
          */
-        if (self.nodes.length <= self.input_size) return false;
+        if (self.nodes.length <= self.input_size) return null;
         
         // Check user constraint
-        if(self.nodes.length >= maxNodes) return false;
+        if(self.nodes. length >= maxNodes) return null;
         
         // Look for an existing connection and place a node in between
         const connection = getRandomConnection();
-        this.disconnect(connection.from, connection.to);
+        self.disconnect(connection.from, connection.to);
 
         // Insert the new node right before the old connection.to
-        const to_index = this.nodes.indexOf(connection.to);
+        const to_index = self.nodes.indexOf(connection.to);
         const node = new Node('hidden');
 
         if (mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION);
 
-        // Place it in this.nodes
-        const min_bound = Math.min(to_index, this.nodes.length - this.output_size);
-        this.nodes.splice(min_bound, 0, node);
+        // Place it in self.nodes
+        const min_bound = Math.min(to_index, self.nodes.length - self.output_size);
+        self.nodes.splice(min_bound, 0, node);
 
         // Now create two new connections
-        const new_connection1 = this.connect(connection.from, node)[0];
-        const new_connection2 = this.connect(node, connection.to)[0];
+        const new_connection1 = self.connect(connection.from, node)[0];
+        const new_connection2 = self.connect(node, connection.to)[0];
 
         const gater = connection.gater;
         // Check if the original connection was gated
-        if (gater != null) this.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2);
-
-        return true;
+        if (gater != null) self.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2);
+        
+        return self;
       }
       case "SUB_NODE": {
-        const possible = this.possible(method);
+        const possible = self.possible(method);
         if (possible) {
-          this.remove(_.sample(possible));
+          self.remove(_.sample(possible));
           return true;
         }
-        return false;
+        return self;
       }
       case "ADD_CONN": {
         // Check user constraint
-        if(self.connections.length >= maxConns) return false
+        if(self.connections.length >= maxConns) return null
         
-        const possible = this.possible(method);
+        const possible = self.possible(method);
         if (possible) {
           const pair = possible[Math.floor(Math.random() * possible.length)];
-          this.connect(pair[0], pair[1]);
-          return true;
+          self.connect(pair[0], pair[1]);
+          return self;
         }
 
-        return false;
+        return null;
       }
       case "REMOVE_CONN": // alias for sub_conn
       case "SUB_CONN": {
-        const possible = this.possible(method);
+        const possible = self.possible(method);
         if (possible) {
           const random_connection = possible[Math.floor(Math.random() * possible.length)];
-          this.disconnect(random_connection.from, random_connection.to);
+          self.disconnect(random_connection.from, random_connection.to);
           return true;
         }
 
-        return false;
+        return self;
       }
       case "MOD_WEIGHT": {
-        if (self.nodes.length <= self.input_size) return false;
+        if (self.nodes.length <= self.input_size) return null;
 
         // get a random connection to modify weight
         const chosen_connection = getRandomConnection();
 
         chosen_connection.weight += Math.random() * (method.max - method.min) + method.min;
 
-        return true;
+        return self;
       }
       case "MOD_BIAS": {
-        if (self.nodes.length <= self.input_size) return false;
+        if (self.nodes.length <= self.input_size) return null;
         // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
-        const chosen_node_index = Math.floor(Math.random() * (this.nodes.length - this.input_size) + this.input_size);
+        const chosen_node_index = Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size);
         const node_to_mutate = self.nodes[chosen_node_index];
         node_to_mutate.mutate(method);
 
-        return true;
+        return self;
       }
       case "MOD_ACTIVATION": {
         if (self.possible(method)) {
-          const possible = _.filter(this.nodes, method.mutateOutput ?
+          const possible = _.filter(self.nodes, method.mutateOutput ?
             (node) => node.type !== 'input' :
             (node) => node.type !== 'input' && node.type !== 'output');
 
@@ -721,17 +723,17 @@ function Network(input_size, output_size) {
           _.sample(possible).mutate(method);
           return true;
         }
-        return false;
+        return self;
       }
       case "ADD_SELF_CONN": {
-        const possible = this.possible(method);
+        const possible = self.possible(method);
         if (possible) {
           const node = possible[Math.floor(Math.random() * possible.length)];
-          this.connect(node, node); // Create the self-connection
+          self.connect(node, node); // Create the self-connection
           return true;
         }
 
-        return false;
+        return self;
       }
       case "SUB_SELF_CONN": {
         // very slow implementation.
@@ -744,60 +746,60 @@ function Network(input_size, output_size) {
           }
         }
 
-        if (this.possible(method)) {
+        if (self.possible(method)) {
           const chosen_connection = self_connections[Math.floor(Math.random() * self_connections.length)];
-          this.disconnect(chosen_connection.from, chosen_connection.to);
-          return true;
+          self.disconnect(chosen_connection.from, chosen_connection.to);
+          return self;
         }
 
-        return false;
+        return null;
       }
       case "ADD_GATE": {
         // Check user constraint
-        if(self.gates.length >= maxGates) return false
+        if(self.gates.length >= maxGates) return null
         
-        const possible = this.possible(method);
+        const possible = self.possible(method);
         if (possible) {
           // Select a random gater node and connection, can't be gated by input
-          const node = this.nodes[Math.floor(Math.random() * (this.nodes.length - this.input_size) + this.input_size)];
+          const node = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)];
           const conn = possible[Math.floor(Math.random() * possible.length)];
 
-          this.gate(node, conn); // Gate the connection with the node
-          return true;
+          self.gate(node, conn); // Gate the connection with the node
+          return self;
         }
 
-        return false;
+        return null;
       }
       case "SUB_GATE": {
-        if (this.possible(method)) {
-          this.ungate(this.gates[Math.floor(Math.random() * this.gates.length)]);
-          return true;
+        if (self.possible(method)) {
+          self.ungate(self.gates[Math.floor(Math.random() * self.gates.length)]);
+          return self;
         }
 
-        return false;
+        return null;
       }
       case "ADD_BACK_CONN": {
-        const possible = this.possible(method);
+        const possible = self.possible(method);
         if (possible) {
           const pair = possible[Math.floor(Math.random() * possible.length)]
-          this.connect(pair[0], pair[1]);
-          return true;
+          self.connect(pair[0], pair[1]);
+          return self;
         }
 
-        return false;
+        return null;
       }
       case "SUB_BACK_CONN": {
-        const possible = this.possible(method);
+        const possible = self.possible(method);
         if (possible) {
           const random_connection = possible[Math.floor(Math.random() * possible.length)];
-          this.disconnect(random_connection.from, random_connection.to);
-          return true;
+          self.disconnect(random_connection.from, random_connection.to);
+          return self;
         }
 
-        return false;
+        return null;
       }
       case "SWAP_NODES": {
-        const possible = this.possible(method);
+        const possible = self.possible(method);
         if (possible) {
           // Return a random node out of the filtered collection
           const node1 = _.sample(possible);
@@ -816,10 +818,10 @@ function Network(input_size, output_size) {
           node1.squash = node2.squash;
           node2.bias = bias_temp;
           node2.squash = squash_temp;
-          return true;
+          return self;
         }
 
-        return false;
+        return null;
       }
     }
   }
@@ -833,7 +835,7 @@ function Network(input_size, output_size) {
    *
    * @memberof Network
    *
-   * @param {mutation[]} allowedMethods=methods.mutation.ALL An array of [Mutation methods](mutation) to automatically pick from
+   * @param {mutation[]} [allowedMethods=methods.mutation.ALL] An array of [Mutation methods](mutation) to automatically pick from
    * @param {object} options
    * @param {number} [options.maxNodes=Infinity] Maximum amount of [Nodes](node) a network can grow to
    * @param {number} [options.maxConns=Infinity] Maximum amount of [Connections](connection) a network can grow to
@@ -940,7 +942,7 @@ function Network(input_size, output_size) {
    */
   self.train = function(data, options) {
     // the or in the size is for backward compatibility
-    if (data[0].input.length !== (this.input_size || this.input) || data[0].output.length !== (this.output_size || this.output)) {
+    if (data[0].input.length !== (self.input_size || self.input) || data[0].output.length !== (self.output_size || self.output)) {
       throw new Error(`Dataset input/output size should be same as network input/output size!`);
     }
 
@@ -1022,13 +1024,13 @@ function Network(input_size, output_size) {
       current_training_rate = options.rate_policy(base_training_rate, iteration_number);
 
       // run on training epoch
-      const train_error = this._trainOneEpoch(
+      const train_error = self._trainOneEpoch(
         train_set, options.batch_size, current_training_rate, options.momentum, options.cost, {dropout_rate: options.dropout});
-      if (options.clear) this.clear();
+      if (options.clear) self.clear();
       // Checks if cross validation is enabled
       if (options.cross_validate) {
-        error = this.test(test_set, options.cost).error;
-        if (options.clear) this.clear();
+        error = self.test(test_set, options.cost).error;
+        if (options.clear) self.clear();
       } else {
         error = train_error;
       }
@@ -1050,7 +1052,7 @@ function Network(input_size, output_size) {
       }
     }
 
-    if (options.clear) this.clear();
+    if (options.clear) self.clear();
 
     return {
       error: error,
@@ -1060,7 +1062,7 @@ function Network(input_size, output_size) {
   }
 
   /**
-   * Performs one training epoch and returns the error - this is a private function used in `this.train`
+   * Performs one training epoch and returns the error - this is a private function used in `self.train`
    *
    * @todo Add `@param` tag descriptions
    * @todo Add `@returns` tag description
@@ -1090,8 +1092,8 @@ function Network(input_size, output_size) {
       // the !! turns to boolean
       const update = !!((i + 1) % batch_size === 0 || (i + 1) === set.length);
 
-      const output = this.activate(input, { dropout_rate: dropout_rate });
-      this.propagate(training_rate, momentum, update, correct_output);
+      const output = self.activate(input, { dropout_rate: dropout_rate });
+      self.propagate(training_rate, momentum, update, correct_output);
 
       error_sum += cost_function(correct_output, output);
     }
@@ -1117,7 +1119,7 @@ function Network(input_size, output_size) {
     _.times(set.length, (index) => {
       let input = set[index].input;
       let target = set[index].output;
-      let output = this.activate(input, {no_trace: true});
+      let output = self.activate(input, {no_trace: true});
       error += cost(target, output);
     });
 
@@ -1162,11 +1164,11 @@ function Network(input_size, output_size) {
     };
 
     let i;
-    for (i = 0; i < this.nodes.length; i++) {
-      const node = this.nodes[i];
+    for (i = 0; i < self.nodes.length; i++) {
+      const node = self.nodes[i];
 
       if (node.type === `input`) {
-        if (this.input_size === 1) {
+        if (self.input_size === 1) {
           graph_json.constraints[0].offsets.push({
             node: i,
             offset: 0
@@ -1174,7 +1176,7 @@ function Network(input_size, output_size) {
         } else {
           graph_json.constraints[0].offsets.push({
             node: i,
-            offset: 0.8 * width / (this.input_size - 1) * input++
+            offset: 0.8 * width / (self.input_size - 1) * input++
           });
         }
         graph_json.constraints[1].offsets.push({
@@ -1182,7 +1184,7 @@ function Network(input_size, output_size) {
           offset: 0
         });
       } else if (node.type === `output`) {
-        if (this.output_size === 1) {
+        if (self.output_size === 1) {
           graph_json.constraints[0].offsets.push({
             node: i,
             offset: 0
@@ -1190,7 +1192,7 @@ function Network(input_size, output_size) {
         } else {
           graph_json.constraints[0].offsets.push({
             node: i,
-            offset: 0.8 * width / (this.output_size - 1) * output++
+            offset: 0.8 * width / (self.output_size - 1) * output++
           });
         }
         graph_json.constraints[1].offsets.push({
@@ -1207,13 +1209,13 @@ function Network(input_size, output_size) {
       });
     }
 
-    const connections = this.connections;
+    const connections = self.connections;
     for (i = 0; i < connections.length; i++) {
       const connection = connections[i];
       if (connection.gater == null) {
         graph_json.links.push({
-          source: this.nodes.indexOf(connection.from),
-          target: this.nodes.indexOf(connection.to),
+          source: self.nodes.indexOf(connection.from),
+          target: self.nodes.indexOf(connection.to),
           weight: connection.weight
         });
       } else {
@@ -1225,17 +1227,17 @@ function Network(input_size, output_size) {
           name: `GATE`
         });
         graph_json.links.push({
-          source: this.nodes.indexOf(connection.from),
+          source: self.nodes.indexOf(connection.from),
           target: index,
           weight: 1 / 2 * connection.weight
         });
         graph_json.links.push({
           source: index,
-          target: this.nodes.indexOf(connection.to),
+          target: self.nodes.indexOf(connection.to),
           weight: 1 / 2 * connection.weight
         });
         graph_json.links.push({
-          source: this.nodes.indexOf(connection.gater),
+          source: self.nodes.indexOf(connection.gater),
           target: index,
           weight: connection.gater.activation,
           gate: true
@@ -1269,18 +1271,18 @@ function Network(input_size, output_size) {
       connections: [],
       input_nodes: [],
       output_nodes: [],
-      input_size: this.input_size,
-      output_size: this.output_size,
-      dropout: this.dropout,
+      input_size: self.input_size,
+      output_size: self.output_size,
+      dropout: self.dropout,
       // backward compatibility
-      input: this.input_size,
-      output: this.output_size,
+      input: self.input_size,
+      output: self.output_size,
     };
 
     let i;
-    for (i = 0; i < this.nodes.length; i++) {
+    for (i = 0; i < self.nodes.length; i++) {
       // So we don't have to use expensive .indexOf()
-      this.nodes[i].index = i;
+      self.nodes[i].index = i;
       if (self.input_nodes.has(self.nodes[i])) {
         json.input_nodes.push(i);
       }
@@ -1289,8 +1291,8 @@ function Network(input_size, output_size) {
       }
     }
 
-    for (i = 0; i < this.nodes.length; i++) {
-      const node = this.nodes[i];
+    for (i = 0; i < self.nodes.length; i++) {
+      const node = self.nodes[i];
       const node_json = node.toJSON();
       node_json.index = i;
       json.nodes.push(node_json);
@@ -1305,8 +1307,8 @@ function Network(input_size, output_size) {
       }
     }
 
-    for (i = 0; i < this.connections.length; i++) {
-      const connection = this.connections[i];
+    for (i = 0; i < self.connections.length; i++) {
+      const connection = self.connections[i];
       const connection_json = connection.toJSON();
       connection_json.from = connection.from.index;
       connection_json.to = connection.to.index;
@@ -1431,7 +1433,7 @@ function Network(input_size, output_size) {
    * execute();
    */
   self.evolve = async function(dataset, options) {
-    if (dataset[0].input.length !== (this.input_size || this.input) || dataset[0].output.length !== (this.output_size || this.output)) {
+    if (dataset[0].input.length !== (self.input_size || self.input) || dataset[0].output.length !== (self.output_size || self.output)) {
       throw new Error(`Dataset input/output size should be same as network input/output size!`);
     }
 
@@ -1522,8 +1524,8 @@ function Network(input_size, output_size) {
 
     // Intialise the NEAT instance
     options.network = this;
-    options.input = this.input_size;
-    options.output = this.output_size;
+    options.input = self.input_size;
+    options.output = self.output_size;
     const neat = new Neat(dataset, options);
 
     let error = -Infinity;
@@ -1554,13 +1556,13 @@ function Network(input_size, output_size) {
 
     if (typeof best_genome !== `undefined`) {
       // copy the best network into this one
-      this.nodes = best_genome.nodes;
-      this.connections = best_genome.connections;
-      this.gates = best_genome.gates;
-      this.input_nodes = best_genome.input_nodes;
-      this.output_nodes = best_genome.output_nodes;
+      self.nodes = best_genome.nodes;
+      self.connections = best_genome.connections;
+      self.gates = best_genome.gates;
+      self.input_nodes = best_genome.input_nodes;
+      self.output_nodes = best_genome.output_nodes;
 
-      if(options.clear) this.clear();
+      if(options.clear) self.clear();
     }
 
     return {
@@ -1601,8 +1603,8 @@ function Network(input_size, output_size) {
     const functions = [];
 
     // get input nodes
-    for (let i = 0; i < this.input_size; i++) {
-      var node = this.nodes[i];
+    for (let i = 0; i < self.input_size; i++) {
+      var node = self.nodes[i];
       activations.push(node.activation);
       states.push(node.state);
     }
@@ -1610,12 +1612,12 @@ function Network(input_size, output_size) {
     lines.push(`for(var i = 0; i < input.length; i++) A[i] = input[i];`);
 
     // So we don't have to use expensive .indexOf()
-    for (i = 0; i < this.nodes.length; i++) {
-      this.nodes[i].index = i;
+    for (i = 0; i < self.nodes.length; i++) {
+      self.nodes[i].index = i;
     }
 
-    for (i = this.input_size; i < this.nodes.length; i++) {
-      let node = this.nodes[i];
+    for (i = self.input_size; i < self.nodes.length; i++) {
+      let node = self.nodes[i];
       activations.push(node.activation);
       states.push(node.state);
 
@@ -1659,7 +1661,7 @@ function Network(input_size, output_size) {
     }
 
     let output = [];
-    for (i = this.nodes.length - this.output_size; i < this.nodes.length; i++) {
+    for (i = self.nodes.length - self.output_size; i < self.nodes.length; i++) {
       output.push(`A[${i}]`);
     }
 
@@ -1690,19 +1692,19 @@ function Network(input_size, output_size) {
       `ABSOLUTE`, `INVERSE`, `SELU`
     ];
 
-    connections.push(this.input_size);
-    connections.push(this.output_size);
+    connections.push(self.input_size);
+    connections.push(self.output_size);
 
     let node_index_counter = 0;
-    _.forEach(this.nodes, (node) => {
+    _.forEach(self.nodes, (node) => {
       node.index = node_index_counter;
       node_index_counter++;
       activations.push(node.activation);
       states.push(node.state);
     });
 
-    for (let node_index = this.input_size; node_index < this.nodes.length; node_index++) {
-      const node = this.nodes[node_index];
+    for (let node_index = self.input_size; node_index < self.nodes.length; node_index++) {
+      const node = self.nodes[node_index];
       connections.push(node.index);
       connections.push(node.bias);
       connections.push(squashes.indexOf(node.squash.name));
@@ -2251,7 +2253,7 @@ const Neat = function(dataset, {
    *
    * @param {Array<{input:number[],output:number[]}>} [evolve_set=dataset] A set to be used for evolving the population, if none is provided the dataset passed to Neat on creation will be used.
    * @param {function} [pickGenome] A custom selection function to pick out unwanted genomes. Accepts a network as a parameter and returns true for selection.
-   * @param {function} [adjustGenome=this.template] Accepts a network, modifies it, and returns it. Used to modify unwanted genomes returned by `pickGenome` and reincorporate them into the population. If left unset, unwanted genomes will be replaced with the template Network. Will only run when pickGenome is defined.
+   * @param {function} [adjustGenome=self.template] Accepts a network, modifies it, and returns it. Used to modify unwanted genomes returned by `pickGenome` and reincorporate them into the population. If left unset, unwanted genomes will be replaced with the template Network. Will only run when pickGenome is defined.
    *
    * @returns {Network} Fittest network
    *

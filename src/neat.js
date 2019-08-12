@@ -87,11 +87,13 @@ const config = require(`./config`);
 const Neat = function(inputs, outputs, dataset, options) {
   const self = this;
 
+  // new Neat() | Nothing to do
+  
   // new Neat(dataset) || new Neat(options)
   if(!(outputs || dataset || options)) {
     if(_.isPlainObject(inputs)) options = inputs;
     else if(Array.isArray(inputs)) dataset = inputs;
-
+    
     inputs = undefined;
   }
 
@@ -108,14 +110,19 @@ const Neat = function(inputs, outputs, dataset, options) {
     dataset = undefined;
   }
 
-  // new Neat()
-  // new Neat(population) - leave out for now
-  // new Neat(input, output)
-  // new Neat(population, options) - leave out for now
-  // new Neat(population, dataset) - leave out for now
-  // new Neat(input, output, dataset)
-  // new Neat(population, dataset, options) - leave out for now
-  // new Neat(input, output, dataset, options)
+  
+  /**
+   * To-do:
+   *
+   * new Neat(population) - leave out for now
+   * new Neat(input, output)
+   * new Neat(population, options) - leave out for now
+   * new Neat(population, dataset) - leave out for now
+   * new Neat(input, output, dataset)
+   * new Neat(population, dataset, options) - leave out for now
+   * new Neat(input, output, dataset, options)
+   */
+  
   inputs = inputs || 1;
   outputs = outputs || 1;
   dataset = dataset || [];
@@ -155,27 +162,30 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    * @memberof Neat
    *
-   * @param {Network} [network] - Template network used to create population - _other networks will be "identical twins"_ - _will use `this.template`, if `network` is not defined_
-   * @param {number} [size=50] - Number of network in created population - _how many identical twins created in new population_
+   * @param {Network} [network=options.template] Template network used to create population - _other networks will be "identical twins"_ - _will use `options.template`, if `network` is not defined_
+   * @param {number} [size=50] - Number of networks in created population - _how many identical twins created in new population_
    *
-   * @returns {Network[]} Returns an array of networks
+   * @returns {Network[]} Returns an array of networks each a member of the population
    */
   self.createPopulation = function create_networks_for_evolution(network, size) {
+    
+    // createPopulation(size)
     if(!size && Number.isInteger(network)) {
-      size = network;
-      network = undefined;
+      size = network
+      network = undefined
+    }
+    
+    size = size || self.population_size
+    
+    // Prioritize network, otherwise use template network, otherwise use "new network"
+    copyNetwork = network ? () => network.clone() : self.template ? () => self.template.clone() : () => new Network(self.inputs, self.outputs)
+     
+    const population = []
+    for(let i = 0; i < size; i++) {
+      population.push(copyNetwork())
     }
 
-    const population = [];
-
-    network = network ? network.clone() : (self.template || new Network(self.inputs, self.outputs));
-    size = size || self.population_size;
-
-    for(let index = 0; index < size; index++) {
-      population.push(network);
-    }
-
-    return population;
+    return population
   };
 
   // Initialise the genomes
@@ -242,6 +252,8 @@ const Neat = function(inputs, outputs, dataset, options) {
    * @memberof Neat
    *
    * @param {mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
+   *
+   * @return {Network[]} An array of mutated networks (a new population)
    */
   self.mutate = function mutate_population(method) {
     
@@ -253,17 +265,19 @@ const Neat = function(inputs, outputs, dataset, options) {
     
     // Change execution based on arguments
     const mutateGenome = method
-      ? (genome, method, options) => { genome.mutate(method, options) }
-      : (genome, methods, options) => { genome.mutateRandom(methods, options) }
+      ? (genome, method, options) => genome.mutate(method, options)
+      : (genome, methods, options) => genome.mutateRandom(methods, options)
     
+    // Default to Neat allowed mutations if no method
     method = method ? method : self.mutation
     
-    let { population, mutation_rate: rate, mutation_amount: times } = self
+    const population = []
     
-    for (let i = 0; i < population.length; i++) { // Elitist genomes should not be included
-      if (Math.random() <= rate) {
-        for(let j =0; j < times; j++) {
-          mutateGenome(population[i], method, options)
+    // Elitist genomes should not be included, will fix
+    for(let i = 0; i < self.population.length; i++) {
+      if(Math.random() <= self.mutation_rate) {
+        for(let j = 0; j < self.mutation_amount; j++) {
+          population.push(mutateGenome(self.population[i], method, options))
         }
       }
     }
