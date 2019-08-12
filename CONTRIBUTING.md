@@ -210,9 +210,7 @@ process may triage issues. This helps to speed up releases and minimises both
 user and developer pain in working through our backlog.
 
 Briefly, to triage an issue, review the report, validate that it is an actual
-issue (reproducing if possible), and add one or more labels. We have a
-[summary of our label taxonomy](https://github.com/liquid-carrot/carrot/issues/499)
-for your reference.
+issue (reproducing if possible), and add one or more labels.
 
 If you are not an official committer, please reach out to our mailing list(TODO)
 or [chat][8] to learn how you can assist with triaging indirectly.
@@ -237,7 +235,7 @@ If you have commit access, please follow this process for merging patches and cu
    Leave a comment about it so the author and others will know.
 7. Once everything looks good, add an "Approve" review. Don’t forget to say
    something nice 👏🐶💖✨
-8. If the commit messages follow [our conventions](@commit-message-conventions)
+8. If the commit messages follow our conventions(TODO)
 
    1. If the pull request fixes one or more open issues, please include the
       text "Fixes #472" or "Fixes liquid-carrot/carrot#472".
