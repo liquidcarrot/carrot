@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Liquid Carrot - Connection - Documentation</title>
+    <link rel="shortcut icon" href="/liquid-carrot-favicon.png" />
+    
+    
+    
+    
+    
+    <meta property="og:title" content=""/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content=""/>
+    
+    <meta property="og:url" content=""/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="styles/bulma.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/ionicons/2.0.1/css/ionicons.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger">
+  <div class="fixed-action-btn">
+    <div class="button-floating">
+      <!--
+      <label for="nav-trigger" class="navicon-button x">
+        <div class="navicon"></div>
+      </label>
+      -->
+        <i class="ion-ios-book" aria-hidden="true"></i>
+    </div>
+  </div>
+</label>
+<label for="nav-trigger" class="overlay"></label>
+
+<div class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="#" style="padding:0">
+      <img src="img/carrot-logo.png" height="28">
+    </a>
+
+    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+
+  <div id="navbarBasicExample" class="navbar-menu">
+    <div class="navbar-start">
+      <a class="navbar-item" href="/">Home</a>
+      <a class="navbar-item" href="/carrot">Docs</a>
+      <a class="navbar-item" href="https://github.com/liquidcarrot/carrot" target="_blank"><i class="ion-social-github" aria-hidden="true"></i></a>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          Versions
+        </a>
+        
+        <div class="navbar-dropdown">
+          <a href='https://liquidcarrot.io/carrot/versions/0.2.27/' class="navbar-item">v0.2.27</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.2.28/' class="navbar-item">v0.2.28</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.0/' class="navbar-item">v0.3.0</a>
+      <a href='https://liquidcarrot.io/carrot/' class="navbar-item">latest</a>
+        </div>
+      </div>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More
+        </a>
+
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="mailto:people@liquidcarrot.io?subject=Contact%20From%20Docs">
+            Contact
+          </a>
+          <hr class="navbar-divider">
+          <a class="navbar-item" href="https://github.com/liquidcarrot/carrot/issues/new">
+            Report an issue
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <input type="text" id="nav-search" placeholder="Search" autofocus>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav >
+    <h3>Classes</h3><ul><li><a href="Connection_.html">Connection</a><ul class='methods'><li data-type='method'><a href="Connection_.html#.innovationID">innovationID</a></li><li data-type='method'><a href="Connection_.html#.toJSON">toJSON</a></li></ul></li><li><a href="Group.html">Group</a><ul class='methods'><li data-type='method'><a href="Group.html#.activate">activate</a></li><li data-type='method'><a href="Group.html#.clear">clear</a></li><li data-type='method'><a href="Group.html#.connect">connect</a></li><li data-type='method'><a href="Group.html#.disconnect">disconnect</a></li><li data-type='method'><a href="Group.html#.gate">gate</a></li><li data-type='method'><a href="Group.html#.propagate">propagate</a></li><li data-type='method'><a href="Group.html#.set">set</a></li></ul></li><li><a href="Layer.html">Layer</a><ul class='methods'><li data-type='method'><a href="Layer.html#.Dense">Dense</a></li><li data-type='method'><a href="Layer.html#.GRU">GRU</a></li><li data-type='method'><a href="Layer.html#.LSTM">LSTM</a></li><li data-type='method'><a href="Layer.html#.Memory">Memory</a></li></ul></li><li><a href="Neat.html">Neat</a><ul class='methods'><li data-type='method'><a href="Neat.html">evolve</a></li><li data-type='method'><a href="Neat.html#.createPool">createPool</a></li><li data-type='method'><a href="Neat.html#.createPopulation">createPopulation</a></li><li data-type='method'><a href="Neat.html#.evaluate">evaluate</a></li><li data-type='method'><a href="Neat.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Neat.html#.getAverage">getAverage</a></li><li data-type='method'><a href="Neat.html#.getFittest">getFittest</a></li><li data-type='method'><a href="Neat.html#.getOffspring">getOffspring</a></li><li data-type='method'><a href="Neat.html#.getParent">getParent</a></li><li data-type='method'><a href="Neat.html#.mutate">mutate</a></li><li data-type='method'><a href="Neat.html#.replace">replace</a></li><li data-type='method'><a href="Neat.html#.toJSON">toJSON</a></li></ul></li><li><a href="Network.html">Network</a><ul class='methods'><li data-type='method'><a href="Network.html#.activate">activate</a></li><li data-type='method'><a href="Network.html#.clear">clear</a></li><li data-type='method'><a href="Network.html#.clone">clone</a></li><li data-type='method'><a href="Network.html#.connect">connect</a></li><li data-type='method'><a href="Network.html#.crossOver">crossOver</a></li><li data-type='method'><a href="Network.html#.disconnect">disconnect</a></li><li data-type='method'><a href="Network.html#.evolve">evolve</a></li><li data-type='method'><a href="Network.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Network.html#.gate">gate</a></li><li data-type='method'><a href="Network.html#.graph">graph</a></li><li data-type='method'><a href="Network.html#.merge">merge</a></li><li data-type='method'><a href="Network.html#.mutate">mutate</a></li><li data-type='method'><a href="Network.html#.mutateRandom">mutateRandom</a></li><li data-type='method'><a href="Network.html#.noTraceActivate">noTraceActivate</a></li><li data-type='method'><a href="Network.html#.possible">possible</a></li><li data-type='method'><a href="Network.html#.remove">remove</a></li><li data-type='method'><a href="Network.html#.set">set</a></li><li data-type='method'><a href="Network.html#.standalone">standalone</a></li><li data-type='method'><a href="Network.html#.test">test</a></li><li data-type='method'><a href="Network.html#.toJSON">toJSON</a></li><li data-type='method'><a href="Network.html#.train">train</a></li><li data-type='method'><a href="Network.html#.ungate">ungate</a></li></ul></li><li><a href="Node.html">Node</a><ul class='methods'><li data-type='method'><a href="Node.html#.activate">activate</a></li><li data-type='method'><a href="Node.html#.clear">clear</a></li><li data-type='method'><a href="Node.html#.connect">connect</a></li><li data-type='method'><a href="Node.html#.disconnect">disconnect</a></li><li data-type='method'><a href="Node.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Node.html#.gate">gate</a></li><li data-type='method'><a href="Node.html#.isProjectedBy">isProjectedBy</a></li><li data-type='method'><a href="Node.html#.isProjectingTo">isProjectingTo</a></li><li data-type='method'><a href="Node.html#.mutate">mutate</a></li><li data-type='method'><a href="Node.html#.noTraceActivate">noTraceActivate</a></li><li data-type='method'><a href="Node.html#.propagate">propagate</a></li><li data-type='method'><a href="Node.html#.toJSON">toJSON</a></li><li data-type='method'><a href="Node.html#.ungate">ungate</a></li></ul></li></ul><h3>Namespaces</h3><ul><li><a href="activation.html">activation</a><ul class='methods'><li data-type='method'><a href="activation.html#.ABSOLUTE">ABSOLUTE</a></li><li data-type='method'><a href="activation.html#.BENT_IDENTITY">BENT_IDENTITY</a></li><li data-type='method'><a href="activation.html#.BIPOLAR">BIPOLAR</a></li><li data-type='method'><a href="activation.html#.BIPOLAR_SIGMOID">BIPOLAR_SIGMOID</a></li><li data-type='method'><a href="activation.html#.GAUSSIAN">GAUSSIAN</a></li><li data-type='method'><a href="activation.html#.HARD_TANH">HARD_TANH</a></li><li data-type='method'><a href="activation.html#.IDENTITY">IDENTITY</a></li><li data-type='method'><a href="activation.html#.INVERSE">INVERSE</a></li><li data-type='method'><a href="activation.html#.LOGISTIC">LOGISTIC</a></li><li data-type='method'><a href="activation.html#.RELU">RELU</a></li><li data-type='method'><a href="activation.html#.SELU">SELU</a></li><li data-type='method'><a href="activation.html#.SINUSOID">SINUSOID</a></li><li data-type='method'><a href="activation.html#.SOFTSIGN">SOFTSIGN</a></li><li data-type='method'><a href="activation.html#.STEP">STEP</a></li><li data-type='method'><a href="activation.html#.TANH">TANH</a></li></ul></li><li><a href="architect.html">architect</a><ul class='methods'><li data-type='method'><a href="architect.html#.Construct">Construct</a></li><li data-type='method'><a href="architect.html#.GRU">GRU</a></li><li data-type='method'><a href="architect.html#.Hopfield">Hopfield</a></li><li data-type='method'><a href="architect.html#.Liquid">Liquid</a></li><li data-type='method'><a href="architect.html#.LSTM">LSTM</a></li><li data-type='method'><a href="architect.html#.NARX">NARX</a></li><li data-type='method'><a href="architect.html#.Perceptron">Perceptron</a></li><li data-type='method'><a href="architect.html#.Random">Random</a></li></ul></li><li><a href="connection.html">connection</a><ul class='members'><li data-type='member'><a href="connection.html#.ALL_TO_ALL">ALL_TO_ALL</a></li><li data-type='member'><a href="connection.html#.ALL_TO_ELSE">ALL_TO_ELSE</a></li><li data-type='member'><a href="connection.html#.ONE_TO_ONE">ONE_TO_ONE</a></li></ul></li><li><a href="cost.html">cost</a><ul class='methods'><li data-type='method'><a href="cost.html#.BINARY">BINARY</a></li><li data-type='method'><a href="cost.html#.CROSS_ENTROPY">CROSS_ENTROPY</a></li><li data-type='method'><a href="cost.html#.HINGE">HINGE</a></li><li data-type='method'><a href="cost.html#.MAE">MAE</a></li><li data-type='method'><a href="cost.html#.MAPE">MAPE</a></li><li data-type='method'><a href="cost.html#.MSE">MSE</a></li><li data-type='method'><a href="cost.html#.MSLE">MSLE</a></li><li data-type='method'><a href="cost.html#.WAPE">WAPE</a></li></ul></li><li><a href="crossover.html">crossover</a><ul class='members'><li data-type='member'><a href="crossover.html#.AVERAGE">AVERAGE</a></li><li data-type='member'><a href="crossover.html#.SINGLE_POINT">SINGLE_POINT</a></li><li data-type='member'><a href="crossover.html#.TWO_POINT">TWO_POINT</a></li><li data-type='member'><a href="crossover.html#.UNIFORM">UNIFORM</a></li></ul></li><li><a href="gating.html">gating</a><ul class='members'><li data-type='member'><a href="gating.html#.INPUT">INPUT</a></li><li data-type='member'><a href="gating.html#.OUTPUT">OUTPUT</a></li><li data-type='member'><a href="gating.html#.SELF">SELF</a></li></ul></li><li><a href="mutation.html">mutation</a><ul class='members'><li data-type='member'><a href="mutation.html#.ADD_BACK_CONN">ADD_BACK_CONN</a></li><li data-type='member'><a href="mutation.html#.ADD_CONN">ADD_CONN</a></li><li data-type='member'><a href="mutation.html#.ADD_GATE">ADD_GATE</a></li><li data-type='member'><a href="mutation.html#.ADD_NODE">ADD_NODE</a></li><li data-type='member'><a href="mutation.html#.ADD_SELF_CONN">ADD_SELF_CONN</a></li><li data-type='member'><a href="mutation.html#.ALL">ALL</a></li><li data-type='member'><a href="mutation.html#.FFW">FFW</a></li><li data-type='member'><a href="mutation.html#.MOD_ACTIVATION">MOD_ACTIVATION</a></li><li data-type='member'><a href="mutation.html#.MOD_BIAS">MOD_BIAS</a></li><li data-type='member'><a href="mutation.html#.MOD_WEIGHT">MOD_WEIGHT</a></li><li data-type='member'><a href="mutation.html#.SUB_BACK_CONN">SUB_BACK_CONN</a></li><li data-type='member'><a href="mutation.html#.SUB_CONN">SUB_CONN</a></li><li data-type='member'><a href="mutation.html#.SUB_GATE">SUB_GATE</a></li><li data-type='member'><a href="mutation.html#.SUB_NODE">SUB_NODE</a></li><li data-type='member'><a href="mutation.html#.SUB_SELF_CONN">SUB_SELF_CONN</a></li><li data-type='member'><a href="mutation.html#.SWAP_NODES">SWAP_NODES</a></li></ul></li><li><a href="rate.html">rate</a><ul class='methods'><li data-type='method'><a href="rate.html#.EXP">EXP</a></li><li data-type='method'><a href="rate.html#.FIXED">FIXED</a></li><li data-type='method'><a href="rate.html#.INV">INV</a></li><li data-type='method'><a href="rate.html#.STEP">STEP</a></li></ul></li><li><a href="selection.html">selection</a><ul class='members'><li data-type='member'><a href="selection.html#.FITNESS_PROPORTIONATE">FITNESS_PROPORTIONATE</a></li><li data-type='member'><a href="selection.html#.POWER">POWER</a></li><li data-type='member'><a href="selection.html#.TOURNAMENT">TOURNAMENT</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#config">config</a></li><li><a href="global.html#GAN">GAN</a></li><li><a href="global.html#sort">sort</a></li></ul>
+</nav>
+
+<div id="main">
+    <div class="columns">
+        <div class="column is-hidden-touch"></div>
+        <div class="column is-11-desktop is-10-widescreen">
+
+            
+                <h1 class="page-title">Connection</h1>
+            
+
+            
+
+
+
+
+<section>
+
+<header>
+    
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+
+    
+
+    <h4 class="name" id="Connection"><span class="type-signature"></span>new Connection
+    
+    <span class="signature mobile-break">(from, to, weight<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>)</span><span class="type-signature mobile-break"></span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>A connection instance describes the connection between two nodes. If you're looking for connections between <a href="Group">Groups</a> please see <a href="connection">Connection Methods</a></p>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>from</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type"><a href="Node.html">Node</a></span>
+
+
+                
+                
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+            
+                <td class="description last"><p>Connection origin node (neuron)</p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>to</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type"><a href="Node.html">Node</a></span>
+
+
+                
+                
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+            
+                <td class="description last"><p>Connection destination node (neuron)</p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>weight</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">number</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                    <code>random</code>
+                
+                </td>
+            
+            
+                <td class="description last"><p>Weight of the connection</p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            
+
+            
+                <td colspan="2" class="description last">
+                    
+                    <h6>Properties</h6>
+                    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>gain</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">number</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                    <code>1</code>
+                
+                </td>
+            
+            
+                <td class="description last"></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gater</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type"><a href="Node.html">Node</a></span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+            
+                <td class="description last"></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+                </td>
+            
+
+            
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>from</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Node.html">Node</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Connection origin node (neuron)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>to</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Node.html">Node</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Connection destination node (neuron)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>weight</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>random</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Weight of the connection</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gain</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>1</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Used for gating, gets multiplied with weight</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gater</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Node.html">Node</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>null</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>The node gating this connection</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>elegibility</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>0</code>
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>xtrace_nodes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="Node.html">Node</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>xtrace_values</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;number></span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>delta_weights</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;number></span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>delta_weights_previous</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>0</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Tracks <a href="https://www.willamette.edu/~gorr/classes/cs449/momrate.html">momentum</a></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>delta_weights_total</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>0</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Tracks <a href="https://www.willamette.edu/~gorr/classes/cs449/momrate.html">momentum</a> - <em>for <a href="https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes">batch training</a></em></p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_connection.js.html">architecture/connection.js</a>, <a href="architecture_connection.js.html#line30">line 30</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="connection.html">Connection Methods</a></li>
+        
+            <li><a href="Node.html">Node</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+        
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="main-subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".innovationID"><span class="type-signature">(static) </span>innovationID
+    
+    <span class="signature mobile-break">(a, b)</span><span class="type-signature mobile-break"> &rarr; {number}</span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Returns an innovation ID</p>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>a</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">number</span>
+
+
+                
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>A <a href="https://en.wikipedia.org/wiki/Natural_number">natural number</a>, which is an integer greater than or equal to zero</p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">number</span>
+
+
+                
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>A <a href="https://en.wikipedia.org/wiki/Natural_number">natural number</a>, which is an integer greater than or equal to zero</p></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <ul>
+<li>An Integer that uniquely represents a pair of Integers</li>
+</ul>
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_connection.js.html">architecture/connection.js</a>, <a href="architecture_connection.js.html#line80">line 80</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://en.wikipedia.org/wiki/Pairing_function%20(Cantor%20pairing%20function)">Pairing function (Cantor pairing function)</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".toJSON"><span class="type-signature">(static) </span>toJSON
+    
+    <span class="signature mobile-break">()</span><span class="type-signature mobile-break"> &rarr; {object}</span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Returns the connection as a JSON</p>
+</div>
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Returns connection as a JSON</p>
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_connection.js.html">architecture/connection.js</a>, <a href="architecture_connection.js.html#line57">line 57</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+            
+
+        </div>
+        <div class="column is-hidden-touch"></div>
+    </div>
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a> on Sat Aug 10 2019 17:49:36 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/jquery-3.1.1.min.js"></script>
+
+<script src="scripts/search.js"></script>
+
+
+
+
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+  heap.load("1195922815");
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Get all "navbar-burger" elements
+  const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+  // Check if there are any navbar burgers
+  if ($navbarBurgers.length > 0) {
+
+    // Add a click event on each of them
+    $navbarBurgers.forEach( el => {
+      el.addEventListener('click', () => {
+
+        // Get the target from the "data-target" attribute
+        const target = el.dataset.target;
+        const $target = document.getElementById(target);
+
+        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+        el.classList.toggle('is-active');
+        $target.classList.toggle('is-active');
+
+      });
+    });
+  }
+
+});
+</script>
+<script src="scripts/clipboard.min.js"></script>
+<script>
+  // example copying functionality
+  const clipboard = new ClipboardJS('code');
+  const clipboard_button = new ClipboardJS('.copy-button');
+
+  clipboard_button.on('success', (e) => {
+    e.trigger.innerText = "Copied!"
+  });
+
+  const copy_buttons = document.querySelectorAll(".copy-button");
+  
+  copy_buttons.forEach(function(btn) {
+    btn.addEventListener("mouseout", function(e) {
+      setTimeout(function() {
+        e.fromElement.innerText = "Copy"
+      }, 200);
+    });
+  });
+</script>
+<script>prettyPrint();</script>
+</body>
+</html>
