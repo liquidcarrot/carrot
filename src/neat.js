@@ -326,8 +326,8 @@ const Neat = function(inputs, outputs, dataset, options) {
    * @alias evolve
    *
    * @param {Array<{input:number[],output:number[]}>} [evolve_dataset=dataset] A set to be used for evolving the population, if none is provided the dataset passed to Neat on creation will be used.
-   * @param {Function} pickGenome A function that takes a genome as a parameter and returns true "marking" it for adjustment
-   * @param {Function} adjustGenome A function that takes a marked genome and
+   * @param {Function} pickGenome A function that takes a genome as a parameter and returns true "marking" it for adjustment - _invoked `pick(network, index, population)`_
+   * @param {Function} adjustGenome A function that takes a marked genome as a parameter, makes changes, and returns it - _invoked `transform(network, index, population)`_
    *
    * @returns {Object}
    *
@@ -358,6 +358,7 @@ const Neat = function(inputs, outputs, dataset, options) {
    * // evolves using originalSet
    * neat.evolve()
    *
+   * // optional parameters left out
    * let pick = function pickGenome(genome) {
    *
    *  // Select genomes with more than 100 nodes
@@ -365,6 +366,7 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    * }
    *
+   * // optional parameters left out
    * let transform = function transformGenome(genome) {
    *
    *  genome.clear() // Adjust by cleaning the genome state
