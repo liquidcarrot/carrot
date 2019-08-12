@@ -192,17 +192,19 @@ const Neat = function(inputs, outputs, dataset, options) {
   self.population = self.population || self.createPopulation(self.template, self.population_size);
 
   /**
-   * Replaces all networks that match the `select` function - _if `transform` is provided networks will be transformed before being filtered out_
+   * Replaces all networks that match the `pick` function - _picked networks are sent through the `transform` function_
    *
-   * Allows networks (genomes) in a population to be selected and filtered with a custom user-defined function, used within Neat.evolve to allow for custom mutation before and after evolution
+   * Allows networks (genomes) in a population to be picked and transformed with a custom user-defined function, used within Neat.evolve to allow for custom mutation before and after evolution
    *
    * @function replace
+   *
+   * @alpha
    *
    * @memberof Neat
    *
    * @param {Network[]} [population] An array (population) of genomes (networks)
-   * @param {number|Network|Function} [filter] An index, network, or function used to pick out replaceable genome(s) from the population - _invoked `filter(network, index, population)`_
-   * @param {Network|Function} [transform] A network used to replace filtered genomes or a function used to mutate filtered genomes - _invoked `transform(network, index, population)`_
+   * @param {number|Network|Function} [pick] An index, network, or function used to pick out replaceable genome(s) from the population - _invoked `pick(network, index, population)`_
+   * @param {Network|Function} [transform] A network used to replace picked genomes or a function used to mutate picked genomes - _invoked `transform(network, index, population)`_
    *
    * @return {Network[]} Returns the replaced genomes (population)
    *
@@ -210,10 +212,9 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    * let neat = new Neat()
    *
-   *
    * let pick = function pickGenome(genome, index, population) {
    *
-   *  return genome.nodes.length > 100 ? true : false // Select genomes with >100 nodes
+   *  return genome.nodes.length > 100 ? true : false // Pick genomes with >100 nodes
    *
    * }
    *
@@ -224,45 +225,45 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    * }
    *
-   * neat.population = neat.replace
+   * neat.population = neat.replace(neat.population, pick, transform)
    *
    */
-  self.replace = function(population, filter, transform) {
-    if(population == undefined && filter == undefined && transform == undefined) throw new ReferenceError("Missing required parameter 'transform'")
+  self.replace = function(population, pick, transform) {
+    if(population == undefined && pick == undefined && transform == undefined) throw new ReferenceError("Missing required parameter 'transform'")
     
     // Change execution when partial params supplied
     function _transform(t) {
       const transformer = t instanceof Network ? (() => t) : typeof t === "function" ? t : new TypeError(`Expected ${t} to be a {Network|Function}`);
       return transformer;
     }
-    function _filter(f) {
-      const filter = Number.isFinite(f) ? (network, index, population) => index === f
+    function _pick(f) {
+      const pick = Number.isFinite(f) ? (network, index, population) => index === f
         : f instanceof Network ? (network, index, population) => network === f
         : typeof f === "function" ? f
         : f == undefined ? () => true
         : new TypeError(`Expected ${t} to be a {Number|Network|Function|undefined}`);
-      return filter;
+      return pick;
     }
     
     
     // replace(transform)
-    if (filter == undefined && transform == undefined) {
+    if (pick == undefined && transform == undefined) {
       transform = _transform(population);
-      filter = _filter();
+      pick = _pick();
       population = self.population;
     }
     
     // replace(population, transform)
     else if (transform == undefined) {
-      transform = _transform(filter);
-      filter = _filter(population);
+      transform = _transform(pick);
+      pick = _pick(population);
       population = self.population;
     }
     
-    // replace(population, filter, transform)
+    // replace(population, pick, transform)
     else {
       transform = _transform(transform);
-      filter = _filter(filter);
+      pick = _pick(pick);
       population = population || self.population;
     }
     
@@ -270,7 +271,7 @@ const Neat = function(inputs, outputs, dataset, options) {
     // Does not create deep copies before operations. Potentially problematic, but performant
     const transformed = []
     for (let i = 0; i < population.length; i++) {
-      filter(population[i], i, population) ? transformed[i] = transform(population[i], i, population) : transformed.push(population[i])
+      pick(population[i], i, population) ? transformed[i] = transform(population[i], i, population) : transformed.push(population[i])
     }
     
     return transformed;
