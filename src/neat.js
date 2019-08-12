@@ -194,6 +194,8 @@ const Neat = function(inputs, outputs, dataset, options) {
   /**
    * Replaces all networks that match the `select` function - _if `transform` is provided networks will be transformed before being filtered out_
    *
+   * Allows networks (genomes) in a population to be selected and filtered with a custom user-defined function, used within Neat.evolve to allow for custom mutation before and after evolution
+   *
    * @function replace
    *
    * @memberof Neat
@@ -202,11 +204,33 @@ const Neat = function(inputs, outputs, dataset, options) {
    * @param {number|Network|Function} [filter] An index, network, or function used to pick out replaceable genome(s) from the population - _invoked `filter(network, index, population)`_
    * @param {Network|Function} [transform] A network used to replace filtered genomes or a function used to mutate filtered genomes - _invoked `transform(network, index, population)`_
    *
-   * @return {Network[]} Returns the new genome
+   * @return {Network[]} Returns the replaced genomes (population)
+   *
+   * @example
+   *
+   * let neat = new Neat()
+   *
+   *
+   * let pick = function pickGenome(genome, index, population) {
+   *
+   *  return genome.nodes.length > 100 ? true : false // Select genomes with >100 nodes
+   *
+   * }
+   *
+   * let transform = function transformGenome(genome, index, population) {
+   *
+   *  genome.clear() // Adjust by cleaning the genome state
+   *  return genome // Return the genome
+   *
+   * }
+   *
+   * neat.population = neat.replace
+   *
    */
   self.replace = function(population, filter, transform) {
     if(population == undefined && filter == undefined && transform == undefined) throw new ReferenceError("Missing required parameter 'transform'")
     
+    // Change execution when partial params supplied
     function _transform(t) {
       const transformer = t instanceof Network ? (() => t) : typeof t === "function" ? t : new TypeError(`Expected ${t} to be a {Network|Function}`);
       return transformer;
@@ -220,28 +244,36 @@ const Neat = function(inputs, outputs, dataset, options) {
       return filter;
     }
     
+    
+    // replace(transform)
     if (filter == undefined && transform == undefined) {
       transform = _transform(population);
       filter = _filter();
       population = self.population;
     }
+    
+    // replace(population, transform)
     else if (transform == undefined) {
       transform = _transform(filter);
       filter = _filter(population);
       population = self.population;
-    } else {
+    }
+    
+    // replace(population, filter, transform)
+    else {
       transform = _transform(transform);
       filter = _filter(filter);
       population = population || self.population;
     }
     
-    const filtered = [...self.population];
-
-    for (let genome = 0; genome < population.length; genome++)
-      if (filter(population[genome], genome, population))
-        filtered[genome] = transform(population[genome], genome, population);
-
-    return filtered;
+    
+    // Does not create deep copies before operations. Potentially problematic, but performant
+    const transformed = []
+    for (let i = 0; i < population.length; i++) {
+      filter(population[i], i, population) ? transformed[i] = transform(population[i], i, population) : transformed.push(population[i])
+    }
+    
+    return transformed;
   };
 
   /**
@@ -293,8 +325,8 @@ const Neat = function(inputs, outputs, dataset, options) {
    * @alias evolve
    *
    * @param {Array<{input:number[],output:number[]}>} [evolve_dataset=dataset] A set to be used for evolving the population, if none is provided the dataset passed to Neat on creation will be used.
-   * @param {Function} pickGenome
-   * @param {Function} filterGenome
+   * @param {Function} pickGenome A function that takes a genome as a parameter and returns true "marking" it for adjustment
+   * @param {Function} adjustGenome A function that takes a marked genome and
    *
    * @returns {Object}
    *
@@ -325,15 +357,24 @@ const Neat = function(inputs, outputs, dataset, options) {
    * // evolves using originalSet
    * neat.evolve()
    *
-   * let pick = function pickGenome(genome) return genome.nodes.length > 100 ? true : false // Remove genomes with more than 100 nodes
+   * let pick = function pickGenome(genome) {
    *
-   * let adjust = function adjustGenome(genome) return genome.clear() // clear the nodes
+   *  // Select genomes with more than 100 nodes
+   *  return genome.nodes.length > 100 ? true : false
    *
-   * // evolves using originalSet
-   * neat.evolve(null, filter, adjust)
+   * }
+   *
+   * let transform = function transformGenome(genome) {
+   *
+   *  genome.clear() // Adjust by cleaning the genome state
+   *  return genome // Return the genome
+   *
+   * }
+   *
+   * neat.evolve(null, pick, transform) // First param is usually dataset, but this uses originalSet instead
    *
    */
-  self.evolve = async function(evolve_dataset, pickGenome, filterGenome) {
+  self.evolve = async function(evolve_dataset, pickGenome, transformGenome) {
     /*
     // // Check if evolve is possible
     // if (self.elitism + self.provenance > self.population_size) throw new Error("Can`t evolve! Elitism + provenance exceeds population size!");
@@ -453,7 +494,7 @@ const Neat = function(inputs, outputs, dataset, options) {
     }
 
     // evolve dataset is optional, so deal with not having it
-    if (typeof evolve_dataset === `function`) {
+    if (typeof evolve_dataset === 'function') {
       adjustGenome = pickGenome;
       pickGenome = evolve_dataset
       evolve_dataset = undefined;
@@ -465,10 +506,9 @@ const Neat = function(inputs, outputs, dataset, options) {
     if (self.population[self.population.length - 1].score == undefined) {
       await self.evaluate(evolve_dataset);
     }
+    
     // Check & adjust genomes as needed
-    if (pickGenome) {
-      self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome);
-    }
+    if (pickGenome) self.population = self.replace(self.population, pickGenome, transformGenome);
 
     // Sort in order of fitness (fittest first)
     self.sort();
@@ -498,7 +538,7 @@ const Neat = function(inputs, outputs, dataset, options) {
     await self.evaluate(evolve_dataset);
 
     // Check & adjust genomes as needed
-    if (pickGenome) self.population = self.filterGenome(self.population, self.template, pickGenome, adjustGenome)
+    if (pickGenome) self.population = self.replace(self.population, pickGenome, transformGenome)
 
     // Sort in order of fitness (fittest first)
     self.sort()
