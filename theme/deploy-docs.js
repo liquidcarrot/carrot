@@ -8,7 +8,8 @@ const version = require('../package.json').version;
 async function run(command, message) {
   console.log(message)
   
-  const { stdout, stderr } = await exec(command)
+  // increase default stdout capacity
+  const { stdout, stderr } = await exec(command, {maxBuffer: 1024 * 5000})
   
   if (stderr) {
     console.log(`stdout: ${stdout}`)
@@ -43,7 +44,7 @@ async function start() {
   await run(`./node_modules/.bin/jsdoc -c jsdoc.json -d .`, 'Building latest doc files')
   
   // Push files into gh-pages (i.e. deploy the docs)
-  await exec("git add . && git stash && git branch -D gh-pages && git checkout -b gh-pages && git merge --squash --strategy-option=theirs stash && git stash drop && git commit -m 'Auto-build' && git push origin gh-pages -f && git checkout -", "Deploying docs")
+  await run("git add . && git stash && git branch -D gh-pages && git checkout -b gh-pages && git merge --squash --strategy-option=theirs stash && git stash drop && git commit -m 'Auto-build' && git push origin gh-pages -f && git checkout -", "Deploying docs")
 
   // Restore previous changes
   await run(`git stash pop && rm -f .temp && git add .temp`, "Restoring any of your changes")
