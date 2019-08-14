@@ -580,6 +580,8 @@ describe("Neat", function() {
     })
     
     it("new Neat(dataset), Neat.evolve(otherSet) | Should prioritize otherSet for training", async function () {
+      this.timeout(10000)
+      
       const neat = new Neat(2, 1, data.XOR, { population_size: 5 }) // reduced population size to speed up test
       
       // .evolve should prioritize AND set

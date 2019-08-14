@@ -78,7 +78,7 @@ describe("Logic Gates", function() {
     // console.log(`Initial Score: ${initial.score}`);
     // console.log(`Final Score: ${final.score}`);
 
-    expect(final.score).to.be.at.least(initial.score);
+    expect(final[0].score).to.be.at.least(initial.score);
   });
 
   it("[AND] Network.train()", function() {
