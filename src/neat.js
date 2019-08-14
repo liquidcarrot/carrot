@@ -321,15 +321,15 @@ const Neat = function(inputs, outputs, dataset, options) {
   /**
    * Evaluates, selects, breeds and mutates population
    *
+   * @function evolve
+   *
    * @memberof Neat
    *
-   * @alias evolve
-   *
    * @param {Array<{input:number[],output:number[]}>} [evolve_dataset=dataset] A set to be used for evolving the population, if none is provided the dataset passed to Neat on creation will be used.
-   * @param {Function} pickGenome A function that takes a genome as a parameter and returns true "marking" it for adjustment - _invoked `pick(network, index, population)`_
-   * @param {Function} adjustGenome A function that takes a marked genome as a parameter, makes changes, and returns it - _invoked `transform(network, index, population)`_
+   * @param {Function} [pickGenome] A function that takes a genome as a parameter and returns true "marking" it for adjustment - _invoked `pick(network, index, population)`_
+   * @param {Function} [adjustGenome] A function that takes a marked genome as a parameter, makes changes, and returns it - _invoked `transform(network, index, population)`_
    *
-   * @returns {Object}
+   * @returns {network[]} An evolved population
    *
    * @example
    *
@@ -378,183 +378,81 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    */
   self.evolve = async function(evolve_dataset, pickGenome, transformGenome) {
-    /*
-    // // Check if evolve is possible
-    // if (self.elitism + self.provenance > self.population_size) throw new Error("Can`t evolve! Elitism + provenance exceeds population size!");
-
-    // dataset = dataset || self.dataset;
+    if (self.elitism + self.provenance > self.population_size) throw new Error("Can't evolve! Elitism + provenance exceeds population size!")
     
-    
-    // // Reset the scores
-    // for (let i = 0; i < self.population.length; i++) self.population[i].score = undefined;
-
-    // // Check population for evaluation
-    // // if (typeof self.population[self.population.length - 1].score === `undefined`)
-    // await self.evaluate(dataset);
-    
-    // console.log(self.population[0].score);
-
-    // // Sort in order of fitness (fittest first)
-    // self.sort();
-
-    // // Elitism, assumes population is sorted by fitness
-    // const elitists = [];
-    // for (let i = 0; i < self.elitism; i++) elitists.push(self.population[i]);
-
-    // // Provenance
-    // const new_population = Array(self.provenance).fill(Network.fromJSON(self.template.toJSON()))
-
-    // // Breed the next individuals
-    // for (let i = 0; i < self.population_size - self.elitism - self.provenance; i++)
-    //   new_population.push(self.getOffspring());
-
-    // // Replace the old population with the new population
-    // self.population = new_population;
-
-    // // Mutate the new population
-    // self.mutate();
-
-    // // Add the elitists
-    // self.population.push(...elitists);
-
-    // // evaluate the population
-    // await self.evaluate(dataset);
-
-    // // Sort in order of fitness (fittest first)
-    // self.sort()
-
-    // const fittest = Network.fromJSON(self.population[0].toJSON());
-    // fittest.score = self.population[0].score;
-
-    // const best = Network.fromJSON(self.population[0].toJSON());
-    // best.score = self.population[0].score
-    // const worst = Network.fromJSON(self.population[self.population.length - 1].toJSON());
-    // worst.score = self.population[self.population.length - 1].score
-    // const median = Network.fromJSON(self.population[Math.floor(self.population.length / 2)].toJSON());
-    // median.score = self.population[Math.floor(self.population.length / 2)].score
-
-
-    // self.generation++;
-
-    // if (options && options.networks) {
-    //   return { best, median, worst }
-    // } else {
-    //   return {
-    //     best: best.score,
-    //     median: median.score,
-    //     worst: worst.score
-    //   }
-    // }
-    
-    //==========================================================
-    
-    // console.log(dataset);
-    // console.log(options);
-    
-    // if (options == undefined && !Array.isArray(dataset) && typeof dataset === "object") {
-    //   options = dataset;
-    //   dataset = self.dataset;
-    // }
-    
-    // options = options || {};
-    // dataset = dataset || self.dataset || [];
-    
-    
-    // console.log(dataset);
-    // console.log(options);
-    
-    // console.log(dataset == undefined);
-    // console.log(!dataset.length);
-    
-    // if (dataset == undefined || !dataset.length) throw new ReferenceError("'dataset' was not passed to 'neat.evolve()' or 'new Neat'");
-    
-    
-    
-    // for (let index = 0; index < self.population.length; index++) {
-    //   await self.population[index].evolve(dataset);
-    // }
-    
-    // const best = self.population[0];
-    // const worst = self.population[self.population.length - 1];
-    // const median = self.population[Math.floor(self.population.length / 2)];
-    
-    // if (options && options.networks) {
-    //   return { best, median, worst }
-    // } else {
-    //   return {
-    //     best: best.score,
-    //     median: median.score,
-    //     worst: worst.score
-    //   }
-    // }
-    
-    //==========================================================
-    */
-    
-    // Check if evolve is possible
-    if (self.elitism + self.provenance > self.population_size) {
-      throw new Error(`Can't evolve! Elitism + provenance exceeds population size!`);
-    }
-
-    // evolve dataset is optional, so deal with not having it
+    // =======================
+    // Check arguments section. First we'll check if evolve_dataset exists
+    // We prioritize evolve_dataset, fallback to the Neat dataset, and otherwise expect .score properties to be set
+     
     if (typeof evolve_dataset === 'function') {
-      adjustGenome = pickGenome;
+      adjustGenome = pickGenome
       pickGenome = evolve_dataset
-      evolve_dataset = undefined;
+      evolve_dataset = undefined
     }
-
-    evolve_dataset = evolve_dataset || self.dataset;
-
-    // Check population for evaluation
-    if (self.population[self.population.length - 1].score == undefined) {
-      await self.evaluate(evolve_dataset);
+    
+    const isArray = (x) => Array.isArray(x) && x.length
+    let evolve_set = isArray(evolve_dataset) ? evolve_dataset : isArray(self.dataset) ? self.dataset : null
+  
+    let population = self.population // Shallow copy, consider changing later once full functional pattern reached
+  
+    const hasScores = _.every(population, network => {
+      // (+a === +a) "equal to self" check is ~4000% faster than regex
+      return typeof network.score == 'number' || typeof network.score == 'string' &&	+network.score === +network.score
+    })
+    
+    if(evolve_set && !hasScores) {
+      await self.evaluate(evolve_set)
+    } else if (!hasScores) {
+      throw new Error("If no dataset is passed, all networks in population must have numeric '.score' properties!")
     }
+    
+    // =======================
     
     // Check & adjust genomes as needed
-    if (pickGenome) self.population = self.replace(self.population, pickGenome, transformGenome);
+    if (pickGenome) population = self.replace(population, pickGenome, transformGenome)
 
-    // Sort in order of fitness (fittest first)
-    self.sort();
-
+    // Sort in order of fitness (fittest first) | In-place mutation
+    self.sort(population)
+    
     // Elitism, assumes population is sorted by fitness
-    const elitists = [];
-    for (let index = 0; index < self.elitism; index++) elitists.push(self.population[index]);
-
+    const elitists = []
+    for (let i = 0; i < self.elitism; i++) elitists.push(population[i].clone())
+    
     // Provenance
-    const new_population = Array(self.provenance).fill(Network.fromJSON(self.template.toJSON()))
+    const new_population = []
+    for(let i = 0; i < self.provenance; i++) new_population.push(self.template.clone())
 
     // Breed the next individuals
     for (let i = 0; i < self.population_size - self.elitism - self.provenance; i++) {
-      new_population.push(self.getOffspring());
+      new_population.push(self.getOffspring())
     }
 
     // Replace the old population with the new population
-    self.population = new_population;
+    population = self.population = new_population // not purely functional yet so resorting to this
 
     // Mutate the new population
-    self.mutate();
+    self.mutate()
 
     // Add the elitists
-    self.population.push(...elitists);
+    for (let i = 0; i < elitists.length; i++) population.push(elitists[i])
+    
+    // evaluate the population, only if a set was provided
+    if(evolve_set) await self.evaluate(evolve_set)
+    
+    // Check & adjust genomes
+    if (pickGenome) self.population = self.replace(population, pickGenome, transformGenome)
 
-    // evaluate the population
-    await self.evaluate(evolve_dataset);
+    // Sort by fitness (fittest first)
+    self.sort(population)
+    
+    // Reset the scores if no dataset present
+    if(!evolve_set) {
+     for (let i = 0; i < population.length; i++) population[i].score = undefined
+    }
 
-    // Check & adjust genomes as needed
-    if (pickGenome) self.population = self.replace(self.population, pickGenome, transformGenome)
-
-    // Sort in order of fitness (fittest first)
-    self.sort()
-
-    const fittest = Network.fromJSON(self.population[0].toJSON());
-    fittest.score = self.population[0].score;
-
-    // Reset the scores
-    for (let i = 0; i < self.population.length; i++) self.population[i].score = undefined;
-
-    self.generation++;
-
-    return fittest;
+    self.generation++
+    
+    return self.population
   };
 
   /**
@@ -655,31 +553,30 @@ const Neat = function(inputs, outputs, dataset, options) {
    * @memberof Neat
    *
    * @param {Object[]} [dataset]
-   * @param {Object} [options]
-   * @param {boolean} [options.clear=false]
-   * @param {boolean} [options.networks=false]
    *
-   * @return {Object} Return the performance metrics/benchmarks of the networks - _returns networks iff `options.networks === true`_
+   * @return {Network[]} Return the population networks
    */
   self.evaluate = async function (dataset) {
-    dataset = dataset || self.dataset;
-
+    dataset = dataset || self.dataset
+    
     if (self.fitnessPopulation) {
-      // check the clear flag
-      if (self.clear) {
-        for (let i = 0; i < self.population.length; i++) {
-          self.population[i].clear();
-        }
-      }
+      // Evaluate fitness at population level
+      if (self.clear) for(let i = 0; i < self.population.length; i++) self.population[i].clear()
 
       // calculate the fitnesses
       await self.fitness(dataset, self.population);
     } else {
+      // Evaluate fitness at genome level
       for (let i = 0; i < self.population.length; i++) {
-        const genome = self.population[i];
-        if (self.clear) genome.clear(); // clear flag
-        genome.score = await self.fitness(dataset, genome);
-        self.population[i] = genome;
+        
+        const genome = self.population[i]
+        
+        // clear network state if flag set
+        if (self.clear) genome.clear()
+        
+        genome.score = await self.fitness(dataset, genome)
+        
+        self.population[i] = genome
       }
     }
 
@@ -691,13 +588,19 @@ const Neat = function(inputs, outputs, dataset, options) {
   };
 
   /**
-   * Sorts the population by score
+   * Sorts the population by score. Warning! Mutates the population directly
    *
    * @function sort
    *
+   * @param {network[]} A population to sort
+   *
+   * @returns {undefined}
+   *
    */
-  self.sort = function sort_population_by_fitness() {
-    self.population.sort(function (a, b) {
+  self.sort = function sort_population_by_fitness(population) {
+    population = Array.isArray(population) && population.length ? population : self.population
+    
+    population.sort(function (a, b) {
       return b.score - a.score;
     });
   };

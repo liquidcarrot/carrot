@@ -8,10 +8,12 @@ const { Network, Neat, methods, config, architect } = require('../../src/carrot'
 describe("Neat", function() {
   describe("new Neat()", function() {
     it("new Neat()", function() {
+      this.timeout(10000)
       const neat = new Neat();
       is.neat(neat);
     })
     it("new Neat(options)", function() {
+      this.timeout(10000)
       const options = random.options.neat();
       const neat = new Neat(options);
       
@@ -19,6 +21,7 @@ describe("Neat", function() {
       has.options(neat, options);
     })
     it("new Neat(dataset)", function() {
+      this.timeout(10000)
       const dataset = data.XNOR;
       const neat = new Neat(dataset);
       
@@ -26,6 +29,7 @@ describe("Neat", function() {
       has.dataset(neat, dataset);
     })
     it("new Neat(input, output)", function() {
+      this.timeout(10000)
       const inputs = _.random(1,50);
       const outputs = _.random(1,50)
       const neat = new Neat(inputs, outputs);
@@ -34,6 +38,7 @@ describe("Neat", function() {
       has.dimensions(neat, inputs, outputs);
     })
     it("new Neat(dataset, options)", function() {
+      this.timeout(10000)
       const dataset = data.XNOR;
       const options = random.options.neat();
       
@@ -45,6 +50,7 @@ describe("Neat", function() {
       
     })
     it("new Neat(input, output, options)", function() {
+      this.timeout(10000)
       const inputs = _.random(1,50);
       const outputs = _.random(1,50);
       const options = random.options.neat();
@@ -56,6 +62,7 @@ describe("Neat", function() {
       has.dimensions(neat, inputs, outputs);
     })
     it("new Neat(input, output, dataset)", function() {
+      this.timeout(10000)
       const inputs = _.random(1,50);
       const outputs = _.random(1,50);
       const dataset = data.XNOR;
@@ -67,6 +74,7 @@ describe("Neat", function() {
       has.dimensions(neat, inputs, outputs);
     })
     it("new Neat(input, output, dataset, options)", function() {
+      this.timeout(10000)
       const inputs = _.random(1, 50);
       const outputs = _.random(1, 50);
       const dataset = data.XNOR;
@@ -422,7 +430,7 @@ describe("Neat", function() {
   })
   
   describe("neat.mutate()", function() {
-    it.skip("neat.mutate() => {Network[]}", function() {
+    it("neat.mutate() => {Network[]}", function() {
       const neat = new Neat()
       
       expect(neat.mutate()).to.be.an('array')
@@ -446,7 +454,7 @@ describe("Neat", function() {
       expect(neat.population[0]).not.eql(original[0])
     })
     
-    it.skip("neat.mutate(mutation) => {Network[]}", function() {
+    it("neat.mutate(mutation) => {Network[]}", function() {
       const neat = new Neat()
       
       expect(neat.mutate(methods.mutation.ADD_NODE)).to.be.an('array')
@@ -492,8 +500,7 @@ describe("Neat", function() {
     it.skip("neat.mutate(genomes=Network[], methods=mutation[]) => {Network[]}", function () {})
   })
   
-  // keep skipped
-  describe.skip("neat.evolve()", function() {
+  describe("neat.evolve()", function() {
     async function areSorted(genomes) {
       let previous = genomes[0];
       for (let genome = 1; genome < genomes.length; genome++) {
@@ -506,20 +513,110 @@ describe("Neat", function() {
         expect(genomes[genome].score).to.be.finite
       }
     }
-    it("neat.evolve() => {Network}", async function() {
-      this.timeout(40000);
+    
+    it("neat.evolve() => {Network[]}", async function() {
+      
+      const neat = new Neat(2,1);
+      
+      const newPopulation = await neat.evolve(data.XNOR);
+      
+      expect(newPopulation).to.be.an('array')
+    })
+    
+    it("neat.evolve() | NewPopulation is sorted", async function() {
+      this.timeout(40000)
       
       const neat = new Neat(2,1);
       
       const best = await neat.evolve(data.XNOR);
       
-      await areScored(neat.population);
-      await areSorted(neat.population);
+      await areSorted(neat.population)
     })
-    it("neat.evolve(dataset) => {Network}")
-    it("neat.evolve(options) => {Network}")
-    it("neat.evolve(dataset, options) => {Network}")
-    it("neat.evolve(genomes, dataset, options) => {Network}") // Should be static
+
+    it("new Neat(), neat.evolve()", async function () {
+      const neat = new Neat(2,1, { population_size: 2 }) // reduced population to shorten test times
+      
+      let { population } = neat
+      
+      // set dummy scores
+      population = population.map((network, index) => {
+        network.score = index
+        
+        return network
+      })
+      
+      // deep copy original population
+      const originalPopulation = population.map(network => network.clone())
+      
+      population = neat.population = await neat.evolve()
+      
+      expect(population).not.eql(originalPopulation)
+    })
+    
+    it("new Neat(dataset), Neat.evolve()", async function () {
+      const neat = new Neat(2, 1, data.OR, { population_size: 1 })
+      
+      let { population } = neat
+      
+      // set initial scores
+      population = population.map(network => {
+        network.score = -Infinity
+        return network
+      })
+      
+      population = neat.population = await neat.evolve()
+      
+      expect(population[0].score).above(-Infinity)
+    })
+    
+    it("new Neat(), neat.evolve(otherSet)", async function () {
+      const neat = new Neat(2,1, { population_size: 2 })
+      
+      const originalPopulation = neat.population.map(network => network.clone())
+      
+      neat.population = await neat.evolve(data.XOR)
+      
+      expect(neat.population).not.eql(originalPopulation)
+    })
+    
+    it("new Neat(dataset), Neat.evolve(otherSet) | Should prioritize otherSet for training", async function () {
+      const neat = new Neat(2, 1, data.XOR, { population_size: 5 }) // reduced population size to speed up test
+      
+      // .evolve should prioritize AND set
+      const evolvePop = async function(n, neat) {
+        if(n === 0) return neat
+        
+        neat.population = await neat.evolve(data.AND)
+        
+        return evolvePop(n-1, neat)
+      }
+      
+      const { population } = await evolvePop(200, neat)
+      
+      const getError = function(dataset, genome) {
+        
+        let error = 0;
+        for(let i = 0; i < dataset.length; i++) {
+          const entry = dataset[i]
+          const output = entry.output[0]
+          
+          error += Math.pow(output - genome.activate(entry.input), 2)
+        }
+        
+        return error / dataset.length
+      }
+      
+      const AND_Set_Error = getError(data.AND, population[0])
+      const XOR_Set_Error = getError(data.XOR, population[0])
+      
+      // error for AND should be lower
+      expect(AND_Set_Error).below(XOR_Set_Error)
+      
+    })
+    
+    it.skip("neat.evolve(options) => {Network}")
+    it.skip("neat.evolve(dataset, options) => {Network}")
+    it.skip("neat.evolve(genomes, dataset, options) => {Network}") // Should be static
   })
 
   describe("neat.getParent()", function() {
