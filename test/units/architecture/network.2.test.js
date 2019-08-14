@@ -144,7 +144,7 @@ describe('Network', function () {
       const copy = _.cloneDeep(network);
       
       // in place mutation (instead of reassignment)
-      network.mutateRandom();
+      network = network.mutateRandom();
       
       expect(copy).to.not.eql(network) // eql: check for content equality (instead of for the same point in memory)
     })
