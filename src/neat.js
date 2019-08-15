@@ -145,7 +145,6 @@ const Neat = function(inputs, outputs, dataset, options) {
    */
   self.createPool = function createPool(network, population_size) {
     const population = [];
-
     for (let i = 0; i < population_size; i++) {
       population.push(Network.fromJSON({ ...network.toJSON(), score: undefined }));
     }
@@ -305,8 +304,6 @@ const Neat = function(inputs, outputs, dataset, options) {
     method = method ? method : self.mutation
     
     const population = []
-    
-    // Elitist genomes should not be included, will fix
     for(let i = 0; i < self.population.length; i++) {
       if(Math.random() <= self.mutation_rate) {
         for(let j = 0; j < self.mutation_amount; j++) {
@@ -429,7 +426,7 @@ const Neat = function(inputs, outputs, dataset, options) {
 
     // Replace the old population with the new population
     population = self.population = new_population // not purely functional yet so resorting to this
-
+    
     // Mutate the new population
     self.mutate()
 
