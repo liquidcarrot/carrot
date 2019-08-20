@@ -156,6 +156,13 @@ const activation = {
     
     return Array.isArray(x) ? x.map(f) : f(x);
   },
+  SOFTCLIP: function(x, derivate) {
+    const e = Math.exp(1)
+    
+    const f = (derivate) ? x => ((e - 1) * Math.exp(x)) / ((Math.exp(x) + e) * (1 + e)) : x => Math.log((1 + Math.exp(x)) / (1 + Math.exp(x-1)))
+    
+    return Array.isArray(x) ? x.map(f) : f(x)
+  },
   /**
   * [Sinusoid function.](https://en.wikipedia.org/wiki/Sine_wave)
   *
