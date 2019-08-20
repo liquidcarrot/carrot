@@ -1383,7 +1383,7 @@ function Network(input_size, output_size) {
    * @param {function} [options.mutationSelection=random] Custom mutation selection function if given
    * @param {boolean} [options.efficientMutation=false] Test & reduce [mutation methods](mutation) to avoid failed mutation attempts
    *
-   * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance
+   * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance. <br /> Properties include: `error` - error of the best genome, `iterations` - generations used to evolve networks, `time` - clock time elapsed while evolving
    *
    * @example
    * let { Network, methods } = require("@liquid-carrot/carrot");
