@@ -186,9 +186,18 @@ function Network(input_size, output_size) {
   }
 
   /**
-   * Backwards compatibility only. Simply calls activate with option no_trace: true
+   * Deprecated, here for backwards compatibility only! Simply calls `.activate()` with option `no_trace: true`
+   *
+   * Activates network without creating traces
+   *
+   * Activates the network without calculating elegibility traces for the nodes within it.
+   *
+   * Since this doesn't calculate traces it won't factor in backpropagation afterwards. That's also why it's quite a bit faster than regular `activate`.
    *
    * @function noTraceActivate
+   *
+   * @deprecated
+   *
    * @memberof Network
    *
    * @param {number[]} input An array of input values equal in size to the input layer
@@ -204,7 +213,7 @@ function Network(input_size, output_size) {
    * myNetwork.noTraceActivate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
   self.noTraceActivate = function(input) {
-    return self.activate(input, {no_trace: true});
+    return self.activate(input, { no_trace: true });
   }
 
   /**
