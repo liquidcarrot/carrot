@@ -1,10 +1,10 @@
-const _ = require("lodash");
-const parameter = require("../util/parameter");
-const multi = require("../multithreading/multi");
-const methods = require("../methods/methods");
-const Connection = require("./connection");
-const config = require("../config");
-const Node = require("./node");
+const _ = require("lodash")
+const parameter = require("../util/parameter")
+const multi = require("../multithreading/multi")
+const methods = require("../methods/methods")
+const Connection = require("./connection")
+const config = require("../config")
+const Node = require("./node")
 const Group = require("./group")
 
 // Easier variable naming
@@ -2066,7 +2066,426 @@ Network.crossOver = function(network1, network2, equal) {
   return offspring;
 };
 
-module.exports = Network;
+// Hacky fix, will probably remain this way until architect is copied over
+Network.architecture = {
+  Construct: function (list) {
+    // Create a network
+    const network = new Network(0, 0);
+
+    // Transform all groups into nodes, set input and output nodes to the network
+    // TODO: improve how it is communicated which nodes are input and output
+    let nodes = [];
+
+    let i, j;
+    for (i = 0; i < list.length; i++) {
+      if (list[i] instanceof Group || list[i] instanceof Layer) {
+        for (j = 0; j < list[i].nodes.length; j++) {
+          nodes.push(list[i].nodes[j]);
+          if (i === 0) { // assume input nodes. TODO: improve.
+            network.input_nodes.add(list[i].nodes[j]);
+          } else if (i === list.length - 1) {
+            network.output_nodes.add(list[i].nodes[j]);
+          }
+        }
+      } else if (list[i] instanceof Node) {
+        nodes.push(list[i]);
+      }
+    }
+
+    // check if there are input or output nodes, bc otherwise must guess based on number of outputs
+    const found_output_nodes = _.reduce(nodes, (total_found, node) =>
+      total_found + (node.type === `output`), 0);
+    const found_input_nodes = _.reduce(nodes, (total_found, node) =>
+      total_found + (node.type === `input`), 0);
+
+    // Determine input and output nodes
+    const inputs = [];
+    const outputs = [];
+    for (i = nodes.length - 1; i >= 0; i--) {
+      if (nodes[i].type === 'output' || (!found_output_nodes && nodes[i].connections_outgoing.length + nodes[i].connections_gated.length === 0)) {
+        nodes[i].type = 'output';
+        network.output_size++;
+        outputs.push(nodes[i]);
+        nodes.splice(i, 1);
+      } else if (nodes[i].type === 'input' || (!found_input_nodes && !nodes[i].connections_incoming.length)) {
+        nodes[i].type = 'input';
+        network.input_size++;
+        inputs.push(nodes[i]);
+        nodes.splice(i, 1);
+      }
+    }
+    // backward compatibility
+    network.input = network.input_size
+    network.output = network.output_size
+
+    // Input nodes are always first, output nodes are always last
+    nodes = inputs.concat(nodes).concat(outputs);
+
+    if (network.input_size === 0 || network.output_size === 0) {
+      throw new Error('Given nodes have no clear input/output node!');
+    }
+
+    // TODO: network.addNodes should do all of these automatically, not only add connections
+    for (i = 0; i < nodes.length; i++) {
+      // this commented for is added automatically by network.addNodes
+      // for (j = 0; j < nodes[i].connections_outgoing.length; j++) {
+      //   network.connections.push(nodes[i].connections_outgoing[j]);
+      // }
+      for (j = 0; j < nodes[i].connections_gated.length; j++) {
+        network.gates.push(nodes[i].connections_gated[j]);
+      }
+      if (nodes[i].connections_self.weight !== 0) {
+        network.connections.push(nodes[i].connections_self);
+      }
+    }
+
+    network.addNodes(nodes);
+
+    return network;
+  },
+  LSTM: function () {
+    const layer_sizes_and_options = Array.from(arguments);
+
+    const output_size_or_options = layer_sizes_and_options.slice(-1)[0];
+
+    let layer_sizes, options
+
+    // find out if options were passed
+    if (typeof output_size_or_options === 'number') {
+      layer_sizes = layer_sizes_and_options;
+      options = {};
+    } else {
+      layer_sizes = layer_sizes_and_options.slice(layer_sizes_and_options.length - 1);
+      options = output_size_or_options;
+    }
+
+    if (layer_sizes.length < 3) {
+      throw new Error('You have to specify at least 3 layer sizes, one for each of 1.inputs, 2. hidden, 3. output');
+    }
+
+    options = _.defaults(options, {
+      memory_to_memory: false,
+      output_to_memory: false,
+      output_to_gates: false,
+      input_to_output: true,
+      input_to_deep: true
+    });
+
+
+    const input_layer = new Group(layer_sizes.shift()); // first argument
+    input_layer.set({
+      type: 'input'
+    });
+
+    const output_layer = new Group(layer_sizes.pop());
+    output_layer.set({
+      type: 'output'
+    });
+
+    // check if input to output direct connection
+    if (options.input_to_output) {
+      input_layer.connect(output_layer, methods.connection.ALL_TO_ALL);
+    }
+
+    const block_sizes = layer_sizes; // all the remaining arguments
+    const blocks = []; // stores all the nodes of the blocks, to add later to nodes
+    let previous_output = input_layer;
+    _.times(block_sizes.length, (index) => {
+      const block_size = block_sizes[index];
+
+      // Initialize required nodes (in activation order), altogether a memory block_size
+      const input_gate = new Group(block_size);
+      const forget_gate = new Group(block_size);
+      const memory_cell = new Group(block_size);
+      const output_gate = new Group(block_size);
+      // if on last layer then output is the output layer
+      const block_output = index === block_sizes.length - 1 ? output_layer : new Group(block_size);
+
+      input_gate.set({
+        bias: 1
+      });
+      forget_gate.set({
+        bias: 1
+      });
+      output_gate.set({
+        bias: 1
+      });
+
+      // Connect the input with all the nodes
+      // input to memory cell connections for gating
+      const memory_gate_connections = previous_output.connect(memory_cell, methods.connection.ALL_TO_ALL);
+      previous_output.connect(input_gate, methods.connection.ALL_TO_ALL);
+      previous_output.connect(output_gate, methods.connection.ALL_TO_ALL);
+      previous_output.connect(forget_gate, methods.connection.ALL_TO_ALL);
+
+      // Set up internal connections
+      memory_cell.connect(input_gate, methods.connection.ALL_TO_ALL);
+      memory_cell.connect(forget_gate, methods.connection.ALL_TO_ALL);
+      memory_cell.connect(output_gate, methods.connection.ALL_TO_ALL);
+
+      // memory cell connections for gating
+      const forget_gate_connections = memory_cell.connect(memory_cell, methods.connection.ONE_TO_ONE);
+      // memory cell connections for gating
+      const output_gate_connections = memory_cell.connect(block_output, methods.connection.ALL_TO_ALL);
+
+      // Set up gates
+      input_gate.gate(memory_gate_connections, methods.gating.INPUT);
+      forget_gate.gate(forget_gate_connections, methods.gating.SELF);
+      output_gate.gate(output_gate_connections, methods.gating.OUTPUT);
+
+      // add the connections specified in options
+
+      // Input to all memory cells
+      if (options.input_to_deep && index > 0) {
+        const input_layer_memory_gate_connection =
+          input_layer.connect(memory_cell, methods.connection.ALL_TO_ALL);
+        input_gate.gate(input_layer_memory_gate_connection, methods.gating.INPUT);
+      }
+
+      // Optional connections
+      if (options.memory_to_memory) {
+        const recurrent_memory_gate_connection =
+          memory_cell.connect(memory_cell, methods.connection.ALL_TO_ELSE);
+        input_gate.gate(recurrent_memory_gate_connection, methods.gating.INPUT);
+      }
+
+      if (options.output_to_memory) {
+        const output_to_memory_gate_connection =
+          output_layer.connect(memory_cell, methods.connection.ALL_TO_ALL);
+        input_gate.gate(output_to_memory_gate_connection, methods.gating.INPUT);
+      }
+
+      if (options.output_to_gates) {
+        output_layer.connect(input_gate, methods.connection.ALL_TO_ALL);
+        output_layer.connect(forget_gate, methods.connection.ALL_TO_ALL);
+        output_layer.connect(output_gate, methods.connection.ALL_TO_ALL);
+      }
+
+      // Add to array
+      blocks.push(input_gate);
+      blocks.push(forget_gate);
+      blocks.push(memory_cell);
+      blocks.push(output_gate);
+      if (index !== block_sizes.length - 1) blocks.push(block_output);
+
+      previous_output = block_output;
+    });
+
+    const nodes = [];
+    nodes.push(input_layer);
+    _.forEach(blocks, (node_group) => nodes.push(node_group));
+    nodes.push(output_layer);
+    return Network.architecture.Construct(nodes);
+  }
+}
+
+/**
+ * Creates a DQN network
+ *
+ * Used to do reinforcement learning
+ *
+ * @alpha
+ *
+ * @constructs Network.architecture.DQN
+ *
+ * @param {number} input The amount of input neurons
+ * @param {...number} hidden The amount of hidden neurons
+ * @param {number} actions The number of actions per state, also the amount of output neurons of the network
+ *
+ * @param {object} options A configuration object
+ * @param {number} explore Exploration rate. A rate for the network to choose between exploring new states ("explore") or maximizing the value of known states ("exploit"). A.K.A Epsilon
+ *
+ * @example
+ * let { Network } = require("@liquid-carrot/carrot");
+ *
+ *
+*/
+Network.architecture.DQN = function() {
+  const args = Array.from(arguments);
+  
+  // assumes last element is options object
+  let options = args.pop()
+  
+  // layer sizes is remaining arguments
+  layer_sizes = args
+    
+  if (layer_sizes.length < 3) {
+    throw new Error('Please specify at least 3 layer sizes, 1. inputs, 2. hidden, 3. actions (outputs)');
+  }
+  
+  options = _.defaultsDeep(options, Network.architecture.DQN.defaults)
+  options.network = options.network || new Network.architecture.LSTM(...layer_sizes) // Q function
+
+  Object.assign(this, options)
+}
+
+Network.architecture.DQN.defaults = {
+  // Network & state memory
+  state: null,
+  action: null,
+  reward: null,
+  next_state: null,
+  next_action: null,
+  
+  // Learning and update
+  learning_rate: 0.1, // AKA alpha
+  loss_clamp: false, // usually a number
+  loss: 0,
+  
+  // Experience replay
+  experience: [], // experience
+  experience_index: 0, // where to insert
+  experience_limit: 10000, // maximum amount of experience to remember
+  experience_interval: 10, // Interval to choosing when to add experience
+  experience_counter: 0, // Counter for experience_index used to roll-over when experience_limit passed
+  replay_batch_size: 100,
+  
+  // Exploration / Exploitation management
+  explore_decay_rate: 12, // To be added
+  explore_max: .99, // To be added
+  explore_min: 0, // To be added
+  explore: .9, // Exploration rate AKA epsilon
+  
+  // Reward calculation
+  discount: 0.9, // AKA gamma
+  reward_clamp: false // usually a number
+}
+
+Network.architecture.DQN.prototype = {
+  /**
+   * Selects an action by choosing between exploring new states (learning) and exploiting known best states (performing).
+   *
+   * The choice of whether to explore or exploit is determined using the exploration rate set by `explore`.
+   *
+   * The higher explore is, the more the network will explore new states. The lower it is the more the network will pick the best from known states.
+   *
+   * It's best to set a high rate of exploration initially and let it decay over time as the network learns how to perform optimally.
+   *
+   * Like people, the network almost certainly does not know what is best initially and will not learn what is if it doesn't explore.
+   *
+   * @param {number[]} state The current state which is an array of possible actions that the agent can take
+   *
+   * @returns An index representing the networks guess for the highest reward action.
+   */
+  activate: function(state) {
+    
+    // epsilon greedy strategy
+    let action = (Math.random() > this.explore)
+      ? getMaxValueIndex(this.network.activate(state))
+      : Math.floor(Math.random() * this.network.output_size)
+
+    // shift state memory
+    this.state = this.next_state
+    this.action = this.next_action
+    this.next_state = state
+    this.next_action = action
+
+    return action;
+  },
+  /**
+   * Use a new reward to update the Q policy (network)
+   *
+   * @param {number} reward Reward provided by the environment, used to update the Q function
+   *
+   * @returns {number} How novel this reward was to the Q policy, can be thought of as network prediction error
+   */
+  reward: function(new_reward) {
+  
+    // Update Q function | temporal difference method currently hardcoded
+    if(!(this.reward == null) && this.learning_rate > 0) {
+      
+      // Learn from current estimated reward to understand how wrong agent is
+      this.loss = this.learnTD(this.state, this.action, this.reward, this.next_state, this.next_action)
+      
+      // Decide if we should keep this experience in replay
+      if(this.experience_counter % this.experience_interval === 0) {
+        this.remember([this.state, this.action, this.reward, this.next_state, this.next_action])
+      }
+      
+      this.experience_counter += 1
+      
+      // learn from previous experiences
+      this.learnFromMemory()
+    }
+  
+    this.reward = new_reward; // store for next update
+    
+    return this.loss
+  },
+  /**
+   * Adds an experience / a transition (state, action, reward, next_state, next_action) to replay memory i.e. experience in memory.
+   *
+   * Internally has an index of the last experience and appends the inccoming experience to the next index.
+   *
+   * When the `experience_limit` is reached it rolls over to the first index in the experience array and begins to overwrite previous experiences.
+   *
+   * Mutates `experience` array and `experience_index` directly
+   *
+   * @param {number[]} transition An array composed of a state, action, reward, next_state, next_action
+   *
+   */
+  remember: function(transition) {
+    let index = this.experience_index
+    
+    this.experience[index] = transition
+      
+    index += 1
+      
+    // roll over when we reach the experience_limit
+    this.experience_index = (index > this.experience_limit) ? 0 : index
+  },
+  /**
+   * Samples experience from replay memory and learns from it.
+   *
+   * This helps the model learn more generalized solutions and not overfit to some class of samples (states / situations)
+   *
+   */
+  learnFromMemory: function() {
+    for(let k=0; k < this.replay_batch_size; k++) {
+      
+      // TO-DO: priority sweeps?
+      const experience = this.experience[Math.floor(Math.random() * this.experience.length)];
+      
+      this.learnTD(...experience)
+    }
+  },
+  /**
+   * Evaluate function, creates temporal difference error and propagates it through network
+   *
+   * @param {number[]} state An array of actions representing the present state
+   * @param {number} action The index of the best action to take. Each action is an output of the underlying neural network so the index represents the best output / action from the network.
+   * @param {number} reward The understood reward for taking the selected `action` at the present `state`
+   * @param {number[]} next_state The state that results from taking the selected `action`
+   * @param {number} next_action The next best (highest expected reward) action to take
+   *
+   */
+  learnTD: function(state, action, reward, next_state, next_action) {
+    
+    // Compute target Q value, called without traces so it won't affect backprop
+    const next_actions = this.network.activate(next_state, { no_trace: true })
+    
+    // Q(s,a) = r + gamma * max_a' Q(s',a')
+    const target_reward = reward + this.discount * next_actions[getMaxValueIndex(next_actions)]
+
+    // Predicted current reward | called with traces for backprop later
+    const predicted_reward = this.network.activate(state)
+    
+    let td_error = predicted_reward[action] - target_reward
+    const clamp = this.loss_clamp
+    
+    // Clamp error for robustness | To-Do: huber loss
+    // td_error = (Math.abs(td_error) < clamp) ? td_error : (td_error > clamp) ? clamp : -clamp
+    
+    // TO-DO: Add target network to increase reliability
+    
+    // Backpropagation using temporal difference error
+    this.network.propagate(learning_rate, 0, true, [target_reward])
+    
+    return td_error
+  }
+}
+
+module.exports = Network
 
 /**
 * Runs the NEAT algorithm on group of neural networks.
