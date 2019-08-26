@@ -56,8 +56,6 @@
   },
   "homepage": "https://liquidcarrot.io/",
   "dependencies": {
-    "bignumber.js": "^8.1.1",
-    "eslint": "^6.0.1",
     "lodash": "^4.17.11"
   },
   "devDependencies": {
