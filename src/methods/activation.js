@@ -39,9 +39,9 @@ const activation = {
   */
   LOGISTIC: function(x, derivate) {
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
-    
+
     const f = derivate ? (x) => Math.exp(-x) / (Math.pow((1 + Math.exp(-x)), 2)) : (x) => 1 / (1 + Math.exp(-x));
-    
+
     return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
@@ -61,9 +61,9 @@ const activation = {
   */
   TANH: function(x, derivate) {
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
-    
+
     const f = derivate ? (x) => 1 - (Math.tanh(x) * Math.tanh(x)) : (x) => Math.tanh(x)
-    
+
     return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
@@ -85,9 +85,9 @@ const activation = {
   */
   IDENTITY: function(x, derivate) {
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
-    
+
     const f = derivate ? (x) =>  1 : (x) => x;
-    
+
     return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
@@ -107,9 +107,9 @@ const activation = {
   */
   STEP: function(x, derivate) {
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
-    
+
     const f = derivate ? (x) => 0 : (x) => x > 0 ? 1 : 0;
-    
+
     return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
@@ -129,9 +129,9 @@ const activation = {
   */
   RELU: function(x, derivate) {
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
-    
+
     const f = derivate ? (x) => x > 0 ? 1 : 0 : (x) => x > 0 ? x : 0;
-    
+
     return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
@@ -151,18 +151,18 @@ const activation = {
   */
   SOFTSIGN: function(x, derivate) {
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
-    
+
     const f = derivate ? (x) => x / ((1 + Math.abs(x)) * (1 + Math.abs(x))) : (x) => x / 1 + Math.abs(x);
-    
+
     return Array.isArray(x) ? x.map(f) : f(x);
   },
-  SOFTCLIP: function(x, derivate) {
-    const e = Math.exp(1)
-    
-    const f = (derivate) ? x => ((e - 1) * Math.exp(x)) / ((Math.exp(x) + e) * (1 + e)) : x => Math.log((1 + Math.exp(x)) / (1 + Math.exp(x-1)))
-    
-    return Array.isArray(x) ? x.map(f) : f(x)
-  },
+  // SOFTCLIP: function(x, derivate) {
+  //   if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
+  //
+  //   const f = derivate ? (x) => (Math.exp(1) - 1) * Math.exp(x) / (Math.exp(x) +  Math.exp(1)) * (1 +  Math.exp(1)) : (x) => Math.log((1 + Math.exp(x)) / (1 + Math.exp(x-1)))
+  //
+  //   return Array.isArray(x) ? x.map(f) : f(x)
+  // },
   /**
   * [Sinusoid function.](https://en.wikipedia.org/wiki/Sine_wave)
   *
@@ -180,9 +180,9 @@ const activation = {
   */
   SINUSOID: function(x, derivate) {
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
-    
+
     const f = derivate ? (x) => Math.cos(x) : (x) => Math.sin(x);
-    
+
     return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
@@ -202,9 +202,9 @@ const activation = {
   */
   GAUSSIAN: function(x, derivate) {
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
-    
+
     const f = derivate ? (x) => -2 * x * Math.exp(-(x * x)) : (x) => Math.exp(-(x * x));
-    
+
     return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
@@ -224,9 +224,9 @@ const activation = {
   */
   BENT_IDENTITY: function(x, derivate) {
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
-    
+
     const f = derivate ? (x) => x / (2 * Math.sqrt((x * x) + 1)) + 1 : (x) => (Math.sqrt((x * x) + 1) - 1) / 2 + x;
-    
+
     return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
@@ -246,9 +246,9 @@ const activation = {
   */
   BIPOLAR: function(x, derivate) {
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
-    
+
     const f = derivate ? (x) => 0 : (x) => x > 0 ? 1 : -1;
-    
+
     return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
@@ -268,9 +268,9 @@ const activation = {
   */
   BIPOLAR_SIGMOID: function(x, derivate) {
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
-    
+
     const f = derivate ? (x) => (2 * Math.exp(-x)) / (Math.pow((1 + Math.exp(-x)), 2)) : (x) => 2 / (1 + Math.exp(-x)) - 1;
-    
+
     return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
@@ -290,9 +290,9 @@ const activation = {
   */
   HARD_TANH: function(x, derivate) {
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
-    
+
     const f = derivate ? (x) => x > -1 && x < 1 ? 1 : 0 : (x) => Math.max(-1, Math.min(1, x));
-    
+
     return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
@@ -314,9 +314,9 @@ const activation = {
   */
   ABSOLUTE: function(x, derivate) {
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
-    
+
     const f = derivate ? (x) => x < 0 ? -1 : 1 : (x) => Math.abs(x);
-    
+
     return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
@@ -336,9 +336,9 @@ const activation = {
   */
   INVERSE: function(x, derivate) {
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
-    
+
     const f = derivate ? (x) => -1 : (x) => 1 - x;
-    
+
     return Array.isArray(x) ? x.map(f) : f(x);
   },
   /**
@@ -362,12 +362,12 @@ const activation = {
    */
   SELU: function(x, derivate) {
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
-    
+
     const alpha = 1.6732632423543772848170429916717;
     const scale = 1.0507009873554804934193349852946;
-    
+
     const f = derivate ? (x) => x > 0 ? scale : ((x > 0 ? x : alpha * Math.exp(x) - alpha) + alpha) * scale : (x) =>  (x > 0 ? x : alpha * Math.exp(x) - alpha) * scale;
-    
+
     return Array.isArray(x) ? x.map(f) : f(x);
   }
 };
