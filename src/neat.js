@@ -563,7 +563,7 @@ const Neat = function(inputs, outputs, dataset, options) {
       if (self.clear) for(let i = 0; i < self.population.length; i++) self.population[i].clear()
 
       // calculate the fitnesses
-      await self.fitness(dataset, self.population);
+      self.fitness(dataset, self.population);
     } else {
       // Evaluate fitness at genome level
       for (let i = 0; i < self.population.length; i++) {
@@ -573,7 +573,7 @@ const Neat = function(inputs, outputs, dataset, options) {
         // clear network state if flag set
         if (self.clear) genome.clear()
 
-        genome.score = await self.fitness(dataset, genome)
+        genome.score = self.fitness(dataset, genome)
 
         self.population[i] = genome
       }

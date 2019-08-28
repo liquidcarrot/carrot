@@ -9,7 +9,7 @@ const { has, is, data, random } = require('../../util');
 const { Network, Neat, methods, config, architect } = require('../../src/carrot');
 
 describe("Neat", function() {
-  describe.skip("new Neat()", function() {
+  describe("new Neat()", function() {
     it("new Neat()", function() {
       this.timeout(10000)
       const neat = new Neat();
@@ -91,27 +91,27 @@ describe("Neat", function() {
       has.dimensions(neat, inputs, outputs);
     })
 
-    // it.skip("new Neat(population)", function() {
+    // it("new Neat(population)", function() {
     //   const neat = new Neat();
     //   is.neat(neat);
     // })
-    // it.skip("new Neat(population, options)", function() {
+    // it("new Neat(population, options)", function() {
     //   const neat = new Neat();
     //   is.neat(neat);
     // })
-    // it.skip("new Neat(population, dataset)", function() {
+    // it("new Neat(population, dataset)", function() {
     //   const neat = new Neat();
     //   is.neat(neat);
     // })
-    // it.skip("new Neat(population, dataset, options)", function() {
+    // it("new Neat(population, dataset, options)", function() {
     //   const neat = new Neat();
     //   is.neat(neat);
     // })
   })
-  describe.skip("neat.createPool()", function() {
+  describe("neat.createPool()", function() {
     // Should ignore for `neat.createPopulation()`...
   })
-  describe.skip("neat.createPopulation()", function() {
+  describe("neat.createPopulation()", function() {
     it("neat.createPopulation() => {Network[]}", function() {
       const neat = new Neat();
       const population = neat.createPopulation();
@@ -218,7 +218,7 @@ describe("Neat", function() {
     })
 
   })
-  describe.skip("neat.replace()", function() {
+  describe("neat.replace()", function() {
     it("neat.replace() => {ReferenceError}", function() {
       const neat = new Neat();
 
@@ -431,7 +431,7 @@ describe("Neat", function() {
     it("neat.replace(population, filter=Function, transform=Network) => {Network[]}")
     it("neat.replace(population, filter=Function, transform=Function) => {Network[]}")
   })
-  describe.skip("neat.mutate()", function() {
+  describe("neat.mutate()", function() {
     it("neat.mutate() => {Network[]}", function() {
       const neat = new Neat()
 
@@ -491,15 +491,15 @@ describe("Neat", function() {
     })
 
     // To be implemented
-    it.skip("neat.mutate(mutation[]) => {Network[]}", function() {
+    it("neat.mutate(mutation[]) => {Network[]}", function() {
 
     })
-    it.skip("neat.mutate(genomes=Network) => {Network}", function () {})
-    it.skip("neat.mutate(genomes=Network[]) => {Network[]}", function () {})
-    it.skip("neat.mutate(genomes=Network, methods=mutation) => {Network}", function () {})
-    it.skip("neat.mutate(genomes=Network, methods=mutation[]) => {Network}", function () {})
-    it.skip("neat.mutate(genomes=Network[], methods=mutation) => {Network[]}", function () {})
-    it.skip("neat.mutate(genomes=Network[], methods=mutation[]) => {Network[]}", function () {})
+    it("neat.mutate(genomes=Network) => {Network}", function () {})
+    it("neat.mutate(genomes=Network[]) => {Network[]}", function () {})
+    it("neat.mutate(genomes=Network, methods=mutation) => {Network}", function () {})
+    it("neat.mutate(genomes=Network, methods=mutation[]) => {Network}", function () {})
+    it("neat.mutate(genomes=Network[], methods=mutation) => {Network[]}", function () {})
+    it("neat.mutate(genomes=Network[], methods=mutation[]) => {Network[]}", function () {})
   })
   describe("neat.evolve()", function() {
     async function areSorted(genomes) {
@@ -868,15 +868,15 @@ describe("Neat", function() {
       expect(neat.generation).equal(1)
     })
 // --------------------------------------------------------------
-    it.skip("neat.evolve(options) => {Network}")
-    it.skip("neat.evolve(dataset, options) => {Network}")
-    it.skip("neat.evolve(genomes, dataset, options) => {Network}") // Should be static
+    it("neat.evolve(options) => {Network}")
+    it("neat.evolve(dataset, options) => {Network}")
+    it("neat.evolve(genomes, dataset, options) => {Network}") // Should be static
   })
-  describe.skip("neat.getParent()", function() {
+  describe("neat.getParent()", function() {
     it("neat.getParent() => {Network}")
     it("neat.getParent(method) => {Network}") // Hard to test the marginal functionallity over `neat.getParent()`
   })
-  describe.skip("neat.getOffspring()", function() {
+  describe("neat.getOffspring()", function() {
     it("neat.getOffspring() => {Network}")
   })
   describe("neat.evaluate()", function() {
@@ -902,7 +902,7 @@ describe("Neat", function() {
       expect(neat.population[0].score).a("number")
     })
 
-    it.skip("new Neat(dataset), neat.evaluate(otherSet) | should prioritize otherSet", async function() {
+    it("new Neat(dataset), neat.evaluate(otherSet) | should prioritize otherSet", async function() {
       const neat = new Neat(2,1, data.AND, { population_size: 2 }) // reduced population to shorten test times
 
       await neat.evaluate()
@@ -915,19 +915,19 @@ describe("Neat", function() {
     it("neat.evaluate(options={ 'clear': true, networks': true }) => {{ 'best': Network, 'average': Network, 'worst': Network }}")
     it("neat.evaluate(dataset, { 'clear': true, networks': true }) => {{ 'best': Network, 'average': Network, 'worst': Network }}")
   })
-  describe.skip("neat.sort()", function() {
+  describe("neat.sort()", function() {
     it("neat.sort() => {Network[]}")
   })
-  describe.skip("neat.getFittest()", function() {
+  describe("neat.getFittest()", function() {
     it("neat.getFittest() => {Network}")
   })
-  describe.skip("neat.getAverage()", function() {
+  describe("neat.getAverage()", function() {
     it("neat.getAverage() => {Network}")
   })
-  describe.skip("neat.toJSON()", function() {
+  describe("neat.toJSON()", function() {
     it("neat.toJSON() => {Object}")
   })
-  describe.skip("Neat.fromJSON()", function() {
+  describe("Neat.fromJSON()", function() {
     it("neat.fromJSON() => {ReferenceError}")
     it("neat.fromJSON(json) => {Neat}")
   })
