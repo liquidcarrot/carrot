@@ -534,7 +534,7 @@ describe("Neat", function() {
       await areSorted(neat.population)
     })
 // --------------------------------------------------------------
-    it("new Neat(), neat.evolve() | .score set, runs", async function () {
+    it("new Neat(), neat.evolve() | Runs, .score set", async function () {
       const neat = new Neat(2,1, { population_size: 2 }) // reduced population to shorten test times
 
       let { population } = neat
@@ -554,7 +554,13 @@ describe("Neat", function() {
       expect(population).not.eql(originalPopulation)
     })
 
-    it("new Neat(), neat.evolve(null) | .score set, runs", async function () {
+    it("new Neat(), neat.evolve() | Throws error, missing .score", async function () {
+      const neat = new Neat(2,1, { population_size: 2 }) // reduced population to shorten test times
+
+      neat.evolve().should.be.rejected
+    })
+
+    it("new Neat(), neat.evolve(null) | Runs, .score set", async function () {
       const neat = new Neat(2,1, { population_size: 2 }) // reduced population to shorten test times
 
       let { population } = neat
@@ -574,7 +580,7 @@ describe("Neat", function() {
       expect(population).not.eql(originalPopulation)
     })
 
-    it("new Neat(), neat.evolve(null, filter, adjust) | .score set, runs", async function () {
+    it("new Neat(), neat.evolve(null, filter, adjust) | Runs, .score set", async function () {
       const neat = new Neat(2,1, { population_size: 2 }) // reduced population to shorten test times
 
       let { population } = neat
@@ -607,12 +613,6 @@ describe("Neat", function() {
       })
 
       neat.evolve(null, (network) => network).should.be.rejected
-    })
-
-    it("new Neat(), neat.evolve() | Throws error", async function () {
-      const neat = new Neat(2,1, { population_size: 2 }) // reduced population to shorten test times
-
-      neat.evolve().should.be.rejected
     })
 
     it("new Neat(), neat.evolve() | Generation count = number", async function () {
@@ -886,7 +886,7 @@ describe("Neat", function() {
       neat.evaluate().should.be.rejected
     })
 
-    it("new Neat(), neat.evaluate(dataset) | should resolve and set .score", async function() {
+    it("new Neat(), neat.evaluate(dataset) | Should resolve and set .score", async function() {
       const neat = new Neat(2,1, { population_size: 2 }) // reduced population to shorten test times
 
       await neat.evaluate(data.AND)
@@ -894,7 +894,7 @@ describe("Neat", function() {
       expect(neat.population[0].score).a("number")
     })
 
-    it("new Neat(dataset), neat.evaluate() | should resolve and set .score", async function() {
+    it("new Neat(dataset), neat.evaluate() | Should resolve and set .score", async function() {
       const neat = new Neat(2,1, data.AND, { population_size: 2 }) // reduced population to shorten test times
 
       await neat.evaluate()
