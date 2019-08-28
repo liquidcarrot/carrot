@@ -88,12 +88,12 @@ const Neat = function(inputs, outputs, dataset, options) {
   const self = this;
 
   // new Neat() | Nothing to do
-  
+
   // new Neat(dataset) || new Neat(options)
   if(!(outputs || dataset || options)) {
     if(_.isPlainObject(inputs)) options = inputs;
     else if(Array.isArray(inputs)) dataset = inputs;
-    
+
     inputs = undefined;
   }
 
@@ -110,7 +110,7 @@ const Neat = function(inputs, outputs, dataset, options) {
     dataset = undefined;
   }
 
-  
+
   /**
    * To-do:
    *
@@ -122,7 +122,7 @@ const Neat = function(inputs, outputs, dataset, options) {
    * new Neat(population, dataset, options) - leave out for now
    * new Neat(input, output, dataset, options)
    */
-  
+
   inputs = inputs || 1;
   outputs = outputs || 1;
   dataset = dataset || [];
@@ -167,18 +167,18 @@ const Neat = function(inputs, outputs, dataset, options) {
    * @returns {Network[]} Returns an array of networks each a member of the population
    */
   self.createPopulation = function create_networks_for_evolution(network, size) {
-    
+
     // createPopulation(size)
     if(!size && Number.isInteger(network)) {
       size = network
       network = undefined
     }
-    
+
     size = size || self.population_size
-    
+
     // Prioritize network, otherwise use template network, otherwise use "new network"
     copyNetwork = network ? () => network.clone() : self.template ? () => self.template.clone() : () => new Network(self.inputs, self.outputs)
-     
+
     const population = []
     for(let i = 0; i < size; i++) {
       population.push(copyNetwork())
@@ -229,7 +229,7 @@ const Neat = function(inputs, outputs, dataset, options) {
    */
   self.replace = function(population, pick, transform) {
     if(population == undefined && pick == undefined && transform == undefined) throw new ReferenceError("Missing required parameter 'transform'")
-    
+
     // Change execution when partial params supplied
     function _transform(t) {
       const transformer = t instanceof Network ? (() => t) : typeof t === "function" ? t : new TypeError(`Expected ${t} to be a {Network|Function}`);
@@ -243,36 +243,36 @@ const Neat = function(inputs, outputs, dataset, options) {
         : new TypeError(`Expected ${t} to be a {Number|Network|Function|undefined}`);
       return pick;
     }
-    
-    
+
+
     // replace(transform)
     if (pick == undefined && transform == undefined) {
       transform = _transform(population);
       pick = _pick();
       population = self.population;
     }
-    
+
     // replace(population, transform)
     else if (transform == undefined) {
       transform = _transform(pick);
       pick = _pick(population);
       population = self.population;
     }
-    
+
     // replace(population, pick, transform)
     else {
       transform = _transform(transform);
       pick = _pick(pick);
       population = population || self.population;
     }
-    
-    
+
+
     // Does not create deep copies before operations. Potentially problematic, but performant
     const transformed = []
     for (let i = 0; i < population.length; i++) {
       pick(population[i], i, population) ? transformed[i] = transform(population[i], i, population) : transformed.push(population[i])
     }
-    
+
     return transformed;
   };
 
@@ -288,21 +288,21 @@ const Neat = function(inputs, outputs, dataset, options) {
    * @return {Network[]} An array of mutated networks (a new population)
    */
   self.mutate = function mutate_population(method) {
-    
+
     const options = {
       maxNodes: self.maxNodes,
       maxConns: self.maxConns,
       maxGates: self.maxGates
     }
-    
+
     // Change execution based on arguments
     const mutateGenome = method
       ? (genome, method, options) => genome.mutate(method, options)
       : (genome, methods, options) => genome.mutateRandom(methods, options)
-    
+
     // Default to Neat allowed mutations if no method
     method = method ? method : self.mutation
-    
+
     const population = []
     for(let i = 0; i < self.population.length; i++) {
       if(Math.random() <= self.mutation_rate) {
@@ -311,10 +311,10 @@ const Neat = function(inputs, outputs, dataset, options) {
         }
       }
     }
-    
+
     return population
   };
-  
+
   /**
    * Evaluates, selects, breeds and mutates population
    *
@@ -376,45 +376,45 @@ const Neat = function(inputs, outputs, dataset, options) {
    */
   self.evolve = async function(evolve_dataset, pickGenome, transformGenome) {
     if (self.elitism + self.provenance > self.population_size) throw new Error("Can't evolve! Elitism + provenance exceeds population size!")
-    
+
     // =======================
     // Check arguments section. First we'll check if evolve_dataset exists
     // We prioritize evolve_dataset, fallback to the Neat dataset, and otherwise expect .score properties to be set
-     
+
     if (typeof evolve_dataset === 'function') {
       adjustGenome = pickGenome
       pickGenome = evolve_dataset
       evolve_dataset = undefined
     }
-    
+
     const isArray = (x) => Array.isArray(x) && x.length
     let evolve_set = isArray(evolve_dataset) ? evolve_dataset : isArray(self.dataset) ? self.dataset : null
-  
+
     let population = self.population // Shallow copy, consider changing later once full functional pattern reached
-  
+
     const hasScores = _.every(population, network => {
       // (+a === +a) "equal to self" check is ~4000% faster than regex
       return typeof network.score == 'number' || typeof network.score == 'string' &&	+network.score === +network.score
     })
-    
+
     if(evolve_set && !hasScores) {
       await self.evaluate(evolve_set)
     } else if (!hasScores) {
       throw new Error("If no dataset is passed, all networks in population must have numeric '.score' properties!")
     }
-    
+
     // =======================
-    
+
     // Check & adjust genomes as needed
     if (pickGenome) population = self.replace(population, pickGenome, transformGenome)
 
     // Sort in order of fitness (fittest first) | In-place mutation
     self.sort(population)
-    
+
     // Elitism, assumes population is sorted by fitness
     const elitists = []
     for (let i = 0; i < self.elitism; i++) elitists.push(population[i].clone())
-    
+
     // Provenance
     const new_population = []
     for(let i = 0; i < self.provenance; i++) new_population.push(self.template.clone())
@@ -426,29 +426,29 @@ const Neat = function(inputs, outputs, dataset, options) {
 
     // Replace the old population with the new population
     population = self.population = new_population // not purely functional yet so resorting to this
-    
+
     // Mutate the new population
     self.mutate()
 
     // Add the elitists
     for (let i = 0; i < elitists.length; i++) population.push(elitists[i])
-    
+
     // evaluate the population, only if a set was provided
     if(evolve_set) await self.evaluate(evolve_set)
-    
+
     // Check & adjust genomes
     if (pickGenome) self.population = self.replace(population, pickGenome, transformGenome)
 
     // Sort by fitness (fittest first)
     self.sort(population)
-    
+
     // Reset the scores if no dataset present
     if(!evolve_set) {
      for (let i = 0; i < population.length; i++) population[i].score = undefined
     }
 
     self.generation++
-    
+
     return self.population
   };
 
@@ -555,7 +555,9 @@ const Neat = function(inputs, outputs, dataset, options) {
    */
   self.evaluate = async function (dataset) {
     dataset = dataset || self.dataset
-    
+
+    if(!dataset.length) throw new Error("A dataset must be passed to the Neat constructor or Neat.evaluate()!")
+
     if (self.fitnessPopulation) {
       // Evaluate fitness at population level
       if (self.clear) for(let i = 0; i < self.population.length; i++) self.population[i].clear()
@@ -565,14 +567,14 @@ const Neat = function(inputs, outputs, dataset, options) {
     } else {
       // Evaluate fitness at genome level
       for (let i = 0; i < self.population.length; i++) {
-        
+
         const genome = self.population[i]
-        
+
         // clear network state if flag set
         if (self.clear) genome.clear()
-        
+
         genome.score = await self.fitness(dataset, genome)
-        
+
         self.population[i] = genome
       }
     }
@@ -596,7 +598,7 @@ const Neat = function(inputs, outputs, dataset, options) {
    */
   self.sort = function sort_population_by_fitness(population) {
     population = Array.isArray(population) && population.length ? population : self.population
-    
+
     population.sort(function (a, b) {
       return b.score - a.score;
     });
