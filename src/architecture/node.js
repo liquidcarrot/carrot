@@ -332,9 +332,8 @@ function Node(options) {
       const connection = self.connections_incoming[i];
       let gradient = self.error_projected * connection.elegibility;
       for (let j = 0; j < connection.xtrace_nodes.length; j++) {
-        const node = connection.xtrace_nodes[i];
-
-        gradient += node.error_responsibility * connection.xtrace_values[i];
+        const node = connection.xtrace_nodes[j];
+        gradient += node.error_responsibility * connection.xtrace_values[j];
       }
 
       // Adjust Weight ()
