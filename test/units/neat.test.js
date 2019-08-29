@@ -902,7 +902,7 @@ describe("Neat", function() {
       expect(neat.population[0].score).a("number")
     })
 
-    it("new Neat(dataset), neat.evaluate(otherSet) | should prioritize otherSet", async function() {
+    it.skip("new Neat(dataset), neat.evaluate(otherSet) | should prioritize otherSet", async function() {
       const neat = new Neat(2,1, data.AND, { population_size: 2 }) // reduced population to shorten test times
 
       await neat.evaluate()
@@ -914,6 +914,23 @@ describe("Neat", function() {
     it("neat.evaluate(dataset) => {Object}")
     it("neat.evaluate(options={ 'clear': true, networks': true }) => {{ 'best': Network, 'average': Network, 'worst': Network }}")
     it("neat.evaluate(dataset, { 'clear': true, networks': true }) => {{ 'best': Network, 'average': Network, 'worst': Network }}")
+  })
+  describe("neat.fitness()", function() {
+    it("fitness(dataset) | default sets .score property", function() {
+      const neat = new Neat(2,1, { population_size: 2 }) // reduced population to shorten test times
+
+      neat.population[0].score = neat.fitness(data.AND, neat.population[0])
+
+      expect(neat.population[0].score).a("number")
+    })
+
+    it.skip("fitness() | default sets .score property", function() {
+      const neat = new Neat(2,1, { population_size: 2 }) // reduced population to shorten test times
+
+      neat.population[0].score = neat.fitness(data.AND, neat.population[0])
+
+      expect(neat.population[0].score).a("number")
+    })
   })
   describe("neat.sort()", function() {
     it("neat.sort() => {Network[]}")
@@ -931,5 +948,4 @@ describe("Neat", function() {
     it("neat.fromJSON() => {ReferenceError}")
     it("neat.fromJSON(json) => {Neat}")
   })
-
 })
