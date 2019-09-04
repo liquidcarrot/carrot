@@ -38,11 +38,24 @@ const activation = {
   * A.squash = methods.activation.LOGISTIC;
   */
   LOGISTIC: function(x, derivate) {
+
+    // Dirty but neccessary to support Network.standalone as currently written
+    const clamp = function(x) {
+      const max = Number.MAX_VALUE
+
+      return x === Infinity
+        ? max
+        : x === -Infinity
+        ? -max
+        : x
+    }
+
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
 
     const f = derivate ? (x) => Math.exp(-x) / (Math.pow((1 + Math.exp(-x)), 2)) : (x) => 1 / (1 + Math.exp(-x));
 
-    return Array.isArray(x) ? x.map(f) : f(x);
+    // return Array.isArray(x) ? x.map(f) : f(x); unsafe mode
+    return Array.isArray(x) ? x.map(clamp(f)) : clamp(f(x));
   },
   /**
   * [TanH function.](https://en.wikipedia.org/wiki/Hyperbolic_function#Hyperbolic_tangent)
@@ -60,11 +73,24 @@ const activation = {
   * A.squash = methods.activation.TANH;
   */
   TANH: function(x, derivate) {
+
+    // Dirty but neccessary to support Network.standalone as currently written
+    const clamp = function(x) {
+      const max = Number.MAX_VALUE
+
+      return x === Infinity
+        ? max
+        : x === -Infinity
+        ? -max
+        : x
+    }
+
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
 
     const f = derivate ? (x) => 1 - (Math.tanh(x) * Math.tanh(x)) : (x) => Math.tanh(x)
 
-    return Array.isArray(x) ? x.map(f) : f(x);
+    // return Array.isArray(x) ? x.map(f) : f(x); unsafe mode
+    return Array.isArray(x) ? x.map(clamp(f)) : clamp(f(x));
   },
   /**
   * [Identity function.](https://en.wikipedia.org/wiki/Identity_function)
@@ -84,11 +110,24 @@ const activation = {
   * A.squash = methods.activation.IDENTITY;
   */
   IDENTITY: function(x, derivate) {
+
+    // Dirty but neccessary to support Network.standalone as currently written
+    const clamp = function(x) {
+      const max = Number.MAX_VALUE
+
+      return x === Infinity
+        ? max
+        : x === -Infinity
+        ? -max
+        : x
+    }
+
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
 
     const f = derivate ? (x) =>  1 : (x) => x;
 
-    return Array.isArray(x) ? x.map(f) : f(x);
+    // return Array.isArray(x) ? x.map(f) : f(x); unsafe mode
+    return Array.isArray(x) ? x.map(clamp(f)) : clamp(f(x));
   },
   /**
   * [Step function.](https://en.wikipedia.org/wiki/Heaviside_step_function)
@@ -106,11 +145,24 @@ const activation = {
   * A.squash = methods.activation.STEP;
   */
   STEP: function(x, derivate) {
+
+    // Dirty but neccessary to support Network.standalone as currently written
+    const clamp = function(x) {
+      const max = Number.MAX_VALUE
+
+      return x === Infinity
+        ? max
+        : x === -Infinity
+        ? -max
+        : x
+    }
+
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
 
     const f = derivate ? (x) => 0 : (x) => x > 0 ? 1 : 0;
 
-    return Array.isArray(x) ? x.map(f) : f(x);
+    // return Array.isArray(x) ? x.map(f) : f(x); unsafe mode
+    return Array.isArray(x) ? x.map(clamp(f)) : clamp(f(x));
   },
   /**
   * [ReLU function.]{@link https://en.wikipedia.org/wiki/Rectifier_(neural_networks)}
@@ -128,11 +180,24 @@ const activation = {
   * A.squash = methods.activation.RELU;
   */
   RELU: function(x, derivate) {
+
+    // Dirty but neccessary to support Network.standalone as currently written
+    const clamp = function(x) {
+      const max = Number.MAX_VALUE
+
+      return x === Infinity
+        ? max
+        : x === -Infinity
+        ? -max
+        : x
+    }
+
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
 
     const f = derivate ? (x) => x > 0 ? 1 : 0 : (x) => x > 0 ? x : 0;
 
-    return Array.isArray(x) ? x.map(f) : f(x);
+    // return Array.isArray(x) ? x.map(f) : f(x); unsafe mode
+    return Array.isArray(x) ? x.map(clamp(f)) : clamp(f(x));
   },
   /**
   * [Softsign function.](https://en.wikipedia.org/wiki/Activation_function#Comparison_of_activation_functions)
@@ -150,14 +215,27 @@ const activation = {
   * A.squash = methods.activation.SOFTSIGN;
   */
   SOFTSIGN: function(x, derivate) {
+
+    // Dirty but neccessary to support Network.standalone as currently written
+    const clamp = function(x) {
+      const max = Number.MAX_VALUE
+
+      return x === Infinity
+        ? max
+        : x === -Infinity
+        ? -max
+        : x
+    }
+
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
 
     const f = derivate ? (x) => x / ((1 + Math.abs(x)) * (1 + Math.abs(x))) : (x) => x / 1 + Math.abs(x);
 
-    return Array.isArray(x) ? x.map(f) : f(x);
+    // return Array.isArray(x) ? x.map(f) : f(x); unsafe mode
+    return Array.isArray(x) ? x.map(clamp(f)) : clamp(f(x));
   },
   // SOFTCLIP: function(x, derivate) {
-  //   if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
+  // if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
   //
   //   const f = derivate ? (x) => (Math.exp(1) - 1) * Math.exp(x) / (Math.exp(x) +  Math.exp(1)) * (1 +  Math.exp(1)) : (x) => Math.log((1 + Math.exp(x)) / (1 + Math.exp(x-1)))
   //
@@ -179,11 +257,24 @@ const activation = {
   * A.squash = methods.activation.SINUSOID;
   */
   SINUSOID: function(x, derivate) {
+
+    // Dirty but neccessary to support Network.standalone as currently written
+    const clamp = function(x) {
+      const max = Number.MAX_VALUE
+
+      return x === Infinity
+        ? max
+        : x === -Infinity
+        ? -max
+        : x
+    }
+
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
 
     const f = derivate ? (x) => Math.cos(x) : (x) => Math.sin(x);
 
-    return Array.isArray(x) ? x.map(f) : f(x);
+    // return Array.isArray(x) ? x.map(f) : f(x); unsafe mode
+    return Array.isArray(x) ? x.map(clamp(f)) : clamp(f(x));
   },
   /**
   * [Guassian function.](https://en.wikipedia.org/wiki/Gaussian_function)
@@ -201,11 +292,24 @@ const activation = {
   * A.squash = methods.activation.GAUSSIAN;
   */
   GAUSSIAN: function(x, derivate) {
+
+    // Dirty but neccessary to support Network.standalone as currently written
+    const clamp = function(x) {
+      const max = Number.MAX_VALUE
+
+      return x === Infinity
+        ? max
+        : x === -Infinity
+        ? -max
+        : x
+    }
+
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
 
     const f = derivate ? (x) => -2 * x * Math.exp(-(x * x)) : (x) => Math.exp(-(x * x));
 
-    return Array.isArray(x) ? x.map(f) : f(x);
+    // return Array.isArray(x) ? x.map(f) : f(x); unsafe mode
+    return Array.isArray(x) ? x.map(clamp(f)) : clamp(f(x));
   },
   /**
   * [Bent identity function.](https://en.wikipedia.org/wiki/Activation_function#Comparison_of_activation_functions)
@@ -223,11 +327,24 @@ const activation = {
   * A.squash = methods.activation.BENT_IDENTITY;
   */
   BENT_IDENTITY: function(x, derivate) {
+
+    // Dirty but neccessary to support Network.standalone as currently written
+    const clamp = function(x) {
+      const max = Number.MAX_VALUE
+
+      return x === Infinity
+        ? max
+        : x === -Infinity
+        ? -max
+        : x
+    }
+
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
 
     const f = derivate ? (x) => x / (2 * Math.sqrt((x * x) + 1)) + 1 : (x) => (Math.sqrt((x * x) + 1) - 1) / 2 + x;
 
-    return Array.isArray(x) ? x.map(f) : f(x);
+    // return Array.isArray(x) ? x.map(f) : f(x); unsafe mode
+    return Array.isArray(x) ? x.map(clamp(f)) : clamp(f(x));
   },
   /**
   * [Bipolar function](https://wagenaartje.github.io/neataptic/docs/methods/activation/), if x > 0 then returns 1, otherwise returns -1
@@ -245,11 +362,23 @@ const activation = {
   * A.squash = methods.activation.BIPOLAR;
   */
   BIPOLAR: function(x, derivate) {
+
+    // Dirty but neccessary to support Network.standalone as currently written
+    const clamp = function(x) {
+      const max = Number.MAX_VALUE
+
+      return x === Infinity
+        ? max
+        : x === -Infinity
+        ? -max
+        : x
+    }
+
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
 
     const f = derivate ? (x) => 0 : (x) => x > 0 ? 1 : -1;
 
-    return Array.isArray(x) ? x.map(f) : f(x);
+    return Array.isArray(x) ? x.map(clamp(f)) : clamp(f(x));
   },
   /**
   * [Bipolar sigmoid function.](https://wagenaartje.github.io/neataptic/docs/methods/activation/)
@@ -267,11 +396,24 @@ const activation = {
   * A.squash = methods.activation.BIPOLAR_SIGMOID;
   */
   BIPOLAR_SIGMOID: function(x, derivate) {
+
+    // Dirty but neccessary to support Network.standalone as currently written
+    const clamp = function(x) {
+      const max = Number.MAX_VALUE
+
+      return x === Infinity
+        ? max
+        : x === -Infinity
+        ? -max
+        : x
+    }
+
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
 
     const f = derivate ? (x) => (2 * Math.exp(-x)) / (Math.pow((1 + Math.exp(-x)), 2)) : (x) => 2 / (1 + Math.exp(-x)) - 1;
 
-    return Array.isArray(x) ? x.map(f) : f(x);
+    // return Array.isArray(x) ? x.map(f) : f(x); unsafe mode
+    return Array.isArray(x) ? x.map(clamp(f)) : clamp(f(x));
   },
   /**
   * [Hard tanh function.](https://wagenaartje.github.io/neataptic/docs/methods/activation/)
@@ -289,11 +431,24 @@ const activation = {
   * A.squash = methods.activation.HARD_TANH;
   */
   HARD_TANH: function(x, derivate) {
+
+    // Dirty but neccessary to support Network.standalone as currently written
+    const clamp = function(x) {
+      const max = Number.MAX_VALUE
+
+      return x === Infinity
+        ? max
+        : x === -Infinity
+        ? -max
+        : x
+    }
+
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
 
     const f = derivate ? (x) => x > -1 && x < 1 ? 1 : 0 : (x) => Math.max(-1, Math.min(1, x));
 
-    return Array.isArray(x) ? x.map(f) : f(x);
+    // return Array.isArray(x) ? x.map(f) : f(x); unsafe mode
+    return Array.isArray(x) ? x.map(clamp(f)) : clamp(f(x));
   },
   /**
   * [Absolute function.](https://wagenaartje.github.io/neataptic/docs/methods/activation/)
@@ -313,11 +468,24 @@ const activation = {
   * A.squash = methods.activation.ABSOLUTE;
   */
   ABSOLUTE: function(x, derivate) {
+
+    // Dirty but neccessary to support Network.standalone as currently written
+    const clamp = function(x) {
+      const max = Number.MAX_VALUE
+
+      return x === Infinity
+        ? max
+        : x === -Infinity
+        ? -max
+        : x
+    }
+
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
 
     const f = derivate ? (x) => x < 0 ? -1 : 1 : (x) => Math.abs(x);
 
-    return Array.isArray(x) ? x.map(f) : f(x);
+    // return Array.isArray(x) ? x.map(f) : f(x); unsafe mode
+    return Array.isArray(x) ? x.map(clamp(f)) : clamp(f(x));
   },
   /**
   * [Inverse function.](https://wagenaartje.github.io/neataptic/docs/methods/activation/)
@@ -335,11 +503,24 @@ const activation = {
   * A.squash = methods.activation.INVERSE;
   */
   INVERSE: function(x, derivate) {
+
+    // Dirty but neccessary to support Network.standalone as currently written
+    const clamp = function(x) {
+      const max = Number.MAX_VALUE
+
+      return x === Infinity
+        ? max
+        : x === -Infinity
+        ? -max
+        : x
+    }
+
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
 
     const f = derivate ? (x) => -1 : (x) => 1 - x;
 
-    return Array.isArray(x) ? x.map(f) : f(x);
+    // return Array.isArray(x) ? x.map(f) : f(x); unsafe mode
+    return Array.isArray(x) ? x.map(clamp(f)) : clamp(f(x));
   },
   /**
    * [Scaled exponential linear unit.](https://towardsdatascience.com/selu-make-fnns-great-again-snn-8d61526802a9)
@@ -361,6 +542,18 @@ const activation = {
    * A.squash = methods.activation.SELU;
    */
   SELU: function(x, derivate) {
+
+    // Dirty but neccessary to support Network.standalone as currently written
+    const clamp = function(x) {
+      const max = Number.MAX_VALUE
+
+      return x === Infinity
+        ? max
+        : x === -Infinity
+        ? -max
+        : x
+    }
+
     if(x == undefined) throw new ReferenceError("Parameter 'x' is required, but it was not defined");
 
     const alpha = 1.6732632423543772848170429916717;
@@ -368,7 +561,8 @@ const activation = {
 
     const f = derivate ? (x) => x > 0 ? scale : ((x > 0 ? x : alpha * Math.exp(x) - alpha) + alpha) * scale : (x) =>  (x > 0 ? x : alpha * Math.exp(x) - alpha) * scale;
 
-    return Array.isArray(x) ? x.map(f) : f(x);
+    // return Array.isArray(x) ? x.map(f) : f(x); unsafe mode
+    return Array.isArray(x) ? x.map(clamp(f)) : clamp(f(x));
   }
 };
 
