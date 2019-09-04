@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Liquid Carrot - Home - Documentation</title>
+    <link rel="shortcut icon" href="/liquid-carrot-favicon.png" />
+    
+    
+    
+    
+    
+    <meta property="og:title" content=""/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content=""/>
+    
+    <meta property="og:url" content=""/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="styles/bulma.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/ionicons/2.0.1/css/ionicons.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger">
+  <div class="fixed-action-btn">
+    <div class="button-floating">
+      <!--
+      <label for="nav-trigger" class="navicon-button x">
+        <div class="navicon"></div>
+      </label>
+      -->
+        <i class="ion-ios-book" aria-hidden="true"></i>
+    </div>
+  </div>
+</label>
+<label for="nav-trigger" class="overlay"></label>
+
+<div class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="#" style="padding:0">
+      <img src="img/carrot-logo.png" height="28">
+    </a>
+
+    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+
+  <div id="navbarBasicExample" class="navbar-menu">
+    <div class="navbar-start">
+      <a class="navbar-item" href="/">Home</a>
+      <a class="navbar-item" href="/carrot">Docs</a>
+      <a class="navbar-item" href="https://github.com/liquidcarrot/carrot" target="_blank"><i class="ion-social-github" aria-hidden="true"></i></a>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          Versions
+        </a>
+        
+        <div class="navbar-dropdown">
+          <a href='https://liquidcarrot.io/carrot/versions/0.2.27/' class="navbar-item">v0.2.27</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.2.28/' class="navbar-item">v0.2.28</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.0/' class="navbar-item">v0.3.0</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.1/' class="navbar-item">v0.3.1</a>
+      <a href='https://liquidcarrot.io/carrot/' class="navbar-item">latest</a>
+        </div>
+      </div>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More
+        </a>
+
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="mailto:people@liquidcarrot.io?subject=Contact%20From%20Docs">
+            Contact
+          </a>
+          <hr class="navbar-divider">
+          <a class="navbar-item" href="https://github.com/liquidcarrot/carrot/issues/new">
+            Report an issue
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <input type="text" id="nav-search" placeholder="Search" autofocus>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav >
+    <h3>Classes</h3><ul><li><a href="Connection.html">Connection</a><ul class='methods'><li data-type='method'><a href="Connection.html#.innovationID">innovationID</a></li><li data-type='method'><a href="Connection.html#.toJSON">toJSON</a></li></ul></li><li><a href="Group.html">Group</a><ul class='methods'><li data-type='method'><a href="Group.html#.activate">activate</a></li><li data-type='method'><a href="Group.html#.clear">clear</a></li><li data-type='method'><a href="Group.html#.connect">connect</a></li><li data-type='method'><a href="Group.html#.disconnect">disconnect</a></li><li data-type='method'><a href="Group.html#.gate">gate</a></li><li data-type='method'><a href="Group.html#.propagate">propagate</a></li><li data-type='method'><a href="Group.html#.set">set</a></li></ul></li><li><a href="Layer.html">Layer</a><ul class='methods'><li data-type='method'><a href="Layer.html#.Dense">Dense</a></li><li data-type='method'><a href="Layer.html#.GRU">GRU</a></li><li data-type='method'><a href="Layer.html#.LSTM">LSTM</a></li><li data-type='method'><a href="Layer.html#.Memory">Memory</a></li></ul></li><li><a href="Neat.html">Neat</a><ul class='methods'><li data-type='method'><a href="Neat.html">evolve</a></li><li data-type='method'><a href="Neat.html#.createPool">createPool</a></li><li data-type='method'><a href="Neat.html#.createPopulation">createPopulation</a></li><li data-type='method'><a href="Neat.html#.evaluate">evaluate</a></li><li data-type='method'><a href="Neat.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Neat.html#.getAverage">getAverage</a></li><li data-type='method'><a href="Neat.html#.getFittest">getFittest</a></li><li data-type='method'><a href="Neat.html#.getOffspring">getOffspring</a></li><li data-type='method'><a href="Neat.html#.getParent">getParent</a></li><li data-type='method'><a href="Neat.html#.mutate">mutate</a></li><li data-type='method'><a href="Neat.html#.replace">replace</a></li><li data-type='method'><a href="Neat.html#.toJSON">toJSON</a></li></ul></li><li><a href="Network.html">Network</a><ul class='methods'><li data-type='method'><a href="Network.html#.activate">activate</a></li><li data-type='method'><a href="Network.html#.clear">clear</a></li><li data-type='method'><a href="Network.html#.clone">clone</a></li><li data-type='method'><a href="Network.html#.connect">connect</a></li><li data-type='method'><a href="Network.html#.crossOver">crossOver</a></li><li data-type='method'><a href="Network.html#.disconnect">disconnect</a></li><li data-type='method'><a href="Network.html#.evolve">evolve</a></li><li data-type='method'><a href="Network.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Network.html#.gate">gate</a></li><li data-type='method'><a href="Network.html#.graph">graph</a></li><li data-type='method'><a href="Network.html#.merge">merge</a></li><li data-type='method'><a href="Network.html#.mutate">mutate</a></li><li data-type='method'><a href="Network.html#.mutateRandom">mutateRandom</a></li><li data-type='method'><a href="Network.html#.noTraceActivate">noTraceActivate</a></li><li data-type='method'><a href="Network.html#.possible">possible</a></li><li data-type='method'><a href="Network.html#.remove">remove</a></li><li data-type='method'><a href="Network.html#.set">set</a></li><li data-type='method'><a href="Network.html#.standalone">standalone</a></li><li data-type='method'><a href="Network.html#.test">test</a></li><li data-type='method'><a href="Network.html#.toJSON">toJSON</a></li><li data-type='method'><a href="Network.html#.train">train</a></li><li data-type='method'><a href="Network.html#.ungate">ungate</a></li></ul></li><li><a href="Node.html">Node</a><ul class='methods'><li data-type='method'><a href="Node.html#.activate">activate</a></li><li data-type='method'><a href="Node.html#.clear">clear</a></li><li data-type='method'><a href="Node.html#.connect">connect</a></li><li data-type='method'><a href="Node.html#.disconnect">disconnect</a></li><li data-type='method'><a href="Node.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Node.html#.gate">gate</a></li><li data-type='method'><a href="Node.html#.isProjectedBy">isProjectedBy</a></li><li data-type='method'><a href="Node.html#.isProjectingTo">isProjectingTo</a></li><li data-type='method'><a href="Node.html#.mutate">mutate</a></li><li data-type='method'><a href="Node.html#.noTraceActivate">noTraceActivate</a></li><li data-type='method'><a href="Node.html#.propagate">propagate</a></li><li data-type='method'><a href="Node.html#.toJSON">toJSON</a></li><li data-type='method'><a href="Node.html#.ungate">ungate</a></li></ul></li></ul><h3>Namespaces</h3><ul><li><a href="activation.html">activation</a><ul class='methods'><li data-type='method'><a href="activation.html#.ABSOLUTE">ABSOLUTE</a></li><li data-type='method'><a href="activation.html#.BENT_IDENTITY">BENT_IDENTITY</a></li><li data-type='method'><a href="activation.html#.BIPOLAR">BIPOLAR</a></li><li data-type='method'><a href="activation.html#.BIPOLAR_SIGMOID">BIPOLAR_SIGMOID</a></li><li data-type='method'><a href="activation.html#.GAUSSIAN">GAUSSIAN</a></li><li data-type='method'><a href="activation.html#.HARD_TANH">HARD_TANH</a></li><li data-type='method'><a href="activation.html#.IDENTITY">IDENTITY</a></li><li data-type='method'><a href="activation.html#.INVERSE">INVERSE</a></li><li data-type='method'><a href="activation.html#.LOGISTIC">LOGISTIC</a></li><li data-type='method'><a href="activation.html#.RELU">RELU</a></li><li data-type='method'><a href="activation.html#.SELU">SELU</a></li><li data-type='method'><a href="activation.html#.SINUSOID">SINUSOID</a></li><li data-type='method'><a href="activation.html#.SOFTSIGN">SOFTSIGN</a></li><li data-type='method'><a href="activation.html#.STEP">STEP</a></li><li data-type='method'><a href="activation.html#.TANH">TANH</a></li></ul></li><li><a href="architect.html">architect</a><ul class='methods'><li data-type='method'><a href="architect.html#.Construct">Construct</a></li><li data-type='method'><a href="architect.html#.GRU">GRU</a></li><li data-type='method'><a href="architect.html#.Hopfield">Hopfield</a></li><li data-type='method'><a href="architect.html#.Liquid">Liquid</a></li><li data-type='method'><a href="architect.html#.LSTM">LSTM</a></li><li data-type='method'><a href="architect.html#.NARX">NARX</a></li><li data-type='method'><a href="architect.html#.Perceptron">Perceptron</a></li><li data-type='method'><a href="architect.html#.Random">Random</a></li></ul></li><li><a href="connection_.html">connection</a><ul class='members'><li data-type='member'><a href="connection_.html#.ALL_TO_ALL">ALL_TO_ALL</a></li><li data-type='member'><a href="connection_.html#.ALL_TO_ELSE">ALL_TO_ELSE</a></li><li data-type='member'><a href="connection_.html#.ONE_TO_ONE">ONE_TO_ONE</a></li></ul></li><li><a href="cost.html">cost</a><ul class='methods'><li data-type='method'><a href="cost.html#.BINARY">BINARY</a></li><li data-type='method'><a href="cost.html#.CROSS_ENTROPY">CROSS_ENTROPY</a></li><li data-type='method'><a href="cost.html#.HINGE">HINGE</a></li><li data-type='method'><a href="cost.html#.MAE">MAE</a></li><li data-type='method'><a href="cost.html#.MAPE">MAPE</a></li><li data-type='method'><a href="cost.html#.MSE">MSE</a></li><li data-type='method'><a href="cost.html#.MSLE">MSLE</a></li><li data-type='method'><a href="cost.html#.WAPE">WAPE</a></li></ul></li><li><a href="crossover.html">crossover</a><ul class='members'><li data-type='member'><a href="crossover.html#.AVERAGE">AVERAGE</a></li><li data-type='member'><a href="crossover.html#.SINGLE_POINT">SINGLE_POINT</a></li><li data-type='member'><a href="crossover.html#.TWO_POINT">TWO_POINT</a></li><li data-type='member'><a href="crossover.html#.UNIFORM">UNIFORM</a></li></ul></li><li><a href="gating.html">gating</a><ul class='members'><li data-type='member'><a href="gating.html#.INPUT">INPUT</a></li><li data-type='member'><a href="gating.html#.OUTPUT">OUTPUT</a></li><li data-type='member'><a href="gating.html#.SELF">SELF</a></li></ul></li><li><a href="mutation.html">mutation</a><ul class='members'><li data-type='member'><a href="mutation.html#.ADD_BACK_CONN">ADD_BACK_CONN</a></li><li data-type='member'><a href="mutation.html#.ADD_CONN">ADD_CONN</a></li><li data-type='member'><a href="mutation.html#.ADD_GATE">ADD_GATE</a></li><li data-type='member'><a href="mutation.html#.ADD_NODE">ADD_NODE</a></li><li data-type='member'><a href="mutation.html#.ADD_SELF_CONN">ADD_SELF_CONN</a></li><li data-type='member'><a href="mutation.html#.ALL">ALL</a></li><li data-type='member'><a href="mutation.html#.FFW">FFW</a></li><li data-type='member'><a href="mutation.html#.MOD_ACTIVATION">MOD_ACTIVATION</a></li><li data-type='member'><a href="mutation.html#.MOD_BIAS">MOD_BIAS</a></li><li data-type='member'><a href="mutation.html#.MOD_WEIGHT">MOD_WEIGHT</a></li><li data-type='member'><a href="mutation.html#.SUB_BACK_CONN">SUB_BACK_CONN</a></li><li data-type='member'><a href="mutation.html#.SUB_CONN">SUB_CONN</a></li><li data-type='member'><a href="mutation.html#.SUB_GATE">SUB_GATE</a></li><li data-type='member'><a href="mutation.html#.SUB_NODE">SUB_NODE</a></li><li data-type='member'><a href="mutation.html#.SUB_SELF_CONN">SUB_SELF_CONN</a></li><li data-type='member'><a href="mutation.html#.SWAP_NODES">SWAP_NODES</a></li></ul></li><li><a href="rate.html">rate</a><ul class='methods'><li data-type='method'><a href="rate.html#.EXP">EXP</a></li><li data-type='method'><a href="rate.html#.FIXED">FIXED</a></li><li data-type='method'><a href="rate.html#.INV">INV</a></li><li data-type='method'><a href="rate.html#.STEP">STEP</a></li></ul></li><li><a href="selection.html">selection</a><ul class='members'><li data-type='member'><a href="selection.html#.FITNESS_PROPORTIONATE">FITNESS_PROPORTIONATE</a></li><li data-type='member'><a href="selection.html#.POWER">POWER</a></li><li data-type='member'><a href="selection.html#.TOURNAMENT">TOURNAMENT</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#config">config</a></li><li><a href="global.html#GAN">GAN</a></li><li><a href="global.html#sort">sort</a></li></ul>
+</nav>
+
+<div id="main">
+    <div class="columns">
+        <div class="column is-hidden-touch"></div>
+        <div class="column is-11-desktop is-10-widescreen">
+
+            
+
+            
+
+
+
+    
+
+
+    <section class="package">
+        <h3> </h3>		
+    </section>
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    <section class="readme">
+        <article><p align="center">
+ <img src="https://raw.githubusercontent.com/liquidcarrot/carrot/master/logo/carrot-logo_readme.png" alt="Carrot Logo" width="600px"/>
+</p>
+<p align="center">
+    <a href="https://travis-ci.org/liquidcarrot/carrot">
+        <img src="https://travis-ci.org/liquidcarrot/carrot.svg?branch=master"
+             alt="Build Status via Travis CI">
+    </a>
+    <a href="https://www.codacy.com/app/christianechevarria/carrot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=liquidcarrot/carrot&amp;utm_campaign=Badge_Grade">
+        <img src="https://api.codacy.com/project/badge/Grade/3ee723b170f14b4990c8a0a6fc1feb27"
+             alt="Codacy Badge">
+    </a>
+<!--     <a href="https://www.npmjs.com/package/@liquid-carrot/carrot">
+        <img src="https://img.shields.io/npm/d/@liquid-carrot/carrot.svg"
+             alt="Carrot's Monthly Downloads">
+    </a> -->
+    <a href="https://coveralls.io/github/liquidcarrot/carrot?branch=master">
+        <img src="https://coveralls.io/repos/github/liquidcarrot/carrot/badge.svg?branch=master"
+             alt="Coverage Status">
+    </a>
+    <a href="https://gitter.im/carrot-ai/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badgee&utm_content=badge">
+        <img src="https://badges.gitter.im/Join%20Chat.svg"
+             alt="Join the chat at https://gitter.im/carrot-ai/community">
+    </a>
+    <a href="/LICENSE">
+        <img src="https://img.shields.io/badge/License-MIT-blue.svg"
+             alt="Carrot's License">
+    </a>
+    <a href="https://github.com/liquidcarrot/carrot/issues">
+        <img src="https://img.shields.io/badge/Made%20with%20%E2%99%A5%20by-Liquid%20Carrot-ff1414.svg"
+             alt="Made with love">
+    </a>
+</p>
+<p>
+  Carrot is a flexible multi-threaded neural network AI Library for Node.js with neuro-evolution capabilities.
+</p>
+<p>For Documentation, visit <a href="https://liquidcarrot.github.io/carrot">here</a></p>
+<h2>Key Features</h2>
+<ul>
+<li>Multi-threaded</li>
+<li>Fully Documented with <a href="https://liquidcarrot.github.io/carrot">async-style</a> Docs</li>
+<li>Preconfigured GRU, LSTM, NARX Networks</li>
+<li>Mutable Neurons, Layers, Groups, and Networks</li>
+<li><strong>Neuro-evolution</strong> with genetic algorithms</li>
+<li>SVG Network Visualizations using D3.js</li>
+</ul>
+<h2>Install</h2>
+<pre class="prettyprint source lang-bash"><code>$ npm i @liquid-carrot/carrot
+</code></pre>
+<p>Carrot files are hosted by GitHub Pages, just copy this link into the <code>&lt;head&gt;</code> tag:</p>
+<pre class="prettyprint source lang-html"><code>&lt;script src=&quot;https://liquidcarrot.io/carrot/cdn/0.3.1/carrot.js&quot;>&lt;/script>
+</code></pre>
+<h2>Getting Started</h2>
+<p>This is a simple <strong>perceptron</strong>:</p>
+<p><img src="http://www.codeproject.com/KB/dotnet/predictor/network.jpg" alt="perceptron">.</p>
+<p>How to build it with Carrot:</p>
+<pre class="prettyprint source lang-javascript"><code>let { architect } = require('@liquid-carrot/carrot');
+
+// The example Perceptron you see above with 4 inputs, 5 hidden, and 1 output neuron
+let simplePerceptron = new architect.Perceptron(4, 5, 1);
+</code></pre>
+<p>Building networks is easy with <strong>6</strong> built-in networks</p>
+<pre class="prettyprint source lang-javascript"><code>let { architect } = require('@liquid-carrot/carrot');
+
+let LSTM = new architect.LSTM(4, 5, 1);
+
+let GRU = new architect.GRU(4, 5, 1);
+
+let NARX = new architect.NARX(4, 5, 1);
+
+let Hopfield = new architect.Hopfield(4);
+
+let Random = new architect.Random(4, 5, 1);
+
+// Add as many hidden layers as needed
+let Perceptron = new architect.Perceptron(4, 5, 20, 5, 10, 1);
+</code></pre>
+<p>Building custom network architectures</p>
+<pre class="prettyprint source lang-javascript"><code>let architect = require('@liquid-carrot/carrot').architect
+let Layer = require('@liquid-carrot/carrot').Layer
+
+let input = new Layer.Dense(1);
+let hidden1 = new Layer.LSTM(5);
+let hidden2 = new Layer.GRU(1);
+let output = new Layer.Dense(1);
+
+// connect however you want
+input.connect(hidden1);
+hidden1.connect(hidden2);
+hidden2.connect(output);
+
+let network = architect.Construct([input, hidden1, hidden2, output]);
+</code></pre>
+<p>Networks can also shape <strong>themselves</strong> with neuro-evolution</p>
+<pre class="prettyprint source lang-javascript"><code>let { Network, methods } = require('@liquid-carrot/carrot');
+
+// this network learns the XOR gate (through neuro-evolution)
+async function execute () {
+  // no hidden layers...
+   var network = new Network(2,1);
+
+   // XOR dataset
+   var trainingSet = [
+       { input: [0,0], output: [0] },
+       { input: [0,1], output: [1] },
+       { input: [1,0], output: [1] },
+       { input: [1,1], output: [0] }
+   ];
+
+   await network.evolve(trainingSet, {
+       mutation: methods.mutation.FFW,
+       equal: true,
+       error: 0.05,
+       elitism: 5,
+       mutation_rate: 0.5
+   });
+
+   // and it works!
+   network.activate([0,0]); // 0.2413
+   network.activate([0,1]); // 1.0000
+   network.activate([1,0]); // 0.7663
+   network.activate([1,1]); // 0.008
+}
+
+execute();
+</code></pre>
+<p>Build vanilla neural networks</p>
+<pre class="prettyprint source lang-javascript"><code>let Network = require('@liquid-carrot/carrot').Network
+
+let network = new Network([2, 2, 1]) // Builds a neural network with 5 neurons: 2 + 2 + 1
+</code></pre>
+<p>Or implement custom algorithms with neuron-level control</p>
+<pre class="prettyprint source lang-javascript"><code>let Node = require('@liquid-carrot/carrot').Node
+
+let A = new Node() // neuron
+let B = new Node() // neuron
+
+A.connect(B)
+A.activate(0.5)
+console.log(B.activate())
+</code></pre>
+<h2>Try with</h2>
+<h4>Data Sets</h4>
+<ul>
+<li>[ ] <a href="https://www.npmjs.com/package/mnist">MNIST</a></li>
+</ul>
+<h2>Contributors ✨</h2>
+<p>This project exists thanks to all the people who contribute. We can't do it without you! 🙇</p>
+<p>Thanks goes to these wonderful people (<a href="https://allcontributors.org/docs/en/emoji-key">emoji key</a>):</p>
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+<table>
+  <tr>
+    <td align="center"><a href="https://liquidcarrot.io/"><img src="https://avatars3.githubusercontent.com/u/21148993?v=4" width="100px;" alt="Luis Carbonell"/><br /><sub><b>Luis Carbonell</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=luiscarbonell" title="Code">💻</a> <a href="#ideas-luiscarbonell" title="Ideas, Planning, & Feedback">🤔</a> <a href="#review-luiscarbonell" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/liquidcarrot/carrot/commits?author=luiscarbonell" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://liquidcarrot.io"><img src="https://avatars2.githubusercontent.com/u/23618650?v=4" width="100px;" alt="Christian Echevarria"/><br /><sub><b>Christian Echevarria</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=christianechevarria" title="Code">💻</a> <a href="https://github.com/liquidcarrot/carrot/commits?author=christianechevarria" title="Documentation">📖</a> <a href="#infra-christianechevarria" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
+    <td align="center"><a href="https://github.com/dan-ryan"><img src="https://avatars1.githubusercontent.com/u/775672?v=4" width="100px;" alt="Daniel Ryan"/><br /><sub><b>Daniel Ryan</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/issues?q=author%3Adan-ryan" title="Bug reports">🐛</a> <a href="#review-dan-ryan" title="Reviewed Pull Requests">👀</a></td>
+    <td align="center"><a href="https://github.com/IviieMtz"><img src="https://avatars0.githubusercontent.com/u/50965172?v=4" width="100px;" alt="IviieMtz"/><br /><sub><b>IviieMtz</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=IviieMtz" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://github.com/nicszerman"><img src="https://avatars3.githubusercontent.com/u/14032356?v=4" width="100px;" alt="Nicholas Szerman"/><br /><sub><b>Nicholas Szerman</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=nicszerman" title="Code">💻</a></td>
+  </tr>
+</table>
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+<p>This project follows the <a href="https://github.com/all-contributors/all-contributors">all-contributors</a> specification. Contributions of any kind welcome!</p>
+<h2>💬 Contributing</h2>
+<p><a href="https://github.com/liquidcarrot/carrot/issues"><img src="https://img.shields.io/github/issues/liquidcarrot/carrot.svg" alt="Carrot's GitHub Issues"></a></p>
+<p>Your contributions are always welcome! Please have a look at the <a href="https://github.com/liquidcarrot/carrot/blob/master/CONTRIBUTING.md">contribution guidelines</a> first. 🎉</p>
+<p>To build a community welcome to all, Carrot follows the <a href="https://github.com/liquidcarrot/carrot/blob/master/CODE_OF_CONDUCT.md">Contributor Covenant</a> Code of Conduct.</p>
+<p>And finally, a big thank you to all of you for supporting! 🤗</p>
+<details><summary><strong>Planned Features</strong></summary>
+* [ ] Performance Enhancements
+    * [ ] GPU Acceleration
+        * [ ] Tests
+        * [ ] Benchmarks
+    * [ ] Matrix Multiplications
+        * [ ] Tests
+        * [ ] Benchmarks
+    * [ ] Clustering | Multi-Threading
+        * [ ] Tests
+        * [ ] Benchmarks
+* [ ] Syntax Support
+    * [ ] Callbacks
+    * [ ] Promises
+    * [ ] Streaming
+    * [ ] Async/Await
+* [ ] Math Support
+    * [ ] Big Numbers
+    * [ ] Small Numbers
+</details>
+<h2>Patrons</h2>
+<p><a href="https://www.patreon.com/liquidcarrot"><img src="https://img.shields.io/endpoint.svg?color=blue&amp;label=patrons&amp;logo=patrons&amp;url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fliquidcarrot" alt="Carrot's Patrons"></a></p>
+<table>
+ <thead>
+  <tr>
+   <th>Silver Patrons</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td align="center">
+    <a href="https://github.com/D-Nice" alt="D-Nice on Github"><img src="https://avatars0.githubusercontent.com/u/2888248?s=460&v=4" alt="D-Nice Profile Pitcure" width="150px" /></a>
+    <br>
+    <strong>D-Nice</strong>
+   </td>
+  </tr>
+ </tbody>
+</table>
+<table>
+ <thead>
+  <tr>
+   <th>Bronze Patrons</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td align="center">
+    <a href="https://github.com/kappaxbeta" alt="Kappaxbeta on Github"><img src="https://avatars2.githubusercontent.com/u/7612464?s=460&v=4" alt="Kappaxbeta's Profile Pitcure" width="125px" /></a>
+    <br>
+    <strong>Kappaxbeta</strong>
+   </td>
+  </tr>
+ </tbody>
+</table>
+<table>
+ <thead>
+  <tr>
+   <th>Patrons</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+   <td>
+    <a href="http://dollarbizclub.com/" alt="DollarBizClub"><img src="http://dollarbizclub.com/css/img/red400.png" alt="DollarBizClub Logo" width="100px" /></a>
+    <br>
+    <strong>DollarBizClub</strong>
+   </td>
+  </tr>
+ </tbody>
+</table>
+<p><a href="https://www.patreon.com/liquidcarrot"><img src="https://c5.patreon.com/external/logo/become_a_patron_button.png" alt="Become a Patron"></a></p>
+<h2>Acknowledgements</h2>
+<p>A special thanks to <a href="https://github.com/wagenaartje/neataptic/">Neataptic</a>, <a href="https://github.com/cazala/synaptic/">Synaptic</a>, and <a href="https://github.com/BrainJS/brain.js">Brain.js</a>!</p>
+<p>Carrot™ was largely brought about by inspiration from these great libraries.</p></article>
+    </section>
+
+
+
+
+
+
+
+            
+
+        </div>
+        <div class="column is-hidden-touch"></div>
+    </div>
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a> on Sun Aug 11 2019 21:54:07 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/jquery-3.1.1.min.js"></script>
+
+<script src="scripts/search.js"></script>
+
+
+
+
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+  heap.load("1195922815");
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Get all "navbar-burger" elements
+  const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+  // Check if there are any navbar burgers
+  if ($navbarBurgers.length > 0) {
+
+    // Add a click event on each of them
+    $navbarBurgers.forEach( el => {
+      el.addEventListener('click', () => {
+
+        // Get the target from the "data-target" attribute
+        const target = el.dataset.target;
+        const $target = document.getElementById(target);
+
+        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+        el.classList.toggle('is-active');
+        $target.classList.toggle('is-active');
+
+      });
+    });
+  }
+
+});
+</script>
+<script src="scripts/clipboard.min.js"></script>
+<script>
+  // example copying functionality
+  const clipboard = new ClipboardJS('code');
+  const clipboard_button = new ClipboardJS('.copy-button');
+
+  clipboard_button.on('success', (e) => {
+    e.trigger.innerText = "Copied!"
+  });
+
+  const copy_buttons = document.querySelectorAll(".copy-button");
+  
+  copy_buttons.forEach(function(btn) {
+    btn.addEventListener("mouseout", function(e) {
+      setTimeout(function() {
+        e.fromElement.innerText = "Copy"
+      }, 200);
+    });
+  });
+</script>
+<script>prettyPrint();</script>
+</body>
+</html>
