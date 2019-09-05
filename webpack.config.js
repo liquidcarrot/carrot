@@ -1,17 +1,11 @@
 /* Import */
-let fs = require('fs');
-let path = require('path');
-let webpack = require('webpack');
-let CopyWebpackPlugin = require('copy-webpack-plugin');
+const fs = require('fs');
+const path = require('path');
+const webpack = require('webpack');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-/* Update readme and read license */
-let version = require('./package.json').version;
-let readme = fs.readFileSync('./README.md', 'utf-8').replace(
-  /cdn\/(.*)\/carrot.js/, `cdn/${version}/carrot.js`
-);
-fs.writeFileSync('./README.md', readme);
-
-let license = fs.readFileSync('./LICENSE', 'utf-8');
+/* Read license */
+const license = fs.readFileSync('./LICENSE', 'utf-8');
 
 /* Export config */
 module.exports = {

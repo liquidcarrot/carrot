@@ -33,7 +33,15 @@ async function start() {
     // Generate stored doc files version
     await run(`./node_modules/.bin/jsdoc -c jsdoc.json -d ./theme/static/versions/${version}/`, `Building doc files into: ./theme/static/versions/${version}/ directory...`)
 
+    // Generate CDN version
     await run(`./node_modules/.bin/webpack`, "Generating latest CDN dist")
+
+    // Update README CDN version
+    let version = require('./package.json').version;
+    let readme = fs.readFileSync('./README.md', 'utf-8').replace(
+      /cdn\/(.*)\/carrot.js/, `cdn/${version}/carrot.js`
+    );
+    fs.writeFileSync('./README.md', readme);
 
     await run(`git add . && git commit -am 'Update stored doc version ${version}'`, "Committing changes to git")
   }
