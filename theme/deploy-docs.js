@@ -34,7 +34,7 @@ async function start() {
     await run(`./node_modules/.bin/jsdoc -c jsdoc.json -d ./theme/static/versions/${version}/`, `Building doc files into: ./theme/static/versions/${version}/ directory...`)
 
     // Generate CDN version
-    await run(`./node_modules/.bin/webpack`, "Generating latest CDN dist")
+    // await run(`./node_modules/.bin/webpack`, "Generating latest CDN dist")
 
     // Update README CDN version
     let version = require('./package.json').version;
