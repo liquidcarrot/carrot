@@ -4,6 +4,8 @@ const fs = require('fs')
 const exec = util.promisify(require('child_process').exec);
 const version = require('../package.json').version;
 
+
+
 async function run(command, message) {
   console.log(message)
 
@@ -32,8 +34,13 @@ async function start() {
     // Generate stored doc files version
     await run(`./node_modules/.bin/jsdoc -c jsdoc.json -d ./theme/static/versions/${version}/`, `Building doc files into: ./theme/static/versions/${version}/ directory...`)
 
-    // Generate CDN version
-    await run(`./node_modules/.bin/webpack --config webpack.config.js`, "Generating latest CDN dist")
+    // Generate CDN versions
+    await run('./node_modules/.bin/webpack && browserify src/carrot.js -o dist/carrot.js', "Generating latest CDN dist")
+
+    // Add license to carrot.js
+    let license = fs.readFileSync('./LICENSE', 'utf-8');
+    license = "\n\n/*" + license.concat("*/")
+    fs.appendFileSync('dist/carrot.js', license, 'utf8');
 
     // Update CDN version displayed in README
     let readme = fs.readFileSync('./README.md', 'utf-8').replace(

@@ -5,12 +5,11 @@
   "main": "src/carrot",
   "jsdelivr": "dist/carrot.js",
   "scripts": {
+    "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | coveralls && rm -rf ./src-cov",
     "deploy:docs": "node theme/deploy-docs.js",
     "test": "./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha --recursive test/ --exclude test/unit.js",
     "test:debug": "./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha inspect --recursive test/ --exclude test/unit.js",
-    "test:forever": "./node_modules/.bin/nodemon ./node_modules/.bin/mocha --reporter spec test/",
-    "clean:docfiles": "find . -type f -name '*.html' -exec rm {} + && rm -rf styles/ && rm -rf scripts && rm -rf cdn/ && rm -rf img/",
-    "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | coveralls && rm -rf ./src-cov"
+    "test:forever": "./node_modules/.bin/nodemon ./node_modules/.bin/mocha --reporter spec test/"
   },
   "repository": {
     "type": "git",
@@ -64,6 +63,7 @@
     "lodash": "^4.17.11"
   },
   "devDependencies": {
+    "browserify": "^16.5.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chai-each": "0.0.1",

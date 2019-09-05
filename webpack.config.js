@@ -14,7 +14,6 @@ module.exports = {
 	mode: "development",
   context: __dirname,
   entry: {
-    'dist/carrot': './src/carrot.js',
 		'dist/carrot.min': './src/carrot.js',
     [`./theme/static/cdn/${version}/carrot`]: './src/carrot.js'
   },
