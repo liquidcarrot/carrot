@@ -11,10 +11,6 @@
         <img src="https://api.codacy.com/project/badge/Grade/3ee723b170f14b4990c8a0a6fc1feb27"
              alt="Codacy Badge">
     </a>
-<!--     <a href="https://www.npmjs.com/package/@liquid-carrot/carrot">
-        <img src="https://img.shields.io/npm/d/@liquid-carrot/carrot.svg"
-             alt="Carrot's Monthly Downloads">
-    </a> -->
     <a href="https://coveralls.io/github/liquidcarrot/carrot?branch=master">
         <img src="https://coveralls.io/repos/github/liquidcarrot/carrot/badge.svg?branch=master"
              alt="Coverage Status">
