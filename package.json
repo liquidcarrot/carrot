@@ -3,7 +3,7 @@
   "version": "0.3.11",
   "description": "A Simple Node.js AI Library for Neural Network",
   "main": "src/carrot",
-  "jsdelivr": "dist/carrot.js",
+  "jsdelivr": "dist/carrot.min.js",
   "scripts": {
     "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | coveralls && rm -rf ./src-cov",
     "deploy:docs": "node theme/deploy-docs.js",
