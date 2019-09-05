@@ -52,7 +52,8 @@
     "Christian George Echevarria <chris@liquidcarrot.io>"
   ],
   "files": [
-    "/src"
+    "/src",
+    "/dist"
   ],
   "license": "MIT",
   "bugs": {
