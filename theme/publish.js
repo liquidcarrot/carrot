@@ -594,11 +594,20 @@ exports.publish = function(taffyData, opts, tutorials) {
     var fromDir = path.join(templatePath, 'static');
     var staticFiles = fs.ls(fromDir, 10);
 
-    staticFiles.forEach(function(fileName) {
+    if(outdir.includes('versions')) { // building a stored doc version
+      staticFiles.forEach(function(fileName) {
+        if(fileName.includes('versions') || fileName.includes('cdn')) return // skip versions and cdn files
         var toDir = fs.toDir( fileName.replace(fromDir, outdir) );
         fs.mkPath(toDir);
         copyFile(fileName, path.join(toDir, path.basename(fileName)), function(err){if(err) console.err(err);});
-    });
+      });
+    } else { // building regular docs
+      staticFiles.forEach(function(fileName) { // build all files
+        var toDir = fs.toDir(fileName.replace(fromDir, outdir));
+        fs.mkPath(toDir);
+        copyFile(fileName, path.join(toDir, path.basename(fileName)), function(err){if(err) console.err(err);});
+      });
+    }
 
     // copy user-specified static files to outdir
     var staticFilePaths;
