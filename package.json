@@ -50,6 +50,9 @@
     "Luis Ernesto Carbonell <luis@liquidcarrot.io>",
     "Christian George Echevarria <chris@liquidcarrot.io>"
   ],
+  "files": [
+    "/src"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/liquidcarrot/carrot/issues"
