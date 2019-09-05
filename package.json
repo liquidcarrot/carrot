@@ -75,6 +75,7 @@
     "mocha": "^6.1.4",
     "nodemon": "^1.19.1",
     "nyc": "^13.3.0",
+    "terser-webpack-plugin": "^1.4.1",
     "webpack": "^4.39.3",
     "webpack-cli": "^3.3.8"
   },
