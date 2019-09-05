@@ -4,6 +4,7 @@ const path = require('path');
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const version = require('./package.json').version;
 
 /* Read license */
 const license = fs.readFileSync('./LICENSE', 'utf-8');

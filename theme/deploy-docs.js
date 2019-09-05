@@ -2,7 +2,6 @@ const util = require('util');
 const path = require('path');
 const fs = require('fs')
 const exec = util.promisify(require('child_process').exec);
-
 const version = require('../package.json').version;
 
 async function run(command, message) {
@@ -36,8 +35,7 @@ async function start() {
     // Generate CDN version
     await run(`./node_modules/.bin/webpack --config webpack.config.js`, "Generating latest CDN dist")
 
-    // Update README CDN version
-    let version = require('./package.json').version;
+    // Update CDN version displayed in README
     let readme = fs.readFileSync('./README.md', 'utf-8').replace(
       /cdn\/(.*)\/carrot.js/, `cdn/${version}/carrot.js`
     );
