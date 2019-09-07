@@ -1,5 +1,5 @@
 <p align="center">
- <img src="https://raw.githubusercontent.com/liquidcarrot/carrot/master/logo/carrot-logo_readme.png" alt="Carrot Logo" width="600px"/>
+ <img src="https://raw.githubusercontent.com/liquidcarrot/carrot/master/images/carrot-logo_readme.png" alt="Carrot Logo" width="600px"/>
 </p>
 
 <p align="center">
@@ -34,6 +34,10 @@
 </p>
 
 For Documentation, visit [here](https://liquidcarrot.github.io/carrot)
+
+## Demos
+![flappy bird neuro-evolution demo](https://raw.githubusercontent.com/liquidcarrot/carrot/master/images/flappy-bird-demo.gif)
+[See the demo here](https://liquidcarrot.io/example.flappy-bird/ "flappy bird playground")
 
 ## Key Features
 - Multi-threaded
