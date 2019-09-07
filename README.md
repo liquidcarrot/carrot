@@ -37,7 +37,8 @@ For Documentation, visit [here](https://liquidcarrot.github.io/carrot)
 
 ## Demos
 ![flappy bird neuro-evolution demo](https://raw.githubusercontent.com/liquidcarrot/carrot/master/images/flappy-bird-demo.gif)
-[See the demo here](https://liquidcarrot.io/example.flappy-bird/ "flappy bird playground")
+<br>
+[Flappy bird neuro-evolution](https://liquidcarrot.io/example.flappy-bird/ "flappy bird playground")
 
 ## Key Features
 - Multi-threaded
