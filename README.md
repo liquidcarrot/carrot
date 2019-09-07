@@ -35,18 +35,19 @@
 
 For Documentation, visit [here](https://liquidcarrot.github.io/carrot)
 
+## Key Features
+- [Simple & easy docs](https://liquidcarrot.github.io/carrot)
+- Built in neuro-evolution
+- Multi-threading capabilities
+- Preconfigured GRU, LSTM, NARX Networks
+- Mutable Neurons, Layers, Groups, and Networks
+- SVG Network Visualizations using D3.js
+
 ## Demos
 ![flappy bird neuro-evolution demo](https://raw.githubusercontent.com/liquidcarrot/carrot/master/images/flappy-bird-demo.gif)
 <br>
 [Flappy bird neuro-evolution](https://liquidcarrot.io/example.flappy-bird/ "flappy bird playground")
 
-## Key Features
-- Multi-threaded
-- Fully Documented with [async-style](https://liquidcarrot.github.io/carrot) Docs
-- Preconfigured GRU, LSTM, NARX Networks
-- Mutable Neurons, Layers, Groups, and Networks
-- **Neuro-evolution** with genetic algorithms
-- SVG Network Visualizations using D3.js
 
 ## Install
 
