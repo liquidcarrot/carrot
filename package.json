@@ -2,10 +2,14 @@
   "name": "@liquid-carrot/carrot",
   "version": "0.3.11",
   "description": "A Simple Node.js AI Library for Neural Network",
-  "main": "src/carrot",
-  "jsdelivr": "dist/carrot.min.js",
+  "main": "dist/carrot.commonjs2.min.js",
+  "module": "dist/carrot.commonjs2.min.js",
+  "browser": "dist/carrot.window.min.js",
+  "unpkg": "dist/carrot.umd2.min.js",
+  "jsdeliver": "dist/carrot.umd2.min.js",
   "scripts": {
     "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | coveralls && rm -rf ./src-cov",
+    "build:src": "./node_modules/.bin/webpack",
     "deploy:docs": "node theme/deploy-docs.js",
     "test": "./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha --recursive test/ --exclude test/unit.js",
     "test:debug": "./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha inspect --recursive test/ --exclude test/unit.js",
@@ -63,19 +67,17 @@
     "lodash": "^4.17.11"
   },
   "devDependencies": {
-    "browserify": "^16.5.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chai-each": "0.0.1",
     "chalk": "^2.4.2",
-    "copy-webpack-plugin": "^5.0.4",
     "coveralls": "^3.0.4",
     "faker": "^4.1.0",
     "jsdoc": "^3.6.2",
     "mocha": "^6.1.4",
     "nodemon": "^1.19.1",
     "nyc": "^13.3.0",
-    "terser-webpack-plugin": "^1.4.1",
+    "parallel-webpack": "^2.4.0",
     "webpack": "^4.39.3",
     "webpack-cli": "^3.3.8"
   },
@@ -87,9 +89,5 @@
       "test",
       "util"
     ]
-  },
-  "browser": {
-    "fs": false,
-    "child_process": false
   }
 }

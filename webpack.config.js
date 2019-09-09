@@ -1,52 +1,30 @@
+// CHECK: https://tech.trivago.com/2015/12/17/export-multiple-javascript-module-formats/
+// CHECK: https://github.com/vuejs/vue/blob/dev/package.json
+
 /* Import */
 const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
-const TerserPlugin = require('terser-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const version = require('./package.json').version;
+const variants = require("parallel-webpack").createVariants;
 
 /* Read license */
 const license = fs.readFileSync('./LICENSE', 'utf-8');
 
-/* Export config */
-module.exports = {
-	mode: "development",
-  context: __dirname,
-  entry: {
-		'dist/carrot.min': './src/carrot.js',
-    [`./theme/static/cdn/${version}/carrot`]: './src/carrot.js'
-  },
-  resolve: {
-    modules: [
-      path.join(__dirname, 'node_modules')
-    ]
-  },
-	output: {
-		path: __dirname,
-		filename: '[name].js',
-		library: 'carrot',
-		libraryTarget: 'umd'
-	},
-	optimization: {
-    minimize: true,
-    minimizer: [new TerserPlugin({
-      include: /\.min\.js$/
-    })]
-  },
-	plugins: [
-    new webpack.NoEmitOnErrorsPlugin(),
-    new webpack.BannerPlugin(license),
-    new webpack.optimize.ModuleConcatenationPlugin(),
-    new CopyWebpackPlugin([
-      { from: 'src/multithreading/workers/node/worker.js', to: 'dist' }
-    ])
-  ],
-  externals: [
-    'child_process',
-    'os'
-  ],
-  node: {
-    __dirname: false
+function config(options) {
+  return {
+    "entry": "./src/carrot.js",
+    "output": {
+      "path": path.resolve(__dirname, "dist"),
+      "filename": `carrot.${options.target}${options.mode === "development" ? "" : ".min"}.js`,
+      "library": "Carrot",
+      "libraryTarget": options.target,
+			"plugins": [new webpack.BannerPlugin(license)],
+    },
   }
 }
+
+/* Export config */
+module.exports = variants({
+  target: ["window", "commonjs2", "amd", "umd2"],
+	mode: ["development", "production"]
+}, config);
