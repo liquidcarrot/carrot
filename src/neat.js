@@ -277,6 +277,42 @@ const Neat = function(inputs, outputs, dataset, options) {
   };
 
   /**
+  * Resizes the population and adjusts the `population_size`
+  *
+  * @param {Network[]|number} update An array of new networks to add to the existing population or a new size for the population.
+  *
+  * @example
+  * let neat = new Neat() // default population_size = 50
+  *
+  * neat.resize(51) // Adds 1 new network to make the 51 population members
+  *
+  * let neat2 = new Neat()
+  *
+  * neat.resize(neat2.population) // Adds neat2 population to neat, neat now has 101 networks
+  *
+  * console.log(neat.population_size) // 101
+  */
+  self.resize = function(update) {
+    if(typeof update == 'number' || typeof update == 'string' &&	+update === +update) {
+      let offset = update - self.population.length;
+
+      if(offset > 0) {
+        while(offset-- > 0) self.population.push(self.getOffspring())
+      } else {
+        while(offset++ < 0) self.population.pop() // if population sorted, removes least fit first
+      }
+    } else if (Array.isArray(update) && update.length) {
+      for(let i = 0; i < update.length; i++) self.population.push(update[i])
+    } else {
+      throw new Error("Neat.resize needs a number or an array of new population members!")
+    }
+
+    self.population_size = self.population.length
+
+    return self.population
+}
+
+  /**
    * Mutates the given (or current) population
    *
    * @function mutate
