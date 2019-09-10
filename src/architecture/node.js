@@ -83,7 +83,7 @@ function Node(options) {
   *
   * @param {number} [input] Environment signal (i.e. optional numerical value passed to the network as input)  - _should only be passed in input neurons_
   * @param {Object} [options]
-  * @param {boolean} [options.trace]
+  * @param {boolean} [options.trace] Controls whether traces are created when activation happens (a trace is meta information left behind for different uses, e.g. backpropagation).
   *
   * @returns {number} A neuron's ['Squashed'](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) output value
   *
