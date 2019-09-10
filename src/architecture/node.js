@@ -174,13 +174,10 @@ function Node(options) {
 
       // Activate (from incoming connections)
       for (let i = 0; i < self.connections_incoming.length; i++) {
-        const connection = self.connections[i];
+        const connection = self.connections_incoming[i];
 
         self.state += connection.from.activation * connection.weight * connection.gain;
       }
-      // self.connections_incoming.forEach(function(connection, index) {
-      //   self.state += connection.from.activation * connection.weight * connection.gain;
-      // })
 
       // Squash Activation
       self.activation = self.squash(self.state);
