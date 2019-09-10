@@ -86,7 +86,8 @@
   },
   "nyc": {
     "include": [
-      "src/architecture/*.js"
+      "src/architecture/*.js",
+      "src/neat.js"
     ],
     "exclude": [
       "test",
