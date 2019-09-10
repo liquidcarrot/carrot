@@ -117,7 +117,7 @@ function Network(input_size, output_size) {
    *
    * @param {number[]} [input] Input values to activate nodes with
    * @param {Number} [options.dropout_rate=0] The dropout rate. [dropout](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5)
-   * @param {bool} [options.no_trace=false] Activate without leaving a trace (trace is meta information left behind for different uses, e.g. backpropagation).
+   * @param {bool} [options.traces = true] Controls whether traces are created when activation happens (a trace is meta information left behind for different uses, e.g. backpropagation).
    * @returns {number[]} Squashed output values
    *
    * @example
@@ -128,7 +128,7 @@ function Network(input_size, output_size) {
    *
    * myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
-  self.activate = function(input, { dropout_rate = 0, no_trace = false } = {}) {
+  self.activate = function(input, { dropout_rate = 0, traces = true } = {}) {
     // Activate nodes chronologically - first input, then hidden, then output
     // activate input nodes
     // TODO: fix, this should be activated according to nodes order
@@ -139,11 +139,10 @@ function Network(input_size, output_size) {
       }
       const node = self.nodes[i];
       if (!self.input_nodes.has(node)) continue;
-      // only activate input nodes this run
-      if (no_trace) {
-        node.noTraceActivate(input[input_node_index++]);
-      } else {
+      if (traces) {
         node.activate(input[input_node_index++]);
+      } else {
+        node.noTraceActivate(input[input_node_index++]);
       }
     }
     if (input_node_index !== input.length) {
@@ -156,10 +155,10 @@ function Network(input_size, output_size) {
       if (self.input_nodes.has(node) || self.output_nodes.has(node)) return;
 
       if (dropout_rate) node.mask = Math.random() < dropout_rate ? 0 : 1;
-      if (no_trace) {
-        node.noTraceActivate();
-      } else {
+      if (traces) {
         node.activate();
+      } else {
+        node.noTraceActivate();
       }
     });
 
@@ -172,10 +171,10 @@ function Network(input_size, output_size) {
       if (!self.output_nodes.has(node)) continue;
       // only activate output nodes this run
       let node_output;
-      if (no_trace) {
-        node_output = node.noTraceActivate();
-      } else {
+      if (traces) {
         node_output = node.activate();
+      } else {
+        node_output = node.noTraceActivate();
       }
       output.push(node_output);
     }
@@ -186,7 +185,7 @@ function Network(input_size, output_size) {
   }
 
   /**
-   * Deprecated, here for backwards compatibility only! Simply calls `.activate()` with option `no_trace: true`
+   * Deprecated, here for backwards compatibility only! Simply calls `.activate()` with option `traces: false`
    *
    * Activates network without creating traces
    *
@@ -213,7 +212,7 @@ function Network(input_size, output_size) {
    * myNetwork.noTraceActivate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
   self.noTraceActivate = function(input) {
-    return self.activate(input, { no_trace: true });
+    return self.activate(input, { traces: false });
   }
 
   /**
@@ -523,7 +522,7 @@ function Network(input_size, output_size) {
         return (method.mutateOutput || self.nodes.length > self.input_size + self.output_size) ? [] : false
       }
       case "ADD_SELF_CONN": {
-        
+
         for (let i = self.input_size; i < self.nodes.length; i++) {
           const node = self.nodes[i]
           if (node.connections_self.weight === 0) candidates.push(node)
@@ -607,9 +606,9 @@ function Network(input_size, output_size) {
    */
   self.mutate = function(method, options) {
     if (typeof method === 'undefined') throw new Error('Mutate method is undefined!')
-    
+
     const { maxNodes, maxConns, maxGates } = options || {}
-    
+
     // Helper function. TODO: Read the comment inside
     const getRandomConnection = () => {
       if (self.nodes.length <= self.input_size) throw Error('No connections can be chosen');
@@ -643,10 +642,10 @@ function Network(input_size, output_size) {
          * or throw an error
          */
         if (self.nodes.length <= self.input_size) return null;
-        
+
         // Check user constraint
         if(self.nodes. length >= maxNodes) return null;
-        
+
         // Look for an existing connection and place a node in between
         const connection = getRandomConnection();
         self.disconnect(connection.from, connection.to);
@@ -668,7 +667,7 @@ function Network(input_size, output_size) {
         const gater = connection.gater;
         // Check if the original connection was gated
         if (gater != null) self.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2);
-        
+
         return self;
       }
       case "SUB_NODE": {
@@ -682,7 +681,7 @@ function Network(input_size, output_size) {
       case "ADD_CONN": {
         // Check user constraint
         if(self.connections.length >= maxConns) return null
-        
+
         const possible = self.possible(method);
         if (possible) {
           const pair = possible[Math.floor(Math.random() * possible.length)];
@@ -766,7 +765,7 @@ function Network(input_size, output_size) {
       case "ADD_GATE": {
         // Check user constraint
         if(self.gates.length >= maxGates) return null
-        
+
         const possible = self.possible(method);
         if (possible) {
           // Select a random gater node and connection, can't be gated by input
@@ -834,7 +833,7 @@ function Network(input_size, output_size) {
       }
     }
   }
-  
+
   /**
    * Selects a random mutation method and returns a mutated copy of the network. Warning! Mutates network directly.
    *
@@ -854,16 +853,16 @@ function Network(input_size, output_size) {
    */
   self.mutateRandom = function(allowedMethods, options) {
     const possible = (Array.isArray(allowedMethods) && allowedMethods.length) ? _.cloneDeep(allowedMethods) : _.cloneDeep(methods.mutation.ALL)
-    
+
     while(possible.length > 0) {
       const x = Math.floor(Math.random() * possible.length)
       const current = possible[x]
-      
+
       if(self.mutate(current, options)) return self
-      
+
       possible.splice(x,1)
     }
-    
+
     // Return null when mutation is impossible
     return null
   }
@@ -1128,7 +1127,7 @@ function Network(input_size, output_size) {
     _.times(set.length, (index) => {
       let input = set[index].input;
       let target = set[index].output;
-      let output = self.activate(input, {no_trace: true});
+      let output = self.activate(input, { traces: false });
       error += cost(target, output);
     });
 
