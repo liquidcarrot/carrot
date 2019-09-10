@@ -111,43 +111,49 @@ function Node(options) {
 
     if(input != undefined && Number.isFinite(input)) {
       return self.activation = input;
-    } else if(options.trace) {
-      // Update traces
-      const nodes = [];
-      const influences = [];
+    }
 
-      self.old = self.state;
-
+    // DRY abstraction
+    const activate = function() {
       // Activate (from self)
       self.state = self.connections_self.gain * self.connections_self.weight * self.state + self.bias;
 
       // Activate (from incoming connections)
       for (let i = 0; i < self.connections_incoming.length; i++) {
-        const connection = self.connections_incoming[i];
-
-        self.state += connection.from.activation * connection.weight * connection.gain;
+        const conn = self.connections_incoming[i];
+        self.state += conn.from.activation * conn.weight * conn.gain;
       }
 
-      // Squash Activation
-      self.activation = self.squash(self.state) * self.mask;
-      self.derivative = self.squash(self.state, true);
+      return self.state
+    }
 
-      // Adjusting `gain` (to gated connections)
+    if(options.trace) {
+      self.old = self.state;
+
+      self.state = activate()
+      self.activation = self.squash(self.state) * self.mask // Squash Activation
+      self.derivative = self.squash(self.state, true)
+
+      // Stores traces
+      const nodes = [];
+      const influences = [];
+
+      // Adjust 'gain' (to gated connections) & Build traces
       for (let i = 0; i < self.connections_gated.length; i++) {
         const connection = self.connections_gated[i];
-        const index = nodes.indexOf(connection.to);
+        connection.gain = self.activation
 
-        if(index > -1) influences[index] += connection.weight * connection.from.activation;
-        else {
+        // Build traces
+        const index = nodes.indexOf(connection.to);
+        if(index > -1) { // Node & influence exist
+          influences[index] += connection.weight * connection.from.activation;
+        } else { // Add node & corresponding influence
           nodes.push(connection.to);
           influences.push(connection.weight * connection.from.activation + (connection.to.connections_self.gater === self ? connection.to.old : 0));
         }
-
-        // Adjust `gain`
-        connection.gain = self.activation;
       }
 
-      // Forwarding `xtrace` (to incoming connections)
+      // Forwarding 'xtrace' (to incoming connections)
       for (let i = 0; i < self.connections_incoming.length; i++) {
         const connection = self.connections_incoming[i];
 
@@ -169,23 +175,15 @@ function Node(options) {
 
       return self.activation;
     } else {
-      // Activate (from self)
-      self.state = self.connections_self.gain * self.connections_self.weight * self.state + self.bias;
+      if(self.type === "input") return self.activation = 0
 
-      // Activate (from incoming connections)
-      for (let i = 0; i < self.connections_incoming.length; i++) {
-        const connection = self.connections_incoming[i];
+      self.state = activate()
+      self.activation = self.squash(self.state) // Squash Activation
 
-        self.state += connection.from.activation * connection.weight * connection.gain;
+      // Adjust 'gain' (to gated connections)
+      for (let i = 0; i < self.connections_gated.length; i++) {
+        self.connections_gated[i].gain = self.activation
       }
-
-      // Squash Activation
-      self.activation = self.squash(self.state);
-
-      // Adjusting `gain` (to gated connections)
-      self.connections_gated.forEach(function(gate) {
-        gate.gain = self.activation;
-      })
 
       return self.activation;
     }
@@ -213,28 +211,7 @@ function Node(options) {
   * node.noTraceActivate(); // 0.4923128591923
   */
   self.noTraceActivate = function(input) {
-    // Check if an input is given
-    if (input != undefined) {
-      if(Number.isFinite(input)) return self.activation = input;
-      else throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
-    } else if(self.type === "input") return self.activation = 0;
-
-    // Activate (from self)
-    self.state = self.connections_self.gain * self.connections_self.weight * self.state + self.bias;
-
-    // Activate (from incoming connections)
-    self.connections_incoming.forEach(function(connection, index) {
-      self.state += connection.from.activation * connection.weight * connection.gain;
-    })
-
-    // Squash the values received
-    self.activation = self.squash(self.state);
-
-    self.connections_gated.forEach(function(gate) {
-      gate.gain = self.activation;
-    })
-
-    return self.activation;
+    return self.activate(input, { trace: false })
   },
 
   /**

@@ -117,7 +117,7 @@ function Network(input_size, output_size) {
    *
    * @param {number[]} [input] Input values to activate nodes with
    * @param {Number} [options.dropout_rate=0] The dropout rate. [dropout](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5)
-   * @param {bool} [options.traces = true] Controls whether traces are created when activation happens (a trace is meta information left behind for different uses, e.g. backpropagation).
+   * @param {bool} [options.trace=true] Controls whether traces are created when activation happens (a trace is meta information left behind for different uses, e.g. backpropagation).
    * @returns {number[]} Squashed output values
    *
    * @example
@@ -128,7 +128,7 @@ function Network(input_size, output_size) {
    *
    * myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
-  self.activate = function(input, { dropout_rate = 0, traces = true } = {}) {
+  self.activate = function(input, { dropout_rate = 0, trace = true } = {}) {
     // Activate nodes chronologically - first input, then hidden, then output
     // activate input nodes
     // TODO: fix, this should be activated according to nodes order
@@ -139,7 +139,7 @@ function Network(input_size, output_size) {
       }
       const node = self.nodes[i];
       if (!self.input_nodes.has(node)) continue;
-      if (traces) {
+      if (trace) {
         node.activate(input[input_node_index++]);
       } else {
         node.noTraceActivate(input[input_node_index++]);
@@ -155,7 +155,7 @@ function Network(input_size, output_size) {
       if (self.input_nodes.has(node) || self.output_nodes.has(node)) return;
 
       if (dropout_rate) node.mask = Math.random() < dropout_rate ? 0 : 1;
-      if (traces) {
+      if (trace) {
         node.activate();
       } else {
         node.noTraceActivate();
@@ -171,7 +171,7 @@ function Network(input_size, output_size) {
       if (!self.output_nodes.has(node)) continue;
       // only activate output nodes this run
       let node_output;
-      if (traces) {
+      if (trace) {
         node_output = node.activate();
       } else {
         node_output = node.noTraceActivate();
@@ -185,7 +185,7 @@ function Network(input_size, output_size) {
   }
 
   /**
-   * Deprecated, here for backwards compatibility only! Simply calls `.activate()` with option `traces: false`
+   * Deprecated, here for backwards compatibility only! Simply calls `.activate()` with option `trace: false`
    *
    * Activates network without creating traces
    *
@@ -212,7 +212,7 @@ function Network(input_size, output_size) {
    * myNetwork.noTraceActivate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
   self.noTraceActivate = function(input) {
-    return self.activate(input, { traces: false });
+    return self.activate(input, { trace: false });
   }
 
   /**
@@ -1127,7 +1127,7 @@ function Network(input_size, output_size) {
     _.times(set.length, (index) => {
       let input = set[index].input;
       let target = set[index].output;
-      let output = self.activate(input, { traces: false });
+      let output = self.activate(input, { trace: false });
       error += cost(target, output);
     });
 
