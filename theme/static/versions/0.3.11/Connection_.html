@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>Liquid Carrot - Global - Documentation</title>
+    <title>Liquid Carrot - Connection - Documentation</title>
     <link rel="shortcut icon" href="/liquid-carrot-favicon.png" />
     
     
@@ -118,7 +118,7 @@
         <div class="column is-11-desktop is-10-widescreen">
 
             
-                <h1 class="page-title">Global</h1>
+                <h1 class="page-title">Connection</h1>
             
 
             
@@ -139,66 +139,308 @@
         <div class="container-overview">
         
             
-            
-
-
-
-<dl class="details">
 
     
 
+    <h4 class="name" id="Connection"><span class="type-signature"></span>new Connection
     
+    <span class="signature mobile-break">(from, to, weight<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>)</span><span class="type-signature mobile-break"></span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
 
     
 
-    
 
-    
 
-    
+<div class="description">
+    <p>A connection instance describes the connection between two nodes. If you're looking for connections between <a href="Group">Groups</a> please see <a href="connection">Connection Methods</a></p>
+</div>
 
-    
 
-    
 
+    <h5>Parameters:</h5>
     
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-            
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
         
-        </div>
-    
+        <th>Name</th>
+        
 
-    
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-        <h3 class="main-subsection-title">Members</h3>
+        <th>Type</th>
 
         
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
             
-<h4 class="name" id="config"><span class="type-signature"></span>config<span class="type-signature"></span></h4>
+                <td class="name"><code>from</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type"><a href="Node.html">Node</a></span>
+
+
+                
+                
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+            
+                <td class="description last"><p>Connection origin node (neuron)</p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>to</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type"><a href="Node.html">Node</a></span>
+
+
+                
+                
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+            
+                <td class="description last"><p>Connection destination node (neuron)</p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>weight</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">number</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                    <code>random</code>
+                
+                </td>
+            
+            
+                <td class="description last"><p>Weight of the connection</p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            
+
+            
+                <td colspan="2" class="description last">
+                    
+                    <h6>Properties</h6>
+                    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>gain</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">number</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                    <code>1</code>
+                
+                </td>
+            
+            
+                <td class="description last"></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gater</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type"><a href="Node.html">Node</a></span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+            
+                <td class="description last"></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+                </td>
+            
+
+            
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -242,13 +484,13 @@
 
         <tr>
             
-                <td class="name"><code>warnings</code></td>
+                <td class="name"><code>from</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">boolean</span>
+<span class="param-type"><a href="Node.html">Node</a></span>
 
 
             
@@ -259,12 +501,292 @@
             
                 <td class="default">
                 
-                    <code>false</code>
+                </td>
+            
+
+            <td class="description last"><p>Connection origin node (neuron)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>to</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Node.html">Node</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Connection destination node (neuron)</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>weight</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>random</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Weight of the connection</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gain</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>1</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Used for gating, gets multiplied with weight</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gater</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Node.html">Node</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>null</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>The node gating this connection</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>elegibility</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>0</code>
                 
                 </td>
             
 
             <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>xtrace_nodes</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="Node.html">Node</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>xtrace_values</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;number></span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>delta_weights</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;number></span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>delta_weights_previous</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>0</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Tracks <a href="https://www.willamette.edu/~gorr/classes/cs449/momrate.html">momentum</a></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>delta_weights_total</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>0</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Tracks <a href="https://www.willamette.edu/~gorr/classes/cs449/momrate.html">momentum</a> - <em>for <a href="https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes">batch training</a></em></p></td>
         </tr>
 
     
@@ -279,7 +801,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="config.js.html">config.js</a>, <a href="config.js.html#line1">line 1</a>
+        <a href="architecture_connection.js.html">architecture/connection.js</a>, <a href="architecture_connection.js.html#line30">line 30</a>
     </li></ul></dd>
     
 
@@ -308,11 +830,35 @@
     
 
     
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="connection.html">Connection Methods</a></li>
+        
+            <li><a href="Node.html">Node</a></li>
+        </ul>
+    </dd>
+    
 
     
 </dl>
 
         
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
     
 
     
@@ -323,97 +869,9 @@
 
     
 
-    <h4 class="name" id="GAN"><span class="type-signature"></span>GAN
+    <h4 class="name" id=".innovationID"><span class="type-signature">(static) </span>innovationID
     
-    <span class="signature mobile-break">()</span><span class="type-signature mobile-break"></span>
-
-    
-      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
-    
-
-    </h4>
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="gan.js.html">gan.js</a>, <a href="gan.js.html#line6">line 6</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-        
-            
-
-    
-
-    <h4 class="name" id="sort"><span class="type-signature"></span>sort
-    
-    <span class="signature mobile-break">(A)</span><span class="type-signature mobile-break"> &rarr; {undefined}</span>
+    <span class="signature mobile-break">(a, b)</span><span class="type-signature mobile-break"> &rarr; {number}</span>
 
     
       <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
@@ -426,7 +884,7 @@
 
 
 <div class="description">
-    <p>Sorts the population by score. Warning! Mutates the population directly</p>
+    <p>Returns an innovation ID</p>
 </div>
 
 
@@ -454,14 +912,14 @@
 
         <tr>
             
-                <td class="name"><code>A</code></td>
+                <td class="name"><code>a</code></td>
             
 
             
                 <td class="type">
                 
                     
-<span class="param-type">Array.&lt;network></span>
+<span class="param-type">number</span>
 
 
                 
@@ -473,7 +931,34 @@
 
             
             
-                <td class="description last"><p>population to sort</p></td>
+                <td class="description last"><p>A <a href="https://en.wikipedia.org/wiki/Natural_number">natural number</a>, which is an integer greater than or equal to zero</p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>b</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">number</span>
+
+
+                
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>A <a href="https://en.wikipedia.org/wiki/Natural_number">natural number</a>, which is an integer greater than or equal to zero</p></td>
             
         </tr>
 
@@ -484,176 +969,39 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="neat.js.html">neat.js</a>, <a href="neat.js.html#line629">line 629</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
+<h5>Returns:</h5>
 
         
-    
-
-    
-        <h3 class="main-subsection-title">Type Definitions</h3>
-
-        
-                
-<h4 class="name" id="data">data</h4>
-
-
-
-
-
-
-    <h5>Type:</h5>
+<div class="param-desc">
     <ul>
-        <li>
-            
-<span class="param-type">Object</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-
-
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
+<li>An Integer that uniquely represents a pair of Integers</li>
+</ul>
+</div>
 
     
 
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>data.input</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;number></span>
 
 
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>data.output</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;number></span>
 
 
-            
-            </td>
 
-            
 
-            
 
-            <td class="description last"></td>
-        </tr>
 
-    
-    </tbody>
-</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -663,7 +1011,114 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="population.js.html">population.js</a>, <a href="population.js.html#line114">line 114</a>
+        <a href="architecture_connection.js.html">architecture/connection.js</a>, <a href="architecture_connection.js.html#line80">line 80</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://en.wikipedia.org/wiki/Pairing_function%20(Cantor%20pairing%20function)">Pairing function (Cantor pairing function)</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".toJSON"><span class="type-signature">(static) </span>toJSON
+    
+    <span class="signature mobile-break">()</span><span class="type-signature mobile-break"> &rarr; {object}</span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Returns the connection as a JSON</p>
+</div>
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Returns connection as a JSON</p>
+</div>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_connection.js.html">architecture/connection.js</a>, <a href="architecture_connection.js.html#line57">line 57</a>
     </li></ul></dd>
     
 
@@ -696,521 +1151,9 @@
     
 </dl>
 
-            
-                
-<h4 class="name" id="Dataset">Dataset</h4>
-
-
-
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">Array.&lt;<a href="global.html#data">data</a>></span>
-|
-
-<span class="param-type">Array.&lt;<a href="global.html#state">state</a>></span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="population.js.html">population.js</a>, <a href="population.js.html#line120">line 120</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-            
-                
-<h4 class="name" id="EvolutionaryPeriod">EvolutionaryPeriod</h4>
-
-
-
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">Object</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-
-
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
         
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
     
 
-        <tr>
-            
-                <td class="name"><code>generations</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>time</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>error</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>networks</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last">
-                <h6>Properties</h6>
-
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>best</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Network.html">Network</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>worst</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Network.html">Network</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>all</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;<a href="Network.html">Network</a>></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-            </td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="population.js.html">population.js</a>, <a href="population.js.html#line124">line 124</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-            
-                
-<h4 class="name" id="state">state</h4>
-
-
-
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">Object</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-
-
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>state.information</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;number></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>state.action</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;number></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>state.reward</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;number></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="population.js.html">population.js</a>, <a href="population.js.html#line107">line 107</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-            
     
 
     
@@ -1232,7 +1175,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a> on Tue Sep 10 2019 17:26:00 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a> on Tue Sep 10 2019 17:26:01 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 <script src="scripts/linenumber.js"></script>
 
