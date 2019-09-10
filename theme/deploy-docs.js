@@ -24,28 +24,23 @@ async function start() {
   // Stash previous changes
   await run(`> .temp && git add . && git stash`, "Storing any changes to restore later")
 
-  const versions = await fs.readdirSync(path.join(__dirname, '/static/versions/'))
+  // Generate stored doc files version
+  await run(`./node_modules/.bin/jsdoc -c jsdoc.json -d ./theme/static/versions/${version}/`, `Building doc files into: ./theme/static/versions/${version}/ directory...`)
 
-  if(versions[Object.keys(versions).length-1] !== version) {
-    console.log('Missing latest package version from stored doc versions')
+  // Update CDN version displayed in README
+  // let readme = fs.readFileSync('./README.md', 'utf-8').replace(
+  //   /cdn\/(.*)\/carrot.js/, `cdn/${version}/carrot.js`
+  // );
+  // fs.writeFileSync('./README.md', readme);
 
-    // Generate stored doc files version
-    await run(`./node_modules/.bin/jsdoc -c jsdoc.json -d ./theme/static/versions/${version}/`, `Building doc files into: ./theme/static/versions/${version}/ directory...`)
-
-    // Update CDN version displayed in README
-    // let readme = fs.readFileSync('./README.md', 'utf-8').replace(
-    //   /cdn\/(.*)\/carrot.js/, `cdn/${version}/carrot.js`
-    // );
-    // fs.writeFileSync('./README.md', readme);
-
-    await run(`git add . && git commit -am 'Update stored doc version ${version}'`, "Committing changes to git")
-  }
+  // Commit stored doc files version
+  await run(`git add . && git commit -am 'Update stored doc version ${version}'`, "Committing version to git")
 
   // Generate current docfiles
-  await run(`./node_modules/.bin/jsdoc -c jsdoc.json -d .`, 'Building latest doc files')
+  await run(`./node_modules/.bin/jsdoc -c jsdoc.json -d .`, 'Building live docs files')
 
   // Push files into gh-pages (i.e. deploy the docs)
-  await run("git add . && git stash && git branch -D gh-pages && git checkout -b gh-pages && git merge --squash --strategy-option=theirs stash && git stash drop && git commit -m 'Auto-build' && git push origin gh-pages -f && git checkout -", "Deploying docs")
+  await run(`git add . && git stash && git branch -D gh-pages && git checkout -b gh-pages && git merge --squash --strategy-option=theirs stash && git stash drop && git commit -m 'Auto-build ${version}' && git push origin gh-pages -f && git checkout -`, "Deploying docs")
 
   // Restore previous changes
   await run(`git stash pop && rm -f .temp && git add .temp`, "Restoring any of your changes")
