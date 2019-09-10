@@ -132,6 +132,7 @@ function Network(input_size, output_size) {
     // Activate nodes chronologically - first input, then hidden, then output
     // activate input nodes
     // TODO: fix, this should be activated according to nodes order
+
     let input_node_index = 0;
     for (let i = 0; i < self.nodes.length; i++) {
       if (input_node_index === self.input_nodes.size) {
@@ -139,11 +140,8 @@ function Network(input_size, output_size) {
       }
       const node = self.nodes[i];
       if (!self.input_nodes.has(node)) continue;
-      if (trace) {
-        node.activate(input[input_node_index++]);
-      } else {
-        node.noTraceActivate(input[input_node_index++]);
-      }
+
+      node.activate(input[input_node_index++], { trace })
     }
     if (input_node_index !== input.length) {
       throw Error(`There are ${input_node_index} input nodes, but ${input.length} inputs were passed`);
@@ -155,11 +153,8 @@ function Network(input_size, output_size) {
       if (self.input_nodes.has(node) || self.output_nodes.has(node)) return;
 
       if (dropout_rate) node.mask = Math.random() < dropout_rate ? 0 : 1;
-      if (trace) {
-        node.activate();
-      } else {
-        node.noTraceActivate();
-      }
+
+      node.activate({ trace })
     });
 
     const output = [];
@@ -169,18 +164,15 @@ function Network(input_size, output_size) {
       }
       const node = self.nodes[i];
       if (!self.output_nodes.has(node)) continue;
+
       // only activate output nodes this run
-      let node_output;
-      if (trace) {
-        node_output = node.activate();
-      } else {
-        node_output = node.noTraceActivate();
-      }
-      output.push(node_output);
+      output.push(node.activate({ trace }))
     }
+
     if (output.length !== self.output_nodes.size) {
       throw Error(`There are ${self.output_nodes.size} output nodes, but ${output.length} outputs were passed`);
     }
+    
     return output;
   }
 
