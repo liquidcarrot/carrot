@@ -431,6 +431,57 @@ describe("Neat", function() {
     it("neat.replace(population, filter=Function, transform=Network) => {Network[]}")
     it("neat.replace(population, filter=Function, transform=Function) => {Network[]}")
   })
+  describe("neat.resize()", function() {
+    it("neat.resize() | throws an Error", function() {
+      let neat = new Neat()
+
+      assert.throws(neat.resize, Error)
+    })
+    it("neat.resize(*) => {Network[]}", function() {
+      let neat = new Neat()
+      let neat2 = new Neat()
+
+      expect(neat.resize(3)).an("array")
+      expect(neat.resize(neat2.population)).an("array")
+      expect(neat.resize(2)).an("array")
+    })
+    it("neat.resize(*) | population_size equals population.length", function() {
+      let neat = new Neat({ population_size: 3 })
+
+      neat.resize(5)
+
+      expect(neat.population_size).equals(neat.population.length)
+    })
+    it("neat.resize(network[]) => {Network[]} | population_size increased by network[] length", function() {
+      let neat = new Neat({ population_size: 1 })
+      let neat2 = new Neat({ population_size: 1 })
+
+      neat.resize(neat2.population)
+
+      expect(neat.population_size).equals(2)
+    })
+    it("new Neat({ population_size: 1 }), neat.resize(number) => {Network[]} | number > population, size increased to number", function() {
+      let neat = new Neat({ population_size: 1 })
+
+      neat.resize(2)
+
+      expect(neat.population.length).equals(2)
+    })
+    it("neat.resize(number) => {Network[]} | number > population, size increased to number", function() {
+      let neat = new Neat({ population_size: 2 })
+
+      neat.resize(5)
+
+      expect(neat.population.length).equals(5)
+    })
+    it("neat.resize(number) => {Network[]} | number < population, size decreased to number", function() {
+      let neat = new Neat({ population_size: 2 })
+
+      neat.resize(1)
+
+      expect(neat.population.length).equals(1)
+    })
+  })
   describe("neat.mutate()", function() {
     it("neat.mutate() => {Network[]}", function() {
       const neat = new Neat()
@@ -917,14 +968,6 @@ describe("Neat", function() {
   })
   describe("neat.fitness()", function() {
     it("fitness(dataset) | default sets .score property", function() {
-      const neat = new Neat(2,1, { population_size: 2 }) // reduced population to shorten test times
-
-      neat.population[0].score = neat.fitness(data.AND, neat.population[0])
-
-      expect(neat.population[0].score).a("number")
-    })
-
-    it.skip("fitness() | default sets .score property", function() {
       const neat = new Neat(2,1, { population_size: 2 }) // reduced population to shorten test times
 
       neat.population[0].score = neat.fitness(data.AND, neat.population[0])

@@ -297,6 +297,10 @@ const Neat = function(inputs, outputs, dataset, options) {
       let offset = update - self.population.length;
 
       if(offset > 0) {
+        if(self.population.length === 1) {
+          self.population.push(self.population[0].clone())
+          offset--
+        }
         while(offset-- > 0) self.population.push(self.getOffspring())
       } else {
         while(offset++ < 0) self.population.pop() // if population sorted, removes least fit first
