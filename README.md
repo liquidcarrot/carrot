@@ -55,7 +55,7 @@ For Documentation, visit [here](https://liquidcarrot.github.io/carrot)
 $ npm i @liquid-carrot/carrot
 ```
  
-Carrot files are hosted by JSDelivr, just copy a link into the <head> tag
+Carrot files are hosted by JSDelivr
 
 For prototyping or learning, use the latest version here:
 
@@ -63,7 +63,7 @@ For prototyping or learning, use the latest version here:
 <script src="https://cdn.jsdelivr.net/npm/@liquid-carrot/carrot/dist/carrot.umd2.min.js"></script>
 ```
 
-For production, we recommend linking to a specific version number and build to avoid unexpected breakage from newer versions:
+For production, link to a specific version number to avoid unexpected breakage from newer versions:
 
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@liquid-carrot/carrot@0.3.12/dist/carrot.umd2.min.js"></script>
