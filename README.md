@@ -36,9 +36,9 @@
 For Documentation, visit [here](https://liquidcarrot.github.io/carrot)
 
 ## Key Features
-- [Simple & easy docs](https://liquidcarrot.github.io/carrot)
-- Built in neuro-evolution
-- Multi-threading capabilities
+- [Simple docs](https://liquidcarrot.github.io/carrot) & [interactive examples](https://liquidcarrot.io/example.flappy-bird/)
+- **Neuro-evolution** & population based training
+- Multi-threading & GPU (coming soon)
 - Preconfigured GRU, LSTM, NARX Networks
 - Mutable Neurons, Layers, Groups, and Networks
 - SVG Network Visualizations using D3.js
@@ -54,11 +54,19 @@ For Documentation, visit [here](https://liquidcarrot.github.io/carrot)
 ```bash
 $ npm i @liquid-carrot/carrot
 ```
+ 
+Carrot files are hosted by JSDelivr, just copy a link into the <head> tag
 
-Carrot files are hosted by GitHub Pages, just copy this link into the `<head>` tag:
+For prototyping or learning, use the latest version here:
 
 ```html
-<script src="https://liquidcarrot.io/carrot/cdn/0.3.11/carrot.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@liquid-carrot/carrot/dist/carrot.umd2.min.js"></script>
+```
+
+For production, we recommend linking to a specific version number and build to avoid unexpected breakage from newer versions:
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/@liquid-carrot/carrot@0.3.12/dist/carrot.umd2.min.js"></script>
 ```
 
 ## Getting Started
@@ -83,14 +91,6 @@ let { architect } = require('@liquid-carrot/carrot');
 
 let LSTM = new architect.LSTM(4, 5, 1);
 
-let GRU = new architect.GRU(4, 5, 1);
-
-let NARX = new architect.NARX(4, 5, 1);
-
-let Hopfield = new architect.Hopfield(4);
-
-let Random = new architect.Random(4, 5, 1);
-
 // Add as many hidden layers as needed
 let Perceptron = new architect.Perceptron(4, 5, 20, 5, 10, 1);
 ```
@@ -114,7 +114,7 @@ hidden2.connect(output);
 let network = architect.Construct([input, hidden1, hidden2, output]);
 ```
 
-Networks can also shape **themselves** with neuro-evolution
+Networks also shape **themselves** with neuro-evolution
 
 ```javascript
 let { Network, methods } = require('@liquid-carrot/carrot');
