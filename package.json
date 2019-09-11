@@ -1,6 +1,6 @@
 {
   "name": "@liquid-carrot/carrot",
-  "version": "0.3.11",
+  "version": "0.3.12",
   "description": "A Simple Node.js AI Library for Neural Network",
   "main": "dist/carrot.commonjs2.min.js",
   "module": "dist/carrot.commonjs2.min.js",
@@ -8,8 +8,8 @@
   "jsdeliver": "dist/carrot.umd2.min.js",
   "browser": {
     "fs": false,
-     "child_process": false
-   },
+    "child_process": false
+  },
   "scripts": {
     "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | coveralls && rm -rf ./src-cov",
     "build:src": "./node_modules/.bin/webpack",
