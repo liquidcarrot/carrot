@@ -41,31 +41,31 @@ function Network(input_size, output_size) {
   const self = this;
 
   // *IDEA*: Store input & output nodes in arrays accessible by self.input and self.output instead of just storing the number
-  self.input_size = input_size;
-  self.output_size = output_size;
+  self.input_size = input_size
+  self.output_size = output_size
   // backwards compatibility
-  self.input = input_size;
-  self.output = output_size;
+  self.input = input_size
+  self.output = output_size
 
   // keep track of the input and output nodes
-  self.input_nodes = new Set();
-  self.output_nodes = new Set();
+  self.input_nodes = new Set()
+  self.output_nodes = new Set()
 
   // Store all the nodes and connection genes
-  self.nodes = []; // Stored in activation order
-  self.connections = [];
-  self.gates = [];
+  self.nodes = [] // Stored in activation order
+  self.connections = []
+  self.gates = []
 
   // Create input and output nodes
   for (let i = 0; i < input_size; i++) {
-    const new_node = new Node();
-    self.nodes.push(new_node);
-    self.input_nodes.add(new_node);
+    const new_node = new Node()
+    self.nodes.push(new_node)
+    self.input_nodes.add(new_node)
   }
   for (let i = 0; i < output_size; i++) {
-    const new_node = new Node();
-    self.nodes.push(new_node);
-    self.output_nodes.add(new_node);
+    const new_node = new Node()
+    self.nodes.push(new_node)
+    self.output_nodes.add(new_node)
   }
 
   /**
@@ -172,7 +172,7 @@ function Network(input_size, output_size) {
     if (output.length !== self.output_nodes.size) {
       throw Error(`There are ${self.output_nodes.size} output nodes, but ${output.length} outputs were passed`);
     }
-    
+
     return output;
   }
 

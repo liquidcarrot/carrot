@@ -126,8 +126,7 @@ const Neat = function(inputs, outputs, dataset, options) {
   inputs = inputs || 1;
   outputs = outputs || 1;
   dataset = dataset || [];
-  options = _.defaultsDeep(options, Neat.default.options);
-  options.template = options.template || new Network(inputs, outputs);
+  options = _.defaultsDeep(options, Neat.default.options)
 
   Object.assign(self, { inputs, outputs, dataset, ...options});
 
@@ -177,12 +176,14 @@ const Neat = function(inputs, outputs, dataset, options) {
     size = size || self.population_size
 
     // Prioritize network, otherwise use template network, otherwise use "new network"
-    copyNetwork = network ? () => network.clone() : self.template ? () => self.template.clone() : () => new Network(self.inputs, self.outputs)
+    copyNetwork = network
+      ? () => network.clone()
+      : self.template
+      ? () => self.template.clone()
+      : () => new Network(self.inputs, self.outputs)
 
     const population = []
-    for(let i = 0; i < size; i++) {
-      population.push(copyNetwork())
-    }
+    for(let i = 0; i < size; i++) population.push(copyNetwork())
 
     return population
   };
@@ -724,8 +725,6 @@ const Neat = function(inputs, outputs, dataset, options) {
 Neat.default = {
   options: {
     generation: 0, // internal variable
-    // input: 1,
-    // output: 1,
     equal: true,
     clean: false,
     population_size: 50,
@@ -754,7 +753,6 @@ Neat.default = {
       methods.crossover.AVERAGE
     ],
     mutation: methods.mutation.ALL,
-    // template: new Network(this.input, this.output)
     maxNodes: Infinity,
     maxConns: Infinity,
     maxGates: Infinity
