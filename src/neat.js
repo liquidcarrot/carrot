@@ -280,6 +280,12 @@ const Neat = function(inputs, outputs, dataset, options) {
   /**
   * Resizes the population and adjusts the `population_size`
   *
+  * @function resize
+  *
+  * @alpha
+  *
+  * @memberof Neat
+  *
   * @param {Network[]|number} update An array of new networks to add to the existing population or a new size for the population.
   *
   * @example
