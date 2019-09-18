@@ -17360,7 +17360,7 @@ function Node(options) {
   *
   * @param {number} [input] Environment signal (i.e. optional numerical value passed to the network as input)  - _should only be passed in input neurons_
   * @param {Object} [options]
-  * @param {boolean} [options.trace]
+  * @param {boolean} [options.trace] Controls whether traces are created when activation happens (a trace is meta information left behind for different uses, e.g. backpropagation).
   *
   * @returns {number} A neuron's ['Squashed'](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) output value
   *
@@ -17388,43 +17388,49 @@ function Node(options) {
 
     if(input != undefined && Number.isFinite(input)) {
       return self.activation = input;
-    } else if(options.trace) {
-      // Update traces
-      const nodes = [];
-      const influences = [];
+    }
 
-      self.old = self.state;
-
+    // DRY abstraction
+    const activate = function() {
       // Activate (from self)
       self.state = self.connections_self.gain * self.connections_self.weight * self.state + self.bias;
 
       // Activate (from incoming connections)
       for (let i = 0; i < self.connections_incoming.length; i++) {
-        const connection = self.connections_incoming[i];
-
-        self.state += connection.from.activation * connection.weight * connection.gain;
+        const conn = self.connections_incoming[i];
+        self.state += conn.from.activation * conn.weight * conn.gain;
       }
 
-      // Squash Activation
-      self.activation = self.squash(self.state) * self.mask;
-      self.derivative = self.squash(self.state, true);
+      return self.state
+    }
 
-      // Adjusting `gain` (to gated connections)
+    if(options.trace) {
+      self.old = self.state;
+
+      self.state = activate()
+      self.activation = self.squash(self.state) * self.mask // Squash Activation
+      self.derivative = self.squash(self.state, true)
+
+      // Stores traces
+      const nodes = [];
+      const influences = [];
+
+      // Adjust 'gain' (to gated connections) & Build traces
       for (let i = 0; i < self.connections_gated.length; i++) {
         const connection = self.connections_gated[i];
-        const index = nodes.indexOf(connection.to);
+        connection.gain = self.activation
 
-        if(index > -1) influences[index] += connection.weight * connection.from.activation;
-        else {
+        // Build traces
+        const index = nodes.indexOf(connection.to);
+        if(index > -1) { // Node & influence exist
+          influences[index] += connection.weight * connection.from.activation;
+        } else { // Add node & corresponding influence
           nodes.push(connection.to);
           influences.push(connection.weight * connection.from.activation + (connection.to.connections_self.gater === self ? connection.to.old : 0));
         }
-
-        // Adjust `gain`
-        connection.gain = self.activation;
       }
 
-      // Forwarding `xtrace` (to incoming connections)
+      // Forwarding 'xtrace' (to incoming connections)
       for (let i = 0; i < self.connections_incoming.length; i++) {
         const connection = self.connections_incoming[i];
 
@@ -17446,26 +17452,15 @@ function Node(options) {
 
       return self.activation;
     } else {
-      // Activate (from self)
-      self.state = self.connections_self.gain * self.connections_self.weight * self.state + self.bias;
+      if(self.type === "input") return self.activation = 0
 
-      // Activate (from incoming connections)
-      for (let i = 0; i < self.connections_incoming.length; i++) {
-        const connection = self.connections[i];
+      self.state = activate()
+      self.activation = self.squash(self.state) // Squash Activation
 
-        self.state += connection.from.activation * connection.weight * connection.gain;
+      // Adjust 'gain' (to gated connections)
+      for (let i = 0; i < self.connections_gated.length; i++) {
+        self.connections_gated[i].gain = self.activation
       }
-      // self.connections_incoming.forEach(function(connection, index) {
-      //   self.state += connection.from.activation * connection.weight * connection.gain;
-      // })
-
-      // Squash Activation
-      self.activation = self.squash(self.state);
-
-      // Adjusting `gain` (to gated connections)
-      self.connections_gated.forEach(function(gate) {
-        gate.gain = self.activation;
-      })
 
       return self.activation;
     }
@@ -17493,28 +17488,7 @@ function Node(options) {
   * node.noTraceActivate(); // 0.4923128591923
   */
   self.noTraceActivate = function(input) {
-    // Check if an input is given
-    if (input != undefined) {
-      if(Number.isFinite(input)) return self.activation = input;
-      else throw new TypeError("Parameter \"input\": " + input + " is not a valid \"number\".");
-    } else if(self.type === "input") return self.activation = 0;
-
-    // Activate (from self)
-    self.state = self.connections_self.gain * self.connections_self.weight * self.state + self.bias;
-
-    // Activate (from incoming connections)
-    self.connections_incoming.forEach(function(connection, index) {
-      self.state += connection.from.activation * connection.weight * connection.gain;
-    })
-
-    // Squash the values received
-    self.activation = self.squash(self.state);
-
-    self.connections_gated.forEach(function(gate) {
-      gate.gain = self.activation;
-    })
-
-    return self.activation;
+    return self.activate(input, { trace: false })
   },
 
   /**
@@ -18256,31 +18230,31 @@ function Network(input_size, output_size) {
   const self = this;
 
   // *IDEA*: Store input & output nodes in arrays accessible by self.input and self.output instead of just storing the number
-  self.input_size = input_size;
-  self.output_size = output_size;
+  self.input_size = input_size
+  self.output_size = output_size
   // backwards compatibility
-  self.input = input_size;
-  self.output = output_size;
+  self.input = input_size
+  self.output = output_size
 
   // keep track of the input and output nodes
-  self.input_nodes = new Set();
-  self.output_nodes = new Set();
+  self.input_nodes = new Set()
+  self.output_nodes = new Set()
 
   // Store all the nodes and connection genes
-  self.nodes = []; // Stored in activation order
-  self.connections = [];
-  self.gates = [];
+  self.nodes = [] // Stored in activation order
+  self.connections = []
+  self.gates = []
 
   // Create input and output nodes
   for (let i = 0; i < input_size; i++) {
-    const new_node = new Node();
-    self.nodes.push(new_node);
-    self.input_nodes.add(new_node);
+    const new_node = new Node()
+    self.nodes.push(new_node)
+    self.input_nodes.add(new_node)
   }
   for (let i = 0; i < output_size; i++) {
-    const new_node = new Node();
-    self.nodes.push(new_node);
-    self.output_nodes.add(new_node);
+    const new_node = new Node()
+    self.nodes.push(new_node)
+    self.output_nodes.add(new_node)
   }
 
   /**
@@ -18332,7 +18306,7 @@ function Network(input_size, output_size) {
    *
    * @param {number[]} [input] Input values to activate nodes with
    * @param {Number} [options.dropout_rate=0] The dropout rate. [dropout](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5)
-   * @param {bool} [options.no_trace=false] Activate without leaving a trace (trace is meta information left behind for different uses, e.g. backpropagation).
+   * @param {bool} [options.trace=true] Controls whether traces are created when activation happens (a trace is meta information left behind for different uses, e.g. backpropagation).
    * @returns {number[]} Squashed output values
    *
    * @example
@@ -18343,10 +18317,11 @@ function Network(input_size, output_size) {
    *
    * myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
-  self.activate = function(input, { dropout_rate = 0, no_trace = false } = {}) {
+  self.activate = function(input, { dropout_rate = 0, trace = true } = {}) {
     // Activate nodes chronologically - first input, then hidden, then output
     // activate input nodes
     // TODO: fix, this should be activated according to nodes order
+
     let input_node_index = 0;
     for (let i = 0; i < self.nodes.length; i++) {
       if (input_node_index === self.input_nodes.size) {
@@ -18354,12 +18329,8 @@ function Network(input_size, output_size) {
       }
       const node = self.nodes[i];
       if (!self.input_nodes.has(node)) continue;
-      // only activate input nodes this run
-      if (no_trace) {
-        node.noTraceActivate(input[input_node_index++]);
-      } else {
-        node.activate(input[input_node_index++]);
-      }
+
+      node.activate(input[input_node_index++], { trace })
     }
     if (input_node_index !== input.length) {
       throw Error(`There are ${input_node_index} input nodes, but ${input.length} inputs were passed`);
@@ -18371,11 +18342,8 @@ function Network(input_size, output_size) {
       if (self.input_nodes.has(node) || self.output_nodes.has(node)) return;
 
       if (dropout_rate) node.mask = Math.random() < dropout_rate ? 0 : 1;
-      if (no_trace) {
-        node.noTraceActivate();
-      } else {
-        node.activate();
-      }
+
+      node.activate({ trace })
     });
 
     const output = [];
@@ -18385,23 +18353,20 @@ function Network(input_size, output_size) {
       }
       const node = self.nodes[i];
       if (!self.output_nodes.has(node)) continue;
+
       // only activate output nodes this run
-      let node_output;
-      if (no_trace) {
-        node_output = node.noTraceActivate();
-      } else {
-        node_output = node.activate();
-      }
-      output.push(node_output);
+      output.push(node.activate({ trace }))
     }
+
     if (output.length !== self.output_nodes.size) {
       throw Error(`There are ${self.output_nodes.size} output nodes, but ${output.length} outputs were passed`);
     }
+
     return output;
   }
 
   /**
-   * Deprecated, here for backwards compatibility only! Simply calls `.activate()` with option `no_trace: true`
+   * Deprecated, here for backwards compatibility only! Simply calls `.activate()` with option `trace: false`
    *
    * Activates network without creating traces
    *
@@ -18428,7 +18393,7 @@ function Network(input_size, output_size) {
    * myNetwork.noTraceActivate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
    */
   self.noTraceActivate = function(input) {
-    return self.activate(input, { no_trace: true });
+    return self.activate(input, { trace: false });
   }
 
   /**
@@ -18738,7 +18703,7 @@ function Network(input_size, output_size) {
         return (method.mutateOutput || self.nodes.length > self.input_size + self.output_size) ? [] : false
       }
       case "ADD_SELF_CONN": {
-        
+
         for (let i = self.input_size; i < self.nodes.length; i++) {
           const node = self.nodes[i]
           if (node.connections_self.weight === 0) candidates.push(node)
@@ -18822,9 +18787,9 @@ function Network(input_size, output_size) {
    */
   self.mutate = function(method, options) {
     if (typeof method === 'undefined') throw new Error('Mutate method is undefined!')
-    
+
     const { maxNodes, maxConns, maxGates } = options || {}
-    
+
     // Helper function. TODO: Read the comment inside
     const getRandomConnection = () => {
       if (self.nodes.length <= self.input_size) throw Error('No connections can be chosen');
@@ -18858,10 +18823,10 @@ function Network(input_size, output_size) {
          * or throw an error
          */
         if (self.nodes.length <= self.input_size) return null;
-        
+
         // Check user constraint
         if(self.nodes. length >= maxNodes) return null;
-        
+
         // Look for an existing connection and place a node in between
         const connection = getRandomConnection();
         self.disconnect(connection.from, connection.to);
@@ -18883,7 +18848,7 @@ function Network(input_size, output_size) {
         const gater = connection.gater;
         // Check if the original connection was gated
         if (gater != null) self.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2);
-        
+
         return self;
       }
       case "SUB_NODE": {
@@ -18897,7 +18862,7 @@ function Network(input_size, output_size) {
       case "ADD_CONN": {
         // Check user constraint
         if(self.connections.length >= maxConns) return null
-        
+
         const possible = self.possible(method);
         if (possible) {
           const pair = possible[Math.floor(Math.random() * possible.length)];
@@ -18981,7 +18946,7 @@ function Network(input_size, output_size) {
       case "ADD_GATE": {
         // Check user constraint
         if(self.gates.length >= maxGates) return null
-        
+
         const possible = self.possible(method);
         if (possible) {
           // Select a random gater node and connection, can't be gated by input
@@ -19049,7 +19014,7 @@ function Network(input_size, output_size) {
       }
     }
   }
-  
+
   /**
    * Selects a random mutation method and returns a mutated copy of the network. Warning! Mutates network directly.
    *
@@ -19069,16 +19034,16 @@ function Network(input_size, output_size) {
    */
   self.mutateRandom = function(allowedMethods, options) {
     const possible = (Array.isArray(allowedMethods) && allowedMethods.length) ? _.cloneDeep(allowedMethods) : _.cloneDeep(methods.mutation.ALL)
-    
+
     while(possible.length > 0) {
       const x = Math.floor(Math.random() * possible.length)
       const current = possible[x]
-      
+
       if(self.mutate(current, options)) return self
-      
+
       possible.splice(x,1)
     }
-    
+
     // Return null when mutation is impossible
     return null
   }
@@ -19343,7 +19308,7 @@ function Network(input_size, output_size) {
     _.times(set.length, (index) => {
       let input = set[index].input;
       let target = set[index].output;
-      let output = self.activate(input, {no_trace: true});
+      let output = self.activate(input, { trace: false });
       error += cost(target, output);
     });
 
@@ -26356,8 +26321,7 @@ const Neat = function(inputs, outputs, dataset, options) {
   inputs = inputs || 1;
   outputs = outputs || 1;
   dataset = dataset || [];
-  options = _.defaultsDeep(options, Neat.default.options);
-  options.template = options.template || new Network(inputs, outputs);
+  options = _.defaultsDeep(options, Neat.default.options)
 
   Object.assign(self, { inputs, outputs, dataset, ...options});
 
@@ -26407,12 +26371,14 @@ const Neat = function(inputs, outputs, dataset, options) {
     size = size || self.population_size
 
     // Prioritize network, otherwise use template network, otherwise use "new network"
-    copyNetwork = network ? () => network.clone() : self.template ? () => self.template.clone() : () => new Network(self.inputs, self.outputs)
+    copyNetwork = network
+      ? () => network.clone()
+      : self.template
+      ? () => self.template.clone()
+      : () => new Network(self.inputs, self.outputs)
 
     const population = []
-    for(let i = 0; i < size; i++) {
-      population.push(copyNetwork())
-    }
+    for(let i = 0; i < size; i++) population.push(copyNetwork())
 
     return population
   };
@@ -26508,6 +26474,12 @@ const Neat = function(inputs, outputs, dataset, options) {
 
   /**
   * Resizes the population and adjusts the `population_size`
+  *
+  * @function resize
+  *
+  * @alpha
+  *
+  * @memberof Neat
   *
   * @param {Network[]|number} update An array of new networks to add to the existing population or a new size for the population.
   *
@@ -26954,8 +26926,6 @@ const Neat = function(inputs, outputs, dataset, options) {
 Neat.default = {
   options: {
     generation: 0, // internal variable
-    // input: 1,
-    // output: 1,
     equal: true,
     clean: false,
     population_size: 50,
@@ -26984,7 +26954,6 @@ Neat.default = {
       methods.crossover.AVERAGE
     ],
     mutation: methods.mutation.ALL,
-    // template: new Network(this.input, this.output)
     maxNodes: Infinity,
     maxConns: Infinity,
     maxGates: Infinity

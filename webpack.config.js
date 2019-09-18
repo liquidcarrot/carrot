@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 const variants = require("parallel-webpack").createVariants;
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 /* Read license */
 const license = fs.readFileSync('./LICENSE', 'utf-8');
@@ -26,8 +27,9 @@ function config(options) {
     },
     "plugins": [
       new webpack.BannerPlugin(license),
-      new webpack.optimize.ModuleConcatenationPlugin()
-  ],
+      new webpack.optimize.ModuleConcatenationPlugin(),
+      new CopyWebpackPlugin([ { from: 'src/multithreading/workers/node/worker.js', to: '.' } ])
+    ],
     "optimization": {
       "namedModules": false,
       "namedChunks": false,
