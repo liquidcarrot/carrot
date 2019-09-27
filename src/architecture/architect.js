@@ -12,7 +12,11 @@ const assert = require("assert")
  *
  * Ready to be built with simple one line functions.
  *
+ * No longer supported! Use Network.architecture.[architecture] instead
+ *
  * @namespace
+ *
+ * @deprecated
 */
 const architect = {
   /**
