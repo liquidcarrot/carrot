@@ -30,7 +30,20 @@
 </p>
 
 <p>
-  Carrot is a flexible multi-threaded neural network AI Library for Node.js with neuro-evolution capabilities.
+  Carrot is an architecture-free neural network library built around neuroevolution
+</p>
+
+<p>
+ Why / when should I use this?
+ 
+ Whenever you have a problem that you:
+ 
+ - Don't know how-to solve
+ - Don't want to design a custom network for
+ - Want to discover the ideal neural-network structure for
+
+You can use Carrot's ability to **design networks of arbitrary complexity by itself** to solve whatever problem you have. If you want to see Carrot designing a neural-network to play flappy-bird [check here](https://liquidcarrot.io/example.flappy-bird/)
+ 
 </p>
 
 For Documentation, visit [here](https://liquidcarrot.github.io/carrot)
@@ -70,6 +83,10 @@ For production, link to a specific version number to avoid unexpected breakage f
 ```
 
 ## Getting Started
+
+💡 Want to be super knowledgeable about neuro-evolution in a few minutes?
+
+Check out [this article](https://www.oreilly.com/radar/neuroevolution-a-different-kind-of-deep-learning/ "Neuro-evolution based deep learning") by the creator of NEAT, Kenneth Stanley
 
 This is a simple **perceptron**:
 
