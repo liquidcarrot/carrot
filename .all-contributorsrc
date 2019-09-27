@@ -60,6 +60,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "tracycollins",
+      "name": "tracy collins",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/1046501?v=4",
+      "profile": "http://www.threeceemedia.com",
+      "contributions": [
+        "test"
+      ]
     }
   ],
   "contributorsPerLine": 7
