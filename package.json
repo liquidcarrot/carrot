@@ -2,8 +2,8 @@
   "name": "@liquid-carrot/carrot",
   "version": "0.3.14",
   "description": "A Simple Node.js AI Library for Neural Network",
-  "main": "dist/carrot.commonjs2.min.js",
-  "module": "dist/carrot.commonjs2.min.js",
+  "main": "src/carrot.js",
+  "module": "src/carrot.js",
   "unpkg": "dist/carrot.umd2.min.js",
   "jsdelivr": "dist/carrot.umd2.min.js",
   "browser": {
