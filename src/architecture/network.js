@@ -1728,18 +1728,19 @@ function Network(input_size, output_size) {
 
   /**
    * Add the nodes to the network
-   * @param  {Node|Node[]|Group} nodes_to_add The nodes to add
+   * @param  {Node|Node[]|Group} nodes The nodes to add
    * @return {Network} A self reference for chaining
    */
-  self.addNodes = function (nodes_to_add) {
-    if (nodes_to_add instanceof Node) nodes_to_add = [nodes_to_add];
-    else if (nodes_to_add instanceof Group) nodes_to_add = nodes_to_add.nodes;
-    self.nodes.push(...nodes_to_add);
-    for (let i = 0; i < nodes_to_add.length; i++) {
-      const current_node = nodes_to_add[i];
+  self.addNodes = function (nodes) {
+    if (nodes instanceof Node) nodes = [nodes];
+    else if (nodes instanceof Group) nodes = nodes.nodes;
+    self.nodes.push(...nodes);
+    for (let i = 0; i < nodes.length; i++) {
       // not required to push connections incoming. by pushing every outgoing connection,
       // every incoming connection will be pushed as well. pushing both causes duplicates
-      self.connections.push(...current_node.connections_outgoing);
+      self.connections.push(...nodes[i].connections_outgoing)
+      self.gates.push(...nodes[i].connections_gated)
+      if(nodes[i].connections_self.weight) self.connections.push(nodes[i].connections_self)
     }
   }
 }
@@ -2078,6 +2079,10 @@ Network.architecture = {
   /**
   * Constructs a network from a given array of connected nodes
   *
+  * Behind the scenes, Construct expects nodes to have connections and gates already made which it uses to infer the structure of the network and assemble it.
+  *
+  * It's useful because it's a generic function to produce a network from custom architectures
+  *
   * @param {Group[]|Layer[]|Node[]} list A list of Groups, Layers, and Nodes to combine into a Network
   *
   * @example <caption>A Network built with Nodes</caption>
@@ -2167,27 +2172,12 @@ Network.architecture = {
     // Input nodes are always first, output nodes are always last
     nodes = inputs.concat(nodes).concat(outputs);
 
-    if (network.input_size === 0 || network.output_size === 0) {
-      throw new Error('Given nodes have no clear input/output node!');
-    }
+    if (network.input_size === 0 || network.output_size === 0) throw new Error('Given nodes have no clear input/output node!')
 
-    // TODO: network.addNodes should do all of these automatically, not only add connections
-    for (i = 0; i < nodes.length; i++) {
-      // this commented for is added automatically by network.addNodes
-      // for (j = 0; j < nodes[i].connections_outgoing.length; j++) {
-      //   network.connections.push(nodes[i].connections_outgoing[j]);
-      // }
-      for (j = 0; j < nodes[i].connections_gated.length; j++) {
-        network.gates.push(nodes[i].connections_gated[j]);
-      }
-      if (nodes[i].connections_self.weight !== 0) {
-        network.connections.push(nodes[i].connections_self);
-      }
-    }
+    // Adds nodes, connections, and gates
+    network.addNodes(nodes)
 
-    network.addNodes(nodes);
-
-    return network;
+    return network
   },
 
   /**

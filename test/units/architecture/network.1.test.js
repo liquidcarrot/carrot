@@ -103,7 +103,6 @@ describe('Network', function(){
         const B = new Node()
         B.connect(A)
         const network = Network.architecture.Construct([A, B])
-        console.log(network.nodes.indexOf(B)) // expect 1
         expect(network).to.be.an.instanceOf(Network)
       })
       it('([n1, n2]) | n2 is an input neuron, should be first neuron in .neurons array', function() {
@@ -175,7 +174,6 @@ describe('Network', function(){
         const B = new Node()
         B.connect(A)
         const network = Network.architecture.Construct([A, B])
-        console.log(network.nodes.indexOf(B)) // expect 1
         expect(network).to.be.an.instanceOf(Network)
       })
     })
