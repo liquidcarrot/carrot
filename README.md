@@ -54,7 +54,7 @@ For Documentation, visit [here](https://liquidcarrot.github.io/carrot)
 ```bash
 $ npm i @liquid-carrot/carrot
 ```
- 
+
 Carrot files are hosted by JSDelivr
 
 For prototyping or learning, use the latest version here:
@@ -290,6 +290,10 @@ And finally, a big thank you to all of you for supporting! 🤗
 
 ## Acknowledgements
 
-A special thanks to [Neataptic](https://github.com/wagenaartje/neataptic/), [Synaptic](https://github.com/cazala/synaptic/), and [Brain.js](https://github.com/BrainJS/brain.js)!
+A special thanks to:
 
-Carrot™ was largely brought about by inspiration from these great libraries.
+@wagenaartje for [Neataptic](https://github.com/wagenaartje/neataptic/) which was the starting point for this project
+
+@cazala for [Synaptic](https://github.com/cazala/synaptic/) which pioneered architecture free neural networks in javascript and was the starting point for Neataptic
+
+@robertleeplummerjr for [GPU.js](https://github.com/gpujs/gpu.js) which makes using GPU in JS easy and [Brain.js](https://github.com/BrainJS/brain.js) which has inspired Carrot's development
