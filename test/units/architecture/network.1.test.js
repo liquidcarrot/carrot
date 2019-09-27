@@ -26,8 +26,7 @@ const mutation = methods.mutation;
  *
  */
 describe('Network', function(){
-  // a helper function to facilitate testing
-  // creates a network with hidden nodes and uses it a little bit
+  /** Helper functions to facilitate testing */
   function createUsedNetwork() {
     const network = new Network(10, 20);
 
@@ -50,6 +49,35 @@ describe('Network', function(){
     return network;
   }
 
+  // This function just (poorly) checks whether a mutation happens by checking the output
+  // Should be checking if the two networks are not deeply equal
+  function checkMutation (method) {
+    var network = new architect.Perceptron(2, 4, 4, 4, 2);
+    network.mutate(methods.mutation.ADD_GATE);
+    network.mutate(methods.mutation.ADD_BACK_CONN);
+    network.mutate(methods.mutation.ADD_SELF_CONN);
+
+    var originalOutput = [];
+    var i, j;
+    for (i = 0; i <= 10; i++) {
+      for (j = 0; j <= 10; j++) {
+        originalOutput.push(network.activate([i / 10, j / 10]));
+      }
+    }
+
+    network.mutate(method);
+
+    var mutatedOutput = [];
+
+    for (i = 0; i <= 10; i++) {
+      for (j = 0; j <= 10; j++) {
+        mutatedOutput.push(network.activate([i / 10, j / 10]));
+      }
+    }
+
+    assert.notDeepEqual(originalOutput, mutatedOutput, 'Output of original network should be different from the mutated network!');
+  }
+
   describe('new Network()', function () {
     it('new Network() => {TypeError}', function () {
       // missing input or output size
@@ -61,6 +89,95 @@ describe('Network', function(){
       const network = new Network(10, 20);
       expect(network).to.be.an.instanceOf(Network);
       expect(network.nodes).to.be.of.length(30);
+    })
+  })
+
+  /** Architecture tests */
+  describe('Network.architecture', function() {
+    describe('.Construct', function() {
+      it('() => Network | fails', function() {
+        expect(Network.architecture.Construct).to.throw(Error);
+      })
+      it('([...]) => Network', function() {
+        const A = new Node()
+        const B = new Node()
+        B.connect(A)
+        const network = Network.architecture.Construct([A, B])
+        console.log(network.nodes.indexOf(B)) // expect 1
+        expect(network).to.be.an.instanceOf(Network)
+      })
+      it('([n1, n2]) | n2 is an input neuron, should be first neuron in .neurons array', function() {
+        const A = new Node()
+        const B = new Node()
+        B.connect(A)
+        const network = Network.architecture.Construct([A, B])
+
+        expect(network.nodes.indexOf(B)).equal(0)
+      })
+    })
+
+    describe('.Perceptron', function() {
+      // most basic check ever
+      it('([...]) => Network', function() {
+        const network = new Network.architecture.Perceptron(2,4,2)
+        expect(network).to.be.an.instanceOf(Network)
+      })
+    })
+
+    describe('.Random', function() {
+      // most basic check ever
+      it('([...]) => Network', function() {
+        const network = Network.architecture.Random(1, 20, 2, {
+          connections: 40,
+          gates: 4,
+          selfconnections: 4
+        });
+        expect(network).to.be.an.instanceOf(Network)
+      })
+    })
+
+    describe('.LSTM', function() {
+      // most basic check ever
+      it('([...]) => Network', function() {
+        const network = Network.architecture.LSTM(2,5,2)
+        expect(network).to.be.an.instanceOf(Network)
+      })
+    })
+
+    describe('.GRU', function() {
+      // most basic check ever
+      it('([...]) => Network', function() {
+        const network = Network.architecture.GRU(2,2,2)
+        expect(network).to.be.an.instanceOf(Network)
+      })
+    })
+
+    describe('.Hopfield', function() {
+      // most basic check ever
+      it('([...]) => Network', function() {
+        const network = Network.architecture.Hopfield(2)
+        expect(network).to.be.an.instanceOf(Network)
+      })
+    })
+
+    describe('.NARX', function() {
+      // most basic check ever
+      it('([...]) => Network', function() {
+        const network = Network.architecture.NARX(1,1,1,1,1)
+        expect(network).to.be.an.instanceOf(Network)
+      })
+    })
+
+    describe('.Liquid', function() {
+      // most basic check ever
+      it('([...]) => Network', function() {
+        const A = new Node()
+        const B = new Node()
+        B.connect(A)
+        const network = Network.architecture.Construct([A, B])
+        console.log(network.nodes.indexOf(B)) // expect 1
+        expect(network).to.be.an.instanceOf(Network)
+      })
     })
   })
 
@@ -169,7 +286,23 @@ describe('Network', function(){
   })
 
   describe('network.mutate()', function() {
-    describe('mutation.SUB_NODE', function() {
+
+    it('ADD_NODE', function () {
+      checkMutation(methods.mutation.ADD_NODE);
+    });
+    it('ADD_CONNECTION', function () {
+      checkMutation(methods.mutation.ADD_CONN);
+    });
+    it('MOD_BIAS', function () {
+      checkMutation(methods.mutation.MOD_BIAS);
+    });
+    it('MOD_WEIGHT', function () {
+      checkMutation(methods.mutation.MOD_WEIGHT);
+    });
+    it('SUB_CONN', function () {
+      checkMutation(methods.mutation.SUB_CONN);
+    });
+    describe('SUB_NODE', function() {
       it('given a network with 7 nodes, should produce a network with 6', function(){
         // const network = new architect.Random(2,3,2);
         const network = new architect.Perceptron(2,3,2);
@@ -204,23 +337,116 @@ describe('Network', function(){
         assert.deepEqual(outputs, _.filter(network.nodes, (node) => { return (node.type === 'output') }))
       })
 
+      it('checkMutation passes', function() {
+        checkMutation(methods.mutation.SUB_NODE);
+      })
+
+    })
+    it('MOD_ACTIVATION', function () {
+      checkMutation(methods.mutation.MOD_ACTIVATION);
     });
+    it('ADD_GATE', function () {
+      checkMutation(methods.mutation.ADD_GATE);
+    });
+    it('SUB_GATE', function () {
+      checkMutation(methods.mutation.SUB_GATE);
+    });
+    it('ADD_SELF_CONN', function () {
+      checkMutation(methods.mutation.ADD_SELF_CONN);
+    });
+    it('SUB_SELF_CONN', function () {
+      checkMutation(methods.mutation.SUB_SELF_CONN);
+    });
+    it('ADD_BACK_CONN', function () {
+      checkMutation(methods.mutation.ADD_BACK_CONN);
+    });
+    it('SUB_BACK_CONN', function () {
+      checkMutation(methods.mutation.SUB_BACK_CONN);
+    });
+    it('SWAP_NODES', function () {
+      checkMutation(methods.mutation.SWAP_NODES);
+    });
+  })
+
+  describe('Network.mutateRandom()', function () {
+    it('() => {Network}', function () {
+      let template = new Network(1,2)
+      let network = new architect.Perceptron(2,3,2)
+
+      expect(network.mutateRandom()).to.include.keys(Object.keys(template))
+    })
+
+    it('([]) => {Network}', function () {
+      let template = new Network(1,2)
+      let network = new architect.Perceptron(2,3,2)
+
+      expect(network.mutateRandom([])).to.include.keys(Object.keys(template))
+    })
+
+    it('originalNetwork !== newNetwork', function () {
+      let network = new architect.Perceptron(2,3,2)
+      const copy = _.cloneDeep(network);
+
+      // in place mutation (instead of reassignment)
+      network = network.mutateRandom();
+
+      expect(copy).to.not.eql(network) // eql: check for content equality (instead of for the same point in memory)
+    })
+
+    it("Shouldn't add node when at max nodes", function () {
+      let network = new architect.Perceptron(2,3,2)
+
+      network.mutateRandom([methods.mutation.ADD_NODE], { maxNodes: 7 })
+
+      expect(network.nodes.length).equal(7)
+    })
+
+    it("Shouldn't add connections when at max connections", function () {
+      let network = new architect.Perceptron(1,2,2)
+
+      network.mutateRandom([methods.mutation.ADD_CONN], { maxConns: 6 })
+
+      // natural max is 9
+      expect(network.connections.length).equal(6)
+    })
+
+    it("Shouldn't add connections when at max gates", function () {
+      let network = new architect.Perceptron(1,2,2)
+
+      // directly depends on .mutate(), not ideal
+      network.mutate(methods.mutation.ADD_GATE)
+
+      network.mutateRandom([methods.mutation.ADD_GATE], { maxGates: 1 })
+
+      // natural max is 5
+      expect(network.gates.length).equal(1)
+    })
+
+    it("Shouldn't change network when all methods impossible", function () {
+      let network = new architect.Perceptron(2,3,2)
+      const copy = _.cloneDeep(network);
+
+      // impossible mutation method
+      network.mutateRandom([methods.mutation.SUB_GATE])
+
+      expect(copy).to.eql(network) // eql: check for content equality (instead of for the same point in memory)
+    })
   })
 
   describe('network.clone()', function() {
     it('network.clone() => {Network}', function () {
       const original = new architect.Perceptron(2,3,1)
-      
+
       const copy = original.clone()
-      
+
       expect(copy).eql(original)
     })
-    
+
     it("network.clone() | Shouldn't return a shallow copy", function () {
       const original = new architect.Perceptron(2,3,1)
-      
+
       const copy = original.clone()
-      
+
       expect(copy).not.equal(original)
     })
   })
@@ -510,5 +736,4 @@ describe('Network', function(){
       expect(final.error).to.be.below(initial.error);
     })
   })
-
 })
