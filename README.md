@@ -192,7 +192,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/dan-ryan"><img src="https://avatars1.githubusercontent.com/u/775672?v=4" width="100px;" alt="Daniel Ryan"/><br /><sub><b>Daniel Ryan</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/issues?q=author%3Adan-ryan" title="Bug reports">🐛</a> <a href="#review-dan-ryan" title="Reviewed Pull Requests">👀</a></td>
     <td align="center"><a href="https://github.com/IviieMtz"><img src="https://avatars0.githubusercontent.com/u/50965172?v=4" width="100px;" alt="IviieMtz"/><br /><sub><b>IviieMtz</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=IviieMtz" title="Tests">⚠️</a></td>
     <td align="center"><a href="https://github.com/nicszerman"><img src="https://avatars3.githubusercontent.com/u/14032356?v=4" width="100px;" alt="Nicholas Szerman"/><br /><sub><b>Nicholas Szerman</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=nicszerman" title="Code">💻</a></td>
-    <td align="center"><a href="http://www.threeceemedia.com"><img src="https://avatars3.githubusercontent.com/u/1046501?v=4" width="100px;" alt="tracy collins"/><br /><sub><b>tracy collins</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=tracycollins" title="Tests">⚠️</a></td>
+    <td align="center"><a href="http://www.threeceemedia.com"><img src="https://avatars3.githubusercontent.com/u/1046501?v=4" width="100px;" alt="tracy collins"/><br /><sub><b>tracy collins</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=tracycollins" title="Bug reports">🐛</a></td>
   </tr>
 </table>
 
