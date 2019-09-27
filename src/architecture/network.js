@@ -1,14 +1,14 @@
-const _ = require("lodash");
-const parameter = require("../util/parameter");
-const multi = require("../multithreading/multi");
-const methods = require("../methods/methods");
-const Connection = require("./connection");
-const config = require("../config");
-const Node = require("./node");
+const config = require("../config")
+const multi = require("../multithreading/multi")
+const methods = require("../methods/methods")
 const Group = require("./group")
+const Layer = require("./layer")
+const Connection = require("./connection")
+const Node = require("./node")
+const _ = require("lodash")
 
 // Easier variable naming
-const mutation = methods.mutation;
+const mutation = methods.mutation
 
 /**
 * Create a neural network
@@ -33,7 +33,7 @@ const mutation = methods.mutation;
 * let myNetwork = new Network(2, 1);
 *
 * // and a multi-layered network
-* let myNetwork = new architect.Perceptron(5, 20, 10, 5, 1);
+* let myNetwork = new architect.Perceptron(5, 20, 10, 5, 1)
 */
 function Network(input_size, output_size) {
   if (typeof input_size === `undefined` || typeof output_size === `undefined`) throw new TypeError(`No input or output size given`);
