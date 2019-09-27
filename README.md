@@ -292,8 +292,8 @@ And finally, a big thank you to all of you for supporting! 🤗
 
 A special thanks to:
 
-@wagenaartje for [Neataptic](https://github.com/wagenaartje/neataptic/) which was the starting point for this project
+[@wagenaartje](https://github.com/wagenaartje) for [Neataptic](https://github.com/wagenaartje/neataptic/) which was the starting point for this project
 
-@cazala for [Synaptic](https://github.com/cazala/synaptic/) which pioneered architecture free neural networks in javascript and was the starting point for Neataptic
+[@cazala](https://github.com/cazala) for [Synaptic](https://github.com/cazala/synaptic/) which pioneered architecture free neural networks in javascript and was the starting point for Neataptic
 
-@robertleeplummerjr for [GPU.js](https://github.com/gpujs/gpu.js) which makes using GPU in JS easy and [Brain.js](https://github.com/BrainJS/brain.js) which has inspired Carrot's development
+[@robertleeplummerjr](https://github.com/robertleeplummerjr) for [GPU.js](https://github.com/gpujs/gpu.js) which makes using GPU in JS easy and [Brain.js](https://github.com/BrainJS/brain.js) which has inspired Carrot's development
