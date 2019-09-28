@@ -507,13 +507,13 @@ describe("Neat", function() {
       expect(neat.population[0]).not.eql(original[0])
     })
 
-    it("neat.mutate(mutation) => {Network[]}", function() {
+    it("neat.mutate(ADD_NODE) => {Network[]}", function() {
       const neat = new Neat()
 
       expect(neat.mutate(methods.mutation.ADD_NODE)).to.be.an('array')
     })
 
-    it("neat.mutate(mutation) | original != new", function() {
+    it("neat.mutate(ADD_NODE) | original != new", function() {
       const neat = new Neat()
 
       const original = neat.population.map(function(network) {

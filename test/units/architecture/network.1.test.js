@@ -49,36 +49,7 @@ describe('Network', function(){
     return network;
   }
 
-  // This function just (poorly) checks whether a mutation happens by checking the output
-  // Should be checking if the two networks are not deeply equal
-  function checkMutation (method) {
-    var network = new architect.Perceptron(2, 4, 4, 4, 2);
-    network.mutate(methods.mutation.ADD_GATE);
-    network.mutate(methods.mutation.ADD_BACK_CONN);
-    network.mutate(methods.mutation.ADD_SELF_CONN);
-
-    var originalOutput = [];
-    var i, j;
-    for (i = 0; i <= 10; i++) {
-      for (j = 0; j <= 10; j++) {
-        originalOutput.push(network.activate([i / 10, j / 10]));
-      }
-    }
-
-    network.mutate(method);
-
-    var mutatedOutput = [];
-
-    for (i = 0; i <= 10; i++) {
-      for (j = 0; j <= 10; j++) {
-        mutatedOutput.push(network.activate([i / 10, j / 10]));
-      }
-    }
-
-    assert.notDeepEqual(originalOutput, mutatedOutput, 'Output of original network should be different from the mutated network!');
-  }
-
-  describe('new Network()', function () {
+  describe('new Network()', function() {
     it('new Network() => {TypeError}', function () {
       // missing input or output size
       expect(() => new Network()).to.throw(TypeError);
@@ -179,7 +150,7 @@ describe('Network', function(){
     })
   })
 
-  describe('network.connect()', function () {
+  describe('network.connect()', function() {
     it('network.connect() => {Connection[]}', function () {
       const network = new Network(10, 20);
       const source_node = new Node();
@@ -196,7 +167,7 @@ describe('Network', function(){
     })
   })
 
-  describe('network.activate()', function () {
+  describe('network.activate()', function() {
     it('network.activate(Array<Number>) => {Array<Number>}', function () {
       const network = new Network(10, 20);
       const input = Array(10).fill(0).map(() => Math.random());
@@ -267,7 +238,7 @@ describe('Network', function(){
     })
   })
 
-  describe('network.clear()', function () {
+  describe('network.clear()', function() {
     it('network.clear() => {undefined}', function () {
       const test_network = createUsedNetwork();
 
@@ -285,21 +256,41 @@ describe('Network', function(){
 
   describe('network.mutate()', function() {
 
-    it('ADD_NODE', function () {
-      checkMutation(methods.mutation.ADD_NODE);
-    });
-    it('ADD_CONNECTION', function () {
-      checkMutation(methods.mutation.ADD_CONN);
-    });
-    it('MOD_BIAS', function () {
-      checkMutation(methods.mutation.MOD_BIAS);
-    });
-    it('MOD_WEIGHT', function () {
-      checkMutation(methods.mutation.MOD_WEIGHT);
-    });
-    it('SUB_CONN', function () {
-      checkMutation(methods.mutation.SUB_CONN);
-    });
+    describe('ADD_NODE', function() {
+      it('originalNetwork != newNetwork | when mutation possible', function() {
+
+      })
+
+    })
+
+    describe('ADD_CONNECTION', function() {
+      it('originalNetwork != newNetwork | when mutation possible', function() {
+
+      })
+
+    })
+
+    describe('MOD_BIAS', function() {
+      it('originalNetwork != newNetwork | when mutation possible', function() {
+
+      })
+
+    })
+
+    describe('MOD_WEIGHT', function() {
+      it('originalNetwork != newNetwork | when mutation possible', function() {
+
+      })
+
+    })
+
+    describe('SUB_CONN', function() {
+      it('originalNetwork != newNetwork | when mutation possible', function() {
+
+      })
+
+    })
+
     describe('SUB_NODE', function() {
       it('given a network with 7 nodes, should produce a network with 6', function(){
         // const network = new architect.Random(2,3,2);
@@ -334,36 +325,64 @@ describe('Network', function(){
 
         assert.deepEqual(outputs, _.filter(network.nodes, (node) => { return (node.type === 'output') }))
       })
+    })
 
-      it('checkMutation passes', function() {
-        checkMutation(methods.mutation.SUB_NODE);
+    describe('MOD_ACTIVATION', function() {
+      it('originalNetwork != newNetwork | when mutation possible', function() {
+
       })
 
     })
-    it('MOD_ACTIVATION', function () {
-      checkMutation(methods.mutation.MOD_ACTIVATION);
-    });
-    it('ADD_GATE', function () {
-      checkMutation(methods.mutation.ADD_GATE);
-    });
-    it('SUB_GATE', function () {
-      checkMutation(methods.mutation.SUB_GATE);
-    });
-    it('ADD_SELF_CONN', function () {
-      checkMutation(methods.mutation.ADD_SELF_CONN);
-    });
-    it('SUB_SELF_CONN', function () {
-      checkMutation(methods.mutation.SUB_SELF_CONN);
-    });
-    it('ADD_BACK_CONN', function () {
-      checkMutation(methods.mutation.ADD_BACK_CONN);
-    });
-    it('SUB_BACK_CONN', function () {
-      checkMutation(methods.mutation.SUB_BACK_CONN);
-    });
-    it('SWAP_NODES', function () {
-      checkMutation(methods.mutation.SWAP_NODES);
-    });
+
+    describe('ADD_GATE', function() {
+      it('originalNetwork != newNetwork | when mutation possible', function() {
+
+      })
+
+    })
+
+    describe('SUB_GATE', function() {
+      it('originalNetwork != newNetwork | when mutation possible', function() {
+
+      })
+
+    })
+
+    describe('ADD_SELF_CONN', function() {
+      it('originalNetwork != newNetwork | when mutation possible', function() {
+
+      })
+
+    })
+
+    describe('SUB_SELF_CONN', function() {
+      it('originalNetwork != newNetwork | when mutation possible', function() {
+
+      })
+
+    })
+
+    describe('ADD_BACK_CONN', function() {
+      it('originalNetwork != newNetwork | when mutation possible', function() {
+
+      })
+
+    })
+
+    describe('SUB_BACK_CONN', function() {
+      it('originalNetwork != newNetwork | when mutation possible', function() {
+
+      })
+
+    })
+
+    describe('SWAP_NODES', function() {
+      it('originalNetwork != newNetwork | when mutation possible', function() {
+
+      })
+
+    })
+
   })
 
   describe('Network.mutateRandom()', function () {
