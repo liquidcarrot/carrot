@@ -258,9 +258,63 @@ describe('Network', function(){
 
     describe('ADD_NODE', function() {
       it('originalNetwork != newNetwork | when mutation possible', function() {
+        let network = new Network(1,1)
+        const originalNetwork = network.clone()
+        network = network.mutate(methods.mutation.ADD_NODE)
 
+        expect(network).not.eql(originalNetwork)
       })
 
+      it("Network.nodes.length is greater by 1 after mutation", function() {
+        let network = new Network(1,1)
+        const original_nodes_length = network.nodes.length
+        network = network.mutate(methods.mutation.ADD_NODE)
+
+        expect(network.nodes.length).equal(original_nodes_length + 1)
+      })
+
+      it("Network.connections.length is greater by 1 after mutation", function() {
+        let network = new Network(1,1)
+        const original_connections_length = network.connections.length
+        network = network.mutate(methods.mutation.ADD_NODE)
+
+        expect(network.connections.length).equal(original_connections_length + 1)
+      })
+
+      it("First neuron should have no incoming connections | new Network(1,1)", function() {
+        let network = new Network(1,1)
+        network = network.mutate(methods.mutation.ADD_NODE)
+
+        expect(network.nodes[0].connections_incoming).eql([])
+      })
+
+      it('Middle (hidden) neuron should have directionally correct incoming & outgoing connections | new Network(1,1)', function() {
+        let network = new Network(1,1)
+        network = network.mutate(methods.mutation.ADD_NODE)
+        const json = network.toJSON()
+
+        expect(json.connections[0].from).equal(0)
+        expect(json.connections[0].to).equal(1)
+        expect(json.connections[1].from).equal(1)
+        expect(json.connections[1].to).equal(2)
+
+        // Additional notes: this test makes an assumption that
+        // neurons should only be between inputs & outputs but it's
+        // conceivable that some problems would benefit from "peripheral"
+        // neurons that connect from the output (or a series of outputs) back into another neuron
+        // including other inputs and outputs. We can't be sure that this behavior wouldn't be useful
+        // in some cases and it would be best if we let the evolutionary algorithms handle sorting
+        // if these structures are useful should they arise.
+        // In short: we shouldn't stop networks with peripheral neurons to form in the future,
+        // but right now we're making a compromise
+      })
+
+      it("Last neuron should have no outgoing connections | new Network(1,1)", function() {
+        let network = new Network(1,1)
+        network = network.mutate(methods.mutation.ADD_NODE)
+
+        expect(network.nodes[2].connections_outgoing).eql([])
+      })
     })
 
     describe('ADD_CONNECTION', function() {

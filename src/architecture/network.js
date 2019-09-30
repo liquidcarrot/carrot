@@ -320,7 +320,7 @@ function Network(input_size, output_size) {
     }
 
     // Delete the connection at the sending and receiving neuron
-    from.disconnect(to);
+    from.disconnect(to)
   }
 
   /**
@@ -601,64 +601,47 @@ function Network(input_size, output_size) {
 
     const { maxNodes, maxConns, maxGates } = options || {}
 
-    // Helper function. TODO: Read the comment inside
+    // Helper function
     const getRandomConnection = () => {
-      if (self.nodes.length <= self.input_size) throw Error('No connections can be chosen');
-      // get a random connection. this method does not choose from a uniform distribution
-      // TODO: make the distribution uniform among connections (atm connections connected
-      // to nodes with a small degree are more likely to be chosen)
-      const chosen_node_index = Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size);
-      const connection_node = self.nodes[chosen_node_index];
-      // at the moment does not mutate self connections. TODO: mutate self connections!
-      // first try outgoing then incoming - one of them has to work
-      let chosen_connection;
-      if (connection_node.connections_outgoing.length > 0) {
-        const chosen_connection_index =
-          Math.floor(Math.random() * connection_node.connections_outgoing.length);
-        chosen_connection = connection_node.connections_outgoing[chosen_connection_index];
-      } else {
-        const chosen_connection_index =
-          Math.floor(Math.random() * connection_node.connections_incoming.length);
-        chosen_connection = connection_node.connections_incoming[chosen_connection_index];
-      }
+      if(self.nodes.length <= self.input_nodes.size) // use dynamic self.input_nodes.size instead
+        throw new Error("Something went wrong. Total nodes is length is somehow less than size of inputs")
 
-      return chosen_connection;
-    };
+      return _.sample(self.connections)
+    }
 
     let i, j;
     switch (method.name) {
+      // Looks for an existing connection and places a node inbetween
       case "ADD_NODE": {
-        /**
-         * This is a sloppy fix, even if amount of nodes is equal to input
-         * should still add a output / hidden node
-         * or throw an error
-         */
-        if (self.nodes.length <= self.input_size) return null;
+        if(self.nodes.length >= maxNodes) return null
 
-        // Check user constraint
-        if(self.nodes. length >= maxNodes) return null;
+        const node = new Node({ type: 'hidden' })
+        if (mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION) // this should be an option passed into the Node constructor
 
-        // Look for an existing connection and place a node in between
-        const connection = getRandomConnection();
-        self.disconnect(connection.from, connection.to);
+        // Note for the future: this makes the assumption that nodes can only be placed
+        // between existing connections, but what this means is that connections will never
+        // be formed where there is not a connection right now.
+        // This means connections across inputs / outputs will not be formed
+        // And it also means that "peripheral" connections between output neurons and neurons that connect
+        // back into the network will also not be formed.
+        const connection = getRandomConnection()
+        const from = connection.from
+        const to = connection.to
+        self.disconnect(from, to) // break the existing connection
 
-        // Insert the new node right before the old connection.to
-        const to_index = self.nodes.indexOf(connection.to);
-        const node = new Node('hidden');
-
-        if (mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION);
-
-        // Place it in self.nodes
-        const min_bound = Math.min(to_index, self.nodes.length - self.output_size);
-        self.nodes.splice(min_bound, 0, node);
+        // Make sure new node is between from & to
+        // Accomodates assumption that: nodes array is ordered: ["inputs", "hidden", "outputs"]
+        // Should be agnostic by setting a node .type value and updating the way ".activate" works
+        let min_bound = self.nodes.indexOf(from) // Shouldn't use expensive ".indexOf", we should track neuron index numbers in the "to" & "from" of connections instead and access nodes later if needed
+        min_bound >= self.input_nodes.size - 1 ? min_bound : self.input_nodes.size - 1 // make sure after to insert after all input neurons
+        self.nodes.splice(min_bound + 1, 0, node) // assumes there is at least one output neuron
 
         // Now create two new connections
-        const new_connection1 = self.connect(connection.from, node)[0];
-        const new_connection2 = self.connect(node, connection.to)[0];
+        const new_connection1 = self.connect(from, node)[0]
+        const new_connection2 = self.connect(node, to)[0]
 
         const gater = connection.gater;
-        // Check if the original connection was gated
-        if (gater != null) self.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2);
+        if (gater != null) self.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2) // Check if the original connection was gated
 
         return self;
       }
