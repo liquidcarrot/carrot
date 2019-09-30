@@ -632,7 +632,7 @@ function Network(input_size, output_size) {
         // Accomodates assumption that: nodes array is ordered: ["inputs", "hidden", "outputs"]
         // Should be agnostic by setting a node .type value and updating the way ".activate" works
         let min_bound = self.nodes.indexOf(from) // Shouldn't use expensive ".indexOf", we should track neuron index numbers in the "to" & "from" of connections instead and access nodes later if needed
-        min_bound >= self.input_nodes.size - 1 ? min_bound : self.input_nodes.size - 1 // make sure after to insert after all input neurons
+        min_bound = (min_bound >= self.input_nodes.size - 1) ? min_bound : self.input_nodes.size - 1 // make sure after to insert after all input neurons
         self.nodes.splice(min_bound + 1, 0, node) // assumes there is at least one output neuron
 
         // Now create two new connections
