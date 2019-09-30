@@ -79,7 +79,7 @@ For prototyping or learning, use the latest version here:
 For production, link to a specific version number to avoid unexpected breakage from newer versions:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@liquid-carrot/carrot@0.3.12/dist/carrot.umd2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@liquid-carrot/carrot@0.3.17/dist/carrot.umd2.min.js"></script>
 ```
 
 ## Getting Started
