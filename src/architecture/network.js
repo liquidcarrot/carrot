@@ -609,7 +609,6 @@ function Network(input_size, output_size) {
       return _.sample(self.connections)
     }
 
-    let i, j;
     switch (method.name) {
       // Looks for an existing connection and places a node inbetween
       case "ADD_NODE": {
