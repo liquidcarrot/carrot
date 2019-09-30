@@ -58,12 +58,12 @@ function Network(input_size, output_size) {
 
   // Create input and output nodes
   for (let i = 0; i < input_size; i++) {
-    const new_node = new Node()
+    const new_node = new Node({ type: 'input' })
     self.nodes.push(new_node)
     self.input_nodes.add(new_node)
   }
   for (let i = 0; i < output_size; i++) {
-    const new_node = new Node()
+    const new_node = new Node({ type: 'output' })
     self.nodes.push(new_node)
     self.output_nodes.add(new_node)
   }
@@ -511,10 +511,10 @@ function Network(input_size, output_size) {
         return candidates.length ? candidates : false
       }
       case "MOD_ACTIVATION": {
-        return (method.mutateOutput || self.nodes.length > self.input_size + self.output_size) ? [] : false
+        candidates = _.filter(self.nodes, method.mutateOutput ? (node) => node.type !== 'input' : (node) => node.type !== 'input' && node.type !== 'output')
+        return candidates.length ? candidates : false
       }
       case "ADD_SELF_CONN": {
-
         for (let i = self.input_size; i < self.nodes.length; i++) {
           const node = self.nodes[i]
           if (node.connections_self.weight === 0) candidates.push(node)
@@ -696,16 +696,13 @@ function Network(input_size, output_size) {
         return self;
       }
       case "MOD_ACTIVATION": {
-        if (self.possible(method)) {
-          const possible = _.filter(self.nodes, method.mutateOutput ?
-            (node) => node.type !== 'input' :
-            (node) => node.type !== 'input' && node.type !== 'output');
-
+        const possible = self.possible(method)
+        if (possible) {
           // Mutate a random node out of the filtered collection
           _.sample(possible).mutate(method);
-          return true;
+          return self;
         }
-        return self;
+        return null;
       }
       case "ADD_SELF_CONN": {
         const possible = self.possible(method);

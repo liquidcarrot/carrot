@@ -1,28 +1,28 @@
-var chai = require('chai')
-var assert = chai.assert
+const chai = require('chai')
+const assert = chai.assert
 let carrot = require('../src/carrot')
 
-/* Shorten var names */
-var { Network, methods, config } = carrot;
+/* Shorten const names */
+const { Network, methods, config } = carrot;
 
 /* Turn off warnings */
 config.warnings = false;
 
-describe('Neat', function () {
-  
+describe('Network.evolve()', function () {
+
   it('AND', async function () {
     this.timeout(40000);
 
     // Train the AND gate
-    var trainingSet = [
+    const trainingSet = [
       { input: [0, 0], output: [0] },
       { input: [0, 1], output: [0] },
       { input: [1, 0], output: [0] },
       { input: [1, 1], output: [1] }
     ];
 
-    var network = new Network(2, 1);
-    var results = await network.evolve(trainingSet, {
+    const network = new Network(2, 1);
+    const results = await network.evolve(trainingSet, {
       mutation: methods.mutation.FFW,
       equal: true,
       elitism: 10,
@@ -32,20 +32,28 @@ describe('Neat', function () {
     });
 
     assert.isBelow(results.error, 0.03);
-  });
+  })
   it('XOR', async function () {
     this.timeout(40000);
     // Train the XOR gate
-    var trainingSet = [
+    const trainingSet = [
       { input: [0, 0], output: [0] },
       { input: [0, 1], output: [1] },
       { input: [1, 0], output: [1] },
       { input: [1, 1], output: [0] }
     ];
 
-    var network = new Network(2, 1);
-    var results = await network.evolve(trainingSet, {
-      mutation: methods.mutation.FFW,
+    const network = new Network(2, 1);
+    const results = await network.evolve(trainingSet, {
+      mutation: [
+        methods.mutation.ADD_NODE,
+        methods.mutation.SUB_NODE,
+        methods.mutation.ADD_CONN,
+        methods.mutation.SUB_CONN,
+        methods.mutation.MOD_WEIGHT,
+        methods.mutation.MOD_BIAS,
+        methods.mutation.MOD_ACTIVATION
+      ],
       equal: true,
       elitism: 10,
       mutation_rate: 0.9,
@@ -53,42 +61,20 @@ describe('Neat', function () {
       threads: 1
     });
     assert.isBelow(results.error, 0.03);
-  });
-  it.skip('XOR using efficientMutation', async function () {
-    this.timeout(40000);
-    // Train the XOR gate
-    var trainingSet = [
-      { input: [0, 0], output: [0] },
-      { input: [0, 1], output: [1] },
-      { input: [1, 0], output: [1] },
-      { input: [1, 1], output: [0] }
-    ];
-
-    var network = new Network(2, 1);
-    var results = await network.evolve(trainingSet, {
-      mutation: methods.mutation.FFW,
-      equal: true,
-      elitism: 10,
-      mutation_rate: 0.9,
-      error: 0.03,
-      efficientMutation: true,
-      threads: 1
-    });
-    assert.isBelow(results.error, 0.03);
-  });
+  })
   it('XNOR', async function () {
     this.timeout(60000);
 
     // Train the XNOR gate
-    var trainingSet = [
+    const trainingSet = [
       { input: [0, 0], output: [1] },
       { input: [0, 1], output: [0] },
       { input: [1, 0], output: [0] },
       { input: [1, 1], output: [1] }
     ];
 
-    var network = new Network(2, 1);
-    var results = await network.evolve(trainingSet, {
+    const network = new Network(2, 1);
+    const results = await network.evolve(trainingSet, {
       mutation: methods.mutation.FFW,
       equal: true,
       elitism: 10,
@@ -98,5 +84,5 @@ describe('Neat', function () {
     });
 
     assert.isBelow(results.error, 0.03);
-  });
-});
+  })
+})
