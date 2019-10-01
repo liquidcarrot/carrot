@@ -501,6 +501,7 @@ function Network(input_size, output_size) {
 
         return candidates.length ? candidates : false
       }
+      case "REMOVE_CONN": // alias for sub_conn
       case "SUB_CONN": {
         _.each(self.connections, (conn) => {
           // Check if it is not disabling a node
@@ -523,13 +524,14 @@ function Network(input_size, output_size) {
         return candidates.length ? candidates : false
       }
       case "SUB_SELF_CONN": {
+        // Very slow implementation.
+        // TODO: Huge speed up by storing a Set is_self_connection<id -> node>
         for (let i = 0; i < self.connections.length; i++) {
-          const current_connection = self.connections[i];
-          if (current_connection.from == current_connection.to) {
-            return true;
-          }
+          const conn = self.connections[i]
+          if (conn.from == conn.to) candidates.push(conn)
         }
-        return false;
+
+        return candidates.length ? candidates : false
       }
       case "ADD_GATE": {
         self.connections.forEach((conn) => {
@@ -610,7 +612,7 @@ function Network(input_size, output_size) {
     }
 
     switch (method.name) {
-      // Looks for an existing connection and places a node inbetween
+      // Looks for an existing connection and places a node in between
       case "ADD_NODE": {
         if(self.nodes.length >= maxNodes) return null
 
@@ -639,168 +641,145 @@ function Network(input_size, output_size) {
         const new_connection1 = self.connect(from, node)[0]
         const new_connection2 = self.connect(node, to)[0]
 
-        const gater = connection.gater;
+        const gater = connection.gater
         if (gater != null) self.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2) // Check if the original connection was gated
 
-        return self;
+        return self
       }
       case "SUB_NODE": {
-        const possible = self.possible(method);
+        const possible = self.possible(method)
         if (possible) {
-          self.remove(_.sample(possible));
-          return true;
+          self.remove(_.sample(possible))
+          return self
         }
-        return self;
+        return null
       }
       case "ADD_CONN": {
-        // Check user constraint
-        if(self.connections.length >= maxConns) return null
+        if(self.connections.length >= maxConns) return null // Check user constraint
 
-        const possible = self.possible(method);
+        const possible = self.possible(method)
         if (possible) {
-          const pair = possible[Math.floor(Math.random() * possible.length)];
-          self.connect(pair[0], pair[1]);
-          return self;
+          const pair = possible[Math.floor(Math.random() * possible.length)]
+          self.connect(pair[0], pair[1])
+          return self
         }
 
-        return null;
+        return null
       }
       case "REMOVE_CONN": // alias for sub_conn
       case "SUB_CONN": {
-        const possible = self.possible(method);
+        const possible = self.possible(method)
         if (possible) {
-          const random_connection = possible[Math.floor(Math.random() * possible.length)];
-          self.disconnect(random_connection.from, random_connection.to);
-          return true;
+          const random_connection = possible[Math.floor(Math.random() * possible.length)]
+          self.disconnect(random_connection.from, random_connection.to)
+          return self
         }
 
-        return self;
+        return null
       }
       case "MOD_WEIGHT": {
-        if (self.nodes.length <= self.input_size) return null;
+        const chosen_connection = getRandomConnection() // get a random connection to modify weight
+        chosen_connection.weight += Math.random() * (method.max - method.min) + method.min
 
-        // get a random connection to modify weight
-        const chosen_connection = getRandomConnection();
-
-        chosen_connection.weight += Math.random() * (method.max - method.min) + method.min;
-
-        return self;
+        return self
       }
       case "MOD_BIAS": {
         if (self.nodes.length <= self.input_size) return null;
         // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
-        const chosen_node_index = Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size);
-        const node_to_mutate = self.nodes[chosen_node_index];
-        node_to_mutate.mutate(method);
+        const node_to_mutate = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)]
+        node_to_mutate.mutate(method)
 
-        return self;
+        return self
       }
       case "MOD_ACTIVATION": {
         const possible = self.possible(method)
         if (possible) {
-          // Mutate a random node out of the filtered collection
-          _.sample(possible).mutate(method);
-          return self;
+          _.sample(possible).mutate(method) // Mutate a random node out of filtered collection, MOD_ACTIVATION is a neuron-level concern
+          return self
         }
-        return null;
+        return null
       }
       case "ADD_SELF_CONN": {
-        const possible = self.possible(method);
+        const possible = self.possible(method)
         if (possible) {
-          const node = possible[Math.floor(Math.random() * possible.length)];
-          self.connect(node, node); // Create the self-connection
-          return true;
+          const node = possible[Math.floor(Math.random() * possible.length)]
+          self.connect(node, node) // Create the self-connection
+          return self
         }
-
-        return self;
+        return null
       }
       case "SUB_SELF_CONN": {
-        // very slow implementation.
-        // TODO: Huge speed up by storing a map is_self_connection<id -> node>
-        const self_connections = [];
-        for (let i = 0; i < self.connections.length; i++) {
-          const current_connection = self.connections[i];
-          if (current_connection.from == current_connection.to) {
-            self_connections.push(current_connection);
-          }
-        }
-
-        if (self.possible(method)) {
-          const chosen_connection = self_connections[Math.floor(Math.random() * self_connections.length)];
+        const possible = self.possible(method)
+        if (possible) {
+          const chosen_connection = possible[Math.floor(Math.random() * possible.length)];
           self.disconnect(chosen_connection.from, chosen_connection.to);
-          return self;
+          return self
         }
-
         return null;
       }
       case "ADD_GATE": {
         // Check user constraint
         if(self.gates.length >= maxGates) return null
 
-        const possible = self.possible(method);
+        const possible = self.possible(method)
         if (possible) {
-          // Select a random gater node and connection, can't be gated by input
-          const node = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)];
-          const conn = possible[Math.floor(Math.random() * possible.length)];
+          // Select a random gater node and connection, can't be gated by input | makes ["input", "hidden", "output"] assumption
+          const node = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)]
+          const conn = possible[Math.floor(Math.random() * possible.length)]
 
-          self.gate(node, conn); // Gate the connection with the node
-          return self;
+          self.gate(node, conn) // Gate the connection with the node
+          return self
         }
-
-        return null;
+        return null
       }
       case "SUB_GATE": {
         if (self.possible(method)) {
-          self.ungate(self.gates[Math.floor(Math.random() * self.gates.length)]);
-          return self;
+          self.ungate(self.gates[Math.floor(Math.random() * self.gates.length)])
+          return self
         }
-
-        return null;
+        return null
       }
       case "ADD_BACK_CONN": {
-        const possible = self.possible(method);
+        const possible = self.possible(method)
         if (possible) {
           const pair = possible[Math.floor(Math.random() * possible.length)]
-          self.connect(pair[0], pair[1]);
-          return self;
+          self.connect(pair[0], pair[1])
+          return self
         }
-
-        return null;
+        return null
       }
       case "SUB_BACK_CONN": {
-        const possible = self.possible(method);
+        const possible = self.possible(method)
         if (possible) {
-          const random_connection = possible[Math.floor(Math.random() * possible.length)];
-          self.disconnect(random_connection.from, random_connection.to);
-          return self;
+          const random_connection = possible[Math.floor(Math.random() * possible.length)]
+          self.disconnect(random_connection.from, random_connection.to)
+          return self
         }
-
-        return null;
+        return null
       }
       case "SWAP_NODES": {
-        const possible = self.possible(method);
+        const possible = self.possible(method)
         if (possible) {
           // Return a random node out of the filtered collection
-          const node1 = _.sample(possible);
+          const node1 = _.sample(possible)
 
           // Filter node1 from collection
-          const possible2 = _.filter(possible,
-            function(node, index) { return (node !== node1) });
+          const possible2 = _.filter(possible, (node, index) => node !== node1)
 
           // Get random node from filtered collection (excludes node1)
-          const node2 = _.sample(possible2);
+          const node2 = _.sample(possible2)
 
-          const bias_temp = node1.bias;
-          const squash_temp = node1.squash;
+          const bias_temp = node1.bias
+          const squash_temp = node1.squash
 
-          node1.bias = node2.bias;
-          node1.squash = node2.squash;
-          node2.bias = bias_temp;
-          node2.squash = squash_temp;
-          return self;
+          node1.bias = node2.bias
+          node1.squash = node2.squash
+          node2.bias = bias_temp
+          node2.squash = squash_temp
+          return self
         }
 
-        return null;
+        return null
       }
     }
   }

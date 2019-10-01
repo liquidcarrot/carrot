@@ -45,15 +45,7 @@ describe('Network.evolve()', function () {
 
     const network = new Network(2, 1);
     const results = await network.evolve(trainingSet, {
-      mutation: [
-        methods.mutation.ADD_NODE,
-        methods.mutation.SUB_NODE,
-        methods.mutation.ADD_CONN,
-        methods.mutation.SUB_CONN,
-        methods.mutation.MOD_WEIGHT,
-        methods.mutation.MOD_BIAS,
-        methods.mutation.MOD_ACTIVATION
-      ],
+      mutation: methods.mutation.FFW,
       equal: true,
       elitism: 10,
       mutation_rate: 0.9,
