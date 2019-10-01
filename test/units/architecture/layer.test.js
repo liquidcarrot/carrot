@@ -25,13 +25,13 @@ describe("Layer", function() {
 
       // const example_connections = {
       //   connections_self: Number(1246315), // any number
-      //   connections_incoming: [],
-      //   connections_outgoing: []
+      //   incoming: [],
+      //   outgoing: []
       // };
       expect(layer.connections_self).to.be.an("array");
-      expect(layer.connections_incoming).to.be.an("array");
-      expect(layer.connections_outgoing).to.be.an("array");
-      const array_of_arrays = [layer.connections_self, layer.connections_incoming, layer.connections_incoming];
+      expect(layer.incoming).to.be.an("array");
+      expect(layer.outgoing).to.be.an("array");
+      const array_of_arrays = [layer.connections_self, layer.incoming, layer.incoming];
       array_of_arrays.forEach(array_of_connections => array_of_connections.forEach(connection => {
         expect(connection).to.be.an.instanceOf(Connection);
       }));
@@ -97,12 +97,12 @@ describe("Layer", function() {
         expect(node.error_responsibility).to.equal(0);
         expect(node.error_projected).to.equal(0);
         expect(node.error_gated).to.equal(0);
-        node.connections_incoming.forEach(connection => {
+        node.incoming.forEach(connection => {
           expect(connection.elegibility).to.equal(0);
           expect(connection.xtrace_nodes).to.be.an('array');
           expect(connection.xtrace_values).to.be.an('array');
         });
-        node.connections_gated.forEach(connection => {
+        node.gated.forEach(connection => {
           expect(connection.gain).to.equal(0);
         });
       });
@@ -238,7 +238,7 @@ describe("Layer", function() {
 
       main_layer.connect(other_layer, methods.connection.ALL_TO_ALL);
       main_layer.nodes.forEach(node => {
-        expect(node.connections_outgoing.length).equal(other_layer.nodes.length);
+        expect(node.outgoing.length).equal(other_layer.nodes.length);
       });
     })
     it("layer.connect(target, methods.connection.ALL_TO_ALL, weight) => {Connection[]}", function() {
@@ -247,8 +247,8 @@ describe("Layer", function() {
       main_layer.connect(other_layer, methods.connection.ALL_TO_ALL, weight);
 
       main_layer.nodes.forEach(node => {
-        expect(node.connections_outgoing.length).equal(other_layer.nodes.length);
-        node.connections_outgoing.forEach(connection => expect(connection.weight).to.equal(weight));
+        expect(node.outgoing.length).equal(other_layer.nodes.length);
+        node.outgoing.forEach(connection => expect(connection.weight).to.equal(weight));
       });
     })
     it("layer.connect(target, methods.connection.ALL_TO_ELSE, weight) => {Connection[]}", function() {
@@ -256,13 +256,13 @@ describe("Layer", function() {
       const weight = Math.random();
       main_layer.connect(main_layer, methods.connection.ALL_TO_ELSE, weight);
       main_layer.nodes.forEach(node => {
-        expect(node.connections_outgoing.length).equal(0);
+        expect(node.outgoing.length).equal(0);
       });
 
       ({ main_layer, other_layer } = createRandomLayers(true));
       main_layer.connect(other_layer, methods.connection.ALL_TO_ELSE, weight);
       main_layer.nodes.forEach(node => {
-        expect(node.connections_outgoing.length).equal(other_layer.nodes.length);
+        expect(node.outgoing.length).equal(other_layer.nodes.length);
       });
     })
     it("layer.connect(target, methods.connection.ONE_TO_ONE, weight) => {Connection[]}", function() {
@@ -272,8 +272,8 @@ describe("Layer", function() {
       main_layer.connect(other_layer, methods.connection.ONE_TO_ONE, weight);
 
       main_layer.nodes.forEach(node => {
-        expect(node.connections_outgoing.length).equal(1);
-        node.connections_outgoing.forEach(connection => expect(connection.weight).to.equal(weight));
+        expect(node.outgoing.length).equal(1);
+        node.outgoing.forEach(connection => expect(connection.weight).to.equal(weight));
       });
     })
 
@@ -287,10 +287,10 @@ describe("Layer", function() {
 
       main_layer.disconnect(other_layer);
       main_layer.nodes.forEach(node => {
-        expect(node.connections_outgoing.length).to.equal(0);
+        expect(node.outgoing.length).to.equal(0);
       })
       other_layer.nodes.forEach(node => {
-        expect(node.connections_outgoing.length).to.equal(main_layer.nodes.length);
+        expect(node.outgoing.length).to.equal(main_layer.nodes.length);
       })
     })
     it("layer.disconnect(target, twosided)", function () {
@@ -298,10 +298,10 @@ describe("Layer", function() {
 
       main_layer.disconnect(other_layer, true);
       main_layer.nodes.forEach(node => {
-        expect(node.connections_outgoing.length).to.equal(0);
+        expect(node.outgoing.length).to.equal(0);
       })
       other_layer.nodes.forEach(node => {
-        expect(node.connections_outgoing.length).to.equal(0);
+        expect(node.outgoing.length).to.equal(0);
       })
     })
   })
@@ -345,7 +345,7 @@ describe("Layer", function() {
       const connections_to_gate = main_layer.connect(to_connect_node);
 
       main_layer.gate(connections_to_gate, methods.gating.OUTPUT);
-      main_layer.nodes.forEach(node => node.connections_outgoing.forEach(connection => {
+      main_layer.nodes.forEach(node => node.outgoing.forEach(connection => {
         expect(connection.gater).to.be.an.instanceOf(Node);
       }))
     })
@@ -357,7 +357,7 @@ describe("Layer", function() {
       // console.log(main_layer.nodes[0])
       main_layer.gate(connections_to_gate, methods.gating.INPUT);
       // console.log(main_layer.nodes[0])
-      main_layer.nodes.forEach(node => node.connections_outgoing.forEach(connection => {
+      main_layer.nodes.forEach(node => node.outgoing.forEach(connection => {
         expect(connection.gater).to.be.an.instanceOf(Node);
       }))
     })
@@ -369,7 +369,7 @@ describe("Layer", function() {
       // console.log(main_layer.nodes[0])
       main_layer.gate(connections_to_gate, methods.gating.OUTPUT);
       // console.log(main_layer.nodes[0])
-      main_layer.nodes.forEach(node => node.connections_outgoing.forEach(connection => {
+      main_layer.nodes.forEach(node => node.outgoing.forEach(connection => {
         expect(connection.gater).to.be.an.instanceOf(Node);
       }))
     })
@@ -380,7 +380,7 @@ describe("Layer", function() {
       const connections_to_gate = main_layer.connect(main_layer);
       main_layer.gate(connections_to_gate, methods.gating.SELF);
 
-      main_layer.nodes.forEach(node => node.connections_outgoing.forEach(connection => {
+      main_layer.nodes.forEach(node => node.outgoing.forEach(connection => {
         expect(connection.gater).to.be.an.instanceOf(Node);
       }))
     })

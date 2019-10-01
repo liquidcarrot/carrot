@@ -413,7 +413,7 @@ function Network(input_size, output_size) {
     // Get all its inputting nodes
     const inputs = [];
     // unsure why not regular forEach
-    _.forEachRight(node.connections_incoming, (connection) => {
+    _.forEachRight(node.incoming, (connection) => {
       if (mutation.SUB_NODE.keep_gates && connection.gater !== null && connection.gater !== node) {
         // the condition mutation.SUB_NODE.keep_gates seems
         // useless - probably it should be an option
@@ -427,7 +427,7 @@ function Network(input_size, output_size) {
     // Get all its outputing nodes
     const outputs = [];
     // unsure why not regular forEach
-    _.forEachRight(node.connections_outgoing, (connection) => {
+    _.forEachRight(node.outgoing, (connection) => {
       if (mutation.SUB_NODE.keep_gates && connection.gater !== null && connection.gater !== node) {
         gates.push(connection.gater);
       }
@@ -457,8 +457,8 @@ function Network(input_size, output_size) {
     }
 
     // Remove gated connections gated by this node
-    for (i = node.connections_gated.length - 1; i >= 0; i--) {
-      const connection = node.connections_gated[i];
+    for (i = node.gated.length - 1; i >= 0; i--) {
+      const connection = node.gated[i];
       self.ungate(connection);
     }
 
@@ -505,7 +505,7 @@ function Network(input_size, output_size) {
       case "SUB_CONN": {
         _.each(self.connections, (conn) => {
           // Check if it is not disabling a node
-          if (conn.from.connections_outgoing.length > 1 && conn.to.connections_incoming.length > 1 && self.nodes.indexOf(conn.to) > self.nodes.indexOf(conn.from))
+          if (conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && self.nodes.indexOf(conn.to) > self.nodes.indexOf(conn.from))
             candidates.push(conn)
         })
 
@@ -557,7 +557,7 @@ function Network(input_size, output_size) {
       }
       case "SUB_BACK_CONN": {
         _.each(self.connections, (conn) => {
-          if (conn.from.connections_outgoing.length > 1 && conn.to.connections_incoming.length > 1 && self.nodes.indexOf(conn.from) > self.nodes.indexOf(conn.to))
+          if (conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && self.nodes.indexOf(conn.from) > self.nodes.indexOf(conn.to))
             candidates.push(conn)
         })
 
@@ -1473,8 +1473,8 @@ function Network(input_size, output_size) {
       }
 
       const incoming = [];
-      for (var j = 0; j < node.connections_incoming.length; j++) {
-        const connection = node.connections_incoming[j];
+      for (var j = 0; j < node.incoming.length; j++) {
+        const connection = node.incoming[j];
         if (connection.from.index === undefined) debugger;
         let computation = `A[${connection.from.index}] * ${connection.weight}`;
 
@@ -1555,8 +1555,8 @@ function Network(input_size, output_size) {
       connections.push(node.connections_self.weight);
       connections.push(node.connections_self.gater == null ? -1 : node.connections_self.gater.index);
 
-      _.times(node.connections_incoming.length, (incoming_connections_index) => {
-        const connection = node.connections_incoming[incoming_connections_index];
+      _.times(node.incoming.length, (incoming_connections_index) => {
+        const connection = node.incoming[incoming_connections_index];
 
         connections.push(connection.from.index);
         connections.push(connection.weight);
@@ -1581,8 +1581,8 @@ function Network(input_size, output_size) {
     for (let i = 0; i < nodes.length; i++) {
       // not required to push connections incoming. by pushing every outgoing connection,
       // every incoming connection will be pushed as well. pushing both causes duplicates
-      self.connections.push(...nodes[i].connections_outgoing)
-      self.gates.push(...nodes[i].connections_gated)
+      self.connections.push(...nodes[i].outgoing)
+      self.gates.push(...nodes[i].gated)
       if(nodes[i].connections_self.weight) self.connections.push(nodes[i].connections_self)
     }
   }
@@ -1996,12 +1996,12 @@ Network.architecture = {
     const inputs = [];
     const outputs = [];
     for (i = nodes.length - 1; i >= 0; i--) {
-      if (nodes[i].type === 'output' || (!found_output_nodes && nodes[i].connections_outgoing.length + nodes[i].connections_gated.length === 0)) {
+      if (nodes[i].type === 'output' || (!found_output_nodes && nodes[i].outgoing.length + nodes[i].gated.length === 0)) {
         nodes[i].type = 'output';
         network.output_size++;
         outputs.push(nodes[i]);
         nodes.splice(i, 1);
-      } else if (nodes[i].type === 'input' || (!found_input_nodes && !nodes[i].connections_incoming.length)) {
+      } else if (nodes[i].type === 'input' || (!found_input_nodes && !nodes[i].incoming.length)) {
         nodes[i].type = 'input';
         network.input_size++;
         inputs.push(nodes[i]);

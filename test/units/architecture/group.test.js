@@ -26,13 +26,13 @@ describe("Group", function() {
 
       // const example_connections = {
       //   connections_self: Number(1246315), // any number
-      //   connections_incoming: [],
-      //   connections_outgoing: []
+      //   incoming: [],
+      //   outgoing: []
       // };
       expect(group.connections_self).to.be.an("array");
-      expect(group.connections_incoming).to.be.an("array");
-      expect(group.connections_outgoing).to.be.an("array");
-      const array_of_arrays = [group.connections_self, group.connections_incoming, group.connections_incoming];
+      expect(group.incoming).to.be.an("array");
+      expect(group.outgoing).to.be.an("array");
+      const array_of_arrays = [group.connections_self, group.incoming, group.incoming];
       array_of_arrays.forEach(array_of_connections => array_of_connections.forEach(connection => {
         expect(connection).to.be.an.instanceOf(Connection);
       }));
@@ -98,12 +98,12 @@ describe("Group", function() {
         expect(node.error_responsibility).to.equal(0);
         expect(node.error_projected).to.equal(0);
         expect(node.error_gated).to.equal(0);
-        node.connections_incoming.forEach(connection => {
+        node.incoming.forEach(connection => {
           expect(connection.elegibility).to.equal(0);
           expect(connection.xtrace_nodes).to.be.an('array');
           expect(connection.xtrace_values).to.be.an('array');
         });
-        node.connections_gated.forEach(connection => {
+        node.gated.forEach(connection => {
           expect(connection.gain).to.equal(0);
         });
       });
@@ -239,7 +239,7 @@ describe("Group", function() {
       main_group.connect(other_group, methods.connection.ALL_TO_ALL);
 
       main_group.nodes.forEach(node => {
-        expect(node.connections_outgoing.length).equal(other_group.nodes.length);
+        expect(node.outgoing.length).equal(other_group.nodes.length);
       });
     })
     it("group.connect(target, methods.connection.ALL_TO_ALL, weight) => {Connection[]}", function() {
@@ -248,8 +248,8 @@ describe("Group", function() {
       main_group.connect(other_group, methods.connection.ALL_TO_ALL, weight);
 
       main_group.nodes.forEach(node => {
-        expect(node.connections_outgoing.length).equal(other_group.nodes.length);
-        node.connections_outgoing.forEach(connection => expect(connection.weight).to.equal(weight));
+        expect(node.outgoing.length).equal(other_group.nodes.length);
+        node.outgoing.forEach(connection => expect(connection.weight).to.equal(weight));
       });
     })
     it("group.connect(target, methods.connection.ALL_TO_ELSE, weight) => {Connection[]}", function() {
@@ -257,13 +257,13 @@ describe("Group", function() {
       const weight = Math.random();
       main_group.connect(main_group, methods.connection.ALL_TO_ELSE, weight);
       main_group.nodes.forEach(node => {
-        expect(node.connections_outgoing.length).equal(0);
+        expect(node.outgoing.length).equal(0);
       });
 
       ({ main_group, other_group } = createRandomGroups(true));
       main_group.connect(other_group, methods.connection.ALL_TO_ELSE, weight);
       main_group.nodes.forEach(node => {
-        expect(node.connections_outgoing.length).equal(other_group.nodes.length);
+        expect(node.outgoing.length).equal(other_group.nodes.length);
       });
     })
     it("group.connect(target, methods.connection.ONE_TO_ONE, weight) => {Connection[]}", function() {
@@ -273,8 +273,8 @@ describe("Group", function() {
       main_group.connect(other_group, methods.connection.ONE_TO_ONE, weight);
 
       main_group.nodes.forEach(node => {
-        expect(node.connections_outgoing.length).equal(1);
-        node.connections_outgoing.forEach(connection => expect(connection.weight).to.equal(weight));
+        expect(node.outgoing.length).equal(1);
+        node.outgoing.forEach(connection => expect(connection.weight).to.equal(weight));
       });
     })
     // TODO: ONE_TO_ONE
@@ -288,10 +288,10 @@ describe("Group", function() {
 
       main_group.disconnect(other_group);
       main_group.nodes.forEach(node => {
-        expect(node.connections_outgoing.length).to.equal(0);
+        expect(node.outgoing.length).to.equal(0);
       })
       other_group.nodes.forEach(node => {
-        expect(node.connections_outgoing.length).to.equal(main_group.nodes.length);
+        expect(node.outgoing.length).to.equal(main_group.nodes.length);
       })
     })
     it("group.disconnect(target, twosided)", function () {
@@ -299,10 +299,10 @@ describe("Group", function() {
 
       main_group.disconnect(other_group, true);
       main_group.nodes.forEach(node => {
-        expect(node.connections_outgoing.length).to.equal(0);
+        expect(node.outgoing.length).to.equal(0);
       })
       other_group.nodes.forEach(node => {
-        expect(node.connections_outgoing.length).to.equal(0);
+        expect(node.outgoing.length).to.equal(0);
       })
     })
   })
@@ -346,7 +346,7 @@ describe("Group", function() {
       const connections_to_gate = main_group.connect(to_connect_node);
 
       main_group.gate(connections_to_gate, methods.gating.OUTPUT);
-      main_group.nodes.forEach(node => node.connections_outgoing.forEach(connection => {
+      main_group.nodes.forEach(node => node.outgoing.forEach(connection => {
         expect(connection.gater).to.be.an.instanceOf(Node);
       }))
     })
@@ -358,7 +358,7 @@ describe("Group", function() {
       // console.log(main_group.nodes[0])
       main_group.gate(connections_to_gate, methods.gating.INPUT);
       // console.log(main_group.nodes[0])
-      main_group.nodes.forEach(node => node.connections_outgoing.forEach(connection => {
+      main_group.nodes.forEach(node => node.outgoing.forEach(connection => {
         expect(connection.gater).to.be.an.instanceOf(Node);
       }))
     })
@@ -370,7 +370,7 @@ describe("Group", function() {
       // console.log(main_group.nodes[0])
       main_group.gate(connections_to_gate, methods.gating.OUTPUT);
       // console.log(main_group.nodes[0])
-      main_group.nodes.forEach(node => node.connections_outgoing.forEach(connection => {
+      main_group.nodes.forEach(node => node.outgoing.forEach(connection => {
         expect(connection.gater).to.be.an.instanceOf(Node);
       }))
     })
@@ -381,7 +381,7 @@ describe("Group", function() {
       const connections_to_gate = main_group.connect(main_group);
       main_group.gate(connections_to_gate, methods.gating.SELF);
 
-      main_group.nodes.forEach(node => node.connections_outgoing.forEach(connection => {
+      main_group.nodes.forEach(node => node.outgoing.forEach(connection => {
         expect(connection.gater).to.be.an.instanceOf(Node);
       }))
     })

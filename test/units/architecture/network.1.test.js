@@ -285,7 +285,7 @@ describe('Network', function(){
         let network = new Network(1,1)
         network = network.mutate(methods.mutation.ADD_NODE)
 
-        expect(network.nodes[0].connections_incoming).eql([])
+        expect(network.nodes[0].incoming).eql([])
       })
 
       it('Middle (hidden) neuron should have directionally correct incoming & outgoing connections | new Network(1,1)', function() {
@@ -313,7 +313,7 @@ describe('Network', function(){
         let network = new Network(1,1)
         network = network.mutate(methods.mutation.ADD_NODE)
 
-        expect(network.nodes[2].connections_outgoing).eql([])
+        expect(network.nodes[2].outgoing).eql([])
       })
     })
 
@@ -641,7 +641,7 @@ describe('Network', function(){
       test_network.disconnect(test_network.nodes[2], test_node);
 
       expect(test_network.connections.length).to.equal(before_network_connection_size - 1);
-      expect(test_node.connections_outgoing).to.be.empty;
+      expect(test_node.outgoing).to.be.empty;
     })
   })
 
@@ -663,7 +663,7 @@ describe('Network', function(){
       test_network.gate(new_node, connection);
       expect(test_network.gates).to.be.of.length(before_number_of_gates + 1);
       expect(connection.gater).to.eql(new_node);
-      expect(new_node.connections_gated).to.have.lengthOf(1);
+      expect(new_node.gated).to.have.lengthOf(1);
     })
   })
 
@@ -687,7 +687,7 @@ describe('Network', function(){
       test_network.ungate(connection);
       expect(test_network.gates).to.be.of.length(before_number_of_gates - 1);
       expect(connection.gater).to.not.exist;
-      expect(new_node.connections_gated).to.have.lengthOf(0);
+      expect(new_node.gated).to.have.lengthOf(0);
     })
   })
 
@@ -730,9 +730,9 @@ describe('Network', function(){
         for (let j = 0; j < j_max; j++) {
           const from_node = test_network.nodes[input_node_ids_to_test[i]];
           const to_node = test_network.nodes[output_node_ids_to_test[j]];
-          // cycle through from_node connections_outgoing until to_node is found
+          // cycle through from_node outgoing connections until to_node is found
           let is_connected = false;
-          from_node.connections_outgoing.forEach(connection => {
+          from_node.outgoing.forEach(connection => {
             if (connection.to == to_node) {
               is_connected = true;
             }

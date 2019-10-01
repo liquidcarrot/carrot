@@ -92,12 +92,12 @@ const architect = {
     const inputs = [];
     const outputs = [];
     for (i = nodes.length - 1; i >= 0; i--) {
-      if (nodes[i].type === 'output' || (!found_output_nodes && nodes[i].connections_outgoing.length + nodes[i].connections_gated.length === 0)) {
+      if (nodes[i].type === 'output' || (!found_output_nodes && nodes[i].outgoing.length + nodes[i].gated.length === 0)) {
         nodes[i].type = 'output';
         network.output_size++;
         outputs.push(nodes[i]);
         nodes.splice(i, 1);
-      } else if (nodes[i].type === 'input' || (!found_input_nodes && !nodes[i].connections_incoming.length)) {
+      } else if (nodes[i].type === 'input' || (!found_input_nodes && !nodes[i].incoming.length)) {
         nodes[i].type = 'input';
         network.input_size++;
         inputs.push(nodes[i]);
@@ -118,11 +118,11 @@ const architect = {
     // TODO: network.addNodes should do all of these automatically, not only add connections
     for (i = 0; i < nodes.length; i++) {
       // this commented for is added automatically by network.addNodes
-      // for (j = 0; j < nodes[i].connections_outgoing.length; j++) {
-      //   network.connections.push(nodes[i].connections_outgoing[j]);
+      // for (j = 0; j < nodes[i].outgoing.length; j++) {
+      //   network.connections.push(nodes[i].outgoing[j]);
       // }
-      for (j = 0; j < nodes[i].connections_gated.length; j++) {
-        network.gates.push(nodes[i].connections_gated[j]);
+      for (j = 0; j < nodes[i].gated.length; j++) {
+        network.gates.push(nodes[i].gated[j]);
       }
       if (nodes[i].connections_self.weight !== 0) {
         network.connections.push(nodes[i].connections_self);

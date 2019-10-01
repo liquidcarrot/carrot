@@ -11,8 +11,8 @@ const Node = require('./node');
 * @param {number} [size=0] Amount of nodes to build group with
 *
 * @prop {Nodes[]} [nodes=[]] All nodes within the group
-* @prop {Connection[]} [connections_incoming=[]] Incoming connections
-* @prop {Connection[]} [connections_outgoing=[]] Outgoing connections
+* @prop {Connection[]} [incoming=[]] Incoming connections
+* @prop {Connection[]} [outgoing=[]] Outgoing connections
 * @prop {Connection[]} [connections_self=[]] Self connections
 *
 * @example
@@ -28,8 +28,8 @@ function Group(size) {
   // The order of the nodes dictates the ideal order of activation
   self.nodes = [];
   self.connections_self = [];
-  self.connections_incoming = [];
-  self.connections_outgoing = [];
+  self.incoming = [];
+  self.outgoing = [];
 
   for (let index = 0; index < size; index++) {
     self.nodes.push(new Node());
@@ -210,8 +210,8 @@ function Group(size) {
         self.connections_self.push(connection);
       }
       else {
-        self.connections_outgoing.push(connection);
-        target.connections_incoming.push(connection);
+        self.outgoing.push(connection);
+        target.incoming.push(connection);
       }
     }
 
@@ -249,8 +249,8 @@ function Group(size) {
           const node = nodes_to[i];
           const gater = self.nodes[i % self.nodes.length];
 
-          for (j = 0; j < node.connections_incoming.length; j++) {
-            const connection = node.connections_incoming[j];
+          for (j = 0; j < node.incoming.length; j++) {
+            const connection = node.incoming[j];
             if (connections.includes(connection)) {
               gater.gate(connection);
             }
@@ -262,8 +262,8 @@ function Group(size) {
           const node = nodes_from[i];
           const gater = self.nodes[i % this.nodes.length];
 
-          for (j = 0; j < node.connections_outgoing.length; j++) {
-            const connection = node.connections_outgoing[j];
+          for (j = 0; j < node.outgoing.length; j++) {
+            const connection = node.outgoing[j];
             if (connections.includes(connection)) {
               gater.gate(connection);
             }
@@ -325,13 +325,13 @@ function Group(size) {
           self.nodes[i].disconnect(target.nodes[j], { twosided });
 
           if (twosided) {
-            self.connections_incoming = self.connections_incoming.filter(connection => {
+            self.incoming = self.incoming.filter(connection => {
               // this is a quick patch, there shouldnt be undefines here
               if (!connection) return false;
               return !(connection.from === target.nodes[j] && connection.to === this.nodes[i])
             });
           }
-          self.connections_outgoing = self.connections_outgoing.filter(connection => {
+          self.outgoing = self.outgoing.filter(connection => {
             // this is a quick patch, there shouldnt be undefines here
             if (!connection) return false;
             return !(connection.from === self.nodes[i] && connection.to === target.nodes[j]);
@@ -343,8 +343,8 @@ function Group(size) {
       for (let index = 0; index < self.nodes.length; index++) {
         self.nodes[index].disconnect(target, { twosided });
 
-        if (twosided) self.connections_incoming = self.connections_incoming.filter(connection => !(connection.from === target && connection.to === self.nodes[index]));
-        self.connections_outgoing = self.connections_outgoing.filter(connection => !(connection.from === self.nodes[index] && connection.to === target));
+        if (twosided) self.incoming = self.incoming.filter(connection => !(connection.from === target && connection.to === self.nodes[index]));
+        self.outgoing = self.outgoing.filter(connection => !(connection.from === self.nodes[index] && connection.to === target));
       }
     }
   },
