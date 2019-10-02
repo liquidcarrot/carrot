@@ -670,8 +670,8 @@ function Network(input_size, output_size) {
       case "SUB_CONN": {
         const possible = self.possible(method)
         if (possible) {
-          const random_connection = possible[Math.floor(Math.random() * possible.length)]
-          self.disconnect(random_connection.from, random_connection.to)
+          const chosen = _.sample(possible)
+          self.disconnect(chosen.from, chosen.to)
           return self
         }
 
