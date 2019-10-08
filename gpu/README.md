@@ -10,7 +10,7 @@
 
 ### GPU JS Libraries:
 - GPU.js
-- gl
+- gl (https://github.com/stackgl/headless-gl) - Used by GPU.js
 - regl
 - node-webgl
 - node-gles (https://github.com/google/node-gles)
