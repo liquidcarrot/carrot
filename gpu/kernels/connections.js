@@ -1,5 +1,5 @@
 // Different connection kernels
-const GPU  = require("./gpu.js");
+const GPU  = require("./gpu");
 
 // By default attempts to run kernels accurately with low memory footprint
 // and support for variable sized parameters and outputs
