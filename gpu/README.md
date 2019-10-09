@@ -1,3 +1,7 @@
+## Concept
+
+## Resources
+
 ### GPU Acceleration:
 - OpenGL
 - WebGL
