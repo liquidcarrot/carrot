@@ -1,4 +1,21 @@
-## Concept
+## Explanation of Concepts
+
+To make the most of the GPU and support architecture-free networks it's best if the structure and state of the neural network is represented by a series of matrices.
+
+### Instance / Constructor Matrices
+
+**Connection / weight matrix**
+
+This matrix is always a square matrix with a side-length equal to the amount of neurons in the network.
+
+|   |  1  |  2  |  3  |  4  | 5 | 6 |
+|:-:|:---:|:---:|:---:|:---:|:-:|:-:|
+| **1** |  0  |  0  |  0  |  0  | 0 | 0 |
+| **2** | [w<sub>a</sub>, w<sub>b</sub>, w<sub>c</sub>] |  0  |  0  |  0  | 0 | 0 |
+| **3** | [w<sub>a</sub>, w<sub>b</sub>, w<sub>c</sub>] |  0  |  0  |  0  | 0 | 0 |
+| **4** | [w<sub>a</sub>, w<sub>b</sub>, w<sub>c</sub>] |  0  |  0  |  0  | 0 | 0 |
+| **5** |  0  | [w] | [w] |  0  | 0 | 0 |
+| **6** |  0  |  0  | [w] | [w] | 0 | 0 |
 
 ## Resources
 
