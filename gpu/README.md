@@ -6,6 +6,10 @@ To make the most of the GPU and support architecture-free networks it's best if 
 
 **Connection / weight matrix**
 
+<p>
+<img width="300px" src="./img/example-neural-network.png" alt="A neural network with 6 numbered neurons, 1 input, 3 hidden, 2 output">
+</p>
+
 This matrix is always a square matrix with a side-length equal to the amount of neurons in the network.
 
 |   |  1  |  2  |  3  |  4  | 5 | 6 |
