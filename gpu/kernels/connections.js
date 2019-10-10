@@ -31,7 +31,7 @@ const _weighted = GPU.createKernel(function(C, X) {
 
 const weighted = function(C, X) {
   const size = X.length;
-  const kernel = _weighted.setOutput([size]);
+  const kernel = _weighted.setOutput([size]).setTactic("speed").setOptimizeFloatMemory(true);
 
   return kernel(C, X);
 };
@@ -48,7 +48,7 @@ const _cyclical = GPU.createKernel(function(C, X) {
 
 const cyclical = function(C, X) {
   const size = X.length;
-  const kernel =_cyclical.setOutput([size]);
+  const kernel =_cyclical.setOutput([size]).setTactic("speed").setOptimizeFloatMemory(true);
 
   return kernel(C, X);
 };
