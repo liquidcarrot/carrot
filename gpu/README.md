@@ -8,7 +8,7 @@ To make the most of the GPU and support architecture-free networks it's best if 
 <img width="300px" src="./img/example-neural-network.png" alt="A neural network with 6 numbered neurons, 1 input, 3 hidden, 2 output">
 </p>
 
-**Connection / weight matrix**
+**Connection / Weight Matrix**
 
 This matrix is always a square matrix with a side-length equal to the amount of neurons in the network.
 
@@ -20,6 +20,35 @@ This matrix is always a square matrix with a side-length equal to the amount of 
 | **4** | [w<sub>a</sub>, w<sub>b</sub>, w<sub>c</sub>] |  0  |  0  |  0  | 0 | 0 |
 | **5** |  0  | [w] | [w] |  0  | 0 | 0 |
 | **6** |  0  |  0  | [w] | [w] | 0 | 0 |
+
+**Current, Previous Activation, Error, Previous Error**
+
+This matrix is a 6 by N matrix that contains information about the current & previous activation, error values. 
+
+|    |  1  |  2  |  3 |  4  |  5  |  6  |
+|:--:|:---:|:---:|:--:|:---:|:---:|:---:|
+|  x | 1.2 |  2  |  4 |  4  |  4  |  5  |
+| x' |  2  |  3  |  4 |  4  |  4  |  4  |
+|  ε |  2  |  3  |  4 |  4  |  2  |  2  |
+| ε' |  2  |  2  |  2 |  4  |  4  |  4  |
+
+
+**Activation, Error, Optimizer**
+
+This contains the per-neuron corresponding activation, error, and optimizer function 
+
+|    | 1 | 2 | 3 | 4 | 5 | 6 |
+|:--:|:-:|:-:|:-:|:-:|:-:|:-:|
+|  f | 2 | 2 | 4 | 4 | 3 | 3 |
+| f' | 2 | 3 | 4 | 4 | 4 | 4 |
+|  ε | 2 | 3 | 4 | 4 | 2 | 2 |
+| ε' | 2 | 2 | 2 | 4 | 4 | 4 |
+|  Θ | 2 | 2 | 2 | 2 | 2 | 1 |
+| Θ' | 1 | 3 | 4 | 2 | 1 | 3 |
+
+### Serialized Kernels
+
+These kernels contained serialized references to their corresponding functions
 
 ## Resources
 
