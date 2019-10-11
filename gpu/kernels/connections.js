@@ -59,4 +59,4 @@ const cyclical = function(C, X) {
 
 // [weighted, cyclical]
 module.exports = [weighted, cyclical];
-module.exports._ = [_weighted, _cyclical]; 
+module.exports._ = [_weighted, _cyclical];
