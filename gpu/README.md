@@ -46,6 +46,26 @@ This contains the per-neuron corresponding activation, error, and optimizer func
 |  Θ | 2 | 2 | 2 | 2 | 2 | 1 |
 | Θ' | 1 | 3 | 4 | 2 | 1 | 3 |
 
+<div>
+  <table>
+    <thead>
+      <tr>
+        <td>
+          <table>
+            <thead><tr><td>b</td></tr></thead>
+          </table>
+        </td>
+        <td>
+          <table>
+            <thead><tr><td>b</td></tr></thead>
+          </table>
+        </td>
+      </tr>
+    </thead>
+  </table>
+  
+</div>
+
 ### Serialized Kernels
 
 These kernels contained serialized references to their corresponding functions
