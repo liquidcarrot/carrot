@@ -31,6 +31,9 @@ const _weighted = GPU.createKernel(function(C, X) {
 
 const weighted = function(C, X) {
   const size = X.length;
+  // "speed" = lowp = "low precision"
+  // "balanced" = midp = "balanced precision"
+  // "performance" = highp = "high precision"
   const kernel = _weighted.setOutput([size]).setTactic("speed").setOptimizeFloatMemory(true);
 
   return kernel(C, X);
@@ -56,3 +59,4 @@ const cyclical = function(C, X) {
 
 // [weighted, cyclical]
 module.exports = [weighted, cyclical];
+module.exports._ = [_weighted, _cyclical]; 

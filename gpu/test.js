@@ -13,10 +13,11 @@ const ACTIVATION = require('./kernels/activations');
 //     O
 
 const TESTING = {
-  CONNECTION_WEIGHT: true,
-  CONNECTION_CYCLICAL: false
+  CONNECTION_WEIGHT: false,
+  CONNECTION_CYCLICAL: true
 }
 
+// Connection: Weighted
 if(TESTING.CONNECTION_WEIGHT) {
   console.log("Testing 'Weighted Sum' Connection GPU Kernel\n");
 
@@ -57,4 +58,9 @@ if(TESTING.CONNECTION_WEIGHT) {
 
   // Floating Point Operations per Second (FLOPs)
   console.log(`Flops: ${((SIZE * 2) / elapsed / 1000000).toFixed(3)} Megaflops`);
+}
+
+// Connection: Cyclical
+if(TESTING.CONNECTION_CYCLICAL) {
+  console.log(CONNECTION._[1]);
 }
