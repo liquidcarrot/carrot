@@ -309,18 +309,17 @@ function Network(input_size, output_size) {
   self.disconnect = function(from, to) {
     // Delete the connection in the network's connection array
     const connections = self.connections;
-
     for (let i = 0; i < connections.length; i++) {
-      const connection = connections[i];
-      if (connection.from === from && connection.to === to) {
-        if (connection.gater !== null) self.ungate(connection);
+      const conn = connections[i];
+      if (conn.from === from && conn.to === to) {
+        if (conn.gater !== null) self.ungate(conn);
         connections.splice(i, 1);
         break;
       }
     }
 
-    // Delete the connection at the sending and receiving neuron
-    from.disconnect(to)
+    // Delete & return the connection at the sending and receiving neuron
+    return from.disconnect(to)
   }
 
   /**

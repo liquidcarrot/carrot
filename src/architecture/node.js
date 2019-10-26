@@ -486,7 +486,6 @@ function Node(options) {
 
           if (connection.to === nodes) {
             self.outgoing.splice(index, 1);
-
             connection.to.incoming.splice(connection.to.incoming.indexOf(connection), 1);
 
             if(connection.gater != undefined) connection.gater.ungate(connection);
@@ -512,7 +511,7 @@ function Node(options) {
 
             connections.push(connection);
 
-            break;
+            break; // we're done with this target node, increment i by 1
           }
         }
       }
