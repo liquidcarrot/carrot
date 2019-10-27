@@ -1,7 +1,7 @@
-const _ = require("lodash");
-const methods = require("../methods/methods");
-const Node = require("./node");
-const Group = require("./group"); // will be imported later for circular dependency issues
+const _ = require('lodash');
+const methods = require('../methods/methods');
+const Node = require('./node');
+const Group = require('./group'); // will be imported later for circular dependency issues
 
 
 /**
@@ -34,7 +34,6 @@ const Group = require("./group"); // will be imported later for circular depende
 * let network = architect.Construct([input, hidden1, hidden2, output]);
 */
 class Layer extends Group {
-
   /**
    * Accepts the same arguments as Group, since it inherits from Group
    */
@@ -52,7 +51,7 @@ class Layer extends Group {
   *
   * @param {number} size Amount of nodes to build the layer with
   *
-  * @returns {Layer} Plain layer
+  * @return {Layer} Plain layer
   *
   * @example
   * let { Layer } = require("@liquid-carrot/carrot");
@@ -78,7 +77,7 @@ class Layer extends Group {
   *
   * @param {number} size Amount of nodes to build the layer with
   *
-  * @returns {Layer} LSTM layer
+  * @return {Layer} LSTM layer
   *
   * @example
   * let { Layer } = require("@liquid-carrot/carrot");
@@ -98,13 +97,13 @@ class Layer extends Group {
     const output_block = new Group(size);
 
     input_gate.set({
-      bias: 1
+      bias: 1,
     });
     forget_gate.set({
-      bias: 1
+      bias: 1,
     });
     output_gate.set({
-      bias: 1
+      bias: 1,
     });
 
     // Set up internal connections
@@ -147,7 +146,7 @@ class Layer extends Group {
   *
   * @param {number} size Amount of nodes to build the layer with
   *
-  * @returns {Layer} GRU layer
+  * @return {Layer} GRU layer
   *
   * @example
   * let { Layer } = require("@liquid-carrot/carrot");
@@ -169,27 +168,27 @@ class Layer extends Group {
     previous_output.set({
       bias: 0,
       squash: methods.activation.IDENTITY,
-      type: 'constant'
+      type: 'constant',
     });
     memory_cell.set({
-      squash: methods.activation.TANH
+      squash: methods.activation.TANH,
     });
     inverse_update_gate.set({
       bias: 0,
       squash: methods.activation.INVERSE,
-      type: 'constant'
+      type: 'constant',
     });
     update_gate.set({
-      bias: 1
+      bias: 1,
     });
     reset_gate.set({
-      bias: 0
+      bias: 0,
     });
 
     // Initial input forwarding
     input_group.connect(update_gate, methods.connection.ALL_TO_ALL),
     input_group.connect(reset_gate, methods.connection.ALL_TO_ALL),
-    input_group.connect(memory_cell, methods.connection.ALL_TO_ALL)
+    input_group.connect(memory_cell, methods.connection.ALL_TO_ALL);
 
     // Update gate calculation
     previous_output.connect(update_gate, methods.connection.ALL_TO_ALL);
@@ -240,7 +239,7 @@ class Layer extends Group {
   * @param {number} size Amount of nodes to build the layer with
   * @param {number} memory_size Number of previous inputs to remember
   *
-  * @returns {Layer} Layer with nodes that store previous inputs
+  * @return {Layer} Layer with nodes that store previous inputs
   *
   * @example
   * let { Layer } = require("@liquid-carrot/carrot");
@@ -264,7 +263,7 @@ class Layer extends Group {
       block.set({
         squash: methods.activation.IDENTITY,
         bias: 0,
-        type: 'constant'
+        type: 'constant',
       });
 
       previous.connect(block, methods.connection.ONE_TO_ONE, 1);
@@ -274,11 +273,11 @@ class Layer extends Group {
     }
 
     // set up input and output nodes
-    new_memory_layer.input_nodes.push(...input_group.nodes)
-    new_memory_layer.output_nodes.push(...added_groups.slice(-1)[0].nodes)
+    new_memory_layer.input_nodes.push(...input_group.nodes);
+    new_memory_layer.output_nodes.push(...added_groups.slice(-1)[0].nodes);
 
     // the order of activation has to be the reverse of the connection order to have a memory effect
-    added_groups.reverse().forEach(group => new_memory_layer.addNodes(group));;
+    added_groups.reverse().forEach((group) => new_memory_layer.addNodes(group));
 
     return new_memory_layer;
   }

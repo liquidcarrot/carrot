@@ -3,7 +3,7 @@
 * @name config
 * @prop {boolean} warnings=false
 */
-var config = {
+const config = {
   warnings: false,
 };
 

@@ -1,6 +1,18 @@
 {
-  "extends": "google",
+  "extends": [
+    "eslint:recommended",
+    "google"
+  ],
   "rules": {
-    /* We'll probably add some rules here at some point */
+    "one-var": "off",
+    "operator-linebreak": "off",
+    "no-extra-semi": "error",
+    "no-undef": "off"
+  },
+  "env": {
+    "es6": true,
+    "amd": true,
+    "commonjs": true,
+    "shared-node-browser": true
   }
 }

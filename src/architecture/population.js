@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 // const _ = require(`lodash`);
 // // const parameter = require(`./util/parameter`);
 // const Network = require(`./network`);

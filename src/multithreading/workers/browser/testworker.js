@@ -1,6 +1,6 @@
 module.exports = TestWorker;
 
-var multi = require('../../multi');
+const multi = require('../../multi');
 
 /**
 * Creates a web worker process for running tests
@@ -18,12 +18,12 @@ var multi = require('../../multi');
 * @param dataSet
 * @param cost
 */
-function TestWorker (dataSet, cost) {
-  var blob = new Blob([this._createBlobString(cost)]);
+function TestWorker(dataSet, cost) {
+  const blob = new Blob([this._createBlobString(cost)]);
   this.url = window.URL.createObjectURL(blob);
   this.worker = new Worker(this.url);
 
-  var data = { set: new Float64Array(dataSet).buffer };
+  const data = {set: new Float64Array(dataSet).buffer};
   this.worker.postMessage(data, [data.set]);
 }
 
@@ -38,18 +38,18 @@ TestWorker.prototype = {
   *
   * @param network
   */
-  evaluate: function (network) {
+  evaluate: function(network) {
     return new Promise((resolve, reject) => {
-      var serialized = network.serialize();
+      const serialized = network.serialize();
 
-      var data = {
+      const data = {
         activations: new Float64Array(serialized[0]).buffer,
         states: new Float64Array(serialized[1]).buffer,
-        conns: new Float64Array(serialized[2]).buffer
+        conns: new Float64Array(serialized[2]).buffer,
       };
 
-      this.worker.onmessage = function (e) {
-        var error = new Float64Array(e.data.buffer)[0];
+      this.worker.onmessage = function(e) {
+        const error = new Float64Array(e.data.buffer)[0];
         resolve(error);
       };
 
@@ -60,7 +60,7 @@ TestWorker.prototype = {
   /**
   * @todo Create a function description
   */
-  terminate: function () {
+  terminate: function() {
     this.worker.terminate();
     window.URL.revokeObjectURL(this.url);
   },
@@ -75,8 +75,8 @@ TestWorker.prototype = {
   *
   * @param cost
   */
-  _createBlobString: function (cost) {
-    var source = `
+  _createBlobString: function(cost) {
+    const source = `
       var F = [${multi.activations.toString()}];
       var cost = ${cost.toString()};
       var multi = {
@@ -101,5 +101,5 @@ TestWorker.prototype = {
       };`;
 
     return source;
-  }
+  },
 };

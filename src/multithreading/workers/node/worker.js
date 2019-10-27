@@ -6,12 +6,12 @@
  */
 
 // be careful about circular dependencies here
-const { multi, methods } = require('../../../carrot');
+const {multi, methods} = require('../../../carrot');
 const F = multi.activations;
 let dataset = [];
 let cost_function;
 
-process.on('message', function (e) {
+process.on('message', function(e) {
   if (e.serialized_dataset) {
     dataset = multi.deserializeDataSet(e.serialized_dataset);
   }
@@ -22,12 +22,12 @@ process.on('message', function (e) {
   }
 
   if (e.conns) { // this means that activations, states, and conns were provided
-    var A = e.activations;
-    var S = e.states;
-    var connections = e.conns;
+    const A = e.activations;
+    const S = e.states;
+    const connections = e.conns;
 
     // the dataset does not have to be serialized. I think that only the data param
-    var result = multi.testSerializedSet(dataset, cost_function, A, S, connections, F);
+    const result = multi.testSerializedSet(dataset, cost_function, A, S, connections, F);
 
     process.send(result);
   }

@@ -7,7 +7,7 @@
 * @borrows ./node/testworker as workers.node.TestWorker
 * @borrows ./browser/testworker as workers.browser.TestWorker
 */
-var workers = {
+const workers = {
   node: {
     TestWorker: require('./node/testworker'),
   },
