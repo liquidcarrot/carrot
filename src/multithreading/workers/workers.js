@@ -9,11 +9,11 @@
 */
 var workers = {
   node: {
-    TestWorker: require('./node/testworker')
+    TestWorker: require('./node/testworker'),
   },
   browser: {
-    TestWorker: require('./browser/testworker')
-  }
+    TestWorker: require('./browser/testworker'),
+  },
 };
 
 module.exports = workers;

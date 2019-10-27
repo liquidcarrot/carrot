@@ -4,7 +4,7 @@
 * @prop {boolean} warnings=false
 */
 var config = {
-  warnings: false
+  warnings: false,
 };
 
 module.exports = config;
