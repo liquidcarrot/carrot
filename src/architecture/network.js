@@ -2302,17 +2302,17 @@ Network.architecture = {
 */
 Network.architecture.DQN = function() {
   const args = Array.from(arguments);
-  
+
   // assumes last element is options object
   let options = args.pop()
-  
+
   // layer sizes is remaining arguments
   layer_sizes = args
-    
+
   if (layer_sizes.length < 3) {
     throw new Error('Please specify at least 3 layer sizes, 1. inputs, 2. hidden, 3. actions (outputs)');
   }
-  
+
   options = _.defaultsDeep(options, Network.architecture.DQN.defaults)
   options.network = options.network || new Network.architecture.LSTM(...layer_sizes) // Q function
 
@@ -2326,12 +2326,12 @@ Network.architecture.DQN.defaults = {
   reward: null,
   next_state: null,
   next_action: null,
-  
+
   // Learning and update
   learning_rate: 0.1, // AKA alpha
   loss_clamp: false, // usually a number
   loss: 0,
-  
+
   // Experience replay
   experience: [], // experience
   experience_index: 0, // where to insert
@@ -2339,18 +2339,17 @@ Network.architecture.DQN.defaults = {
   experience_interval: 10, // Interval to choosing when to add experience
   experience_counter: 0, // Counter for experience_index used to roll-over when experience_limit passed
   replay_batch_size: 100,
-  
+
   // Exploration / Exploitation management
   explore_decay_rate: 12, // To be added
   explore_max: .99, // To be added
   explore_min: 0, // To be added
   explore: .9, // Exploration rate AKA epsilon
-  
+
   // Reward calculation
   discount: 0.9, // AKA gamma
   reward_clamp: false // usually a number
 }
-
 Network.architecture.DQN.prototype = {
   /**
    * Selects an action by choosing between exploring new states (learning) and exploiting known best states (performing).
@@ -2368,10 +2367,10 @@ Network.architecture.DQN.prototype = {
    * @returns An index representing the networks guess for the highest reward action.
    */
   activate: function(state) {
-    
+
     // epsilon greedy strategy
     let action = (Math.random() > this.explore)
-      ? getMaxValueIndex(this.network.activate(state))
+      ? this.getMaxValueIndex(this.network.activate(state))
       : Math.floor(Math.random() * this.network.output_size)
 
     // shift state memory
@@ -2385,31 +2384,31 @@ Network.architecture.DQN.prototype = {
   /**
    * Use a new reward to update the Q policy (network)
    *
-   * @param {number} reward Reward provided by the environment, used to update the Q function
+   * @param {number} new_reward Reward provided by the environment, used to update the Q function
    *
    * @returns {number} How novel this reward was to the Q policy, can be thought of as network prediction error
    */
   reward: function(new_reward) {
-  
+
     // Update Q function | temporal difference method currently hardcoded
     if(!(this.reward == null) && this.learning_rate > 0) {
-      
+
       // Learn from current estimated reward to understand how wrong agent is
       this.loss = this.learnTD(this.state, this.action, this.reward, this.next_state, this.next_action)
-      
+
       // Decide if we should keep this experience in replay
       if(this.experience_counter % this.experience_interval === 0) {
-        this.remember([this.state, this.action, this.reward, this.next_state, this.next_action])
+        this.remember([this.state, this.action, this.reward, this.next_state, this.next_action, this.loss])
       }
-      
+
       this.experience_counter += 1
-      
+
       // learn from previous experiences
       this.learnFromMemory()
     }
-  
+
     this.reward = new_reward; // store for next update
-    
+
     return this.loss
   },
   /**
@@ -2426,11 +2425,11 @@ Network.architecture.DQN.prototype = {
    */
   remember: function(transition) {
     let index = this.experience_index
-    
+
     this.experience[index] = transition
-      
+
     index += 1
-      
+
     // roll over when we reach the experience_limit
     this.experience_index = (index > this.experience_limit) ? 0 : index
   },
@@ -2441,12 +2440,21 @@ Network.architecture.DQN.prototype = {
    *
    */
   learnFromMemory: function() {
-    for(let k=0; k < this.replay_batch_size; k++) {
-      
-      // TO-DO: priority sweeps?
-      const experience = this.experience[Math.floor(Math.random() * this.experience.length)];
-      
-      this.learnTD(...experience)
+    //Sort by loss_value
+    //Very inefficient a sorted insertion might be better
+    this.experience.sort(function (a, b){
+      return b[5] - a[5]; //descending
+    });
+
+    for(let k = 0; k < this.replay_batch_size; k++) {
+      for(let i = 0; i < this.experience.length; i++) {
+        //Priority replay
+        //Improvement: improve distribution
+        if(Math.random() < 1 / (i + 2)) {
+          this.learnTD(...this.experience[i]);
+          break;
+        }
+      }
     }
   },
   /**
@@ -2460,31 +2468,45 @@ Network.architecture.DQN.prototype = {
    *
    */
   learnTD: function(state, action, reward, next_state, next_action) {
-    
+
     // Compute target Q value, called without traces so it won't affect backprop
     const next_actions = this.network.activate(next_state, { no_trace: true })
-    
+
     // Q(s,a) = r + gamma * max_a' Q(s',a')
-    const target_reward = reward + this.discount * next_actions[getMaxValueIndex(next_actions)]
+    const target_reward = reward + this.discount * next_actions[this.getMaxValueIndex(next_actions)]
 
     // Predicted current reward | called with traces for backprop later
     const predicted_reward = this.network.activate(state)
-    
+
     let td_error = predicted_reward[action] - target_reward
-    const clamp = this.loss_clamp
-    
+    const clamp = this.loss_clamp;
+
     // Clamp error for robustness | To-Do: huber loss
-    // td_error = (Math.abs(td_error) < clamp) ? td_error : (td_error > clamp) ? clamp : -clamp
-    
+    // td_error = (Math.abs(td_error) <= clamp) ? td_error : (td_error > clamp) ? clamp : -clamp
+
+    //Huber loss
+    td_error =  Math.abs(td_error) <= clamp ? 0.5 * td_error * td_error : clamp * (Math.abs(td_error) - 0.5 * clamp);
+
     // TO-DO: Add target network to increase reliability
-    
+
     // Backpropagation using temporal difference error
-    this.network.propagate(learning_rate, 0, true, [target_reward])
-    
-    return td_error
+    this.network.propagate(this.learning_rate, 0, true, [target_reward])
+
+    return td_error;
+  },
+
+  getMaxValueIndex: function (arr){
+    let index = 0;
+    let maxValue = arr[0];
+    for(let i = 1; i < arr.length;i++){
+      if(arr[i] > maxValue){
+        maxValue = arr[i];
+        index = i;
+      }
+    }
+    return index;
   }
 }
-
 module.exports = Network
 
 /**
