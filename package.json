@@ -15,6 +15,7 @@
     "build:src": "./node_modules/.bin/webpack",
     "deploy:docs": "node theme/deploy-docs.js",
     "test": "./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha --recursive test/ --exclude test/unit.js",
+    "posttest": "./node_modules/.bin/eslint --ignore-path .eslintignore .",
     "test:debug": "./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha inspect --recursive test/ --exclude test/unit.js",
     "test:forever": "./node_modules/.bin/nodemon ./node_modules/.bin/mocha --reporter spec test/"
   },
@@ -76,6 +77,8 @@
     "chalk": "^2.4.2",
     "copy-webpack-plugin": "^5.0.4",
     "coveralls": "^3.0.6",
+    "eslint": "^6.6.0",
+    "eslint-config-google": "^0.14.0",
     "faker": "^4.1.0",
     "jsdoc": "^3.6.3",
     "mocha": "^6.2.0",
