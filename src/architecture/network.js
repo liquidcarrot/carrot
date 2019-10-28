@@ -309,18 +309,17 @@ function Network(input_size, output_size) {
   self.disconnect = function(from, to) {
     // Delete the connection in the network's connection array
     const connections = self.connections;
-
     for (let i = 0; i < connections.length; i++) {
-      const connection = connections[i];
-      if (connection.from === from && connection.to === to) {
-        if (connection.gater !== null) self.ungate(connection);
+      const conn = connections[i];
+      if (conn.from === from && conn.to === to) {
+        if (conn.gater !== null) self.ungate(conn);
         connections.splice(i, 1);
         break;
       }
     }
 
-    // Delete the connection at the sending and receiving neuron
-    from.disconnect(to)
+    // Delete & return the connection at the sending and receiving neuron
+    return from.disconnect(to)
   }
 
   /**
@@ -614,9 +613,9 @@ function Network(input_size, output_size) {
     switch (method.name) {
       // Looks for an existing connection and places a node in between
       case "ADD_NODE": {
-        if(self.nodes.length >= maxNodes) return null
+        if(self.nodes.length >= maxNodes) return null // check user constraints
 
-        const node = new Node({ type: 'hidden' })
+        const node = new Node({ type: 'hidden' }) // Unless we have connections across inputs / outputs this is always a hidden
         if (mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION) // this should be an option passed into the Node constructor
 
         // Note for the future: this makes the assumption that nodes can only be placed
@@ -628,18 +627,19 @@ function Network(input_size, output_size) {
         const connection = getRandomConnection()
         const from = connection.from
         const to = connection.to
-        self.disconnect(from, to) // break the existing connection
+        // break the existing connection, TODO: this should be stored in the future as a gene (somehwere), per the NEAT spec
+        self.disconnect(from, to)
 
         // Make sure new node is between from & to
-        // Accomodates assumption that: nodes array is ordered: ["inputs", "hidden", "outputs"]
+        // Fits assumption that: nodes array ordered: ["inputs", "hidden", "outputs"]
         // Should be agnostic by setting a node .type value and updating the way ".activate" works
         let min_bound = self.nodes.indexOf(from) // Shouldn't use expensive ".indexOf", we should track neuron index numbers in the "to" & "from" of connections instead and access nodes later if needed
         min_bound = (min_bound >= self.input_nodes.size - 1) ? min_bound : self.input_nodes.size - 1 // make sure after to insert after all input neurons
         self.nodes.splice(min_bound + 1, 0, node) // assumes there is at least one output neuron
 
         // Now create two new connections
-        const new_connection1 = self.connect(from, node)[0]
-        const new_connection2 = self.connect(node, to)[0]
+        const new_connection1 = self.connect(from, node, 1)[0] // Incoming connection weight set to 1, matches NEAT spec
+        const new_connection2 = self.connect(node, to, connection.weight)[0] // Outgoing connection has previous connection weight, matches NEAT spec
 
         const gater = connection.gater
         if (gater != null) self.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2) // Check if the original connection was gated
