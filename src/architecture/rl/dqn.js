@@ -1,4 +1,6 @@
 const architect = require('../architect');
+const Window = require("../../util/window");
+const Rate = require("../../methods/rate");
 
 /**
  *
@@ -8,21 +10,25 @@ const architect = require('../architect');
  */
 function DQN(numActions, numStates, opt) {
   this.numActions = numActions;
-  this.gamma = getopt(opt, 'gamma', 0.3); // future reward discount factor
-  this.epsilon = getopt(opt, 'epsilon', 0.1); // for epsilon-greedy policy
-  this.learningRate = getopt(opt, 'learningRate', 0.01); // value function learning rate
+  this.gamma = getopt(opt, 'gamma', 0.1); // future reward discount factor
+  this.epsilon = getopt(opt, 'epsilon', 0.05); // for epsilon-greedy policy
+  this.epsilonDecay = getopt(opt, 'epsilonDecay', 0.99); // for epsilon-greedy policy
+  this.epsilonMin = getopt(opt, 'epsilonMin', 0.01); // for epsilon-greedy policy
+  this.learningRate = getopt(opt, 'learningRate', 0.05); // value function learning rate
+  this.learningRateDecay = getopt(opt, 'learningRateDecay', 1); // value function learning rate
+  this.learningRateMin = getopt(opt, 'learningRateMin', 0.01); // value function learning rate
+
+  this.isTraining = getopt(opt, 'isTraining', true);
 
   // number of time steps before we add another experience to replay memory
-  this.experienceAddEvery = getopt(opt, 'experience_add_every', 5);
   this.experienceSize = getopt(opt, 'experience_size', 5000); // size of experience replay
-  this.learningStepsPerIteration = getopt(opt, 'learning_steps_per_iteration', 50);
-  this.tderror_clamp = getopt(opt, 'tderror_clamp', 1.0);
-  this.hiddenNeurons = getopt(opt, 'hidden', [10]);
+  this.learningStepsPerIteration = getopt(opt, 'learning_steps_per_iteration', 20);
+  this.tderrorClamp = getopt(opt, 'tderrorClamp', 1);
+  this.hiddenNeurons = getopt(opt, 'hidden', [200]);
 
-  this.network = new architect.Perceptron(numStates, this.hiddenNeurons, numActions);
+  this.network = new architect.Perceptron(numStates, ...this.hiddenNeurons, numActions);
 
-  this.experience = []; // experience
-  this.experienceIndex = 0; // where to insert
+  this.experience = new Window(this.experienceSize, true); // experience
 
   this.reward = null;
   this.state = null;
@@ -30,22 +36,23 @@ function DQN(numActions, numStates, opt) {
   this.action = null;
   this.nextAction = null;
   this.loss = 0;
+  this.t = 0;
 }
 
 DQN.prototype = {
-  toJSON: function() {
+  toJSON: function () {
     // save function
     return this.network.toJSON();
   },
-  fromJSON: function(json) {
+  fromJSON: function (json) {
     // load function
     this.network = Network.fromJSON(json);
     this.numActions = this.network.output_size;
   },
-  act: function(state) {
+  act: function (state) {
     // epsilon greedy strategy
     let action;
-    if (this.epsilon < Math.random()) {
+    if (Math.max(this.epsilonMin, Rate.EXP(this.epsilon, this.t, {gamma: this.epsilonDecay})) < Math.random()) {
       action = Math.floor(Math.random() * this.numActions);
     } else {
       action = this.getMaxValueIndex(this.network.activate(state));
@@ -59,41 +66,24 @@ DQN.prototype = {
 
     return action;
   },
-  learn: function(newReward) {
+  learn: function (newReward) {
     // Update Q function | temporal difference method currently hardcoded
-    if (this.reward != null && this.learningRate > 0) {
+    if (this.reward != null && this.isTraining) {
       // Learn from current estimated reward to understand how wrong agent is
       this.loss = this.learnQ(this.state, this.action, this.reward, this.nextState);
 
       // Too random, should pick experiences by their loss value
-      if (this.experienceIndex % this.experienceAddEvery === 0) {
-        this.experience[this.experienceIndex] = [this.state, this.action, this.reward, this.nextState, this.loss];
-        this.experienceIndex++;
+      this.experience.add([this.state, this.action, this.reward, this.nextState, this.loss]);
 
-        // roll over when we reach the experience_limit
-        this.experienceIndex = (this.experienceIndex > this.experienceSize) ? 0 : this.experienceIndex;
+      for (let i = 0; i < this.learningStepsPerIteration; i++) {
+        this.learnQ(...this.experience.pickRandom());
       }
-      this.experienceIndex++;
-
-      this.learnFromExperience();
     }
-
-    this.reward = newReward; // store for next update
+    this.t++;
+    this.reward = newReward;
     return this.loss;
   },
-  learnFromExperience: function() {
-    // Much improvement required
-    // TODO PER
-    for (let i = 0; i < this.learningStepsPerIteration; i++) {
-      for (let j = 0; j < this.experienceSize; j++) {
-        const exp = this.experience[Math.floor(Math.random() * this.experienceSize)];
-        if (exp !== undefined) {
-          this.learnQ(...exp);
-        }
-      }
-    }
-  },
-  learnQ: function(state, action, reward, nextState) {
+  learnQ: function (state, action, reward, nextState) {
     // Compute target Q value, called without traces so it won't affect backprop
     const nextActions = this.network.activate(nextState, {no_trace: true});
 
@@ -103,22 +93,22 @@ DQN.prototype = {
     // Predicted current reward | called with traces for backprop later
     const predictedReward = this.network.activate(state);
 
-    const tdError = predictedReward[action] - targetReward;
+    let tdError = predictedReward[action] - targetReward;
 
     // Clamp error for robustness | To-Do: huber loss
-    // tdError = (Math.abs(tdError) <= clamp) ? tdError : (tdError > clamp) ? clamp : -clamp
+    if (Math.abs(tdError) > this.tderrorClamp) {
+      tdError = tdError > this.tderrorClamp ? this.tderrorClamp : -this.tderrorClamp;
+    }
     // Huber loss
 
     // TO-DO: Add target network to increase reliability
-
     // Backpropagation using temporal difference error
     const outputNodesAlpha = new Float64Array(this.numActions);
     outputNodesAlpha[action] = targetReward;
-    this.network.propagate(this.learningRate, 0, true, outputNodesAlpha);
-
+    this.network.propagate(Math.max(this.learningRateMin, Rate.EXP(this.learningRate, this.t, {gamma: this.learningRateDecay})), 0, true, outputNodesAlpha);
     return tdError;
   },
-  getMaxValueIndex: function(arr) {
+  getMaxValueIndex: function (arr) {
     let index = 0;
     let maxValue = arr[0];
     for (let i = 1; i < arr.length; i++) {
@@ -129,13 +119,17 @@ DQN.prototype = {
     }
     return index;
   },
+  setTraining: function (val) {
+    this.isTraining = val;
+  }
 };
+
 
 /**
  * This function will get the value from the fieldName, if Present, otherwise returns the defaultValue
- * @param {Array} opt
+ * @param {Object} opt
  * @param {String} fieldName
- * @param {number} defaultValue
+ * @param {number|boolean} defaultValue
  * @return {Number | number[]} the value of the fileName if Present, otherwise the defaultValue
  */
 function getopt(opt, fieldName, defaultValue) {
