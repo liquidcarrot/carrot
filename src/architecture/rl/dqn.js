@@ -29,18 +29,18 @@ function DQN(numActions, numStates, opt) {
   this.gamma = getopt(opt, 'gamma', 0.1); // future reward discount factor
   this.epsilon = getopt(opt, 'epsilon', 0.05); // for epsilon-greedy policy
   this.epsilonDecay = getopt(opt, 'epsilonDecay', 0.99); // for epsilon-greedy policy
-  this.epsilonMin = getopt(opt, 'epsilonMin', 0.01); // for epsilon-greedy policy
-  this.learningRate = getopt(opt, 'learningRate', 0.05); // value function learning rate
-  this.learningRateDecay = getopt(opt, 'learningRateDecay', 1); // value function learning rate
+  this.epsilonMin = getopt(opt, 'epsilonMin', 0); // for epsilon-greedy policy
+  this.learningRate = getopt(opt, 'learningRate', 0.1); // value function learning rate
+  this.learningRateDecay = getopt(opt, 'learningRateDecay', 0.99); // value function learning rate
   this.learningRateMin = getopt(opt, 'learningRateMin', 0.01); // value function learning rate
 
   this.isTraining = getopt(opt, 'isTraining', true);
 
   // number of time steps before we add another experience to replay memory
-  let experienceSize = getopt(opt, 'experience_size', 5000); // size of experience replay
+  let experienceSize = getopt(opt, 'experience_size', 50000); // size of experience replay
   this.learningStepsPerIteration = getopt(opt, 'learning_steps_per_iteration', 20);
-  this.tderrorClamp = getopt(opt, 'tderrorClamp', 0.8);
-  this.hiddenNeurons = getopt(opt, 'hidden', [50]);
+  this.tderrorClamp = getopt(opt, 'tderrorClamp', 1);
+  this.hiddenNeurons = getopt(opt, 'hidden', [10]);
 
   this.network = new architect.Perceptron(numStates, ...this.hiddenNeurons, numActions);
 
@@ -138,7 +138,7 @@ DQN.prototype = {
     const nextActions = this.network.activate(nextState, {no_trace: true});
 
     // Q(s,a) = r + gamma * max_a' Q(s',a')
-    const targetQValue = reward + this.gamma * nextActions[this.getMaxValueIndex(nextActions)];
+    const targetQValue = (1 + reward) / 2 + this.gamma * nextActions[this.getMaxValueIndex(nextActions)];
 
     // Predicted current reward | called with traces for backprop later
     const predictedReward = this.network.activate(state);
@@ -146,18 +146,16 @@ DQN.prototype = {
     //Bad loss function
     let tdError = predictedReward[action] - targetQValue;
 
-    // Clamp error for robustness | To-Do: huber loss
+    // Clamp error for robustness | ToDo: huber loss
     if (Math.abs(tdError) > this.tderrorClamp) {
       tdError = tdError > this.tderrorClamp ? this.tderrorClamp : -this.tderrorClamp;
     }
-    // Huber loss
 
     // TO-DO: Add target network to increase reliability
     // Backpropagation using temporal difference error
     //TODO can be faster
-    const outputNodesAlpha = new Float64Array(this.numActions);
-    outputNodesAlpha[action] = targetQValue;
-    this.network.propagate(Math.max(this.learningRateMin, Rate.EXP(this.learningRate, this.t, {gamma: this.learningRateDecay})), 0, true, outputNodesAlpha);
+    predictedReward[action] = targetQValue;
+    this.network.propagate(Math.max(this.learningRateMin, Rate.EXP(this.learningRate, this.t, {gamma: this.learningRateDecay})), 0, true, predictedReward);
     return tdError;
   },
 

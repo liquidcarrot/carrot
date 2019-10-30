@@ -20,14 +20,14 @@ describe('DQN', function () {
   });
   it('test learning capabilities', function () {
     this.timeout(10000);
-    let agent = new DQN(2, 1, {});
+    let agent = new DQN(2, 1, {gamma: 0.3, hidden: [4], epsilon: 0});
 
     let currentState = 0.5;
     let lastState = currentState;
     let currentLoss;
-    let avgReward = new Window(300);
+    let rewardWindow = new Window(100);
     let i = 0;
-    while (i < 100000 && (avgReward.getAverage() < 0.6 || i < 1000)) {
+    while (i < 100 || rewardWindow.getAverage() < 0.6) {
       i++;
 
       let action = agent.act([currentState]);
@@ -36,10 +36,10 @@ describe('DQN', function () {
         Math.max(0, currentState - 0.5);
 
       let reward = currentState === lastState ? -1 : 1;
-      avgReward.add(reward);
+      rewardWindow.add(reward);
       currentLoss = agent.learn(reward);
       lastState = currentState;
     }
-    expect(avgReward.getAverage() >= 0.6).to.be.true;
+    expect(rewardWindow.getAverage() >= 0.6).to.be.true;
   });
 });
