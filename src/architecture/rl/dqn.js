@@ -23,8 +23,8 @@ function DQN(numActions, numStates, opt) {
   // number of time steps before we add another experience to replay memory
   this.experienceSize = getopt(opt, 'experience_size', 5000); // size of experience replay
   this.learningStepsPerIteration = getopt(opt, 'learning_steps_per_iteration', 20);
-  this.tderrorClamp = getopt(opt, 'tderrorClamp', 1);
-  this.hiddenNeurons = getopt(opt, 'hidden', [200]);
+  this.tderrorClamp = getopt(opt, 'tderrorClamp', 0.8);
+  this.hiddenNeurons = getopt(opt, 'hidden', [50]);
 
   this.network = new architect.Perceptron(numStates, ...this.hiddenNeurons, numActions);
 

@@ -1,9 +1,10 @@
 const DQN = require('../../../../src/architecture/rl/dqn.js');
+const Window = require('../../../../src/util/window');
 const {expect} = require('chai');
 
 describe('DQN', function () {
   it('Object creation', function () {
-    this.timeout(500);
+    this.timeout(2000);
     for (let i = 0; i < 100; i++) {
       let opt = {
         'hidden': [Math.floor(Math.random() * 30 + 1)],
@@ -23,13 +24,17 @@ describe('DQN', function () {
     let states = 1;
     let agent = new DQN(actions, states, {});
 
-    const NUM_EPISODES = 2000;
-
     let currentState = 0.5;
     let lastState = currentState;
     let currentLoss;
-    let avgReward = 0;
-    for (let i = 0; i < NUM_EPISODES; i++) {
+    let avgReward = new Window(300);
+    for (let i = 0; i < 500; i++) {
+      avgReward.add(0);
+    }
+    let i = 1;
+    while (i < 100000 && (avgReward.getAverage() < 0.6 || i < 1000) {
+      i++;
+
       let action = agent.act([currentState]);
       if (action === 1) {
         currentState += 0.5;
@@ -44,10 +49,13 @@ describe('DQN', function () {
       }
 
       let reward = currentState === lastState ? -1 : 1;
-      avgReward += reward;
+      avgReward.add(reward);
       currentLoss = agent.learn(reward);
       lastState = currentState;
+
+      console.log(avgReward.getAverage() + ",");
     }
-    expect(avgReward / NUM_EPISODES > 0.5).to.be.true;
+    expect(avgReward.getAverage() >= 0.6).to.be.true;
   });
-});
+})
+;
