@@ -52,8 +52,6 @@ describe('DQN', function () {
       avgReward.add(reward);
       currentLoss = agent.learn(reward);
       lastState = currentState;
-
-      console.log(avgReward.getAverage() + ",");
     }
     expect(avgReward.getAverage() >= 0.6).to.be.true;
   });
