@@ -36,34 +36,31 @@ This matrix is a 6 by N matrix that contains information about the current & pre
 **Activation, Error, Optimizer**
 
 This contains the per-neuron corresponding activation, error, and optimizer function 
-
-|    | 1 | 2 | 3 | 4 | 5 | 6 |
-|:--:|:-:|:-:|:-:|:-:|:-:|:-:|
-|  f | 2 | 2 | 4 | 4 | 3 | 3 |
-| f' | 2 | 3 | 4 | 4 | 4 | 4 |
-|  ε | 2 | 3 | 4 | 4 | 2 | 2 |
-| ε' | 2 | 2 | 2 | 4 | 4 | 4 |
-|  Θ | 2 | 2 | 2 | 2 | 2 | 1 |
-| Θ' | 1 | 3 | 4 | 2 | 1 | 3 |
-
-<div>
-  <table>
-    <thead>
-      <tr>
-        <td>
-          <table>
-            <thead><tr><td>b</td></tr></thead>
-          </table>
-        </td>
-        <td>
-          <table>
-            <thead><tr><td>b</td></tr></thead>
-          </table>
-        </td>
-      </tr>
-    </thead>
-  </table>
+<div align="middle">
   
+  <table>
+  <tr><th>Neuron state matrix</th><th>Function reference matrix</th></tr>
+  <tr><td>
+
+  |    | 1 | 2 | 3 | 4 | 5 | 6 |
+  |:--:|:-:|:-:|:-:|:-:|:-:|:-:|
+  |  f | 2 | 2 | 4 | 4 | 3 | 3 |
+  | f' | 2 | 3 | 4 | 4 | 4 | 4 |
+  |  ε | 2 | 3 | 4 | 4 | 2 | 2 |
+  | ε' | 2 | 2 | 2 | 4 | 4 | 4 |
+  |  Θ | 2 | 2 | 2 | 2 | 2 | 1 |
+  | Θ' | 1 | 3 | 4 | 2 | 1 | 3 |
+
+  </td><td>
+
+|    |     1     |     2    |     3    |     4    |     5     |     6     |     7     |
+|:--:|:---------:|:--------:|:--------:|:--------:|:---------:|:---------:|:---------:|
+|  f |  Logistic |   Tanh   |   Step   |   ReLU   |  Softsign |  Sinusoid |  Gaussian |
+| f' | Logistic' |   Tanh'  |   Step'  |   ReLU'  | Softsign' | Sinusoid' | Guassian' |
+|  ε |    MSE    |  MAE  |    MAPE   |   MAPE   |    WAPE   |    MSLE   |   Hinge   |
+|  Θ |  fitness1 | fitness2 | fitness3 | fitness4 |  fitness5 |  fitness6 |  fitness7 |
+
+  </td></tr> </table>
 </div>
 
 ### Serialized Kernels
