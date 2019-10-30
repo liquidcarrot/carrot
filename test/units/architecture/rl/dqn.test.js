@@ -20,18 +20,13 @@ describe('DQN', function () {
   });
   it('test learning capabilities', function () {
     this.timeout(10000);
-    let actions = 2;
-    let states = 1;
-    let agent = new DQN(actions, states, {});
+    let agent = new DQN(2, 1, {});
 
     let currentState = 0.5;
     let lastState = currentState;
     let currentLoss;
     let avgReward = new Window(300);
-    for (let i = 0; i < 500; i++) {
-      avgReward.add(0);
-    }
-    let i = 1;
+    let i = 0;
     while (i < 100000 && (avgReward.getAverage() < 0.6 || i < 1000)) {
       i++;
 
