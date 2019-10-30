@@ -36,17 +36,9 @@ describe('DQN', function () {
       i++;
 
       let action = agent.act([currentState]);
-      if (action === 1) {
-        currentState += 0.5;
-        if (currentState > 1) {
-          currentState = 0.5;
-        }
-      } else {
-        currentState -= 0.5;
-        if (currentState < 0) {
-          currentState = 0;
-        }
-      }
+      currentState = action === 1 ?
+        Math.min(1, currentState + 0.5) :
+        Math.max(0, currentState - 0.5);
 
       let reward = currentState === lastState ? -1 : 1;
       avgReward.add(reward);
