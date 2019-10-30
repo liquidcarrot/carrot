@@ -1,4 +1,5 @@
 const architect = require('../architect');
+const Network = require('../network');
 const Window = require("../../util/window");
 const Rate = require("../../methods/rate");
 
