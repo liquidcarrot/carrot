@@ -32,7 +32,7 @@ describe('DQN', function () {
       avgReward.add(0);
     }
     let i = 1;
-    while (i < 100000 && (avgReward.getAverage() < 0.6 || i < 1000) {
+    while (i < 100000 && (avgReward.getAverage() < 0.6 || i < 1000)) {
       i++;
 
       let action = agent.act([currentState]);
@@ -57,5 +57,4 @@ describe('DQN', function () {
     }
     expect(avgReward.getAverage() >= 0.6).to.be.true;
   });
-})
-;
+});

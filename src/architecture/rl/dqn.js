@@ -2,6 +2,21 @@ const architect = require('../architect');
 const Window = require("../../util/window");
 const Rate = require("../../methods/rate");
 
+
+/**
+ * This function will get the value from the fieldName, if Present, otherwise returns the defaultValue
+ * @param {Object} opt
+ * @param {String} fieldName
+ * @param {number|boolean} defaultValue
+ * @return {Number | number[]} the value of the fileName if Present, otherwise the defaultValue
+ */
+function getopt(opt, fieldName, defaultValue) {
+  if (typeof opt === 'undefined') {
+    return defaultValue;
+  }
+  return (typeof opt[fieldName] !== 'undefined') ? opt[fieldName] : defaultValue;
+}
+
 /**
  *
  * @param {int} numActions maximum number of actions the agent can do
@@ -21,14 +36,14 @@ function DQN(numActions, numStates, opt) {
   this.isTraining = getopt(opt, 'isTraining', true);
 
   // number of time steps before we add another experience to replay memory
-  this.experienceSize = getopt(opt, 'experience_size', 5000); // size of experience replay
+  let experienceSize = getopt(opt, 'experience_size', 5000); // size of experience replay
   this.learningStepsPerIteration = getopt(opt, 'learning_steps_per_iteration', 20);
   this.tderrorClamp = getopt(opt, 'tderrorClamp', 0.8);
   this.hiddenNeurons = getopt(opt, 'hidden', [50]);
 
   this.network = new architect.Perceptron(numStates, ...this.hiddenNeurons, numActions);
 
-  this.experience = new Window(this.experienceSize, true); // experience
+  this.experience = new Window(experienceSize, true); // experience
 
   this.reward = null;
   this.state = null;
@@ -40,15 +55,32 @@ function DQN(numActions, numStates, opt) {
 }
 
 DQN.prototype = {
+  /**
+   * Save function
+   *
+   * @return {JSON} JSON String which represents the current DQN agent
+   */
   toJSON: function () {
-    // save function
-    return this.network.toJSON();
+    let json = {};
+    json.net = this.network.toJSON();
+    json.gamma = this.gamma;
+    json.epsilon = this.epsilon;
+    json.epsilonDecay = this.epsilonDecay;
+    json.epsilonMin = this.epsilonMin;
+    json.learningRate = this.learningRate;
+    json.learningRateDecay = this.learningRateDecay;
+    json.learningRateMin = this.learningRateMin;
+    json.isTraining = this.isTraining;
+    json.experience = this.experience;
+    return json;
   },
-  fromJSON: function (json) {
-    // load function
-    this.network = Network.fromJSON(json);
-    this.numActions = this.network.output_size;
-  },
+
+  /**
+   * This method gets the current state as input, and decides which action should be taken.
+   *
+   * @param {number[]} state current state (float arr with values between 0 and 1)
+   * @returns {number} the action which the DQN would take at this state
+   */
   act: function (state) {
     // epsilon greedy strategy
     let action;
@@ -66,6 +98,13 @@ DQN.prototype = {
 
     return action;
   },
+
+  /**
+   * This method trains the Q-Network.
+   *
+   * @param {number} newReward the current reward, the agent receives from the environment
+   * @returns {number} the loss value
+   */
   learn: function (newReward) {
     // Update Q function | temporal difference method currently hardcoded
     if (this.reward != null && this.isTraining) {
@@ -83,17 +122,28 @@ DQN.prototype = {
     this.reward = newReward;
     return this.loss;
   },
+
+  /**
+   * This method learns from an specified experience.
+   *
+   * @param {number[]} state current state
+   * @param {number} action action taken in current state
+   * @param {number} reward reward received for the action in the current state
+   * @param {number[]} nextState the state which follows the current state with the action taken
+   * @returns {number} TDError
+   */
   learnQ: function (state, action, reward, nextState) {
     // Compute target Q value, called without traces so it won't affect backprop
     const nextActions = this.network.activate(nextState, {no_trace: true});
 
     // Q(s,a) = r + gamma * max_a' Q(s',a')
-    const targetReward = reward + this.gamma * nextActions[this.getMaxValueIndex(nextActions)];
+    const targetQValue = reward + this.gamma * nextActions[this.getMaxValueIndex(nextActions)];
 
     // Predicted current reward | called with traces for backprop later
     const predictedReward = this.network.activate(state);
 
-    let tdError = predictedReward[action] - targetReward;
+    //Bad loss function
+    let tdError = predictedReward[action] - targetQValue;
 
     // Clamp error for robustness | To-Do: huber loss
     if (Math.abs(tdError) > this.tderrorClamp) {
@@ -103,11 +153,21 @@ DQN.prototype = {
 
     // TO-DO: Add target network to increase reliability
     // Backpropagation using temporal difference error
+    //TODO can be faster
     const outputNodesAlpha = new Float64Array(this.numActions);
-    outputNodesAlpha[action] = targetReward;
+    outputNodesAlpha[action] = targetQValue;
     this.network.propagate(Math.max(this.learningRateMin, Rate.EXP(this.learningRate, this.t, {gamma: this.learningRateDecay})), 0, true, outputNodesAlpha);
     return tdError;
   },
+
+  /**
+   * This method returns the index of the element with the highest value
+   *
+   * TODO create test method
+   *
+   * @param {number[]} arr the input array
+   * @returns {number} the index which the highest value
+   */
   getMaxValueIndex: function (arr) {
     let index = 0;
     let maxValue = arr[0];
@@ -119,24 +179,38 @@ DQN.prototype = {
     }
     return index;
   },
+
+  /**
+   * Setter for variable "isTraining"
+   *
+   * @param val new value
+   */
   setTraining: function (val) {
     this.isTraining = val;
   }
 };
 
-
 /**
- * This function will get the value from the fieldName, if Present, otherwise returns the defaultValue
- * @param {Object} opt
- * @param {String} fieldName
- * @param {number|boolean} defaultValue
- * @return {Number | number[]} the value of the fileName if Present, otherwise the defaultValue
+ * Loads function
+ *
+ * @param {JSON} json  JSON String
+ * @return {DQN} Agent with the specs from the json
  */
-function getopt(opt, fieldName, defaultValue) {
-  if (typeof opt === 'undefined') {
-    return defaultValue;
-  }
-  return (typeof opt[fieldName] !== 'undefined') ? opt[fieldName] : defaultValue;
-}
+DQN.fromJSON = function (json) {
+  let network = Network.fromJSON(json);
+  let agent = new DQN(network.input_size, network.output_size, {});
+
+  agent.gamma = json.gamma;
+  agent.epsilon = json.epsilon;
+  agent.epsilonDecay = json.epsilonDecay;
+  agent.epsilonMin = json.epsilonMin;
+  agent.learningRate = json.learningRate;
+  agent.learningRateDecay = json.learningRateDecay;
+  agent.learningRateMin = json.learningRateMin;
+  agent.isTraining = json.isTraining;
+  agent.experience = json.experience;
+
+  return agent;
+};
 
 module.exports = DQN;
