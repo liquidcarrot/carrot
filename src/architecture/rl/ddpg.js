@@ -2,9 +2,9 @@ const Network = require("../network");
 const architect = require("../architect");
 const ReplayBuffer = require("./replay-buffer");
 
-function DDPG(numStates,hiddenSize,numActions,maxExperienceSize){
-  this.actor = new architect.Perceptron(numStates,hiddenSize,numActions);
-  this.critic = new architect.Perceptron(numStates+numActions,hiddenSize,numActions);
+function DDPG(numStates, hiddenSize, numActions, maxExperienceSize) {
+  this.actor = new architect.Perceptron(numStates, hiddenSize, numActions);
+  this.critic = new architect.Perceptron(numStates + numActions, hiddenSize, numActions);
 
   this.actorTarget = Network.fromJSON(this.actor.toJSON());
   this.criticTarget = Network.fromJSON(this.critic.toJSON());
@@ -22,16 +22,16 @@ function DDPG(numStates,hiddenSize,numActions,maxExperienceSize){
 }
 
 DDPG.prototype = {
-  init: function(initState){
+  init: function (initState) {
     this.nextState = initState;
   },
 
-  act: function() {
+  act: function () {
     //TODO replacing with OUNoise -> Continuous Action Space
     let action;
-    if(Math.random()<this.epsilon){
+    if (Math.random() < this.epsilon) {
       action = Math.floor(Math.random() * this.numActions);
-    }else {
+    } else {
       action = this.getMaxValueIndex(this.actor.activate(this.nextState));
     }
     this.action = action;
@@ -40,46 +40,55 @@ DDPG.prototype = {
     return action;
   },
 
-  learn: function (reward,newState){
-    this.replayBuffer.add(this.state, this.action, reward,newState);
+  learn: function (reward, newState) {
+    this.replayBuffer.add(this.state, this.action, reward, newState);
 
     this.sampleExperience(...this.replayBuffer.getLast());
 
-    for(let i = 0; i < this.learningStepsPerEpisode;i++){
+    for (let i = 0; i < this.learningStepsPerEpisode; i++) {
       this.sampleExperience(...this.replayBuffer.pickRandom());
     }
   },
 
-  sampleExperience: function(state,action,reward,nextState){
-    let qValues = this.critic.activate(...state,...action);
-    let criticInput = [...nextState,...this.actorTarget.activate(nextState)];
-    let nextQ = this.getMaxValueIndex(this.criticTarget.activate(criticInput));
-    let qPrime = reward + this.gamma * nextQ;
-
-    //Learning the actor and critic networks
-    let criticLoss = 0;
-    for(let i = 0; i < qValues.length;i++){
-      criticLoss += Math.pow(qPrime[i]-qValues[i],2);
+  sampleExperience: function (state, action, reward, nextState) {
+    let qValues = this.critic.activate(...state, ...action);
+    let criticInput = [...nextState, ...this.actorTarget.activate(nextState)];
+    let nextQ = this.criticTarget.activate(criticInput);
+    let qPrime = [];
+    for (let i = 0; i < nextQ.length; i++) {
+      qPrime.push(reward + this.gamma * nextQ[i]);
     }
 
-    let actorLoss = this.mean(-this.critic.activate([...state,...this.actor.activate(state)]));
+    //Learning the actor and critic networks
+    let criticGradients = this.critic.activate([...state, action]);
+    for (let i = 0; i < qValues.length; i++) {
+      criticGradients += Math.pow(qPrime[i] - qValues[i], 2);
+    }
+
+    this.critic.propagate(this.learningRate, 0, true, criticGradients);
+
+    let actorLoss = this.mean(-this.critic.activate([...state, ...this.actor.activate(state)]));
+    let gradients = this.actor.activate(state);
+    gradients[action] += actorLoss;
+    this.actor.propagate(this.learningRate, 0, true, gradients);
+
     //TODO LEARN FROM THESE LOSS_VALUES
 
 
     //Learning the actorTarget and criticTarget networks
     let actorParameters = this.actor.activate(state);
     let actorTargetParameters = this.actorTarget.activate(state);
-    let criticParameters = this.critic.activate([...state,...action]);
-    let criticTargetParameters = this.criticTarget.activate([...state,...action]);
-    for(let i = 0; i < actorParameters.length;i++){
-      actorTargetParameters[i] = (this.tau * actorParameters[i]+(1-this.tau) * actorTargetParameters);
+    let criticParameters = this.critic.activate([...state, ...action]);
+    let criticTargetParameters = this.criticTarget.activate([...state, ...action]);
+    for (let i = 0; i < actorParameters.length; i++) {
+      actorTargetParameters[i] = (this.tau * actorParameters[i] + (1 - this.tau) * actorTargetParameters);
     }
-    for(let i = 0; i < criticParameters.length;i++){
-     criticTargetParameters[i] = (this.tau * criticParameters[i]+(1-this.tau) * criticTargetParameters);
+    for (let i = 0; i < criticParameters.length; i++) {
+      criticTargetParameters[i] = (this.tau * criticParameters[i] + (1 - this.tau) * criticTargetParameters);
     }
-    this.actorTarget.propagate(this.learningRate,0,true,actorTargetParameters);
-    this.criticTarget.propagate(this.learningRate,0,true,criticTargetParameters);
-    },
+    this.actorTarget.propagate(this.learningRate, 0, true, actorTargetParameters);
+    this.criticTarget.propagate(this.learningRate, 0, true, criticTargetParameters);
+  },
 
   /**
    * This method returns the index of the element with the highest value
@@ -103,9 +112,9 @@ DDPG.prototype = {
    * @param {number[]} arr input array
    * @returns {number} mean value
    */
-  mean: function(arr) {
+  mean: function (arr) {
     let sum = 0;
-    for(let i = 0; i < arr.length; i++){
+    for (let i = 0; i < arr.length; i++) {
       sum += arr[i];
     }
     return sum / arr.length;
