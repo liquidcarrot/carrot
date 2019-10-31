@@ -51,18 +51,20 @@ DDPG.prototype = {
   },
 
   sampleExperience: function(state,action,reward,nextState){
-    let QValues = this.critic.activate(...state,...action);
+    let qValues = this.critic.activate(...state,...action);
     let criticInput = [...nextState,...this.actorTarget.activate(nextState)];
-    let nextQ = reward + this.gamma * this.criticTarget.activate(criticInput);
-    let QPrime = reward + this.gamma * nextQ;
+    let nextQ = this.getMaxValueIndex(this.criticTarget.activate(criticInput));
+    let qPrime = reward + this.gamma * nextQ;
 
     //Learning the actor and critic networks
     let criticLoss = 0;
-    for(let i = 0; i < QValues.length;i++){
-      criticLoss += Math.pow(QPrime[i]-QValues[i],2);
+    for(let i = 0; i < qValues.length;i++){
+      criticLoss += Math.pow(qPrime[i]-qValues[i],2);
     }
 
     let actorLoss = this.mean(-this.critic.activate([...state,...this.actor.activate(state)]));
+    //TODO LEARN FROM THESE LOSS_VALUES
+
 
     //Learning the actorTarget and criticTarget networks
     //TODO create function parameters in network.js
