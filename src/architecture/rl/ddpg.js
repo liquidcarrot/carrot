@@ -67,17 +67,18 @@ DDPG.prototype = {
 
 
     //Learning the actorTarget and criticTarget networks
-    //TODO create function parameters in network.js
-    let actorParameters = this.actor.parameters();
-    let actorTargetParameters = this.actorTarget.parameters();
-    let criticParameters = this.critic.parameters();
-    let criticTargetParameters = this.criticTarget.parameters();
+    let actorParameters = this.actor.activate(state);
+    let actorTargetParameters = this.actorTarget.activate(state);
+    let criticParameters = this.critic.activate([...state,...action]);
+    let criticTargetParameters = this.criticTarget.activate([...state,...action]);
     for(let i = 0; i < actorParameters.length;i++){
       actorTargetParameters[i] = (this.tau * actorParameters[i]+(1-this.tau) * actorTargetParameters);
     }
     for(let i = 0; i < criticParameters.length;i++){
      criticTargetParameters[i] = (this.tau * criticParameters[i]+(1-this.tau) * criticTargetParameters);
     }
+    this.actorTarget.propagate(this.learningRate,0,true,actorTargetParameters);
+    this.criticTarget.propagate(this.learningRate,0,true,criticTargetParameters);
     },
 
   /**
