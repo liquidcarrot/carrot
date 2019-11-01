@@ -1,9 +1,9 @@
 {
   "name": "@liquid-carrot/carrot",
-  "version": "0.3.13",
+  "version": "0.3.18",
   "description": "A Simple Node.js AI Library for Neural Network",
-  "main": "dist/carrot.commonjs2.min.js",
-  "module": "dist/carrot.commonjs2.min.js",
+  "main": "src/carrot.js",
+  "module": "src/carrot.js",
   "unpkg": "dist/carrot.umd2.min.js",
   "jsdelivr": "dist/carrot.umd2.min.js",
   "browser": {
@@ -67,22 +67,23 @@
   },
   "homepage": "https://liquidcarrot.io/",
   "dependencies": {
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chai-each": "0.0.1",
     "chalk": "^2.4.2",
-    "coveralls": "^3.0.4",
+    "copy-webpack-plugin": "^5.0.4",
+    "coveralls": "^3.0.6",
     "faker": "^4.1.0",
-    "jsdoc": "^3.6.2",
-    "mocha": "^6.1.4",
-    "nodemon": "^1.19.1",
+    "jsdoc": "^3.6.3",
+    "mocha": "^6.2.0",
+    "nodemon": "^1.19.2",
     "nyc": "^13.3.0",
     "parallel-webpack": "^2.4.0",
-    "webpack": "^4.39.3",
-    "webpack-cli": "^3.3.8"
+    "webpack": "^4.41.0",
+    "webpack-cli": "^3.3.9"
   },
   "nyc": {
     "include": [

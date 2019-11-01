@@ -14,8 +14,8 @@ const Group = require("./group"); // will be imported later for circular depende
 *
 * @prop {Node[]} output Output nodes
 * @prop {Node[]} nodes Nodes within the layer
-* @prop {Group[]|Node[]} connections_incoming Incoming connections
-* @prop {Group[]|Node[]} connections_outgoing Outgoing connections
+* @prop {Group[]|Node[]} incoming Incoming connections
+* @prop {Group[]|Node[]} outgoing Outgoing connections
 * @prop {Group[]|Node[]} connections_self Self connections
 *
 * @example <caption>Custom architecture built with layers</caption>

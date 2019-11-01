@@ -17,10 +17,10 @@ describe("Node", function() {
       expect(node.delta_bias_previous).to.be.finite;
       expect(node.delta_bias_total).to.be.finite;
       expect(node.delta_bias).to.be.an("array");
-      expect(node.connections_gated).to.be.an("array");
+      expect(node.gated).to.be.an("array");
       expect(node.connections_self).to.be.an.instanceOf(Connection);
-      expect(node.connections_incoming).to.be.an("array");
-      expect(node.connections_outgoing).to.be.an("array");
+      expect(node.incoming).to.be.an("array");
+      expect(node.outgoing).to.be.an("array");
       expect(node.error_responsibility).to.be.finite;
       expect(node.error_projected).to.be.finite;
       expect(node.error_gated).to.be.finite;
@@ -105,8 +105,8 @@ describe("Node", function() {
       }
 
       expect(node.connect(other, options)).to.be.an.instanceOf(Connection);
-      expect(node.connections_incoming).to.have.lengthOf(1);
-      expect(node.connections_outgoing).to.have.lengthOf(1);
+      expect(node.incoming).to.have.lengthOf(1);
+      expect(node.outgoing).to.have.lengthOf(1);
     })
     it("node.connect(nodes, options={ twosided: true }) => {Connection[]}", function() {
       const node = new Node();
@@ -125,8 +125,8 @@ describe("Node", function() {
         expect(connections[i]).to.be.an.instanceOf(Connection);
       }
 
-      expect(node.connections_incoming).to.have.lengthOf(size);
-      expect(node.connections_outgoing).to.have.lengthOf(size);
+      expect(node.incoming).to.have.lengthOf(size);
+      expect(node.outgoing).to.have.lengthOf(size);
     })
   });
   describe("node.disconnect()", function() {
@@ -173,8 +173,8 @@ describe("Node", function() {
 
       expect(connection).to.be.an.instanceOf(Connection);
 
-      expect(node.connections_incoming).to.have.lengthOf(0);
-      expect(node.connections_outgoing).to.have.lengthOf(0);
+      expect(node.incoming).to.have.lengthOf(0);
+      expect(node.outgoing).to.have.lengthOf(0);
     })
     it("node.disconnect(nodes, options={ twosided: true }) => {Connection[]}", function() {
       const node = new Node();
@@ -194,8 +194,8 @@ describe("Node", function() {
         expect(connections[i]).to.be.an.instanceOf(Connection);
       }
 
-      expect(node.connections_incoming).to.have.lengthOf(0);
-      expect(node.connections_outgoing).to.have.lengthOf(0);
+      expect(node.incoming).to.have.lengthOf(0);
+      expect(node.outgoing).to.have.lengthOf(0);
     })
   });
   describe("node.activate()", function() {
@@ -332,7 +332,7 @@ describe("Node", function() {
 
       expect(gate).to.be.an.instanceof(Connection);
       expect(gate.gater).to.eql(node);
-      expect(node.connections_gated).to.have.lengthOf(1);
+      expect(node.gated).to.have.lengthOf(1);
     })
     it("node.gate(connections) => {Connection[]}", function() {
       const size = Math.ceil(Math.random() * 10);
@@ -357,7 +357,7 @@ describe("Node", function() {
         expect(gates[i].gater).to.eql(node);
       }
 
-      expect(node.connections_gated).to.have.lengthOf(size);
+      expect(node.gated).to.have.lengthOf(size);
     })
   });
   describe("node.ungate()", function() {
@@ -378,7 +378,7 @@ describe("Node", function() {
 
       expect(gate).to.be.an.instanceof(Connection);
       expect(gate.gater).to.not.exist;
-      expect(node.connections_gated).to.have.lengthOf(0);
+      expect(node.gated).to.have.lengthOf(0);
     })
     it("node.ungate(connections) => {Connection[]}", function() {
       const size = Math.ceil(Math.random() * 10);
@@ -405,7 +405,7 @@ describe("Node", function() {
         expect(gates[i].gater).to.not.exist;
       }
 
-      expect(node.connections_gated).to.have.lengthOf(0);
+      expect(node.gated).to.have.lengthOf(0);
     })
   });
   describe("node.clear()", function() {
@@ -426,16 +426,16 @@ describe("Node", function() {
       expect(node.error_projected).to.equal(0);
       expect(node.error_gated).to.equal(0);
 
-      for (let i = 0; i < node.connections_incoming.length; i++) {
-        expect(node.connections_incoming[i].eligibility).to.equal(0);
-        expect(node.connections_incoming[i].xtrace_nodes).to.be.an("array");
-        expect(node.connections_incoming[i].xtrace_nodes).to.have.lengthOf(0);
-        expect(node.connections_incoming[i].xtrace_values).to.be.an("array");
-        expect(node.connections_incoming[i].xtrace_values).to.have.lengthOf(0);
+      for (let i = 0; i < node.incoming.length; i++) {
+        expect(node.incoming[i].eligibility).to.equal(0);
+        expect(node.incoming[i].xtrace_nodes).to.be.an("array");
+        expect(node.incoming[i].xtrace_nodes).to.have.lengthOf(0);
+        expect(node.incoming[i].xtrace_values).to.be.an("array");
+        expect(node.incoming[i].xtrace_values).to.have.lengthOf(0);
       }
 
-      for (let i = 0; i < node.connections_gated.length; i++) {
-        expect(node.connections_gated[i].gain).to.equal(0);
+      for (let i = 0; i < node.gated.length; i++) {
+        expect(node.gated[i].gain).to.equal(0);
       }
     })
   });

@@ -31,9 +31,9 @@ const config = require('../config');
 * @prop {number} mask=1 Used for dropout. This is either 0 (ignored) or 1 (included) during training and is used to avoid [overfit](https://www.kdnuggets.com/2015/04/preventing-overfitting-neural-networks.html).
 * @prop {number} previousDeltaBias
 * @prop {number} totalDeltaBias
-* @prop {Array<Connection>} connections_incoming Incoming connections to this node
-* @prop {Array<Connection>} connections_outgoing connections from this node
-* @prop {Array<Connection>} connections_gated Connections this node gates
+* @prop {Array<Connection>} incoming Incoming connections to this node
+* @prop {Array<Connection>} outgoing Outgoing connections from this node
+* @prop {Array<Connection>} gated Connections this node gates
 * @prop {Connection} connections_self A self-connection
 * @prop {number} error.responsibility
 * @prop {number} error.projected
@@ -59,9 +59,9 @@ function Node(options) {
     delta_bias_previous: 0,
     delta_bias_total: 0,
     delta_bias: [],
-    connections_incoming: [],
-    connections_outgoing: [],
-    connections_gated: [],
+    incoming: [],
+    outgoing: [],
+    gated: [],
     connections_self: new Connection(self, self, 0),
     error_responsibility: 0,
     error_projected: 0,
@@ -119,8 +119,8 @@ function Node(options) {
       self.state = self.connections_self.gain * self.connections_self.weight * self.state + self.bias;
 
       // Activate (from incoming connections)
-      for (let i = 0; i < self.connections_incoming.length; i++) {
-        const conn = self.connections_incoming[i];
+      for (let i = 0; i < self.incoming.length; i++) {
+        const conn = self.incoming[i];
         self.state += conn.from.activation * conn.weight * conn.gain;
       }
 
@@ -139,8 +139,8 @@ function Node(options) {
       const influences = [];
 
       // Adjust 'gain' (to gated connections) & Build traces
-      for (let i = 0; i < self.connections_gated.length; i++) {
-        const connection = self.connections_gated[i];
+      for (let i = 0; i < self.gated.length; i++) {
+        const connection = self.gated[i];
         connection.gain = self.activation
 
         // Build traces
@@ -154,8 +154,8 @@ function Node(options) {
       }
 
       // Forwarding 'xtrace' (to incoming connections)
-      for (let i = 0; i < self.connections_incoming.length; i++) {
-        const connection = self.connections_incoming[i];
+      for (let i = 0; i < self.incoming.length; i++) {
+        const connection = self.incoming[i];
 
         // Trace Elegibility
         connection.elegibility = self.connections_self.gain * self.connections_self.weight * connection.elegibility + connection.from.activation * connection.gain;
@@ -181,8 +181,8 @@ function Node(options) {
       self.activation = self.squash(self.state) // Squash Activation
 
       // Adjust 'gain' (to gated connections)
-      for (let i = 0; i < self.connections_gated.length; i++) {
-        self.connections_gated[i].gain = self.activation
+      for (let i = 0; i < self.gated.length; i++) {
+        self.gated[i].gain = self.activation
       }
 
       return self.activation;
@@ -279,8 +279,8 @@ function Node(options) {
     else {
       // Projected Error Responsibility (from outgoing connections)
       self.error_projected = 0;
-      for (let i = 0; i < self.connections_outgoing.length; i++) {
-        const connection = self.connections_outgoing[i];
+      for (let i = 0; i < self.outgoing.length; i++) {
+        const connection = self.outgoing[i];
 
         self.error_projected += connection.to.error_responsibility * connection.weight * connection.gain;
       }
@@ -288,8 +288,8 @@ function Node(options) {
 
       // Gated Error Responsibility (from gated connections)
       self.error_gated = 0;
-      for (let i = 0; i < self.connections_gated.length; i++) {
-        const connection = self.connections_gated[i];
+      for (let i = 0; i < self.gated.length; i++) {
+        const connection = self.gated[i];
         const node = connection.to;
         const influence = (node.connections_self.gater === self ? node.old : 0) + connection.weight * connection.from.activation;
 
@@ -302,8 +302,8 @@ function Node(options) {
     }
 
     // Adjust Incoming Connections
-    for (let i = 0; i < self.connections_incoming.length; i++) {
-      const connection = self.connections_incoming[i];
+    for (let i = 0; i < self.incoming.length; i++) {
+      const connection = self.incoming[i];
       let gradient = self.error_projected * connection.elegibility;
       for (let j = 0; j < connection.xtrace_nodes.length; j++) {
         const node = connection.xtrace_nodes[j];
@@ -397,8 +397,8 @@ function Node(options) {
       else {
         const connection = new Connection(self, nodes, weight, options);
 
-        self.connections_outgoing.push(connection);
-        nodes.connections_incoming.push(connection);
+        self.outgoing.push(connection);
+        nodes.incoming.push(connection);
 
         if(options.twosided) nodes.connect(self);
 
@@ -411,8 +411,8 @@ function Node(options) {
       for (let index = 0; index < nodes.length; index++) {
         const connection = new Connection(self, nodes[index], weight, options);
 
-        self.connections_outgoing.push(connection);
-        nodes[index].connections_incoming.push(connection);
+        self.outgoing.push(connection);
+        nodes[index].incoming.push(connection);
         connections.push(connection);
 
         if(options.twosided) nodes[index].connect(self);
@@ -441,13 +441,13 @@ function Node(options) {
   *
   * node.connect(other); // `node` now connected to `other`
   *
-  * console.log(node.connections_incoming.length); // 0
-  * console.log(node.connections_outgoing.length); // 1
+  * console.log(node.incoming.length); // 0
+  * console.log(node.outgoing.length); // 1
   *
   * node.disconnect(other); // `node` is now disconnected from `other`
   *
-  * console.log(node.connections_incoming.length); // 0
-  * console.log(node.connections_outgoing.length); // 0
+  * console.log(node.incoming.length); // 0
+  * console.log(node.outgoing.length); // 0
   *
   * @example <caption>Connect to one <code>node</code> - <em>two-sided</em></caption>
   * const { Node } = require("@liquid-carrot/carrot");
@@ -460,16 +460,16 @@ function Node(options) {
   *   twosided: true
   * });
   *
-  * console.log(node.connections_incoming.length); // 1
-  * console.log(node.connections_outgoing.length); // 1
+  * console.log(node.incoming.length); // 1
+  * console.log(node.outgoing.length); // 1
   *
   * // `node` & `other` are now disconnected from each other
   * node.disconnect(other, {
   *   twosided: true
   * });
   *
-  * console.log(node.connections_incoming.length); // 0
-  * console.log(node.connections_outgoing.length); // 0
+  * console.log(node.incoming.length); // 0
+  * console.log(node.outgoing.length); // 0
   */
   self.disconnect = function(nodes, options) {
     if (nodes == undefined) throw new ReferenceError("Missing required parameter 'target'");
@@ -481,13 +481,13 @@ function Node(options) {
         self.connections_self.weight = 0;
         return self.connections_self;
       } else {
-        for (let index = 0; index < self.connections_outgoing.length; index++) {
-          const connection = self.connections_outgoing[index];
+        for (let index = 0; index < self.outgoing.length; index++) {
+          const connection = self.outgoing[index];
 
           if (connection.to === nodes) {
-            self.connections_outgoing.splice(index, 1);
+            self.outgoing.splice(index, 1);
 
-            connection.to.connections_incoming.splice(connection.to.connections_incoming.indexOf(connection), 1);
+            connection.to.incoming.splice(connection.to.incoming.indexOf(connection), 1);
 
             if(connection.gater != undefined) connection.gater.ungate(connection);
             if(options.twosided) nodes.disconnect(self);
@@ -500,12 +500,12 @@ function Node(options) {
       const connections = [];
 
       for (let i = 0; i < nodes.length; i++) {
-        for (let j = 0; j < self.connections_outgoing.length; j++) {
-          const connection = self.connections_outgoing[j];
+        for (let j = 0; j < self.outgoing.length; j++) {
+          const connection = self.outgoing[j];
 
           if(connection.to === nodes[i]) {
-            self.connections_outgoing.splice(j, 1);
-            connection.to.connections_incoming.splice(connection.to.connections_incoming.indexOf(connection), 1);
+            self.outgoing.splice(j, 1);
+            connection.to.incoming.splice(connection.to.incoming.indexOf(connection), 1);
 
             if(connection.gater != undefined) connection.gater.ungate(connection);
             if(options.twosided) nodes[i].disconnect(self);
@@ -550,13 +550,13 @@ function Node(options) {
 
 
     if (!Array.isArray(connections)) {
-      self.connections_gated.push(connections);
+      self.gated.push(connections);
       connections.gater = self;
     } else {
       for (let index = 0; index < connections.length; index++) {
         const connection = connections[index];
 
-        self.connections_gated.push(connection);
+        self.gated.push(connection);
         connection.gater = self;
       }
     }
@@ -597,7 +597,7 @@ function Node(options) {
     if (connections == undefined) throw new ReferenceError("Missing required parameter 'connections'");
 
     if (!Array.isArray(connections)) {
-      self.connections_gated.splice(self.connections_gated.indexOf(connections), 1);
+      self.gated.splice(self.gated.indexOf(connections), 1);
       connections.gater = null;
       connections.gain = 1;
     } else {
@@ -605,7 +605,7 @@ function Node(options) {
       // for (let index = connections.length - 1; index >= 0; index--) {
         const connection = connections[i];
 
-        self.connections_gated.splice(self.connections_gated.indexOf(connection), 1);
+        self.gated.splice(self.gated.indexOf(connection), 1);
         connection.gater = null;
         connection.gain = 1;
       }
@@ -637,16 +637,16 @@ function Node(options) {
   * console.log(node); // Node has no state information
   */
   self.clear = function() {
-    for (let index = 0; index < self.connections_incoming.length; index++) {
-      const connection = self.connections_incoming[index];
+    for (let index = 0; index < self.incoming.length; index++) {
+      const connection = self.incoming[index];
 
       connection.elegibility = 0;
       connection.xtrace_nodes = []
       connection.xtrace_values = [];
     }
 
-    for (let index = 0; index < self.connections_gated.length; index++) {
-      const connection = self.connections_gated[index];
+    for (let index = 0; index < self.gated.length; index++) {
+      const connection = self.gated[index];
       connection.gain = 0;
     }
 
@@ -742,8 +742,8 @@ function Node(options) {
 
     if (nodes === self) return self.connections_self.weight !== 0;
     else if (!Array.isArray(nodes)) {
-      for (let i = 0; i < self.connections_outgoing.length; i++) {
-        if (self.connections_outgoing[i].to === nodes) return true;
+      for (let i = 0; i < self.outgoing.length; i++) {
+        if (self.outgoing[i].to === nodes) return true;
       }
       return false;
     } else {
@@ -752,9 +752,9 @@ function Node(options) {
       for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
 
-        for (let j = 0; j < self.connections_outgoing.length; j++) {
+        for (let j = 0; j < self.outgoing.length; j++) {
 
-          if (self.connections_outgoing[j].to === node) {
+          if (self.outgoing[j].to === node) {
             projecting_to++;
             break;
           }
@@ -800,8 +800,8 @@ function Node(options) {
 
     if (nodes === self) return self.connections_self.weight !== 0;
     else if (!Array.isArray(nodes)) {
-      for (let i = 0; i < self.connections_incoming.length; i++) {
-        if (self.connections_incoming[i].from === nodes) return true;
+      for (let i = 0; i < self.incoming.length; i++) {
+        if (self.incoming[i].from === nodes) return true;
       }
       return false;
     } else {
@@ -810,9 +810,9 @@ function Node(options) {
       for (let i = 0; i < nodes.length; i++) {
         const node = nodes[i];
 
-        for (let j = 0; j < self.connections_incoming.length; j++) {
+        for (let j = 0; j < self.incoming.length; j++) {
 
-          if (self.connections_incoming[j].from === node) {
+          if (self.incoming[j].from === node) {
             projected_by++;
             break;
           }
@@ -823,8 +823,8 @@ function Node(options) {
       return nodes.length === projected_by ? true : false;
     }
 
-    // for(let i = 0; i < self.connections_incoming.length; i++) {
-    //   if(self.connections_incoming[i].from === node) return true;
+    // for(let i = 0; i < self.incoming.length; i++) {
+    //   if(self.incoming[i].from === node) return true;
     // }
 
     // return false;

@@ -1,0 +1,4050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Liquid Carrot - Node - Documentation</title>
+    <link rel="shortcut icon" href="/liquid-carrot-favicon.png" />
+    
+    
+    
+    
+    
+    <meta property="og:title" content=""/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content=""/>
+    
+    <meta property="og:url" content=""/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="styles/bulma.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/ionicons/2.0.1/css/ionicons.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger">
+  <div class="fixed-action-btn">
+    <div class="button-floating">
+      <!--
+      <label for="nav-trigger" class="navicon-button x">
+        <div class="navicon"></div>
+      </label>
+      -->
+        <i class="ion-ios-book" aria-hidden="true"></i>
+    </div>
+  </div>
+</label>
+<label for="nav-trigger" class="overlay"></label>
+
+<div class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="#" style="padding:0">
+      <img src="img/carrot-logo.png" height="28">
+    </a>
+
+    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+
+  <div id="navbarBasicExample" class="navbar-menu">
+    <div class="navbar-start">
+      <a class="navbar-item" href="/">Home</a>
+      <a class="navbar-item" href="/carrot">Docs</a>
+      <a class="navbar-item" href="https://github.com/liquidcarrot/carrot" target="_blank"><i class="ion-social-github" aria-hidden="true"></i></a>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          Versions
+        </a>
+        
+        <div class="navbar-dropdown">
+          <a href='https://liquidcarrot.io/carrot/versions/0.2.27/' class="navbar-item">v0.2.27</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.2.28/' class="navbar-item">v0.2.28</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.0/' class="navbar-item">v0.3.0</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.1/' class="navbar-item">v0.3.1</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.10/' class="navbar-item">v0.3.10</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.11/' class="navbar-item">v0.3.11</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.12/' class="navbar-item">v0.3.12</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.16/' class="navbar-item">v0.3.16</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.3/' class="navbar-item">v0.3.3</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.4/' class="navbar-item">v0.3.4</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.7/' class="navbar-item">v0.3.7</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.8/' class="navbar-item">v0.3.8</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.9/' class="navbar-item">v0.3.9</a>
+      <a href='https://liquidcarrot.io/carrot/' class="navbar-item">latest</a>
+        </div>
+      </div>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More
+        </a>
+
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="mailto:people@liquidcarrot.io?subject=Contact%20From%20Docs">
+            Contact
+          </a>
+          <hr class="navbar-divider">
+          <a class="navbar-item" href="https://github.com/liquidcarrot/carrot/issues/new">
+            Report an issue
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <input type="text" id="nav-search" placeholder="Search" autofocus>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav >
+    <h3>Classes</h3><ul><li><a href="Connection_.html">Connection</a><ul class='methods'><li data-type='method'><a href="Connection_.html#.innovationID">innovationID</a></li><li data-type='method'><a href="Connection_.html#.toJSON">toJSON</a></li></ul></li><li><a href="Group.html">Group</a><ul class='methods'><li data-type='method'><a href="Group.html#.activate">activate</a></li><li data-type='method'><a href="Group.html#.clear">clear</a></li><li data-type='method'><a href="Group.html#.connect">connect</a></li><li data-type='method'><a href="Group.html#.disconnect">disconnect</a></li><li data-type='method'><a href="Group.html#.gate">gate</a></li><li data-type='method'><a href="Group.html#.propagate">propagate</a></li><li data-type='method'><a href="Group.html#.set">set</a></li></ul></li><li><a href="Layer.html">Layer</a><ul class='methods'><li data-type='method'><a href="Layer.html#.Dense">Dense</a></li><li data-type='method'><a href="Layer.html#.GRU">GRU</a></li><li data-type='method'><a href="Layer.html#.LSTM">LSTM</a></li><li data-type='method'><a href="Layer.html#.Memory">Memory</a></li></ul></li><li><a href="Neat.html">Neat</a><ul class='methods'><li data-type='method'><a href="Neat.html#.createPool">createPool</a></li><li data-type='method'><a href="Neat.html#.createPopulation">createPopulation</a></li><li data-type='method'><a href="Neat.html#.evaluate">evaluate</a></li><li data-type='method'><a href="Neat.html#.evolve">evolve</a></li><li data-type='method'><a href="Neat.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Neat.html#.getAverage">getAverage</a></li><li data-type='method'><a href="Neat.html#.getFittest">getFittest</a></li><li data-type='method'><a href="Neat.html#.getOffspring">getOffspring</a></li><li data-type='method'><a href="Neat.html#.getParent">getParent</a></li><li data-type='method'><a href="Neat.html#.mutate">mutate</a></li><li data-type='method'><a href="Neat.html#.replace">replace</a></li><li data-type='method'><a href="Neat.html#.resize">resize</a></li><li data-type='method'><a href="Neat.html#.toJSON">toJSON</a></li></ul></li><li><a href="Network.html">Network</a><ul class='methods'><li data-type='method'><a href="Network.html#.activate">activate</a></li><li data-type='method'><a href="Network.html#.clear">clear</a></li><li data-type='method'><a href="Network.html#.clone">clone</a></li><li data-type='method'><a href="Network.html#.connect">connect</a></li><li data-type='method'><a href="Network.html#.crossOver">crossOver</a></li><li data-type='method'><a href="Network.html#.disconnect">disconnect</a></li><li data-type='method'><a href="Network.html#.evolve">evolve</a></li><li data-type='method'><a href="Network.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Network.html#.gate">gate</a></li><li data-type='method'><a href="Network.html#.merge">merge</a></li><li data-type='method'><a href="Network.html#.mutate">mutate</a></li><li data-type='method'><a href="Network.html#.mutateRandom">mutateRandom</a></li><li data-type='method'><a href="Network.html#.noTraceActivate">noTraceActivate</a></li><li data-type='method'><a href="Network.html#.possible">possible</a></li><li data-type='method'><a href="Network.html#.remove">remove</a></li><li data-type='method'><a href="Network.html#.set">set</a></li><li data-type='method'><a href="Network.html#.standalone">standalone</a></li><li data-type='method'><a href="Network.html#.test">test</a></li><li data-type='method'><a href="Network.html#.toJSON">toJSON</a></li><li data-type='method'><a href="Network.html#.train">train</a></li><li data-type='method'><a href="Network.html#.ungate">ungate</a></li></ul></li><li><a href="Node.html">Node</a><ul class='methods'><li data-type='method'><a href="Node.html#.activate">activate</a></li><li data-type='method'><a href="Node.html#.clear">clear</a></li><li data-type='method'><a href="Node.html#.connect">connect</a></li><li data-type='method'><a href="Node.html#.disconnect">disconnect</a></li><li data-type='method'><a href="Node.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Node.html#.gate">gate</a></li><li data-type='method'><a href="Node.html#.isProjectedBy">isProjectedBy</a></li><li data-type='method'><a href="Node.html#.isProjectingTo">isProjectingTo</a></li><li data-type='method'><a href="Node.html#.mutate">mutate</a></li><li data-type='method'><a href="Node.html#.noTraceActivate">noTraceActivate</a></li><li data-type='method'><a href="Node.html#.propagate">propagate</a></li><li data-type='method'><a href="Node.html#.toJSON">toJSON</a></li><li data-type='method'><a href="Node.html#.ungate">ungate</a></li></ul></li></ul><h3>Namespaces</h3><ul><li><a href="activation.html">activation</a><ul class='methods'><li data-type='method'><a href="activation.html#.ABSOLUTE">ABSOLUTE</a></li><li data-type='method'><a href="activation.html#.BENT_IDENTITY">BENT_IDENTITY</a></li><li data-type='method'><a href="activation.html#.BIPOLAR">BIPOLAR</a></li><li data-type='method'><a href="activation.html#.BIPOLAR_SIGMOID">BIPOLAR_SIGMOID</a></li><li data-type='method'><a href="activation.html#.GAUSSIAN">GAUSSIAN</a></li><li data-type='method'><a href="activation.html#.HARD_TANH">HARD_TANH</a></li><li data-type='method'><a href="activation.html#.IDENTITY">IDENTITY</a></li><li data-type='method'><a href="activation.html#.INVERSE">INVERSE</a></li><li data-type='method'><a href="activation.html#.LOGISTIC">LOGISTIC</a></li><li data-type='method'><a href="activation.html#.RELU">RELU</a></li><li data-type='method'><a href="activation.html#.SELU">SELU</a></li><li data-type='method'><a href="activation.html#.SINUSOID">SINUSOID</a></li><li data-type='method'><a href="activation.html#.SOFTSIGN">SOFTSIGN</a></li><li data-type='method'><a href="activation.html#.STEP">STEP</a></li><li data-type='method'><a href="activation.html#.TANH">TANH</a></li></ul></li><li><a href="architect.html">architect</a><ul class='methods'><li data-type='method'><a href="architect.html#.Construct">Construct</a></li><li data-type='method'><a href="architect.html#.GRU">GRU</a></li><li data-type='method'><a href="architect.html#.Hopfield">Hopfield</a></li><li data-type='method'><a href="architect.html#.Liquid">Liquid</a></li><li data-type='method'><a href="architect.html#.LSTM">LSTM</a></li><li data-type='method'><a href="architect.html#.NARX">NARX</a></li><li data-type='method'><a href="architect.html#.Perceptron">Perceptron</a></li><li data-type='method'><a href="architect.html#.Random">Random</a></li></ul></li><li><a href="connection.html">connection</a><ul class='members'><li data-type='member'><a href="connection.html#.ALL_TO_ALL">ALL_TO_ALL</a></li><li data-type='member'><a href="connection.html#.ALL_TO_ELSE">ALL_TO_ELSE</a></li><li data-type='member'><a href="connection.html#.ONE_TO_ONE">ONE_TO_ONE</a></li></ul></li><li><a href="cost.html">cost</a><ul class='methods'><li data-type='method'><a href="cost.html#.BINARY">BINARY</a></li><li data-type='method'><a href="cost.html#.CROSS_ENTROPY">CROSS_ENTROPY</a></li><li data-type='method'><a href="cost.html#.HINGE">HINGE</a></li><li data-type='method'><a href="cost.html#.MAE">MAE</a></li><li data-type='method'><a href="cost.html#.MAPE">MAPE</a></li><li data-type='method'><a href="cost.html#.MSE">MSE</a></li><li data-type='method'><a href="cost.html#.MSLE">MSLE</a></li><li data-type='method'><a href="cost.html#.WAPE">WAPE</a></li></ul></li><li><a href="crossover.html">crossover</a><ul class='members'><li data-type='member'><a href="crossover.html#.AVERAGE">AVERAGE</a></li><li data-type='member'><a href="crossover.html#.SINGLE_POINT">SINGLE_POINT</a></li><li data-type='member'><a href="crossover.html#.TWO_POINT">TWO_POINT</a></li><li data-type='member'><a href="crossover.html#.UNIFORM">UNIFORM</a></li></ul></li><li><a href="gating.html">gating</a><ul class='members'><li data-type='member'><a href="gating.html#.INPUT">INPUT</a></li><li data-type='member'><a href="gating.html#.OUTPUT">OUTPUT</a></li><li data-type='member'><a href="gating.html#.SELF">SELF</a></li></ul></li><li><a href="mutation.html">mutation</a><ul class='members'><li data-type='member'><a href="mutation.html#.ADD_BACK_CONN">ADD_BACK_CONN</a></li><li data-type='member'><a href="mutation.html#.ADD_CONN">ADD_CONN</a></li><li data-type='member'><a href="mutation.html#.ADD_GATE">ADD_GATE</a></li><li data-type='member'><a href="mutation.html#.ADD_NODE">ADD_NODE</a></li><li data-type='member'><a href="mutation.html#.ADD_SELF_CONN">ADD_SELF_CONN</a></li><li data-type='member'><a href="mutation.html#.ALL">ALL</a></li><li data-type='member'><a href="mutation.html#.FFW">FFW</a></li><li data-type='member'><a href="mutation.html#.MOD_ACTIVATION">MOD_ACTIVATION</a></li><li data-type='member'><a href="mutation.html#.MOD_BIAS">MOD_BIAS</a></li><li data-type='member'><a href="mutation.html#.MOD_WEIGHT">MOD_WEIGHT</a></li><li data-type='member'><a href="mutation.html#.SUB_BACK_CONN">SUB_BACK_CONN</a></li><li data-type='member'><a href="mutation.html#.SUB_CONN">SUB_CONN</a></li><li data-type='member'><a href="mutation.html#.SUB_GATE">SUB_GATE</a></li><li data-type='member'><a href="mutation.html#.SUB_NODE">SUB_NODE</a></li><li data-type='member'><a href="mutation.html#.SUB_SELF_CONN">SUB_SELF_CONN</a></li><li data-type='member'><a href="mutation.html#.SWAP_NODES">SWAP_NODES</a></li></ul></li><li><a href="Network.architecture.html">architecture</a><ul class='methods'><li data-type='method'><a href="Network.architecture.html#.Construct">Construct</a></li><li data-type='method'><a href="Network.architecture.html#.GRU">GRU</a></li><li data-type='method'><a href="Network.architecture.html#.Hopfield">Hopfield</a></li><li data-type='method'><a href="Network.architecture.html#.Liquid">Liquid</a></li><li data-type='method'><a href="Network.architecture.html#.LSTM">LSTM</a></li><li data-type='method'><a href="Network.architecture.html#.NARX">NARX</a></li><li data-type='method'><a href="Network.architecture.html#.Perceptron">Perceptron</a></li><li data-type='method'><a href="Network.architecture.html#.Random">Random</a></li></ul></li><li><a href="rate.html">rate</a><ul class='methods'><li data-type='method'><a href="rate.html#.EXP">EXP</a></li><li data-type='method'><a href="rate.html#.FIXED">FIXED</a></li><li data-type='method'><a href="rate.html#.INV">INV</a></li><li data-type='method'><a href="rate.html#.STEP">STEP</a></li></ul></li><li><a href="selection.html">selection</a><ul class='members'><li data-type='member'><a href="selection.html#.FITNESS_PROPORTIONATE">FITNESS_PROPORTIONATE</a></li><li data-type='member'><a href="selection.html#.POWER">POWER</a></li><li data-type='member'><a href="selection.html#.TOURNAMENT">TOURNAMENT</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#config">config</a></li><li><a href="global.html#GAN">GAN</a></li><li><a href="global.html#sort">sort</a></li></ul>
+</nav>
+
+<div id="main">
+    <div class="columns">
+        <div class="column is-hidden-touch"></div>
+        <div class="column is-11-desktop is-10-widescreen">
+
+            
+                <h1 class="page-title">Node</h1>
+            
+
+            
+
+
+
+
+<section>
+
+<header>
+    
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+
+    
+
+    <h4 class="name" id="Node"><span class="type-signature"></span>new Node
+    
+    <span class="signature mobile-break">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature mobile-break"></span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Creates a new neuron/node</p>
+<p>Neurons are the basic unit of the neural network. They can be connected together, or used to gate connections between other neurons. A Neuron can perform basically 4 operations: form connections, gate connections, activate and <a href="https://www.youtube.com/watch?v=Ilg3gGewQ5U">propagate</a>.</p>
+<p>For more information check:</p>
+<ul>
+<li><a href="https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e">here</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Artificial_neuron">here</a></li>
+<li><a href="https://wagenaartje.github.io/neataptic/docs/architecture/node/">here</a></li>
+<li><a href="https://github.com/cazala/synaptic/wiki/Neural-Networks-101">here</a></li>
+<li><a href="https://keras.io/backend/#bias_add">here</a></li>
+</ul>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            
+
+            
+                <td colspan="2" class="description last">
+                    <p>Options Object or template <code>Node</code></p>
+                    <h6>Properties</h6>
+                    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>bias</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">number</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>Neuron's bias <a href="https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e">here</a></p></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+                </td>
+            
+
+            
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();'>Copy</a>
+      <code data-clipboard-text='let { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();'>let { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();</code>
+    </pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>bias</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Neuron's bias <a href="https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e">here</a></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>squash</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="activation.html">activation</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p><a href="https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0">Activation function</a></p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>type</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>activation</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Output value</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>state</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>old</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>mask</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                    <code>1</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>Used for dropout. This is either 0 (ignored) or 1 (included) during training and is used to avoid <a href="https://www.kdnuggets.com/2015/04/preventing-overfitting-neural-networks.html">overfit</a>.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>previousDeltaBias</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>totalDeltaBias</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>incoming</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="Connection_.html">Connection</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Incoming connections to this node</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>outgoing</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="Connection_.html">Connection</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Outgoing connections from this node</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>gated</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;<a href="Connection_.html">Connection</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Connections this node gates</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>connections_self</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Connection_.html">Connection</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>A self-connection</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>error.responsibility</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>error.projected</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>error.gated</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_node.js.html">architecture/node.js</a>, <a href="architecture_node.js.html#line47">line 47</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="main-subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".activate"><span class="type-signature">(static) </span>activate
+    
+    <span class="signature mobile-break">(input<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>)</span><span class="type-signature mobile-break"> &rarr; {number}</span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Actives the node.</p>
+<p>When a neuron activates, it computes its state from all its input connections and 'squashes' it using its activation function, and returns the output (activation).</p>
+<p>You can also provide the activation (a float between 0 and 1) as a parameter, which is useful for neurons in the input layer.</p>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>input</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">number</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>Environment signal (i.e. optional numerical value passed to the network as input)  - <em>should only be passed in input neurons</em></p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            
+
+            
+                <td colspan="2" class="description last">
+                    
+                    <h6>Properties</h6>
+                    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>trace</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">boolean</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>Controls whether traces are created when activation happens (a trace is meta information left behind for different uses, e.g. backpropagation).</p></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+                </td>
+            
+
+            
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A neuron's <a href="https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0">'Squashed'</a> output value</p>
+</div>
+
+    
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Node } = require("@liquid-carrot/carrot");
+
+let A = new Node();
+let B = new Node();
+
+A.connect(B);
+A.activate(0.5); // 0.5
+B.activate(); // 0.3244554645'>Copy</a>
+      <code data-clipboard-text='let { Node } = require("@liquid-carrot/carrot");
+
+let A = new Node();
+let B = new Node();
+
+A.connect(B);
+A.activate(0.5); // 0.5
+B.activate(); // 0.3244554645'>let { Node } = require("@liquid-carrot/carrot");
+
+let A = new Node();
+let B = new Node();
+
+A.connect(B);
+A.activate(0.5); // 0.5
+B.activate(); // 0.3244554645</code>
+    </pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_node.js.html">architecture/node.js</a>, <a href="architecture_node.js.html#line72">line 72</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-todo">To Do:</dt>
+    <dd class="tag-todo">
+        <ul>
+            <li>Support vector/tensor/array activation</li>
+        </ul>
+    </dd>
+    
+</dl>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".clear"><span class="type-signature">(static) </span>clear
+    
+    <span class="signature mobile-break">()</span><span class="type-signature mobile-break"></span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Clears this node's state information - <em>i.e. resets node and its connections to &quot;factory settings&quot;</em></p>
+<p><code>node.clear()</code> is useful for predicting timeseries with LSTMs.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+node.activate([1, 0]);
+node.propagate([1]);
+
+console.log(node); // Node has state information (e.g. `node.derivative`)
+
+node.clear(); // Factory resets node
+
+console.log(node); // Node has no state information'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+node.activate([1, 0]);
+node.propagate([1]);
+
+console.log(node); // Node has state information (e.g. `node.derivative`)
+
+node.clear(); // Factory resets node
+
+console.log(node); // Node has no state information'>const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+node.activate([1, 0]);
+node.propagate([1]);
+
+console.log(node); // Node has state information (e.g. `node.derivative`)
+
+node.clear(); // Factory resets node
+
+console.log(node); // Node has no state information</code>
+    </pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_node.js.html">architecture/node.js</a>, <a href="architecture_node.js.html#line617">line 617</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".connect"><span class="type-signature">(static) </span>connect
+    
+    <span class="signature mobile-break">(nodes, weight<span class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>, twosided<span class="signature-attributes">opt</span>)</span><span class="type-signature mobile-break"> &rarr; {Array.&lt;<a href="Connection_.html">Connection</a>>|<a href="Connection_.html">Connection</a>}</span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Connects this node to the given node(s)</p>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>nodes</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type"><a href="Node.html">Node</a></span>
+|
+
+<span class="param-type">Array.&lt;<a href="Node.html">Node</a>></span>
+
+
+                
+                
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+            
+                <td class="description last"><p>Node(s) to project connection(s) to</p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>weight</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">number</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+            
+                <td class="description last"><p>Initial connection(s) <a href="https://en.wikipedia.org/wiki/Synaptic_weight">weight</a></p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">Object</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                    <code>{}</code>
+                
+                </td>
+            
+            
+                <td class="description last"></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>twosided</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">boolean</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+            
+                <td class="description last"><p>If <code>true</code> connect nodes to each other</p></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+        <p class="code-caption">Connecting node (neuron) to another node (neuron)</p>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+let other_node = new Node();
+
+let connection = node.connect(other_node); // Both nodes now share a connection
+
+console.log(connection); // Connection { from: [Object object], to: [Object object], ...}'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+let other_node = new Node();
+
+let connection = node.connect(other_node); // Both nodes now share a connection
+
+console.log(connection); // Connection { from: [Object object], to: [Object object], ...}'>const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+let other_node = new Node();
+
+let connection = node.connect(other_node); // Both nodes now share a connection
+
+console.log(connection); // Connection { from: [Object object], to: [Object object], ...}</code>
+    </pre>
+
+        <p class="code-caption">Connecting node (neuron) to many nodes (neurons)</p>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+let other_nodes = [new Node(), new Node(), new Node()];
+
+let connections = node.connect(other_nodes); // Node is connected to all other nodes
+
+console.log(connections); // [{ from: [Object object], to: [Object object], ...}, ...]'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+let other_nodes = [new Node(), new Node(), new Node()];
+
+let connections = node.connect(other_nodes); // Node is connected to all other nodes
+
+console.log(connections); // [{ from: [Object object], to: [Object object], ...}, ...]'>const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+let other_nodes = [new Node(), new Node(), new Node()];
+
+let connections = node.connect(other_nodes); // Node is connected to all other nodes
+
+console.log(connections); // [{ from: [Object object], to: [Object object], ...}, ...]</code>
+    </pre>
+
+        <p class="code-caption">Connecting a node (neuron) to itself</p>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+let connection = node.connect(node); // Node is connected to itself.
+
+console.log(connection); // Connection { from: [Object object], to: [Object object], ...}'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+let connection = node.connect(node); // Node is connected to itself.
+
+console.log(connection); // Connection { from: [Object object], to: [Object object], ...}'>const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+let connection = node.connect(node); // Node is connected to itself.
+
+console.log(connection); // Connection { from: [Object object], to: [Object object], ...}</code>
+    </pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_node.js.html">architecture/node.js</a>, <a href="architecture_node.js.html#line339">line 339</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".disconnect"><span class="type-signature">(static) </span>disconnect
+    
+    <span class="signature mobile-break">(node, options)</span><span class="type-signature mobile-break"></span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Disconnects this node from the given node(s)</p>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>node</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type"><a href="Node.html">Node</a></span>
+|
+
+<span class="param-type">Array.&lt;<a href="Node.html">Node</a>></span>
+
+
+                
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>Node(s) to remove connection(s) to</p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            
+
+            
+                <td colspan="2" class="description last">
+                    
+                    <h6>Properties</h6>
+                    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>twosided</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">boolean</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                    <code>false</code>
+                
+                </td>
+            
+            
+                <td class="description last"><p>If <code>true</code> disconnects nodes from each other (i.e. both sides)</p></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+                </td>
+            
+
+            
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+        <p class="code-caption">Disconnect from one <code>node</code></p>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+let other = new Node();
+
+node.connect(other); // `node` now connected to `other`
+
+console.log(node.incoming.length); // 0
+console.log(node.outgoing.length); // 1
+
+node.disconnect(other); // `node` is now disconnected from `other`
+
+console.log(node.incoming.length); // 0
+console.log(node.outgoing.length); // 0'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+let other = new Node();
+
+node.connect(other); // `node` now connected to `other`
+
+console.log(node.incoming.length); // 0
+console.log(node.outgoing.length); // 1
+
+node.disconnect(other); // `node` is now disconnected from `other`
+
+console.log(node.incoming.length); // 0
+console.log(node.outgoing.length); // 0'>const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+let other = new Node();
+
+node.connect(other); // `node` now connected to `other`
+
+console.log(node.incoming.length); // 0
+console.log(node.outgoing.length); // 1
+
+node.disconnect(other); // `node` is now disconnected from `other`
+
+console.log(node.incoming.length); // 0
+console.log(node.outgoing.length); // 0</code>
+    </pre>
+
+        <p class="code-caption">Connect to one <code>node</code> - <em>two-sided</em></p>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+let other = new Node();
+
+// `node` & `other` are now connected to each other
+node.connect(other, {
+  twosided: true
+});
+
+console.log(node.incoming.length); // 1
+console.log(node.outgoing.length); // 1
+
+// `node` & `other` are now disconnected from each other
+node.disconnect(other, {
+  twosided: true
+});
+
+console.log(node.incoming.length); // 0
+console.log(node.outgoing.length); // 0'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+let other = new Node();
+
+// `node` & `other` are now connected to each other
+node.connect(other, {
+  twosided: true
+});
+
+console.log(node.incoming.length); // 1
+console.log(node.outgoing.length); // 1
+
+// `node` & `other` are now disconnected from each other
+node.disconnect(other, {
+  twosided: true
+});
+
+console.log(node.incoming.length); // 0
+console.log(node.outgoing.length); // 0'>const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+let other = new Node();
+
+// `node` &amp; `other` are now connected to each other
+node.connect(other, {
+  twosided: true
+});
+
+console.log(node.incoming.length); // 1
+console.log(node.outgoing.length); // 1
+
+// `node` &amp; `other` are now disconnected from each other
+node.disconnect(other, {
+  twosided: true
+});
+
+console.log(node.incoming.length); // 0
+console.log(node.outgoing.length); // 0</code>
+    </pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_node.js.html">architecture/node.js</a>, <a href="architecture_node.js.html#line426">line 426</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".fromJSON"><span class="type-signature">(static) </span>fromJSON
+    
+    <span class="signature mobile-break">(json)</span><span class="type-signature mobile-break"> &rarr; {<a href="Node.html">Node</a>}</span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Convert a json object to a node</p>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>json</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">object</span>
+
+
+                
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>A node represented as a JSON object</p></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A reconstructed node</p>
+</div>
+
+    
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+        <p class="code-caption">From Object</p>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let json = { bias: 0.35 };
+let node = Node.fromJSON(json);
+
+console.log(node);'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let json = { bias: 0.35 };
+let node = Node.fromJSON(json);
+
+console.log(node);'>const { Node } = require("@liquid-carrot/carrot");
+
+let json = { bias: 0.35 };
+let node = Node.fromJSON(json);
+
+console.log(node);</code>
+    </pre>
+
+        <p class="code-caption">From Node.toJSON()</p>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let other_node = new Node();
+let json = other_node.toJSON();
+let node = Node.fromJSON(json);
+
+console.log(node);'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let other_node = new Node();
+let json = other_node.toJSON();
+let node = Node.fromJSON(json);
+
+console.log(node);'>const { Node } = require("@liquid-carrot/carrot");
+
+let other_node = new Node();
+let json = other_node.toJSON();
+let node = Node.fromJSON(json);
+
+console.log(node);</code>
+    </pre>
+
+        <p class="code-caption">From JSON string</p>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let other = new Node();
+let json = other_node.toJSON();
+let string = JSON.stringify(json);
+let node = Node.fromJSON(string);
+
+console.log(node);'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let other = new Node();
+let json = other_node.toJSON();
+let string = JSON.stringify(json);
+let node = Node.fromJSON(string);
+
+console.log(node);'>const { Node } = require("@liquid-carrot/carrot");
+
+let other = new Node();
+let json = other_node.toJSON();
+let string = JSON.stringify(json);
+let node = Node.fromJSON(string);
+
+console.log(node);</code>
+    </pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_node.js.html">architecture/node.js</a>, <a href="architecture_node.js.html#line892">line 892</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".gate"><span class="type-signature">(static) </span>gate
+    
+    <span class="signature mobile-break">(connections)</span><span class="type-signature mobile-break"></span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>This node gates (influences) the given connection(s)</p>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>connections</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type"><a href="Connection_.html">Connection</a></span>
+|
+
+<span class="param-type">Array.&lt;<a href="Connection_.html">Connection</a>></span>
+
+
+                
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>Connections to be gated (influenced) by a neuron</p></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+        <p class="code-caption">Gate one <code>connection</code></p>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let input = new Node();
+let output = new Node();
+let connection = input.connect(output);
+
+let node = new Node();
+
+console.log(connection.gater === node); // false
+
+node.gate(connection); // Node now gates (manipulates) `connection`
+
+console.log(connection.gater === node); // true'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let input = new Node();
+let output = new Node();
+let connection = input.connect(output);
+
+let node = new Node();
+
+console.log(connection.gater === node); // false
+
+node.gate(connection); // Node now gates (manipulates) `connection`
+
+console.log(connection.gater === node); // true'>const { Node } = require("@liquid-carrot/carrot");
+
+let input = new Node();
+let output = new Node();
+let connection = input.connect(output);
+
+let node = new Node();
+
+console.log(connection.gater === node); // false
+
+node.gate(connection); // Node now gates (manipulates) `connection`
+
+console.log(connection.gater === node); // true</code>
+    </pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_node.js.html">architecture/node.js</a>, <a href="architecture_node.js.html#line525">line 525</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".isProjectedBy"><span class="type-signature">(static) </span>isProjectedBy
+    
+    <span class="signature mobile-break">(nodes)</span><span class="type-signature mobile-break"> &rarr; {boolean}</span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Checks if the given node(s) are have outgoing connections to this node</p>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>nodes</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type"><a href="Node.html">Node</a></span>
+|
+
+<span class="param-type">Array.&lt;<a href="Node.html">Node</a>></span>
+
+
+                
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>Checks if <code>node(s)</code> have outgoing connections into this node</p></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Returns true, iff every node(s) has an outgoing connection into this node</p>
+</div>
+
+    
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+        <p class="code-caption">Check one <code>node</code></p>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let other_node = new Node();
+let node = new Node();
+other_node.connect(node);
+
+console.log(node.isProjectedBy(other_node)); // true'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let other_node = new Node();
+let node = new Node();
+other_node.connect(node);
+
+console.log(node.isProjectedBy(other_node)); // true'>const { Node } = require("@liquid-carrot/carrot");
+
+let other_node = new Node();
+let node = new Node();
+other_node.connect(node);
+
+console.log(node.isProjectedBy(other_node)); // true</code>
+    </pre>
+
+        <p class="code-caption">Check many <code>nodes</code></p>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let other_nodes = Array.from({ length: 5 }, () => new Node());
+let node = new Node();
+
+other_nodes.forEach(other_node => other_node.connect(node));
+
+console.log(node.isProjectedBy(other_nodes)); // true'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let other_nodes = Array.from({ length: 5 }, () => new Node());
+let node = new Node();
+
+other_nodes.forEach(other_node => other_node.connect(node));
+
+console.log(node.isProjectedBy(other_nodes)); // true'>const { Node } = require("@liquid-carrot/carrot");
+
+let other_nodes = Array.from({ length: 5 }, () => new Node());
+let node = new Node();
+
+other_nodes.forEach(other_node => other_node.connect(node));
+
+console.log(node.isProjectedBy(other_nodes)); // true</code>
+    </pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_node.js.html">architecture/node.js</a>, <a href="architecture_node.js.html#line769">line 769</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".isProjectingTo"><span class="type-signature">(static) </span>isProjectingTo
+    
+    <span class="signature mobile-break">(nodes)</span><span class="type-signature mobile-break"> &rarr; {boolean}</span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Checks if this node has an outgoing connection(s) into the given node(s)</p>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>nodes</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type"><a href="Node.html">Node</a></span>
+|
+
+<span class="param-type">Array.&lt;<a href="Node.html">Node</a>></span>
+
+
+                
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>Checks if this node has outgoing connection(s) into <code>node(s)</code></p></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Returns true, iff this node has an outgoing connection into every node(s)</p>
+</div>
+
+    
+
+
+
+
+
+
+
+
+    <h5>Examples</h5>
+    
+        <p class="code-caption">Check one <code>node</code></p>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let other_node = new Node();
+let node = new Node();
+node.connect(other_node);
+
+console.log(node.isProjectingTo(other_node)); // true'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let other_node = new Node();
+let node = new Node();
+node.connect(other_node);
+
+console.log(node.isProjectingTo(other_node)); // true'>const { Node } = require("@liquid-carrot/carrot");
+
+let other_node = new Node();
+let node = new Node();
+node.connect(other_node);
+
+console.log(node.isProjectingTo(other_node)); // true</code>
+    </pre>
+
+        <p class="code-caption">Check many <code>nodes</code></p>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let other_nodes = Array.from({ length: 5 }, () => new Node());
+let node = new Node();
+
+other_nodes.forEach(other_node => node.connect(other_node));
+
+console.log(node.isProjectingTo(other_nodes)); // true'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let other_nodes = Array.from({ length: 5 }, () => new Node());
+let node = new Node();
+
+other_nodes.forEach(other_node => node.connect(other_node));
+
+console.log(node.isProjectingTo(other_nodes)); // true'>const { Node } = require("@liquid-carrot/carrot");
+
+let other_nodes = Array.from({ length: 5 }, () => new Node());
+let node = new Node();
+
+other_nodes.forEach(other_node => node.connect(other_node));
+
+console.log(node.isProjectingTo(other_nodes)); // true</code>
+    </pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_node.js.html">architecture/node.js</a>, <a href="architecture_node.js.html#line711">line 711</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".mutate"><span class="type-signature">(static) </span>mutate
+    
+    <span class="signature mobile-break">(options<span class="signature-attributes">opt</span>)</span><span class="type-signature mobile-break"></span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Mutates the node - <em>i.e. changes node's squash function or bias</em></p>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            
+
+            
+                <td colspan="2" class="description last">
+                    
+                    <h6>Properties</h6>
+                    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>method</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">string</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>A <a href="mutation">mutation method</a> - <em>a random method will chosen if none is passed</em></p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>allowed</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">Array.&lt;<a href="activation.html">activation</a>></span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>Allowed/possible squash (activation) functions for node (neuron)</p></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+                </td>
+            
+
+            
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+console.log(node);
+
+node.mutate(); // Changes node's squash function or bias'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+console.log(node);
+
+node.mutate(); // Changes node's squash function or bias'>const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+console.log(node);
+
+node.mutate(); // Changes node's squash function or bias</code>
+    </pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_node.js.html">architecture/node.js</a>, <a href="architecture_node.js.html#line657">line 657</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".noTraceActivate"><span class="type-signature">(static) </span>noTraceActivate
+    
+    <span class="signature mobile-break">(input<span class="signature-attributes">opt</span>)</span><span class="type-signature mobile-break"> &rarr; {number}</span>
+
+    
+      <span class="bulma-tag is-danger">deprecated</span>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Activates the node without calculating elegibility traces and such.</p>
+<p>Calculates the state from all the input connections, adds the bias, and 'squashes' it. Does not calculate traces, so this can't be used to backpropagate afterwards. That's also why it's quite a bit faster than regular <code>activate</code>.</p>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>input</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">number</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>Optional value to be used for an input (or forwarding) neuron - <em>should only be passed in input neurons</em></p></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A neuron's <a href="https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0">'Squashed'</a> output value</p>
+</div>
+
+    
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+node.noTraceActivate(); // 0.4923128591923'>Copy</a>
+      <code data-clipboard-text='let { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+node.noTraceActivate(); // 0.4923128591923'>let { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+node.noTraceActivate(); // 0.4923128591923</code>
+    </pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_node.js.html">architecture/node.js</a>, <a href="architecture_node.js.html#line192">line 192</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".propagate"><span class="type-signature">(static) </span>propagate
+    
+    <span class="signature mobile-break">(target, options)</span><span class="type-signature mobile-break"></span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Backpropagate the error (a.k.a. learn).</p>
+<p>After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating. <a href="https://www.willamette.edu/~gorr/classes/cs449/momrate.html">Momentum</a> adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.</p>
+<p>If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).</p>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>target</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">number</span>
+
+
+                
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>The target value (i.e. &quot;the value the network SHOULD have given&quot;)</p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            
+
+            
+                <td colspan="2" class="description last">
+                    
+                    <h6>Properties</h6>
+                    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>rate</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">number</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                    <code>0.3</code>
+                
+                </td>
+            
+            
+                <td class="description last"><p><a href="https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10">Learning rate</a></p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>momentum</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">number</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                    <code>0</code>
+                
+                </td>
+            
+            
+                <td class="description last"><p><a href="https://www.willamette.edu/~gorr/classes/cs449/momrate.html">Momentum</a> adds a fraction of the previous weight update to the current one.</p></td>
+            
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>update</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type">boolean</span>
+
+
+                
+                
+                    
+                        <span class="attribute">&lt;optional&gt;</span>
+                    
+
+                    
+
+                    
+                
+                </td>
+            
+
+            
+
+            
+                <td class="default">
+                
+                    <code>true</code>
+                
+                </td>
+            
+            
+                <td class="description last"><p>When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first &quot;update:false&quot; propagations too.</p></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+                </td>
+            
+
+            
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { Node } = require("@liquid-carrot/carrot");
+
+let A = new Node();
+let B = new Node('output');
+A.connect(B);
+
+let learningRate = .3;
+let momentum = 0;
+
+for(let i = 0; i < 20000; i++)
+{
+  // when A activates 1
+  A.activate(1);
+
+  // train B to activate 0
+  B.activate();
+  B.propagate(learningRate, momentum, true, 0);
+}
+
+// test it
+A.activate(1);
+B.activate(); // 0.006540565760853365'>Copy</a>
+      <code data-clipboard-text='let { Node } = require("@liquid-carrot/carrot");
+
+let A = new Node();
+let B = new Node('output');
+A.connect(B);
+
+let learningRate = .3;
+let momentum = 0;
+
+for(let i = 0; i < 20000; i++)
+{
+  // when A activates 1
+  A.activate(1);
+
+  // train B to activate 0
+  B.activate();
+  B.propagate(learningRate, momentum, true, 0);
+}
+
+// test it
+A.activate(1);
+B.activate(); // 0.006540565760853365'>let { Node } = require("@liquid-carrot/carrot");
+
+let A = new Node();
+let B = new Node('output');
+A.connect(B);
+
+let learningRate = .3;
+let momentum = 0;
+
+for(let i = 0; i &lt; 20000; i++)
+{
+  // when A activates 1
+  A.activate(1);
+
+  // train B to activate 0
+  B.activate();
+  B.propagate(learningRate, momentum, true, 0);
+}
+
+// test it
+A.activate(1);
+B.activate(); // 0.006540565760853365</code>
+    </pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_node.js.html">architecture/node.js</a>, <a href="architecture_node.js.html#line217">line 217</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><p><a href="https://wagenaartje.github.io/neataptic/docs/methods/regularization/">Regularization Neataptic</a></p></li>
+        
+            <li><p><a href="https://www.youtube.com/watch?v=Ilg3gGewQ5U">What is backpropagation | YouTube</a></p></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".toJSON"><span class="type-signature">(static) </span>toJSON
+    
+    <span class="signature mobile-break">()</span><span class="type-signature mobile-break"> &rarr; {object}</span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Converts the node to a json object that can later be converted back</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+console.log(node.toJSON());'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+console.log(node.toJSON());'>const { Node } = require("@liquid-carrot/carrot");
+
+let node = new Node();
+
+console.log(node.toJSON());</code>
+    </pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_node.js.html">architecture/node.js</a>, <a href="architecture_node.js.html#line833">line 833</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".ungate"><span class="type-signature">(static) </span>ungate
+    
+    <span class="signature mobile-break">(connections)</span><span class="type-signature mobile-break"> &rarr; {<a href="Connection_.html">Connection</a>|Array.&lt;<a href="Connection_.html">Connection</a>>}</span>
+
+    
+      <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an issue</a>
+    
+
+    </h4>
+
+    
+
+
+
+<div class="description">
+    <p>Stops this node from gating (manipulating) the given connection(s)</p>
+</div>
+
+
+
+    <h5>Parameters:</h5>
+    
+<div class="table-overflow">
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>connections</code></td>
+            
+
+            
+                <td class="type">
+                
+                    
+<span class="param-type"><a href="Connection_.html">Connection</a></span>
+|
+
+<span class="param-type">Array.&lt;<a href="Connection_.html">Connection</a>></span>
+
+
+                
+                
+                </td>
+            
+
+            
+
+            
+            
+                <td class="description last"><p>Connections to ungate - <em>i.e. remove this node from</em></p></td>
+            
+        </tr>
+
+    
+    </tbody>
+</table>
+</div>
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>Returns connection(s) that were ungated</p>
+</div>
+
+    
+
+
+
+
+
+
+
+
+    <h5>Example</h5>
+    
+        <p class="code-caption">Ungate one <code>connection</code></p>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let input = new Node();
+let output = new Node();
+let connection = input.connect(output);
+
+let node = new Node();
+
+console.log(connection.gater === node); // false
+
+node.gate(connection); // Node now gates (manipulates) `connection`
+
+console.log(connection.gater === node); // true
+
+node.ungate(connection); // Node is removed from `connection`
+
+console.log(connection.gater === node); // false'>Copy</a>
+      <code data-clipboard-text='const { Node } = require("@liquid-carrot/carrot");
+
+let input = new Node();
+let output = new Node();
+let connection = input.connect(output);
+
+let node = new Node();
+
+console.log(connection.gater === node); // false
+
+node.gate(connection); // Node now gates (manipulates) `connection`
+
+console.log(connection.gater === node); // true
+
+node.ungate(connection); // Node is removed from `connection`
+
+console.log(connection.gater === node); // false'>const { Node } = require("@liquid-carrot/carrot");
+
+let input = new Node();
+let output = new Node();
+let connection = input.connect(output);
+
+let node = new Node();
+
+console.log(connection.gater === node); // false
+
+node.gate(connection); // Node now gates (manipulates) `connection`
+
+console.log(connection.gater === node); // true
+
+node.ungate(connection); // Node is removed from `connection`
+
+console.log(connection.gater === node); // false</code>
+    </pre>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="architecture_node.js.html">architecture/node.js</a>, <a href="architecture_node.js.html#line567">line 567</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+
+            
+
+        </div>
+        <div class="column is-hidden-touch"></div>
+    </div>
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Tue Oct 01 2019 19:58:02 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/jquery-3.1.1.min.js"></script>
+
+<script src="scripts/search.js"></script>
+
+
+
+
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+  heap.load("1195922815");
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Get all "navbar-burger" elements
+  const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+  // Check if there are any navbar burgers
+  if ($navbarBurgers.length > 0) {
+
+    // Add a click event on each of them
+    $navbarBurgers.forEach( el => {
+      el.addEventListener('click', () => {
+
+        // Get the target from the "data-target" attribute
+        const target = el.dataset.target;
+        const $target = document.getElementById(target);
+
+        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+        el.classList.toggle('is-active');
+        $target.classList.toggle('is-active');
+
+      });
+    });
+  }
+
+});
+</script>
+<script src="scripts/clipboard.min.js"></script>
+<script>
+  // example copying functionality
+  const clipboard = new ClipboardJS('code');
+  const clipboard_button = new ClipboardJS('.copy-button');
+
+  clipboard_button.on('success', (e) => {
+    e.trigger.innerText = "Copied!"
+  });
+
+  const copy_buttons = document.querySelectorAll(".copy-button");
+  
+  copy_buttons.forEach(function(btn) {
+    btn.addEventListener("mouseout", function(e) {
+      setTimeout(function() {
+        e.fromElement.innerText = "Copy"
+      }, 200);
+    });
+  });
+</script>
+<script>prettyPrint();</script>
+</body>
+</html>

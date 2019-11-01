@@ -30,7 +30,20 @@
 </p>
 
 <p>
-  Carrot is a flexible multi-threaded neural network AI Library for Node.js with neuro-evolution capabilities.
+  Carrot is an architecture-free neural network library built around neuroevolution
+</p>
+
+<p>
+ Why / when should I use this?
+ 
+ Whenever you have a problem that you:
+ 
+ - Don't know how-to solve
+ - Don't want to design a custom network for
+ - Want to discover the ideal neural-network structure for
+
+You can use Carrot's ability to **design networks of arbitrary complexity by itself** to solve whatever problem you have. If you want to see Carrot designing a neural-network to play flappy-bird [check here](https://liquidcarrot.io/example.flappy-bird/)
+ 
 </p>
 
 For Documentation, visit [here](https://liquidcarrot.github.io/carrot)
@@ -54,7 +67,7 @@ For Documentation, visit [here](https://liquidcarrot.github.io/carrot)
 ```bash
 $ npm i @liquid-carrot/carrot
 ```
- 
+
 Carrot files are hosted by JSDelivr
 
 For prototyping or learning, use the latest version here:
@@ -66,10 +79,14 @@ For prototyping or learning, use the latest version here:
 For production, link to a specific version number to avoid unexpected breakage from newer versions:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@liquid-carrot/carrot@0.3.12/dist/carrot.umd2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@liquid-carrot/carrot@0.3.17/dist/carrot.umd2.min.js"></script>
 ```
 
 ## Getting Started
+
+💡 Want to be super knowledgeable about neuro-evolution in a few minutes?
+
+Check out [this article](https://www.oreilly.com/radar/neuroevolution-a-different-kind-of-deep-learning/ "Neuro-evolution based deep learning") by the creator of NEAT, Kenneth Stanley
 
 This is a simple **perceptron**:
 
@@ -192,6 +209,8 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/dan-ryan"><img src="https://avatars1.githubusercontent.com/u/775672?v=4" width="100px;" alt="Daniel Ryan"/><br /><sub><b>Daniel Ryan</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/issues?q=author%3Adan-ryan" title="Bug reports">🐛</a> <a href="#review-dan-ryan" title="Reviewed Pull Requests">👀</a></td>
     <td align="center"><a href="https://github.com/IviieMtz"><img src="https://avatars0.githubusercontent.com/u/50965172?v=4" width="100px;" alt="IviieMtz"/><br /><sub><b>IviieMtz</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=IviieMtz" title="Tests">⚠️</a></td>
     <td align="center"><a href="https://github.com/nicszerman"><img src="https://avatars3.githubusercontent.com/u/14032356?v=4" width="100px;" alt="Nicholas Szerman"/><br /><sub><b>Nicholas Szerman</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=nicszerman" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.threeceemedia.com"><img src="https://avatars3.githubusercontent.com/u/1046501?v=4" width="100px;" alt="tracy collins"/><br /><sub><b>tracy collins</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/issues?q=author%3Atracycollins" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/raimannma"><img src="https://avatars3.githubusercontent.com/u/26171511?v=4" width="100px;" alt="M. Raimann"/><br /><sub><b>M. Raimann</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=raimannma" title="Code">💻</a></td>
   </tr>
 </table>
 
@@ -289,6 +308,10 @@ And finally, a big thank you to all of you for supporting! 🤗
 
 ## Acknowledgements
 
-A special thanks to [Neataptic](https://github.com/wagenaartje/neataptic/), [Synaptic](https://github.com/cazala/synaptic/), and [Brain.js](https://github.com/BrainJS/brain.js)!
+A special thanks to:
 
-Carrot™ was largely brought about by inspiration from these great libraries.
+[@wagenaartje](https://github.com/wagenaartje) for [Neataptic](https://github.com/wagenaartje/neataptic/) which was the starting point for this project
+
+[@cazala](https://github.com/cazala) for [Synaptic](https://github.com/cazala/synaptic/) which pioneered architecture free neural networks in javascript and was the starting point for Neataptic
+
+[@robertleeplummerjr](https://github.com/robertleeplummerjr) for [GPU.js](https://github.com/gpujs/gpu.js) which makes using GPU in JS easy and [Brain.js](https://github.com/BrainJS/brain.js) which has inspired Carrot's development

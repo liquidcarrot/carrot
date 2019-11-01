@@ -1,14 +1,14 @@
-const _ = require("lodash")
-const parameter = require("../util/parameter")
+const config = require("../config")
 const multi = require("../multithreading/multi")
 const methods = require("../methods/methods")
-const Connection = require("./connection")
-const config = require("../config")
-const Node = require("./node")
 const Group = require("./group")
+const Layer = require("./layer")
+const Connection = require("./connection")
+const Node = require("./node")
+const _ = require("lodash")
 
 // Easier variable naming
-const mutation = methods.mutation;
+const mutation = methods.mutation
 
 /**
 * Create a neural network
@@ -33,7 +33,7 @@ const mutation = methods.mutation;
 * let myNetwork = new Network(2, 1);
 *
 * // and a multi-layered network
-* let myNetwork = new architect.Perceptron(5, 20, 10, 5, 1);
+* let myNetwork = new architect.Perceptron(5, 20, 10, 5, 1)
 */
 function Network(input_size, output_size) {
   if (typeof input_size === `undefined` || typeof output_size === `undefined`) throw new TypeError(`No input or output size given`);
@@ -58,12 +58,12 @@ function Network(input_size, output_size) {
 
   // Create input and output nodes
   for (let i = 0; i < input_size; i++) {
-    const new_node = new Node()
+    const new_node = new Node({ type: 'input' })
     self.nodes.push(new_node)
     self.input_nodes.add(new_node)
   }
   for (let i = 0; i < output_size; i++) {
-    const new_node = new Node()
+    const new_node = new Node({ type: 'output' })
     self.nodes.push(new_node)
     self.output_nodes.add(new_node)
   }
@@ -320,7 +320,7 @@ function Network(input_size, output_size) {
     }
 
     // Delete the connection at the sending and receiving neuron
-    from.disconnect(to);
+    from.disconnect(to)
   }
 
   /**
@@ -413,7 +413,7 @@ function Network(input_size, output_size) {
     // Get all its inputting nodes
     const inputs = [];
     // unsure why not regular forEach
-    _.forEachRight(node.connections_incoming, (connection) => {
+    _.forEachRight(node.incoming, (connection) => {
       if (mutation.SUB_NODE.keep_gates && connection.gater !== null && connection.gater !== node) {
         // the condition mutation.SUB_NODE.keep_gates seems
         // useless - probably it should be an option
@@ -427,7 +427,7 @@ function Network(input_size, output_size) {
     // Get all its outputing nodes
     const outputs = [];
     // unsure why not regular forEach
-    _.forEachRight(node.connections_outgoing, (connection) => {
+    _.forEachRight(node.outgoing, (connection) => {
       if (mutation.SUB_NODE.keep_gates && connection.gater !== null && connection.gater !== node) {
         gates.push(connection.gater);
       }
@@ -457,8 +457,8 @@ function Network(input_size, output_size) {
     }
 
     // Remove gated connections gated by this node
-    for (i = node.connections_gated.length - 1; i >= 0; i--) {
-      const connection = node.connections_gated[i];
+    for (i = node.gated.length - 1; i >= 0; i--) {
+      const connection = node.gated[i];
       self.ungate(connection);
     }
 
@@ -501,20 +501,21 @@ function Network(input_size, output_size) {
 
         return candidates.length ? candidates : false
       }
+      case "REMOVE_CONN": // alias for sub_conn
       case "SUB_CONN": {
         _.each(self.connections, (conn) => {
           // Check if it is not disabling a node
-          if (conn.from.connections_outgoing.length > 1 && conn.to.connections_incoming.length > 1 && self.nodes.indexOf(conn.to) > self.nodes.indexOf(conn.from))
+          if (conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && self.nodes.indexOf(conn.to) > self.nodes.indexOf(conn.from))
             candidates.push(conn)
         })
 
         return candidates.length ? candidates : false
       }
       case "MOD_ACTIVATION": {
-        return (method.mutateOutput || self.nodes.length > self.input_size + self.output_size) ? [] : false
+        candidates = _.filter(self.nodes, method.mutateOutput ? (node) => node.type !== 'input' : (node) => node.type !== 'input' && node.type !== 'output')
+        return candidates.length ? candidates : false
       }
       case "ADD_SELF_CONN": {
-
         for (let i = self.input_size; i < self.nodes.length; i++) {
           const node = self.nodes[i]
           if (node.connections_self.weight === 0) candidates.push(node)
@@ -523,13 +524,14 @@ function Network(input_size, output_size) {
         return candidates.length ? candidates : false
       }
       case "SUB_SELF_CONN": {
+        // Very slow implementation.
+        // TODO: Huge speed up by storing a Set is_self_connection<id -> node>
         for (let i = 0; i < self.connections.length; i++) {
-          const current_connection = self.connections[i];
-          if (current_connection.from == current_connection.to) {
-            return true;
-          }
+          const conn = self.connections[i]
+          if (conn.from == conn.to) candidates.push(conn)
         }
-        return false;
+
+        return candidates.length ? candidates : false
       }
       case "ADD_GATE": {
         self.connections.forEach((conn) => {
@@ -555,7 +557,7 @@ function Network(input_size, output_size) {
       }
       case "SUB_BACK_CONN": {
         _.each(self.connections, (conn) => {
-          if (conn.from.connections_outgoing.length > 1 && conn.to.connections_incoming.length > 1 && self.nodes.indexOf(conn.from) > self.nodes.indexOf(conn.to))
+          if (conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && self.nodes.indexOf(conn.from) > self.nodes.indexOf(conn.to))
             candidates.push(conn)
         })
 
@@ -601,227 +603,183 @@ function Network(input_size, output_size) {
 
     const { maxNodes, maxConns, maxGates } = options || {}
 
-    // Helper function. TODO: Read the comment inside
+    // Helper function
     const getRandomConnection = () => {
-      if (self.nodes.length <= self.input_size) throw Error('No connections can be chosen');
-      // get a random connection. this method does not choose from a uniform distribution
-      // TODO: make the distribution uniform among connections (atm connections connected
-      // to nodes with a small degree are more likely to be chosen)
-      const chosen_node_index = Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size);
-      const connection_node = self.nodes[chosen_node_index];
-      // at the moment does not mutate self connections. TODO: mutate self connections!
-      // first try outgoing then incoming - one of them has to work
-      let chosen_connection;
-      if (connection_node.connections_outgoing.length > 0) {
-        const chosen_connection_index =
-          Math.floor(Math.random() * connection_node.connections_outgoing.length);
-        chosen_connection = connection_node.connections_outgoing[chosen_connection_index];
-      } else {
-        const chosen_connection_index =
-          Math.floor(Math.random() * connection_node.connections_incoming.length);
-        chosen_connection = connection_node.connections_incoming[chosen_connection_index];
-      }
+      if(self.nodes.length <= self.input_nodes.size) // use dynamic self.input_nodes.size instead
+        throw new Error("Something went wrong. Total nodes is length is somehow less than size of inputs")
 
-      return chosen_connection;
-    };
+      return _.sample(self.connections)
+    }
 
-    let i, j;
     switch (method.name) {
+      // Looks for an existing connection and places a node in between
       case "ADD_NODE": {
-        /**
-         * This is a sloppy fix, even if amount of nodes is equal to input
-         * should still add a output / hidden node
-         * or throw an error
-         */
-        if (self.nodes.length <= self.input_size) return null;
+        if(self.nodes.length >= maxNodes) return null
 
-        // Check user constraint
-        if(self.nodes. length >= maxNodes) return null;
+        const node = new Node({ type: 'hidden' })
+        if (mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION) // this should be an option passed into the Node constructor
 
-        // Look for an existing connection and place a node in between
-        const connection = getRandomConnection();
-        self.disconnect(connection.from, connection.to);
+        // Note for the future: this makes the assumption that nodes can only be placed
+        // between existing connections, but what this means is that connections will never
+        // be formed where there is not a connection right now.
+        // This means connections across inputs / outputs will not be formed
+        // And it also means that "peripheral" connections between output neurons and neurons that connect
+        // back into the network will also not be formed.
+        const connection = getRandomConnection()
+        const from = connection.from
+        const to = connection.to
+        self.disconnect(from, to) // break the existing connection
 
-        // Insert the new node right before the old connection.to
-        const to_index = self.nodes.indexOf(connection.to);
-        const node = new Node('hidden');
-
-        if (mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION);
-
-        // Place it in self.nodes
-        const min_bound = Math.min(to_index, self.nodes.length - self.output_size);
-        self.nodes.splice(min_bound, 0, node);
+        // Make sure new node is between from & to
+        // Accomodates assumption that: nodes array is ordered: ["inputs", "hidden", "outputs"]
+        // Should be agnostic by setting a node .type value and updating the way ".activate" works
+        let min_bound = self.nodes.indexOf(from) // Shouldn't use expensive ".indexOf", we should track neuron index numbers in the "to" & "from" of connections instead and access nodes later if needed
+        min_bound = (min_bound >= self.input_nodes.size - 1) ? min_bound : self.input_nodes.size - 1 // make sure after to insert after all input neurons
+        self.nodes.splice(min_bound + 1, 0, node) // assumes there is at least one output neuron
 
         // Now create two new connections
-        const new_connection1 = self.connect(connection.from, node)[0];
-        const new_connection2 = self.connect(node, connection.to)[0];
+        const new_connection1 = self.connect(from, node)[0]
+        const new_connection2 = self.connect(node, to)[0]
 
-        const gater = connection.gater;
-        // Check if the original connection was gated
-        if (gater != null) self.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2);
+        const gater = connection.gater
+        if (gater != null) self.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2) // Check if the original connection was gated
 
-        return self;
+        return self
       }
       case "SUB_NODE": {
-        const possible = self.possible(method);
+        const possible = self.possible(method)
         if (possible) {
-          self.remove(_.sample(possible));
-          return true;
+          self.remove(_.sample(possible))
+          return self
         }
-        return self;
+        return null
       }
       case "ADD_CONN": {
-        // Check user constraint
-        if(self.connections.length >= maxConns) return null
+        if(self.connections.length >= maxConns) return null // Check user constraint
 
-        const possible = self.possible(method);
+        const possible = self.possible(method)
         if (possible) {
-          const pair = possible[Math.floor(Math.random() * possible.length)];
-          self.connect(pair[0], pair[1]);
-          return self;
+          const pair = possible[Math.floor(Math.random() * possible.length)]
+          self.connect(pair[0], pair[1])
+          return self
         }
 
-        return null;
+        return null
       }
       case "REMOVE_CONN": // alias for sub_conn
       case "SUB_CONN": {
-        const possible = self.possible(method);
+        const possible = self.possible(method)
         if (possible) {
-          const random_connection = possible[Math.floor(Math.random() * possible.length)];
-          self.disconnect(random_connection.from, random_connection.to);
-          return true;
+          const chosen = _.sample(possible)
+          self.disconnect(chosen.from, chosen.to)
+          return self
         }
 
-        return self;
+        return null
       }
       case "MOD_WEIGHT": {
-        if (self.nodes.length <= self.input_size) return null;
+        const chosen_connection = getRandomConnection() // get a random connection to modify weight
+        chosen_connection.weight += Math.random() * (method.max - method.min) + method.min
 
-        // get a random connection to modify weight
-        const chosen_connection = getRandomConnection();
-
-        chosen_connection.weight += Math.random() * (method.max - method.min) + method.min;
-
-        return self;
+        return self
       }
       case "MOD_BIAS": {
         if (self.nodes.length <= self.input_size) return null;
         // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
-        const chosen_node_index = Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size);
-        const node_to_mutate = self.nodes[chosen_node_index];
-        node_to_mutate.mutate(method);
+        const node_to_mutate = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)]
+        node_to_mutate.mutate(method)
 
-        return self;
+        return self
       }
       case "MOD_ACTIVATION": {
-        if (self.possible(method)) {
-          const possible = _.filter(self.nodes, method.mutateOutput ?
-            (node) => node.type !== 'input' :
-            (node) => node.type !== 'input' && node.type !== 'output');
-
-          // Mutate a random node out of the filtered collection
-          _.sample(possible).mutate(method);
-          return true;
+        const possible = self.possible(method)
+        if (possible) {
+          _.sample(possible).mutate(method) // Mutate a random node out of filtered collection, MOD_ACTIVATION is a neuron-level concern
+          return self
         }
-        return self;
+        return null
       }
       case "ADD_SELF_CONN": {
-        const possible = self.possible(method);
+        const possible = self.possible(method)
         if (possible) {
-          const node = possible[Math.floor(Math.random() * possible.length)];
-          self.connect(node, node); // Create the self-connection
-          return true;
+          const node = possible[Math.floor(Math.random() * possible.length)]
+          self.connect(node, node) // Create the self-connection
+          return self
         }
-
-        return self;
+        return null
       }
       case "SUB_SELF_CONN": {
-        // very slow implementation.
-        // TODO: Huge speed up by storing a map is_self_connection<id -> node>
-        const self_connections = [];
-        for (let i = 0; i < self.connections.length; i++) {
-          const current_connection = self.connections[i];
-          if (current_connection.from == current_connection.to) {
-            self_connections.push(current_connection);
-          }
-        }
-
-        if (self.possible(method)) {
-          const chosen_connection = self_connections[Math.floor(Math.random() * self_connections.length)];
+        const possible = self.possible(method)
+        if (possible) {
+          const chosen_connection = possible[Math.floor(Math.random() * possible.length)];
           self.disconnect(chosen_connection.from, chosen_connection.to);
-          return self;
+          return self
         }
-
         return null;
       }
       case "ADD_GATE": {
         // Check user constraint
         if(self.gates.length >= maxGates) return null
 
-        const possible = self.possible(method);
+        const possible = self.possible(method)
         if (possible) {
-          // Select a random gater node and connection, can't be gated by input
-          const node = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)];
-          const conn = possible[Math.floor(Math.random() * possible.length)];
+          // Select a random gater node and connection, can't be gated by input | makes ["input", "hidden", "output"] assumption
+          const node = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)]
+          const conn = possible[Math.floor(Math.random() * possible.length)]
 
-          self.gate(node, conn); // Gate the connection with the node
-          return self;
+          self.gate(node, conn) // Gate the connection with the node
+          return self
         }
-
-        return null;
+        return null
       }
       case "SUB_GATE": {
         if (self.possible(method)) {
-          self.ungate(self.gates[Math.floor(Math.random() * self.gates.length)]);
-          return self;
+          self.ungate(self.gates[Math.floor(Math.random() * self.gates.length)])
+          return self
         }
-
-        return null;
+        return null
       }
       case "ADD_BACK_CONN": {
-        const possible = self.possible(method);
+        const possible = self.possible(method)
         if (possible) {
           const pair = possible[Math.floor(Math.random() * possible.length)]
-          self.connect(pair[0], pair[1]);
-          return self;
+          self.connect(pair[0], pair[1])
+          return self
         }
-
-        return null;
+        return null
       }
       case "SUB_BACK_CONN": {
-        const possible = self.possible(method);
+        const possible = self.possible(method)
         if (possible) {
-          const random_connection = possible[Math.floor(Math.random() * possible.length)];
-          self.disconnect(random_connection.from, random_connection.to);
-          return self;
+          const random_connection = possible[Math.floor(Math.random() * possible.length)]
+          self.disconnect(random_connection.from, random_connection.to)
+          return self
         }
-
-        return null;
+        return null
       }
       case "SWAP_NODES": {
-        const possible = self.possible(method);
+        const possible = self.possible(method)
         if (possible) {
           // Return a random node out of the filtered collection
-          const node1 = _.sample(possible);
+          const node1 = _.sample(possible)
 
           // Filter node1 from collection
-          const possible2 = _.filter(possible,
-            function(node, index) { return (node !== node1) });
+          const possible2 = _.filter(possible, (node, index) => node !== node1)
 
           // Get random node from filtered collection (excludes node1)
-          const node2 = _.sample(possible2);
+          const node2 = _.sample(possible2)
 
-          const bias_temp = node1.bias;
-          const squash_temp = node1.squash;
+          const bias_temp = node1.bias
+          const squash_temp = node1.squash
 
-          node1.bias = node2.bias;
-          node1.squash = node2.squash;
-          node2.bias = bias_temp;
-          node2.squash = squash_temp;
-          return self;
+          node1.bias = node2.bias
+          node1.squash = node2.squash
+          node2.bias = bias_temp
+          node2.squash = squash_temp
+          return self
         }
 
-        return null;
+        return null
       }
     }
   }
@@ -1131,121 +1089,6 @@ function Network(input_size, output_size) {
     };
 
     return results;
-  }
-
-  /**
-   * Creates a json that can be used to create a graph with d3 and webcola
-   *
-   * @function graph
-   * @memberof Network
-   *
-   * @param {number} width Width of the graph
-   * @param {number} height Height of the graph
-   *
-   * @returns {{nodes:Array<{id:{number},name:{string},activation:{activation},bias:{number}}>,links:Array<{{source:{number},target:{number},weight:{number},gate:{boolean}}}>,constraints:{Array<{type:{string},axis:{string},offsets:{node:{number},offset:{number}}}>}}}
-   *
-   */
-  self.graph = function(width, height) {
-    let input = 0;
-    let output = 0;
-
-    var graph_json = {
-      nodes: [],
-      links: [],
-      constraints: [{
-        type: `alignment`,
-        axis: `x`,
-        offsets: []
-      }, {
-        type: `alignment`,
-        axis: `y`,
-        offsets: []
-      }]
-    };
-
-    let i;
-    for (i = 0; i < self.nodes.length; i++) {
-      const node = self.nodes[i];
-
-      if (node.type === `input`) {
-        if (self.input_size === 1) {
-          graph_json.constraints[0].offsets.push({
-            node: i,
-            offset: 0
-          });
-        } else {
-          graph_json.constraints[0].offsets.push({
-            node: i,
-            offset: 0.8 * width / (self.input_size - 1) * input++
-          });
-        }
-        graph_json.constraints[1].offsets.push({
-          node: i,
-          offset: 0
-        });
-      } else if (node.type === `output`) {
-        if (self.output_size === 1) {
-          graph_json.constraints[0].offsets.push({
-            node: i,
-            offset: 0
-          });
-        } else {
-          graph_json.constraints[0].offsets.push({
-            node: i,
-            offset: 0.8 * width / (self.output_size - 1) * output++
-          });
-        }
-        graph_json.constraints[1].offsets.push({
-          node: i,
-          offset: -0.8 * height
-        });
-      }
-
-      graph_json.nodes.push({
-        id: i,
-        name: node.type === `hidden` ? node.squash.name : node.type.toUpperCase(),
-        activation: node.activation,
-        bias: node.bias
-      });
-    }
-
-    const connections = self.connections;
-    for (i = 0; i < connections.length; i++) {
-      const connection = connections[i];
-      if (connection.gater == null) {
-        graph_json.links.push({
-          source: self.nodes.indexOf(connection.from),
-          target: self.nodes.indexOf(connection.to),
-          weight: connection.weight
-        });
-      } else {
-        // Add a gater 'node'
-        const index = graph_json.nodes.length;
-        graph_json.nodes.push({
-          id: index,
-          activation: connection.gater.activation,
-          name: `GATE`
-        });
-        graph_json.links.push({
-          source: self.nodes.indexOf(connection.from),
-          target: index,
-          weight: 1 / 2 * connection.weight
-        });
-        graph_json.links.push({
-          source: index,
-          target: self.nodes.indexOf(connection.to),
-          weight: 1 / 2 * connection.weight
-        });
-        graph_json.links.push({
-          source: self.nodes.indexOf(connection.gater),
-          target: index,
-          weight: connection.gater.activation,
-          gate: true
-        });
-      }
-    }
-
-    return graph_json;
   }
 
   /**
@@ -1630,8 +1473,8 @@ function Network(input_size, output_size) {
       }
 
       const incoming = [];
-      for (var j = 0; j < node.connections_incoming.length; j++) {
-        const connection = node.connections_incoming[j];
+      for (var j = 0; j < node.incoming.length; j++) {
+        const connection = node.incoming[j];
         if (connection.from.index === undefined) debugger;
         let computation = `A[${connection.from.index}] * ${connection.weight}`;
 
@@ -1712,8 +1555,8 @@ function Network(input_size, output_size) {
       connections.push(node.connections_self.weight);
       connections.push(node.connections_self.gater == null ? -1 : node.connections_self.gater.index);
 
-      _.times(node.connections_incoming.length, (incoming_connections_index) => {
-        const connection = node.connections_incoming[incoming_connections_index];
+      _.times(node.incoming.length, (incoming_connections_index) => {
+        const connection = node.incoming[incoming_connections_index];
 
         connections.push(connection.from.index);
         connections.push(connection.weight);
@@ -1728,18 +1571,19 @@ function Network(input_size, output_size) {
 
   /**
    * Add the nodes to the network
-   * @param  {Node|Node[]|Group} nodes_to_add The nodes to add
+   * @param  {Node|Node[]|Group} nodes The nodes to add
    * @return {Network} A self reference for chaining
    */
-  self.addNodes = function (nodes_to_add) {
-    if (nodes_to_add instanceof Node) nodes_to_add = [nodes_to_add];
-    else if (nodes_to_add instanceof Group) nodes_to_add = nodes_to_add.nodes;
-    self.nodes.push(...nodes_to_add);
-    for (let i = 0; i < nodes_to_add.length; i++) {
-      const current_node = nodes_to_add[i];
+  self.addNodes = function (nodes) {
+    if (nodes instanceof Node) nodes = [nodes];
+    else if (nodes instanceof Group) nodes = nodes.nodes;
+    self.nodes.push(...nodes);
+    for (let i = 0; i < nodes.length; i++) {
       // not required to push connections incoming. by pushing every outgoing connection,
       // every incoming connection will be pushed as well. pushing both causes duplicates
-      self.connections.push(...current_node.connections_outgoing);
+      self.connections.push(...nodes[i].outgoing)
+      self.gates.push(...nodes[i].gated)
+      if(nodes[i].connections_self.weight) self.connections.push(nodes[i].connections_self)
     }
   }
 }
@@ -1786,7 +1630,7 @@ Network.fromJSON = function(json) {
   json.output_nodes.forEach(node_index => network.output_nodes.add(network.nodes[node_index]))
 
   return network;
-};
+}
 
 /**
  * Merge two networks into one.
@@ -1843,7 +1687,7 @@ Network.merge = function(network1, network2) {
   network1.nodes = network1.nodes.concat(network2.nodes);
 
   return network1;
-};
+}
 
 /**
  * Create an offspring from two parent networks.
@@ -2064,7 +1908,581 @@ Network.crossOver = function(network1, network2, equal) {
   }
 
   return offspring;
-};
+}
+
+/**
+ *
+ * Preconfigured neural networks!
+ *
+ * Ready to be built with simple one line functions.
+ *
+ * @namespace
+*/
+Network.architecture = {
+  /**
+  * Constructs a network from a given array of connected nodes
+  *
+  * Behind the scenes, Construct expects nodes to have connections and gates already made which it uses to infer the structure of the network and assemble it.
+  *
+  * It's useful because it's a generic function to produce a network from custom architectures
+  *
+  * @param {Group[]|Layer[]|Node[]} list A list of Groups, Layers, and Nodes to combine into a Network
+  *
+  * @example <caption>A Network built with Nodes</caption>
+  * let { architect } = require("@liquid-carrot/carrot");
+  *
+  * var A = new Node();
+  * var B = new Node();
+  * var C = new Node();
+  * var D = new Node();
+  *
+  * // Create connections
+  * A.connect(B);
+  * A.connect(C);
+  * B.connect(D);
+  * C.connect(D);
+  *
+  * // Construct a network
+  * var network = architect.Construct([A, B, C, D]);
+  *
+  * @example <caption>A Network built with Groups</caption>
+  * let { architect } = require("@liquid-carrot/carrot");
+  *
+  * var A = new Group(4);
+  * var B = new Group(2);
+  * var C = new Group(6);
+  *
+  * // Create connections between the groups
+  * A.connect(B);
+  * A.connect(C);
+  * B.connect(C);
+  *
+  * // Construct a square-looking network
+  * var network = architect.Construct([A, B, C, D]);
+  *
+  * @returns {Network}
+  */
+  Construct: function (list) {
+    // Create a network
+    const network = new Network(0, 0);
+
+    // Transform all groups into nodes, set input and output nodes to the network
+    // TODO: improve how it is communicated which nodes are input and output
+    let nodes = [];
+
+    let i, j;
+    for (i = 0; i < list.length; i++) {
+      if (list[i] instanceof Group || list[i] instanceof Layer) {
+        for (j = 0; j < list[i].nodes.length; j++) {
+          nodes.push(list[i].nodes[j]);
+          if (i === 0) { // assume input nodes. TODO: improve.
+            network.input_nodes.add(list[i].nodes[j]);
+          } else if (i === list.length - 1) {
+            network.output_nodes.add(list[i].nodes[j]);
+          }
+        }
+      } else if (list[i] instanceof Node) {
+        nodes.push(list[i]);
+      }
+    }
+
+    // check if there are input or output nodes, bc otherwise must guess based on number of outputs
+    const found_output_nodes = _.reduce(nodes, (total_found, node) =>
+      total_found + (node.type === `output`), 0);
+    const found_input_nodes = _.reduce(nodes, (total_found, node) =>
+      total_found + (node.type === `input`), 0);
+
+    // Determine input and output nodes
+    const inputs = [];
+    const outputs = [];
+    for (i = nodes.length - 1; i >= 0; i--) {
+      if (nodes[i].type === 'output' || (!found_output_nodes && nodes[i].outgoing.length + nodes[i].gated.length === 0)) {
+        nodes[i].type = 'output';
+        network.output_size++;
+        outputs.push(nodes[i]);
+        nodes.splice(i, 1);
+      } else if (nodes[i].type === 'input' || (!found_input_nodes && !nodes[i].incoming.length)) {
+        nodes[i].type = 'input';
+        network.input_size++;
+        inputs.push(nodes[i]);
+        nodes.splice(i, 1);
+      }
+    }
+    // backward compatibility
+    network.input = network.input_size
+    network.output = network.output_size
+
+    // Input nodes are always first, output nodes are always last
+    nodes = inputs.concat(nodes).concat(outputs);
+
+    if (network.input_size === 0 || network.output_size === 0) throw new Error('Given nodes have no clear input/output node!')
+
+    // Adds nodes, connections, and gates
+    network.addNodes(nodes)
+
+    return network
+  },
+
+  /**
+  * Creates a multilayer perceptron (MLP)
+  *
+  * @param {...number} layer_neurons Number of neurons in input layer, hidden layer(s), and output layer as a series of numbers (min 3 arguments)
+  *
+  * @example
+  * let { architect } = require("@liquid-carrot/carrot");
+  *
+  * // Input 2 neurons, Hidden layer: 3 neurons, Output: 1 neuron
+  * let my_perceptron = new architect.Perceptron(2,3,1);
+  *
+  * // Input: 2 neurons, 4 Hidden layers: 10 neurons, Output: 1 neuron
+  * let my_perceptron = new architect.Perceptron(2, 10, 10, 10, 10, 1);
+  *
+  * @returns {Network} Feed forward neural network
+  */
+  Perceptron: function () {
+    // Convert arguments to Array
+    const layers = Array.from(arguments);
+
+    if (layers.length < 3) throw new Error(`You have to specify at least 3 layers`);
+
+    // Create a list of nodes/groups and add input nodes
+    const nodes = [new Group(layers[0])];
+
+    // add the following nodes and connect them
+    _.times(layers.length - 1, (index) => {
+      const layer = new Group(layers[index + 1]);
+      nodes.push(layer);
+      nodes[index].connect(nodes[index + 1], methods.connection.ALL_TO_ALL);
+    });
+
+    // Construct the network
+    return Network.architecture.Construct(nodes);
+  },
+
+  /**
+  * Creates a randomly connected network
+  *
+  * @param {number} input Number of input nodes
+  * @param {number} [hidden] Number of nodes inbetween input and output
+  * @param {number} output Number of output nodes
+  * @param {object} [options] Configuration options
+  * @param {number} [options.connections=hidden*2] Number of connections (Larger than hidden)
+  * @param {number} [options.backconnections=0] Number of recurrent connections
+  * @param {number} [options.selfconnections=0] Number of self connections
+  * @param {number} [options.gates=0] Number of gates
+  *
+  * @example
+  * let { architect } = require("@liquid-carrot/carrot");
+  *
+  * let network = architect.Random(1, 20, 2, {
+  *   connections: 40,
+  *   gates: 4,
+  *   selfconnections: 4
+  * });
+  *
+  * @returns {Network}
+  */
+  Random: function (input, hidden, output, options) {
+    // Random(input, output)
+    if(!(output, options)) {
+      output = hidden;
+      hidden = undefined;
+    }
+    // Random(input, output, options)
+    else if(!options && _.isPlainObject(output)) {
+        options = output;
+        output = hidden;
+        hidden = undefined;
+    }
+
+    hidden = hidden || 0;
+    options = _.defaults(options, {
+      connections: hidden * 2,
+      backconnections: 0,
+      selfconnections: 0,
+      gates: 0
+    });
+
+    const network = new Network(input, output);
+
+    _.times(hidden, () => network.mutate(methods.mutation.ADD_NODE));
+    _.times(options.connections - hidden, () => network.mutate(methods.mutation.ADD_CONN));
+    _.times(options.backconnections, () => network.mutate(methods.mutation.ADD_BACK_CONN));
+    _.times(options.selfconnections, () => network.mutate(methods.mutation.ADD_SELF_CONN));
+    _.times(options.gates, () => network.mutate(methods.mutation.ADD_GATE));
+
+    return network;
+  },
+
+  /**
+  * Creates a long short-term memory network
+  *
+  * @see {@link https://en.wikipedia.org/wiki/Long_short-term_memory|LSTM on Wikipedia}
+  *
+  * @param {number} input Number of input nodes
+  * @param {...number} memory Number of memory block_size assemblies (input gate, memory cell, forget gate, and output gate) per layer
+  * @param {number} output Number of output nodes
+  * @param {object} [options] Configuration options
+  * @param {boolean} [options.memory_to_memory=false] Form internal connections between memory blocks
+  * @param {boolean} [options.output_to_memory=false] Form output to memory layer connections and gate them
+  * @param {boolean} [options.output_to_gates=false] Form output to gate connections (connects to all gates)
+  * @param {boolean} [options.input_to_output=true] Form direct input to output connections
+  * @param {boolean} [options.input_to_deep=true] Form input to memory layer conections and gate them
+  *
+  * @example <caption>While training sequences or timeseries prediction, set the clear option to true in training</caption>
+  * let { architect } = require("@liquid-carrot/carrot");
+  *
+  * // Input, memory block_size layer, output
+  * let my_LSTM = new architect.LSTM(2,6,1);
+  *
+  * // with multiple memory block_size layer_sizes
+  * let my_LSTM = new architect.LSTM(2, 4, 4, 4, 1);
+  *
+  * // with options
+  * var options = {
+  *   memory_to_memory: false,    // default
+  *   output_to_memory: false,    // default
+  *   output_to_gates: false,     // default
+  *   input_to_output: true,      // default
+  *   input_to_deep: true         // default
+  * };
+  *
+  * let my_LSTM = new architect.LSTM(2, 4, 4, 4, 1, options);
+  *
+  * @returns {Network}
+  */
+  LSTM: function () {
+    const layer_sizes_and_options = Array.from(arguments);
+
+    const output_size_or_options = layer_sizes_and_options.slice(-1)[0];
+
+    let layer_sizes, options
+
+    // find out if options were passed
+    if (typeof output_size_or_options === 'number') {
+      layer_sizes = layer_sizes_and_options;
+      options = {};
+    } else {
+      layer_sizes = layer_sizes_and_options.slice(layer_sizes_and_options.length - 1);
+      options = output_size_or_options;
+    }
+
+    if (layer_sizes.length < 3) {
+      throw new Error('You have to specify at least 3 layer sizes, one for each of 1.inputs, 2. hidden, 3. output');
+    }
+
+    options = _.defaults(options, {
+      memory_to_memory: false,
+      output_to_memory: false,
+      output_to_gates: false,
+      input_to_output: true,
+      input_to_deep: true
+    });
+
+
+    const input_layer = new Group(layer_sizes.shift()); // first argument
+    input_layer.set({
+      type: 'input'
+    });
+
+    const output_layer = new Group(layer_sizes.pop());
+    output_layer.set({
+      type: 'output'
+    });
+
+    // check if input to output direct connection
+    if (options.input_to_output) {
+      input_layer.connect(output_layer, methods.connection.ALL_TO_ALL);
+    }
+
+    const block_sizes = layer_sizes; // all the remaining arguments
+    const blocks = []; // stores all the nodes of the blocks, to add later to nodes
+    let previous_output = input_layer;
+    _.times(block_sizes.length, (index) => {
+      const block_size = block_sizes[index];
+
+      // Initialize required nodes (in activation order), altogether a memory block_size
+      const input_gate = new Group(block_size);
+      const forget_gate = new Group(block_size);
+      const memory_cell = new Group(block_size);
+      const output_gate = new Group(block_size);
+      // if on last layer then output is the output layer
+      const block_output = index === block_sizes.length - 1 ? output_layer : new Group(block_size);
+
+      input_gate.set({
+        bias: 1
+      });
+      forget_gate.set({
+        bias: 1
+      });
+      output_gate.set({
+        bias: 1
+      });
+
+      // Connect the input with all the nodes
+      // input to memory cell connections for gating
+      const memory_gate_connections = previous_output.connect(memory_cell, methods.connection.ALL_TO_ALL);
+      previous_output.connect(input_gate, methods.connection.ALL_TO_ALL);
+      previous_output.connect(output_gate, methods.connection.ALL_TO_ALL);
+      previous_output.connect(forget_gate, methods.connection.ALL_TO_ALL);
+
+      // Set up internal connections
+      memory_cell.connect(input_gate, methods.connection.ALL_TO_ALL);
+      memory_cell.connect(forget_gate, methods.connection.ALL_TO_ALL);
+      memory_cell.connect(output_gate, methods.connection.ALL_TO_ALL);
+
+      // memory cell connections for gating
+      const forget_gate_connections = memory_cell.connect(memory_cell, methods.connection.ONE_TO_ONE);
+      // memory cell connections for gating
+      const output_gate_connections = memory_cell.connect(block_output, methods.connection.ALL_TO_ALL);
+
+      // Set up gates
+      input_gate.gate(memory_gate_connections, methods.gating.INPUT);
+      forget_gate.gate(forget_gate_connections, methods.gating.SELF);
+      output_gate.gate(output_gate_connections, methods.gating.OUTPUT);
+
+      // add the connections specified in options
+
+      // Input to all memory cells
+      if (options.input_to_deep && index > 0) {
+        const input_layer_memory_gate_connection =
+          input_layer.connect(memory_cell, methods.connection.ALL_TO_ALL);
+        input_gate.gate(input_layer_memory_gate_connection, methods.gating.INPUT);
+      }
+
+      // Optional connections
+      if (options.memory_to_memory) {
+        const recurrent_memory_gate_connection =
+          memory_cell.connect(memory_cell, methods.connection.ALL_TO_ELSE);
+        input_gate.gate(recurrent_memory_gate_connection, methods.gating.INPUT);
+      }
+
+      if (options.output_to_memory) {
+        const output_to_memory_gate_connection =
+          output_layer.connect(memory_cell, methods.connection.ALL_TO_ALL);
+        input_gate.gate(output_to_memory_gate_connection, methods.gating.INPUT);
+      }
+
+      if (options.output_to_gates) {
+        output_layer.connect(input_gate, methods.connection.ALL_TO_ALL);
+        output_layer.connect(forget_gate, methods.connection.ALL_TO_ALL);
+        output_layer.connect(output_gate, methods.connection.ALL_TO_ALL);
+      }
+
+      // Add to array
+      blocks.push(input_gate);
+      blocks.push(forget_gate);
+      blocks.push(memory_cell);
+      blocks.push(output_gate);
+      if (index !== block_sizes.length - 1) blocks.push(block_output);
+
+      previous_output = block_output;
+    });
+
+    const nodes = [];
+    nodes.push(input_layer);
+    _.forEach(blocks, (node_group) => nodes.push(node_group));
+    nodes.push(output_layer);
+    return Network.architecture.Construct(nodes);
+  },
+
+  /**
+  * Creates a gated recurrent unit network
+  *
+  * @param {number} input Number of input nodes
+  * @param {...number} units Number of gated recurrent units per layer
+  * @param {number} output Number of output nodes
+  *
+  * @example <caption>GRU is being tested, and may not always work for your dataset.</caption>
+  * let { architect } = require("@liquid-carrot/carrot");
+  *
+  * // Input, gated recurrent unit layer, output
+  * let my_LSTM = new architect.GRU(2,6,1);
+  *
+  * // with multiple layers of gated recurrent units
+  * let my_LSTM = new architect.GRU(2, 4, 4, 4, 1);
+  *
+  * @example <caption>Training XOR gate</caption>
+  * let { architect } = require("@liquid-carrot/carrot");
+  *
+  * var training_set = [
+  *   { input: [0], output: [0]},
+  *   { input: [1], output: [1]},
+  *   { input: [1], output: [0]},
+  *   { input: [0], output: [1]},
+  *   { input: [0], output: [0]}
+  * ];
+  *
+  * var network = new architect.GRU(1,1,1);
+  *
+  * // Train a sequence: 00100100..
+  * network.train(training_set, {
+  *   log: 1,
+  *   rate: 0.1, // lower rates work best
+  *   error: 0.005,
+  *   iterations: 3000,
+  *   clear: true // set to true while training
+  * });
+  *
+  * @returns {Network}
+  */
+  GRU: function () {
+    const layer_sizes = Array.from(arguments);
+    if (layer_sizes.length < 3) throw new Error('You have to specify at least 3 layer sizes');
+
+    const input_layer = new Group(layer_sizes.shift(), 'input'); // first argument
+    const output_layer = new Group(layer_sizes.pop(), 'output'); // last argument
+    const block_sizes = layer_sizes; // all the arguments in the middle
+
+    const nodes = [];
+    nodes.push(input_layer);
+
+    let previous = input_layer;
+    for (var i = 0; i < block_sizes.length; i++) {
+      const layer = Layer.GRU(block_sizes[i])
+      previous.connect(layer);
+      previous = layer;
+
+      nodes.push(layer);
+    }
+
+    previous.connect(output_layer);
+    nodes.push(output_layer);
+
+    return Network.architecture.Construct(nodes);
+  },
+
+  /**
+  * Creates a hopfield network of the given size
+  *
+  * @param {number} size Number of inputs and outputs (which is the same number)
+  *
+  * @example <caption>Output will always be binary due to `Activation.STEP` function.</caption>
+  * let { architect } = require("@liquid-carrot/carrot");
+  *
+  * var network = architect.Hopfield(10);
+  * var training_set = [
+  *   { input: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1], output: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1] },
+  *   { input: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0], output: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0] }
+  * ];
+  *
+  * network.train(training_set);
+  *
+  * network.activate([0,1,0,1,0,1,0,1,1,1]); // [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+  * network.activate([1,1,1,1,1,0,0,1,0,0]); // [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]
+  *
+  * @returns {Network}
+  */
+  Hopfield: function (size) {
+    const input = new Group(size, "input")
+    const output = new Group(size, "output")
+
+    input.connect(output, methods.connection.ALL_TO_ALL)
+
+    output.set({
+      squash: methods.activation.STEP
+    })
+
+    return Network.architecture.Construct([input, output])
+  },
+
+  /**
+  * Creates a NARX network (remember previous inputs/outputs)
+  * @alpha cannot make standalone network. TODO: be able to make standalone network
+  *
+  * @param {number} input Number of input nodes
+  * @param {number[]|number} hidden Array of hidden layer sizes, e.g. [10,20,10] If only one hidden layer, can be a number (of nodes)
+  * @param {number} output Number of output nodes
+  * @param {number} input_memory Number of previous inputs to remember
+  * @param {number} output_memory Number of previous outputs to remember
+  *
+  * @example
+  * let { architect } = require("@liquid-carrot/carrot");
+  *
+  * let narx = new architect.NARX(1, 5, 1, 3, 3);
+  *
+  * // Training a sequence
+  * let training_data = [
+  *   { input: [0], output: [0] },
+  *   { input: [0], output: [0] },
+  *   { input: [0], output: [1] },
+  *   { input: [1], output: [0] },
+  *   { input: [0], output: [0] },
+  *   { input: [0], output: [0] },
+  *   { input: [0], output: [1] },
+  * ];
+  * narx.train(training_data, {
+  *   log: 1,
+  *   iterations: 3000,
+  *   error: 0.03,
+  *   rate: 0.05
+  * });
+  *
+  * @returns {Network}
+  */
+  NARX: function (input_size, hidden_sizes, output_size, input_memory_size, output_memory_size) {
+    if (!Array.isArray(hidden_sizes)) {
+      hidden_sizes = [hidden_sizes];
+    }
+
+    const nodes = [];
+
+    const input_layer = Layer.Dense(input_size);
+    const input_memory = Layer.Memory(input_size, input_memory_size);
+
+    const hidden_layers = [];
+    // create the hidden layers
+    for (let index = 0; index < hidden_sizes.length; index++) {
+      hidden_layers.push(Layer.Dense(hidden_sizes[index]));
+    }
+
+    const output_layer = Layer.Dense(output_size);
+    const output_memory = Layer.Memory(output_size, output_memory_size);
+
+    // add the input connections and add to the list of nodes
+    input_layer.connect(hidden_layers[0], methods.connection.ALL_TO_ALL);
+    input_layer.connect(input_memory, methods.connection.ONE_TO_ONE, 1);
+    nodes.push(input_layer);
+
+    // connect the memories to the first hidden layer
+    input_memory.connect(hidden_layers[0], methods.connection.ALL_TO_ALL);
+    output_memory.connect(hidden_layers[0], methods.connection.ALL_TO_ALL);
+    nodes.push(input_memory);
+    nodes.push(output_memory);
+
+    // feed forward the hidden layers
+    for (let index = 0; index < hidden_layers.length; index++) {
+      if (index < hidden_layers.length - 1) { // do not connect to next if last
+        hidden_layers[index].connect(hidden_layers[index + 1], methods.connection.ALL_TO_ALL);
+      } else { // if last, connect to output
+        hidden_layers[index].connect(output_layer, methods.connection.ALL_TO_ALL);
+      }
+
+      nodes.push(hidden_layers[index]);
+    }
+
+    // finally, connect output to memory
+    output_layer.connect(output_memory, methods.connection.ONE_TO_ONE, 1);
+    nodes.push(output_layer);
+
+
+    input_layer.set({
+      type: 'input'
+    });
+    output_layer.set({
+      type: 'output'
+    });
+
+    return Network.architecture.Construct(nodes);
+  },
+
+  /**
+   * @todo Build Liquid network constructor
+   */
+  Liquid: function() {
+    // Code here....
+  }
+}
 
 // Hacky fix, will probably remain this way until architect is copied over
 Network.architecture = {
