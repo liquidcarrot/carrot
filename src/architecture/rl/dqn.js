@@ -79,17 +79,21 @@ DQN.prototype = {
   /**
    * This method gets the current state as input, and decides which action should be taken.
    *
+   * Decision based on exploration rate set by `.explore`.
+   *
+   * Infinite explore = Network always explores states randomly.
+   * Zero explore = network always picks the action it thinks best from known states.
+   * 
+   * Best: High explore at first then less explore as network is more experienced.
+   *
    * @param {number[]} state current state (float arr with values between 0 and 1)
-   * @returns {number} the action which the DQN would take at this state
+   * @returns {number} The action which the DQN would take at this state (represented by an index)
    */
   act: function (state) {
-    // epsilon greedy strategy
-    let action;
-    if (Math.max(this.exploreMin, Rate.EXP(this.explore, this.t, {gamma: this.exploreDecay})) > Math.random()) {
-      action = Math.floor(Math.random() * this.numActions);
-    } else {
-      action = this.getMaxValueIndex(this.network.activate(state));
-    }
+    // epsilon greedy strategy | explore > random = explore; else exploit
+    const action = (Math.max(this.exploreMin, Rate.EXP(this.explore, this.t, {gamma: this.exploreDecay})) > Math.random())
+      ? Math.floor(Math.random() * this.numActions) // random "explore" action
+      : this.getMaxValueIndex(this.network.activate(state)) // deliberate "exploit" action
 
     // shift state memory
     this.state = this.nextState;
