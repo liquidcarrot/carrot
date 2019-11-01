@@ -595,4 +595,4 @@ const architect = {
   }
 };
 
-module.exports = architect;
+module.exports = architect
