@@ -85,7 +85,7 @@ DQN.prototype = {
   act: function (state) {
     // epsilon greedy strategy
     let action;
-    if (Math.max(this.epsilonMin, Rate.EXP(this.epsilon, this.t, {gamma: this.epsilonDecay})) < Math.random()) {
+    if (Math.max(this.epsilonMin, Rate.EXP(this.epsilon, this.t, {gamma: this.epsilonDecay})) > Math.random()) {
       action = Math.floor(Math.random() * this.numActions);
     } else {
       action = this.getMaxValueIndex(this.network.activate(state));
