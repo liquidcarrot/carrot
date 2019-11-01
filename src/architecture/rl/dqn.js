@@ -27,9 +27,9 @@ function getopt(opt, fieldName, defaultValue) {
 function DQN(numActions, numStates, opt) {
   this.numActions = numActions;
   this.gamma = getopt(opt, 'gamma', 0.1); // future reward discount factor
-  this.epsilon = getopt(opt, 'epsilon', 0.05); // for epsilon-greedy policy
-  this.epsilonDecay = getopt(opt, 'epsilonDecay', 0.99); // for epsilon-greedy policy
-  this.epsilonMin = getopt(opt, 'epsilonMin', 0); // for epsilon-greedy policy
+  this.explore = getopt(opt, 'explore', 0.05); // for epsilon-greedy policy
+  this.exploreDecay = getopt(opt, 'exploreDecay', 0.99); // for epsilon-greedy policy
+  this.exploreMin = getopt(opt, 'exploreMin', 0); // for epsilon-greedy policy
   this.learningRate = getopt(opt, 'learningRate', 0.1); // value function learning rate
   this.learningRateDecay = getopt(opt, 'learningRateDecay', 0.99); // value function learning rate
   this.learningRateMin = getopt(opt, 'learningRateMin', 0.01); // value function learning rate
@@ -65,9 +65,9 @@ DQN.prototype = {
     let json = {};
     json.net = this.network.toJSON();
     json.gamma = this.gamma;
-    json.epsilon = this.epsilon;
-    json.epsilonDecay = this.epsilonDecay;
-    json.epsilonMin = this.epsilonMin;
+    json.explore = this.explore;
+    json.exploreDecay = this.exploreDecay;
+    json.exploreMin = this.exploreMin;
     json.learningRate = this.learningRate;
     json.learningRateDecay = this.learningRateDecay;
     json.learningRateMin = this.learningRateMin;
@@ -85,7 +85,7 @@ DQN.prototype = {
   act: function (state) {
     // epsilon greedy strategy
     let action;
-    if (Math.max(this.epsilonMin, Rate.EXP(this.epsilon, this.t, {gamma: this.epsilonDecay})) > Math.random()) {
+    if (Math.max(this.exploreMin, Rate.EXP(this.explore, this.t, {gamma: this.exploreDecay})) > Math.random()) {
       action = Math.floor(Math.random() * this.numActions);
     } else {
       action = this.getMaxValueIndex(this.network.activate(state));
@@ -200,9 +200,9 @@ DQN.fromJSON = function (json) {
   let agent = new DQN(network.input_size, network.output_size, {});
 
   agent.gamma = json.gamma;
-  agent.epsilon = json.epsilon;
-  agent.epsilonDecay = json.epsilonDecay;
-  agent.epsilonMin = json.epsilonMin;
+  agent.explore = json.explore;
+  agent.exploreDecay = json.exploreDecay;
+  agent.exploreMin = json.exploreMin;
   agent.learningRate = json.learningRate;
   agent.learningRateDecay = json.learningRateDecay;
   agent.learningRateMin = json.learningRateMin;
