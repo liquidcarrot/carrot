@@ -210,10 +210,10 @@ function Network(input_size, output_size) {
   /**
    * Backpropagate the network
    *
+   * This function allows you to teach the network. If you want to do more complex training, use the `network.train()` function.
+   * 
    * @function propagate
    * @memberof Network
-   *
-   * This function allows you to teach the network. If you want to do more complex training, use the `network.train()` function.
    *
    * @param {number} rate=0.3 Sets the [learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10) of the backpropagation process
    * @param {number} momentum=0 [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html). Adds a fraction of the previous weight update to the current one.
