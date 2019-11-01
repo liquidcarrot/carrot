@@ -20,7 +20,7 @@ describe('DQN', function () {
   });
   it('test learning capabilities', function () {
     this.timeout(10000);
-    let agent = new DQN(2, 1, {gamma: 0.3, hidden: [4], epsilon: 0});
+    let agent = new DQN(2, 1, {gamma: 0.3, hidden: [4], explore: 0});
 
     let currentState = 0.5;
     let lastState = currentState;
