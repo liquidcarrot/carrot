@@ -210,10 +210,11 @@ function Species(options={}) {
 
   // @param {Network} network - Network requesting to be added to the species
   // @param {number} [threshold=1] - The maximum genomic/topological distance between networks that is allowable to be part of the same species - i.e. the speciation threshold
+  // @param {Network} [representative] - Useful when creating new generations in `Population`
   // @returns {boolean} Returns `true`, iff the network was added to the species
   this.addNetwork = function(network, options={ threshold: 0.4 }) {
-    // If there are no networks in the species, or the network is similar to the species...
-    if(this.networks.length === 0 || distance([this.getRandomNetwork().connections, network.connections]) < options.threshold) {
+    // If there are no networks in the species, the network is similar to the species, or a representative network is given from a previous generation...
+    if((options.representative && distance([options.representative.connections, network.connections]) < options.threshold) || this.networks.length === 0 || distance([this.getRandomNetwork().connections, network.connections]) < options.threshold) {
       // ...add the network to the species...
       this.networks.push(network); return true;
     }
@@ -261,7 +262,7 @@ function Population(options={}) {
   this.species = [];
 
   // @param {Network} network - Network will added to the population
-  this.addNetwork = function(network, options={ threshold: 1 }) {
+  this.addNetwork = function(network, options={ threshold: 0.4 }) {
     if(this.species.length === 0) this.species.push(new Species); // Each population will have at least "one species" even if it's a mono-species population
 
     let speciated = false; // Tracks if `network` was successfully added to an existing species in `population`
@@ -269,7 +270,7 @@ function Population(options={}) {
     // Add the network to an existing species
     for (let s = 0; s < this.species.length; s++) {
       // If the network is succesfully added to a species, return `true` - specifying that the network was successfully added to the population
-      if (this.species[s].addNetwork(network)) {
+      if (this.species[s].addNetwork(network, options)) {
         speciated = true;
         return true;
       }
@@ -282,6 +283,57 @@ function Population(options={}) {
       this.species.push(species);
       return true
     }
+  }
+
+  // Returns random species representatives
+  this.getRepresentatives = function() {
+    let representatives = [];
+
+    for (let s = 0; s < this.species.length; s++) {
+      representatives.push(this.species[s].getRandomNetwork());
+    }
+
+    return representatives;
+  }
+
+  this.newGeneration = function(options={
+    size: 1000,
+    threshold: 0.4,
+    network: {
+      connections: 10,
+      density: 0.4
+    }
+  }) {
+    let population = new Population();
+    let representatives = this.getRepresentatives();
+
+    // Adds `size` networks to a new population that is speciated using the previous population
+    for (let n = 0; n < options.size; n++) {
+      let speciated = false;
+
+      // Add connections to an existing species from a previous generation
+      for (let r = 0; r < representatives.length; r++) {
+        if(population.addNetwork(new Network(options.network), {
+          threshold: options.threshold,
+          representative: representatives[r]
+        })) {
+          speciated = true;
+          break;
+        }
+      }
+
+      // Otherwise, create a new species
+      if(!speciated) {
+        let species = new Species();
+        species.addNetwork(new Network(options.network), {
+          threshold: options.threshold,
+          representative: representatives[r]
+        });
+        population.species.push(species);
+      }
+    }
+
+    return population;
   }
 }
 
@@ -302,12 +354,41 @@ Population.createRandom = function(options={
   for (let n = 0; n < options.size; n++) {
     let network = new Network(options.network);
 
-    population.addNetwork(network);
+    population.addNetwork(network, {
+      threshold: options.threshold
+    });
   }
 
   return population;
 }
 
+// Checks: Cross-generational speciation
+{
+  // let population = Population.createRandom({
+  //   size: 1000,
+  //   speciated: true,
+  //   threshold: 0.3,
+  //   network: {
+  //     connections: 10,
+  //     density: 0.4
+  //   }
+  // });
+  //
+  // // console.log(population);
+  // console.log(population.species.length);
+  //
+  // let newPopulation = population.newGeneration({
+  //   size: 1000,
+  //   threshold: 0.3,
+  //   network: {
+  //     connections: 10,
+  //     density: 0.4
+  //   }
+  // });
+  //
+  // // console.log(newPopulation);
+  // console.log(newPopulation.species.length);
+}
 // Checks: (Un)Speciated Population creation
 {
   // let population = Population.createRandom();
