@@ -19,40 +19,53 @@ function getopt(opt, fieldName, defaultValue) {
 }
 
 /**
- *
- * @param {int} numActions maximum number of actions the agent can do
- * @param {int} numStates length of the state array
- * @param {Object} opt array, of user-specific options
- */
+* Creates a DQN network
+*
+* Used to do reinforcement learning
+*
+* @alpha
+*
+* @constructs DQN
+* 
+* @param {int} numActions Maximum number of actions the agent can do,
+* @param {int} numStates Length of the state array
+* @param {Object} options Options object
+*/
 function DQN(numActions, numStates, opt) {
+  // Network Sizing
+  this.numStates = numStates;
   this.numActions = numActions;
-  this.gamma = getopt(opt, 'gamma', 0.1); // future reward discount factor
-  this.explore = getopt(opt, 'explore', 0.05); // for epsilon-greedy policy
-  this.exploreDecay = getopt(opt, 'exploreDecay', 0.99); // for epsilon-greedy policy
-  this.exploreMin = getopt(opt, 'exploreMin', 0); // for epsilon-greedy policy
-  this.learningRate = getopt(opt, 'learningRate', 0.1); // value function learning rate
-  this.learningRateDecay = getopt(opt, 'learningRateDecay', 0.99); // value function learning rate
-  this.learningRateMin = getopt(opt, 'learningRateMin', 0.01); // value function learning rate
-
-  this.isTraining = getopt(opt, 'isTraining', true);
-
-  // number of time steps before we add another experience to replay memory
-  let experienceSize = getopt(opt, 'experience_size', 50000); // size of experience replay
-  this.learningStepsPerIteration = getopt(opt, 'learning_steps_per_iteration', 20);
-  this.tderrorClamp = getopt(opt, 'tderrorClamp', 1);
   this.hiddenNeurons = getopt(opt, 'hidden', [10]);
-
   this.network = new architect.Perceptron(numStates, ...this.hiddenNeurons, numActions);
 
-  this.experience = new Window(experienceSize, true); // experience
-
+  // Network & state memory
   this.reward = null;
   this.state = null;
   this.nextState = null;
   this.action = null;
   this.nextAction = null;
+
+  // Learning and update
+  this.learningRate = getopt(opt, 'learningRate', 0.1); // AKA alpha value function learning rate
+  this.learningRateDecay = getopt(opt, 'learningRateDecay', 0.99); // AKA alpha value function learning rate
+  this.learningRateMin = getopt(opt, 'learningRateMin', 0.01); // AKA alpha value function learning rate
   this.loss = 0;
+  this.tderrorClamp = getopt(opt, 'tderrorClamp', 1);
+  this.isTraining = getopt(opt, 'isTraining', true);
+
+  // Experience Replay
+  this.experience = new Window(experienceSize, true); // experience
+  let experienceSize = getopt(opt, 'experience_size', 50000); // size of experience replay
+  this.learningStepsPerIteration = getopt(opt, 'learning_steps_per_iteration', 20); // number of time steps before we add another experience to replay memory
   this.t = 0;
+
+  // Exploration / Exploitation management
+  this.explore = getopt(opt, 'explore', 0.05); // AKA epsilon for epsilon-greedy policy
+  this.exploreDecay = getopt(opt, 'exploreDecay', 0.99); // AKA epsilon for epsilon-greedy policy
+  this.exploreMin = getopt(opt, 'exploreMin', 0); // AKA epsilon for epsilon-greedy policy
+
+  // Reward calculation
+  this.gamma = getopt(opt, 'gamma', 0.1); // future reward discount factor
 }
 
 DQN.prototype = {
@@ -83,7 +96,7 @@ DQN.prototype = {
    *
    * Infinite explore = Network always explores states randomly.
    * Zero explore = network always picks the action it thinks best from known states.
-   * 
+   *
    * Best: High explore at first then less explore as network is more experienced.
    *
    * @param {number[]} state current state (float arr with values between 0 and 1)
