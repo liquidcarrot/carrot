@@ -61,7 +61,26 @@ function Network(options={}) {
 Network.NODES = 0;
 Network.CONNECTIONS = 0;
 
-Network.createRandom = function(options) {}
+// @param {Object} [network={}] - Options passed to the created network before being "randomized"
+// @param {number} [connections=10] - Number of connections/genes in the network
+// @param {number} [density=1] - Given any data which can be used to construct a network (e.g. inputs/outputs, layers, etc.), this value represents the percentage of total possible connections that will actually be added to the final network; e.g. if a network is created with 100 connections and a 0.8 density only ~80 connections will actually be created
+Network.createRandom = function(options={
+  connections: 10,
+  density: 1,
+  network: {}
+}) {
+  let network =  new Network(options.network);
+
+  // Creates the connections in the network
+  for (let c = 0; c < options.connections; c++) {
+    let connection = new Connection({ id: c });
+
+    // Pseudo-randomly omits certain connections to - on average - keep the network density at `density`
+    if(Math.random() < options.density) network.connections.push(connection);
+  }
+
+  return network;
+}
 
 // Selects a one of a given group of genes
 function select(genes, options={}) {
@@ -180,12 +199,43 @@ function distance(genomes, options={}) {
   return (coefficents[0] * excess / nodes) + (coefficents[1] * disjointed / nodes) + (coefficents[2] * deltaWeight);
 }
 
+function Species(options={}) {
+  this.networks = [];
+
+  this.getRandomNetwork = function() {
+    return this.networks[Math.floor(Math.random() * this.networks.length)];
+  }
+}
+
+// @param {number} size
+// @param {number} threshold - The maximum genomic/topological distance between networks that is allowable to be part of the same species - i.e. the speciation threshold
+Species.createRandom = function(options={}) {
+
+}
+
+function Population(options={}) {
+  this.networks = [];
+  this.species = [];
+}
 
 
-// let mother = new Network({ connections: 5 });
-// let father = new Network({ connections: 100 });
-// console.log(mother.connections.lenth);
-// console.log(father.connections.length);
-//
-// console.log(crossover([mother.connections, father.connections]));
-// console.log(distance([mother.connections, father.connections]));
+
+// Checks: Sparse Network creation
+{
+  // let network = Network.createRandom({
+  //   connections: 10,
+  //   density: 0.6
+  // });
+  //
+  // console.log(network);
+}
+// Checks: Crossing over & Genomic/Network/Topological Distance
+{
+  // let mother = new Network({ connections: 5 });
+  // let father = new Network({ connections: 100 });
+  // console.log(mother.connections.lenth);
+  // console.log(father.connections.length);
+  //
+  // console.log(crossover([mother.connections, father.connections]));
+  // console.log(distance([mother.connections, father.connections]));
+}
