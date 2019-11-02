@@ -207,6 +207,19 @@ function Species(options={}) {
   this.getRandomNetwork = function() {
     return this.networks[Math.floor(Math.random() * this.networks.length)];
   }
+
+  // @param {Network} network - Network requesting to be added to the species
+  // @param {number} [threshold=1] - The maximum genomic/topological distance between networks that is allowable to be part of the same species - i.e. the speciation threshold
+  // @returns {boolean} Returns `true`, iff the network was added to the species
+  this.addNetwork = function(network, options={ threshold: 0.4 }) {
+    // If there are no networks in the species, or the network is similar to the species...
+    if(this.networks.length === 0 || distance([this.getRandomNetwork().connections, network.connections]) < options.threshold) {
+      // ...add the network to the species...
+      this.networks.push(network); return true;
+    }
+    // ...otherwise, don't add the network
+    else return false;
+  }
 }
 
 // @param {number} [size=10] - Number of network in the species - i.e. population size
@@ -244,12 +257,64 @@ Species.createRandom = function(options={
 }
 
 function Population(options={}) {
-  this.networks = [];
+  // this.networks = [];
   this.species = [];
+
+  // @param {Network} network - Network will added to the population
+  this.addNetwork = function(network, options={ threshold: 1 }) {
+    if(this.species.length === 0) this.species.push(new Species); // Each population will have at least "one species" even if it's a mono-species population
+
+    let speciated = false; // Tracks if `network` was successfully added to an existing species in `population`
+
+    // Add the network to an existing species
+    for (let s = 0; s < this.species.length; s++) {
+      // If the network is succesfully added to a species, return `true` - specifying that the network was successfully added to the population
+      if (this.species[s].addNetwork(network)) {
+        speciated = true;
+        return true;
+      }
+    }
+
+    // Otherwise, create a new species
+    if (!speciated) {
+      let species = new Species();
+      species.networks.push(network);
+      this.species.push(species);
+      return true
+    }
+  }
 }
 
+// @param {number} [size=10] - Number of networks in the species - i.e. population size
+// @param {Object|boolean} [speciated=true] - Options passed to `Species.createRandom` for each random created species; NOTE: if `species` isn't specified the population will not be speciated
+// @param {number} [threshold=1] - The maximum genomic/topological distance between networks that is allowable to be part of the same species - i.e. the speciation threshold
+Population.createRandom = function(options={
+  size: 1000,
+  speciated: true,
+  threshold: 1,
+  network: {
+    connections: 10,
+    density: 0.4
+  }
+}) {
+  let population = new Population();
 
+  for (let n = 0; n < options.size; n++) {
+    let network = new Network(options.network);
 
+    population.addNetwork(network);
+  }
+
+  return population;
+}
+
+// Checks: (Un)Speciated Population creation
+{
+  // let population = Population.createRandom();
+  //
+  // console.log(population);
+  // console.log(population.species);
+}
 // Checks: Species creation
 {
   // let start = performance.now();
