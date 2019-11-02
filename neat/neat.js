@@ -1,3 +1,5 @@
+const { performance } = require("perf_hooks");
+
 Math.cantor = function(a, b) {
   return (a + b) * (a + b + 1) / 2 + b;
 }
@@ -207,10 +209,38 @@ function Species(options={}) {
   }
 }
 
-// @param {number} size
-// @param {number} threshold - The maximum genomic/topological distance between networks that is allowable to be part of the same species - i.e. the speciation threshold
-Species.createRandom = function(options={}) {
+// @param {number} [size=10] - Number of network in the species - i.e. population size
+// @param {number} [threshold=1] - The maximum genomic/topological distance between networks that is allowable to be part of the same species - i.e. the speciation threshold
+// @param {Object} [network={}] - Options passed to `Network.createRandom` for each randomly created network before being "speciated"
+Species.createRandom = function(options={
+  size: 10,
+  threshold: 1,
+  network: { density: 0.4 }
+}) {
+  let species = new Species();
+  let networks = 0; // Networks in the species
 
+  // Species representative - i.e. the network that is reference to determine what species should "look like"; the network to which every other network will measure their genomic distance
+  let representative = Network.createRandom({
+    ...options.network,
+    network: { id: networks }
+  });
+  species.networks.push(representative); ++networks;
+
+  while(species.networks.length < options.size) {
+    // Create a random network
+    let network = Network.createRandom({
+      ...options.network,
+      network: { id: networks }
+    });
+
+    // Add it to the species, if they're "similar enough"
+    if(distance([representative.connections, network.connections]) < options.threshold) {
+      species.networks.push(network); ++networks;
+    }
+  }
+
+  return species;
 }
 
 function Population(options={}) {
@@ -220,6 +250,23 @@ function Population(options={}) {
 
 
 
+// Checks: Species creation
+{
+  // let start = performance.now();
+  // let species = Species.createRandom({
+  //   size: 100,
+  //   threshold: 1,
+  //   network: {
+  //     connections: 1000,
+  //     density: 0.6
+  //   }
+  // });
+  // let end = performance.now();
+  //
+  // console.log(species);
+  // console.log(species.getRandomNetwork());
+  // console.log(end - start);
+}
 // Checks: Sparse Network creation
 {
   // let network = Network.createRandom({
