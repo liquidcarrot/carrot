@@ -64,16 +64,13 @@ DDPG.prototype = {
     for (let i = 0; i < qValues.length; i++) {
       criticGradients += Math.pow(qPrime[i] - qValues[i], 2);
     }
-
+    //TODO Might be a mistake
     this.critic.propagate(this.learningRate, 0, true, criticGradients);
 
     let actorLoss = this.mean(-this.critic.activate([...state, ...this.actor.activate(state)]));
     let gradients = this.actor.activate(state);
     gradients[action] += actorLoss;
     this.actor.propagate(this.learningRate, 0, true, gradients);
-
-    //TODO LEARN FROM THESE LOSS_VALUES
-
 
     //Learning the actorTarget and criticTarget networks
     let actorParameters = this.actor.activate(state);
