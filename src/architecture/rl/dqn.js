@@ -83,7 +83,7 @@ DQN.prototype = {
    *
    * Infinite explore = Network always explores states randomly.
    * Zero explore = network always picks the action it thinks best from known states.
-   * 
+   *
    * Best: High explore at first then less explore as network is more experienced.
    *
    * @param {number[]} state current state (float arr with values between 0 and 1)
@@ -93,7 +93,7 @@ DQN.prototype = {
     // epsilon greedy strategy | explore > random = explore; else exploit
     const action = (Math.max(this.exploreMin, Rate.EXP(this.explore, this.t, {gamma: this.exploreDecay})) > Math.random())
       ? Math.floor(Math.random() * this.numActions) // random "explore" action
-      : this.getMaxValueIndex(this.network.activate(state)) // deliberate "exploit" action
+      : this.getMaxValueIndex(this.network.activate(state)); // deliberate "exploit" action
 
     // shift state memory
     this.state = this.nextState;
@@ -147,7 +147,6 @@ DQN.prototype = {
     // Predicted current reward | called with traces for backprop later
     const predictedReward = this.network.activate(state);
 
-    //Bad loss function
     let tdError = predictedReward[action] - targetQValue;
 
     // Clamp error for robustness | ToDo: huber loss
@@ -155,9 +154,7 @@ DQN.prototype = {
       tdError = tdError > this.tderrorClamp ? this.tderrorClamp : -this.tderrorClamp;
     }
 
-    // TO-DO: Add target network to increase reliability
     // Backpropagation using temporal difference error
-    //TODO can be faster
     predictedReward[action] = targetQValue;
     this.network.propagate(Math.max(this.learningRateMin, Rate.EXP(this.learningRate, this.t, {gamma: this.learningRateDecay})), 0, true, predictedReward);
     return tdError;
