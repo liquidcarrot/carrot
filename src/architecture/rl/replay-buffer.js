@@ -1,14 +1,14 @@
-function ReplayBuffer(maxSize){
+function ReplayBuffer(maxSize) {
   this.states = [];
-  this.actions =  [];
+  this.actions = [];
   this.rewards = [];
   this.nextStates = [];
   this.maxSize = maxSize;
 }
 
 ReplayBuffer.prototype = {
-  add: function(state,action,reward,nextState){
-    if(state.length >= this.maxSize){
+  add: function (state, action, reward, nextState) {
+    if (state.length >= this.maxSize) {
       this.states.shift();
       this.actions.shift();
       this.rewards.shift();
@@ -19,15 +19,15 @@ ReplayBuffer.prototype = {
     this.rewards.push(reward);
     this.nextStates.push(nextState);
   },
-  pickRandom:function(){
+  pickRandom: function () {
     let randomIndex = Math.floor(Math.random() * this.states.length);
-    return get(randomIndex);
+    return this.get(randomIndex);
   },
-  get(index){
-    return [this.states[index],this.actions[index],this.rewards[index],this.nextStates[index]];
+  get(index) {
+    return [this.states[index], this.actions[index], this.rewards[index], this.nextStates[index]];
   },
-  getLast: function(){
-    return get(this.states.length-1);
+  getLast: function () {
+    return this.get(this.states.length - 1);
   }
 };
 
