@@ -55,8 +55,8 @@ function DQN(numActions, numStates, opt) {
   this.isTraining = getopt(opt, 'isTraining', true);
 
   // Experience Replay
-  this.experience = new Window(experienceSize, true); // experience
   let experienceSize = getopt(opt, 'experience_size', 50000); // size of experience replay
+  this.experience = new Window(experienceSize, true); // experience
   this.learningStepsPerIteration = getopt(opt, 'learning_steps_per_iteration', 20); // number of time steps before we add another experience to replay memory
   this.timeStep = 0;
 
