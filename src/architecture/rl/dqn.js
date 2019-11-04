@@ -108,6 +108,9 @@ DQN.prototype = {
    *
    * @param {number[]} state current state (float arr with values between 0 and 1)
    * @returns {number} The action which the DQN would take at this state (represented by an index)
+   *
+   * @todo Add ability to select strategies
+   * @todo Add Thompson Sampling strategy
    */
   act: function (state) {
     // epsilon greedy strategy | explore > random = explore; else exploit
@@ -140,13 +143,13 @@ DQN.prototype = {
     // Update Q function | temporal difference method currently hardcoded
     if (this.reward != null && this.isTraining) {
       // Learn from current estimated reward to understand how wrong agent is
-      this.loss = this.learnQ(this.state, this.action, this.reward, this.nextState);
+      this.loss = this.study(this.state, this.action, this.reward, this.nextState);
 
       // Too random, should pick experiences by their loss value
       this.experience.add([this.state, this.action, this.reward, this.nextState, this.loss]);
 
       for (let i = 0; i < this.learningStepsPerIteration; i++) {
-        this.learnQ(...this.experience.pickRandom());
+        this.study(...this.experience.pickRandom());
       }
     }
     this.t++;
@@ -164,13 +167,13 @@ DQN.prototype = {
    * @param {number} action action taken in current state
    * @param {number} reward reward received for the action in the current state
    * @param {number[]} nextState the state which follows the current state with the action taken
-   * @returns {number} TDError
+   * @returns {number} TDError Roughly, an experiential measure of surprise / insight for the network at this state-action.
    *
    * @todo Add dynamic loss functions & clamps, including Huber Loss
    * @todo Add target network to increase reliability
    * @todo Consider not using a target network: https://www.ijcai.org/proceedings/2019/0379.pdf
    */
-  learnQ: function (state, action, reward, nextState) {
+  study: function (state, action, reward, nextState) {
     // Compute target Q value, called without traces so it won't affect backprop
     const nextActions = this.network.activate(nextState, {no_trace: true});
 
