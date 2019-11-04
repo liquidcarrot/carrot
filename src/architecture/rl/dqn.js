@@ -26,10 +26,11 @@ function getopt(opt, fieldName, defaultValue) {
 * @alpha
 *
 * @constructs DQN
-* 
+*
 * @param {int} numActions Maximum number of actions the agent can do,
 * @param {int} numStates Length of the state array
 * @param {Object} options Options object
+* @todo Allow underlying Network to have arbitrary layer structure and/or a template structure like Neat's `.template` option
 */
 function DQN(numActions, numStates, opt) {
   // Network Sizing
@@ -72,6 +73,9 @@ DQN.prototype = {
   /**
    * Save function
    *
+   * @function toJSON
+   * @memberof DQN
+   *
    * @return {JSON} JSON String which represents the current DQN agent
    */
   toJSON: function () {
@@ -99,6 +103,9 @@ DQN.prototype = {
    *
    * Best: High explore at first then less explore as network is more experienced.
    *
+   * @function act
+   * @memberof DQN
+   *
    * @param {number[]} state current state (float arr with values between 0 and 1)
    * @returns {number} The action which the DQN would take at this state (represented by an index)
    */
@@ -120,8 +127,14 @@ DQN.prototype = {
   /**
    * This method trains the Q-Network.
    *
+   * @function learn
+   * @memberof DQN
+   *
    * @param {number} newReward the current reward, the agent receives from the environment
    * @returns {number} the loss value
+   *
+   * @todo Add prioritized experience replay
+   *
    */
   learn: function (newReward) {
     // Update Q function | temporal difference method currently hardcoded
@@ -144,11 +157,18 @@ DQN.prototype = {
   /**
    * This method learns from an specified experience.
    *
+   * @function learnQ
+   * @memberof DQN
+   *
    * @param {number[]} state current state
    * @param {number} action action taken in current state
    * @param {number} reward reward received for the action in the current state
    * @param {number[]} nextState the state which follows the current state with the action taken
    * @returns {number} TDError
+   *
+   * @todo Add dynamic loss functions & clamps, including Huber Loss
+   * @todo Add target network to increase reliability
+   * @todo Consider not using a target network: https://www.ijcai.org/proceedings/2019/0379.pdf
    */
   learnQ: function (state, action, reward, nextState) {
     // Compute target Q value, called without traces so it won't affect backprop
@@ -160,7 +180,6 @@ DQN.prototype = {
     // Predicted current reward | called with traces for backprop later
     const predictedReward = this.network.activate(state);
 
-    //Bad loss function
     let tdError = predictedReward[action] - targetQValue;
 
     // Clamp error for robustness | ToDo: huber loss
@@ -168,9 +187,7 @@ DQN.prototype = {
       tdError = tdError > this.tderrorClamp ? this.tderrorClamp : -this.tderrorClamp;
     }
 
-    // TO-DO: Add target network to increase reliability
     // Backpropagation using temporal difference error
-    //TODO can be faster
     predictedReward[action] = targetQValue;
     this.network.propagate(Math.max(this.learningRateMin, Rate.EXP(this.learningRate, this.t, {gamma: this.learningRateDecay})), 0, true, predictedReward);
     return tdError;
@@ -179,10 +196,13 @@ DQN.prototype = {
   /**
    * This method returns the index of the element with the highest value
    *
-   * TODO create test method
+   * @function getMaxValueIndex
+   * @memberof DQN
    *
    * @param {number[]} arr the input array
    * @returns {number} the index which the highest value
+   *
+   * @todo Create unit test
    */
   getMaxValueIndex: function (arr) {
     let index = 0;
@@ -199,7 +219,11 @@ DQN.prototype = {
   /**
    * Setter for variable "isTraining"
    *
+   * @function setTraining
+   * @memberof DQN
+   *
    * @param val new value
+   * @todo Consider removing
    */
   setTraining: function (val) {
     this.isTraining = val;
@@ -208,6 +232,9 @@ DQN.prototype = {
 
 /**
  * Loads function
+ *
+ * @function fromJSON
+ * @memberof DQN
  *
  * @param {JSON} json  JSON String
  * @return {DQN} Agent with the specs from the json
