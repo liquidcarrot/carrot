@@ -192,7 +192,7 @@ DQN.prototype = {
 
     // Backpropagation using temporal difference error
     predictedReward[action] = targetQValue;
-    this.network.propagate(Math.max(this.learningRateMin, Rate.EXP(this.learningRate, this.t, {gamma: this.learningRateDecay})), 0, true, predictedReward);
+    this.network.propagate(Math.max(this.learningRateMin, Rate.EXP(this.learningRate, this.timeStep, {gamma: this.learningRateDecay})), 0, true, predictedReward);
     return tdError;
   },
 
