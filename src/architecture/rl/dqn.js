@@ -58,7 +58,7 @@ function DQN(numActions, numStates, opt) {
   this.experience = new Window(experienceSize, true); // experience
   let experienceSize = getopt(opt, 'experience_size', 50000); // size of experience replay
   this.learningStepsPerIteration = getopt(opt, 'learning_steps_per_iteration', 20); // number of time steps before we add another experience to replay memory
-  this.t = 0;
+  this.timeStep = 0;
 
   // Exploration / Exploitation management
   this.explore = getopt(opt, 'explore', 0.05); // AKA epsilon for epsilon-greedy policy
@@ -114,7 +114,7 @@ DQN.prototype = {
    */
   act: function (state) {
     // epsilon greedy strategy | explore > random = explore; else exploit
-    const action = (Math.max(this.exploreMin, Rate.EXP(this.explore, this.t, {gamma: this.exploreDecay})) > Math.random())
+    const action = (Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay})) > Math.random())
       ? Math.floor(Math.random() * this.numActions) // random "explore" action
       : this.getMaxValueIndex(this.network.activate(state)) // deliberate "exploit" action
 
@@ -152,7 +152,7 @@ DQN.prototype = {
         this.study(...this.experience.pickRandom());
       }
     }
-    this.t++;
+    this.timeStep++;
     this.reward = newReward;
     return this.loss;
   },
