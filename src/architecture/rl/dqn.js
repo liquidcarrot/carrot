@@ -137,7 +137,7 @@ DQN.prototype = {
    * @returns {number} the loss value
    *
    * @todo Add prioritized experience replay
-   *
+   * @todo Add hindsight experience replay
    */
   learn: function (newReward) {
     // Update Q function | temporal difference method currently hardcoded
@@ -158,9 +158,9 @@ DQN.prototype = {
   },
 
   /**
-   * This method learns from an specified experience.
+   * This method learns from an specified experience / action-state transition.
    *
-   * @function learnQ
+   * @function study
    * @memberof DQN
    *
    * @param {number[]} state current state
