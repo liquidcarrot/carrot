@@ -1,5 +1,6 @@
 const DQN = require('../../../../src/architecture/rl/dqn.js');
 const Window = require('../../../../src/util/window');
+const Network = require('../../../../src/architecture/network')
 const {expect} = require('chai');
 
 describe('DQN', function () {
@@ -42,4 +43,11 @@ describe('DQN', function () {
     }
     expect(rewardWindow.getAverage() >= 0.6).to.be.true;
   });
+
+  it('Should accept a custom network as a constructor option', function () {
+    const LSTM_NET = new Network.architecture.LSTM(2, 10, 10, 2)
+    const agent = new DQN(2, 2, { network: LSTM_NET })
+
+    expect(agent.network).equal(LSTM_NET)
+  })
 });

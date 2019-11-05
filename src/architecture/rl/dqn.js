@@ -30,14 +30,16 @@ function getopt(opt, fieldName, defaultValue) {
 * @param {int} numActions Maximum number of actions the agent can do,
 * @param {int} numStates Length of the state array
 * @param {Object} options Options object
-* @todo Allow underlying Network to have arbitrary layer structure and/or a template structure like Neat's `.template` option
+* 
+* @todo Allow underlying Network to have arbitrary layer structure
+* @todo Add test & custom network input / output size validation
 */
 function DQN(numActions, numStates, opt) {
   // Network Sizing
   this.numStates = numStates;
   this.numActions = numActions;
-  this.hiddenNeurons = getopt(opt, 'hidden', [10]);
-  this.network = new architect.Perceptron(numStates, ...this.hiddenNeurons, numActions);
+  this.hiddenNeurons = getopt(opt, 'hiddenNeurons', [10]);
+  this.network = getopt(opt, 'network', new architect.Perceptron(numStates, ...this.hiddenNeurons, numActions));
 
   // Network & state memory
   this.reward = null;
