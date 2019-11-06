@@ -185,7 +185,7 @@ DQN.prototype = {
     let normalizedReward = (1 + experience.reward) / 2;
     let targetQValue;
     targetQValue = experience.isFinalState
-      ? normalizedReward
+      ? normalizedReward // For the final state only the current reward is important
       : normalizedReward + this.gamma * nextActions[DQN.getMaxValueIndex(nextActions)];
 
     // Predicted current reward | called with traces for backprop later
