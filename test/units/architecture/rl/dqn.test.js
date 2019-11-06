@@ -58,18 +58,15 @@ describe('DQN', function () {
         randomArray[i] = i;
       }
 
-      function shuffle(array) {
-        let tmp, current, top = array.length;
-        if (top === 0) {
-          return array;
+      function shuffle(a) {
+        let j, x, i;
+        for (i = a.length - 1; i > 0; i--) {
+          j = Math.floor(Math.random() * (i + 1));
+          x = a[i];
+          a[i] = a[j];
+          a[j] = x;
         }
-        while (--top) {
-          current = Math.floor(Math.random() * (top + 1));
-          tmp = array[current];
-          array[current] = array[top];
-          array[top] = tmp;
-        }
-        return array;
+        return a;
       }
 
       let randomArrayShuffled = shuffle(randomArray);
