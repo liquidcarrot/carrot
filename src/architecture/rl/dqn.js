@@ -113,7 +113,7 @@ DQN.prototype = {
    * @todo Add Thompson Sampling strategy
    */
   act: function (state) {
-    // epsilon greedy strategy | explore > random = explore; else exploit
+    // epsilon greedy strategy | explore > random ? explore : otherwise exploit
     const action = (Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay})) > Math.random())
       ? Math.floor(Math.random() * this.numActions) // random "explore" action
       : this.getMaxValueIndex(this.network.activate(state)); // deliberate "exploit" action
