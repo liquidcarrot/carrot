@@ -26,7 +26,7 @@ function getOption(opt, fieldName, defaultValue) {
  *
  * Used to do reinforcement learning
  *
- * @alpha
+ * @beta
  *
  * @constructs DQN
  *
@@ -137,8 +137,8 @@ DQN.prototype = {
    *
    * Decision based on exploration rate set by `.explore`.
    *
-   * Infinite explore = Network always explores states randomly.
-   * Zero explore = network always picks the action it thinks best from known states.
+   * explore >= 1 --> Network always explores states randomly.
+   * explore == 0 --> Network always picks the action it thinks best from known states.
    *
    * Best: High explore at first then less explore as network is more experienced.
    *
