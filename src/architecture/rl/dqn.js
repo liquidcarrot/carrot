@@ -69,6 +69,8 @@ function DQN(numStates, numActions, options) {
 
   // Reward calculation
   this.gamma = getOption(options, 'gamma', 0.7); // future reward discount factor
+
+  this.isUsingPER = getOption(options, 'isUsingPER', true);
 }
 
 DQN.prototype = {
@@ -154,7 +156,9 @@ DQN.prototype = {
       // Too random, should pick experiences by their loss value
       this.experience.add(experience);
 
-      let miniBatch = this.experience.getRandomMiniBatch(this.learningStepsPerIteration);
+      let miniBatch = this.isUsingPER
+        ? this.experience.getMiniBatchWithPER(this.learningStepsPerIteration)
+        : this.experience.getRandomMiniBatch(this.learningStepsPerIteration);
       for (let i = 0; i < miniBatch.length; i++) {
         this.study(miniBatch[i]);
       }
