@@ -8,10 +8,27 @@ const Rate = require("../../methods/rate");
 
 /**
  * This function will get the value from the fieldName, if Present, otherwise returns the defaultValue
- * @param {Object} opt
+ *
+ * @param {{
+ *   hiddenNeurons: {int[]},
+ *   network: {Network},
+ *   learningRate: {number},
+ *   learningRateDecay: {number},
+ *   learningRateMin: {number},
+ *   explore: {number},
+ *   exploreDecay: {number},
+ *   exploreMin: {number},
+ *   tdErrorClamp: {number},
+ *   isTraining: {boolean},
+ *   isUsingPER: {boolean},
+ *   experienceSize: {int},
+ *   learningStepsPerIteration: {int},
+ *   timeStep: {number},
+ *   gamma: {number}
+ * }} opt JSON object which contains all custom options
  * @param {String} fieldName
- * @param {number | boolean | number[]} defaultValue
- * @return {Number | number[] | boolean} the value of the fileName if Present, otherwise the defaultValue
+ * @param {Object} defaultValue
+ * @return {Object} the value of the fileName if Present, otherwise the defaultValue
  * @todo Consider outsourcing to utils.js
  */
 function getOption(opt, fieldName, defaultValue) {
