@@ -55,6 +55,7 @@ ReplayBuffer.prototype = {
    * @returns {Experience[]} mini batch chosen with PER
    *
    * @todo Create unit test
+   * @todo consider using another series for probability distribution
    */
   getMiniBatchWithPER(size) {
     //Size can't be bigger than this.buffer.length
