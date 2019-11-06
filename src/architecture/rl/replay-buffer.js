@@ -32,6 +32,27 @@ ReplayBuffer.prototype = {
   pickRandom: function() {
     return this.buffer[Math.floor(Math.random() * this.buffer.length)];
   },
+
+  /**
+   * Get random mini batch.
+   *
+   * @param {number} size the size of the minibatch.
+   *
+   * @returns {Experience[]} a batch of Experiences to train from.
+   */
+  getRandomMiniBatch: function(size) {
+    size = Math.min(size, this.buffer.length);
+    if (size === this.buffer.length) {
+      return this.buffer;
+    }
+    let bufferCopy = [...this.buffer];
+    let batch = [];
+
+    for (let i = 0; i < size; i++) {
+      batch.push(...bufferCopy.splice(Math.floor(Math.random() * bufferCopy.length), 1));
+    }
+    return batch;
+  },
 };
 
 module.exports = ReplayBuffer;
