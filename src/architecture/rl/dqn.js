@@ -237,7 +237,7 @@ DQN.prototype = {
  */
 DQN.fromJSON = function (json) {
   let network = Network.fromJSON(json.net);
-  let agent = new DQN(network.input_size, network.output_size, {});
+  let agent = new DQN(network.input_size, network.output_size, {network: network});
 
   agent.gamma = json.gamma;
   agent.explore = json.explore;
