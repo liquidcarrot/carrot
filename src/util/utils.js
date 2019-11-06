@@ -5,7 +5,7 @@
  * @param {number} max upper bound
  * @returns {int} random integer between min and max
  */
-let randomInt = function randomNumber(min, max) {
+let randomInt = function(min, max) {
   return Math.random() * (max - min) + min;
 };
 
@@ -30,7 +30,7 @@ let getMaxValueIndex = function(arr) {
 };
 
 /**
- * This method shuffles an array;
+ * This method shuffles an array.
  *
  * @function shuffle
  *
@@ -39,7 +39,7 @@ let getMaxValueIndex = function(arr) {
  *
  * Source: https://stackoverflow.com/a/2450976
  */
-let shuffle = function shuffle(arr) {
+let shuffle = function(arr) {
   let j, x, i;
   for (i = arr.length - 1; i > 0; i--) {
     j = Math.floor(Math.random() * (i + 1));
@@ -50,6 +50,17 @@ let shuffle = function shuffle(arr) {
   return arr;
 };
 
+/**
+ * This method picks a random element from an given array.
+ *
+ * @param {[]} arr input array
+ * @returns {*} the randomly chosen element
+ */
+let pickRandom = function(arr) {
+  return arr[randomInt(0, arr.length - 1)];
+};
+
 module.exports.getMaxValueIndex = getMaxValueIndex;
 module.exports.shuffle = shuffle;
 module.exports.randomInt = randomInt;
+module.exports.pickRandom = pickRandom;
