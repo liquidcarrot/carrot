@@ -64,15 +64,18 @@ ReplayBuffer.prototype = {
       return this.buffer;
     }
 
-    let bufferCopy = [...this.buffer];
+    let bufferCopy = this.buffer.slice(0);
     let batch = [];
 
     bufferCopy = ReplayBuffer.sortByLoss(bufferCopy);
 
     for (let i = 0; i < size; i++) {
       for (let j = 0; j < bufferCopy.length; j++) {
-        if (Math.random() < 1 / Math.pow(2, j + 1)) { // 1/2, 1/4, 1/8, 1/16, ...
-          batch.push(bufferCopy.splice(j, 1));
+        if (Math.random() <= 1 / Math.pow(2, j + 1)) { // 1/2, 1/4, 1/8, 1/16, ...
+          let experience = bufferCopy.splice(j, 1);
+          if (experience.state !== undefined) {
+            batch.push(experience);
+          }
           break;
         }
       }
