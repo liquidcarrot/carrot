@@ -3,7 +3,7 @@
  *
  * @param {number} min lower bound
  * @param {number} max upper bound
- * @returns {number} random integer between min and max
+ * @returns {int} random integer between min and max
  */
 let randomInt = function randomNumber(min, max) {
   return Math.random() * (max - min) + min;
@@ -15,7 +15,7 @@ let randomInt = function randomNumber(min, max) {
  * @function getMaxValueIndex
  *
  * @param {number[]} arr the input array
- * @returns {number} the index which the highest value
+ * @returns {int} the index which the highest value
  */
 let getMaxValueIndex = function(arr) {
   let index = 0;

@@ -32,7 +32,7 @@ function getOption(opt, fieldName, defaultValue) {
  * @param {int} numActions Maximum number of actions the agent can do,
  * @param {int} numStates Length of the state array
  * @param {{
- *   hiddenNeurons: {number[]},
+ *   hiddenNeurons: {int[]},
  *   network: {Network},
  *   learningRate: {number},
  *   learningRateDecay: {number},
@@ -43,8 +43,8 @@ function getOption(opt, fieldName, defaultValue) {
  *   tdErrorClamp: {number},
  *   isTraining: {boolean},
  *   isUsingPER: {boolean},
- *   experienceSize: {number},
- *   learningStepsPerIteration: {number},
+ *   experienceSize: {int},
+ *   learningStepsPerIteration: {int},
  *   timeStep: {number},
  *   gamma: {number}
  * }} options JSON object which contains all custom options
@@ -145,7 +145,7 @@ DQN.prototype = {
    * @memberof DQN
    *
    * @param {number[]} state current state (float arr with values between 0 and 1)
-   * @return {number} The action which the DQN would take at this state (represented by an index)
+   * @return {int} The action which the DQN would take at this state (represented by an index)
    *
    * @todo Add ability to select strategies
    * @todo Add Thompson Sampling strategy
