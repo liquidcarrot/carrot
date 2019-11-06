@@ -12,6 +12,7 @@ const Rate = require("../../methods/rate");
  * @param {String} fieldName
  * @param {number | boolean | number[]} defaultValue
  * @return {Number | number[] | boolean} the value of the fileName if Present, otherwise the defaultValue
+ * @todo Consider outsourcing to utils.js
  */
 function getOption(opt, fieldName, defaultValue) {
   if (typeof opt === 'undefined') {
