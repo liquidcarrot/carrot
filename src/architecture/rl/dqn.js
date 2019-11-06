@@ -26,8 +26,8 @@ const Rate = require("../../methods/rate");
  *   gamma: {number}
  * }} opt JSON object which contains all custom options
  * @param {String} fieldName
- * @param {Object} defaultValue
- * @return {Object} the value of the fileName if Present, otherwise the defaultValue
+ * @param {*} defaultValue
+ * @return {*} the value of the fileName if Present, otherwise the defaultValue
  * @todo Consider outsourcing to utils.js
  */
 function getOption(opt, fieldName, defaultValue) {
