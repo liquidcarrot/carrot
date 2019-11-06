@@ -4,17 +4,17 @@ const {expect} = require('chai');
 
 describe('DQN', function () {
   it('Object creation', function () {
-    for (let i = 0; i < 10; i++) {
-      let actions = Math.floor(Math.random() * 100 + 1);
-      let states = Math.floor(Math.random() * 100 + 1);
-      let agent = new DQN(actions, states, {});
+    for (let i = 0; i < 100; i++) {
+      let numStates = Math.floor(Math.random() * 100 + 1);
+      let numActions = Math.floor(Math.random() * 100 + 1);
+      let agent = new DQN(numStates, numActions, {});
 
-      expect(agent.network.input_size).to.equal(states);
-      expect(agent.network.output_size).to.equal(actions);
+      expect(agent.network.input_size).to.equal(numStates);
+      expect(agent.network.output_size).to.equal(numActions);
     }
   });
   it('test learning capabilities', function () {
-    let agent = new DQN(2, 1, {gamma: 0.3, hidden: [4], explore: 0});
+    let agent = new DQN(1, 2, {gamma: 0.3, hidden: [4], explore: 0});
 
     let currentState = 0.5;
     let lastState = currentState;
