@@ -215,6 +215,7 @@ DQN.prototype = {
    * @todo Add dynamic loss functions & clamps, including Huber Loss
    * @todo Add target network to increase reliability
    * @todo Consider not using a target network: https://www.ijcai.org/proceedings/2019/0379.pdf
+   * @todo Consider renaming to sample(experience)
    */
   study: function(experience) {
     // Compute target Q value, called without traces so it won't affect backprop
