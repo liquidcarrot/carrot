@@ -53,6 +53,7 @@ function getOption(opt, fieldName, defaultValue) {
  * @todo Allow underlying Network to have arbitrary layer structure
  * @todo Add test & custom network input / output size validation
  * @todo Maybe automatically suggest default values for the num of states and actions
+ * @todo Make possible to create liquid networks
 */
 function DQN(numStates, numActions, options) {
   // Network Sizing
