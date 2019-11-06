@@ -38,7 +38,6 @@ describe('DQN', function () {
       if (rewardWindow.length > 100) {
         rewardSum -= rewardWindow.shift();
       }
-      console.log(rewardSum / rewardWindow.length);
       currentLoss = agent.learn(reward);
       lastState = currentState;
     }
