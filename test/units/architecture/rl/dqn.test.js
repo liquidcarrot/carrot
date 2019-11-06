@@ -21,12 +21,11 @@ describe('DQN', function () {
     let currentState = 0.5;
     let lastState = currentState;
     let currentLoss;
+    let windowSize = 100;
     let rewardWindow = [];
     let rewardSum = 0;
-    let i = 0;
-    while (i < 100 || rewardSum / rewardWindow.length < 0.9) {
-      i++;
 
+    for (let i = 0; i < windowSize || rewardSum / windowSize < 0.9; i++) {
       let action = agent.act([currentState]);
       currentState = action === 1 ?
         Math.min(1, currentState + 0.5) :
@@ -35,13 +34,14 @@ describe('DQN', function () {
       let reward = currentState === lastState ? -1 : 1;
       rewardWindow.push(reward);
       rewardSum += reward;
-      if (rewardWindow.length > 100) {
+      if (rewardWindow.length > windowSize) {
         rewardSum -= rewardWindow.shift();
       }
       currentLoss = agent.learn(reward);
       lastState = currentState;
     }
-    expect(rewardSum / rewardWindow.length >= 0.9).to.be.true;
+
+    expect(rewardSum / windowSize >= 0.9).to.be.true;
   });
 
   it('Should accept a custom network as a constructor option', function () {
