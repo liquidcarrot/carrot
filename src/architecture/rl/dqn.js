@@ -1,6 +1,7 @@
 const architect = require('../architect');
 const Network = require('../network');
-const Window = require("../../util/window");
+const ReplayBuffer = require('./replay-buffer');
+const Experience = require('./experience');
 const Rate = require("../../methods/rate");
 
 
@@ -56,7 +57,7 @@ function DQN(numActions, numStates, options) {
 
   // Experience Replay
   let experienceSize = getOption(options, 'experience_size', 50000); // size of experience replay
-  this.experience = new Window(experienceSize); // experience
+  this.experience = new ReplayBuffer(experienceSize); // experience
   this.learningStepsPerIteration = getOption(options, 'learning_steps_per_iteration', 20); // number of time steps before we add another experience to replay memory
   this.timeStep = 0;
 
@@ -76,7 +77,7 @@ DQN.prototype = {
    * @function toJSON
    * @memberof DQN
    *
-   * @return {{net:{input:{number},output:{number},dropout:{number},nodes:Array<object>,connections:Array<object>},gamma:{number},explore:{number},exploreDecay:{number},exploreMin:{number},learningRate:{number},learningRateDecay:{number},learningRateMin:{number},isTraining:{boolean},experience:{Window}}} json JSON String JSON String which represents this DQN agent
+   * @return {{net:{input:{number},output:{number},dropout:{number},nodes:Array<object>,connections:Array<object>},gamma:{number},explore:{number},exploreDecay:{number},exploreMin:{number},learningRate:{number},learningRateDecay:{number},learningRateMin:{number},isTraining:{boolean},experience:{ReplayBuffer}}} json JSON String JSON String which represents this DQN agent
    */
   toJSON: function () {
     let json = {};
@@ -143,14 +144,15 @@ DQN.prototype = {
   learn: function(newReward, isFinalState = false) {
     // Update Q function | temporal difference method currently hardcoded
     if (this.reward != null && this.isTraining) {
+      let experience = new Experience(this.state, this.action, this.reward, this.nextState, isFinalState);
       // Learn from current estimated reward to understand how wrong agent is
-      this.loss = this.study(this.state, this.action, this.reward, this.nextState, isFinalState);
+      this.loss = this.study(experience);
 
       // Too random, should pick experiences by their loss value
-      this.experience.add([this.state, this.action, this.reward, this.nextState, isFinalState, this.loss]);
+      this.experience.add(experience);
 
       for (let i = 0; i < this.learningStepsPerIteration; i++) {
-        this.study(...this.experience.pickRandom());
+        this.study(this.experience.pickRandom());
       }
     }
     this.timeStep++;
@@ -164,32 +166,29 @@ DQN.prototype = {
    * @function study
    * @memberof DQN
    *
-   * @param {number[]} state current state
-   * @param {number} action action taken in current state
-   * @param {number} reward reward received for the action in the current state
-   * @param {number[]} nextState the state which follows the current state with the action taken
-   * @param {boolean} isFinalState Does the game ends at this state?
+   * @param {Experience} experience the experience to learn from
+   *
    * @returns {number} TDError Roughly, an experiential measure of surprise / insight for the network at this state-action.
    *
    * @todo Add dynamic loss functions & clamps, including Huber Loss
    * @todo Add target network to increase reliability
    * @todo Consider not using a target network: https://www.ijcai.org/proceedings/2019/0379.pdf
    */
-  study: function(state, action, reward, nextState, isFinalState) {
+  study: function(experience) {
     // Compute target Q value, called without traces so it won't affect backprop
-    const nextActions = this.network.activate(nextState, {no_trace: true});
+    const nextActions = this.network.activate(experience.nextState, {no_trace: true});
 
     // Q(s,a) = r + gamma * max_a' Q(s',a')
-    let normalizedReward = (1 + reward) / 2;
+    let normalizedReward = (1 + experience.reward) / 2;
     let targetQValue;
-    targetQValue = isFinalState
+    targetQValue = experience.isFinalState
       ? normalizedReward
       : normalizedReward + this.gamma * nextActions[this.getMaxValueIndex(nextActions)];
 
     // Predicted current reward | called with traces for backprop later
-    const predictedReward = this.network.activate(state);
+    const predictedReward = this.network.activate(experience.state);
 
-    let tdError = predictedReward[action] - targetQValue;
+    let tdError = predictedReward[experience.action] - targetQValue;
 
     // Clamp error for robustness
     if (Math.abs(tdError) > this.tderrorClamp) {
@@ -197,7 +196,7 @@ DQN.prototype = {
     }
 
     // Backpropagation using temporal difference error
-    predictedReward[action] = targetQValue;
+    predictedReward[experience.action] = targetQValue;
     this.network.propagate(Math.max(this.learningRateMin, Rate.EXP(this.learningRate, this.timeStep, {gamma: this.learningRateDecay})), 0, true, predictedReward);
     return tdError;
   },
