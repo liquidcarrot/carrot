@@ -1,34 +1,30 @@
 const DQN = require('../../../../src/architecture/rl/dqn.js');
-const Window = require('../../../../src/util/window');
-const Network = require('../../../../src/architecture/network')
+const Network = require('../../../../src/architecture/network');
 const {expect} = require('chai');
 
 describe('DQN', function () {
   it('Object creation', function () {
     this.timeout(2000);
-    for (let i = 0; i < 100; i++) {
-      let opt = {
-        'hidden': [Math.floor(Math.random() * 30 + 1)],
-      };
+    for (let i = 0; i < 10; i++) {
       let actions = Math.floor(Math.random() * 100 + 1);
       let states = Math.floor(Math.random() * 100 + 1);
-      let agent = new DQN(actions, states, opt);
+      let agent = new DQN(actions, states, {});
 
       expect(agent.network.input_size).to.equal(states);
       expect(agent.network.output_size).to.equal(actions);
-      expect(agent.network.nodes.length).to.equal((actions + states + opt.hidden[0]));
     }
   });
   it('test learning capabilities', function () {
-    this.timeout(10000);
+    this.timeout(5000);
     let agent = new DQN(2, 1, {gamma: 0.3, hidden: [4], explore: 0});
 
     let currentState = 0.5;
     let lastState = currentState;
     let currentLoss;
-    let rewardWindow = new Window(100);
+    let rewardWindow = [];
+    let rewardSum = 0;
     let i = 0;
-    while (i < 100 || rewardWindow.getAverage() < 0.6) {
+    while (i < 100 || rewardSum / rewardWindow.length < 0.9) {
       i++;
 
       let action = agent.act([currentState]);
@@ -37,16 +33,21 @@ describe('DQN', function () {
         Math.max(0, currentState - 0.5);
 
       let reward = currentState === lastState ? -1 : 1;
-      rewardWindow.add(reward);
+      rewardWindow.push(reward);
+      rewardSum += reward;
+      if (rewardWindow.length > 100) {
+        rewardSum -= rewardWindow.shift();
+      }
+      console.log(rewardSum / rewardWindow.length);
       currentLoss = agent.learn(reward);
       lastState = currentState;
     }
-    expect(rewardWindow.getAverage() >= 0.6).to.be.true;
+    expect(rewardSum / rewardWindow.length >= 0.9).to.be.true;
   });
 
   it('Should accept a custom network as a constructor option', function () {
-    const LSTM_NET = new Network.architecture.LSTM(2, 10, 10, 2)
-    const agent = new DQN(2, 2, { network: LSTM_NET })
+    const LSTM_NET = new Network.architecture.LSTM(2, 10, 10, 2);
+    const agent = new DQN(2, 2, {network: LSTM_NET});
 
     expect(agent.network).equal(LSTM_NET)
   })
