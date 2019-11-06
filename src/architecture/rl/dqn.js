@@ -118,7 +118,7 @@ DQN.prototype = {
     // epsilon greedy strategy | explore > random ? explore : otherwise exploit
     const action = (Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay})) > Math.random())
       ? Math.floor(Math.random() * this.numActions) // random "explore" action
-      : this.getMaxValueIndex(this.network.activate(state)); // deliberate "exploit" action
+      : DQN.getMaxValueIndex(this.network.activate(state)); // deliberate "exploit" action
 
     // shift state memory
     this.state = this.nextState;
@@ -186,7 +186,7 @@ DQN.prototype = {
     let targetQValue;
     targetQValue = experience.isFinalState
       ? normalizedReward
-      : normalizedReward + this.gamma * nextActions[this.getMaxValueIndex(nextActions)];
+      : normalizedReward + this.gamma * nextActions[DQN.getMaxValueIndex(nextActions)];
 
     // Predicted current reward | called with traces for backprop later
     const predictedReward = this.network.activate(experience.state);
@@ -203,29 +203,6 @@ DQN.prototype = {
     this.network.propagate(Math.max(this.learningRateMin, Rate.EXP(this.learningRate, this.timeStep, {gamma: this.learningRateDecay})), 0, true, predictedReward);
     return tdError;
   },
-
-  /**
-   * This method returns the index of the element with the highest value
-   *
-   * @function getMaxValueIndex
-   * @memberof DQN
-   *
-   * @param {number[]} arr the input array
-   * @returns {number} the index which the highest value
-   *
-   * @todo Create unit test
-   */
-  getMaxValueIndex: function (arr) {
-    let index = 0;
-    let maxValue = arr[0];
-    for (let i = 1; i < arr.length; i++) {
-      if (arr[i] > maxValue) {
-        maxValue = arr[i];
-        index = i;
-      }
-    }
-    return index;
-  }
 };
 
 /**
@@ -252,6 +229,29 @@ DQN.fromJSON = function (json) {
   agent.experience = json.experience;
 
   return agent;
+};
+
+/**
+ * This method returns the index of the element with the highest value
+ *
+ * @function getMaxValueIndex
+ * @memberof DQN
+ *
+ * @param {number[]} arr the input array
+ * @returns {number} the index which the highest value
+ *
+ * @todo Create unit test
+ */
+DQN.getMaxValueIndex = function(arr) {
+  let index = 0;
+  let maxValue = arr[0];
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] > maxValue) {
+      maxValue = arr[i];
+      index = i;
+    }
+  }
+  return index;
 };
 
 module.exports = DQN;
