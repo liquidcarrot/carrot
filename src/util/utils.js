@@ -39,5 +39,17 @@ let shuffle = function shuffle(arr) {
   return arr;
 };
 
+/**
+ * Generates a random integer between min and max.
+ *
+ * @param {number} min lower bound
+ * @param {number} max upper bound
+ * @returns {number} random integer between min and max
+ */
+let randomInt = function randomNumber(min, max) {
+  return Math.random() * (max - min) + min;
+};
+
 module.exports.getMaxValueIndex = getMaxValueIndex;
 module.exports.shuffle = shuffle;
+module.exports.randomInt = randomInt;
