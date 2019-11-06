@@ -36,7 +36,6 @@ function getOption(opt, fieldName, defaultValue) {
 */
 function DQN(numActions, numStates, options) {
   // Network Sizing
-  this.numStates = numStates;
   this.numActions = numActions;
   this.hiddenNeurons = getOption(options, 'hiddenNeurons', [10]);
   this.network = getOption(options, 'network', new architect.Perceptron(numStates, ...this.hiddenNeurons, numActions));
@@ -46,7 +45,6 @@ function DQN(numActions, numStates, options) {
   this.state = null;
   this.nextState = null;
   this.action = null;
-  this.nextAction = null;
 
   // Learning and update
   this.learningRate = getOption(options, 'learningRate', 0.1); // AKA alpha value function learning rate
