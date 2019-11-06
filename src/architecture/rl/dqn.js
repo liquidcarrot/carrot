@@ -83,10 +83,12 @@ function DQN(numStates, numActions, options) {
   this.nextState = null;
   this.action = null;
 
-  // Learning and update
+  // Learning rate
   this.learningRate = getOption(options, 'learningRate', 0.1); // AKA alpha value function learning rate
   this.learningRateDecay = getOption(options, 'learningRateDecay', 0.99); // AKA alpha value function learning rate
   this.learningRateMin = getOption(options, 'learningRateMin', 0.01); // AKA alpha value function learning rate
+
+  // Training specific variables
   this.loss = 0;
   this.tdErrorClamp = getOption(options, 'tdErrorClamp', 1);
   this.isTraining = getOption(options, 'isTraining', true);
