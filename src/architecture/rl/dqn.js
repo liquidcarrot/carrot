@@ -11,7 +11,7 @@ const Rate = require("../../methods/rate");
  * @param {number|boolean} defaultValue
  * @return {Number | number[]} the value of the fileName if Present, otherwise the defaultValue
  */
-function getopt(opt, fieldName, defaultValue) {
+function getOption(opt, fieldName, defaultValue) {
   if (typeof opt === 'undefined') {
     return defaultValue;
   }
@@ -30,16 +30,16 @@ function getopt(opt, fieldName, defaultValue) {
 * @param {int} numActions Maximum number of actions the agent can do,
 * @param {int} numStates Length of the state array
 * @param {Object} options Options object
-* 
+ *
 * @todo Allow underlying Network to have arbitrary layer structure
 * @todo Add test & custom network input / output size validation
 */
-function DQN(numActions, numStates, opt) {
+function DQN(numActions, numStates, options) {
   // Network Sizing
   this.numStates = numStates;
   this.numActions = numActions;
-  this.hiddenNeurons = getopt(opt, 'hiddenNeurons', [10]);
-  this.network = getopt(opt, 'network', new architect.Perceptron(numStates, ...this.hiddenNeurons, numActions));
+  this.hiddenNeurons = getOption(options, 'hiddenNeurons', [10]);
+  this.network = getOption(options, 'network', new architect.Perceptron(numStates, ...this.hiddenNeurons, numActions));
 
   // Network & state memory
   this.reward = null;
@@ -49,26 +49,26 @@ function DQN(numActions, numStates, opt) {
   this.nextAction = null;
 
   // Learning and update
-  this.learningRate = getopt(opt, 'learningRate', 0.1); // AKA alpha value function learning rate
-  this.learningRateDecay = getopt(opt, 'learningRateDecay', 0.99); // AKA alpha value function learning rate
-  this.learningRateMin = getopt(opt, 'learningRateMin', 0.01); // AKA alpha value function learning rate
+  this.learningRate = getOption(options, 'learningRate', 0.1); // AKA alpha value function learning rate
+  this.learningRateDecay = getOption(options, 'learningRateDecay', 0.99); // AKA alpha value function learning rate
+  this.learningRateMin = getOption(options, 'learningRateMin', 0.01); // AKA alpha value function learning rate
   this.loss = 0;
-  this.tderrorClamp = getopt(opt, 'tderrorClamp', 1);
-  this.isTraining = getopt(opt, 'isTraining', true);
+  this.tderrorClamp = getOption(options, 'tderrorClamp', 1);
+  this.isTraining = getOption(options, 'isTraining', true);
 
   // Experience Replay
-  let experienceSize = getopt(opt, 'experience_size', 50000); // size of experience replay
+  let experienceSize = getOption(options, 'experience_size', 50000); // size of experience replay
   this.experience = new Window(experienceSize, true); // experience
-  this.learningStepsPerIteration = getopt(opt, 'learning_steps_per_iteration', 20); // number of time steps before we add another experience to replay memory
+  this.learningStepsPerIteration = getOption(options, 'learning_steps_per_iteration', 20); // number of time steps before we add another experience to replay memory
   this.timeStep = 0;
 
   // Exploration / Exploitation management
-  this.explore = getopt(opt, 'explore', 0.05); // AKA epsilon for epsilon-greedy policy
-  this.exploreDecay = getopt(opt, 'exploreDecay', 0.99); // AKA epsilon for epsilon-greedy policy
-  this.exploreMin = getopt(opt, 'exploreMin', 0); // AKA epsilon for epsilon-greedy policy
+  this.explore = getOption(options, 'explore', 0.05); // AKA epsilon for epsilon-greedy policy
+  this.exploreDecay = getOption(options, 'exploreDecay', 0.99); // AKA epsilon for epsilon-greedy policy
+  this.exploreMin = getOption(options, 'exploreMin', 0); // AKA epsilon for epsilon-greedy policy
 
   // Reward calculation
-  this.gamma = getopt(opt, 'gamma', 0.1); // future reward discount factor
+  this.gamma = getOption(options, 'gamma', 0.1); // future reward discount factor
 }
 
 DQN.prototype = {
