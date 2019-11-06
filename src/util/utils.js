@@ -25,6 +25,8 @@ let getMaxValueIndex = function(arr) {
  *
  * @param {[]} arr input array
  * @returns {[]} shuffled array
+ *
+ * Source: https://stackoverflow.com/a/6274381
  */
 let shuffle = function shuffle(arr) {
   let j, x, i;
