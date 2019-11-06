@@ -33,8 +33,7 @@ ReplayBuffer.prototype = {
    */
   getRandomMiniBatch: function(size) {
     //Size can't be bigger than this.buffer.length
-    size = Math.min(size, this.buffer.length);
-    if (size === this.buffer.length) {
+    if (size >= this.buffer.length) {
       return this.buffer;
     }
 
