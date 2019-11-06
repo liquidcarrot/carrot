@@ -109,7 +109,7 @@ DQN.prototype = {
    * @memberof DQN
    *
    * @param {number[]} state current state (float arr with values between 0 and 1)
-   * @returns {number} The action which the DQN would take at this state (represented by an index)
+   * @return {number} The action which the DQN would take at this state (represented by an index)
    *
    * @todo Add ability to select strategies
    * @todo Add Thompson Sampling strategy
@@ -171,7 +171,6 @@ DQN.prototype = {
    * @memberof DQN
    *
    * @param {Experience} experience the experience to learn from
-   *
    * @returns {number} TDError Roughly, an experiential measure of surprise / insight for the network at this state-action.
    *
    * @todo Add dynamic loss functions & clamps, including Huber Loss
