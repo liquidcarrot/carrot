@@ -20,20 +20,21 @@ function getOption(opt, fieldName, defaultValue) {
 }
 
 /**
-* Creates a DQN network
-*
-* Used to do reinforcement learning
-*
-* @alpha
-*
-* @constructs DQN
-*
-* @param {int} numActions Maximum number of actions the agent can do,
-* @param {int} numStates Length of the state array
-* @param {Object} options Options object
+ * Creates a DQN network
  *
-* @todo Allow underlying Network to have arbitrary layer structure
-* @todo Add test & custom network input / output size validation
+ * Used to do reinforcement learning
+ *
+ * @alpha
+ *
+ * @constructs DQN
+ *
+ * @param {int} numActions Maximum number of actions the agent can do,
+ * @param {int} numStates Length of the state array
+ * @param {Object} options Options object
+ *
+ * @todo Allow underlying Network to have arbitrary layer structure
+ * @todo Add test & custom network input / output size validation
+ * @todo Maybe automatically suggest default values for the num of states and actions
 */
 function DQN(numStates, numActions, options) {
   // Network Sizing
