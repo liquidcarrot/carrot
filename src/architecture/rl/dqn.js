@@ -157,7 +157,7 @@ DQN.prototype = {
       ? Utils.randomInt(0, this.numActions - 1)
       : Utils.getMaxValueIndex(this.network.activate(state)); // deliberate "exploit" action
 
-    // shift state memory
+    // keep this in memory for learning
     this.state = this.nextState;
     this.action = this.nextAction;
     this.nextState = state;
