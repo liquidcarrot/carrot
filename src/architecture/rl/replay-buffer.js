@@ -25,17 +25,19 @@ ReplayBuffer.prototype = {
   },
 
   /**
-   * Get random mini batch.
+   * Get a random mini batch of given size.
    *
    * @param {number} size the size of the minibatch.
    *
    * @returns {Experience[]} a batch of Experiences to train from.
    */
   getRandomMiniBatch: function(size) {
+    //Size can't be bigger than this.buffer.length
     size = Math.min(size, this.buffer.length);
     if (size === this.buffer.length) {
       return this.buffer;
     }
+
     let bufferCopy = [...this.buffer];
     let batch = [];
 
