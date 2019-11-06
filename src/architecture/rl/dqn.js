@@ -70,7 +70,7 @@ function DQN(numStates, numActions, options) {
   // Reward calculation
   this.gamma = getOption(options, 'gamma', 0.7); // future reward discount factor
 
-  this.isUsingPER = getOption(options, 'isUsingPER', true);
+  this.isUsingPER = getOption(options, 'isUsingPER', true); // using prioritized experience replay
 }
 
 DQN.prototype = {
@@ -117,7 +117,7 @@ DQN.prototype = {
    * @todo Add Thompson Sampling strategy
    */
   act: function (state) {
-    // epsilon greedy strategy | explore > random ? explore : otherwise exploit
+    // epsilon greedy strategy | explore > random ? explore : exploit
     const action = (Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay})) > Math.random())
       ? Math.floor(Math.random() * this.numActions) // random "explore" action
       : DQN.getMaxValueIndex(this.network.activate(state)); // deliberate "exploit" action
