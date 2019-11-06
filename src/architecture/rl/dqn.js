@@ -5,7 +5,6 @@ const Experience = require('./experience');
 const Utils = require('../../util/utils');
 const Rate = require("../../methods/rate");
 
-
 /**
  * This function will get the value from the fieldName, if Present, otherwise returns the defaultValue
  *

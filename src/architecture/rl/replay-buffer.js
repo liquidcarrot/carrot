@@ -56,7 +56,7 @@ ReplayBuffer.prototype = {
    *
    * @todo Create unit test
    * @todo consider using another series for probability distribution
-   *       because sometimes the length of the MiniBatch is not equal to the size given as param
+   *       because sometimes the length of the MiniBatch is not equal to the size given as param.
    *       Look at: https://www.freecodecamp.org/news/improvements-in-deep-q-learning-dueling-double-dqn-prioritized-experience-replay-and-fixed-58b130cc5682/
    */
   getMiniBatchWithPER(size) {
@@ -89,7 +89,7 @@ ReplayBuffer.prototype = {
 /**
  * Sorts the buffer descending.
  *
- * @param {Experience[]} buffer input buffer (unsorted)
+ * @param {Experience[]} buffer unsorted input buffer
  * @returns {Experience[]} descending sorted buffer
  */
 ReplayBuffer.sortByLoss = function(buffer) {
