@@ -1,4 +1,15 @@
 /**
+ * Generates a random integer between min and max.
+ *
+ * @param {number} min lower bound
+ * @param {number} max upper bound
+ * @returns {number} random integer between min and max
+ */
+let randomInt = function randomNumber(min, max) {
+  return Math.random() * (max - min) + min;
+};
+
+/**
  * This method returns the index of the element with the highest value
  *
  * @function getMaxValueIndex
@@ -26,7 +37,7 @@ let getMaxValueIndex = function(arr) {
  * @param {[]} arr input array
  * @returns {[]} shuffled array
  *
- * Source: https://stackoverflow.com/a/6274381
+ * Source: https://stackoverflow.com/a/2450976
  */
 let shuffle = function shuffle(arr) {
   let j, x, i;
@@ -37,17 +48,6 @@ let shuffle = function shuffle(arr) {
     arr[j] = x;
   }
   return arr;
-};
-
-/**
- * Generates a random integer between min and max.
- *
- * @param {number} min lower bound
- * @param {number} max upper bound
- * @returns {number} random integer between min and max
- */
-let randomInt = function randomNumber(min, max) {
-  return Math.random() * (max - min) + min;
 };
 
 module.exports.getMaxValueIndex = getMaxValueIndex;
