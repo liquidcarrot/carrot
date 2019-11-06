@@ -14,6 +14,7 @@ function Experience(state, action, reward, nextState, isFinalState) {
   this.reward = reward;
   this.nextState = nextState;
   this.isFinalState = isFinalState;
+  this.loss = 0;
 }
 
 module.exports = Experience;

@@ -146,7 +146,9 @@ DQN.prototype = {
     if (this.reward != null && this.isTraining) {
       let experience = new Experience(this.state, this.action, this.reward, this.nextState, isFinalState);
       // Learn from current estimated reward to understand how wrong agent is
-      this.loss = this.study(experience);
+      let loss = this.study(experience);
+      experience.loss = loss;
+      this.loss = loss;
 
       // Too random, should pick experiences by their loss value
       this.experience.add(experience);
