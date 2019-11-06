@@ -140,13 +140,13 @@ DQN.prototype = {
    * explore >= 1 --> Network always explores states randomly.
    * explore == 0 --> Network always picks the action it thinks best from known states.
    *
-   * Best: High explore at first then less explore as network is more experienced.
+   * Best strategy: High explore at first then less explore as network is more experienced.
    *
    * @function act
    * @memberof DQN
    *
-   * @param {number[]} state current state (float arr with values between 0 and 1)
-   * @return {int} The action which the DQN would take at this state (represented by an index)
+   * @param {number[]} state current state (float arr with values in [0,1])
+   * @return {int} The action which the DQN would take at this state (represented by an index) action ∈ [0, this.numActions-1]
    *
    * @todo Add ability to select strategies
    * @todo Add Thompson Sampling strategy
@@ -173,9 +173,9 @@ DQN.prototype = {
    * @function learn
    * @memberof DQN
    *
-   * @param {number} newReward the current reward, the agent receives from the environment
+   * @param {number} newReward the current reward, the agent receives from the environment; newReward ∈ [-1,1]
    * @param {boolean} isFinalState Does the game ends at this state?
-   * @returns {number} the loss value
+   * @returns {number} the loss value; loss ∈ [-1,1]
    *
    * @todo Add prioritized experience replay
    * @todo Add hindsight experience replay
@@ -211,7 +211,7 @@ DQN.prototype = {
    * @memberof DQN
    *
    * @param {Experience} experience the experience to learn from
-   * @returns {number} TDError Roughly, an experiential measure of surprise / insight for the network at this state-action.
+   * @returns {number} TDError Roughly, an experiential measure of surprise / insight for the network at this state-action; tdError ∈ [-1,1]
    *
    * @todo Add dynamic loss functions & clamps, including Huber Loss
    * @todo Add target network to increase reliability
