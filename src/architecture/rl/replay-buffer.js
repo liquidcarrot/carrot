@@ -56,6 +56,7 @@ ReplayBuffer.prototype = {
    *
    * @todo Create unit test
    * @todo consider using another series for probability distribution
+   *       because sometimes the length of the MiniBatch is not equal to the size given as param
    */
   getMiniBatchWithPER(size) {
     //Size can't be bigger than this.buffer.length
