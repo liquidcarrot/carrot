@@ -2,7 +2,6 @@
  * This method returns the index of the element with the highest value
  *
  * @function getMaxValueIndex
- * @memberof DQN
  *
  * @param {number[]} arr the input array
  * @returns {number} the index which the highest value
@@ -21,6 +20,9 @@ let getMaxValueIndex = function(arr) {
 
 /**
  * This method shuffles an array;
+ *
+ * @function shuffle
+ *
  * @param {[]} arr input array
  * @returns {[]} shuffled array
  */
