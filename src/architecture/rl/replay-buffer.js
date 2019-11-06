@@ -42,6 +42,7 @@ ReplayBuffer.prototype = {
     let batch = [];
 
     for (let i = 0; i < size; i++) {
+      //Add an random experience to the batch and remove it from the bufferCopy
       batch.push(...bufferCopy.splice(Math.floor(Math.random() * bufferCopy.length), 1));
     }
     return batch;
