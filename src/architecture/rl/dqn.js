@@ -76,7 +76,7 @@ DQN.prototype = {
    * @function toJSON
    * @memberof DQN
    *
-   * @return {JSON} JSON String which represents the current DQN agent
+   * @return {{net:{input:{number},output:{number},dropout:{number},nodes:Array<object>,connections:Array<object>},gamma:{number},explore:{number},exploreDecay:{number},exploreMin:{number},learningRate:{number},learningRateDecay:{number},learningRateMin:{number},isTraining:{boolean},experience:{Window}}} json JSON String JSON String which represents this DQN agent
    */
   toJSON: function () {
     let json = {};
@@ -232,11 +232,11 @@ DQN.prototype = {
  * @function fromJSON
  * @memberof DQN
  *
- * @param {JSON} json  JSON String
+ * @param {{net:{input:{number},output:{number},dropout:{number},nodes:Array<object>,connections:Array<object>},gamma:{number},explore:{number},exploreDecay:{number},exploreMin:{number},learningRate:{number},learningRateDecay:{number},learningRateMin:{number},isTraining:{boolean},experience:{Window}}} json  JSON String
  * @return {DQN} Agent with the specs from the json
  */
 DQN.fromJSON = function (json) {
-  let network = Network.fromJSON(json);
+  let network = Network.fromJSON(json.net);
   let agent = new DQN(network.input_size, network.output_size, {});
 
   agent.gamma = json.gamma;
