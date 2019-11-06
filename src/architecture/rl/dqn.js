@@ -239,8 +239,6 @@ DQN.fromJSON = function (json) {
  *
  * @param {number[]} arr the input array
  * @returns {number} the index which the highest value
- *
- * @todo Create unit test
  */
 DQN.getMaxValueIndex = function(arr) {
   let index = 0;
