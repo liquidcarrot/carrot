@@ -4,7 +4,6 @@ const {expect} = require('chai');
 
 describe('DQN', function () {
   it('Object creation', function () {
-    this.timeout(2000);
     for (let i = 0; i < 10; i++) {
       let actions = Math.floor(Math.random() * 100 + 1);
       let states = Math.floor(Math.random() * 100 + 1);
@@ -15,7 +14,6 @@ describe('DQN', function () {
     }
   });
   it('test learning capabilities', function () {
-    this.timeout(5000);
     let agent = new DQN(2, 1, {gamma: 0.3, hidden: [4], explore: 0});
 
     let currentState = 0.5;
@@ -32,12 +30,14 @@ describe('DQN', function () {
         Math.max(0, currentState - 0.5);
 
       let reward = currentState === lastState ? -1 : 1;
+      currentLoss = agent.learn(reward);
+
       rewardWindow.push(reward);
       rewardSum += reward;
       if (rewardWindow.length > windowSize) {
         rewardSum -= rewardWindow.shift();
       }
-      currentLoss = agent.learn(reward);
+
       lastState = currentState;
     }
 
