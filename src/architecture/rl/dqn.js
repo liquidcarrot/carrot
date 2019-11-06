@@ -8,8 +8,8 @@ const Rate = require("../../methods/rate");
  * This function will get the value from the fieldName, if Present, otherwise returns the defaultValue
  * @param {Object} opt
  * @param {String} fieldName
- * @param {number|boolean} defaultValue
- * @return {Number | number[]} the value of the fileName if Present, otherwise the defaultValue
+ * @param {number | boolean | number[]} defaultValue
+ * @return {Number | number[] | boolean} the value of the fileName if Present, otherwise the defaultValue
  */
 function getOption(opt, fieldName, defaultValue) {
   if (typeof opt === 'undefined') {
@@ -58,7 +58,7 @@ function DQN(numActions, numStates, options) {
 
   // Experience Replay
   let experienceSize = getOption(options, 'experience_size', 50000); // size of experience replay
-  this.experience = new Window(experienceSize, true); // experience
+  this.experience = new Window(experienceSize); // experience
   this.learningStepsPerIteration = getOption(options, 'learning_steps_per_iteration', 20); // number of time steps before we add another experience to replay memory
   this.timeStep = 0;
 
