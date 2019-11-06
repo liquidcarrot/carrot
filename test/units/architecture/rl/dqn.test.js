@@ -49,5 +49,32 @@ describe('DQN', function () {
     const agent = new DQN(2, 2, {network: LSTM_NET});
 
     expect(agent.network).equal(LSTM_NET)
-  })
+  });
+
+  it('getMaxValueIndex', function() {
+    for (let testIteration = 0; testIteration < 100; testIteration++) {
+      let randomArray = [];
+      for (let i = 0; i <= 100; i++) {
+        randomArray[i] = i;
+      }
+
+      function shuffle(array) {
+        let tmp, current, top = array.length;
+        if (top === 0) {
+          return array;
+        }
+        while (--top) {
+          current = Math.floor(Math.random() * (top + 1));
+          tmp = array[current];
+          array[current] = array[top];
+          array[top] = tmp;
+        }
+        return array;
+      }
+
+      let randomArrayShuffled = shuffle(randomArray);
+
+      expect(randomArrayShuffled[DQN.getMaxValueIndex(randomArrayShuffled)]).equal(100);
+    }
+  });
 });
