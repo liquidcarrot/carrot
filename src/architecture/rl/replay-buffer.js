@@ -20,7 +20,7 @@ ReplayBuffer.prototype = {
    */
   add: function(experience) {
     if (this.buffer.length >= this.maxSize) {
-      this.buffer.shift();
+      this.buffer.shift(); // Buffer is full --> remove first entry
     }
     this.buffer.push(experience);
   },
@@ -37,7 +37,7 @@ ReplayBuffer.prototype = {
       return this.buffer;
     }
 
-    let bufferCopy = [...this.buffer];
+    let bufferCopy = this.buffer.slice(0);
     let batch = [];
 
     for (let i = 0; i < size; i++) {

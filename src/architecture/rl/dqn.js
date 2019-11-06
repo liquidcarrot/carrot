@@ -40,7 +40,7 @@ function getOption(opt, fieldName, defaultValue) {
 /**
  * Creates a DQN network
  *
- * Used to do reinforcement learning
+ * Used to do reinforcement learning with an DQN Agent
  *
  * @beta
  *
