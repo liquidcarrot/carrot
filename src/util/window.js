@@ -2,15 +2,15 @@
  * A Window is just an array with an fixed max-size.
  * It deletes old entries, to create space for new ones.
  *
- * @param size maximum size
+ * @param maxSize maximum size
  *
  * TODO: Should be replaced with a replay buffer
  * @deprecated
  * @constructor
  */
-function Window(size) {
+function Window(maxSize) {
   this.v = [];
-  this.size = typeof (size) === 'undefined' ? 100 : size;
+  this.maxSize = typeof (maxSize) === 'undefined' ? 100 : maxSize;
 }
 
 Window.prototype = {
@@ -20,7 +20,7 @@ Window.prototype = {
    */
   add: function(elem) {
     this.v.push(elem);
-    if (this.v.length > this.size) {
+    if (this.v.length > this.maxSize) {
       this.v.shift();
     }
   },
