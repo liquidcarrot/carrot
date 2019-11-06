@@ -4,7 +4,7 @@ const Utils = require('../../util/utils');
 /**
  * Creates a replay buffer with a maximum size of experience entries.
  *
- * @param maxSize maximum number of experiences
+ * @param {int} maxSize maximum number of experiences
  * @constructor
  */
 function ReplayBuffer(maxSize) {
@@ -28,7 +28,7 @@ ReplayBuffer.prototype = {
   /**
    * Get a random mini batch of given size.
    *
-   * @param {number} size the size of the minibatch.
+   * @param {int} size the size of the minibatch.
    * @returns {Experience[]} a batch of Experiences to train from.
    */
   getRandomMiniBatch: function(size) {
@@ -51,7 +51,7 @@ ReplayBuffer.prototype = {
    * This method creates a mini batch of buffered experiences.
    * Higher loss values --> higher probability
    *
-   * @param size the size of the minibatch.
+   * @param {int} size the size of the minibatch.
    * @returns {Experience[]} mini batch chosen with PER
    *
    * @todo Create unit test
