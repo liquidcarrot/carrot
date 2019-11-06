@@ -224,19 +224,6 @@ DQN.prototype = {
       }
     }
     return index;
-  },
-
-  /**
-   * Setter for variable "isTraining"
-   *
-   * @function setTraining
-   * @memberof DQN
-   *
-   * @param val new value
-   * @todo Consider removing
-   */
-  setTraining: function (val) {
-    this.isTraining = val;
   }
 };
 
