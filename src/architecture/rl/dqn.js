@@ -2,6 +2,7 @@ const architect = require('../architect');
 const Network = require('../network');
 const ReplayBuffer = require('./replay-buffer');
 const Experience = require('./experience');
+const Utils = require('../../util/utils');
 const Rate = require("../../methods/rate");
 
 
@@ -153,7 +154,7 @@ DQN.prototype = {
     // epsilon greedy strategy | explore > random ? explore : exploit
     const action = (Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay})) > Math.random())
       ? Math.floor(Math.random() * this.numActions) // random "explore" action
-      : DQN.getMaxValueIndex(this.network.activate(state)); // deliberate "exploit" action
+      : Utils.getMaxValueIndex(this.network.activate(state)); // deliberate "exploit" action
 
     // shift state memory
     this.state = this.nextState;
@@ -222,7 +223,7 @@ DQN.prototype = {
     let targetQValue;
     targetQValue = experience.isFinalState
       ? normalizedReward // For the final state only the current reward is important
-      : normalizedReward + this.gamma * nextActions[DQN.getMaxValueIndex(nextActions)];
+      : normalizedReward + this.gamma * nextActions[Utils.getMaxValueIndex(nextActions)];
 
     // Predicted current reward | called with traces for backprop later
     const predictedReward = this.network.activate(experience.state);
@@ -282,27 +283,6 @@ DQN.fromJSON = function (json) {
   agent.experience = json.experience;
 
   return agent;
-};
-
-/**
- * This method returns the index of the element with the highest value
- *
- * @function getMaxValueIndex
- * @memberof DQN
- *
- * @param {number[]} arr the input array
- * @returns {number} the index which the highest value
- */
-DQN.getMaxValueIndex = function(arr) {
-  let index = 0;
-  let maxValue = arr[0];
-  for (let i = 1; i < arr.length; i++) {
-    if (arr[i] > maxValue) {
-      maxValue = arr[i];
-      index = i;
-    }
-  }
-  return index;
 };
 
 module.exports = DQN;
