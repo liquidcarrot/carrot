@@ -35,7 +35,7 @@ function getOption(opt, fieldName, defaultValue) {
 * @todo Allow underlying Network to have arbitrary layer structure
 * @todo Add test & custom network input / output size validation
 */
-function DQN(numActions, numStates, options) {
+function DQN(numStates, numActions, options) {
   // Network Sizing
   this.numActions = numActions;
   this.hiddenNeurons = getOption(options, 'hiddenNeurons', [10]);
@@ -62,12 +62,12 @@ function DQN(numActions, numStates, options) {
   this.timeStep = 0;
 
   // Exploration / Exploitation management
-  this.explore = getOption(options, 'explore', 0.05); // AKA epsilon for epsilon-greedy policy
-  this.exploreDecay = getOption(options, 'exploreDecay', 0.99); // AKA epsilon for epsilon-greedy policy
-  this.exploreMin = getOption(options, 'exploreMin', 0); // AKA epsilon for epsilon-greedy policy
+  this.explore = getOption(options, 'explore', 0.3); // AKA epsilon for epsilon-greedy policy
+  this.exploreDecay = getOption(options, 'exploreDecay', 0.9999); // AKA epsilon for epsilon-greedy policy
+  this.exploreMin = getOption(options, 'exploreMin', 0.01); // AKA epsilon for epsilon-greedy policy
 
   // Reward calculation
-  this.gamma = getOption(options, 'gamma', 0.1); // future reward discount factor
+  this.gamma = getOption(options, 'gamma', 0.7); // future reward discount factor
 }
 
 DQN.prototype = {
