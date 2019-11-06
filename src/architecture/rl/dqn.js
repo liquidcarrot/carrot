@@ -180,19 +180,18 @@ DQN.prototype = {
     const nextActions = this.network.activate(nextState, {no_trace: true});
 
     // Q(s,a) = r + gamma * max_a' Q(s',a')
+    let normalizedReward = (1 + reward) / 2;
     let targetQValue;
-    if (isFinalState) {
-      targetQValue = (1 + reward) / 2;
-    } else {
-      targetQValue = (1 + reward) / 2 + this.gamma * nextActions[this.getMaxValueIndex(nextActions)];
-    }
+    targetQValue = isFinalState
+      ? normalizedReward
+      : normalizedReward + this.gamma * nextActions[this.getMaxValueIndex(nextActions)];
 
     // Predicted current reward | called with traces for backprop later
     const predictedReward = this.network.activate(state);
 
     let tdError = predictedReward[action] - targetQValue;
 
-    // Clamp error for robustness | ToDo: huber loss
+    // Clamp error for robustness
     if (Math.abs(tdError) > this.tderrorClamp) {
       tdError = tdError > this.tderrorClamp ? this.tderrorClamp : -this.tderrorClamp;
     }
