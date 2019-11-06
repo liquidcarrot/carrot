@@ -136,19 +136,20 @@ DQN.prototype = {
    * @memberof DQN
    *
    * @param {number} newReward the current reward, the agent receives from the environment
+   * @param {boolean} isFinalState Does the game ends at this state?
    * @returns {number} the loss value
    *
    * @todo Add prioritized experience replay
    * @todo Add hindsight experience replay
    */
-  learn: function (newReward) {
+  learn: function(newReward, isFinalState = false) {
     // Update Q function | temporal difference method currently hardcoded
     if (this.reward != null && this.isTraining) {
       // Learn from current estimated reward to understand how wrong agent is
-      this.loss = this.study(this.state, this.action, this.reward, this.nextState);
+      this.loss = this.study(this.state, this.action, this.reward, this.nextState, isFinalState);
 
       // Too random, should pick experiences by their loss value
-      this.experience.add([this.state, this.action, this.reward, this.nextState, this.loss]);
+      this.experience.add([this.state, this.action, this.reward, this.nextState, isFinalState, this.loss]);
 
       for (let i = 0; i < this.learningStepsPerIteration; i++) {
         this.study(...this.experience.pickRandom());
@@ -169,18 +170,24 @@ DQN.prototype = {
    * @param {number} action action taken in current state
    * @param {number} reward reward received for the action in the current state
    * @param {number[]} nextState the state which follows the current state with the action taken
+   * @param {boolean} isFinalState Does the game ends at this state?
    * @returns {number} TDError Roughly, an experiential measure of surprise / insight for the network at this state-action.
    *
    * @todo Add dynamic loss functions & clamps, including Huber Loss
    * @todo Add target network to increase reliability
    * @todo Consider not using a target network: https://www.ijcai.org/proceedings/2019/0379.pdf
    */
-  study: function (state, action, reward, nextState) {
+  study: function(state, action, reward, nextState, isFinalState) {
     // Compute target Q value, called without traces so it won't affect backprop
     const nextActions = this.network.activate(nextState, {no_trace: true});
 
     // Q(s,a) = r + gamma * max_a' Q(s',a')
-    const targetQValue = (1 + reward) / 2 + this.gamma * nextActions[this.getMaxValueIndex(nextActions)];
+    let targetQValue;
+    if (isFinalState) {
+      targetQValue = (1 + reward) / 2;
+    } else {
+      targetQValue = (1 + reward) / 2 + this.gamma * nextActions[this.getMaxValueIndex(nextActions)];
+    }
 
     // Predicted current reward | called with traces for backprop later
     const predictedReward = this.network.activate(state);
