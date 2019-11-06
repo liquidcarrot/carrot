@@ -116,7 +116,7 @@ DQN.prototype = {
     // epsilon greedy strategy | explore > random = explore; else exploit
     const action = (Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay})) > Math.random())
       ? Math.floor(Math.random() * this.numActions) // random "explore" action
-      : this.getMaxValueIndex(this.network.activate(state)) // deliberate "exploit" action
+      : this.getMaxValueIndex(this.network.activate(state)); // deliberate "exploit" action
 
     // shift state memory
     this.state = this.nextState;
