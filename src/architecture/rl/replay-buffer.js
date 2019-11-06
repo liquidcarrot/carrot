@@ -25,15 +25,6 @@ ReplayBuffer.prototype = {
   },
 
   /**
-   * Returns a random entry from the buffer. Used for learning without PER.
-   *
-   * @returns {Experience} the randome experience
-   */
-  pickRandom: function() {
-    return this.buffer[Math.floor(Math.random() * this.buffer.length)];
-  },
-
-  /**
    * Get random mini batch.
    *
    * @param {number} size the size of the minibatch.
