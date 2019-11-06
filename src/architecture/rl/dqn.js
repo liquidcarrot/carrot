@@ -30,7 +30,23 @@ function getOption(opt, fieldName, defaultValue) {
  *
  * @param {int} numActions Maximum number of actions the agent can do,
  * @param {int} numStates Length of the state array
- * @param {Object} options Options object
+ * @param {{
+ *   hiddenNeurons: {number[]},
+ *   network: {Network},
+ *   learningRate: {number},
+ *   learningRateDecay: {number},
+ *   learningRateMin: {number},
+ *   explore: {number},
+ *   exploreDecay: {number},
+ *   exploreMin: {number},
+ *   tdErrorClamp: {number},
+ *   isTraining: {boolean},
+ *   isUsingPER: {boolean},
+ *   experienceSize: {number},
+ *   learningStepsPerIteration: {number},
+ *   timeStep: {number},
+ *   gamma: {number}
+ * }} options JSON object which contains all custom options
  *
  * @todo Allow underlying Network to have arbitrary layer structure
  * @todo Add test & custom network input / output size validation
@@ -53,7 +69,7 @@ function DQN(numStates, numActions, options) {
   this.learningRateDecay = getOption(options, 'learningRateDecay', 0.99); // AKA alpha value function learning rate
   this.learningRateMin = getOption(options, 'learningRateMin', 0.01); // AKA alpha value function learning rate
   this.loss = 0;
-  this.tderrorClamp = getOption(options, 'tderrorClamp', 1);
+  this.tdErrorClamp = getOption(options, 'tdErrorClamp', 1);
   this.isTraining = getOption(options, 'isTraining', true);
 
   // Experience Replay
@@ -80,7 +96,24 @@ DQN.prototype = {
    * @function toJSON
    * @memberof DQN
    *
-   * @return {{net:{input:{number},output:{number},dropout:{number},nodes:Array<object>,connections:Array<object>},gamma:{number},explore:{number},exploreDecay:{number},exploreMin:{number},learningRate:{number},learningRateDecay:{number},learningRateMin:{number},isTraining:{boolean},experience:{ReplayBuffer}}} json JSON String JSON String which represents this DQN agent
+   * @return {{
+   *   net: {
+   *     input:{number},
+   *     output:{number},
+   *     dropout:{number},
+   *     nodes:Array<object>,
+   *     connections:Array<object>
+   *   },
+   *   gamma:{number},
+   *   explore:{number},
+   *   exploreDecay:{number},
+   *   exploreMin:{number},
+   *   learningRate:{number},
+   *   learningRateDecay:{number},
+   *   learningRateMin:{number},
+   *   isTraining:{boolean},
+   *   experience:{ReplayBuffer}
+   * }} json JSON String JSON String which represents this DQN agent
    */
   toJSON: function () {
     let json = {};
@@ -197,8 +230,8 @@ DQN.prototype = {
     let tdError = predictedReward[experience.action] - targetQValue;
 
     // Clamp error for robustness
-    if (Math.abs(tdError) > this.tderrorClamp) {
-      tdError = tdError > this.tderrorClamp ? this.tderrorClamp : -this.tderrorClamp;
+    if (Math.abs(tdError) > this.tdErrorClamp) {
+      tdError = tdError > this.tdErrorClamp ? this.tdErrorClamp : -this.tdErrorClamp;
     }
 
     // Backpropagation using temporal difference error
@@ -209,12 +242,29 @@ DQN.prototype = {
 };
 
 /**
- * Loads function
+ * Load function
  *
  * @function fromJSON
  * @memberof DQN
  *
- * @param {{net:{input:{number},output:{number},dropout:{number},nodes:Array<object>,connections:Array<object>},gamma:{number},explore:{number},exploreDecay:{number},exploreMin:{number},learningRate:{number},learningRateDecay:{number},learningRateMin:{number},isTraining:{boolean},experience:{Window}}} json  JSON String
+ * @param {{
+ *   net:{
+ *     input:{number},
+ *     output:{number},
+ *     dropout:{number},
+ *     nodes:Array<object>,
+ *     connections:Array<object>
+ *   },
+ *   gamma:{number},
+ *   explore:{number},
+ *   exploreDecay:{number},
+ *   exploreMin:{number},
+ *   learningRate:{number},
+ *   learningRateDecay:{number},
+ *   learningRateMin:{number},
+ *   isTraining:{boolean},
+ *   experience:{ReplayBuffer}
+ * }} json  JSON String
  * @return {DQN} Agent with the specs from the json
  */
 DQN.fromJSON = function (json) {
