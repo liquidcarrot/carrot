@@ -153,9 +153,9 @@ DQN.prototype = {
       // Too random, should pick experiences by their loss value
       this.experience.add(experience);
 
-      let minibatch = this.experience.getRandomMiniBatch(this.learningStepsPerIteration);
-      for (let i = 0; i < minibatch.length; i++) {
-        this.study(minibatch[i]);
+      let miniBatch = this.experience.getRandomMiniBatch(this.learningStepsPerIteration);
+      for (let i = 0; i < miniBatch.length; i++) {
+        this.study(miniBatch[i]);
       }
     }
     this.timeStep++;
