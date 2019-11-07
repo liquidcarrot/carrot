@@ -196,7 +196,6 @@ DQN.prototype = {
    * @param {boolean} isFinalState Does the game ends at this state?
    * @returns {number} the loss value; loss ∈ [-1,1]
    *
-   * @todo Add prioritized experience replay
    * @todo Add hindsight experience replay
    */
   learn: function(newReward, isFinalState = false) {
