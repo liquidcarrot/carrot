@@ -92,7 +92,7 @@ ReplayBuffer.prototype = {
  * @returns {Experience[]} descending sorted buffer
  */
 ReplayBuffer.sortByLoss = function(buffer) {
-  return buffer.sort((a, b) => b.loss - a.loss);
+  return buffer.sort((a, b) => Math.abs(b.loss) - Math.abs(a.loss));
 };
 
 module.exports = ReplayBuffer;
