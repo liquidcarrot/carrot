@@ -199,9 +199,13 @@ DQN.prototype = {
    * @todo Add hindsight experience replay
    */
   learn: function(newReward, isFinalState = false) {
+    // newReward ∈ [-1,1]
+    // normalizedReward ∈ [0,1]
+    const normalizedReward = (1 + newReward) / 2;
+
     // Update Q function | temporal difference method currently hardcoded
     if (this.reward != null && this.isTraining) {
-      let experience = new Experience(this.state, this.action, this.reward, this.nextState, isFinalState);
+      let experience = new Experience(this.state, this.action, normalizedReward, this.nextState, isFinalState);
       // Learn from current estimated reward to understand how wrong agent is
       experience.loss = this.study(experience);
       this.loss = experience.loss;
@@ -241,11 +245,10 @@ DQN.prototype = {
     const nextActions = this.network.activate(experience.nextState, {no_trace: true});
 
     // Q(s,a) = r + gamma * max_a' Q(s',a')
-    let normalizedReward = (1 + experience.reward) / 2;
     let targetQValue;
     targetQValue = experience.isFinalState
-      ? normalizedReward // For the final state only the current reward is important
-      : normalizedReward + this.gamma * nextActions[Utils.getMaxValueIndex(nextActions)];
+      ? experience.reward // For the final state only the current reward is important
+      : experience.reward + this.gamma * nextActions[Utils.getMaxValueIndex(nextActions)];
 
     // Predicted current reward | called with traces for backprop later
     const predictedReward = this.network.activate(experience.state);
