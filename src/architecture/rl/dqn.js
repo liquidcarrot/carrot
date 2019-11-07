@@ -173,8 +173,8 @@ DQN.prototype = {
    */
   act: function (state) {
     // epsilon greedy strategy | explore > random ? explore : exploit
-    let explore = Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay}));
-    const action = explore > Math.random()
+    let currentExploreRate = Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay}));
+    const action = currentExploreRate > Math.random()
       ? Utils.randomInt(0, this.numActions - 1)// explore
       : Utils.getMaxValueIndex(this.network.activate(state));// exploit
 
@@ -263,8 +263,8 @@ DQN.prototype = {
 
     // Backpropagation using temporal difference error
     predictedReward[experience.action] = targetQValue;
-    let learningRate = Math.max(this.learningRateMin, Rate.EXP(this.learningRate, this.timeStep, {gamma: this.learningRateDecay}));
-    this.network.propagate(learningRate, 0, true, predictedReward);
+    let currentLearningRate = Math.max(this.learningRateMin, Rate.EXP(this.learningRate, this.timeStep, {gamma: this.learningRateDecay}));
+    this.network.propagate(currentLearningRate, 0, true, predictedReward);
     return tdError;
   },
 };
