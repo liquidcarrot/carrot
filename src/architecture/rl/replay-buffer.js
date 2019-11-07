@@ -68,7 +68,7 @@ ReplayBuffer.prototype = {
     let bufferCopy = this.buffer.slice(0);
     let batch = [];
 
-    bufferCopy = ReplayBuffer.sortByLoss(bufferCopy);
+    bufferCopy = ReplayBuffer.sortByAbsLoss(bufferCopy);
 
     for (let i = 0; i < size; i++) {
       for (let j = 0; j < bufferCopy.length; j++) {
@@ -86,12 +86,12 @@ ReplayBuffer.prototype = {
 };
 
 /**
- * Sorts the buffer descending.
+ * Sorts the buffer descending by the absolute loss values.
  *
  * @param {Experience[]} buffer unsorted input buffer
  * @returns {Experience[]} descending sorted buffer
  */
-ReplayBuffer.sortByLoss = function(buffer) {
+ReplayBuffer.sortByAbsLoss = function(buffer) {
   return buffer.sort((a, b) => Math.abs(b.loss) - Math.abs(a.loss));
 };
 
