@@ -175,8 +175,8 @@ DQN.prototype = {
     // epsilon greedy strategy | explore > random ? explore : exploit
     let explore = Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay}));
     const action = explore > Math.random()
-      ? Utils.randomInt(0, this.numActions - 1)
-      : Utils.getMaxValueIndex(this.network.activate(state)); // deliberate "exploit" action
+      ? Utils.randomInt(0, this.numActions - 1)// explore
+      : Utils.getMaxValueIndex(this.network.activate(state));// exploit
 
     // keep this in memory for learning
     this.state = this.nextState;
@@ -200,8 +200,8 @@ DQN.prototype = {
    * @todo Add hindsight experience replay
    */
   learn: function(newReward, isFinalState = false) {
-    // newReward ∈ [-1,1]
-    // normalizedReward ∈ [0,1]
+    // Normalizing reward:
+    // newReward ∈ [-1,1] --> normalizedReward ∈ [0,1]
     const normalizedReward = (1 + newReward) / 2;
 
     // Update Q function | temporal difference method currently hardcoded
