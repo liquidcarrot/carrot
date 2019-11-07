@@ -1,5 +1,4 @@
 const _ = require(`lodash`);
-// const parameter = require(`./util/parameter`);
 const Network = require(`./architecture/network`);
 const methods = require(`./methods/methods`);
 const config = require(`./config`);
