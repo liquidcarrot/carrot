@@ -22,7 +22,7 @@ const Rate = require("../../methods/rate");
  *   isUsingPER: {boolean},
  *   experienceSize: {int},
  *   learningStepsPerIteration: {int},
- *   timeStep: {number},
+ *   timeStep: {int},
  *   gamma: {number}
  * }} opt JSON object which contains all custom options
  * @param {String} fieldName
@@ -62,7 +62,7 @@ function getOption(opt, fieldName, defaultValue) {
  *   isUsingPER: {boolean},
  *   experienceSize: {int},
  *   learningStepsPerIteration: {int},
- *   timeStep: {number},
+ *   timeStep: {int},
  *   gamma: {number}
  * }} options JSON object which contains all custom options
  *
