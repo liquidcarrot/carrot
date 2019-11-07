@@ -156,7 +156,8 @@ DQN.prototype = {
    *
    * Decision based on exploration rate set by `.explore`.
    *
-   * explore >= 1 --> Network always explores states randomly.
+   * explore ∈ [0,1]
+   * explore == 1 --> Network always explores states randomly.
    * explore == 0 --> Network always picks the action it thinks best from known states.
    *
    * Best strategy: High explore at first then less explore as network is more experienced.
@@ -164,7 +165,7 @@ DQN.prototype = {
    * @function act
    * @memberof DQN
    *
-   * @param {number[]} state current state (float arr with values in [0,1])
+   * @param {number[]} state current state (float arr with values from [0,1])
    * @return {int} The action which the DQN would take at this state (represented by an index) action ∈ [0, this.numActions-1]
    *
    * @todo Add ability to select strategies
