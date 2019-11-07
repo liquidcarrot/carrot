@@ -4,6 +4,8 @@
  * @param {number} min lower bound
  * @param {number} max upper bound
  * @returns {int} random integer between min and max
+ *
+ * @todo Create unit test
  */
 let randomInt = function(min, max) {
   return Math.random() * (max - min) + min;
@@ -55,6 +57,8 @@ let shuffle = function(arr) {
  *
  * @param {[]} arr input array
  * @returns {*} the randomly chosen element
+ *
+ * @todo Create unit test
  */
 let pickRandom = function(arr) {
   return arr[randomInt(0, arr.length - 1)];
