@@ -47,84 +47,9 @@ const config = require('./config');
 *
 * // new Population(options)
 * let neat = new Population({ population_size: 100 })
-*
-* // new Population(dataset)
-* let neat = new Population([
-*   { input: [0, 0], output: [0] },
-*   { input: [0, 1], output: [1] },
-*   { input: [1, 0], output: [1] },
-*   { input: [1, 1], output: [0] }
-* ])
-*
-* // new Population(input, output)
-* let neat = new Population(64, 10)
-*
-* // new Population(dataset, options)
-* let neat = new Population([
-*   { input: [0, 0], output: [0] },
-*   { input: [0, 1], output: [1] },
-*   { input: [1, 0], output: [1] },
-*   { input: [1, 1], output: [0] }
-* ], { population_size: 100 })
-*
-* // new Population(input, output, options)
-* let neat = new Population(64, 10, { population_size: 100 })
-*
-* // new Population(input, output, dataset)
-* let neat = new Population(2, 1, [
-*   { input: [0, 0], output: [0] },
-*   { input: [0, 1], output: [1] },
-*   { input: [1, 0], output: [1] },
-*   { input: [1, 1], output: [0] }
-* ])
-*
-* // new Population(input, output, dataset, options)
-* let neat = new Population(2, 1, [
-*   { input: [0, 0], output: [0] },
-*   { input: [0, 1], output: [1] },
-*   { input: [1, 0], output: [1] },
-*   { input: [1, 1], output: [0] }
-* ], { population_size: 100 })
-*
 */
-const Population = function(inputs, outputs, dataset, options) {
+const Population = function(options) {
   const self = this;
-
-  // new Population() | Nothing to do
-
-  // new Population(dataset) || new Population(options)
-  if(!(outputs || dataset || options)) {
-    if(_.isPlainObject(inputs)) options = inputs;
-    else if(Array.isArray(inputs)) dataset = inputs;
-
-    inputs = undefined;
-  }
-
-  // new Population(dataset, options)
-  else if(!(dataset || options) && Array.isArray(inputs) && _.isPlainObject(outputs)) {
-    dataset = inputs;
-    options = outputs;
-    inputs = outputs = undefined;
-  }
-
-  // new Population(input, output, options)
-  else if(!(options) && _.isInteger(inputs) && _.isInteger(outputs) && _.isPlainObject(dataset)) {
-    options = dataset;
-    dataset = undefined;
-  }
-
-
-  /**
-   * To-do:
-   *
-   * new Population(population) - leave out for now
-   * new Population(input, output)
-   * new Population(population, options) - leave out for now
-   * new Population(population, dataset) - leave out for now
-   * new Population(input, output, dataset)
-   * new Population(population, dataset, options) - leave out for now
-   * new Population(input, output, dataset, options)
-   */
 
   inputs = inputs || 1;
   outputs = outputs || 1;
