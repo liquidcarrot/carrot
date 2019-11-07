@@ -1,6 +1,8 @@
 /**
  * Generates a random integer between min and max.
  *
+ * @function randomInt
+ *
  * @param {number} min lower bound
  * @param {number} max upper bound
  * @returns {int} random integer between min and max
@@ -54,6 +56,8 @@ let shuffle = function(arr) {
 
 /**
  * This method picks a random element from an given array.
+ *
+ * @function pickRandom
  *
  * @param {[]} arr input array
  * @returns {*} the randomly chosen element
