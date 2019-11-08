@@ -8,30 +8,29 @@ const Rate = require('../../methods/rate');
 /**
  *
  * @param {int} numStates
- * @param {int} hiddenSize
  * @param {int} numActions
- * @param {int} maxExperienceSize
+ * @param options
  * @constructor
  */
-function DDPG(numStates, hiddenSize, numActions, maxExperienceSize) {
-  this.actor = new architect.Perceptron(numStates, hiddenSize, numActions);
-  this.critic = new architect.Perceptron(numStates + numActions, hiddenSize, numActions);
+function DDPG(numStates, numActions, options) {
+  // Network creation
+  let hiddenNeuronsActor = Utils.RL.getOption(options, 'hiddenNeuronsActor', [10]);
+  let hiddenNeuronsCritic = Utils.RL.getOption(options, 'hiddenNeuronsCritic', hiddenNeuronsActor);
 
-  this.actorTarget = Network.fromJSON(this.actor.toJSON());
-  this.criticTarget = Network.fromJSON(this.critic.toJSON());
+  this.actor = Utils.RL.getOption(options, 'actor', new architect.Perceptron(numStates, hiddenNeuronsActor, numActions));
+  this.critic = Utils.RL.getOption(options, 'critic', new architect.Perceptron(numStates + numActions, hiddenNeuronsCritic, numActions));
+  this.actorTarget = Utils.RL.getOption(options, 'actorTarget', Network.fromJSON(this.actor.toJSON()));
+  this.criticTarget = Utils.RL.getOption(options, 'criticTarget', Network.fromJSON(this.critic.toJSON()));
 
+  // Experience ("Memory")
+  let maxExperienceSize = Utils.RL.getOption(options, 'maxExperienceSize', true);
   this.replayBuffer = new ReplayBuffer(maxExperienceSize);
+  this.learningStepsPerEpisode = Utils.RL.getOption(options, 'learningStepsPerEpisode', 20);
 
-  this.learningStepsPerEpisode = 20;
-  this.gamma = 0.3;
-  this.tau = 0.01;
-  this.isTraining = true;
-  this.timeStep = 0;
-
-  this.action = 0;
-  this.nextState = null;
-  this.state = null;
-  this.loss = 0;
+  // Training specific variables
+  this.gamma = Utils.RL.getOption(options, 'gamma', 0.7);
+  this.tau = Utils.RL.getOption(options, 'tau', 0.01);
+  this.isTraining = Utils.RL.getOption(options, 'isTraining', true);
 
   this.learningRateActor = Utils.RL.getOption(options, 'learningRateActor', 0.1); // AKA alpha value function learning rate
   this.learningRateActorDecay = Utils.RL.getOption(options, 'learningRateActorDecay', 0.99); // AKA alpha value function learning rate
@@ -48,6 +47,17 @@ function DDPG(numStates, hiddenSize, numActions, maxExperienceSize) {
   this.learningRateCriticTarget = Utils.RL.getOption(options, 'learningRateCriticTarget', this.learningRateCritic); // AKA alpha value function learning rate
   this.learningRateCriticTargetDecay = Utils.RL.getOption(options, 'learningRateCriticTargetDecay', this.learningRateCriticDecay); // AKA alpha value function learning rate
   this.learningRateCriticTargetMin = Utils.RL.getOption(options, 'learningRateCriticTargetMin', this.learningRateCriticMin); // AKA alpha value function learning rate
+
+  // Exploration / Exploitation management
+  this.explore = Utils.RL.getOption(options, 'explore', 0.3); // AKA epsilon for epsilon-greedy policy
+  this.exploreDecay = Utils.RL.getOption(options, 'exploreDecay', 0.9999); // AKA epsilon for epsilon-greedy policy
+  this.exploreMin = Utils.RL.getOption(options, 'exploreMin', 0.01); // AKA epsilon for epsilon-greedy policy
+
+  this.timeStep = 0;
+  this.loss = 0;
+  this.action = 0;
+  this.state = null;
+  this.lastState = null;
 }
 
 DDPG.prototype = {
@@ -71,14 +81,14 @@ DDPG.prototype = {
    * @todo replacing explore with OUNoise -> Continuous Action Space
    */
   act: function(state) {
-    let action;
-    action = this.explore > Math.random()
+    let currentExploreRate = Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay}));
+    let action = currentExploreRate > Math.random()
       ? Math.floor(Math.random() * this.numActions)
       : Utils.getMaxValueIndex(this.actor.activate(state));
 
     this.action = action;
-    this.state = this.nextState;
-    this.nextState = state;
+    this.lastState = this.state;
+    this.state = state;
     return action;
   },
 
@@ -97,7 +107,7 @@ DDPG.prototype = {
     if (!this.isTraining) {
       return 1;
     }
-    let experience = new Experience(this.state, this.action, reward, this.nextState, isFinalState);
+    let experience = new Experience(this.lastState, this.action, reward, this.state, isFinalState);
     this.replayBuffer.add(experience);
 
     this.loss = this.study(experience);
