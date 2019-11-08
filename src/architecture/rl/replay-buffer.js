@@ -19,6 +19,9 @@ ReplayBuffer.prototype = {
    * @param {Experience} experience the experience to add
    */
   add: function(experience) {
+    if (experience.state === undefined) {
+      return;
+    }
     if (this.buffer.length >= this.maxSize) {
       this.buffer.shift(); // Buffer is full --> remove first entry
     }
@@ -73,10 +76,7 @@ ReplayBuffer.prototype = {
     for (let i = 0; i < size; i++) {
       for (let j = 0; j < bufferCopy.length; j++) {
         if (Math.random() <= 1 / Math.pow(2, j + 1)) { // 1/2, 1/4, 1/8, 1/16, ...
-          let experience = bufferCopy.splice(j, 1);
-          if (experience.state !== undefined) {
-            batch.push(experience);
-          }
+          batch.push(bufferCopy.splice(j, 1));
           break;
         }
       }
