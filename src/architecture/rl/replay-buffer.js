@@ -19,10 +19,6 @@ ReplayBuffer.prototype = {
    * @param {Experience} experience the experience to add
    */
   add: function(experience) {
-    if (experience.state === undefined) {
-      //Bad experience
-      return;
-    }
     if (this.buffer.length >= this.maxSize) {
       this.buffer.shift(); // Buffer is full --> remove first entry
     }
@@ -42,13 +38,16 @@ ReplayBuffer.prototype = {
     }
 
     let bufferCopy = this.buffer.slice(0);
-    let batch = [];
+    let miniBatch = [];
 
     for (let i = 0; i < size; i++) {
       //Add an random experience to the batch and remove it from the bufferCopy
-      batch.push(bufferCopy.splice(Utils.randomInt(0, bufferCopy.length - 1), 1)[0]);
+      miniBatch.push(bufferCopy.splice(Utils.randomInt(0, bufferCopy.length - 1), 1)[0]);
     }
-    return batch;
+    miniBatch.filter(function(exp) {
+      return exp.state !== undefined;
+    });
+    return miniBatch;
   },
 
   /**
@@ -86,6 +85,9 @@ ReplayBuffer.prototype = {
       //Appending elements from the front of the buffer until the MiniBatch is full
       miniBatch.push(bufferSorted.slice(0, 1)); //This should be removed
     }
+    miniBatch.filter(function(exp) {
+      return exp.state !== undefined;
+    });
     return miniBatch;
   },
 };
