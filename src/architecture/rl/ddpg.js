@@ -373,6 +373,10 @@ DDPG.prototype = {
  *   timeStep: {int},
  *   experience:{ReplayBuffer}
  * }} json JSON String JSON String which represents this DDPG agent
+ *
+ * @return {DDPG} the agent with specs from json
+ *
+ * @todo Create unit tests
  */
 DDPG.fromJSON = function(json) {
   let agent = new DDPG(json.actor.input_size, json.actor.output_size, json);
