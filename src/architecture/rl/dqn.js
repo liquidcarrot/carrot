@@ -246,8 +246,7 @@ DQN.prototype = {
     const nextActions = this.network.activate(experience.nextState, {no_trace: true});
 
     // Q(s,a) = r + gamma * max_a' Q(s',a')
-    let targetQValue;
-    targetQValue = experience.isFinalState
+    let targetQValue = experience.isFinalState
       ? experience.reward // For the final state only the current reward is important
       : experience.reward + this.gamma * nextActions[Utils.getMaxValueIndex(nextActions)];
 
