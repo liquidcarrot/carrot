@@ -1,17 +1,42 @@
 const architect = require('../architect');
 const Network = require('../network');
-const Window = require("../../util/window");
+const ReplayBuffer = require('./replay-buffer');
+const Experience = require('./experience');
+const Utils = require('../../util/utils');
 const Rate = require("../../methods/rate");
-
 
 /**
  * This function will get the value from the fieldName, if Present, otherwise returns the defaultValue
- * @param {Object} opt
+ *
+ * @param {{
+ *   hiddenNeurons: {int[]},
+ *   hiddenNeuronsB: {int[]},
+ *   network: {Network},
+ *   networkB: {Network},
+ *   learningRate: {number},
+ *   learningRateDecay: {number},
+ *   learningRateMin: {number},
+ *   learningRateB: {number},
+ *   learningRateDecayB: {number},
+ *   learningRateMinB: {number},
+ *   explore: {number},
+ *   exploreDecay: {number},
+ *   exploreMin: {number},
+ *   tdErrorClamp: {number},
+ *   isTraining: {boolean},
+ *   isDoubleDQN: {boolean},
+ *   isUsingPER: {boolean},
+ *   experienceSize: {int},
+ *   learningStepsPerIteration: {int},
+ *   timeStep: {int},
+ *   gamma: {number}
+ * }} opt JSON object which contains all custom options
  * @param {String} fieldName
- * @param {number|boolean} defaultValue
- * @return {Number | number[]} the value of the fileName if Present, otherwise the defaultValue
+ * @param {*} defaultValue
+ * @return {*} the value of the fileName if Present, otherwise the defaultValue
+ * @todo Consider outsourcing to utils.js
  */
-function getopt(opt, fieldName, defaultValue) {
+function getOption(opt, fieldName, defaultValue) {
   if (typeof opt === 'undefined') {
     return defaultValue;
   }
@@ -19,56 +44,90 @@ function getopt(opt, fieldName, defaultValue) {
 }
 
 /**
-* Creates a DQN network
-*
-* Used to do reinforcement learning
-*
-* @alpha
-*
-* @constructs DQN
-*
-* @param {int} numActions Maximum number of actions the agent can do,
-* @param {int} numStates Length of the state array
-* @param {Object} options Options object
-* 
-* @todo Allow underlying Network to have arbitrary layer structure
-* @todo Add test & custom network input / output size validation
+ * Creates a DQN network
+ *
+ * Used to do reinforcement learning with an DQN Agent
+ *
+ * @beta
+ *
+ * @constructs DQN
+ *
+ * @param {int} numActions Maximum number of actions the agent can do,
+ * @param {int} numStates Length of the state array
+ * @param {{
+ *   hiddenNeurons: {int[]},
+ *   hiddenNeuronsB: {int[]},
+ *   network: {Network},
+ *   networkB: {Network},
+ *   learningRate: {number},
+ *   learningRateDecay: {number},
+ *   learningRateMin: {number},
+ *   learningRateB: {number},
+ *   learningRateDecayB: {number},
+ *   learningRateMinB: {number},
+ *   explore: {number},
+ *   exploreDecay: {number},
+ *   exploreMin: {number},
+ *   tdErrorClamp: {number},
+ *   isTraining: {boolean},
+ *   isDoubleDQN: {boolean},
+ *   isUsingPER: {boolean},
+ *   experienceSize: {int},
+ *   learningStepsPerIteration: {int},
+ *   timeStep: {int},
+ *   gamma: {number}
+ * }} options JSON object which contains all custom options
+ *
+ * @todo Allow underlying Network to have arbitrary layer structure
+ * @todo Add test & custom network input / output size validation
+ * @todo Maybe automatically suggest default values for the num of states and actions
+ * @todo Allow Liquid networks trained with NEAT
+ * @todo consider default value of isDoubleDQN to be true
 */
-function DQN(numActions, numStates, opt) {
-  // Network Sizing
-  this.numStates = numStates;
-  this.numActions = numActions;
-  this.hiddenNeurons = getopt(opt, 'hiddenNeurons', [10]);
-  this.network = getopt(opt, 'network', new architect.Perceptron(numStates, ...this.hiddenNeurons, numActions));
+function DQN(numStates, numActions, options) {
+  // Training specific variables
+  this.tdErrorClamp = getOption(options, 'tdErrorClamp', 1); // td error clamp for training stability
+  this.isTraining = getOption(options, 'isTraining', true); // set training mode on and off
+  this.isDoubleDQN = getOption(options, 'isDoubleDQN', false); // using Double-DQN
+  this.isUsingPER = getOption(options, 'isUsingPER', true); // using prioritized experience replay
+  this.gamma = getOption(options, 'gamma', 0.7); // future reward discount factor
 
-  // Network & state memory
+  // Network creation
+  this.numActions = numActions;
+  this.hiddenNeurons = getOption(options, 'hiddenNeurons', [10]);
+  this.hiddenNeuronsB = getOption(options, 'hiddenNeuronsB', this.hiddenNeurons);
+  this.network = getOption(options, 'network', new architect.Perceptron(numStates, ...this.hiddenNeurons, numActions));
+  this.networkB = this.isDoubleDQN
+    ? getOption(options, 'networkB', new architect.Perceptron(numStates, ...this.hiddenNeuronsB, numActions))
+    : null;
+
+  // Learning rate
+  this.learningRate = getOption(options, 'learningRate', 0.1); // AKA alpha value function learning rate
+  this.learningRateDecay = getOption(options, 'learningRateDecay', 0.99); // AKA alpha value function learning rate
+  this.learningRateMin = getOption(options, 'learningRateMin', 0.01); // AKA alpha value function learning rate
+  if (this.isDoubleDQN) {
+    this.learningRateB = getOption(options, 'learningRateB', this.learningRate); // AKA alpha value function learning rate
+    this.learningRateDecayB = getOption(options, 'learningRateDecayB', this.learningRateDecay); // AKA alpha value function learning rate
+    this.learningRateMinB = getOption(options, 'learningRateMinB', this.learningRateMin); // AKA alpha value function learning rate
+  }
+
+  // Experience ("Memory")
+  let experienceSize = getOption(options, 'experienceSize', 50000); // size of experience replay
+  this.experience = new ReplayBuffer(experienceSize); // experience
+  this.learningStepsPerIteration = getOption(options, 'learningStepsPerIteration', 20); // number of time steps before we add another experience to replay memory
+
+  // Exploration / Exploitation management
+  this.explore = getOption(options, 'explore', 0.3); // AKA epsilon for epsilon-greedy policy
+  this.exploreDecay = getOption(options, 'exploreDecay', 0.9999); // AKA epsilon for epsilon-greedy policy
+  this.exploreMin = getOption(options, 'exploreMin', 0.01); // AKA epsilon for epsilon-greedy policy
+
+  // Set variables to null | 0
+  this.loss = 0;
+  this.timeStep = 0;
   this.reward = null;
   this.state = null;
   this.nextState = null;
   this.action = null;
-  this.nextAction = null;
-
-  // Learning and update
-  this.learningRate = getopt(opt, 'learningRate', 0.1); // AKA alpha value function learning rate
-  this.learningRateDecay = getopt(opt, 'learningRateDecay', 0.99); // AKA alpha value function learning rate
-  this.learningRateMin = getopt(opt, 'learningRateMin', 0.01); // AKA alpha value function learning rate
-  this.loss = 0;
-  this.tderrorClamp = getopt(opt, 'tderrorClamp', 1);
-  this.isTraining = getopt(opt, 'isTraining', true);
-
-  // Experience Replay
-  let experienceSize = getopt(opt, 'experience_size', 50000); // size of experience replay
-  this.experience = new Window(experienceSize, true); // experience
-  this.learningStepsPerIteration = getopt(opt, 'learning_steps_per_iteration', 20); // number of time steps before we add another experience to replay memory
-  this.timeStep = 0;
-
-  // Exploration / Exploitation management
-  this.explore = getopt(opt, 'explore', 0.05); // AKA epsilon for epsilon-greedy policy
-  this.exploreDecay = getopt(opt, 'exploreDecay', 0.99); // AKA epsilon for epsilon-greedy policy
-  this.exploreMin = getopt(opt, 'exploreMin', 0); // AKA epsilon for epsilon-greedy policy
-
-  // Reward calculation
-  this.gamma = getopt(opt, 'gamma', 0.1); // future reward discount factor
 }
 
 DQN.prototype = {
@@ -78,11 +137,39 @@ DQN.prototype = {
    * @function toJSON
    * @memberof DQN
    *
-   * @return {JSON} JSON String which represents the current DQN agent
+   * @return {{
+   *   network: {
+   *     input:{number},
+   *     output:{number},
+   *     dropout:{number},
+   *     nodes:Array<object>,
+   *     connections:Array<object>
+   *   },
+   *   networkB: {
+   *     input:{number},
+   *     output:{number},
+   *     dropout:{number},
+   *     nodes:Array<object>,
+   *     connections:Array<object>
+   *   },
+   *   gamma:{number},
+   *   explore:{number},
+   *   exploreDecay:{number},
+   *   exploreMin:{number},
+   *   learningRate:{number},
+   *   learningRateDecay:{number},
+   *   learningRateMin:{number},
+   *   isTraining:{boolean},
+   *   isDoubleDQN:{boolean},
+   *   experience:{ReplayBuffer}
+   * }} json JSON String JSON String which represents this DQN agent
+   *
+   * @todo Create unit test
    */
   toJSON: function () {
     let json = {};
-    json.net = this.network.toJSON();
+    json.network = this.network.toJSON();
+    json.networkB = this.isDoubleDQN ? this.networkB.toJSON() : null;
     json.gamma = this.gamma;
     json.explore = this.explore;
     json.exploreDecay = this.exploreDecay;
@@ -91,6 +178,7 @@ DQN.prototype = {
     json.learningRateDecay = this.learningRateDecay;
     json.learningRateMin = this.learningRateMin;
     json.isTraining = this.isTraining;
+    json.isDoubleDQN = this.isDoubleDQN;
     json.experience = this.experience;
     return json;
   },
@@ -100,27 +188,41 @@ DQN.prototype = {
    *
    * Decision based on exploration rate set by `.explore`.
    *
-   * Infinite explore = Network always explores states randomly.
-   * Zero explore = network always picks the action it thinks best from known states.
+   * explore ∈ [0,1]
+   * explore == 1 --> Network always explores states randomly.
+   * explore == 0 --> Network always picks the action it thinks best from known states.
    *
-   * Best: High explore at first then less explore as network is more experienced.
+   * Best strategy: High explore at first then less explore as network is more experienced.
    *
    * @function act
    * @memberof DQN
    *
-   * @param {number[]} state current state (float arr with values between 0 and 1)
-   * @returns {number} The action which the DQN would take at this state (represented by an index)
+   * @param {number[]} state current state (float arr with values from [0,1])
+   * @return {int} The action which the DQN would take at this state; action ∈ [0, this.numActions-1]
    *
    * @todo Add ability to select strategies
    * @todo Add Thompson Sampling strategy
    */
   act: function (state) {
-    // epsilon greedy strategy | explore > random = explore; else exploit
-    const action = (Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay})) > Math.random())
-      ? Math.floor(Math.random() * this.numActions) // random "explore" action
-      : this.getMaxValueIndex(this.network.activate(state)) // deliberate "exploit" action
+    // epsilon greedy strategy | explore > random ? explore : exploit
+    let currentExploreRate = Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay}));
+    let action;
+    if (currentExploreRate > Math.random()) {
+      //Explore
+      action = Utils.randomInt(0, this.numActions - 1);
+    } else if (this.isDoubleDQN) {
+      // Exploit with Double-DQN
+      // Take action which is maximum of both networks by summing them up
+      let activation = this.network.activate(state, {no_trace: true});
+      let activationB = this.networkB.activate(state, {no_trace: true});
+      let sum = activation.map((elem, index) => elem + activationB[index]);
+      action = Utils.getMaxValueIndex(sum);
+    } else {
+      // Exploit
+      action = Utils.getMaxValueIndex(this.network.activate(state, {no_trace: true}));
+    }
 
-    // shift state memory
+    // keep this in memory for learning
     this.state = this.nextState;
     this.action = this.nextAction;
     this.nextState = state;
@@ -135,23 +237,33 @@ DQN.prototype = {
    * @function learn
    * @memberof DQN
    *
-   * @param {number} newReward the current reward, the agent receives from the environment
-   * @returns {number} the loss value
+   * @param {number} newReward the current reward, the agent receives from the environment; newReward ∈ [-1,1]
+   * @param {boolean} isFinalState Does the game ends at this state?
+   * @returns {number} the loss value; loss ∈ [-1,1]
    *
-   * @todo Add prioritized experience replay
    * @todo Add hindsight experience replay
    */
-  learn: function (newReward) {
+  learn: function(newReward, isFinalState = false) {
+    // Normalizing reward:
+    // newReward ∈ [-1,1] --> normalizedReward ∈ [0,1]
+    const normalizedReward = (1 + newReward) / 2;
+
     // Update Q function | temporal difference method currently hardcoded
     if (this.reward != null && this.isTraining) {
+      let experience = new Experience(this.state, this.action, normalizedReward, this.nextState, isFinalState);
       // Learn from current estimated reward to understand how wrong agent is
-      this.loss = this.study(this.state, this.action, this.reward, this.nextState);
+      experience.loss = this.study(experience);
+      this.loss = experience.loss;
 
-      // Too random, should pick experiences by their loss value
-      this.experience.add([this.state, this.action, this.reward, this.nextState, this.loss]);
+      this.experience.add(experience);
 
-      for (let i = 0; i < this.learningStepsPerIteration; i++) {
-        this.study(...this.experience.pickRandom());
+      let miniBatch = this.isUsingPER
+        ? this.experience.getMiniBatchWithPER(this.learningStepsPerIteration)
+        : this.experience.getRandomMiniBatch(this.learningStepsPerIteration);
+
+      //Sample the mini batch
+      for (let i = 0; i < miniBatch.length; i++) {
+        this.study(miniBatch[i]);
       }
     }
     this.timeStep++;
@@ -165,100 +277,107 @@ DQN.prototype = {
    * @function study
    * @memberof DQN
    *
-   * @param {number[]} state current state
-   * @param {number} action action taken in current state
-   * @param {number} reward reward received for the action in the current state
-   * @param {number[]} nextState the state which follows the current state with the action taken
-   * @returns {number} TDError Roughly, an experiential measure of surprise / insight for the network at this state-action.
+   * @param {Experience} experience the experience to learn from
+   * @returns {number} TDError Roughly, an experiential measure of surprise / insight for the network at this state-action; tdError ∈ [-1,1]
    *
    * @todo Add dynamic loss functions & clamps, including Huber Loss
    * @todo Add target network to increase reliability
    * @todo Consider not using a target network: https://www.ijcai.org/proceedings/2019/0379.pdf
+   * @todo Consider renaming to sample(experience)
    */
-  study: function (state, action, reward, nextState) {
-    // Compute target Q value, called without traces so it won't affect backprop
-    const nextActions = this.network.activate(nextState, {no_trace: true});
+  study: function(experience) {
+    let chooseNetwork = !this.isDoubleDQN || Math.random() < 0.5 ? 'A' : 'B';
 
-    // Q(s,a) = r + gamma * max_a' Q(s',a')
-    const targetQValue = (1 + reward) / 2 + this.gamma * nextActions[this.getMaxValueIndex(nextActions)];
+    // Compute target Q value, called without traces so it won't affect backpropagation later
+    let nextActions = !this.isDoubleDQN || chooseNetwork === 'A'
+      ? this.network.activate(experience.nextState, {no_trace: true})
+      : this.networkB.activate(experience.nextState, {no_trace: true});
+    let maxValueIndexNextActions = Utils.getMaxValueIndex(nextActions);
 
-    // Predicted current reward | called with traces for backprop later
-    const predictedReward = this.network.activate(state);
+    let targetQValue;
+    if (experience.isFinalState) {
+      targetQValue = experience.reward;
+    } else if (this.isDoubleDQN) {
+      //See here: https://bit.ly/2rjp1gS
+      targetQValue = experience.reward + this.gamma *
+        (chooseNetwork === 'A'
+          ? this.networkB.activate(experience.nextState, {no_trace: true})[maxValueIndexNextActions]
+          : this.network.activate(experience.nextState, {no_trace: true})[maxValueIndexNextActions]) -
+        (chooseNetwork === 'A'
+          ? this.network.activate(experience.state, {no_trace: true})[experience.action]
+          : this.networkB.activate(experience.state, {no_trace: true})[experience.action]);
+    } else {
+      // Q(s,a) = r + gamma * max_a' Q(s',a')
+      targetQValue = experience.reward + this.gamma * nextActions[maxValueIndexNextActions];
+    }
 
-    let tdError = predictedReward[action] - targetQValue;
+    // Predicted current reward | called with traces for backpropagation later
+    let predictedReward;
+    predictedReward = !this.isDoubleDQN || chooseNetwork === 'A'
+      ? this.network.activate(experience.state)
+      : this.networkB.activate(experience.state);
 
-    // Clamp error for robustness | ToDo: huber loss
-    if (Math.abs(tdError) > this.tderrorClamp) {
-      tdError = tdError > this.tderrorClamp ? this.tderrorClamp : -this.tderrorClamp;
+    let tdError = predictedReward[experience.action] - targetQValue;
+
+    // Clamp error for robustness
+    if (Math.abs(tdError) > this.tdErrorClamp) {
+      tdError = tdError > this.tdErrorClamp ? this.tdErrorClamp : -this.tdErrorClamp;
     }
 
     // Backpropagation using temporal difference error
-    predictedReward[action] = targetQValue;
-    this.network.propagate(Math.max(this.learningRateMin, Rate.EXP(this.learningRate, this.timeStep, {gamma: this.learningRateDecay})), 0, true, predictedReward);
+    predictedReward[experience.action] = targetQValue;
+    if (!this.isDoubleDQN || chooseNetwork === 'A') {
+      let currentLearningRate = Math.max(this.learningRateMin, Rate.EXP(this.learningRate, this.timeStep, {gamma: this.learningRateDecay}));
+      this.network.propagate(currentLearningRate, 0, true, predictedReward);
+    } else {
+      let currentLearningRate = Math.max(this.learningRateMinB, Rate.EXP(this.learningRateB, this.timeStep, {gamma: this.learningRateDecayB}));
+      this.networkB.propagate(currentLearningRate, 0, true, predictedReward);
+    }
     return tdError;
   },
-
-  /**
-   * This method returns the index of the element with the highest value
-   *
-   * @function getMaxValueIndex
-   * @memberof DQN
-   *
-   * @param {number[]} arr the input array
-   * @returns {number} the index which the highest value
-   *
-   * @todo Create unit test
-   */
-  getMaxValueIndex: function (arr) {
-    let index = 0;
-    let maxValue = arr[0];
-    for (let i = 1; i < arr.length; i++) {
-      if (arr[i] > maxValue) {
-        maxValue = arr[i];
-        index = i;
-      }
-    }
-    return index;
-  },
-
-  /**
-   * Setter for variable "isTraining"
-   *
-   * @function setTraining
-   * @memberof DQN
-   *
-   * @param val new value
-   * @todo Consider removing
-   */
-  setTraining: function (val) {
-    this.isTraining = val;
-  }
 };
 
 /**
- * Loads function
+ * Load function
  *
  * @function fromJSON
  * @memberof DQN
  *
- * @param {JSON} json  JSON String
+ * @param {{
+ *   network:{
+ *     input:{number},
+ *     output:{number},
+ *     dropout:{number},
+ *     nodes:Array<object>,
+ *     connections:Array<object>
+ *   },
+ *   networkB:{
+ *     input:{number},
+ *     output:{number},
+ *     dropout:{number},
+ *     nodes:Array<object>,
+ *     connections:Array<object>
+ *   },
+ *   gamma:{number},
+ *   explore:{number},
+ *   exploreDecay:{number},
+ *   exploreMin:{number},
+ *   learningRate:{number},
+ *   learningRateDecay:{number},
+ *   learningRateMin:{number},
+ *   isTraining:{boolean},
+ *   isDoubleDQN:{boolean},
+ *   experience:{ReplayBuffer}
+ * }} json  JSON String
  * @return {DQN} Agent with the specs from the json
+ *
+ * @todo Create unit test
  */
 DQN.fromJSON = function (json) {
-  let network = Network.fromJSON(json);
-  let agent = new DQN(network.input_size, network.output_size, {});
+  json.network = json.network instanceof Network ? json.network : Network.fromJSON(json.network);
+  json.networkB = json.networkB instanceof Network ? json.networkB : Network.fromJSON(json.networkB);
 
-  agent.gamma = json.gamma;
-  agent.explore = json.explore;
-  agent.exploreDecay = json.exploreDecay;
-  agent.exploreMin = json.exploreMin;
-  agent.learningRate = json.learningRate;
-  agent.learningRateDecay = json.learningRateDecay;
-  agent.learningRateMin = json.learningRateMin;
-  agent.isTraining = json.isTraining;
-  agent.experience = json.experience;
-
-  return agent;
+  return new DQN(json.network.input_size, json.network.output_size, json);
 };
 
 module.exports = DQN;
