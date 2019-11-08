@@ -87,29 +87,7 @@ RL = {
   /**
    * This function will get the value from the fieldName, if Present, otherwise returns the defaultValue
    *
-   * @param {{
-   *   hiddenNeurons: {int[]},
-   *   hiddenNeuronsB: {int[]},
-   *   network: {Network},
-   *   networkB: {Network},
-   *   learningRate: {number},
-   *   learningRateDecay: {number},
-   *   learningRateMin: {number},
-   *   learningRateB: {number},
-   *   learningRateDecayB: {number},
-   *   learningRateMinB: {number},
-   *   explore: {number},
-   *   exploreDecay: {number},
-   *   exploreMin: {number},
-   *   tdErrorClamp: {number},
-   *   isTraining: {boolean},
-   *   isDoubleDQN: {boolean},
-   *   isUsingPER: {boolean},
-   *   experienceSize: {int},
-   *   learningStepsPerIteration: {int},
-   *   timeStep: {int},
-   *   gamma: {number}
-   * }} opt JSON object which contains all custom options
+   * @param {*} opt JSON object which contains all custom options
    * @param {String} fieldName
    * @param {*} defaultValue
    * @return {*} the value of the fileName if Present, otherwise the defaultValue

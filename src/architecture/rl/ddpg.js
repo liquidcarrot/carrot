@@ -9,7 +9,35 @@ const Rate = require('../../methods/rate');
  *
  * @param {int} numStates
  * @param {int} numActions
- * @param options
+ * @param {{
+ *   hiddenNeuronsActor: {int[]},
+ *   hiddenNeuronsCritic: {int[]},
+ *   actor: {Network},
+ *   critic: {Network},
+ *   actorTarget: {Network},
+ *   criticTarget: {Network},
+ *   learningRateActor: {number},
+ *   learningRateActorDecay: {number},
+ *   learningRateActorMin: {number},
+ *   learningRateCritic: {number},
+ *   learningRateCriticDecay: {number},
+ *   learningRateCriticMin: {number},
+ *   learningRateActorTarget: {number},
+ *   learningRateActorTargetDecay: {number},
+ *   learningRateActorTargetMin: {number},
+ *   learningRateCriticTarget: {number},
+ *   learningRateCriticTargetDecay: {number},
+ *   learningRateCriticTargetMin: {number},
+ *   explore: {number},
+ *   exploreDecay: {number},
+ *   exploreMin: {number},
+ *   isTraining: {boolean},
+ *   isUsingPER: {boolean},
+ *   experienceSize: {int},
+ *   learningStepsPerIteration: {int},
+ *   timeStep: {int},
+ *   gamma: {number}
+ * }} options
  * @constructor
  */
 function DDPG(numStates, numActions, options) {
@@ -23,14 +51,15 @@ function DDPG(numStates, numActions, options) {
   this.criticTarget = Utils.RL.getOption(options, 'criticTarget', Network.fromJSON(this.critic.toJSON()));
 
   // Experience ("Memory")
-  let maxExperienceSize = Utils.RL.getOption(options, 'maxExperienceSize', true);
-  this.replayBuffer = new ReplayBuffer(maxExperienceSize);
+  let experienceSize = Utils.RL.getOption(options, 'experienceSize', 50000);
+  this.replayBuffer = new ReplayBuffer(experienceSize);
   this.learningStepsPerEpisode = Utils.RL.getOption(options, 'learningStepsPerEpisode', 20);
 
   // Training specific variables
   this.gamma = Utils.RL.getOption(options, 'gamma', 0.7);
   this.tau = Utils.RL.getOption(options, 'tau', 0.01);
   this.isTraining = Utils.RL.getOption(options, 'isTraining', true);
+  this.isUsingPER = Utils.RL.getOption(options, 'isUsingPER', true); // using prioritized experience replay
 
   this.learningRateActor = Utils.RL.getOption(options, 'learningRateActor', 0.1); // AKA alpha value function learning rate
   this.learningRateActorDecay = Utils.RL.getOption(options, 'learningRateActorDecay', 0.99); // AKA alpha value function learning rate
@@ -112,7 +141,10 @@ DDPG.prototype = {
 
     this.loss = this.study(experience);
 
-    let miniBatch = this.replayBuffer.getMiniBatchWithPER(this.learningStepsPerEpisode);
+    let miniBatch = this.isUsingPER
+      ? this.replayBuffer.getMiniBatchWithPER(this.learningStepsPerEpisode)
+      : this.replayBuffer.getRandomMiniBatch(this.learningStepsPerEpisode);
+
     for (let i = 0; i < miniBatch.length; i++) {
       this.study(miniBatch[i]);
     }
