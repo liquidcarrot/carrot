@@ -2,6 +2,35 @@ const DQN = require('../../../../src/architecture/rl/dqn.js');
 const Network = require('../../../../src/architecture/network');
 const {expect} = require('chai');
 
+function testLearning(agent) {
+  let currentState = 0.5;
+  let lastState = currentState;
+  let currentLoss;
+  let windowSize = 100;
+  let rewardWindow = [];
+  let rewardSum = 0;
+
+  for (let i = 0; i < windowSize || rewardSum / windowSize < 0.9; i++) {
+    let action = agent.act([currentState]);
+    currentState = action === 1 ?
+      Math.min(1, currentState + 0.5) :
+      Math.max(0, currentState - 0.5);
+
+    let reward = currentState === lastState ? -1 : 1;
+    currentLoss = agent.learn(reward);
+
+    rewardWindow.push(reward);
+    rewardSum += reward;
+    if (rewardWindow.length > windowSize) {
+      rewardSum -= rewardWindow.shift();
+    }
+
+    lastState = currentState;
+  }
+
+  return rewardSum / windowSize;
+}
+
 describe('DQN', function () {
   it('Object creation', function () {
     for (let i = 0; i < 100; i++) {
@@ -20,33 +49,7 @@ describe('DQN', function () {
       explore: 0,
       isDoubleDQN: false,
     });
-
-    let currentState = 0.5;
-    let lastState = currentState;
-    let currentLoss;
-    let windowSize = 100;
-    let rewardWindow = [];
-    let rewardSum = 0;
-
-    for (let i = 0; i < windowSize || rewardSum / windowSize < 0.9; i++) {
-      let action = agent.act([currentState]);
-      currentState = action === 1 ?
-        Math.min(1, currentState + 0.5) :
-        Math.max(0, currentState - 0.5);
-
-      let reward = currentState === lastState ? -1 : 1;
-      currentLoss = agent.learn(reward);
-
-      rewardWindow.push(reward);
-      rewardSum += reward;
-      if (rewardWindow.length > windowSize) {
-        rewardSum -= rewardWindow.shift();
-      }
-
-      lastState = currentState;
-    }
-
-    expect(rewardSum / windowSize >= 0.9).to.be.true;
+    expect(testLearning(agent) >= 0.9).to.be.true;
   });
 
   it('test learning capabilities with Double-DQN', function() {
@@ -56,33 +59,7 @@ describe('DQN', function () {
       explore: 0,
       isDoubleDQN: true,
     });
-
-    let currentState = 0.5;
-    let lastState = currentState;
-    let currentLoss;
-    let windowSize = 100;
-    let rewardWindow = [];
-    let rewardSum = 0;
-
-    for (let i = 0; i < windowSize || rewardSum / windowSize < 0.9; i++) {
-      let action = agent.act([currentState]);
-      currentState = action === 1 ?
-        Math.min(1, currentState + 0.5) :
-        Math.max(0, currentState - 0.5);
-
-      let reward = currentState === lastState ? -1 : 1;
-      currentLoss = agent.learn(reward);
-
-      rewardWindow.push(reward);
-      rewardSum += reward;
-      if (rewardWindow.length > windowSize) {
-        rewardSum -= rewardWindow.shift();
-      }
-
-      lastState = currentState;
-    }
-
-    expect(rewardSum / windowSize >= 0.9).to.be.true;
+    expect(testLearning(agent) >= 0.9).to.be.true;
   });
 
   it('Should accept a custom network as a constructor option', function () {
