@@ -55,10 +55,6 @@ ReplayBuffer.prototype = {
    * @returns {Experience[]} mini batch chosen with PER
    *
    * @todo Create unit test
-   * @todo consider using another series for probability distribution
-   *       because sometimes the length of the MiniBatch is not equal to the size given as param.
-   *       Look at: https://www.freecodecamp.org/news/improvements-in-deep-q-learning-dueling-double-dqn-prioritized-experience-replay-and-fixed-58b130cc5682/
-   *       And remove the while loop at the end
    */
   getMiniBatchWithPER(size) {
     if (size >= this.buffer.length) {
@@ -66,35 +62,27 @@ ReplayBuffer.prototype = {
       return this.buffer;
     }
 
+    let sumOfAbsLosses = 0;
+    for (let i = 0; i < this.buffer.length; i++) {
+      sumOfAbsLosses += Math.abs(this.buffer[i].loss);
+    }
+
     let miniBatch = [];
-    let bufferSorted = ReplayBuffer.sortByAbsLoss(this.buffer.slice(0));
+    let bufferCopy = this.buffer.slice(0);
 
     for (let i = 0; i < size; i++) {
-      for (let j = 0; j < bufferSorted.length; j++) {
-        //For bufferSorted.length is equal to infinity
-        if (Math.random() <= 1 / Math.pow(2, j + 1)) { // 1/2, 1/4, 1/8, 1/16, ...
-          miniBatch.push(bufferSorted.splice(j, 1)[0]);
+      for (let j = 0; j < bufferCopy.length; j++) {
+        if (Math.random() <= Math.abs(bufferCopy[j].loss) / sumOfAbsLosses) {
+          let exp = bufferCopy.splice(j, 1)[0];
+          miniBatch.push(exp);
+          sumOfAbsLosses -= Math.abs(exp.loss);
           break;
         }
       }
     }
 
-    while (miniBatch.length < size) {
-      //Appending elements from the front of the buffer until the MiniBatch is full
-      miniBatch.push(bufferSorted.splice(0, 1)[0]); //This should be removed
-    }
     return miniBatch;
   },
-};
-
-/**
- * Sorts the buffer descending by the absolute loss values.
- *
- * @param {Experience[]} buffer unsorted input buffer
- * @returns {Experience[]} descending sorted buffer
- */
-ReplayBuffer.sortByAbsLoss = function(buffer) {
-  return buffer.sort((a, b) => Math.abs(b.loss) - Math.abs(a.loss));
 };
 
 module.exports = ReplayBuffer;
