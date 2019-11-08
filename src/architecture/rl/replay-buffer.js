@@ -10,6 +10,7 @@ const Utils = require('../../util/utils');
 function ReplayBuffer(maxSize) {
   this.buffer = [];
   this.maxSize = maxSize;
+  this.sumOfAbsLosses = 0;
 }
 
 ReplayBuffer.prototype = {
@@ -20,9 +21,10 @@ ReplayBuffer.prototype = {
    */
   add: function(experience) {
     if (this.buffer.length >= this.maxSize) {
-      this.buffer.shift(); // Buffer is full --> remove first entry
+      this.sumOfAbsLosses -= this.buffer.shift().loss; // Buffer is full --> remove first entry
     }
     this.buffer.push(experience);
+    this.sumOfAbsLosses += Math.abs(experience.loss);
   },
 
   /**
@@ -62,20 +64,16 @@ ReplayBuffer.prototype = {
       return this.buffer;
     }
 
-    let sumOfAbsLosses = 0;
-    for (let i = 0; i < this.buffer.length; i++) {
-      sumOfAbsLosses += Math.abs(this.buffer[i].loss);
-    }
-
     let miniBatch = [];
     let bufferCopy = this.buffer.slice(0);
+    let sumOfAbsLossesCopy = this.sumOfAbsLosses;
 
     for (let i = 0; i < size; i++) {
       for (let j = 0; j < bufferCopy.length; j++) {
-        if (Math.random() <= Math.abs(bufferCopy[j].loss) / sumOfAbsLosses) {
+        if (Math.random() <= Math.abs(bufferCopy[j].loss) / sumOfAbsLossesCopy) {
           let exp = bufferCopy.splice(j, 1)[0];
           miniBatch.push(exp);
-          sumOfAbsLosses -= Math.abs(exp.loss);
+          sumOfAbsLossesCopy -= Math.abs(exp.loss);
           break;
         }
       }
