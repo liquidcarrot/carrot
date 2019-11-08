@@ -81,7 +81,7 @@ ReplayBuffer.prototype = {
 
     while (miniBatch.length < size) {
       //Appending elements from the front of the buffer until the MiniBatch is full
-      miniBatch.push(bufferSorted.slice(0, 1)); //This should be removed
+      miniBatch.push(bufferSorted.splice(0, 1)[0]); //This should be removed
     }
     return miniBatch;
   },
