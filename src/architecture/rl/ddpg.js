@@ -9,35 +9,7 @@ const Rate = require('../../methods/rate');
  *
  * @param {int} numStates
  * @param {int} numActions
- * @param {{
- *   hiddenNeuronsActor: {int[]},
- *   hiddenNeuronsCritic: {int[]},
- *   actor: {Network},
- *   critic: {Network},
- *   actorTarget: {Network},
- *   criticTarget: {Network},
- *   learningRateActor: {number},
- *   learningRateActorDecay: {number},
- *   learningRateActorMin: {number},
- *   learningRateCritic: {number},
- *   learningRateCriticDecay: {number},
- *   learningRateCriticMin: {number},
- *   learningRateActorTarget: {number},
- *   learningRateActorTargetDecay: {number},
- *   learningRateActorTargetMin: {number},
- *   learningRateCriticTarget: {number},
- *   learningRateCriticTargetDecay: {number},
- *   learningRateCriticTargetMin: {number},
- *   explore: {number},
- *   exploreDecay: {number},
- *   exploreMin: {number},
- *   isTraining: {boolean},
- *   isUsingPER: {boolean},
- *   experienceSize: {int},
- *   learningStepsPerIteration: {int},
- *   timeStep: {int},
- *   gamma: {number}
- * }} options
+ * @param options
  * @constructor
  */
 function DDPG(numStates, numActions, options) {
