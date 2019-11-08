@@ -83,8 +83,49 @@ let mean = function(arr) {
   return sum / arr.length;
 };
 
+RL = {
+  /**
+   * This function will get the value from the fieldName, if Present, otherwise returns the defaultValue
+   *
+   * @param {{
+   *   hiddenNeurons: {int[]},
+   *   hiddenNeuronsB: {int[]},
+   *   network: {Network},
+   *   networkB: {Network},
+   *   learningRate: {number},
+   *   learningRateDecay: {number},
+   *   learningRateMin: {number},
+   *   learningRateB: {number},
+   *   learningRateDecayB: {number},
+   *   learningRateMinB: {number},
+   *   explore: {number},
+   *   exploreDecay: {number},
+   *   exploreMin: {number},
+   *   tdErrorClamp: {number},
+   *   isTraining: {boolean},
+   *   isDoubleDQN: {boolean},
+   *   isUsingPER: {boolean},
+   *   experienceSize: {int},
+   *   learningStepsPerIteration: {int},
+   *   timeStep: {int},
+   *   gamma: {number}
+   * }} opt JSON object which contains all custom options
+   * @param {String} fieldName
+   * @param {*} defaultValue
+   * @return {*} the value of the fileName if Present, otherwise the defaultValue
+   * @todo Consider outsourcing to utils.js
+   */
+  getOption: function(opt, fieldName, defaultValue) {
+    if (typeof opt === 'undefined') {
+      return defaultValue;
+    }
+    return (typeof opt[fieldName] !== 'undefined') ? opt[fieldName] : defaultValue;
+  },
+};
+
 module.exports.getMaxValueIndex = getMaxValueIndex;
 module.exports.shuffle = shuffle;
 module.exports.randomInt = randomInt;
 module.exports.pickRandom = pickRandom;
 module.exports.mean = mean;
+module.exports.RL = RL;

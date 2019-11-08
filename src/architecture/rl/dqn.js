@@ -6,44 +6,6 @@ const Utils = require('../../util/utils');
 const Rate = require("../../methods/rate");
 
 /**
- * This function will get the value from the fieldName, if Present, otherwise returns the defaultValue
- *
- * @param {{
- *   hiddenNeurons: {int[]},
- *   hiddenNeuronsB: {int[]},
- *   network: {Network},
- *   networkB: {Network},
- *   learningRate: {number},
- *   learningRateDecay: {number},
- *   learningRateMin: {number},
- *   learningRateB: {number},
- *   learningRateDecayB: {number},
- *   learningRateMinB: {number},
- *   explore: {number},
- *   exploreDecay: {number},
- *   exploreMin: {number},
- *   tdErrorClamp: {number},
- *   isTraining: {boolean},
- *   isDoubleDQN: {boolean},
- *   isUsingPER: {boolean},
- *   experienceSize: {int},
- *   learningStepsPerIteration: {int},
- *   timeStep: {int},
- *   gamma: {number}
- * }} opt JSON object which contains all custom options
- * @param {String} fieldName
- * @param {*} defaultValue
- * @return {*} the value of the fileName if Present, otherwise the defaultValue
- * @todo Consider outsourcing to utils.js
- */
-function getOption(opt, fieldName, defaultValue) {
-  if (typeof opt === 'undefined') {
-    return defaultValue;
-  }
-  return (typeof opt[fieldName] !== 'undefined') ? opt[fieldName] : defaultValue;
-}
-
-/**
  * Creates a DQN network
  *
  * Used to do reinforcement learning with an DQN Agent
@@ -86,40 +48,40 @@ function getOption(opt, fieldName, defaultValue) {
 */
 function DQN(numStates, numActions, options) {
   // Training specific variables
-  this.tdErrorClamp = getOption(options, 'tdErrorClamp', 1); // td error clamp for training stability
-  this.isTraining = getOption(options, 'isTraining', true); // set training mode on and off
-  this.isDoubleDQN = getOption(options, 'isDoubleDQN', false); // using Double-DQN
-  this.isUsingPER = getOption(options, 'isUsingPER', true); // using prioritized experience replay
-  this.gamma = getOption(options, 'gamma', 0.7); // future reward discount factor
+  this.tdErrorClamp = Utils.RL.getOption(options, 'tdErrorClamp', 1); // td error clamp for training stability
+  this.isTraining = Utils.RL.getOption(options, 'isTraining', true); // set training mode on and off
+  this.isDoubleDQN = Utils.RL.getOption(options, 'isDoubleDQN', false); // using Double-DQN
+  this.isUsingPER = Utils.RL.getOption(options, 'isUsingPER', true); // using prioritized experience replay
+  this.gamma = Utils.RL.getOption(options, 'gamma', 0.7); // future reward discount factor
 
   // Network creation
   this.numActions = numActions;
-  this.hiddenNeurons = getOption(options, 'hiddenNeurons', [10]);
-  this.hiddenNeuronsB = getOption(options, 'hiddenNeuronsB', this.hiddenNeurons);
-  this.network = getOption(options, 'network', new architect.Perceptron(numStates, ...this.hiddenNeurons, numActions));
+  this.hiddenNeurons = Utils.RL.getOption(options, 'hiddenNeurons', [10]);
+  this.hiddenNeuronsB = Utils.RL.getOption(options, 'hiddenNeuronsB', this.hiddenNeurons);
+  this.network = Utils.RL.getOption(options, 'network', new architect.Perceptron(numStates, ...this.hiddenNeurons, numActions));
   this.networkB = this.isDoubleDQN
-    ? getOption(options, 'networkB', new architect.Perceptron(numStates, ...this.hiddenNeuronsB, numActions))
+    ? Utils.RL.getOption(options, 'networkB', new architect.Perceptron(numStates, ...this.hiddenNeuronsB, numActions))
     : null;
 
   // Learning rate
-  this.learningRate = getOption(options, 'learningRate', 0.1); // AKA alpha value function learning rate
-  this.learningRateDecay = getOption(options, 'learningRateDecay', 0.99); // AKA alpha value function learning rate
-  this.learningRateMin = getOption(options, 'learningRateMin', 0.01); // AKA alpha value function learning rate
+  this.learningRate = Utils.RL.getOption(options, 'learningRate', 0.1); // AKA alpha value function learning rate
+  this.learningRateDecay = Utils.RL.getOption(options, 'learningRateDecay', 0.99); // AKA alpha value function learning rate
+  this.learningRateMin = Utils.RL.getOption(options, 'learningRateMin', 0.01); // AKA alpha value function learning rate
   if (this.isDoubleDQN) {
-    this.learningRateB = getOption(options, 'learningRateB', this.learningRate); // AKA alpha value function learning rate
-    this.learningRateDecayB = getOption(options, 'learningRateDecayB', this.learningRateDecay); // AKA alpha value function learning rate
-    this.learningRateMinB = getOption(options, 'learningRateMinB', this.learningRateMin); // AKA alpha value function learning rate
+    this.learningRateB = Utils.RL.getOption(options, 'learningRateB', this.learningRate); // AKA alpha value function learning rate
+    this.learningRateDecayB = Utils.RL.getOption(options, 'learningRateDecayB', this.learningRateDecay); // AKA alpha value function learning rate
+    this.learningRateMinB = Utils.RL.getOption(options, 'learningRateMinB', this.learningRateMin); // AKA alpha value function learning rate
   }
 
   // Experience ("Memory")
-  let experienceSize = getOption(options, 'experienceSize', 50000); // size of experience replay
+  let experienceSize = Utils.RL.getOption(options, 'experienceSize', 50000); // size of experience replay
   this.experience = new ReplayBuffer(experienceSize); // experience
-  this.learningStepsPerIteration = getOption(options, 'learningStepsPerIteration', 20); // number of time steps before we add another experience to replay memory
+  this.learningStepsPerIteration = Utils.RL.getOption(options, 'learningStepsPerIteration', 20); // number of time steps before we add another experience to replay memory
 
   // Exploration / Exploitation management
-  this.explore = getOption(options, 'explore', 0.3); // AKA epsilon for epsilon-greedy policy
-  this.exploreDecay = getOption(options, 'exploreDecay', 0.9999); // AKA epsilon for epsilon-greedy policy
-  this.exploreMin = getOption(options, 'exploreMin', 0.01); // AKA epsilon for epsilon-greedy policy
+  this.explore = Utils.RL.getOption(options, 'explore', 0.3); // AKA epsilon for epsilon-greedy policy
+  this.exploreDecay = Utils.RL.getOption(options, 'exploreDecay', 0.9999); // AKA epsilon for epsilon-greedy policy
+  this.exploreMin = Utils.RL.getOption(options, 'exploreMin', 0.01); // AKA epsilon for epsilon-greedy policy
 
   // Set variables to null | 0
   this.loss = 0;

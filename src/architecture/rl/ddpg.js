@@ -3,6 +3,7 @@ const Network = require('../network');
 const ReplayBuffer = require('./replay-buffer');
 const Experience = require('./experience');
 const Utils = require('../../util/utils');
+const Rate = require('../../methods/rate');
 
 /**
  *
@@ -25,11 +26,28 @@ function DDPG(numStates, hiddenSize, numActions, maxExperienceSize) {
   this.gamma = 0.3;
   this.tau = 0.01;
   this.isTraining = true;
+  this.timeStep = 0;
 
   this.action = 0;
   this.nextState = null;
   this.state = null;
   this.loss = 0;
+
+  this.learningRateActor = Utils.RL.getOption(options, 'learningRateActor', 0.1); // AKA alpha value function learning rate
+  this.learningRateActorDecay = Utils.RL.getOption(options, 'learningRateActorDecay', 0.99); // AKA alpha value function learning rate
+  this.learningRateActorMin = Utils.RL.getOption(options, 'learningRateActorMin', 0.01); // AKA alpha value function learning rate
+
+  this.learningRateCritic = Utils.RL.getOption(options, 'learningRateCritic', this.learningRateActor); // AKA alpha value function learning rate
+  this.learningRateCriticDecay = Utils.RL.getOption(options, 'learningRateCriticDecay', this.learningRateActorDecay); // AKA alpha value function learning rate
+  this.learningRateCriticMin = Utils.RL.getOption(options, 'learningRateCriticMin', this.learningRateActorMin); // AKA alpha value function learning rate
+
+  this.learningRateActorTarget = Utils.RL.getOption(options, 'learningRateActorTarget', this.learningRateActor); // AKA alpha value function learning rate
+  this.learningRateActorTargetDecay = Utils.RL.getOption(options, 'learningRateActorTargetDecay', this.learningRateActorDecay); // AKA alpha value function learning rate
+  this.learningRateActorTargetMin = Utils.RL.getOption(options, 'learningRateActorTargetMin', this.learningRateActorMin); // AKA alpha value function learning rate
+
+  this.learningRateCriticTarget = Utils.RL.getOption(options, 'learningRateCriticTarget', this.learningRateCritic); // AKA alpha value function learning rate
+  this.learningRateCriticTargetDecay = Utils.RL.getOption(options, 'learningRateCriticTargetDecay', this.learningRateCriticDecay); // AKA alpha value function learning rate
+  this.learningRateCriticTargetMin = Utils.RL.getOption(options, 'learningRateCriticTargetMin', this.learningRateCriticMin); // AKA alpha value function learning rate
 }
 
 DDPG.prototype = {
@@ -49,11 +67,12 @@ DDPG.prototype = {
    *
    * @param {number[]} state current state (float arr with values from [0,1])
    * @return {int} The action which the DQN would take at this state; action ∈ [0, this.numActions-1]
+   *
+   * @todo replacing explore with OUNoise -> Continuous Action Space
    */
   act: function(state) {
-    //TODO replacing with OUNoise -> Continuous Action Space
     let action;
-    action = this.epsilon > Math.random()
+    action = this.explore > Math.random()
       ? Math.floor(Math.random() * this.numActions)
       : Utils.getMaxValueIndex(this.actor.activate(state));
 
@@ -74,6 +93,7 @@ DDPG.prototype = {
    * @returns {number} the loss value; loss ∈ [-1,1]
    */
   learn: function(reward, isFinalState = false) {
+    this.timeStep++;
     if (!this.isTraining) {
       return 1;
     }
@@ -110,12 +130,15 @@ DDPG.prototype = {
     }
 
     //TODO Might be a bug
-    this.critic.propagate(this.learningRate, 0, true, criticGradients);
+    let criticLearningRate = Math.max(this.learningRateCriticMin, Rate.EXP(this.learningRateCritic, this.timeStep, {gamma: this.learningRateCriticDecay}));
+    this.critic.propagate(criticLearningRate, 0, true, criticGradients);
 
     let actorLoss = -Utils.mean(this.critic.activate(experience.state.concat(this.actor.activate(experience.state))));
     let gradients = this.actor.activate(experience.state);
     gradients[experience.action] += actorLoss;
-    this.actor.propagate(this.learningRate, 0, true, gradients);
+
+    let actorLearningRate = Math.max(this.learningRateActorMin, Rate.EXP(this.learningRateActor, this.timeStep, {gamma: this.learningRateActorDecay}));
+    this.actor.propagate(actorLearningRate, 0, true, gradients);
 
     // Learning the actorTarget and criticTarget networks
     let actorParameters = this.actor.activate(experience.state);
@@ -128,8 +151,12 @@ DDPG.prototype = {
     for (let i = 0; i < criticParameters.length; i++) {
       criticTargetParameters[i] = this.tau * criticParameters[i] + (1 - this.tau) * criticTargetParameters;
     }
-    this.actorTarget.propagate(this.learningRate, 0, true, actorTargetParameters);
-    this.criticTarget.propagate(this.learningRate, 0, true, criticTargetParameters);
+
+    let actorTargetLearningRate = Math.max(this.learningRateActorTargetMin, Rate.EXP(this.learningRateActorTarget, this.timeStep, {gamma: this.learningRateActorTargetDecay}));
+    this.actorTarget.propagate(actorTargetLearningRate, 0, true, actorTargetParameters);
+
+    let criticTargetLearningRate = Math.max(this.learningRateCriticTargetMin, Rate.EXP(this.learningRateCriticTarget, this.timeStep, {gamma: this.learningRateCriticTargetDecay}));
+    this.criticTarget.propagate(criticTargetLearningRate, 0, true, criticTargetParameters);
 
     return actorLoss;
   },
