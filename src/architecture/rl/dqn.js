@@ -16,6 +16,9 @@ const Rate = require("../../methods/rate");
  *   learningRate: {number},
  *   learningRateDecay: {number},
  *   learningRateMin: {number},
+ *   learningRateB: {number},
+ *   learningRateDecayB: {number},
+ *   learningRateMinB: {number},
  *   explore: {number},
  *   exploreDecay: {number},
  *   exploreMin: {number},
@@ -59,6 +62,9 @@ function getOption(opt, fieldName, defaultValue) {
  *   learningRate: {number},
  *   learningRateDecay: {number},
  *   learningRateMin: {number},
+ *   learningRateB: {number},
+ *   learningRateDecayB: {number},
+ *   learningRateMinB: {number},
  *   explore: {number},
  *   exploreDecay: {number},
  *   exploreMin: {number},
@@ -86,7 +92,7 @@ function DQN(numStates, numActions, options) {
   this.isUsingPER = getOption(options, 'isUsingPER', true); // using prioritized experience replay
   this.gamma = getOption(options, 'gamma', 0.7); // future reward discount factor
 
-  // Network Sizing
+  // Network creation
   this.numActions = numActions;
   this.hiddenNeurons = getOption(options, 'hiddenNeurons', [10]);
   this.hiddenNeuronsB = getOption(options, 'hiddenNeuronsB', this.hiddenNeurons);
@@ -99,8 +105,13 @@ function DQN(numStates, numActions, options) {
   this.learningRate = getOption(options, 'learningRate', 0.1); // AKA alpha value function learning rate
   this.learningRateDecay = getOption(options, 'learningRateDecay', 0.99); // AKA alpha value function learning rate
   this.learningRateMin = getOption(options, 'learningRateMin', 0.01); // AKA alpha value function learning rate
+  if (this.isDoubleDQN) {
+    this.learningRateB = getOption(options, 'learningRateB', this.learningRate); // AKA alpha value function learning rate
+    this.learningRateDecayB = getOption(options, 'learningRateDecayB', this.learningRateDecay); // AKA alpha value function learning rate
+    this.learningRateMinB = getOption(options, 'learningRateMinB', this.learningRateMin); // AKA alpha value function learning rate
+  }
 
-  // Experience Replay
+  // Experience ("Memory")
   let experienceSize = getOption(options, 'experienceSize', 50000); // size of experience replay
   this.experience = new ReplayBuffer(experienceSize); // experience
   this.learningStepsPerIteration = getOption(options, 'learningStepsPerIteration', 20); // number of time steps before we add another experience to replay memory
@@ -315,10 +326,11 @@ DQN.prototype = {
 
     // Backpropagation using temporal difference error
     predictedReward[experience.action] = targetQValue;
-    let currentLearningRate = Math.max(this.learningRateMin, Rate.EXP(this.learningRate, this.timeStep, {gamma: this.learningRateDecay}));
     if (!this.isDoubleDQN || chooseNetwork === 'A') {
+      let currentLearningRate = Math.max(this.learningRateMin, Rate.EXP(this.learningRate, this.timeStep, {gamma: this.learningRateDecay}));
       this.network.propagate(currentLearningRate, 0, true, predictedReward);
     } else {
+      let currentLearningRate = Math.max(this.learningRateMinB, Rate.EXP(this.learningRateB, this.timeStep, {gamma: this.learningRateDecayB}));
       this.networkB.propagate(currentLearningRate, 0, true, predictedReward);
     }
     return tdError;
