@@ -70,7 +70,7 @@ function getOption(opt, fieldName, defaultValue) {
  * @todo Add test & custom network input / output size validation
  * @todo Maybe automatically suggest default values for the num of states and actions
  * @todo Allow Liquid networks trained with NEAT
- * @todo Implement Double-DQN
+ * @todo Implement Double-DQN useful link: https://www.freecodecamp.org/news/improvements-in-deep-q-learning-dueling-double-dqn-prioritized-experience-replay-and-fixed-58b130cc5682/
 */
 function DQN(numStates, numActions, options) {
   // Network Sizing
