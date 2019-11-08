@@ -10,6 +10,7 @@ const Rate = require("../../methods/rate");
  *
  * @param {{
  *   hiddenNeurons: {int[]},
+ *   hiddenNeuronsB: {int[]},
  *   network: {Network},
  *   networkB: {Network},
  *   learningRate: {number},
@@ -52,6 +53,7 @@ function getOption(opt, fieldName, defaultValue) {
  * @param {int} numStates Length of the state array
  * @param {{
  *   hiddenNeurons: {int[]},
+ *   hiddenNeuronsB: {int[]},
  *   network: {Network},
  *   networkB: {Network},
  *   learningRate: {number},
@@ -74,29 +76,24 @@ function getOption(opt, fieldName, defaultValue) {
  * @todo Add test & custom network input / output size validation
  * @todo Maybe automatically suggest default values for the num of states and actions
  * @todo Allow Liquid networks trained with NEAT
+ * @todo consider default value of isDoubleDQN to be true
 */
 function DQN(numStates, numActions, options) {
   // Training specific variables
-  this.loss = 0;
-  this.tdErrorClamp = getOption(options, 'tdErrorClamp', 1);
-  this.isTraining = getOption(options, 'isTraining', true);
-  this.isDoubleDQN = getOption(options, 'isDoubleDQN', false);
+  this.tdErrorClamp = getOption(options, 'tdErrorClamp', 1); // td error clamp for training stability
+  this.isTraining = getOption(options, 'isTraining', true); // set training mode on and off
+  this.isDoubleDQN = getOption(options, 'isDoubleDQN', false); // using Double-DQN
+  this.isUsingPER = getOption(options, 'isUsingPER', true); // using prioritized experience replay
+  this.gamma = getOption(options, 'gamma', 0.7); // future reward discount factor
 
   // Network Sizing
   this.numActions = numActions;
   this.hiddenNeurons = getOption(options, 'hiddenNeurons', [10]);
+  this.hiddenNeuronsB = getOption(options, 'hiddenNeuronsB', this.hiddenNeurons);
   this.network = getOption(options, 'network', new architect.Perceptron(numStates, ...this.hiddenNeurons, numActions));
-  if (this.isDoubleDQN) {
-    this.networkB = getOption(options, 'networkB', new architect.Perceptron(numStates, ...this.hiddenNeurons, numActions));
-  } else {
-    this.networkB = null;
-  }
-
-  // Network & state memory
-  this.reward = null;
-  this.state = null;
-  this.nextState = null;
-  this.action = null;
+  this.networkB = this.isDoubleDQN
+    ? getOption(options, 'networkB', new architect.Perceptron(numStates, ...this.hiddenNeuronsB, numActions))
+    : null;
 
   // Learning rate
   this.learningRate = getOption(options, 'learningRate', 0.1); // AKA alpha value function learning rate
@@ -107,17 +104,19 @@ function DQN(numStates, numActions, options) {
   let experienceSize = getOption(options, 'experienceSize', 50000); // size of experience replay
   this.experience = new ReplayBuffer(experienceSize); // experience
   this.learningStepsPerIteration = getOption(options, 'learningStepsPerIteration', 20); // number of time steps before we add another experience to replay memory
-  this.timeStep = 0;
 
   // Exploration / Exploitation management
   this.explore = getOption(options, 'explore', 0.3); // AKA epsilon for epsilon-greedy policy
   this.exploreDecay = getOption(options, 'exploreDecay', 0.9999); // AKA epsilon for epsilon-greedy policy
   this.exploreMin = getOption(options, 'exploreMin', 0.01); // AKA epsilon for epsilon-greedy policy
 
-  // Reward calculation
-  this.gamma = getOption(options, 'gamma', 0.7); // future reward discount factor
-
-  this.isUsingPER = getOption(options, 'isUsingPER', true); // using prioritized experience replay
+  // Set variables to null | 0
+  this.loss = 0;
+  this.timeStep = 0;
+  this.reward = null;
+  this.state = null;
+  this.nextState = null;
+  this.action = null;
 }
 
 DQN.prototype = {
@@ -202,10 +201,10 @@ DQN.prototype = {
       action = Utils.randomInt(0, this.numActions - 1);
     } else if (this.isDoubleDQN) {
       // Exploit with Double-DQN
-      // Take action which is maximum of both networks
-      let networkAActivation = this.network.activate(state, {no_trace: true});
-      let networkBActivation = this.networkB.activate(state, {no_trace: true});
-      let sum = networkAActivation.map((elem, index) => elem + networkBActivation[index]);
+      // Take action which is maximum of both networks by summing them up
+      let activation = this.network.activate(state, {no_trace: true});
+      let activationB = this.networkB.activate(state, {no_trace: true});
+      let sum = activation.map((elem, index) => elem + activationB[index]);
       action = Utils.getMaxValueIndex(sum);
     } else {
       // Exploit
