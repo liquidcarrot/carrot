@@ -99,14 +99,14 @@ DQN.prototype = {
    * @memberof DQN
    *
    * @return {{
-   *   network: {
+   *   network:{
    *     input:{number},
    *     output:{number},
    *     dropout:{number},
    *     nodes:Array<object>,
    *     connections:Array<object>
    *   },
-   *   networkB: {
+   *   networkB:{
    *     input:{number},
    *     output:{number},
    *     dropout:{number},
@@ -122,6 +122,7 @@ DQN.prototype = {
    *   learningRateMin:{number},
    *   isTraining:{boolean},
    *   isDoubleDQN:{boolean},
+   *   timeStep: {int},
    *   experience:{ReplayBuffer}
    * }} json JSON String JSON String which represents this DQN agent
    *
@@ -140,6 +141,7 @@ DQN.prototype = {
     json.learningRateMin = this.learningRateMin;
     json.isTraining = this.isTraining;
     json.isDoubleDQN = this.isDoubleDQN;
+    json.timeStep = this.timeStep;
     json.experience = this.experience;
     return json;
   },
@@ -328,6 +330,7 @@ DQN.prototype = {
  *   learningRateMin:{number},
  *   isTraining:{boolean},
  *   isDoubleDQN:{boolean},
+ *   timeStep: {int},
  *   experience:{ReplayBuffer}
  * }} json  JSON String
  * @return {DQN} Agent with the specs from the json
@@ -338,7 +341,9 @@ DQN.fromJSON = function (json) {
   json.network = json.network instanceof Network ? json.network : Network.fromJSON(json.network);
   json.networkB = json.networkB instanceof Network ? json.networkB : Network.fromJSON(json.networkB);
 
-  return new DQN(json.network.input_size, json.network.output_size, json);
+  let agent = new DQN(json.network.input_size, json.network.output_size, json);
+  agent.timeStep = json.timeStep;
+  return agent;
 };
 
 module.exports = DQN;
