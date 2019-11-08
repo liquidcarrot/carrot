@@ -13,6 +13,8 @@ const Rate = require('../../methods/rate');
  *
  * @alpha
  *
+ * @constructs DDPG
+ *
  * @param {int} numStates
  * @param {int} numActions
  * @param {{
@@ -44,7 +46,7 @@ const Rate = require('../../methods/rate');
  *   gamma: {number},
  *   tau: {number}
  * }} options JSON object which contains all custom options
- * @constructor
+ *
  * @todo replace epsilon-greedy with OUNoise
  */
 function DDPG(numStates, numActions, options) {
@@ -161,10 +163,17 @@ DDPG.prototype = {
     }
     return this.loss;
   },
+
   /**
+   * This method learns from an specified experience / action-state transition.
    *
-   * @param {Experience} experience
-   * @return {number} loss
+   * @function study
+   * @memberof DDPG
+   *
+   * @param {Experience} experience the experience to learn from
+   * @returns {number} Actor loss value; loss ∈ [-1,1]
+   *
+   * @todo Add dynamic loss functions & clamps, including Huber Loss
    */
   study: function(experience) {
     let qValues = this.critic.activate(experience.state.concat(experience.action));
