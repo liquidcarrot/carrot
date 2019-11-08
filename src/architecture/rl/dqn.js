@@ -121,6 +121,7 @@ DQN.prototype = {
    *   learningRateDecay:{number},
    *   learningRateMin:{number},
    *   isTraining:{boolean},
+   *   isUsingPER:{boolean},
    *   isDoubleDQN:{boolean},
    *   timeStep: {int},
    *   experience:{ReplayBuffer}
@@ -140,6 +141,7 @@ DQN.prototype = {
     json.learningRateDecay = this.learningRateDecay;
     json.learningRateMin = this.learningRateMin;
     json.isTraining = this.isTraining;
+    json.isUsingPER = this.isUsingPER;
     json.isDoubleDQN = this.isDoubleDQN;
     json.timeStep = this.timeStep;
     json.experience = this.experience;
@@ -329,6 +331,7 @@ DQN.prototype = {
  *   learningRateDecay:{number},
  *   learningRateMin:{number},
  *   isTraining:{boolean},
+ *   isUsingPER:{boolean},
  *   isDoubleDQN:{boolean},
  *   timeStep: {int},
  *   experience:{ReplayBuffer}
