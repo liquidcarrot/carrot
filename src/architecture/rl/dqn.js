@@ -74,7 +74,7 @@ function DQN(numStates, numActions, options) {
 
   // Experience ("Memory")
   let experienceSize = Utils.RL.getOption(options, 'experienceSize', 50000); // size of experience replay
-  this.experience = new ReplayBuffer(experienceSize); // experience
+  this.experience = Utils.RL.getOption(options, 'experience', new ReplayBuffer(experienceSize)); // experience
   this.learningStepsPerIteration = Utils.RL.getOption(options, 'learningStepsPerIteration', 20); // number of time steps before we add another experience to replay memory
 
   // Exploration / Exploitation management
