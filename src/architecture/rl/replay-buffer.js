@@ -76,6 +76,7 @@ ReplayBuffer.prototype = {
 
     for (let i = 0; i < size; i++) {
       for (let j = 0; j < bufferCopy.length; j++) {
+        //For bufferCopy.length is equal to infinity
         if (Math.random() <= 1 / Math.pow(2, j + 1)) { // 1/2, 1/4, 1/8, 1/16, ...
           batch.push(bufferCopy.splice(j, 1));
           break;
@@ -83,7 +84,7 @@ ReplayBuffer.prototype = {
       }
     }
     while (batch.length < size) {
-      batch.push(bufferCopy.slice(0, 1));
+      batch.push(bufferCopy.slice(0, 1)); //This should be removed
     }
     return batch;
   },
