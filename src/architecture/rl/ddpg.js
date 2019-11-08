@@ -9,8 +9,37 @@ const Rate = require('../../methods/rate');
  *
  * @param {int} numStates
  * @param {int} numActions
- * @param options
+ * @param {{
+ *   hiddenNeuronsActor: {int[]},
+ *   hiddenNeuronsCritic: {int[]},
+ *   actor: {Network},
+ *   critic: {Network},
+ *   actorTarget: {Network},
+ *   criticTarget: {Network},
+ *   learningRateActor: {number},
+ *   learningRateActorDecay: {number},
+ *   learningRateActorMin: {number},
+ *   learningRateCritic: {number},
+ *   learningRateCriticDecay: {number},
+ *   learningRateCriticMin: {number},
+ *   learningRateActorTarget: {number},
+ *   learningRateActorTargetDecay: {number},
+ *   learningRateActorTargetMin: {number},
+ *   learningRateCriticTarget: {number},
+ *   learningRateCriticTargetDecay: {number},
+ *   learningRateCriticTargetMin: {number},
+ *   explore: {number},
+ *   exploreDecay: {number},
+ *   exploreMin: {number},
+ *   isTraining: {boolean},
+ *   isUsingPER: {boolean},
+ *   experienceSize: {int},
+ *   learningStepsPerIteration: {int},
+ *   gamma: {number},
+ *   tau: {number}
+ * }} options JSON object which contains all custom options
  * @constructor
+ * @todo replace epsilon-greedy with OUNoise
  */
 function DDPG(numStates, numActions, options) {
   // Network creation
@@ -86,7 +115,11 @@ DDPG.prototype = {
     this.actions = action;
     this.lastState = this.state;
     this.state = state;
-    return Utils.getMaxValueIndex(action);
+
+    let currentExploreRate = Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay}));
+    return currentExploreRate > Math.random()
+      ? Utils.randomInt(0, this.numActions - 1)
+      : Utils.getMaxValueIndex(action);
   },
 
   /**
