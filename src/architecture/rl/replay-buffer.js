@@ -35,8 +35,8 @@ ReplayBuffer.prototype = {
    * @returns {Experience[]} a batch of Experiences to train from.
    */
   getRandomMiniBatch: function(size) {
-    //Size can't be bigger than this.buffer.length
     if (size >= this.buffer.length) {
+      //If MiniBatch size is bigger than this.buffer, then we return the full buffer
       return this.buffer;
     }
 
