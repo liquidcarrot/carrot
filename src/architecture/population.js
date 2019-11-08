@@ -1,8 +1,8 @@
 <<<<<<< HEAD
 const _ = require('lodash');
-const Network = require('./architecture/network');
-const methods = require('./methods/methods');
-const config = require('./config');
+const Network = require('./network');
+const methods = require('../methods/methods');
+const config = require('../config');
 
 /**
 * Runs the NEAT algorithm on group of neural networks.
