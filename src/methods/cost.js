@@ -1,11 +1,11 @@
 function validate(targets, outputs) {
-  if(targets == undefined || outputs == undefined) throw new ReferenceError("Missing at least one required parameters: `targets`, `outputs`");
-  
+  if (targets == undefined || outputs == undefined) throw new ReferenceError('Missing at least one required parameters: `targets`, `outputs`');
+
   targets = Array.isArray(targets) ? targets : [targets];
   outputs = Array.isArray(outputs) ? outputs : [outputs];
-  
-  if(targets.length !== outputs.length) throw new RangeError(`Required "targets.length === outputs.length"; Received "targets.length=${targets.length}" & "outputs.length=${outputs.length}`);
-  
+
+  if (targets.length !== outputs.length) throw new RangeError(`Required "targets.length === outputs.length"; Received "targets.length=${targets.length}" & "outputs.length=${outputs.length}`);
+
   return [targets, outputs];
 }
 
@@ -17,7 +17,7 @@ function validate(targets, outputs) {
  * @see [Loss Function on Wikipedia](https://en.wikipedia.org/wiki/Loss_function)
  */
 const cost = {
-  
+
   /**
   * Cross entropy error
   *
@@ -25,7 +25,7 @@ const cost = {
   * @param {number[]|number} targets Ideal value
   * @param {number[]|number} outputs Actual values
   *
-  * @returns {number} [Cross entropy error](https://ml-cheatsheet.readthedocs.io/en/latest/loss_functions.html)
+  * @return {number} [Cross entropy error](https://ml-cheatsheet.readthedocs.io/en/latest/loss_functions.html)
   *
   * @example
   * let { methods, Network } = require("@liquid-carrot/carrot");
@@ -35,21 +35,21 @@ const cost = {
   */
   CROSS_ENTROPY: function(targets, outputs) {
     [targets, outputs] = validate(targets, outputs);
-    
+
     const error = outputs.reduce(function(total, value, index) {
       return total -= targets[index] * Math.log(Math.max(outputs[index], 1e-15)) + (1 - targets[index]) * Math.log(1 - Math.max(outputs[index], 1e-15));
     }, 0);
-    
+
     return error / outputs.length;
   },
-  
+
   /**
   * Mean Squared Error
   *
   * @param {number[]|number} targets Ideal value
   * @param {number[]|number} outputs Actual values
   *
-  * @returns {number} [Mean squared error](https://medium.freecodecamp.org/machine-learning-mean-squared-error-regression-line-c7dde9a26b93)
+  * @return {number} [Mean squared error](https://medium.freecodecamp.org/machine-learning-mean-squared-error-regression-line-c7dde9a26b93)
   *
   * @example
   * let { methods, Network } = require("@liquid-carrot/carrot");
@@ -59,21 +59,21 @@ const cost = {
   */
   MSE: function(targets, outputs) {
     [targets, outputs] = validate(targets, outputs);
-    
+
     const error = outputs.reduce(function(total, value, index) {
       return total += Math.pow(targets[index] - outputs[index], 2);
     }, 0);
-    
+
     return error / outputs.length;
   },
-  
+
   /**
   * Binary Error
   *
   * @param {number[]|number} targets Ideal value
   * @param {number[]|number} outputs Actual values
   *
-  * @returns {number} misses The amount of times targets value was missed
+  * @return {number} misses The amount of times targets value was missed
   *
   * @see [Hinge loss on Wikipedia](https://en.wikipedia.org/wiki/Hinge_loss)
   *
@@ -91,21 +91,21 @@ const cost = {
   */
   BINARY: function(targets, outputs) {
     [targets, outputs] = validate(targets, outputs);
-    
+
     const error = outputs.reduce(function(total, value, index) {
       return total += Math.round(targets[index] * 2) !== Math.round(outputs[index] * 2);
     }, 0);
-    
+
     return error;
   },
-  
+
   /**
   * Mean Absolute Error
   *
   * @param {number[]|number} targets Ideal value
   * @param {number[]|number} outputs Actual values
   *
-  * @returns {number} [Mean absoulte error](https://en.wikipedia.org/wiki/Mean_absolute_error)
+  * @return {number} [Mean absoulte error](https://en.wikipedia.org/wiki/Mean_absolute_error)
   *
   * @example
   * let { methods, Network } = require("@liquid-carrot/carrot");
@@ -121,21 +121,21 @@ const cost = {
   */
   MAE: function(targets, outputs) {
     [targets, outputs] = validate(targets, outputs);
-    
+
     const error = outputs.reduce(function(total, value, index) {
       return total += Math.abs(targets[index] - outputs[index]);
     }, 0);
-    
+
     return error / outputs.length;
   },
-  
+
   /**
   * Mean Absolute Percentage Error
   *
   * @param {number[]|number} targets Ideal value
   * @param {number[]|number} outputs Actual values
   *
-  * @returns {number} [Mean absolute percentage error](https://en.wikipedia.org/wiki/Mean_absolute_percentage_error)
+  * @return {number} [Mean absolute percentage error](https://en.wikipedia.org/wiki/Mean_absolute_percentage_error)
   *
   * @example
   * let { methods, Network } = require("@liquid-carrot/carrot");
@@ -151,21 +151,21 @@ const cost = {
   */
   MAPE: function(targets, outputs) {
     [targets, outputs] = validate(targets, outputs);
-    
+
     const error = outputs.reduce(function(total, value, index) {
       return total += Math.abs((outputs[index] - targets[index]) / Math.max(targets[index], 1e-15));
     }, 0);
-    
+
     return error / outputs.length;
   },
-  
+
   /**
   * Weighted Absolute Percentage Error (WAPE)
   *
   * @param {number[]|number} targets Ideal value
   * @param {number[]|number} outputs Actual values
   *
-  * @returns {number} - [Weighted absolute percentage error](https://help.sap.com/doc/saphelp_nw70/7.0.31/en-US/76/487053bbe77c1ee10000000a174cb4/content.htm?no_cache=true)
+  * @return {number} - [Weighted absolute percentage error](https://help.sap.com/doc/saphelp_nw70/7.0.31/en-US/76/487053bbe77c1ee10000000a174cb4/content.htm?no_cache=true)
   *
   * @example
   * let { methods, Network } = require("@liquid-carrot/carrot");
@@ -177,25 +177,25 @@ const cost = {
   */
   WAPE: function(targets, outputs) {
     [targets, outputs] = validate(targets, outputs);
-    
+
     let error = 0;
     let sum = 0;
-    
+
     for (let index = 0; index < outputs.length; index++) {
       error += Math.abs(targets[index] - outputs[index]);
       sum += targets[index];
     }
-    
+
     return error / sum;
   },
-  
+
   /**
   * Mean Squared Logarithmic Error
   *
   * @param {number[]|number} targets Ideal value
   * @param {number[]|number} outputs Actual values
   *
-  * @returns {number} - [Mean squared logarithmic error](https://peltarion.com/knowledge-center/documentation/modeling-view/build-an-ai-model/loss-functions/mean-squared-logarithmic-error)
+  * @return {number} - [Mean squared logarithmic error](https://peltarion.com/knowledge-center/documentation/modeling-view/build-an-ai-model/loss-functions/mean-squared-logarithmic-error)
   *
   * @example
   * let { methods, Network } = require("@liquid-carrot/carrot");
@@ -211,21 +211,21 @@ const cost = {
   */
   MSLE: function(targets, outputs) {
     [targets, outputs] = validate(targets, outputs);
-    
+
     const error = outputs.reduce(function(total, value, index) {
       return total += Math.log(Math.max(targets[index], 1e-15)) - Math.log(Math.max(outputs[index], 1e-15));
     }, 0);
-    
+
     return error;
   },
-  
+
   /**
   * Hinge loss, for classifiers
   *
   * @param {number[]|number} targets Ideal value
   * @param {number[]|number} outputs Actual values
   *
-  * @returns {number} - [Hinge loss](https://towardsdatascience.com/support-vector-machines-intuitive-understanding-part-1-3fb049df4ba1)
+  * @return {number} - [Hinge loss](https://towardsdatascience.com/support-vector-machines-intuitive-understanding-part-1-3fb049df4ba1)
   *
   * @example
   * let { methods, Network } = require("@liquid-carrot/carrot");
@@ -241,13 +241,13 @@ const cost = {
   */
   HINGE: function(targets, outputs) {
     [targets, outputs] = validate(targets, outputs);
-    
+
     const error = outputs.reduce(function(total, value, index) {
       return total += Math.max(0, 1 - targets[index] * outputs[index]);
     }, 0);
-    
+
     return error;
-  }
+  },
 };
 
 module.exports = cost;

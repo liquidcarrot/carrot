@@ -17,7 +17,7 @@ const gating = {
    * let example = "TODO"
    */
   OUTPUT: {
-    name: 'OUTPUT'
+    name: 'OUTPUT',
   },
   /**
    * @constant
@@ -29,7 +29,7 @@ const gating = {
    * let example = "TODO"
    */
   INPUT: {
-    name: 'INPUT'
+    name: 'INPUT',
   },
   /**
    * @constant
@@ -41,8 +41,8 @@ const gating = {
    * let example = "TODO"
    */
   SELF: {
-    name: 'SELF'
-  }
+    name: 'SELF',
+  },
 };
 
 module.exports = gating;

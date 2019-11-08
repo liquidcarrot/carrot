@@ -309,6 +309,22 @@ describe('Network', function(){
         // but right now we're making a compromise
       })
 
+      it("New neuron's out connection matches replaced connection's weight", function() {
+        let network = new Network(1,1)
+        const original = network.connections[0].weight
+        network = network.mutate(methods.mutation.ADD_NODE)
+        // Assumption about removing original connection, not what should happen according to NEAT spec.
+        expect(network.connections[1].weight).equal(original)
+      })
+
+      it("New neuron's in connection has a weight of 1", function () {
+        let network = new Network(1,1)
+        const original = network.connections[0].weight
+        network = network.mutate(methods.mutation.ADD_NODE)
+        // Assumption about removing original connection, not what should happen according to NEAT spec.
+        expect(network.connections[0].weight).equal(1)
+      })
+
       it("Last neuron should have no outgoing connections | new Network(1,1)", function() {
         let network = new Network(1,1)
         network = network.mutate(methods.mutation.ADD_NODE)

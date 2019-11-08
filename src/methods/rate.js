@@ -26,7 +26,7 @@
 * // more coming soon...
 */
 const rate = {
-  
+
   /**
   * Fixed Learning Rate
   *
@@ -34,7 +34,7 @@ const rate = {
   *
   * @param {number} base_rate A base learning rate - _0 < `base_rate` < 1_
   *
-  * @returns {function}
+  * @return {function}
   *
   * @example
   * let { Network, methods } = require("@liquid-carrot/carrot");
@@ -44,11 +44,11 @@ const rate = {
   * network.train(dataset, { rate_policy: methods.rate.FIXED });
   */
   FIXED: function(base_rate) {
-    if(base_rate == undefined) throw new ReferenceError("Missing required parameter 'base_rate'")
-    
+    if (base_rate == undefined) throw new ReferenceError('Missing required parameter \'base_rate\'');
+
     return base_rate;
   },
-  
+
   /**
   * Step Learning Rate
   *
@@ -60,7 +60,7 @@ const rate = {
   * @param {number} [options.gamma=0.9] Learning rate retention per step; - _0 < `options.gamma` < 1_ - _large `options.gamma` CAN cause networks to never converge, low `options.gamma` CAN cause networks to converge too quickly_
   * @param {number} [options.step_size=100] Learning rate is updated every `options.step_size` iterations
   *
-  * @returns {function}
+  * @return {function}
   *
   * @example
   * let { Network, methods } = require("@liquid-carrot/carrot");
@@ -70,16 +70,16 @@ const rate = {
   * network.train(dataset, { rate_policy: methods.rate.STEP });
   */
   STEP: function(base_rate, iteration, options) {
-    if(base_rate == undefined || iteration == undefined) throw new ReferenceError("Missing required parameter 'base_rate' or 'iteration'");
-    
+    if (base_rate == undefined || iteration == undefined) throw new ReferenceError('Missing required parameter \'base_rate\' or \'iteration\'');
+
     options = Object.assign({
       gamma: 0.9,
-      step_size: 100
+      step_size: 100,
     }, options);
-    
+
     return base_rate * Math.pow(options.gamma, Math.floor(iteration / options.step_size));
   },
-  
+
   /**
   * Exponential Learning Rate
   *
@@ -92,7 +92,7 @@ const rate = {
   * @param {Object} [options]
   * @param {number} [options.gamma=0.999] Learning rate retention per iteration; - _0 < `options.gamma` < 1_ - _large `options.gamma` CAN cause networks to never converge, low `options.gamma` CAN cause networks to converge too quickly_
   *
-  * @returns {function}
+  * @return {function}
   *
   * @example
   * let { Network, methods } = require("@liquid-carrot/carrot");
@@ -102,15 +102,15 @@ const rate = {
   * network.train(dataset, { rate_policy: methods.rate.EXP });
   */
   EXP: function(base_rate, iteration, options) {
-    if(base_rate == undefined || iteration == undefined) throw new ReferenceError("Missing required parameter 'base_rate' or 'iteration'");
-    
+    if (base_rate == undefined || iteration == undefined) throw new ReferenceError('Missing required parameter \'base_rate\' or \'iteration\'');
+
     options = Object.assign({
-      gamma: 0.999
+      gamma: 0.999,
     }, options);
-    
+
     return base_rate * Math.pow(options.gamma, iteration);
   },
-  
+
   /**
   * Inverse Exponential Learning Rate
   *
@@ -124,7 +124,7 @@ const rate = {
   * @param {number} [options.gamma=0.001] Learning rate decay per iteration; - _0 < `options.gamma` < 1_ - _large `options.gamma` CAN cause networks to converge too quickly and stop learning, low `options.gamma` CAN cause networks to converge to learn VERY slowly_
   * @param {number} [options.power=2] Decay rate per iteration - _0 < `options.power`_ - _large `options.power` CAN cause networks to stop learning quickly, low `options.power` CAN cause networks to learn VERY slowly_
   *
-  * @returns {function}
+  * @return {function}
   *
   * @example
   * let { Network, methods } = require("@liquid-carrot/carrot");
@@ -134,13 +134,13 @@ const rate = {
   * network.train(dataset, { rate_policy: methods.rate.INV });
   */
   INV: function(base_rate, iteration, options) {
-    if(base_rate == undefined || iteration == undefined) throw new ReferenceError("Missing required parameter 'base_rate' or 'iteration'");
-    
+    if (base_rate == undefined || iteration == undefined) throw new ReferenceError('Missing required parameter \'base_rate\' or \'iteration\'');
+
     options = Object.assign({
       gamma: 0.001,
-      power: 2
+      power: 2,
     }, options);
-    
+
     return base_rate * Math.pow(1 + options.gamma * iteration, -options.power);
   },
 };

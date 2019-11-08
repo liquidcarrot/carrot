@@ -40,7 +40,7 @@ const connection = {
    * A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional
    */
   ALL_TO_ALL: {
-    name: 'OUTPUT'
+    name: 'OUTPUT',
   },
   /**
    * @constant
@@ -57,7 +57,7 @@ const connection = {
    * A.connect(B, methods.connection.ALL_TO_ELSE); // specifying a method is optional
    */
   ALL_TO_ELSE: {
-    name: 'INPUT'
+    name: 'INPUT',
   },
   /**
    * @constant
@@ -75,8 +75,8 @@ const connection = {
    * A.connect(A, methods.connection.ONE_TO_ONE); // specifying a method is optional
    */
   ONE_TO_ONE: {
-    name: 'SELF'
-  }
+    name: 'SELF',
+  },
 };
 
 module.exports = connection;

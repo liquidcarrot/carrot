@@ -35,7 +35,7 @@ const selection = {
    * });
    */
   FITNESS_PROPORTIONATE: {
-    name: 'FITNESS_PROPORTIONATE'
+    name: 'FITNESS_PROPORTIONATE',
   },
   /**
    * @constant
@@ -56,7 +56,7 @@ const selection = {
    */
   POWER: {
     name: 'POWER',
-    power: 4
+    power: 4,
   },
   /**
    * @constant
@@ -78,8 +78,8 @@ const selection = {
   TOURNAMENT: {
     name: 'TOURNAMENT',
     size: 5,
-    probability: 0.5
-  }
+    probability: 0.5,
+  },
 };
 
 module.exports = selection;

@@ -1,3 +1,4 @@
+/* eslint-disable */
 const _ = require("lodash");
 let Network = require('./architecture/network');
 let methods = require('./methods/methods');

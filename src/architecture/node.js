@@ -476,50 +476,38 @@ function Node(options) {
 
     options = options || {};
 
-    if (nodes instanceof Node) {
-      if (nodes === self) {
-        self.connections_self.weight = 0;
-        return self.connections_self;
-      } else {
-        for (let index = 0; index < self.outgoing.length; index++) {
-          const connection = self.outgoing[index];
-
-          if (connection.to === nodes) {
-            self.outgoing.splice(index, 1);
-
-            connection.to.incoming.splice(connection.to.incoming.indexOf(connection), 1);
-
-            if(connection.gater != undefined) connection.gater.ungate(connection);
-            if(options.twosided) nodes.disconnect(self);
-
-            return connection;
-          }
-        }
-      }
-    } else if (Array.isArray(nodes)) {
-      const connections = [];
-
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = 0; j < self.outgoing.length; j++) {
-          const connection = self.outgoing[j];
-
-          if(connection.to === nodes[i]) {
-            self.outgoing.splice(j, 1);
-            connection.to.incoming.splice(connection.to.incoming.indexOf(connection), 1);
-
-            if(connection.gater != undefined) connection.gater.ungate(connection);
-            if(options.twosided) nodes[i].disconnect(self);
-
-            connections.push(connection);
-
-            break;
-          }
-        }
-      }
-
-      return connections;
+    // Return early if self-connection, will need to update this to return previous value of self connection for NEAT
+    if(nodes === self) {
+      self.connections_self.weight = 0 // zero should not be the default self-connection negation, potential for confusion
+      return self.connections_self     // What value are we deriving from having the self-connection on the prototype-chain?
     }
-    else throw new TypeError(`Parameter 'target': Expected 'Node' or 'Node[]' - but recieved, ${nodes}`);
+
+    // DRY abstraction
+    const disconnect = function(node) {
+      // Could this be more efficient by maintaining a set and reducing lookup complexity to O(1)?
+      for (let i = 0; i < self.outgoing.length; i++) {
+        const conn = self.outgoing[i];
+
+        if (conn.to === node) {
+          self.outgoing.splice(i, 1);
+          conn.to.incoming.splice(conn.to.incoming.indexOf(conn), 1); // expensive lookups here -- may want to rethink the node / connection system
+
+          if(conn.gater != undefined) conn.gater.ungate(conn);
+          if(options.twosided) node.disconnect(self);
+
+          return conn;
+        }
+      }
+    }
+
+    if(nodes instanceof Node) {
+      return disconnect(nodes)
+    } else if (Array.isArray(nodes)) {
+      const connections = []
+      for (let i = 0; i < nodes.length; i++) connections.push(disconnect(nodes[i]))
+      return connections
+    } else throw new TypeError(`Parameter 'target': Expected 'Node' or 'Node[]' - but recieved, ${nodes}`)
+
   },
 
   /**

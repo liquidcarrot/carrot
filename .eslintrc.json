@@ -1,0 +1,18 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "google"
+  ],
+  "rules": {
+    "one-var": "off",
+    "operator-linebreak": "off",
+    "no-extra-semi": "error",
+    "no-undef": "off"
+  },
+  "env": {
+    "es6": true,
+    "amd": true,
+    "commonjs": true,
+    "shared-node-browser": true
+  }
+}
