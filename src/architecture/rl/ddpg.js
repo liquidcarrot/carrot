@@ -7,6 +7,12 @@ const Rate = require('../../methods/rate');
 
 /**
  *
+ * Creates a DDPG-Agent
+ *
+ * Used to do reinforcement learning with an DDPG Agent
+ *
+ * @alpha
+ *
  * @param {int} numStates
  * @param {int} numActions
  * @param {{

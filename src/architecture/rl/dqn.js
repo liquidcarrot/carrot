@@ -6,9 +6,9 @@ const Utils = require('../../util/utils');
 const Rate = require("../../methods/rate");
 
 /**
- * Creates a DQN network
+ * Creates a DQN-Agent
  *
- * Used to do reinforcement learning with an DQN Agent
+ * Used to do reinforcement learning with an DQN-Agent
  *
  * @beta
  *
