@@ -56,7 +56,7 @@ function DDPG(numStates, numActions, options) {
 
   this.timeStep = 0;
   this.loss = 0;
-  this.action = 0;
+  this.actions = [];
   this.state = null;
   this.lastState = null;
 }
@@ -82,15 +82,11 @@ DDPG.prototype = {
    * @todo replacing explore with OUNoise -> Continuous Action Space
    */
   act: function(state) {
-    let currentExploreRate = Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay}));
-    let action = currentExploreRate > Math.random()
-      ? Math.floor(Math.random() * this.numActions)
-      : Utils.getMaxValueIndex(this.actor.activate(state));
-
-    this.action = action;
+    let action = this.actor.activate(state);
+    this.actions = action;
     this.lastState = this.state;
     this.state = state;
-    return action;
+    return Utils.getMaxValueIndex(action);
   },
 
   /**
@@ -99,16 +95,20 @@ DDPG.prototype = {
    * @function learn
    * @memberof DDPG
    *
-   * @param {number} reward the current reward, the agent receives from the environment; newReward ∈ [-1,1]
+   * @param {number} newReward the current reward, the agent receives from the environment; newReward ∈ [-1,1]
    * @param {boolean} isFinalState Does the game ends at this state?
    * @returns {number} the loss value; loss ∈ [-1,1]
    */
-  learn: function(reward, isFinalState = false) {
+  learn: function(newReward, isFinalState = false) {
+    // Normalizing newReward:
+    // newReward ∈ [-1,1] --> normalizedReward ∈ [0,1]
+    const normalizedReward = (1 + newReward) / 2;
+
     this.timeStep++;
-    if (!this.isTraining) {
+    if (this.timeStep === 1 || !this.isTraining) {
       return 1;
     }
-    let experience = new Experience(this.lastState, this.action, reward, this.state, isFinalState);
+    let experience = new Experience(this.lastState, this.actions, normalizedReward, this.state, isFinalState);
     this.replayBuffer.add(experience);
 
     this.loss = this.study(experience);
@@ -140,7 +140,7 @@ DDPG.prototype = {
     // Learning the actor and critic networks
     let criticGradients = this.critic.activate(experience.state.concat(experience.action));
     for (let i = 0; i < qValues.length; i++) {
-      criticGradients += Math.pow(qPrime[i] - qValues[i], 2);
+      criticGradients[i] += Math.pow(qPrime[i] - qValues[i], 2);
     }
 
     //TODO Might be a bug
@@ -149,7 +149,7 @@ DDPG.prototype = {
 
     let actorLoss = -Utils.mean(this.critic.activate(experience.state.concat(this.actor.activate(experience.state))));
     let gradients = this.actor.activate(experience.state);
-    gradients[experience.action] += actorLoss;
+    gradients[Utils.getMaxValueIndex(experience.action)] += actorLoss;
 
     let actorLearningRate = Math.max(this.learningRateActorMin, Rate.EXP(this.learningRateActor, this.timeStep, {gamma: this.learningRateActorDecay}));
     this.actor.propagate(actorLearningRate, 0, true, gradients);
