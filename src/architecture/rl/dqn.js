@@ -198,7 +198,7 @@ DQN.prototype = {
    * @memberof DQN
    *
    * @param {number[]} state current state (float arr with values from [0,1])
-   * @return {int} The action which the DQN would take at this state (represented by an index) action ∈ [0, this.numActions-1]
+   * @return {int} The action which the DQN would take at this state; action ∈ [0, this.numActions-1]
    *
    * @todo Add ability to select strategies
    * @todo Add Thompson Sampling strategy
