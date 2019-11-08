@@ -20,6 +20,7 @@ ReplayBuffer.prototype = {
    */
   add: function(experience) {
     if (experience.state === undefined) {
+      //Bad experience
       return;
     }
     if (this.buffer.length >= this.maxSize) {
@@ -64,8 +65,8 @@ ReplayBuffer.prototype = {
    *       And remove the while loop at the end
    */
   getMiniBatchWithPER(size) {
-    //Size can't be bigger than this.buffer.length
     if (size >= this.buffer.length) {
+      //If MiniBatch size is bigger than this.buffer, then we return the full buffer
       return this.buffer;
     }
 
