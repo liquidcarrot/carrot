@@ -68,7 +68,23 @@ let pickRandom = function(arr) {
   return arr[randomInt(0, arr.length - 1)];
 };
 
+
+/**
+ * This method returns the mean value from an array.
+ *
+ * @param {number[]} arr input array
+ * @returns {number} mean value
+ */
+let mean = function(arr) {
+  let sum = 0;
+  for (let i = 0; i < arr.length; i++) {
+    sum += arr[i];
+  }
+  return sum / arr.length;
+};
+
 module.exports.getMaxValueIndex = getMaxValueIndex;
 module.exports.shuffle = shuffle;
 module.exports.randomInt = randomInt;
 module.exports.pickRandom = pickRandom;
+module.exports.mean = mean;
