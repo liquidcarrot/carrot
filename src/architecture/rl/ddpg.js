@@ -61,7 +61,7 @@ function DDPG(numStates, numActions, options) {
 
   // Experience ("Memory")
   let experienceSize = Utils.RL.getOption(options, 'experienceSize', 50000);
-  this.replayBuffer = new ReplayBuffer(experienceSize);
+  this.replayBuffer = Utils.RL.getOption(options, 'experience', new ReplayBuffer(experienceSize));
   this.learningStepsPerEpisode = Utils.RL.getOption(options, 'learningStepsPerEpisode', 20);
 
   // Training specific variables
@@ -99,6 +99,103 @@ function DDPG(numStates, numActions, options) {
 }
 
 DDPG.prototype = {
+  /**
+   * Save function
+   *
+   * @function toJSON
+   * @memberof DDPG
+   *
+   * @return {{
+   *   actor: {
+   *     input:{number},
+   *     output:{number},
+   *     dropout:{number},
+   *     nodes:Array<object>,
+   *     connections:Array<object>
+   *   },
+   *   critic: {
+   *     input:{number},
+   *     output:{number},
+   *     dropout:{number},
+   *     nodes:Array<object>,
+   *     connections:Array<object>
+   *   },
+   *   actorTarget: {
+   *     input:{number},
+   *     output:{number},
+   *     dropout:{number},
+   *     nodes:Array<object>,
+   *     connections:Array<object>
+   *   },
+   *   criticTarget: {
+   *     input:{number},
+   *     output:{number},
+   *     dropout:{number},
+   *     nodes:Array<object>,
+   *     connections:Array<object>
+   *   },
+   *   gamma: {number},
+   *   tau: {number},
+   *   explore: {number},
+   *   exploreDecay: {number},
+   *   exploreMin: {number},
+   *   learningRateActor: {number},
+   *   learningRateActorDecay: {number},
+   *   learningRateActorMin: {number},
+   *   learningRateCritic: {number},
+   *   learningRateCriticDecay: {number},
+   *   learningRateCriticMin: {number},
+   *   learningRateActorTarget: {number},
+   *   learningRateActorTargetDecay: {number},
+   *   learningRateActorTargetMin: {number},
+   *   learningRateCriticTarget: {number},
+   *   learningRateCriticTargetDecay: {number},
+   *   learningRateCriticTargetMin: {number},
+   *   isTraining: {boolean},
+   *   isUsingPER: {boolean},
+   *   timeStep: {int},
+   *   experience:{ReplayBuffer}
+   * }} json JSON String JSON String which represents this DDPG agent
+   *
+   * @todo Create unit test
+   */
+  toJSON: function() {
+    let json = {};
+    json.actor = this.actor.toJSON();
+    json.critic = this.critic.toJSON();
+    json.actorTarget = this.actorTarget.toJSON();
+    json.criticTarget = this.criticTarget.toJSON();
+
+    json.gamma = this.gamma;
+    json.tau = this.tau;
+
+    json.explore = this.explore;
+    json.exploreDecay = this.exploreDecay;
+    json.exploreMin = this.exploreMin;
+
+    json.learningRateActor = this.learningRateActor;
+    json.learningRateActorDecay = this.learningRateActorDecay;
+    json.learningRateActorMin = this.learningRateActorMin;
+
+    json.learningRateCritic = this.learningRateCritic;
+    json.learningRateCriticDecay = this.learningRateCriticDecay;
+    json.learningRateCriticMin = this.learningRateCriticMin;
+
+    json.learningRateActorTarget = this.learningRateActorTarget;
+    json.learningRateActorTargetDecay = this.learningRateActorTargetDecay;
+    json.learningRateActorTargetMin = this.learningRateActorTargetMin;
+
+    json.learningRateCriticTarget = this.learningRateCriticTarget;
+    json.learningRateCriticTargetDecay = this.learningRateCriticTargetDecay;
+    json.learningRateCriticTargetMin = this.learningRateCriticTargetMin;
+
+    json.isTraining = this.isTraining;
+    json.isUsingPER = this.isUsingPER;
+    json.timeStep = this.timeStep;
+    json.experience = this.experience;
+    return json;
+  },
+
   /**
    * This method decides which action should be taken.
    *
@@ -222,6 +319,65 @@ DDPG.prototype = {
 
     return actorLoss;
   },
+};
+
+/**
+ * @param {{
+ *   actor: {
+ *     input:{number},
+ *     output:{number},
+ *     dropout:{number},
+ *     nodes:Array<object>,
+ *     connections:Array<object>
+ *   },
+ *   critic: {
+ *     input:{number},
+ *     output:{number},
+ *     dropout:{number},
+ *     nodes:Array<object>,
+ *     connections:Array<object>
+ *   },
+ *   actorTarget: {
+ *     input:{number},
+ *     output:{number},
+ *     dropout:{number},
+ *     nodes:Array<object>,
+ *     connections:Array<object>
+ *   },
+ *   criticTarget: {
+ *     input:{number},
+ *     output:{number},
+ *     dropout:{number},
+ *     nodes:Array<object>,
+ *     connections:Array<object>
+ *   },
+ *   gamma: {number},
+ *   tau: {number},
+ *   explore: {number},
+ *   exploreDecay: {number},
+ *   exploreMin: {number},
+ *   learningRateActor: {number},
+ *   learningRateActorDecay: {number},
+ *   learningRateActorMin: {number},
+ *   learningRateCritic: {number},
+ *   learningRateCriticDecay: {number},
+ *   learningRateCriticMin: {number},
+ *   learningRateActorTarget: {number},
+ *   learningRateActorTargetDecay: {number},
+ *   learningRateActorTargetMin: {number},
+ *   learningRateCriticTarget: {number},
+ *   learningRateCriticTargetDecay: {number},
+ *   learningRateCriticTargetMin: {number},
+ *   isTraining: {boolean},
+ *   isUsingPER: {boolean},
+ *   timeStep: {int},
+ *   experience:{ReplayBuffer}
+ * }} json JSON String JSON String which represents this DDPG agent
+ */
+DDPG.fromJSON = function(json) {
+  let agent = new DDPG(json.actor.input_size, json.actor.output_size, json);
+  agent.timeStep = json.timeStep;
+  return agent;
 };
 
 module.exports = DDPG;
