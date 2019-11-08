@@ -44,9 +44,6 @@ ReplayBuffer.prototype = {
       //Add an random experience to the batch and remove it from the bufferCopy
       miniBatch.push(bufferCopy.splice(Utils.randomInt(0, bufferCopy.length - 1), 1)[0]);
     }
-    miniBatch.filter(function(exp) {
-      return exp.state !== undefined;
-    });
     return miniBatch;
   },
 
@@ -76,18 +73,16 @@ ReplayBuffer.prototype = {
       for (let j = 0; j < bufferSorted.length; j++) {
         //For bufferSorted.length is equal to infinity
         if (Math.random() <= 1 / Math.pow(2, j + 1)) { // 1/2, 1/4, 1/8, 1/16, ...
-          miniBatch.push(bufferSorted.splice(j, 1));
+          miniBatch.push(bufferSorted.splice(j, 1)[0]);
           break;
         }
       }
     }
+
     while (miniBatch.length < size) {
       //Appending elements from the front of the buffer until the MiniBatch is full
       miniBatch.push(bufferSorted.slice(0, 1)); //This should be removed
     }
-    miniBatch.filter(function(exp) {
-      return exp.state !== undefined;
-    });
     return miniBatch;
   },
 };
