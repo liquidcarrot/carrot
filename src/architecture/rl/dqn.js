@@ -70,6 +70,7 @@ function getOption(opt, fieldName, defaultValue) {
  * @todo Add test & custom network input / output size validation
  * @todo Maybe automatically suggest default values for the num of states and actions
  * @todo Allow Liquid networks trained with NEAT
+ * @todo Implement Double-DQN
 */
 function DQN(numStates, numActions, options) {
   // Network Sizing
@@ -92,6 +93,7 @@ function DQN(numStates, numActions, options) {
   this.loss = 0;
   this.tdErrorClamp = getOption(options, 'tdErrorClamp', 1);
   this.isTraining = getOption(options, 'isTraining', true);
+  this.isDoubleDQN = getOption(options, 'isDoubleDQN', false);
 
   // Experience Replay
   let experienceSize = getOption(options, 'experienceSize', 50000); // size of experience replay
@@ -176,7 +178,7 @@ DQN.prototype = {
     let currentExploreRate = Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay}));
     const action = currentExploreRate > Math.random()
       ? Utils.randomInt(0, this.numActions - 1)// explore
-      : Utils.getMaxValueIndex(this.network.activate(state));// exploit
+      : Utils.getMaxValueIndex(this.network.activate(state));// exploit //TODO implement Double-DQN
 
     // keep this in memory for learning
     this.state = this.nextState;
@@ -248,7 +250,7 @@ DQN.prototype = {
     // Q(s,a) = r + gamma * max_a' Q(s',a')
     let targetQValue = experience.isFinalState
       ? experience.reward // For the final state only the current reward is important
-      : experience.reward + this.gamma * nextActions[Utils.getMaxValueIndex(nextActions)];
+      : experience.reward + this.gamma * nextActions[Utils.getMaxValueIndex(nextActions)];// TODO implement Double-DQN
 
     // Predicted current reward | called with traces for backprop later
     const predictedReward = this.network.activate(experience.state);

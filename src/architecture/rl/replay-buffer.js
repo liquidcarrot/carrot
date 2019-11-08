@@ -10,7 +10,7 @@ const Utils = require('../../util/utils');
 function ReplayBuffer(maxSize) {
   this.buffer = [];
   this.maxSize = maxSize;
-  this.sumOfAbsLosses = 0;
+  this.sumOfAbsLosses = 0; //used for PER
 }
 
 ReplayBuffer.prototype = {
@@ -30,7 +30,7 @@ ReplayBuffer.prototype = {
   /**
    * Get a random mini batch of given size.
    *
-   * @param {int} size the size of the minibatch.
+   * @param {int} size the size of the MiniBatch.
    * @returns {Experience[]} a batch of Experiences to train from.
    */
   getRandomMiniBatch: function(size) {
