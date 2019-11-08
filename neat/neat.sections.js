@@ -1,3 +1,32 @@
+/**
+* IDEA: Bi-directional context referencing
+*
+* CONTEXT: Let's say that we're using NEAT to evolve neural networks. Let's say
+* that within that context we're trying to keep track of innovationIDs - i.e.
+* what connection is new to the population. In other words, when using NEAT,
+* connections get created and destroyed all-the-time (almost contantly); what
+* we want to to keep track of is discoveries (i.e. innovations) to the to the
+* topology of any network in a population (i.e. group) thereof. By giving each
+* neuron in a network an ID and using Cantor Pairing - we can track any time that
+* a connection is "structurally" innovative. Cantor Pairs allows us to uniquely
+* keep track and map the unique integer IDs of the Nodes to a unique ID of a
+* connection; put another way, even if a connection between two nodes gets
+* destroyed, we will know that it was already introduced to the population a
+* while ago.
+*
+* To be able to keep track of all of these things we need to able to have
+* connections "communicate" with the population - and vice-a-versa. The "classes"
+* in between should work as universal translators and communicators between
+* the two classes.
+*
+* Allowing networks to create new connections, that are potentially innovative,
+* while concurrently updating the population's list of structural innovations.
+*
+* This can get done with EventEmitters and EvenListeners. Where multiple
+* contextually relevant objects communicate with each other on event based
+* triggers.
+*/
+
 const { performance } = require("perf_hooks");
 
 Math.cantor = function(a, b) {
@@ -16,11 +45,33 @@ _.nisNil = function(value) {
   return value != undefined;
 }
 
+_.defaultOption = function(options, key, default) {
+  if(options && _.nisNil(options[key])) return options[key]
+  else return default;
+}
+
+// @todo Make work - i.e. add default value/constructor support
+_.waterfallConstruct = function(options, key, constructor, default) {
+  if(options && _.nisNil(options[key])) return new constructor(options[key]);
+  else return new constructor();
+}
+
+// @param {string} type
+// @param {Array.<number>} [coefficents]
+function Weight(options={}) {}
+
 // Connection/Gene/Axon/Dendrite/Edge Class
+// @param {string|number} [id]
+// @param {Node} from
+// @param {Node} to
+// @param {number} [weight]
 function Connection(options={}) {
-  this.id = _.nisNil(options.id) ? options.id : Math.cantor(options.from, options.to);
-  this.from = options.from;
-  this.to = options.to;
+  // Core Things
+  this.id = _.defaultOption(options, "id", Math.cantor(options.from, options.to));
+  this.from = _.defaultOption(options, "from");
+  this.to = _.defaultOption(options, "to");
+
+  // Instantiated
   this.weight = options.weight || Connection.randomWeight();
 }
 
@@ -72,6 +123,15 @@ Network.createRandom = function(options={
   network: {}
 }) {
   let network =  new Network(options.network);
+
+  ConnectionA.structureID ConnectionB.structureID =>
+
+  // CantorPair
+  // InnovationID
+  ConnectionA
+  ConnectionB
+
+  NodeA.id NodeB.id => CantorPair
 
   // Creates the connections in the network
   for (let c = 0; c < options.connections; c++) {
