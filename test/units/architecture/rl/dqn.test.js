@@ -62,6 +62,8 @@ function testAgentEquality(agent, copy) {
   testEquality(agent.networkB,copy.networkB);
 
   expect(agent.gamma).equal(copy.gamma);
+  expect(agent.isUsingPER).equal(copy.isUsingPER);
+  expect(agent.isTraining).equal(copy.isTraining);
   expect(agent.tdErrorClamp).equal(copy.tdErrorClamp);
   expect(agent.learningStepsPerIteration).equal(copy.learningStepsPerIteration);
   expect(agent.replayBuffer).equal(copy.replayBuffer);
@@ -133,7 +135,7 @@ describe('DQN', function () {
 
   it('toJSON - fromJSON', function() {
     this.timeout(10000);
-    for(let i = 0; i < 10;i++){
+    for(let i = 0; i < 5;i++){
       let numStates = Math.floor(Math.random() * 50 + 1);
       let numActions = Math.floor(Math.random() * 50 + 1);
       let hiddenNeurons = [Utils.randomInt(1,100),Utils.randomInt(1,100)];
@@ -160,12 +162,5 @@ describe('DQN', function () {
 
       testAgentEquality(agent, DQN.fromJSON(agent.toJSON()));
     }
-  });
-
-  it('Should accept a custom network as a constructor option', function () {
-    const LSTM_NET = new Network.architecture.LSTM(2, 10, 10, 2);
-    const agent = new DQN(2, 2, {network: LSTM_NET});
-
-    expect(agent.network).equal(LSTM_NET)
   });
 });
