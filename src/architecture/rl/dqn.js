@@ -123,6 +123,9 @@ DQN.prototype = {
    *   learningRate:{number},
    *   learningRateDecay:{number},
    *   learningRateMin:{number},
+   *   learningRateB:{number},
+   *   learningRateBDecay:{number},
+   *   learningRateBMin:{number},
    *   learningStepsPerIteration: {int},
    *   isTraining:{boolean},
    *   isUsingPER:{boolean},
@@ -145,6 +148,9 @@ DQN.prototype = {
     json.learningRate = this.learningRate;
     json.learningRateDecay = this.learningRateDecay;
     json.learningRateMin = this.learningRateMin;
+    json.learningRateB = this.learningRateB;
+    json.learningRateBDecay = this.learningRateBDecay;
+    json.learningRateBMin = this.learningRateBMin;
     json.learningStepsPerIteration = this.learningStepsPerIteration;
     json.isTraining = this.isTraining;
     json.isUsingPER = this.isUsingPER;
@@ -337,6 +343,9 @@ DQN.prototype = {
  *   learningRate:{number},
  *   learningRateDecay:{number},
  *   learningRateMin:{number},
+ *   learningRateB:{number},
+ *   learningRateBDecay:{number},
+ *   learningRateBMin:{number},
  *   learningStepsPerIteration: {int},
  *   isTraining:{boolean},
  *   isUsingPER:{boolean},

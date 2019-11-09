@@ -147,6 +147,15 @@ describe('DQN', function () {
         experienceSize: Utils.randomInt(1000,50000),
         isUsingPER: true,
         isDoubleDQN: true,
+        explore: Math.random(),
+        exploreDecay: Math.random(),
+        exploreMin: Math.random()/10,
+        learningRate: Math.random(),
+        learningRateDecay: Math.random(),
+        learningRateMin: Math.random()/10,
+        learningRateB: Math.random(),
+        learningRateBDecay: Math.random(),
+        learningRateBMin: Math.random() /10,
       });
 
       testAgentEquality(agent, DQN.fromJSON(agent.toJSON()));
