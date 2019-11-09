@@ -66,7 +66,7 @@ function DDPG(numStates, numActions, options) {
 
   // Training specific variables
   this.gamma = Utils.RL.getOption(options, 'gamma', 0.7);
-  this.tau = Utils.RL.getOption(options, 'tau', 0.01);
+  this.theta = Utils.RL.getOption(options, 'tau', 0.01); // soft target update
   this.isTraining = Utils.RL.getOption(options, 'isTraining', true);
   this.isUsingPER = Utils.RL.getOption(options, 'isUsingPER', true); // using prioritized experience replay
 
@@ -167,7 +167,7 @@ DDPG.prototype = {
     json.criticTarget = this.criticTarget.toJSON();
 
     json.gamma = this.gamma;
-    json.tau = this.tau;
+    json.tau = this.theta;
 
     json.explore = this.explore;
     json.exploreDecay = this.exploreDecay;
@@ -305,10 +305,10 @@ DDPG.prototype = {
     let criticParameters = this.critic.activate(experience.state.concat(experience.action));
     let criticTargetParameters = this.criticTarget.activate(experience.state.concat(experience.action));
     for (let i = 0; i < actorParameters.length; i++) {
-      actorTargetParameters[i] = this.tau * actorParameters[i] + (1 - this.tau) * actorTargetParameters;
+      actorTargetParameters[i] = this.theta * actorParameters[i] + (1 - this.theta) * actorTargetParameters;
     }
     for (let i = 0; i < criticParameters.length; i++) {
-      criticTargetParameters[i] = this.tau * criticParameters[i] + (1 - this.tau) * criticTargetParameters;
+      criticTargetParameters[i] = this.theta * criticParameters[i] + (1 - this.theta) * criticTargetParameters;
     }
 
     let actorTargetLearningRate = Math.max(this.learningRateActorTargetMin, Rate.EXP(this.learningRateActorTarget, this.timeStep, {gamma: this.learningRateActorTargetDecay}));

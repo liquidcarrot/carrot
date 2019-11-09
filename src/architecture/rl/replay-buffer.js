@@ -5,12 +5,14 @@ const Utils = require('../../util/utils');
  * Creates a replay buffer with a maximum size of experience entries.
  *
  * @param {int} maxSize maximum number of experiences
+ * @param {number} noiseRate this variable will add a noise to the PER, so there is more randomness
  * @constructor
  */
-function ReplayBuffer(maxSize) {
+function ReplayBuffer(maxSize, noiseRate = 0.1) {
   this.buffer = [];
   this.maxSize = maxSize;
   this.sumOfAbsLosses = 0; //used for PER
+  this.noiseRate = noiseRate;
 }
 
 ReplayBuffer.prototype = {
@@ -70,7 +72,7 @@ ReplayBuffer.prototype = {
 
     for (let i = 0; i < size; i++) {
       for (let j = 0; j < bufferCopy.length; j++) {
-        if (Math.random() <= Math.abs(bufferCopy[j].loss) / sumOfAbsLossesCopy) {
+        if (Math.random() * (1 + this.noiseRate) - this.noiseRate / 2 <= Math.abs(bufferCopy[j].loss) / sumOfAbsLossesCopy) {
           let exp = bufferCopy.splice(j, 1)[0];
           miniBatch.push(exp);
           sumOfAbsLossesCopy -= Math.abs(exp.loss);
