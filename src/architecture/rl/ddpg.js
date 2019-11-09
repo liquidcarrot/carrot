@@ -65,7 +65,7 @@ function DDPG(numStates, numActions, options) {
   this.replayBuffer = Utils.RL.getOption(options, 'replayBuffer', noisyPER === null
     ? new ReplayBuffer(experienceSize)
     : new ReplayBuffer(experienceSize, noisyPER));
-  this.learningStepsPerEpisode = Utils.RL.getOption(options, 'learningStepsPerEpisode', 20);
+  this.learningStepsPerIteration = Utils.RL.getOption(options, 'learningStepsPerIteration', 20);
 
   // Training specific variables
   this.gamma = Utils.RL.getOption(options, 'gamma', 0.7);
@@ -195,6 +195,7 @@ DDPG.prototype = {
     json.isTraining = this.isTraining;
     json.isUsingPER = this.isUsingPER;
     json.timeStep = this.timeStep;
+    json.learningStepsPerIteration = this.learningStepsPerIteration;
     json.replayBuffer = this.replayBuffer.toJSON();
     return json;
   },
@@ -255,8 +256,8 @@ DDPG.prototype = {
     this.loss = this.study(experience);
 
     let miniBatch = this.isUsingPER
-      ? this.replayBuffer.getMiniBatchWithPER(this.learningStepsPerEpisode)
-      : this.replayBuffer.getRandomMiniBatch(this.learningStepsPerEpisode);
+      ? this.replayBuffer.getMiniBatchWithPER(this.learningStepsPerIteration)
+      : this.replayBuffer.getRandomMiniBatch(this.learningStepsPerIteration);
 
     for (let i = 0; i < miniBatch.length; i++) {
       this.study(miniBatch[i]);
