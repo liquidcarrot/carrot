@@ -25,8 +25,8 @@ const Rate = require("../../methods/rate");
  *   learningRateDecay: {number},
  *   learningRateMin: {number},
  *   learningRateB: {number},
- *   learningRateDecayB: {number},
- *   learningRateMinB: {number},
+ *   learningRateBDecay: {number},
+ *   learningRateBMin: {number},
  *   explore: {number},
  *   exploreDecay: {number},
  *   exploreMin: {number},
@@ -68,8 +68,8 @@ function DQN(numStates, numActions, options) {
   this.learningRateMin = Utils.RL.getOption(options, 'learningRateMin', 0.01); // AKA alpha value function learning rate
   if (this.isDoubleDQN) {
     this.learningRateB = Utils.RL.getOption(options, 'learningRateB', this.learningRate); // AKA alpha value function learning rate
-    this.learningRateDecayB = Utils.RL.getOption(options, 'learningRateDecayB', this.learningRateDecay); // AKA alpha value function learning rate
-    this.learningRateMinB = Utils.RL.getOption(options, 'learningRateMinB', this.learningRateMin); // AKA alpha value function learning rate
+    this.learningRateBDecay = Utils.RL.getOption(options, 'learningRateBDecay', this.learningRateDecay); // AKA alpha value function learning rate
+    this.learningRateBMin = Utils.RL.getOption(options, 'learningRateBMin', this.learningRateMin); // AKA alpha value function learning rate
   }
 
   // Experience ("Memory")
@@ -123,9 +123,11 @@ DQN.prototype = {
    *   learningRate:{number},
    *   learningRateDecay:{number},
    *   learningRateMin:{number},
+   *   learningStepsPerIteration: {int},
    *   isTraining:{boolean},
    *   isUsingPER:{boolean},
    *   isDoubleDQN:{boolean},
+   *   tdErrorClamp: {number},
    *   timeStep: {int},
    *   experience:{ReplayBuffer}
    * }} json JSON String JSON String which represents this DQN agent
@@ -143,9 +145,11 @@ DQN.prototype = {
     json.learningRate = this.learningRate;
     json.learningRateDecay = this.learningRateDecay;
     json.learningRateMin = this.learningRateMin;
+    json.learningStepsPerIteration = this.learningStepsPerIteration;
     json.isTraining = this.isTraining;
     json.isUsingPER = this.isUsingPER;
     json.isDoubleDQN = this.isDoubleDQN;
+    json.tdErrorClamp = this.tdErrorClamp;
     json.timeStep = this.timeStep;
     json.experience = this.replayBuffer;
     return json;
@@ -298,7 +302,7 @@ DQN.prototype = {
       let currentLearningRate = Math.max(this.learningRateMin, Rate.EXP(this.learningRate, this.timeStep, {gamma: this.learningRateDecay}));
       this.network.propagate(currentLearningRate, 0, true, predictedReward);
     } else {
-      let currentLearningRate = Math.max(this.learningRateMinB, Rate.EXP(this.learningRateB, this.timeStep, {gamma: this.learningRateDecayB}));
+      let currentLearningRate = Math.max(this.learningRateBMin, Rate.EXP(this.learningRateB, this.timeStep, {gamma: this.learningRateBDecay}));
       this.networkB.propagate(currentLearningRate, 0, true, predictedReward);
     }
     return tdError;
@@ -333,10 +337,12 @@ DQN.prototype = {
  *   learningRate:{number},
  *   learningRateDecay:{number},
  *   learningRateMin:{number},
+ *   learningStepsPerIteration: {int},
  *   isTraining:{boolean},
  *   isUsingPER:{boolean},
  *   isDoubleDQN:{boolean},
  *   timeStep: {int},
+ *   tdErrorClamp: {number},
  *   experience:{ReplayBuffer}
  * }} json  JSON String
  * @return {DQN} Agent with the specs from the json
@@ -345,7 +351,11 @@ DQN.prototype = {
  */
 DQN.fromJSON = function (json) {
   json.network = json.network instanceof Network ? json.network : Network.fromJSON(json.network);
-  json.networkB = json.networkB instanceof Network ? json.networkB : Network.fromJSON(json.networkB);
+  if (json.isDoubleDQN) {
+    json.networkB = json.networkB instanceof Network ? json.networkB : Network.fromJSON(json.networkB);
+  } else {
+    json.networkB = null;
+  }
 
   let agent = new DQN(json.network.input_size, json.network.output_size, json);
   agent.timeStep = json.timeStep;
