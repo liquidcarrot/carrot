@@ -10,7 +10,7 @@
  * @todo Create unit test
  */
 let randomInt = function(min, max) {
-  return Math.random() * (max - min) + min;
+  return Math.floor(Math.random() * (max - min) + min);
 };
 
 /**
@@ -83,6 +83,7 @@ let mean = function(arr) {
   return sum / arr.length;
 };
 
+// Reinforcement learning specific functions
 RL = {
   /**
    * This function will get the value from the fieldName, if Present, otherwise returns the defaultValue
@@ -91,13 +92,11 @@ RL = {
    * @param {String} fieldName
    * @param {*} defaultValue
    * @return {*} the value of the fileName if Present, otherwise the defaultValue
-   * @todo Consider outsourcing to utils.js
    */
   getOption: function(opt, fieldName, defaultValue) {
-    if (typeof opt === 'undefined') {
-      return defaultValue;
-    }
-    return (typeof opt[fieldName] !== 'undefined') ? opt[fieldName] : defaultValue;
+    return typeof opt === 'undefined' || typeof opt[fieldName] === 'undefined'
+      ? defaultValue
+      : opt[fieldName];
   },
 };
 
