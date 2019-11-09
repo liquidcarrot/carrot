@@ -86,12 +86,12 @@ let mean = function(arr) {
 // Reinforcement learning specific functions
 RL = {
   /**
-   * This function will get the value from the fieldName, if Present, otherwise returns the defaultValue
+   * This function will get the value from the fieldName, if present, otherwise returns the defaultValue
    *
    * @param {*} opt JSON object which contains all custom options
    * @param {String} fieldName
    * @param {*} defaultValue
-   * @return {*} the value of the fileName if Present, otherwise the defaultValue
+   * @return {*} the value of the fieldName if present, otherwise the defaultValue
    */
   getOption: function(opt, fieldName, defaultValue) {
     return typeof opt === 'undefined' || typeof opt[fieldName] === 'undefined'
