@@ -74,7 +74,10 @@ function DQN(numStates, numActions, options) {
 
   // Experience ("Memory")
   let experienceSize = Utils.RL.getOption(options, 'experienceSize', 50000); // size of experience replay
-  this.experience = Utils.RL.getOption(options, 'experience', new ReplayBuffer(experienceSize)); // experience
+  let noisyPER = Utils.RL.getOption(options, 'noisyPER', null);
+  this.replayBuffer = Utils.RL.getOption(options, 'experience', noisyPER === null
+    ? new ReplayBuffer(experienceSize)
+    : new ReplayBuffer(experienceSize, noisyPER)); // experience
   this.learningStepsPerIteration = Utils.RL.getOption(options, 'learningStepsPerIteration', 20); // number of time steps before we add another experience to replay memory
 
   // Exploration / Exploitation management
@@ -144,7 +147,7 @@ DQN.prototype = {
     json.isUsingPER = this.isUsingPER;
     json.isDoubleDQN = this.isDoubleDQN;
     json.timeStep = this.timeStep;
-    json.experience = this.experience;
+    json.experience = this.replayBuffer;
     return json;
   },
 
@@ -220,11 +223,11 @@ DQN.prototype = {
       experience.loss = this.study(experience);
       this.loss = experience.loss;
 
-      this.experience.add(experience);
+      this.replayBuffer.add(experience);
 
       let miniBatch = this.isUsingPER
-        ? this.experience.getMiniBatchWithPER(this.learningStepsPerIteration)
-        : this.experience.getRandomMiniBatch(this.learningStepsPerIteration);
+        ? this.replayBuffer.getMiniBatchWithPER(this.learningStepsPerIteration)
+        : this.replayBuffer.getRandomMiniBatch(this.learningStepsPerIteration);
 
       //Sample the mini batch
       for (let i = 0; i < miniBatch.length; i++) {

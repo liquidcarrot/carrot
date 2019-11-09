@@ -61,7 +61,10 @@ function DDPG(numStates, numActions, options) {
 
   // Experience ("Memory")
   let experienceSize = Utils.RL.getOption(options, 'experienceSize', 50000);
-  this.replayBuffer = Utils.RL.getOption(options, 'experience', new ReplayBuffer(experienceSize));
+  let noisyPER = Utils.RL.getOption(options, 'noisyPER', null);
+  this.replayBuffer = Utils.RL.getOption(options, 'experience', noisyPER === null
+    ? new ReplayBuffer(experienceSize)
+    : new ReplayBuffer(experienceSize, noisyPER));
   this.learningStepsPerEpisode = Utils.RL.getOption(options, 'learningStepsPerEpisode', 20);
 
   // Training specific variables
