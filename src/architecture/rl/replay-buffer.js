@@ -17,6 +17,24 @@ function ReplayBuffer(maxSize, noiseRate = 0.1) {
 
 ReplayBuffer.prototype = {
   /**
+   * Save function
+   * @return {{
+   *   buffer: {Experience[]},
+   *   maxSize: {int},
+   *   sumOfAbsLosses: {number},
+   *   noiseRate: {number}
+   * }}
+   */
+  toJSON: function() {
+    let json = {};
+    json.buffer = this.buffer;
+    json.maxSize = this.maxSize;
+    json.sumOfAbsLosses = this.sumOfAbsLosses;
+    json.noiseRate = this.noiseRate;
+    return json;
+  },
+
+  /**
    * Adds an experience entry to the buffer.
    *
    * @param {Experience} experience the experience to add
@@ -83,6 +101,23 @@ ReplayBuffer.prototype = {
 
     return miniBatch;
   },
+};
+
+/**
+ * Load function
+ *
+ * @param {{
+ *   buffer: {Experience[]},
+ *   maxSize: {int},
+ *   sumOfAbsLosses: {number},
+ *   noiseRate: {number}
+ * }} json
+ */
+ReplayBuffer.fromJSON = function(json) {
+  let replayBuffer = new ReplayBuffer(json.maxSize, json.noiseRate);
+  replayBuffer.buffer = json.buffer;
+  replayBuffer.sumOfAbsLosses = json.sumOfAbsLosses;
+  return replayBuffer;
 };
 
 module.exports = ReplayBuffer;

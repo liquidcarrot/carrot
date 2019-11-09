@@ -44,7 +44,7 @@ const Rate = require('../../methods/rate');
  *   experienceSize: {int},
  *   learningStepsPerIteration: {int},
  *   gamma: {number},
- *   tau: {number}
+ *   theta: {number}
  * }} options JSON object which contains all custom options
  *
  * @todo replace epsilon-greedy with OUNoise
@@ -62,14 +62,14 @@ function DDPG(numStates, numActions, options) {
   // Experience ("Memory")
   let experienceSize = Utils.RL.getOption(options, 'experienceSize', 50000);
   let noisyPER = Utils.RL.getOption(options, 'noisyPER', null);
-  this.replayBuffer = Utils.RL.getOption(options, 'experience', noisyPER === null
+  this.replayBuffer = Utils.RL.getOption(options, 'replayBuffer', noisyPER === null
     ? new ReplayBuffer(experienceSize)
     : new ReplayBuffer(experienceSize, noisyPER));
   this.learningStepsPerEpisode = Utils.RL.getOption(options, 'learningStepsPerEpisode', 20);
 
   // Training specific variables
   this.gamma = Utils.RL.getOption(options, 'gamma', 0.7);
-  this.theta = Utils.RL.getOption(options, 'tau', 0.01); // soft target update
+  this.theta = Utils.RL.getOption(options, 'theta', 0.01); // soft target update
   this.isTraining = Utils.RL.getOption(options, 'isTraining', true);
   this.isUsingPER = Utils.RL.getOption(options, 'isUsingPER', true); // using prioritized experience replay
 
@@ -138,7 +138,7 @@ DDPG.prototype = {
    *     connections:Array<object>
    *   },
    *   gamma: {number},
-   *   tau: {number},
+   *   theta: {number},
    *   explore: {number},
    *   exploreDecay: {number},
    *   exploreMin: {number},
@@ -170,7 +170,7 @@ DDPG.prototype = {
     json.criticTarget = this.criticTarget.toJSON();
 
     json.gamma = this.gamma;
-    json.tau = this.theta;
+    json.theta = this.theta;
 
     json.explore = this.explore;
     json.exploreDecay = this.exploreDecay;
@@ -195,7 +195,7 @@ DDPG.prototype = {
     json.isTraining = this.isTraining;
     json.isUsingPER = this.isUsingPER;
     json.timeStep = this.timeStep;
-    json.experience = this.experience;
+    json.replayBuffer = this.replayBuffer.toJSON();
     return json;
   },
 
@@ -325,7 +325,6 @@ DDPG.prototype = {
 };
 
 /**
- * @param {{
  *   actor: {
  *     input:{number},
  *     output:{number},
@@ -355,7 +354,7 @@ DDPG.prototype = {
  *     connections:Array<object>
  *   },
  *   gamma: {number},
- *   tau: {number},
+ *   theta: {number},
  *   explore: {number},
  *   exploreDecay: {number},
  *   exploreMin: {number},
@@ -374,14 +373,38 @@ DDPG.prototype = {
  *   isTraining: {boolean},
  *   isUsingPER: {boolean},
  *   timeStep: {int},
- *   experience:{ReplayBuffer}
+ *   replayBuffer: {
+ *   ReplayBuffer|{
+ *     buffer: {Experience[]},
+ *     maxSize: {int},
+ *     sumOfAbsLosses: {number},
+ *     noiseRate: {number}
+ *    }}
  * }} json JSON String JSON String which represents this DDPG agent
  *
  * @return {DDPG} the agent with specs from json
  *
  * @todo Create unit tests
+ * @param json
  */
 DDPG.fromJSON = function(json) {
+  json.actor = json.actor instanceof Network
+    ? json.actor
+    : Network.fromJSON(json.actor);
+  json.critic = json.critic instanceof Network
+    ? json.critic
+    : Network.fromJSON(json.critic);
+  json.actorTarget = json.actorTarget instanceof Network
+    ? json.actorTarget
+    : Network.fromJSON(json.actorTarget);
+  json.criticTarget = json.criticTarget instanceof Network
+    ? json.criticTarget
+    : Network.fromJSON(json.criticTarget);
+
+  json.replayBuffer = json.replayBuffer instanceof ReplayBuffer
+    ? json.replayBuffer
+    : ReplayBuffer.fromJSON(json.replayBuffer);
+
   let agent = new DDPG(json.actor.input_size, json.actor.output_size, json);
   agent.timeStep = json.timeStep;
   return agent;
