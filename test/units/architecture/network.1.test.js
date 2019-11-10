@@ -331,6 +331,77 @@ describe('Network', function(){
 
         expect(network.nodes[2].outgoing).eql([])
       })
+
+      it("({ nodeIdMap, lastNodeId }), new node | updates nodeIdMap with new node id", function check_nodeIdMap_mutation () {
+        let network = new Network(1,1)
+        const nodeIdMap = {}
+        network = network.mutate(methods.mutation.ADD_NODE, {
+          neat: {
+            nodeIdMap,
+            lastNodeId: 1
+          }
+        })
+
+        expect(nodeIdMap[2]).equal(2)
+      })
+
+      it("({ nodeIdMap, lastNodeId }), existing node | doesn't extend nodeIdMap with existing node ids", function () {
+        let network = new Network(1,1)
+        let network2 = new Network(1,1)
+        const nodeIdMap = {}
+
+        network = network.mutate(methods.mutation.ADD_NODE, {
+          neat: { nodeIdMap, lastNodeId: 1 } // next id will be 2
+        })
+
+        network2 = network2.mutate(methods.mutation.ADD_NODE, {
+          neat: { nodeIdMap, lastNodeId: 67 } // next id should still be 2
+        })
+
+        expect(Object.keys(nodeIdMap).length).equal(1)
+      })
+
+      it("({ nodeIdMap, lastNodeId }), existing node | doesn't increase network's internal lastNodeId", function () {
+        let network = new Network(1,1)
+        let network2 = new Network(1,1)
+        const nodeIdMap = {}
+
+        network = network.mutate(methods.mutation.ADD_NODE, {
+          neat: { nodeIdMap, lastNodeId: 1 } // next id will be 2
+        })
+
+        network2 = network2.mutate(methods.mutation.ADD_NODE, {
+          neat: { nodeIdMap, lastNodeId: 67 } // next id should still be 2
+        })
+
+        expect(network2.lastNodeId).equal(2)
+      })
+
+      it("({ nodeIdMap, lastNodeId }), existing node | sets existing new-node id correctly", function () {
+        let network = new Network(1,1)
+        let network2 = new Network(1,1)
+        const nodeIdMap = {}
+
+        network = network.mutate(methods.mutation.ADD_NODE, {
+          neat: { nodeIdMap, lastNodeId: 1 } // next id will be 2
+        })
+
+        network2 = network2.mutate(methods.mutation.ADD_NODE, {
+          neat: { nodeIdMap, lastNodeId: 67 } // next id should still be 2
+        })
+
+        expect(network2.nodes[1].id).equal(2)
+      })
+
+      it("(), new node | updates network's internal lastNodeId value", function () {
+        let network = new Network(1,1)
+        network = network.mutate(methods.mutation.ADD_NODE)
+        network = network.mutate(methods.mutation.ADD_NODE)
+        expect(network.lastNodeId).equals(3)
+      })
+
+      // not yet implemented
+      it.skip("(), existing node | doesn't increase network's internal lastNodeId", function () {})
     })
 
     describe('ADD_CONNECTION', function() {

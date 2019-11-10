@@ -4,6 +4,10 @@ const util = {
     return len ? arr[Math.floor(Math.random() * len)] : undefined
   },
 
+  isNil: function(value) {
+    return value == null;
+  },
+
   /**
   * Returns a unique ID from two numbers
   *

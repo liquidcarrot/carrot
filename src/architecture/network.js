@@ -57,7 +57,7 @@ function Network(input_size, output_size) {
 
   // Store all the nodes and connection genes
   self.nodes = [] // Stored in activation order
-  self.latestNodeId = input_size + output_size - 1; // Tracks latest node id known to the network
+  self.lastNodeId = input_size + output_size - 1; // Tracks latest node id known to the network
   self.connections = []
   self.gates = []
 
@@ -586,11 +586,15 @@ function Network(input_size, output_size) {
    * @function mutate
    * @memberof Network
    *
+   * @expects Neat mutations (ADD_NODE, ADD_CONN) to happen serially.
+   *
    * @param {mutation} method [Mutation method](mutation)
    * @param {object} options
    * @param {number} [options.maxNodes=Infinity] Maximum amount of [Nodes](node) a network can grow to
    * @param {number} [options.maxConns=Infinity] Maximum amount of [Connections](connection) a network can grow to
    * @param {number} [options.maxGates=Infinity] Maximum amount of Gates a network can grow to
+   * @param {object} [options.neat.nodeIdMap] Map of "from" & "to" node cantor nos as keys with the new node's id as the value
+   * @param {object} [options.neat.lastNodeId] The last nodeId known to the population
    *
    * @returns {network} A mutated version of this network
    *
@@ -601,10 +605,11 @@ function Network(input_size, output_size) {
    *
    * myNetwork = myNetwork.mutate(mutation.ADD_GATE) // returns a mutated network with an added gate
    *
-   * @todo Per the NEAT spec, deactivate disconnected connections but store them at network-level connections array
+   * @todo Store deactivated / disconnected nodes in network-level connections
    * @todo Make node management order agnostic by tracking input / outputs better
-   * @todo Set node ids dictated by to & from node ids
-   * @todo Add node & connection tracking to configuration. This includes latest population ids and a reference object for both
+   * @todo Add connection id tracking to configuration, consists of latest population ids and a reference object
+   * @todo Don't mutate nodeIdMap directly
+   * @todo Add standalone node id population synchronization capabilities, consider maintaing internal nodeIdMap when external isn't provided
    */
   self.mutate = function(method, options) {
     if (typeof method === 'undefined') throw new Error('Mutate method is undefined!')
@@ -638,12 +643,19 @@ function Network(input_size, output_size) {
         * nodes & connections and it must be passed in
         */
 
-        // const nodeIdReferenceKey = util.getCantorNumber(from.id, to.id); // Currently useless
+        let id;
+        const key = util.getCantorNumber(from.id, to.id); // Left outside for a future internal nodeIdMap
+        if(options && options.neat && options.neat.nodeIdMap && options.neat.lastNodeId) {
+          // Structural equivalent already exists
+          if(options.neat.nodeIdMap.hasOwnProperty(key)) id = self.lastNodeId = options.neat.nodeIdMap[key]
+          // Structural equivalent doesn't already exist
+          else id = self.lastNodeId = options.neat.nodeIdMap[key] = options.neat.lastNodeId + 1; // mutates nodeIdMap directly
+        } else {
+          self.lastNodeId++;
+          id = self.lastNodeId;
+        }
 
-        // Updated latest known id to reflect new node | TODO: Make this a conditional that checks passed in network structure node-id map & only updates when a genuinely new node is being added
-        self.latestNodeId += 1;
-
-        const node = new Node({ type: 'hidden', id: self.latestNodeId }) // TODO: Set an id referenced using to & from node id cantor pair as key
+        const node = new Node({ type: 'hidden', id })
         if (mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION) // Should be an option passed into the Node constructor
 
         // Make sure new node placed between from & to nodes
