@@ -5,7 +5,7 @@
  * @namespace multi
  * @borrows workers as workers
 */
-var multi = {
+const multi = {
   // Workers
   workers: require('./workers/workers'),
 
@@ -13,12 +13,12 @@ var multi = {
   * Serializes a dataset
   *
   * @param {number[]} dataSet
-  * @returns {number[]}
+  * @return {number[]}
   */
-  serializeDataSet: function (dataSet) {
-    var serialized = [dataSet[0].input.length, dataSet[0].output.length];
+  serializeDataSet: function(dataSet) {
+    const serialized = [dataSet[0].input.length, dataSet[0].output.length];
 
-    for (var i = 0; i < dataSet.length; i++) {
+    for (let i = 0; i < dataSet.length; i++) {
       var j;
       for (j = 0; j < serialized[0]; j++) {
         serialized.push(dataSet[i].input[j]);
@@ -44,16 +44,16 @@ var multi = {
   * @param {number[]} data
   * @param {number[]} F
   *
-  * @returns {number[]} An output array
+  * @return {number[]} An output array
   */
-  activateSerializedNetwork: function (input, A, S, data, F) {
+  activateSerializedNetwork: function(input, A, S, data, F) {
     for (var i = 0; i < data[0]; i++) A[i] = input[i];
     for (i = 2; i < data.length; i++) {
-      let index = data[i++];
-      let bias = data[i++];
-      let squash = data[i++];
-      let selfweight = data[i++];
-      let selfgater = data[i++];
+      const index = data[i++];
+      const bias = data[i++];
+      const squash = data[i++];
+      const selfweight = data[i++];
+      const selfgater = data[i++];
 
       S[index] = (selfgater === -1 ? 1 : A[selfgater]) * selfweight * S[index] + bias;
 
@@ -63,7 +63,7 @@ var multi = {
       A[index] = F[squash](S[index]);
     }
 
-    var output = [];
+    const output = [];
     for (i = A.length - data[1]; i < A.length; i++) output.push(A[i]);
     return output;
   },
@@ -73,18 +73,18 @@ var multi = {
   *
   * @param {number[]} serializedSet - A dataset serialzed by serializeDataSet
   *
-  * @returns {Array[]} - An array with 2 entries, input data and output data -- each being an array themselves.
+  * @return {Array[]} - An array with 2 entries, input data and output data -- each being an array themselves.
   */
-  deserializeDataSet: function (serializedSet) {
-    var set = [];
+  deserializeDataSet: function(serializedSet) {
+    const set = [];
 
-    var sampleSize = serializedSet[0] + serializedSet[1];
-    for (var i = 0; i < (serializedSet.length - 2) / sampleSize; i++) {
-      let input = [];
+    const sampleSize = serializedSet[0] + serializedSet[1];
+    for (let i = 0; i < (serializedSet.length - 2) / sampleSize; i++) {
+      const input = [];
       for (var j = 2 + i * sampleSize; j < 2 + i * sampleSize + serializedSet[0]; j++) {
         input.push(serializedSet[j]);
       }
-      let output = [];
+      const output = [];
       for (j = 2 + i * sampleSize + serializedSet[0]; j < 2 + i * sampleSize + sampleSize; j++) {
         output.push(serializedSet[j]);
       }
@@ -107,15 +107,13 @@ var multi = {
   * @param {number[]} S
   * @param {number[]} data
   * @param {number[]} F
-  * @returns {number} - Error
+  * @return {number} - Error
   */
-  testSerializedSet: function (set, cost, A, S, data, F) {
-
-
+  testSerializedSet: function(set, cost, A, S, data, F) {
     // Calculate how many samples are in the set
-    var error = 0;
-    for (var i = 0; i < set.length; i += 2) {
-      let output = this.activateSerializedNetwork(set[i], A, S, data, F);
+    let error = 0;
+    for (let i = 0; i < set.length; i += 2) {
+      const output = this.activateSerializedNetwork(set[i], A, S, data, F);
       error += cost(set[i + 1], output);
     }
 
@@ -129,26 +127,56 @@ var multi = {
   * @todo Document this array using `ArrayFunction`
   */
   activations: [
-    function (x) { return 1 / (1 + Math.exp(-x)); },
-    function (x) { return Math.tanh(x); },
-    function (x) { return x; },
-    function (x) { return x > 0 ? 1 : 0; },
-    function (x) { return x > 0 ? x : 0; },
-    function (x) { return x / (1 + Math.abs(x)); },
-    function (x) { return Math.sin(x); },
-    function (x) { return Math.exp(-Math.pow(x, 2)); },
-    function (x) { return (Math.sqrt(Math.pow(x, 2) + 1) - 1) / 2 + x; },
-    function (x) { return x > 0 ? 1 : -1; },
-    function (x) { return 2 / (1 + Math.exp(-x)) - 1; },
-    function (x) { return Math.max(-1, Math.min(1, x)); },
-    function (x) { return Math.abs(x); },
-    function (x) { return 1 - x; },
-    function (x) {
-      var a = 1.6732632423543772848170429916717;
+    function(x) {
+      return 1 / (1 + Math.exp(-x));
+    },
+    function(x) {
+      return Math.tanh(x);
+    },
+    function(x) {
+      return x;
+    },
+    function(x) {
+      return x > 0 ? 1 : 0;
+    },
+    function(x) {
+      return x > 0 ? x : 0;
+    },
+    function(x) {
+      return x / (1 + Math.abs(x));
+    },
+    function(x) {
+      return Math.sin(x);
+    },
+    function(x) {
+      return Math.exp(-Math.pow(x, 2));
+    },
+    function(x) {
+      return (Math.sqrt(Math.pow(x, 2) + 1) - 1) / 2 + x;
+    },
+    function(x) {
+      return x > 0 ? 1 : -1;
+    },
+    function(x) {
+      return 2 / (1 + Math.exp(-x)) - 1;
+    },
+    function(x) {
+      return Math.max(-1, Math.min(1, x));
+    },
+    function(x) {
+      return Math.abs(x);
+    },
+    function(x) {
+      return 1 - x;
+    },
+    function(x) {
+      const a = 1.6732632423543772848170429916717;
       return (x > 0 ? x : a * Math.exp(x) - a) * 1.0507009873554804934193349852946;
-    }
-  ]
+    },
+  ],
 };
 
 
-for(var i in multi) { module.exports[i] = multi[i]; }
+for (const i in multi) {
+  module.exports[i] = multi[i];
+}

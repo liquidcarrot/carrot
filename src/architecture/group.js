@@ -1,4 +1,4 @@
-const _ = require("lodash");
+const _ = require('lodash');
 const methods = require('../methods/methods');
 const config = require('../config');
 const Node = require('./node');
@@ -43,7 +43,7 @@ function Group(size) {
   *
   * @param {number[]} inputs Array of inputs (numbers) for the group - _order matters._
   *
-  * @returns {number[]} Squashed output values
+  * @return {number[]} Squashed output values
   *
   * @example
   * let { Group } = require("@liquid-carrot/carrot");
@@ -81,7 +81,7 @@ function Group(size) {
   * @param {number} [options.momentum] [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
   * @param {boolean} [options.update=true]
   *
-  * @returns {Array<{responsibility: number, projected: number, gated: number}>} The errors created by backpropagating
+  * @return {Array<{responsibility: number, projected: number, gated: number}>} The errors created by backpropagating
   *
   * @example
   * let { Group } = require("@liquid-carrot/carrot");
@@ -127,7 +127,7 @@ function Group(size) {
   * @param {connection} method [Connection Method](connection), determines how the nodes in this group will connect to the target (e.g. one-to-one, all-to-all)
   * @param {number} weight Weight of the connection(s)
   *
-  * @returns {Connection[]} The formed connections
+  * @return {Connection[]} The formed connections
   *
   * @example
   * let { Group } = require("@liquid-carrot/carrot");
@@ -163,11 +163,11 @@ function Group(size) {
     if (target.input_nodes) target_nodes = target.input_nodes;
     else if (target.nodes) target_nodes = target.nodes;
     else if (target instanceof Node) target_nodes = [target];
-    else throw new TypeError("Type of target not supported");
+    else throw new TypeError('Type of target not supported');
 
     // lengths should match if one to one
     if (method === methods.connection.ONE_TO_ONE && source_nodes.length !== target_nodes.length) {
-      throw new RangeError("Method is one-to-one but there are unequal number of source and target nodes");
+      throw new RangeError('Method is one-to-one but there are unequal number of source and target nodes');
     }
 
     // the created connections will be added here. after the
@@ -190,14 +190,14 @@ function Group(size) {
       if (method === methods.connection.ONE_TO_ONE) {
         // when one to one, we use the same index for source and target
         // we checked before that the lengths match
-        let connection = source_nodes[i].connect(target_nodes[i], weight);
+        const connection = source_nodes[i].connect(target_nodes[i], weight);
         new_connections.push(connection);
       }
       // else (ALL_TO_ELSE or ALL_TO_ALL)
       else {
         for (let j = 0; j < source_nodes.length; j++) {
           // create the connection
-          let connection = source_nodes[j].connect(target_nodes[i], weight);
+          const connection = source_nodes[j].connect(target_nodes[i], weight);
           new_connections.push(connection);
         }
       }
@@ -208,8 +208,7 @@ function Group(size) {
       const connection = new_connections[i];
       if (self_targeted) {
         self.connections_self.push(connection);
-      }
-      else {
+      } else {
         self.outgoing.push(connection);
         target.incoming.push(connection);
       }
@@ -322,29 +321,28 @@ function Group(size) {
     if (target instanceof Group) {
       for (let i = 0; i < self.nodes.length; i++) {
         for (let j = 0; j < target.nodes.length; j++) {
-          self.nodes[i].disconnect(target.nodes[j], { twosided });
+          self.nodes[i].disconnect(target.nodes[j], {twosided});
 
           if (twosided) {
-            self.incoming = self.incoming.filter(connection => {
+            self.incoming = self.incoming.filter((connection) => {
               // this is a quick patch, there shouldnt be undefines here
               if (!connection) return false;
-              return !(connection.from === target.nodes[j] && connection.to === this.nodes[i])
+              return !(connection.from === target.nodes[j] && connection.to === this.nodes[i]);
             });
           }
-          self.outgoing = self.outgoing.filter(connection => {
+          self.outgoing = self.outgoing.filter((connection) => {
             // this is a quick patch, there shouldnt be undefines here
             if (!connection) return false;
             return !(connection.from === self.nodes[i] && connection.to === target.nodes[j]);
           });
         }
       }
-    }
-    else if (target instanceof Node) {
+    } else if (target instanceof Node) {
       for (let index = 0; index < self.nodes.length; index++) {
-        self.nodes[index].disconnect(target, { twosided });
+        self.nodes[index].disconnect(target, {twosided});
 
-        if (twosided) self.incoming = self.incoming.filter(connection => !(connection.from === target && connection.to === self.nodes[index]));
-        self.outgoing = self.outgoing.filter(connection => !(connection.from === self.nodes[index] && connection.to === target));
+        if (twosided) self.incoming = self.incoming.filter((connection) => !(connection.from === target && connection.to === self.nodes[index]));
+        self.outgoing = self.outgoing.filter((connection) => !(connection.from === self.nodes[index] && connection.to === target));
       }
     }
   },
@@ -355,14 +353,14 @@ function Group(size) {
   * @function clear
   * @memberof Group
   *
-  * @returns {Group} The group itself
+  * @return {Group} The group itself
   */
   self.clear = function() {
     for (let index = 0; index < self.nodes.length; index++) {
       self.nodes[index].clear();
     }
     return self;
-  }
+  };
 
   /**
    * Add the nodes to the group
@@ -373,7 +371,7 @@ function Group(size) {
     if (nodes_to_add instanceof Node) nodes_to_add = [nodes_to_add];
     else if (nodes_to_add instanceof Group) nodes_to_add = nodes_to_add.nodes;
     self.nodes.push(...nodes_to_add);
-  }
+  };
 }
 
 module.exports = Group;

@@ -3,8 +3,8 @@ const Network = require('./network');
 const Group = require('./group');
 const Layer = require('./layer');
 const Node = require('./node');
-const _ = require("lodash");
-const assert = require("assert")
+const _ = require('lodash');
+const assert = require('assert');
 
 /**
  *
@@ -56,9 +56,9 @@ const architect = {
   * // Construct a square-looking network
   * var network = architect.Construct([A, B, C, D]);
   *
-  * @returns {Network}
+  * @return {Network}
   */
-  Construct: function (list) {
+  Construct: function(list) {
     // Create a network
     const network = new Network(0, 0);
 
@@ -105,8 +105,8 @@ const architect = {
       }
     }
     // backward compatibility
-    network.input = network.input_size
-    network.output = network.output_size
+    network.input = network.input_size;
+    network.output = network.output_size;
 
     // Input nodes are always first, output nodes are always last
     nodes = inputs.concat(nodes).concat(outputs);
@@ -148,9 +148,9 @@ const architect = {
   * // Input: 2 neurons, 4 Hidden layers: 10 neurons, Output: 1 neuron
   * let my_perceptron = new architect.Perceptron(2, 10, 10, 10, 10, 1);
   *
-  * @returns {Network} Feed forward neural network
+  * @return {Network} Feed forward neural network
   */
-  Perceptron: function () {
+  Perceptron: function() {
     // Convert arguments to Array
     const layers = Array.from(arguments);
 
@@ -191,19 +191,19 @@ const architect = {
   *   selfconnections: 4
   * });
   *
-  * @returns {Network}
+  * @return {Network}
   */
-  Random: function (input, hidden, output, options) {
+  Random: function(input, hidden, output, options) {
     // Random(input, output)
-    if(!(output, options)) {
+    if (!(output, options)) {
       output = hidden;
       hidden = undefined;
     }
     // Random(input, output, options)
-    else if(!options && _.isPlainObject(output)) {
-        options = output;
-        output = hidden;
-        hidden = undefined;
+    else if (!options && _.isPlainObject(output)) {
+      options = output;
+      output = hidden;
+      hidden = undefined;
     }
 
     hidden = hidden || 0;
@@ -211,7 +211,7 @@ const architect = {
       connections: hidden * 2,
       backconnections: 0,
       selfconnections: 0,
-      gates: 0
+      gates: 0,
     });
 
     const network = new Network(input, output);
@@ -260,14 +260,14 @@ const architect = {
   *
   * let my_LSTM = new architect.LSTM(2, 4, 4, 4, 1, options);
   *
-  * @returns {Network}
+  * @return {Network}
   */
-  LSTM: function () {
+  LSTM: function() {
     const layer_sizes_and_options = Array.from(arguments);
 
     const output_size_or_options = layer_sizes_and_options.slice(-1)[0];
 
-    let layer_sizes, options
+    let layer_sizes, options;
 
     // find out if options were passed
     if (typeof output_size_or_options === 'number') {
@@ -287,18 +287,18 @@ const architect = {
       output_to_memory: false,
       output_to_gates: false,
       input_to_output: true,
-      input_to_deep: true
+      input_to_deep: true,
     });
 
 
     const input_layer = new Group(layer_sizes.shift()); // first argument
     input_layer.set({
-      type: 'input'
+      type: 'input',
     });
 
     const output_layer = new Group(layer_sizes.pop());
     output_layer.set({
-      type: 'output'
+      type: 'output',
     });
 
     // check if input to output direct connection
@@ -321,13 +321,13 @@ const architect = {
       const block_output = index === block_sizes.length - 1 ? output_layer : new Group(block_size);
 
       input_gate.set({
-        bias: 1
+        bias: 1,
       });
       forget_gate.set({
-        bias: 1
+        bias: 1,
       });
       output_gate.set({
-        bias: 1
+        bias: 1,
       });
 
       // Connect the input with all the nodes
@@ -435,9 +435,9 @@ const architect = {
   *   clear: true // set to true while training
   * });
   *
-  * @returns {Network}
+  * @return {Network}
   */
-  GRU: function () {
+  GRU: function() {
     const layer_sizes = Array.from(arguments);
     if (layer_sizes.length < 3) throw new Error('You have to specify at least 3 layer sizes');
 
@@ -449,8 +449,8 @@ const architect = {
     nodes.push(input_layer);
 
     let previous = input_layer;
-    for (var i = 0; i < block_sizes.length; i++) {
-      const layer = Layer.GRU(block_sizes[i])
+    for (let i = 0; i < block_sizes.length; i++) {
+      const layer = Layer.GRU(block_sizes[i]);
       previous.connect(layer);
       previous = layer;
 
@@ -482,19 +482,19 @@ const architect = {
   * network.activate([0,1,0,1,0,1,0,1,1,1]); // [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
   * network.activate([1,1,1,1,1,0,0,1,0,0]); // [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]
   *
-  * @returns {Network}
+  * @return {Network}
   */
-  Hopfield: function (size) {
-    const input = new Group(size, "input")
-    const output = new Group(size, "output")
+  Hopfield: function(size) {
+    const input = new Group(size, 'input');
+    const output = new Group(size, 'output');
 
-    input.connect(output, methods.connection.ALL_TO_ALL)
+    input.connect(output, methods.connection.ALL_TO_ALL);
 
     output.set({
-      squash: methods.activation.STEP
-    })
+      squash: methods.activation.STEP,
+    });
 
-    return new architect.Construct([input, output])
+    return new architect.Construct([input, output]);
   },
 
   /**
@@ -529,9 +529,9 @@ const architect = {
   *   rate: 0.05
   * });
   *
-  * @returns {Network}
+  * @return {Network}
   */
-  NARX: function (input_size, hidden_sizes, output_size, input_memory_size, output_memory_size) {
+  NARX: function(input_size, hidden_sizes, output_size, input_memory_size, output_memory_size) {
     if (!Array.isArray(hidden_sizes)) {
       hidden_sizes = [hidden_sizes];
     }
@@ -578,10 +578,10 @@ const architect = {
 
 
     input_layer.set({
-      type: 'input'
+      type: 'input',
     });
     output_layer.set({
-      type: 'output'
+      type: 'output',
     });
 
     return architect.Construct(nodes);
@@ -592,7 +592,7 @@ const architect = {
    */
   Liquid: function() {
     // Code here....
-  }
+  },
 };
 
 module.exports = architect;

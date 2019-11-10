@@ -3,8 +3,8 @@
 * @name config
 * @prop {boolean} warnings=false
 */
-var config = {
-  warnings: false
+const config = {
+  warnings: false,
 };
 
 module.exports = config;

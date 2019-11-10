@@ -65,3 +65,4 @@ typings/
 
 # IDE configuration files
 .codetasty/
+.idea/

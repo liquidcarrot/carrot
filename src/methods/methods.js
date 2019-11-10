@@ -21,7 +21,7 @@ const methods = {
   cost: require('./cost'),
   gating: require('./gating'),
   connection: require('./connection'),
-  rate: require('./rate')
+  rate: require('./rate'),
 };
 
 module.exports = methods;

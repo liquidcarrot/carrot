@@ -24,7 +24,7 @@ let fork_port = 9230;
 * @param {Array} serialized_dataset a dataset of the form Array<{input:number[],output:number[]}> serialized by multi.serializeDataSet. Read network.prototype.evolve dataset parameter.
 * @param {Function} cost
 */
-function TestWorker (serialized_dataset, cost_function) {
+function TestWorker(serialized_dataset, cost_function) {
   // find out if in inspect mode. if so then run children in inspect mode as well
   const argv = process.execArgv.join();
   const is_debug = argv.includes('inspect') || argv.includes('debug');
@@ -37,13 +37,13 @@ function TestWorker (serialized_dataset, cost_function) {
   }
 
   const cost_is_standard = cost_function.name in standard_cost_functions;
-  
+
   // send the initialization (ie 'constructor') info
   this.worker.send({
-      serialized_dataset: serialized_dataset,
-      cost_function: cost_is_standard ? cost_function.name : cost_function.toString(),
-      cost_is_standard,
-    });
+    serialized_dataset: serialized_dataset,
+    cost_function: cost_is_standard ? cost_function.name : cost_function.toString(),
+    cost_is_standard,
+  });
 }
 
 TestWorker.prototype = {
@@ -57,18 +57,18 @@ TestWorker.prototype = {
   *
   * @param network
   */
-  evaluate: function (network) {
+  evaluate: function(network) {
     return new Promise((resolve, reject) => {
-      var serialized = network.serialize();
+      const serialized = network.serialize();
 
-      var data = {
+      const data = {
         activations: serialized[0],
         states: serialized[1],
-        conns: serialized[2]
+        conns: serialized[2],
       };
 
-      var _that = this.worker;
-      this.worker.on('message', function callback (e) {
+      const _that = this.worker;
+      this.worker.on('message', function callback(e) {
         _that.removeListener('message', callback);
         resolve(e);
       });
@@ -80,7 +80,7 @@ TestWorker.prototype = {
   /**
   * @todo Create a function description
   */
-  terminate: function () {
+  terminate: function() {
     this.worker.kill();
-  }
+  },
 };

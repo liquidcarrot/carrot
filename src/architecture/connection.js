@@ -1,4 +1,4 @@
-const _ = require("lodash");
+const _ = require('lodash');
 
 /**
 * A connection instance describes the connection between two nodes. If you're looking for connections between [Groups](Group) please see [Connection Methods](connection)
@@ -27,13 +27,13 @@ const _ = require("lodash");
 * @see {@link connection|Connection Methods}
 * @see {@link Node|Node}
 */
-function Connection (from, to, weight, options) {
-  if(from == undefined || to == undefined) throw new ReferenceError("Missing required parameter 'from' or 'to'");
+function Connection(from, to, weight, options) {
+  if (from == undefined || to == undefined) throw new ReferenceError('Missing required parameter \'from\' or \'to\'');
 
-  let self = this;
+  const self = this;
 
   // CHECK: https://gist.github.com/Salakar/1d7137de9cb8b704e48a
-  if(!options && _.isPlainObject(weight)) {
+  if (!options && _.isPlainObject(weight)) {
     options = weight;
     weight = undefined;
   }
@@ -49,10 +49,10 @@ function Connection (from, to, weight, options) {
     delta_weights_total: 0,
     delta_weights: [],
     xtrace_nodes: [],
-    xtrace_values: []
-  }, options, { from, to, weight});
+    xtrace_values: [],
+  }, options, {from, to, weight});
 
-  if(options.gater) options.gater.gate(self);
+  if (options.gater) options.gater.gate(self);
 
   /**
   * Returns the connection as a JSON
@@ -60,11 +60,11 @@ function Connection (from, to, weight, options) {
   * @function toJSON
   * @memberof Connection
   *
-  * @returns {object} Returns connection as a JSON
+  * @return {object} Returns connection as a JSON
   */
-  self.toJSON = function () {
-    return { weight: self.weight };
-  }
+  self.toJSON = function() {
+    return {weight: self.weight};
+  };
 }
 
 /**
@@ -75,14 +75,13 @@ function Connection (from, to, weight, options) {
 * @param {number} a - A [natural number](https://en.wikipedia.org/wiki/Natural_number), which is an integer greater than or equal to zero
 * @param {number} b - A [natural number](https://en.wikipedia.org/wiki/Natural_number), which is an integer greater than or equal to zero
 *
-* @returns {number} - An Integer that uniquely represents a pair of Integers
+* @return {number} - An Integer that uniquely represents a pair of Integers
 */
-Connection.innovationID = function (a, b) {
-  if(a == undefined || b == undefined) throw new ReferenceError("Missing required parameter 'a' or 'b'");
+Connection.innovationID = function(a, b) {
+  if (a == undefined || b == undefined) throw new ReferenceError('Missing required parameter \'a\' or \'b\'');
 
   return 1 / 2 * (a + b) * (a + b + 1) + b;
 };
-
 
 
 module.exports = Connection;

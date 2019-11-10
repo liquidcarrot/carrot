@@ -1,6 +1,6 @@
 const Carrot = {
   activation: require('./methods/activation'),
-  cost: require("./methods/cost"),
+  cost: require('./methods/cost'),
   methods: require('./methods/methods'),
   Connection: require('./architecture/connection'),
   architect: require('./architecture/architect'),
@@ -12,12 +12,14 @@ const Carrot = {
   Neat: require('./neat'),
   Population: require('./architecture/population'),
   GAN: require('./gan'),
-  multi: require('./multithreading/multi')
+  multi: require('./multithreading/multi'),
 };
 
 // CommonJS & AMD
 if (typeof define !== 'undefined' && define.amd) {
-  define([], function () { return Carrot; });
+  define([], function() {
+    return Carrot;
+  });
 }
 
 // Node.js
@@ -27,9 +29,9 @@ if (typeof module !== 'undefined' && module.exports) {
 
 // Browser
 if (typeof window === 'object') {
-  (function () {
-    var old = window['carrot'];
-    Carrot.ninja = function () {
+  (function() {
+    const old = window['carrot'];
+    Carrot.ninja = function() {
       window['carrot'] = old;
       return Carrot;
     };

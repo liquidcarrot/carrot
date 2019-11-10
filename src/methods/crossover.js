@@ -21,7 +21,7 @@ const crossover = {
    */
   SINGLE_POINT: {
     name: 'SINGLE_POINT',
-    config: [0.4]
+    config: [0.4],
   },
   /**
    * @constant
@@ -34,7 +34,7 @@ const crossover = {
    */
   TWO_POINT: {
     name: 'TWO_POINT',
-    config: [0.4, 0.9]
+    config: [0.4, 0.9],
   },
   /**
    * @constant
@@ -46,7 +46,7 @@ const crossover = {
    * let example = "TODO"
    */
   UNIFORM: {
-    name: 'UNIFORM'
+    name: 'UNIFORM',
   },
   /**
    * @constant
@@ -58,8 +58,8 @@ const crossover = {
    * let example = "TODO"
    */
   AVERAGE: {
-    name: 'AVERAGE'
-  }
+    name: 'AVERAGE',
+  },
 };
 
 module.exports = crossover;

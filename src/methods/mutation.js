@@ -47,7 +47,7 @@ const mutation = {
    */
   ADD_NODE: {
     name: 'ADD_NODE',
-    randomActivation: true
+    randomActivation: true,
   },
   /**
    * @constant
@@ -66,7 +66,7 @@ const mutation = {
    */
   SUB_NODE: {
     name: 'SUB_NODE',
-    keep_gates: true
+    keep_gates: true,
   },
   /**
    * @constant
@@ -82,7 +82,7 @@ const mutation = {
    * myNetwork.mutate(methods.mutation.ADD_CONN);
    */
   ADD_CONN: {
-    name: 'ADD_CONN'
+    name: 'ADD_CONN',
   },
   /**
    * @constant
@@ -98,7 +98,7 @@ const mutation = {
    * myNetwork.mutate(methods.mutation.SUB_CONN);
    */
   SUB_CONN: {
-    name: 'REMOVE_CONN'
+    name: 'REMOVE_CONN',
   },
   /**
    * @constant
@@ -119,7 +119,7 @@ const mutation = {
   MOD_WEIGHT: {
     name: 'MOD_WEIGHT',
     min: -1,
-    max: 1
+    max: 1,
   },
   /**
    * @constant
@@ -142,7 +142,7 @@ const mutation = {
   MOD_BIAS: {
     name: 'MOD_BIAS',
     min: -1,
-    max: 1
+    max: 1,
   },
   /**
    * @constant
@@ -189,8 +189,8 @@ const mutation = {
       activation.HARD_TANH,
       activation.ABSOLUTE,
       activation.INVERSE,
-      activation.SELU
-    ]
+      activation.SELU,
+    ],
   },
   /**
    * @constant
@@ -206,7 +206,7 @@ const mutation = {
    * myNetwork.mutate(methods.mutation.ADD_SELF_CONN);
    */
   ADD_SELF_CONN: {
-    name: 'ADD_SELF_CONN'
+    name: 'ADD_SELF_CONN',
   },
   /**
    * @constant
@@ -222,7 +222,7 @@ const mutation = {
    * myNetwork.mutate(methods.mutation.SUB_SELF_CONN);
    */
   SUB_SELF_CONN: {
-    name: 'SUB_SELF_CONN'
+    name: 'SUB_SELF_CONN',
   },
   /**
    * @constant
@@ -238,7 +238,7 @@ const mutation = {
    * myNetwork.mutate(methods.mutation.ADD_GATE);
    */
   ADD_GATE: {
-    name: 'ADD_GATE'
+    name: 'ADD_GATE',
   },
   /**
    * @constant
@@ -254,7 +254,7 @@ const mutation = {
    * myNetwork.mutate(methods.mutation.SUB_GATE);
    */
   SUB_GATE: {
-    name: 'SUB_GATE'
+    name: 'SUB_GATE',
   },
   /**
    * @constant
@@ -270,7 +270,7 @@ const mutation = {
    * myNetwork.mutate(methods.mutation.ADD_BACK_CONN);
    */
   ADD_BACK_CONN: {
-    name: 'ADD_BACK_CONN'
+    name: 'ADD_BACK_CONN',
   },
   /**
    * @constant
@@ -286,7 +286,7 @@ const mutation = {
    * myNetwork.mutate(methods.mutation.SUB_BACK_CONN);
    */
   SUB_BACK_CONN: {
-    name: 'SUB_BACK_CONN'
+    name: 'SUB_BACK_CONN',
   },
   /**
    * @constant
@@ -304,8 +304,8 @@ const mutation = {
    */
   SWAP_NODES: {
     name: 'SWAP_NODES',
-    mutateOutput: false
-  }
+    mutateOutput: false,
+  },
 };
 
 /**
@@ -339,7 +339,7 @@ mutation.ALL = [
   mutation.SUB_SELF_CONN,
   mutation.ADD_BACK_CONN,
   mutation.SUB_BACK_CONN,
-  mutation.SWAP_NODES
+  mutation.SWAP_NODES,
 ];
 
 /**
@@ -367,7 +367,7 @@ mutation.FFW = [
   mutation.MOD_WEIGHT,
   mutation.MOD_BIAS,
   mutation.MOD_ACTIVATION,
-  mutation.SWAP_NODES
+  mutation.SWAP_NODES,
 ];
 
 module.exports = mutation;
