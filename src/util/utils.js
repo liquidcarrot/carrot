@@ -10,7 +10,7 @@
  * @todo Create unit test
  */
 let randomInt = function(min, max) {
-  return Math.random() * (max - min) + min;
+  return Math.floor(Math.random() * (max - min) + min);
 };
 
 /**
@@ -68,7 +68,41 @@ let pickRandom = function(arr) {
   return arr[randomInt(0, arr.length - 1)];
 };
 
+
+/**
+ * This method returns the mean value from an array.
+ *
+ * @param {number[]} arr input array
+ * @returns {number} mean value
+ */
+let mean = function(arr) {
+  let sum = 0;
+  for (let i = 0; i < arr.length; i++) {
+    sum += arr[i];
+  }
+  return sum / arr.length;
+};
+
+// Reinforcement learning specific functions
+RL = {
+  /**
+   * This function will get the value from the fieldName, if present, otherwise returns the defaultValue
+   *
+   * @param {*} opt JSON object which contains all custom options
+   * @param {String} fieldName
+   * @param {*} defaultValue
+   * @return {*} the value of the fieldName if present, otherwise the defaultValue
+   */
+  getOption: function(opt, fieldName, defaultValue) {
+    return typeof opt === 'undefined' || typeof opt[fieldName] === 'undefined'
+      ? defaultValue
+      : opt[fieldName];
+  },
+};
+
 module.exports.getMaxValueIndex = getMaxValueIndex;
 module.exports.shuffle = shuffle;
 module.exports.randomInt = randomInt;
 module.exports.pickRandom = pickRandom;
+module.exports.mean = mean;
+module.exports.RL = RL;

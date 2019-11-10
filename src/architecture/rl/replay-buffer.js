@@ -5,15 +5,35 @@ const Utils = require('../../util/utils');
  * Creates a replay buffer with a maximum size of experience entries.
  *
  * @param {int} maxSize maximum number of experiences
+ * @param {number} noiseRate this variable will add a noise to the PER, so there is more randomness
  * @constructor
  */
-function ReplayBuffer(maxSize) {
+function ReplayBuffer(maxSize, noiseRate = 0.1) {
   this.buffer = [];
   this.maxSize = maxSize;
   this.sumOfAbsLosses = 0; //used for PER
+  this.noiseRate = noiseRate;
 }
 
 ReplayBuffer.prototype = {
+  /**
+   * Save function
+   * @return {{
+   *   buffer: {Experience[]},
+   *   maxSize: {int},
+   *   sumOfAbsLosses: {number},
+   *   noiseRate: {number}
+   * }}
+   */
+  toJSON: function() {
+    let json = {};
+    json.buffer = this.buffer;
+    json.maxSize = this.maxSize;
+    json.sumOfAbsLosses = this.sumOfAbsLosses;
+    json.noiseRate = this.noiseRate;
+    return json;
+  },
+
   /**
    * Adds an experience entry to the buffer.
    *
@@ -70,7 +90,7 @@ ReplayBuffer.prototype = {
 
     for (let i = 0; i < size; i++) {
       for (let j = 0; j < bufferCopy.length; j++) {
-        if (Math.random() <= Math.abs(bufferCopy[j].loss) / sumOfAbsLossesCopy) {
+        if (Math.random() * (1 + this.noiseRate) - this.noiseRate / 2 <= Math.abs(bufferCopy[j].loss) / sumOfAbsLossesCopy) {
           let exp = bufferCopy.splice(j, 1)[0];
           miniBatch.push(exp);
           sumOfAbsLossesCopy -= Math.abs(exp.loss);
@@ -81,6 +101,23 @@ ReplayBuffer.prototype = {
 
     return miniBatch;
   },
+};
+
+/**
+ * Load function
+ *
+ * @param {{
+ *   buffer: {Experience[]},
+ *   maxSize: {int},
+ *   sumOfAbsLosses: {number},
+ *   noiseRate: {number}
+ * }} json
+ */
+ReplayBuffer.fromJSON = function(json) {
+  let replayBuffer = new ReplayBuffer(json.maxSize, json.noiseRate);
+  replayBuffer.buffer = json.buffer;
+  replayBuffer.sumOfAbsLosses = json.sumOfAbsLosses;
+  return replayBuffer;
 };
 
 module.exports = ReplayBuffer;
