@@ -211,7 +211,7 @@ function Network(input_size, output_size) {
    * Backpropagate the network
    *
    * This function allows you to teach the network. If you want to do more complex training, use the `network.train()` function.
-   * 
+   *
    * @function propagate
    * @memberof Network
    *
@@ -596,6 +596,10 @@ function Network(input_size, output_size) {
    * let myNetwork = new architect.Perceptron(2,2)
    *
    * myNetwork = myNetwork.mutate(mutation.ADD_GATE) // returns a mutated network with an added gate
+   *
+   * @todo Per the NEAT spec, deactivate disconnected connections but store them at network-level connections array
+   * @todo Make node management order agnostic by tracking input / outputs better
+   * @todo Set node ids dictated by to & from node ids
    */
   self.mutate = function(method, options) {
     if (typeof method === 'undefined') throw new Error('Mutate method is undefined!')
@@ -613,26 +617,27 @@ function Network(input_size, output_size) {
     switch (method.name) {
       // Looks for an existing connection and places a node in between
       case "ADD_NODE": {
-        if(self.nodes.length >= maxNodes) return null // check user constraints
+        if(self.nodes.length >= maxNodes) return null // Check user constraint
 
-        const node = new Node({ type: 'hidden' }) // Unless we have connections across inputs / outputs this is always a hidden
-        if (mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION) // this should be an option passed into the Node constructor
-
-        // Note for the future: this makes the assumption that nodes can only be placed
-        // between existing connections, but what this means is that connections will never
-        // be formed where there is not a connection right now.
-        // This means connections across inputs / outputs will not be formed
-        // And it also means that "peripheral" connections between output neurons and neurons that connect
-        // back into the network will also not be formed.
+        // Only places nodes where existing connections are
         const connection = getRandomConnection()
         const from = connection.from
         const to = connection.to
-        // break the existing connection, TODO: this should be stored in the future as a gene (somehwere), per the NEAT spec
-        self.disconnect(from, to)
+        self.disconnect(from, to) // break the existing connection, TODO: this should be stored in the future as a gene (somehwere), per the NEAT spec
 
-        // Make sure new node is between from & to
-        // Fits assumption that: nodes array ordered: ["inputs", "hidden", "outputs"]
-        // Should be agnostic by setting a node .type value and updating the way ".activate" works
+        /**
+        * In this section we'll check the node id reference object for the key produced
+        * by the cantor pairing function of the "from" & "to" node ids. If a key doesn't exist,
+        * a new key, value pair is added with the value being the latest sequential id for nodes.
+        * Note: this requires a sequential count to be maintained at the population level for
+        * nodes & connections and it must be passed in
+        */
+
+        const node = new Node({ type: 'hidden' }) // TODO: Set an id referenced using to & from node id cantor pair as key
+        if (mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION) // Should be an option passed into the Node constructor
+
+        // Make sure new node placed between from & to nodes
+        // Assumption: nodes array ordered as ["inputs", "hidden", "outputs"]
         let min_bound = self.nodes.indexOf(from) // Shouldn't use expensive ".indexOf", we should track neuron index numbers in the "to" & "from" of connections instead and access nodes later if needed
         min_bound = (min_bound >= self.input_nodes.size - 1) ? min_bound : self.input_nodes.size - 1 // make sure after to insert after all input neurons
         self.nodes.splice(min_bound + 1, 0, node) // assumes there is at least one output neuron
