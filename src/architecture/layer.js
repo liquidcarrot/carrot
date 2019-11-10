@@ -32,6 +32,8 @@ const Group = require('./group'); // will be imported later for circular depende
 * hidden2.connect(output);
 *
 * let network = architect.Construct([input, hidden1, hidden2, output]);
+* 
+* @todo Add node id / innovation id management capabilities
 */
 class Layer extends Group {
   /**

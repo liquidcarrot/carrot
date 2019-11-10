@@ -21,6 +21,7 @@ const config = require('../config');
 *
 * @param {Object|Node} [options] Options Object or template `Node`
 * @param {number} [options.bias] Neuron's bias [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
+* @param {number} [options.id] Neuron's id, an integer >= 0
 *
 * @prop {number} bias Neuron's bias [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
 * @prop {activation} squash [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0)
@@ -50,6 +51,7 @@ function Node(options) {
   // type = type || 'hidden';
 
   Object.assign(self, {
+    id: -1, // Indicates bogus id, id's must be zero or larger
     bias: Math.random() * 2 - 1,
     squash: methods.activation.LOGISTIC,
     activation: 0,

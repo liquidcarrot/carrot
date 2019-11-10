@@ -54,6 +54,11 @@ describe("Node", function() {
         expect(node[key]).to.eql(json[key]);
       })
     })
+    it("new Node({ id: x }), node.id equals x", function () {
+      const node = new Node({ id: 305 })
+
+      expect(node.id).equal(305)
+    })
     it("new Node(node) => {Node}", function() {
       const node = new Node(other_node);
 

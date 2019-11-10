@@ -20,6 +20,8 @@ const Node = require('./node');
 *
 * // A group with 5 nodes
 * let A = new Group(5);
+*
+* @todo Add node id / innovation id management capabilities
 */
 function Group(size) {
   const self = this;

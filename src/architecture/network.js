@@ -6,6 +6,7 @@ const Layer = require("./layer")
 const Connection = require("./connection")
 const Node = require("./node")
 const _ = require("lodash")
+const util = require('../util/utils'); // Rename this to _ once a full Lodash replacement is possible
 
 // Easier variable naming
 const mutation = methods.mutation
@@ -34,6 +35,8 @@ const mutation = methods.mutation
 *
 * // and a multi-layered network
 * let myNetwork = new architect.Perceptron(5, 20, 10, 5, 1)
+*
+* @todo Add node / connection id management scheme that can be ad-hoc added to a population and preserve unique global ids
 */
 function Network(input_size, output_size) {
   if (typeof input_size === `undefined` || typeof output_size === `undefined`) throw new TypeError(`No input or output size given`);
@@ -43,6 +46,7 @@ function Network(input_size, output_size) {
   // *IDEA*: Store input & output nodes in arrays accessible by self.input and self.output instead of just storing the number
   self.input_size = input_size
   self.output_size = output_size
+
   // backwards compatibility
   self.input = input_size
   self.output = output_size
@@ -53,17 +57,18 @@ function Network(input_size, output_size) {
 
   // Store all the nodes and connection genes
   self.nodes = [] // Stored in activation order
+  self.latestNodeId = input_size + output_size - 1; // Tracks latest node id known to the network
   self.connections = []
   self.gates = []
 
   // Create input and output nodes
   for (let i = 0; i < input_size; i++) {
-    const new_node = new Node({ type: 'input' })
+    const new_node = new Node({ type: 'input', id: i })
     self.nodes.push(new_node)
     self.input_nodes.add(new_node)
   }
   for (let i = 0; i < output_size; i++) {
-    const new_node = new Node({ type: 'output' })
+    const new_node = new Node({ type: 'output', id: input_size + i })
     self.nodes.push(new_node)
     self.output_nodes.add(new_node)
   }
@@ -600,6 +605,7 @@ function Network(input_size, output_size) {
    * @todo Per the NEAT spec, deactivate disconnected connections but store them at network-level connections array
    * @todo Make node management order agnostic by tracking input / outputs better
    * @todo Set node ids dictated by to & from node ids
+   * @todo Add node & connection tracking to configuration. This includes latest population ids and a reference object for both
    */
   self.mutate = function(method, options) {
     if (typeof method === 'undefined') throw new Error('Mutate method is undefined!')
@@ -633,7 +639,12 @@ function Network(input_size, output_size) {
         * nodes & connections and it must be passed in
         */
 
-        const node = new Node({ type: 'hidden' }) // TODO: Set an id referenced using to & from node id cantor pair as key
+        // const nodeIdReferenceKey = util.getCantorNumber(from.id, to.id); // Currently useless
+
+        // Updated latest known id to reflect new node | TODO: Make this a conditional that checks passed in network structure node-id map & only updates when a genuinely new node is being added
+        self.latestNodeId += 1;
+
+        const node = new Node({ type: 'hidden', id: self.latestNodeId }) // TODO: Set an id referenced using to & from node id cantor pair as key
         if (mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION) // Should be an option passed into the Node constructor
 
         // Make sure new node placed between from & to nodes
@@ -1855,7 +1866,7 @@ Network.crossOver = function(network1, network2, equal) {
       to: connection.to.index,
       gater: connection.gater != null ? connection.gater.index : -1
     };
-    n1connections[Connection.innovationID(data.from, data.to)] = data;
+    n1connections[util.getCantorNumber(data.from, data.to)] = data;
   }
 
   // Add the connections of network 2
@@ -1867,7 +1878,7 @@ Network.crossOver = function(network1, network2, equal) {
       to: connection.to.index,
       gater: connection.gater != null ? connection.gater.index : -1
     };
-    n2connections[Connection.innovationID(data.from, data.to)] = data;
+    n2connections[util.getCantorNumber(data.from, data.to)] = data;
   }
 
   // Split common conn genes from disjoint or excess conn genes

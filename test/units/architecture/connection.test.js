@@ -40,6 +40,11 @@ describe("Connection", function() {
       expect(connection).to.be.an.instanceOf(Connection);
       was.connected(connection, from, to);
     })
+    it("new Connection({ id: x }), Connection.id equals x", function () {
+      const connection = new Connection(from, to, undefined, { id: 786 });
+
+      expect(connection.id).equals(786);
+    })
     it(`new Connection(from=${from}, to=${to}, weight=${weight}) => {Connection}`, function() {
       const connection = new Connection(from, to, weight);
 
@@ -74,19 +79,5 @@ describe("Connection", function() {
   })
   describe("Connection.fromJSON()", function() {
     it("Connection.fromJSON() => {Connection}")
-  })
-  describe("Connection.innovationID()", function() {
-    const a = Math.round(Math.random() * 100)
-    const b = Math.round(Math.random() * 100)
-
-    it("Connection.innovationID() => {ReferenceError}", function() {
-      expect(() => Connection.innovationID()).to.throw(ReferenceError);
-    })
-    it(`Connection.innovationID(a=${a}) => {ReferenceError}`, function() {
-      expect(() => Connection.innovationID(a)).to.throw(ReferenceError);
-    })
-    it(`Connection.innovationID(a=${a}, b=${b}) => {number}`, function() {
-      expect(Connection.innovationID(a, b)).to.be.a("number");
-    })
   })
 })
