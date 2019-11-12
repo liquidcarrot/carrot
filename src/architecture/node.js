@@ -341,7 +341,7 @@ function Node(options) {
   /**
   * Connects this node to the given node(s)
   *
-  * @param {Node|Node[]} nodes Node(s) to project connection(s) to
+  * @param {Node} node Node to project a connection to
   * @param {number} [weight] Initial connection(s) [weight](https://en.wikipedia.org/wiki/Synaptic_weight)
   * @param {Object} [options={}]
   * @param {boolean} [twosided] If `true` connect nodes to each other
@@ -365,9 +365,11 @@ function Node(options) {
   * const { Node } = require("@liquid-carrot/carrot");
   *
   * let node = new Node();
-  * let other_nodes = [new Node(), new Node(), new Node()];
+  * let otherNodes = [new Node(), new Node(), new Node()];
   *
-  * let connections = node.connect(other_nodes); // Node is connected to all other nodes
+  * let connections = otherNodes.map(function(otherNode) {
+  *   return node.connect(otherNode)
+  * }); // Node is connected to all other nodes
   *
   * console.log(connections); // [{ from: [Object object], to: [Object object], ...}, ...]
   *
@@ -380,9 +382,11 @@ function Node(options) {
   * let connection = node.connect(node); // Node is connected to itself.
   *
   * console.log(connection); // Connection { from: [Object object], to: [Object object], ...}
+  *
+  * @todo Remove self-connection differentiation
   */
-  self.connect = function(nodes, weight, options) {
-    if (nodes == undefined) throw new ReferenceError("Missing required parameter 'nodes'");
+  self.connect = function(node, weight, options) {
+    if (node == undefined) throw new ReferenceError("Missing required parameter 'node'");
 
     if(options == undefined && typeof weight === "object") {
       options = weight;
@@ -391,38 +395,23 @@ function Node(options) {
 
     options = options || {};
 
-    if (nodes instanceof Node) {
-      if (nodes === self) {
-        self.connections_self.weight = weight || 1;
-        return self.connections_self;
-      } else if (self.isProjectingTo(nodes)) throw new ReferenceError("Node is already projecting to 'target'");
-      else {
-        const connection = new Connection(self, nodes, weight, options);
+    // Self connected node should not be a special case
+    if (node === self) {
+      self.connections_self.weight = weight || 1;
+      return self.connections_self;
+    } else if (self.isProjectingTo(node)) {
+      throw new ReferenceError("Node is already projecting to 'target'");
+    } else {
+      const connection = new Connection(self, node, weight, options);
 
-        self.outgoing.push(connection);
-        nodes.incoming.push(connection);
+      self.outgoing.push(connection);
+      node.incoming.push(connection);
 
-        if(options.twosided) nodes.connect(self);
+      // Recursive case should return subsequent function call
+      if(options.twosided) return node.connect(self);
 
-        return connection;
-      }
+      return connection;
     }
-    else if (Array.isArray(nodes)) {
-      const connections = [];
-
-      for (let index = 0; index < nodes.length; index++) {
-        const connection = new Connection(self, nodes[index], weight, options);
-
-        self.outgoing.push(connection);
-        nodes[index].incoming.push(connection);
-        connections.push(connection);
-
-        if(options.twosided) nodes[index].connect(self);
-      }
-
-      return connections;
-    }
-    else throw new TypeError(`Parameter 'target': Expected 'Node' or 'Node[]' - but recieved, ${nodes}`);
   },
 
   /**

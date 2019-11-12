@@ -93,7 +93,7 @@ describe("Node", function() {
       const size = Math.floor(Math.random() * 10) + 1;
       const layer = Layer.Dense(size);
 
-      const connections = node.connect(layer.nodes);
+      const connections = layer.nodes.map(layerNode => node.connect(layerNode));
 
       expect(connections).to.be.an("array");
       expect(connections.length).to.equal(size);
@@ -121,7 +121,7 @@ describe("Node", function() {
         twosided: true
       }
 
-      const connections = node.connect(layer.nodes, options);
+      const connections = layer.nodes.map(layerNode => node.connect(layerNode, options));
 
       expect(connections).to.be.an("array");
       expect(connections.length).to.equal(size);
@@ -160,7 +160,7 @@ describe("Node", function() {
       const size = Math.floor(Math.random() * 10) + 1;
       const layer = Layer.Dense(size);
 
-      const connections_initial = node.connect(layer.nodes);
+      const connections_inital = layer.nodes.map(layerNode => node.connect(layerNode));
       const connections = node.disconnect(layer.nodes);
 
       expect(connections).to.be.an("array");
@@ -189,7 +189,7 @@ describe("Node", function() {
         twosided: true
       }
 
-      const connections_initial = node.connect(layer.nodes);
+      const connections_inital = layer.nodes.map(layerNode => node.connect(layerNode));
       const connections = node.disconnect(layer.nodes);
 
       expect(connections).to.be.an("array");
@@ -535,13 +535,13 @@ describe("Node", function() {
     it("node.isProjectingTo(nodes) => {boolean}", function() {
       const size = Math.ceil(Math.random() * 10);
       const node = new Node();
-      const other = [];
+      let other = [];
 
       for (let i = 0; i < size; i++) other.push(new Node());
 
       expect(node.isProjectingTo(other)).to.be.false;
 
-      node.connect(other);
+      otherConnections = other.map(otherNode => node.connect(otherNode));
 
       expect(node.isProjectingTo(other)).to.be.true;
     })
