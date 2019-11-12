@@ -1,4 +1,5 @@
 let EventEmitter = require('eventemitter3');
+let GPU
 
 let testing = {
   cantor: false,
@@ -122,6 +123,21 @@ Connection01.prototype.constructor = Connection01;
 // In this scenario, any set of objects can be related to any other set of
 // objects. In a directed graph (e.g. neural networks) a policy can be defined
 // to map the source to the destination.
+function Connection10(options={}) {
+  EventEmitter.call(this);
+
+  this.context = _.option(options, "context"); // The parent network
+  this.from = _.option(options, "from", {});
+  this.to = _.options(options, "to", {});
+  this.id = _.option(options, "id", Math.cantor(from.id, to.id)); // Assumes that `from` and `to` are objects that have an `id` key
+}
+Connection10.prototype = Object.create(EventEmitter.prototype);
+Connection10.prototype.constructor = Connection10;
+Connection10.
+Connection10.ids = {
+  cantor: function(options={}) {}
+}
+
 
 // TEST: Cantor Pairing
 if (testing.cantor) {
