@@ -95,7 +95,6 @@ function DDPG(numStates, numActions, options) {
   this.exploreMin = Utils.RL.getOption(options, 'exploreMin', 0.01); // AKA epsilon for epsilon-greedy policy
 
   this.timeStep = 0;
-  this.loss = 0;
   this.actions = [];
   this.state = null;
   this.lastState = null;
@@ -216,19 +215,14 @@ DDPG.prototype = {
    *
    * @param {number[]} state current state (float arr with values from [0,1])
    * @return {int} The action which the DQN would take at this state; action ∈ [0, this.numActions-1]
-   *
-   * @todo replacing explore with OUNoise -> Continuous Action Space
    */
   act: function(state) {
-    let action = this.actor.activate(state);
+    let action = this.addNoise(this.actor.activate(state));
     this.actions = action;
     this.lastState = this.state;
     this.state = state;
 
-    let currentExploreRate = Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay}));
-    return currentExploreRate > Math.random()
-      ? Utils.randomInt(0, this.numActions - 1)
-      : Utils.getMaxValueIndex(action);
+    return Utils.getMaxValueIndex(action);
   },
 
   /**
@@ -253,7 +247,7 @@ DDPG.prototype = {
     let experience = new Experience(this.lastState, this.actions, normalizedReward, this.state, isFinalState);
     this.replayBuffer.add(experience);
 
-    this.loss = this.study(experience);
+    let loss = this.study(experience);
 
     let miniBatch = this.isUsingPER
       ? this.replayBuffer.getMiniBatchWithPER(this.learningStepsPerIteration)
@@ -262,7 +256,7 @@ DDPG.prototype = {
     for (let i = 0; i < miniBatch.length; i++) {
       this.study(miniBatch[i]);
     }
-    return this.loss;
+    return loss;
   },
 
   /**
@@ -322,6 +316,24 @@ DDPG.prototype = {
     this.criticTarget.propagate(criticTargetLearningRate, 0, true, criticTargetParameters);
 
     return actorLoss;
+  },
+
+  /**
+   * This method adds noise to each param of an array.
+   *
+   * @param actions array from actor.activate()
+   * @returns {number[]} noised actions array
+   *
+   * @todo replace with Gaussian or OUNoise
+   */
+  addNoise: function(actions) {
+    let currentExploreRate = Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay}));
+    for (let i = 0; i < actions.length; i++) {
+      actions[i] *= Math.random() <= currentExploreRate
+        ? currentExploreRate + 1
+        : 1 - currentExploreRate;
+    }
+    return actions;
   },
 };
 
