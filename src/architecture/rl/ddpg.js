@@ -216,7 +216,7 @@ DDPG.prototype = {
     if (this.timeStep === 1 || !this.isTraining) {
       return 1;
     }
-    let experience = new Experience(this.lastState, this.actions, normalizedReward, this.state, isFinalState);
+    let experience = new Experience(this.lastState, this.actions, normalizedReward, this.state, 0, isFinalState);
     this.replayBuffer.add(experience);
 
     let loss = this.study(experience);

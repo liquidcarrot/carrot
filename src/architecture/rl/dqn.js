@@ -34,6 +34,7 @@ const Rate = require("../../methods/rate");
  *   isTraining: {boolean},
  *   isDoubleDQN: {boolean},
  *   isUsingPER: {boolean},
+ *   isUsingSARSA: {boolean},
  *   experienceSize: {int},
  *   learningStepsPerIteration: {int},
  *   gamma: {number}
@@ -51,6 +52,7 @@ function DQN(numStates, numActions, options) {
   this.isTraining = Utils.RL.getOption(options, 'isTraining', true); // set training mode on and off
   this.isDoubleDQN = Utils.RL.getOption(options, 'isDoubleDQN', false); // using Double-DQN
   this.isUsingPER = Utils.RL.getOption(options, 'isUsingPER', true); // using prioritized experience replay
+  this.isUsingSARSA = Utils.RL.getOption(options, 'isUsingSARSA', false);
   this.gamma = Utils.RL.getOption(options, 'gamma', 0.7); // future reward discount factor
 
   // Network creation
@@ -129,6 +131,7 @@ DQN.prototype = {
    *   learningStepsPerIteration: {int},
    *   isTraining:{boolean},
    *   isUsingPER:{boolean},
+   *   isUsingSARSA: {boolean},
    *   isDoubleDQN:{boolean},
    *   tdErrorClamp: {number},
    *   timeStep: {int},
@@ -154,6 +157,7 @@ DQN.prototype = {
     json.learningStepsPerIteration = this.learningStepsPerIteration;
     json.isTraining = this.isTraining;
     json.isUsingPER = this.isUsingPER;
+    json.isUsingSARSA = this.isUsingSARSA;
     json.isDoubleDQN = this.isDoubleDQN;
     json.tdErrorClamp = this.tdErrorClamp;
     json.timeStep = this.timeStep;
@@ -228,7 +232,7 @@ DQN.prototype = {
 
     // Update Q function | temporal difference method currently hardcoded
     if (this.reward != null && this.isTraining) {
-      let experience = new Experience(this.state, this.action, normalizedReward, this.nextState, isFinalState);
+      let experience = new Experience(this.state, this.action, normalizedReward, this.nextState, this.nextAction, isFinalState);
       // Learn from current estimated reward to understand how wrong agent is
       experience.loss = this.study(experience);
       this.loss = experience.loss;
@@ -285,8 +289,15 @@ DQN.prototype = {
           ? this.network.activate(experience.state, {no_trace: true})[experience.action]
           : this.networkB.activate(experience.state, {no_trace: true})[experience.action]);
     } else {
-      // Q(s,a) = r + gamma * max_a' Q(s',a')
-      targetQValue = experience.reward + this.gamma * nextActions[maxValueIndexNextActions];
+      if (this.isUsingSARSA) {
+        targetQValue = experience.reward
+          + this.gamma * nextActions[experience.nextAction]
+          - this.network.activate(experience.state)[experience.action];
+      } else {
+        // Q(s,a) = r + gamma * max_a' Q(s',a')
+        targetQValue = experience.reward
+          + this.gamma * nextActions[maxValueIndexNextActions];
+      }
     }
 
     // Predicted current reward | called with traces for backpropagation later
@@ -349,6 +360,7 @@ DQN.prototype = {
  *   learningStepsPerIteration: {int},
  *   isTraining:{boolean},
  *   isUsingPER:{boolean},
+ *   isUsingSARSA:{boolean},
  *   isDoubleDQN:{boolean},
  *   timeStep: {int},
  *   tdErrorClamp: {number},
