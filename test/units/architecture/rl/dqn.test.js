@@ -135,7 +135,6 @@ describe('DQN', function () {
 
   it('toJSON - fromJSON', function() {
     this.timeout(10000);
-    for(let i = 0; i < 5;i++){
       let numStates = Math.floor(Math.random() * 50 + 1);
       let numActions = Math.floor(Math.random() * 50 + 1);
       let hiddenNeurons = [Utils.randomInt(1,100),Utils.randomInt(1,100)];
@@ -161,6 +160,5 @@ describe('DQN', function () {
       });
 
       testAgentEquality(agent, DQN.fromJSON(agent.toJSON()));
-    }
   });
 });
