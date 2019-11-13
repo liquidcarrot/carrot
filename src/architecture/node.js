@@ -1,9 +1,8 @@
 const _ = require("lodash");
+const util = require('../util/utils'); // Rename this to _ once a full Lodash replacement is possible
 const methods = require('../methods/methods');
 const Connection = require('./connection');
 const config = require('../config');
-// const Group = require("./group");
-// const Layer = require("./layer");
 
 /**
 * Creates a new neuron/node
@@ -339,17 +338,19 @@ function Node(options) {
   },
 
   /**
-  * Connects this node to the given node(s)
+  * Connects this node to the given node
   *
   * @param {Node} node Node to project a connection to
   * @param {number} [weight] Initial connection(s) [weight](https://en.wikipedia.org/wiki/Synaptic_weight)
-  * @param {Object} [options={}]
-  * @param {boolean} [twosided] If `true` connect nodes to each other
+  * @param {Object} [options={}] Configuration object
+  * @param {object} [options.neat.connIdMap] Mutable map of "from" & "to" node cantor keys with connection ids as values
+  * @param {object} [options.neat.lastConnId] The last connectionId known to the population
+  * @param {boolean} [options.twosided] If `true` connect nodes to each other
   *
   * @function connect
   * @memberof Node
   *
-  * @returns {Connection[]|Connection}
+  * @returns {Connection}
   *
   * @example <caption>Connecting node (neuron) to another node (neuron)</caption>
   * const { Node } = require("@liquid-carrot/carrot");
@@ -383,35 +384,43 @@ function Node(options) {
   *
   * console.log(connection); // Connection { from: [Object object], to: [Object object], ...}
   *
-  * @todo Remove self-connection differentiation
+  * @todo Treat self connections as normal connections, simplify code
+  * @todo Make weight part of options
+  * @todo Remove shared mutable state approach for tracking connection ids
   */
   self.connect = function(node, weight, options) {
     if (node == undefined) throw new ReferenceError("Missing required parameter 'node'");
 
-    if(options == undefined && typeof weight === "object") {
+    if (options == undefined && typeof weight === "object") {
       options = weight;
       weight = undefined;
     }
 
     options = options || {};
 
+    // Handle special cases
     // Self connected node should not be a special case
     if (node === self) {
       self.connections_self.weight = weight || 1;
       return self.connections_self;
     } else if (self.isProjectingTo(node)) {
       throw new ReferenceError("Node is already projecting to 'target'");
-    } else {
-      const connection = new Connection(self, node, weight, options);
-
-      self.outgoing.push(connection);
-      node.incoming.push(connection);
-
-      // Recursive case should return subsequent function call
-      if(options.twosided) return node.connect(self);
-
-      return connection;
     }
+
+    // Neat gene id managmement section
+    if (options.neat && options.neat.connIdMap && options.neat.lastConnId) {
+      const res = util.getCantorId(self, node, options.neat.connIdMap, options.neat.lastConnId)
+      options.id = options.neat.lastConnId = options.neat.connIdMap[res.key] = res.id // Mutates options.connIdMap, relies on shared mutable state, must fix
+    }
+
+    const connection = new Connection(self, node, weight, options);
+    self.outgoing.push(connection);
+    node.incoming.push(connection);
+
+    // Recursive case should return subsequent function call
+    if(options.twosided) return node.connect(self, undefined, { neat: options.neat });
+
+    return connection;
   },
 
   /**
@@ -526,7 +535,6 @@ function Node(options) {
   */
   self.gate = function(connections) {
     if (connections == undefined) throw new ReferenceError("Missing required parameter 'connections'");
-
 
     if (!Array.isArray(connections)) {
       self.gated.push(connections);

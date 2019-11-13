@@ -20,6 +20,7 @@ const mutation = methods.mutation
 *
 * @param {number} input_size Size of input layer AKA neurons in input layer
 * @param {number} output_size Size of output layer AKA neurons in output layer
+* @param {Object} [options.connIdMap] A population-level shared mutable object with node (to, from) cantor numbers as lookup keys and connection ids as values
 *
 * @prop {number} input_size Size of input layer AKA neurons in input layer
 * @prop {number} output_size Size of output layer AKA neurons in output layer
@@ -37,11 +38,13 @@ const mutation = methods.mutation
 * let myNetwork = new architect.Perceptron(5, 20, 10, 5, 1)
 *
 * @todo Add node / connection id management scheme that can be ad-hoc added to a population and preserve unique global ids
+* @todo Remove shared mutable state approach to Neat id management
 */
-function Network(input_size, output_size) {
+function Network(input_size, output_size, options) {
   if (typeof input_size === `undefined` || typeof output_size === `undefined`) throw new TypeError(`No input or output size given`);
 
   const self = this;
+  options = options || {};
 
   // *IDEA*: Store input & output nodes in arrays accessible by self.input and self.output instead of just storing the number
   self.input_size = input_size
@@ -57,9 +60,13 @@ function Network(input_size, output_size) {
 
   // Store all the nodes and connection genes
   self.nodes = [] // Stored in activation order
-  self.lastNodeId = input_size + output_size - 1; // Tracks latest node id known to the network
   self.connections = []
   self.gates = []
+
+  // Neat ID Management | Shared mutable state
+  self.lastNodeId = input_size + output_size - 1; // Tracks latest node id known to the network
+  self.lastConnId = 0;
+  self.connIdMap = options.connIdMap || {};
 
   // Create input and output nodes
   for (let i = 0; i < input_size; i++) {
@@ -82,17 +89,26 @@ function Network(input_size, output_size) {
    * @param {Node} from The source Node
    * @param {Node|Group} to The destination Node or Group
    * @param {number} [weight] An initial weight for the connections to be formed
-   *
+   * @param {Object} [options] Configuration object
+   * @param {Object} [options.connIdMap] A mutable object with cantor numbers as lookup keys and connections ids as values
+   * @param {number} [options.lastConnId] The last known connection id
    * @returns {Connection[]} An array of the formed connections
    *
    * @example
    * let { Network } = require("@liquid-carrot/carrot");
    *
    * myNetwork.connect(myNetwork.nodes[4], myNetwork.nodes[5]); // connects network node 4 to network node 5
+   *
+   * @todo Make weight a part of options
+   * @todo Remove shared mutable state pattern
+   * @todo Return a response object with connections, connIdMap, and updated lastConnId
    */
-  self.connect = function(from, to, weight) {
+  self.connect = function(from, to, weight, options) {
+    options = options || {};
+    const connIdMap = (options.connIdMap) ? options.connIdMap : self.connIdMap // Shared mutable state
+    const lastConnId = (options.lastConnId) ? options.lastConnId : self.lastConnId // Shared mutable state
     // many elements if dealing with groups for example
-    let connections = from.connect(to, weight);
+    let connections = from.connect(to, weight, { neat: { connIdMap, lastConnId } });
     if (connections instanceof Connection) connections = [connections];
 
     for (let i = 0; i < connections.length; i++) {
@@ -108,7 +124,9 @@ function Network(input_size, output_size) {
     for (var j = self.input_size; j < self.output_size + self.input_size; j++) {
       // https://stats.stackexchange.com/a/248040/147931
       const weight = (Math.random() - 0.5) * self.input_size * Math.sqrt(2 / self.input_size);
-      self.connect(self.nodes[i], self.nodes[j], weight);
+      // Neat management section | connIdMap is mutated
+      const conns = self.connect(self.nodes[i], self.nodes[j], weight, { connIdMap: self.connIdMap, lastConnId: self.lastConnId });
+      self.lastConnId = conns[conns.length-1].id // update to last known connection id
     }
   }
 
@@ -1901,6 +1919,7 @@ Network.crossOver = function(network1, network2, equal) {
  * Ready to be built with simple one line functions.
  *
  * @namespace
+ * @todo Add connection id support
 */
 Network.architecture = {
   /**
