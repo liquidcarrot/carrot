@@ -92,6 +92,7 @@ describe('DQN', function () {
     }
   });
   it('test learning capabilities with normal DQN with PER', function() {
+    console.time('Learning: DQN, PER');
     let agent = new DQN(1, 2, {
       gamma: 0.3,
       hidden: [4],
@@ -99,9 +100,25 @@ describe('DQN', function () {
       isDoubleDQN: false,
     });
     expect(testLearning(agent) >= 0.9).to.be.true;
+    console.timeEnd('Learning: DQN, PER');
+  });
+
+  it('test learning capabilities with normal DQN and SARSA with PER', function() {
+    console.time('Learning: DQN,SARSA, PER');
+    let agent = new DQN(1, 2, {
+      gamma: 0.3,
+      hidden: [4],
+      explore: 0,
+      isDoubleDQN: false,
+      isUsingPER: true,
+      isUsingSARSA: true,
+    });
+    expect(testLearning(agent) >= 0.9).to.be.true;
+    console.timeEnd('Learning: DQN,SARSA, PER');
   });
 
   it('test learning capabilities with Double-DQN with PER', function() {
+    console.time('Learning: D-DQN, PER');
     let agent = new DQN(1, 2, {
       gamma: 0.3,
       hidden: [4],
@@ -109,9 +126,11 @@ describe('DQN', function () {
       isDoubleDQN: true,
     });
     expect(testLearning(agent) >= 0.9).to.be.true;
+    console.timeEnd('Learning: D-DQN, PER');
   });
 
   it('test learning capabilities with normal DQN without PER', function() {
+    console.time('Learning: DQN');
     let agent = new DQN(1, 2, {
       gamma: 0.3,
       hidden: [4],
@@ -120,9 +139,24 @@ describe('DQN', function () {
       isUsingPER: false,
     });
     expect(testLearning(agent) >= 0.9).to.be.true;
+    console.timeEnd('Learning: DQN');
+  });
+  it('test learning capabilities with normal DQN and SARSA without PER', function() {
+    console.time('Learning: DQN, SARSA');
+    let agent = new DQN(1, 2, {
+      gamma: 0.3,
+      hidden: [4],
+      explore: 0,
+      isDoubleDQN: false,
+      isUsingPER: false,
+      isUsingSARSA: true,
+    });
+    expect(testLearning(agent) >= 0.9).to.be.true;
+    console.timeEnd('Learning: DQN, SARSA');
   });
 
   it('test learning capabilities with Double-DQN without PER', function() {
+    console.time('Learning: D-DQN');
     let agent = new DQN(1, 2, {
       gamma: 0.3,
       hidden: [4],
@@ -131,6 +165,7 @@ describe('DQN', function () {
       isUsingPER: false,
     });
     expect(testLearning(agent) >= 0.9).to.be.true;
+    console.timeEnd('Learning: D-DQN');
   });
 
   it('toJSON - fromJSON', function() {

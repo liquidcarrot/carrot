@@ -56,14 +56,6 @@ function testAgentEquality(agent, copy) {
   expect(agent.learningRateCritic).equal(copy.learningRateCritic);
   expect(agent.learningRateCriticDecay).equal(copy.learningRateCriticDecay);
   expect(agent.learningRateCriticMin).equal(copy.learningRateCriticMin);
-
-  expect(agent.learningRateActorTarget).equal(copy.learningRateActorTarget);
-  expect(agent.learningRateActorTargetDecay).equal(copy.learningRateActorTargetDecay);
-  expect(agent.learningRateActorTargetMin).equal(copy.learningRateActorTargetMin);
-
-  expect(agent.learningRateCriticTarget).equal(copy.learningRateCriticTarget);
-  expect(agent.learningRateCriticTargetDecay).equal(copy.learningRateCriticTargetDecay);
-  expect(agent.learningRateCriticTargetMin).equal(copy.learningRateCriticTargetMin);
 }
 
 function testLearning(agent) {
@@ -117,6 +109,7 @@ describe('DDPG', function() {
     }
   });
   it('test learning capabilities with PER', function() {
+    console.time('Learning: DDPG, PER');
     this.timeout(2000);
     let agent = new DDPG(1, 2, {
       gamma: 0.3,
@@ -124,6 +117,7 @@ describe('DDPG', function() {
       isUsingPER: true,
     });
     expect(testLearning(agent) >= 0.9).to.be.true;
+    console.timeEnd('Learning: DDPG, PER');
   });
 
   it('toJSON - fromJSON', function() {
