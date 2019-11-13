@@ -30,12 +30,6 @@ const Rate = require('../../methods/rate');
  *   learningRateCritic: {number},
  *   learningRateCriticDecay: {number},
  *   learningRateCriticMin: {number},
- *   learningRateActorTarget: {number},
- *   learningRateActorTargetDecay: {number},
- *   learningRateActorTargetMin: {number},
- *   learningRateCriticTarget: {number},
- *   learningRateCriticTargetDecay: {number},
- *   learningRateCriticTargetMin: {number},
  *   explore: {number},
  *   exploreDecay: {number},
  *   exploreMin: {number},
@@ -80,14 +74,6 @@ function DDPG(numStates, numActions, options) {
   this.learningRateCritic = Utils.RL.getOption(options, 'learningRateCritic', this.learningRateActor); // AKA alpha value function learning rate
   this.learningRateCriticDecay = Utils.RL.getOption(options, 'learningRateCriticDecay', this.learningRateActorDecay); // AKA alpha value function learning rate
   this.learningRateCriticMin = Utils.RL.getOption(options, 'learningRateCriticMin', this.learningRateActorMin); // AKA alpha value function learning rate
-
-  this.learningRateActorTarget = Utils.RL.getOption(options, 'learningRateActorTarget', this.learningRateActor); // AKA alpha value function learning rate
-  this.learningRateActorTargetDecay = Utils.RL.getOption(options, 'learningRateActorTargetDecay', this.learningRateActorDecay); // AKA alpha value function learning rate
-  this.learningRateActorTargetMin = Utils.RL.getOption(options, 'learningRateActorTargetMin', this.learningRateActorMin); // AKA alpha value function learning rate
-
-  this.learningRateCriticTarget = Utils.RL.getOption(options, 'learningRateCriticTarget', this.learningRateCritic); // AKA alpha value function learning rate
-  this.learningRateCriticTargetDecay = Utils.RL.getOption(options, 'learningRateCriticTargetDecay', this.learningRateCriticDecay); // AKA alpha value function learning rate
-  this.learningRateCriticTargetMin = Utils.RL.getOption(options, 'learningRateCriticTargetMin', this.learningRateCriticMin); // AKA alpha value function learning rate
 
   // Exploration / Exploitation management
   this.explore = Utils.RL.getOption(options, 'explore', 0.3); // AKA epsilon for epsilon-greedy policy
@@ -147,12 +133,6 @@ DDPG.prototype = {
    *   learningRateCritic: {number},
    *   learningRateCriticDecay: {number},
    *   learningRateCriticMin: {number},
-   *   learningRateActorTarget: {number},
-   *   learningRateActorTargetDecay: {number},
-   *   learningRateActorTargetMin: {number},
-   *   learningRateCriticTarget: {number},
-   *   learningRateCriticTargetDecay: {number},
-   *   learningRateCriticTargetMin: {number},
    *   isTraining: {boolean},
    *   isUsingPER: {boolean},
    *   timeStep: {int},
@@ -182,14 +162,6 @@ DDPG.prototype = {
     json.learningRateCritic = this.learningRateCritic;
     json.learningRateCriticDecay = this.learningRateCriticDecay;
     json.learningRateCriticMin = this.learningRateCriticMin;
-
-    json.learningRateActorTarget = this.learningRateActorTarget;
-    json.learningRateActorTargetDecay = this.learningRateActorTargetDecay;
-    json.learningRateActorTargetMin = this.learningRateActorTargetMin;
-
-    json.learningRateCriticTarget = this.learningRateCriticTarget;
-    json.learningRateCriticTargetDecay = this.learningRateCriticTargetDecay;
-    json.learningRateCriticTargetMin = this.learningRateCriticTargetMin;
 
     json.isTraining = this.isTraining;
     json.isUsingPER = this.isUsingPER;
@@ -303,17 +275,14 @@ DDPG.prototype = {
     let criticParameters = this.critic.activate(experience.state.concat(experience.action));
     let criticTargetParameters = this.criticTarget.activate(experience.state.concat(experience.action));
     for (let i = 0; i < actorParameters.length; i++) {
-      actorTargetParameters[i] = this.theta * actorParameters[i] + (1 - this.theta) * actorTargetParameters;
+      actorTargetParameters[i] *= this.theta * actorParameters[i] + (1 - this.theta);
     }
     for (let i = 0; i < criticParameters.length; i++) {
-      criticTargetParameters[i] = this.theta * criticParameters[i] + (1 - this.theta) * criticTargetParameters;
+      criticTargetParameters[i] *= this.theta * criticParameters[i] + (1 - this.theta);
     }
 
-    let actorTargetLearningRate = Math.max(this.learningRateActorTargetMin, Rate.EXP(this.learningRateActorTarget, this.timeStep, {gamma: this.learningRateActorTargetDecay}));
-    this.actorTarget.propagate(actorTargetLearningRate, 0, true, actorTargetParameters);
-
-    let criticTargetLearningRate = Math.max(this.learningRateCriticTargetMin, Rate.EXP(this.learningRateCriticTarget, this.timeStep, {gamma: this.learningRateCriticTargetDecay}));
-    this.criticTarget.propagate(criticTargetLearningRate, 0, true, criticTargetParameters);
+    this.actorTarget.propagate(1, 0, true, actorTargetParameters);
+    this.criticTarget.propagate(1, 0, true, criticTargetParameters);
 
     return actorLoss;
   },
@@ -377,12 +346,6 @@ DDPG.prototype = {
  *   learningRateCritic: {number},
  *   learningRateCriticDecay: {number},
  *   learningRateCriticMin: {number},
- *   learningRateActorTarget: {number},
- *   learningRateActorTargetDecay: {number},
- *   learningRateActorTargetMin: {number},
- *   learningRateCriticTarget: {number},
- *   learningRateCriticTargetDecay: {number},
- *   learningRateCriticTargetMin: {number},
  *   isTraining: {boolean},
  *   isUsingPER: {boolean},
  *   timeStep: {int},
