@@ -298,7 +298,7 @@ DDPG.prototype = {
    * @param actions array from actor.activate()
    * @returns {number[]} noised actions array
    *
-   * @todo replace with Gaussian or OUNoise
+   * @todo replace with Gaussian or OUNoise (needs a change of network architecture)
    */
   addNoise: function(actions) {
     let currentExploreRate = Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay}));
