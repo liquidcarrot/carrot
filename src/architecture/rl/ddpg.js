@@ -255,10 +255,9 @@ DDPG.prototype = {
     // Learning the actor and critic networks
     let criticGradients = this.critic.activate(experience.state.concat(experience.action));
     for (let i = 0; i < qValues.length; i++) {
-      criticGradients[i] += Math.pow(qPrime[i] - qValues[i], 2);
+      criticGradients[i] += (qPrime[i] - qValues[i]) ** 2;
     }
 
-    //TODO Might be a bug
     let criticLearningRate = Math.max(this.learningRateCriticMin, Rate.EXP(this.learningRateCritic, this.timeStep, {gamma: this.learningRateCriticDecay}));
     this.critic.propagate(criticLearningRate, 0, true, criticGradients);
 
