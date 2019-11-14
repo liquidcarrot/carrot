@@ -89,7 +89,6 @@ function testLearning(agent) {
 
 describe('DDPG', function() {
   it('Object creation', function() {
-    this.timeout(10000);
     for (let i = 0; i < 100; i++) {
       let numStates = Math.floor(Math.random() * 100 + 1);
       let numActions = Math.floor(Math.random() * 100 + 1);
@@ -110,7 +109,6 @@ describe('DDPG', function() {
   });
   it('test learning capabilities with PER', function() {
     console.time('Learning: DDPG, PER');
-    this.timeout(2000);
     let agent = new DDPG(1, 2, {
       gamma: 0.3,
       explore: 0,
@@ -121,7 +119,6 @@ describe('DDPG', function() {
   });
 
   it('toJSON - fromJSON', function() {
-    this.timeout(10000);
     for (let i = 0; i < 10; i++) {
       let numStates = Math.floor(Math.random() * 50 + 1);
       let numActions = Math.floor(Math.random() * 50 + 1);

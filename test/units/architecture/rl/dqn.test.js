@@ -82,7 +82,7 @@ function testAgentEquality(agent, copy) {
 
 describe('DQN', function () {
   it('Object creation', function () {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 10; i++) {
       let numStates = Math.floor(Math.random() * 100 + 1);
       let numActions = Math.floor(Math.random() * 100 + 1);
       let agent = new DQN(numStates, numActions, {});
@@ -169,7 +169,6 @@ describe('DQN', function () {
   });
 
   it('toJSON - fromJSON', function() {
-    this.timeout(10000);
       let numStates = Math.floor(Math.random() * 50 + 1);
       let numActions = Math.floor(Math.random() * 50 + 1);
       let hiddenNeurons = [Utils.randomInt(1,100),Utils.randomInt(1,100)];
