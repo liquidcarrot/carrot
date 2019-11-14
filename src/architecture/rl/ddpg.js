@@ -392,4 +392,15 @@ DDPG.fromJSON = function(json) {
   return agent;
 };
 
+/**
+ * This method adds noise to a whole network.
+ *
+ * @param {Network} network input network
+ *
+ * @return {Network} noisy network
+ */
+function addNoiseToNetwork(network) {
+
+}
+
 module.exports = DDPG;
