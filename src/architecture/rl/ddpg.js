@@ -11,37 +11,37 @@ const Rate = require('../../methods/rate');
  *
  * Used to do reinforcement learning with an DDPG Agent
  *
- * @alpha
+ * @beta
  *
  * @constructs DDPG
  *
  * @param {int} numStates
  * @param {int} numActions
  * @param {{
- *   hiddenNeuronsActor: {int[]},
- *   hiddenNeuronsCritic: {int[]},
- *   actor: {Network},
- *   critic: {Network},
- *   actorTarget: {Network},
- *   criticTarget: {Network},
- *   learningRateActor: {number},
- *   learningRateActorDecay: {number},
- *   learningRateActorMin: {number},
- *   learningRateCritic: {number},
- *   learningRateCriticDecay: {number},
- *   learningRateCriticMin: {number},
- *   explore: {number},
- *   exploreDecay: {number},
- *   exploreMin: {number},
- *   isTraining: {boolean},
- *   isUsingPER: {boolean},
- *   experienceSize: {int},
- *   learningStepsPerIteration: {int},
- *   gamma: {number},
- *   theta: {number}
+ *   hiddenNeuronsActor: int[],
+ *   hiddenNeuronsCritic: int[],
+ *   actor: Network,
+ *   critic: Network,
+ *   actorTarget: Network,
+ *   criticTarget: Network,
+ *   learningRateActor: number,
+ *   learningRateActorDecay: number,
+ *   learningRateActorMin: number,
+ *   learningRateCritic: number,
+ *   learningRateCriticDecay: number,
+ *   learningRateCriticMin: number,
+ *   explore: number,
+ *   exploreDecay: number,
+ *   exploreMin: number,
+ *   isTraining: boolean,
+ *   isUsingPER: boolean,
+ *   experienceSize: int,
+ *   learningStepsPerIteration: int,
+ *   gamma: number,
+ *   theta: number
  * }} options JSON object which contains all custom options
  *
- * @todo replace epsilon-greedy with OUNoise
+ * @todo replace noise function with OUNoise or Gaussian Noise
  */
 function DDPG(numStates, numActions, options) {
   // Network creation
@@ -95,48 +95,54 @@ DDPG.prototype = {
    *
    * @return {{
    *   actor: {
-   *     input:{number},
-   *     output:{number},
-   *     dropout:{number},
+   *     input:number,
+   *     output:number,
+   *     dropout:number,
    *     nodes:Array<object>,
    *     connections:Array<object>
    *   },
    *   critic: {
-   *     input:{number},
-   *     output:{number},
-   *     dropout:{number},
+   *     input:number,
+   *     output:number,
+   *     dropout:number,
    *     nodes:Array<object>,
    *     connections:Array<object>
    *   },
    *   actorTarget: {
-   *     input:{number},
-   *     output:{number},
-   *     dropout:{number},
+   *     input:number,
+   *     output:number,
+   *     dropout:number,
    *     nodes:Array<object>,
    *     connections:Array<object>
    *   },
    *   criticTarget: {
-   *     input:{number},
-   *     output:{number},
-   *     dropout:{number},
+   *     input:number,
+   *     output:number,
+   *     dropout:number,
    *     nodes:Array<object>,
    *     connections:Array<object>
    *   },
-   *   gamma: {number},
-   *   theta: {number},
-   *   explore: {number},
-   *   exploreDecay: {number},
-   *   exploreMin: {number},
-   *   learningRateActor: {number},
-   *   learningRateActorDecay: {number},
-   *   learningRateActorMin: {number},
-   *   learningRateCritic: {number},
-   *   learningRateCriticDecay: {number},
-   *   learningRateCriticMin: {number},
-   *   isTraining: {boolean},
-   *   isUsingPER: {boolean},
-   *   timeStep: {int},
-   *   experience:{ReplayBuffer}
+   *   gamma: number,
+   *   theta: number,
+   *   explore: number,
+   *   exploreDecay: number,
+   *   exploreMin: number,
+   *   learningRateActor: number,
+   *   learningRateActorDecay: number,
+   *   learningRateActorMin: number,
+   *   learningRateCritic: number,
+   *   learningRateCriticDecay: number,
+   *   learningRateCriticMin: number,
+   *   isTraining: boolean,
+   *   isUsingPER: boolean,
+   *   timeStep: int,
+   *   replayBuffer:
+   *   ReplayBuffer|{
+   *     buffer: Experience[],
+   *     maxSize: int,
+   *     sumOfAbsLosses: number,
+   *     noiseRate: number
+   *    }
    * }} json JSON String JSON String which represents this DDPG agent
    *
    * @todo Create unit test
@@ -306,55 +312,56 @@ DDPG.prototype = {
 };
 
 /**
+ * @param {{
  *   actor: {
- *     input:{number},
- *     output:{number},
- *     dropout:{number},
+ *     input:number,
+ *     output:number,
+ *     dropout:number,
  *     nodes:Array<object>,
  *     connections:Array<object>
  *   },
  *   critic: {
- *     input:{number},
- *     output:{number},
- *     dropout:{number},
+ *     input:number,
+ *     output:number,
+ *     dropout:number,
  *     nodes:Array<object>,
  *     connections:Array<object>
  *   },
  *   actorTarget: {
- *     input:{number},
- *     output:{number},
- *     dropout:{number},
+ *     input:number,
+ *     output:number,
+ *     dropout:number,
  *     nodes:Array<object>,
  *     connections:Array<object>
  *   },
  *   criticTarget: {
- *     input:{number},
- *     output:{number},
- *     dropout:{number},
+ *     input:number,
+ *     output:number,
+ *     dropout:number,
  *     nodes:Array<object>,
  *     connections:Array<object>
  *   },
- *   gamma: {number},
- *   theta: {number},
- *   explore: {number},
- *   exploreDecay: {number},
- *   exploreMin: {number},
- *   learningRateActor: {number},
- *   learningRateActorDecay: {number},
- *   learningRateActorMin: {number},
- *   learningRateCritic: {number},
- *   learningRateCriticDecay: {number},
- *   learningRateCriticMin: {number},
- *   isTraining: {boolean},
- *   isUsingPER: {boolean},
- *   timeStep: {int},
- *   replayBuffer: {
+ *   gamma: number,
+ *   theta: number,
+ *   explore: number,
+ *   exploreDecay: number,
+ *   exploreMin: number,
+ *   learningRateActor: number,
+ *   learningRateActorDecay: number,
+ *   learningRateActorMin: number,
+ *   learningRateCritic: number,
+ *   learningRateCriticDecay: number,
+ *   learningRateCriticMin: number,
+ *   isTraining: boolean,
+ *   isUsingPER: boolean,
+ *   timeStep: int,
+ *   replayBuffer:
  *   ReplayBuffer|{
- *     buffer: {Experience[]},
- *     maxSize: {int},
- *     sumOfAbsLosses: {number},
- *     noiseRate: {number}
- *    }}
+ *     buffer: Experience[],
+ *     maxSize: int,
+ *     sumOfAbsLosses: number,
+ *     noiseRate: number
+ *    }
  * }} json JSON String JSON String which represents this DDPG agent
  *
  * @return {DDPG} the agent with specs from json
