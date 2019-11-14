@@ -38,8 +38,8 @@ let getMaxValueIndex = function(arr) {
  *
  * @function shuffle
  *
- * @param {[]} arr input array
- * @returns {[]} shuffled array
+ * @param {T[]} arr input array
+ * @returns {T[]} shuffled array
  *
  * Source: https://stackoverflow.com/a/2450976
  */
@@ -59,8 +59,8 @@ let shuffle = function(arr) {
  *
  * @function pickRandom
  *
- * @param {[]} arr input array
- * @returns {*} the randomly chosen element
+ * @param {T[]} arr input array
+ * @returns {T} the randomly chosen element
  *
  * @todo Create unit test
  */
