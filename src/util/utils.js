@@ -8,11 +8,9 @@ const Network = require('../architecture/network');
  * @param {number} min lower bound
  * @param {number} max upper bound
  * @returns {int} random integer between min and max
- *
- * @todo Create unit test
  */
 let randomInt = function(min, max) {
-  return Math.floor(Math.random() * (max - min) + min);
+  return Math.floor(Math.random() * (max + 1 - min) + min);
 };
 
 let hasReturnValue = false;
