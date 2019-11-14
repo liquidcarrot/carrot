@@ -55,18 +55,19 @@ let gaussianNoise = function(value = 0.5, standardDeviation = 1) {
  * So every node, connection and gate needs to be noised .
  *
  * @param {Network} network input network
+ * @param {number} standardDeviation
  * @returns {Network} noisy network
  */
-let addGaussianNoiseToNetwork = function(network) {
+let addGaussianNoiseToNetwork = function(network, standardDeviation = 0.2) {
   let copy = Network.fromJSON(network.toJSON());
   for (let i = 0; i < copy.nodes.length; i++) {
-    copy.nodes[i].weight = gaussianNoise(copy.nodes[i].weight, 0.2);
+    copy.nodes[i].weight = gaussianNoise(copy.nodes[i].weight, standardDeviation);
   }
   for (let i = 0; i < copy.gates.length; i++) {
-    copy.gates[i].weight = gaussianNoise(copy.gates[i].weight, 0.2);
+    copy.gates[i].weight = gaussianNoise(copy.gates[i].weight, standardDeviation);
   }
   for (let i = 0; i < copy.connections.length; i++) {
-    copy.connections[i].weight = gaussianNoise(copy.connections[i].weight, 0.2);
+    copy.connections[i].weight = gaussianNoise(copy.connections[i].weight, standardDeviation);
   }
   return copy;
 };

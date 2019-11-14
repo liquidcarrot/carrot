@@ -30,9 +30,9 @@ const Rate = require('../../methods/rate');
  *   learningRateCritic: number,
  *   learningRateCriticDecay: number,
  *   learningRateCriticMin: number,
- *   explore: number,
- *   exploreDecay: number,
- *   exploreMin: number,
+ *   noiseStandardDeviation: number,
+ *   noiseStandardDeviationDecay: number,
+ *   noiseStandardDeviationMin: number,
  *   isTraining: boolean,
  *   isUsingPER: boolean,
  *   experienceSize: int,
@@ -74,9 +74,9 @@ function DDPG(numStates, numActions, options) {
   this.learningRateCriticMin = Utils.RL.getOption(options, 'learningRateCriticMin', this.learningRateActorMin); // AKA alpha value function learning rate
 
   // Exploration / Exploitation management
-  this.explore = Utils.RL.getOption(options, 'explore', 0.3); // AKA epsilon for epsilon-greedy policy
-  this.exploreDecay = Utils.RL.getOption(options, 'exploreDecay', 0.9999); // AKA epsilon for epsilon-greedy policy
-  this.exploreMin = Utils.RL.getOption(options, 'exploreMin', 0.01); // AKA epsilon for epsilon-greedy policy
+  this.noiseStandardDeviation = Utils.RL.getOption(options, 'noiseStandardDeviation', 0.3); // AKA epsilon for epsilon-greedy policy
+  this.noiseStandardDeviationDecay = Utils.RL.getOption(options, 'noiseStandardDeviationDecay', 0.9999); // AKA epsilon for epsilon-greedy policy
+  this.noiseStandardDeviationMin = Utils.RL.getOption(options, 'noiseStandardDeviationMin', 0.01); // AKA epsilon for epsilon-greedy policy
 
   this.timeStep = 0;
   this.actions = [];
@@ -122,9 +122,9 @@ DDPG.prototype = {
    *   },
    *   gamma: number,
    *   theta: number,
-   *   explore: number,
-   *   exploreDecay: number,
-   *   exploreMin: number,
+   *   noiseStandardDeviation: number,
+   *   noiseStandardDeviationDecay: number,
+   *   noiseStandardDeviationMin: number,
    *   learningRateActor: number,
    *   learningRateActorDecay: number,
    *   learningRateActorMin: number,
@@ -153,9 +153,9 @@ DDPG.prototype = {
     json.gamma = this.gamma;
     json.theta = this.theta;
 
-    json.explore = this.explore;
-    json.exploreDecay = this.exploreDecay;
-    json.exploreMin = this.exploreMin;
+    json.noiseStandardDeviation = this.noiseStandardDeviation;
+    json.noiseStandardDeviationDecay = this.noiseStandardDeviationDecay;
+    json.noiseStandardDeviationMin = this.noiseStandardDeviationMin;
 
     json.learningRateActor = this.learningRateActor;
     json.learningRateActorDecay = this.learningRateActorDecay;
@@ -191,7 +191,8 @@ DDPG.prototype = {
    * @return {int} The action which the DQN would take at this state; action ∈ [0, this.numActions-1]
    */
   act: function(state) {
-    let action = Utils.addGaussianNoiseToNetwork(this.actor).activate(state);
+    let noiseFactor = Math.max(this.noiseStandardDeviationMin, Rate.EXP(this.noiseStandardDeviation, this.timeStep, {gamma: this.noiseStandardDeviationDecay}));
+    let action = Utils.addGaussianNoiseToNetwork(this.actor, noiseFactor).activate(state);
     this.actions = action;
     this.lastState = this.state;
     this.state = state;
@@ -321,9 +322,9 @@ DDPG.prototype = {
  *   },
  *   gamma: number,
  *   theta: number,
- *   explore: number,
- *   exploreDecay: number,
- *   exploreMin: number,
+ *   noiseStandardDeviation: number,
+ *   noiseStandardDeviationDecay: number,
+ *   noiseStandardDeviationMin: number,
  *   learningRateActor: number,
  *   learningRateActorDecay: number,
  *   learningRateActorMin: number,

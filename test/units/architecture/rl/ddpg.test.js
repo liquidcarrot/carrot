@@ -45,9 +45,9 @@ function testAgentEquality(agent, copy) {
   expect(agent.replayBuffer.noiseRate).equal(copy.replayBuffer.noiseRate);
   expect(agent.replayBuffer.sumOfAbsLosses).equal(copy.replayBuffer.sumOfAbsLosses);
 
-  expect(agent.explore).equal(copy.explore);
-  expect(agent.exploreDecay).equal(copy.exploreDecay);
-  expect(agent.exploreMin).equal(copy.exploreMin);
+  expect(agent.noiseStandardDeviation).equal(copy.noiseStandardDeviation);
+  expect(agent.noiseStandardDeviationDecay).equal(copy.noiseStandardDeviationDecay);
+  expect(agent.noiseStandardDeviationMin).equal(copy.noiseStandardDeviationMin);
 
   expect(agent.learningRateActor).equal(copy.learningRateActor);
   expect(agent.learningRateActorDecay).equal(copy.learningRateActorDecay);
@@ -134,9 +134,9 @@ describe('DDPG', function() {
         noisyPER: Math.random(),
         experienceSize: Utils.randomInt(1000, 50000),
         isUsingPER: true,
-        explore: Math.random(),
-        exploreDecay: Math.random(),
-        exploreMin: Math.random() / 10,
+        noiseStandardDeviation: Math.random() * 0.3 + 0.1,
+        noiseStandardDeviationDecay: Math.random() * 0.7 + 0.1,
+        noiseStandardDeviationMin: Math.random() * 0.1 + 0.1,
       });
 
       testAgentEquality(agent, DDPG.fromJSON(agent.toJSON()));
