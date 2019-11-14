@@ -40,8 +40,6 @@ const Rate = require('../../methods/rate');
  *   gamma: number,
  *   theta: number
  * }} options JSON object which contains all custom options
- *
- * @todo replace noise function with OUNoise or Gaussian Noise
  */
 function DDPG(numStates, numActions, options) {
   // Network creation
@@ -144,8 +142,6 @@ DDPG.prototype = {
    *     noiseRate: number
    *    }
    * }} json JSON String JSON String which represents this DDPG agent
-   *
-   * @todo Create unit test
    */
   toJSON: function() {
     let json = {};
@@ -195,7 +191,7 @@ DDPG.prototype = {
    * @return {int} The action which the DQN would take at this state; action ∈ [0, this.numActions-1]
    */
   act: function(state) {
-    let action = this.addNoise(this.actor.activate(state));
+    let action = Utils.addNoiseToNetwork(this.actor).activate(state);
     this.actions = action;
     this.lastState = this.state;
     this.state = state;
@@ -291,24 +287,6 @@ DDPG.prototype = {
 
     return actorLoss;
   },
-
-  /**
-   * This method adds noise to each param of an array.
-   *
-   * @param actions array from actor.activate()
-   * @returns {number[]} noised actions array
-   *
-   * @todo replace with Gaussian or OUNoise (needs a change of network architecture)
-   */
-  addNoise: function(actions) {
-    let currentExploreRate = Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay}));
-    for (let i = 0; i < actions.length; i++) {
-      actions[i] *= Math.random() <= currentExploreRate
-        ? currentExploreRate + 1
-        : 1 - currentExploreRate;
-    }
-    return actions;
-  },
 };
 
 /**
@@ -366,7 +344,6 @@ DDPG.prototype = {
  *
  * @return {DDPG} the agent with specs from json
  *
- * @todo Create unit tests
  * @param json
  */
 DDPG.fromJSON = function(json) {
@@ -391,16 +368,5 @@ DDPG.fromJSON = function(json) {
   agent.timeStep = json.timeStep;
   return agent;
 };
-
-/**
- * This method adds noise to a whole network.
- *
- * @param {Network} network input network
- *
- * @return {Network} noisy network
- */
-function addNoiseToNetwork(network) {
-
-}
 
 module.exports = DDPG;
