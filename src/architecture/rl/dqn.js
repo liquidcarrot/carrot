@@ -38,7 +38,7 @@ const Rate = require("../../methods/rate");
  *   experienceSize: {int},
  *   learningStepsPerIteration: {int},
  *   gamma: {number}
- * }} options JSON object which contains all custom options
+ * }|*} options JSON object which contains all custom options
  *
  * @todo Allow underlying Network to have arbitrary layer structure
  * @todo Add test & custom network input / output size validation
@@ -371,11 +371,11 @@ DQN.prototype = {
  * @todo Create unit test
  */
 DQN.fromJSON = function (json) {
-  json.network = json.network instanceof Network ? json.network : Network.fromJSON(json.network);
+  json.network = json.network instanceof Network ? json.network.toJSON() : Network.fromJSON(json.network);
   if (json.isDoubleDQN) {
-    json.networkB = json.networkB instanceof Network ? json.networkB : Network.fromJSON(json.networkB);
+    json.networkB = json.networkB instanceof Network ? json.networkB.toJSON() : Network.fromJSON(json.networkB);
   } else {
-    json.networkB = null;
+    json.networkB = undefined;
   }
 
   let agent = new DQN(json.network.input_size, json.network.output_size, json);
