@@ -191,7 +191,7 @@ DDPG.prototype = {
    * @return {int} The action which the DQN would take at this state; action ∈ [0, this.numActions-1]
    */
   act: function(state) {
-    let action = Utils.addNoiseToNetwork(this.actor).activate(state);
+    let action = Utils.addGaussianNoiseToNetwork(this.actor).activate(state);
     this.actions = action;
     this.lastState = this.state;
     this.state = state;

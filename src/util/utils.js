@@ -15,12 +15,17 @@ let randomInt = function(min, max) {
   return Math.floor(Math.random() * (max - min) + min);
 };
 
-let return_v = false;
-let v_val = 0.0;
+let hasReturnValue = false;
+let returnValue = 0;
+/**
+ * This method generates a gaussian random number between 0 and 1
+ *
+ * @returns {number} gaussian random number
+ */
 let nextGaussian = function() {
-  if (return_v) {
-    return_v = false;
-    return v_val;
+  if (hasReturnValue) {
+    hasReturnValue = false;
+    return returnValue;
   }
   let u = 2 * Math.random() - 1;
   let v = 2 * Math.random() - 1;
@@ -29,16 +34,43 @@ let nextGaussian = function() {
     return nextGaussian();
   }
   let c = Math.sqrt(-2 * Math.log(r) / r);
-  v_val = v * c;
-  return_v = true;
+  returnValue = v * c;
+  hasReturnValue = true;
   return u * c;
 };
 
 let sqrtOfTwoPi = Math.sqrt(2 * Math.PI);
-
-let gaussianNoise = function(mean, standardDeviation) {
-  return Math.exp(-((nextGaussian() - mean) ** 2) / (2 * standardDeviation * standardDeviation))
+/**
+ * This method puts gaussian noise onto a value
+ *
+ * @param {number} value the value with the highest probability
+ * @param {number} standardDeviation
+ * @returns {number} noisy value
+ */
+let gaussianNoise = function(value = 0.5, standardDeviation = 1) {
+  return Math.exp(-((nextGaussian() - value) ** 2) / (2 * standardDeviation * standardDeviation))
     / (standardDeviation * sqrtOfTwoPi);
+};
+
+/**
+ * This method adds noise to a whole network.
+ * So every node, connection and gate needs to be noised .
+ *
+ * @param {Network} network input network
+ * @returns {Network} noisy network
+ */
+let addGaussianNoiseToNetwork = function(network) {
+  let copy = Network.fromJSON(network.toJSON());
+  for (let i = 0; i < copy.nodes.length; i++) {
+    copy.nodes[i].weight = gaussianNoise(copy.nodes[i].weight, 0.2);
+  }
+  for (let i = 0; i < copy.gates.length; i++) {
+    copy.gates[i].weight = gaussianNoise(copy.gates[i].weight, 0.2);
+  }
+  for (let i = 0; i < copy.connections.length; i++) {
+    copy.connections[i].weight = gaussianNoise(copy.connections[i].weight, 0.2);
+  }
+  return copy;
 };
 
 /**
@@ -111,27 +143,6 @@ let mean = function(arr) {
   return sum / arr.length;
 };
 
-/**
- * This method adds noise to a whole network.
- *
- * @param {Network} network input network
- *
- * @return {Network} noisy network
- */
-let addNoiseToNetwork = function(network) {
-  let copy = Network.fromJSON(network.toJSON());
-  for (let i = 0; i < copy.nodes.length; i++) {
-    copy.nodes[i].weight = gaussianNoise(copy.nodes[i].weight, 0.2);
-  }
-  for (let i = 0; i < copy.gates.length; i++) {
-    copy.gates[i].weight = gaussianNoise(copy.gates[i].weight, 0.2);
-  }
-  for (let i = 0; i < copy.connections.length; i++) {
-    copy.connections[i].weight = gaussianNoise(copy.connections[i].weight, 0.2);
-  }
-  return copy;
-};
-
 // Reinforcement learning specific functions
 RL = {
   /**
@@ -155,5 +166,5 @@ module.exports.randomInt = randomInt;
 module.exports.pickRandom = pickRandom;
 module.exports.mean = mean;
 module.exports.gaussianNoise = gaussianNoise;
-module.exports.addNoiseToNetwork = addNoiseToNetwork;
+module.exports.addGaussianNoiseToNetwork = addGaussianNoiseToNetwork;
 module.exports.RL = RL;
