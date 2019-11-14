@@ -89,6 +89,7 @@ function testLearning(agent) {
 
 describe('DDPG', function() {
   it('Object creation', function() {
+    this.timeout(10000);
     for (let i = 0; i < 10; i++) {
       let numStates = Math.floor(Math.random() * 100 + 1);
       let numActions = Math.floor(Math.random() * 100 + 1);
