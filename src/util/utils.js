@@ -119,8 +119,6 @@ let shuffle = function(arr) {
  *
  * @param {T[]} arr input array
  * @returns {T} the randomly chosen element
- *
- * @todo Create unit test
  */
 let pickRandom = function(arr) {
   return arr[randomInt(0, arr.length - 1)];
