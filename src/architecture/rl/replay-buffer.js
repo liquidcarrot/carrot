@@ -19,10 +19,10 @@ ReplayBuffer.prototype = {
   /**
    * Save function
    * @return {{
-   *   buffer: {Experience[]},
-   *   maxSize: {int},
-   *   sumOfAbsLosses: {number},
-   *   noiseRate: {number}
+   *   buffer: Experience[],
+   *   maxSize: int,
+   *   sumOfAbsLosses: number,
+   *   noiseRate: number
    * }}
    */
   toJSON: function() {
