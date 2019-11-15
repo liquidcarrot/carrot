@@ -137,8 +137,6 @@ DQN.prototype = {
    *   timeStep: int,
    *   experience:ReplayBuffer
    * }} json JSON String JSON String which represents this DQN agent
-   *
-   * @todo Create unit test
    */
   toJSON: function () {
     let json = {};
@@ -367,8 +365,6 @@ DQN.prototype = {
  *   experience:ReplayBuffer
  * }} json  JSON String
  * @return {DQN} Agent with the specs from the json
- *
- * @todo Create unit test
  */
 DQN.fromJSON = function (json) {
   json.network = json.network instanceof Network ? json.network.toJSON() : Network.fromJSON(json.network);
