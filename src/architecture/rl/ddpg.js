@@ -243,7 +243,7 @@ DDPG.prototype = {
    * @param {Experience} experience the experience to learn from
    * @returns {number} Actor loss value; loss ∈ [-1,1]
    *
-   * @todo much performance improvements possible
+   * @todo much performance improvements possible (no double activations with same input needed)
    */
   study: function(experience) {
     let qValues = this.critic.activate(experience.state.concat(experience.action), {no_trace: true});
