@@ -242,10 +242,12 @@ DDPG.prototype = {
    *
    * @param {Experience} experience the experience to learn from
    * @returns {number} Actor loss value; loss ∈ [-1,1]
+   *
+   * @todo much performance improvements possible
    */
   study: function(experience) {
-    let qValues = this.critic.activate(experience.state.concat(experience.action));
-    let nextQ = this.criticTarget.activate(experience.nextState.concat(this.actorTarget.activate(experience.nextState)));
+    let qValues = this.critic.activate(experience.state.concat(experience.action), {no_trace: true});
+    let nextQ = this.criticTarget.activate(experience.nextState.concat(this.actorTarget.activate(experience.nextState, {no_trace: true})), {no_trace: true});
     let qPrime = [];
     for (let i = 0; i < nextQ.length; i++) {
       qPrime.push(experience.isFinalState
@@ -262,7 +264,7 @@ DDPG.prototype = {
     let criticLearningRate = Math.max(this.learningRateCriticMin, Rate.EXP(this.learningRateCritic, this.timeStep, {gamma: this.learningRateCriticDecay}));
     this.critic.propagate(criticLearningRate, 0, true, criticGradients);
 
-    let actorLoss = -Utils.mean(this.critic.activate(experience.state.concat(this.actor.activate(experience.state))));
+    let actorLoss = -Utils.mean(this.critic.activate(experience.state.concat(this.actor.activate(experience.state, {no_trace: true})), {no_trace: true}));
     let gradients = this.actor.activate(experience.state);
     gradients[Utils.getMaxValueIndex(experience.action)] += actorLoss;
 
@@ -270,9 +272,9 @@ DDPG.prototype = {
     this.actor.propagate(actorLearningRate, 0, true, gradients);
 
     // Learning the actorTarget and criticTarget networks
-    let actorParameters = this.actor.activate(experience.state);
+    let actorParameters = this.actor.activate(experience.state, {no_trace: true});
     let actorTargetParameters = this.actorTarget.activate(experience.state);
-    let criticParameters = this.critic.activate(experience.state.concat(experience.action));
+    let criticParameters = this.critic.activate(experience.state.concat(experience.action), {no_trace: true});
     let criticTargetParameters = this.criticTarget.activate(experience.state.concat(experience.action));
     for (let i = 0; i < actorParameters.length; i++) {
       actorTargetParameters[i] *= this.theta * actorParameters[i] + (1 - this.theta);
