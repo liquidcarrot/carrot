@@ -242,8 +242,6 @@ DDPG.prototype = {
    *
    * @param {Experience} experience the experience to learn from
    * @returns {number} Actor loss value; loss ∈ [-1,1]
-   *
-   * @todo Add dynamic loss functions & clamps, including Huber Loss
    */
   study: function(experience) {
     let qValues = this.critic.activate(experience.state.concat(experience.action));
