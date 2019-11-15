@@ -276,6 +276,7 @@ DQN.prototype = {
 
     let targetQValue;
     if (experience.isFinalState) {
+      //For final state reward needs no discount factor
       targetQValue = experience.reward;
     } else if (this.isDoubleDQN) {
       //See here: https://bit.ly/2rjp1gS
@@ -286,16 +287,15 @@ DQN.prototype = {
         (chooseNetwork === 'A'
           ? this.network.activate(experience.state, {no_trace: true})[experience.action]
           : this.networkB.activate(experience.state, {no_trace: true})[experience.action]);
+    } else if (this.isUsingSARSA) {
+      //SARSA
+      targetQValue = experience.reward
+        + this.gamma * nextActions[experience.nextAction]
+        - this.network.activate(experience.state)[experience.action];
     } else {
-      if (this.isUsingSARSA) {
-        targetQValue = experience.reward
-          + this.gamma * nextActions[experience.nextAction]
-          - this.network.activate(experience.state)[experience.action];
-      } else {
-        // Q(s,a) = r + gamma * max_a' Q(s',a')
-        targetQValue = experience.reward
-          + this.gamma * nextActions[maxValueIndexNextActions];
-      }
+      // Q-LEARNING
+      targetQValue = experience.reward
+        + this.gamma * nextActions[maxValueIndexNextActions];
     }
 
     // Predicted current reward | called with traces for backpropagation later
