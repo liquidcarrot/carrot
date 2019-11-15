@@ -272,7 +272,9 @@ DQN.prototype = {
     let nextActions = !this.isDoubleDQN || chooseNetwork === 'A'
       ? this.network.activate(experience.nextState, {no_trace: true})
       : this.networkB.activate(experience.nextState, {no_trace: true});
-    let maxValueIndexNextActions = Utils.getMaxValueIndex(nextActions);
+    let actionIndex = this.isUsingSARSA
+      ? experience.nextAction
+      : Utils.getMaxValueIndex(nextActions);
 
     let targetQValue;
     if (experience.isFinalState) {
@@ -282,20 +284,20 @@ DQN.prototype = {
       //See here: https://bit.ly/2rjp1gS
       targetQValue = experience.reward + this.gamma *
         (chooseNetwork === 'A'
-          ? this.networkB.activate(experience.nextState, {no_trace: true})[maxValueIndexNextActions]
-          : this.network.activate(experience.nextState, {no_trace: true})[maxValueIndexNextActions]) -
+          ? this.networkB.activate(experience.nextState, {no_trace: true})[actionIndex]
+          : this.network.activate(experience.nextState, {no_trace: true})[actionIndex]) -
         (chooseNetwork === 'A'
           ? this.network.activate(experience.state, {no_trace: true})[experience.action]
           : this.networkB.activate(experience.state, {no_trace: true})[experience.action]);
     } else if (this.isUsingSARSA) {
       //SARSA
       targetQValue = experience.reward
-        + this.gamma * nextActions[experience.nextAction]
-        - this.network.activate(experience.state)[experience.action];
+        + this.gamma * nextActions[actionIndex]
+        - this.network.activate(experience.state)[actionIndex];
     } else {
       // Q-LEARNING
       targetQValue = experience.reward
-        + this.gamma * nextActions[maxValueIndexNextActions];
+        + this.gamma * nextActions[actionIndex];
     }
 
     // Predicted current reward | called with traces for backpropagation later
