@@ -126,10 +126,9 @@ describe('DDPG', function() {
     for (let i = 0; i < 10; i++) {
       let numStates = Math.floor(Math.random() * 50 + 1);
       let numActions = Math.floor(Math.random() * 50 + 1);
-      let hiddenNeurons = [Utils.randomInt(1, 100), Utils.randomInt(1, 100)];
 
       let agent = new DDPG(numStates, numActions, {
-        hiddenNeurons: hiddenNeurons,
+        hiddenNeurons: [Utils.randomInt(1, 100), Utils.randomInt(1, 100)],
         gamma: Math.random(),
         theta: Math.random(),
         tdErrorClamp: 0.6,
