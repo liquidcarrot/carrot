@@ -245,8 +245,8 @@ DDPG.prototype = {
    */
   study: function(experience) {
     let stateActionArr = experience.state.concat(experience.action);
-
-    let qValues = this.critic.activate(stateActionArr);
+    let criticActivation = this.critic.activate(stateActionArr);
+    let actorActivation = this.actor.activate(experience.state);
 
     let nextQ = this.criticTarget.activate(experience.nextState.concat(this.actorTarget.activate(experience.nextState, {no_trace: true})), {no_trace: true});
     let qPrime = [];
@@ -257,22 +257,19 @@ DDPG.prototype = {
     }
 
     // Learning the actor and critic networks
-    let criticGradients = qValues;
-    for (let i = 0; i < qValues.length; i++) {
-      criticGradients[i] += (qPrime[i] - qValues[i]) ** 2;
+    let criticGradients = criticActivation;
+    for (let i = 0; i < criticActivation.length; i++) {
+      criticGradients[i] += (qPrime[i] - criticActivation[i]) ** 2;
     }
 
     let criticLearningRate = Math.max(this.learningRateCriticMin, Rate.EXP(this.learningRateCritic, this.timeStep, {gamma: this.learningRateCriticDecay}));
     this.critic.propagate(criticLearningRate, 0, true, criticGradients);
 
-    let actorActivation = this.actor.activate(experience.state);
-
-    let actorLoss = -Utils.mean(this.critic.activate(experience.state.concat(actorActivation), {no_trace: true}));
-    let gradients = actorActivation;
-    gradients[Utils.getMaxValueIndex(experience.action)] += actorLoss;
+    let actorLoss = Utils.mean(this.critic.activate(experience.state.concat(actorActivation), {no_trace: true}));
+    actorActivation[Utils.getMaxValueIndex(experience.action)] -= actorLoss;
 
     let actorLearningRate = Math.max(this.learningRateActorMin, Rate.EXP(this.learningRateActor, this.timeStep, {gamma: this.learningRateActorDecay}));
-    this.actor.propagate(actorLearningRate, 0, true, gradients);
+    this.actor.propagate(actorLearningRate, 0, true, actorActivation);
 
     // Learning the actorTarget and criticTarget networks
     let actorParameters = this.actor.activate(experience.state, {no_trace: true});
@@ -286,6 +283,7 @@ DDPG.prototype = {
       criticTargetParameters[i] *= this.theta * criticParameters[i] + (1 - this.theta);
     }
 
+    //Learning rate of 1 --> copy parameters
     this.actorTarget.propagate(1, 0, true, actorTargetParameters);
     this.criticTarget.propagate(1, 0, true, criticTargetParameters);
 
