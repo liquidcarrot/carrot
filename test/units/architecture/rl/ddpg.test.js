@@ -114,6 +114,9 @@ describe('DDPG', function() {
       gamma: 0.3,
       explore: 0,
       isUsingPER: true,
+      noiseStandardDeviation: Utils.randomInt(1, 10) / 10,
+      noiseStandardDeviationDecay: Utils.randomInt(1, 10) / 10,
+      noiseStandardDeviationMin: Utils.randomInt(1, 10) / 10,
     });
     expect(testLearning(agent) >= 0.9).to.be.true;
     console.timeEnd('Learning: DDPG, PER');
@@ -123,10 +126,9 @@ describe('DDPG', function() {
     for (let i = 0; i < 10; i++) {
       let numStates = Math.floor(Math.random() * 50 + 1);
       let numActions = Math.floor(Math.random() * 50 + 1);
-      let hiddenNeurons = [Utils.randomInt(1, 100), Utils.randomInt(1, 100)];
 
       let agent = new DDPG(numStates, numActions, {
-        hiddenNeurons: hiddenNeurons,
+        hiddenNeurons: [Utils.randomInt(1, 100), Utils.randomInt(1, 100)],
         gamma: Math.random(),
         theta: Math.random(),
         tdErrorClamp: 0.6,
