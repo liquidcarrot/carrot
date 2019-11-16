@@ -1,1 +1,0 @@
-const monk = 3;
