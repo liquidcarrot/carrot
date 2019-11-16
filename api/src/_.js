@@ -76,4 +76,49 @@ _.mixin = function mixin(objects={}, source={}, options={}) {
   }
 }
 
+/**
+* Deep extension of any class, function, or object - i.e. extends static functions/values, instance functions/values, and constructor
+*
+* Used: https://www.webdeveloper.com/d/243971-how-to-override-constructor-for-a-javascript-object/4
+*
+* @param {Function} target
+* @param {Function} source
+*
+* @exaple
+* function Person(options={}) {
+*   this.name = options.name || ""
+* }
+*
+* let mike = new Person({ name: "Mike", age: 25 });
+*
+* console.log(mike);
+* // Person { name: "Mike" }
+*
+* // Extends the `Person` constructor
+* Person = _.extend(Person, function(options={}) {
+*   this.age = options.age;
+* });
+*
+* let john = new Person({ name: "John", age: 34 });
+*
+* console.log(john);
+* // Person { name: "John", age: 34 }
+*/
+_.extend = function extend(target={}, source={}) {
+  function clone(object) {
+    let F = function() {};
+    F.prototype = object;
+    return new F;
+  };
+  function extend(A, B){
+    A.prototype = clone(B.prototype);
+    A.prototype.constructor = A;
+    return A;
+  };
+
+  return (function(target) {
+    return extend(function() { target.apply(this, arguments); source.call(this, ...arguments); }, target);
+  }(target));
+}
+
 module.exports = _;
