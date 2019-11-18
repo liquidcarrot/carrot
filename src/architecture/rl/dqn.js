@@ -320,7 +320,6 @@ DQN.prototype = {
     }
 
     // Backpropagation using temporal difference error
-    predictedReward[experience.action] = targetQValue;
     if (!this.isDoubleDQN || chooseNetwork === 'A') {
       let currentLearningRate = Math.max(this.learningRateMin, Rate.EXP(this.learningRate, this.timeStep, {gamma: this.learningRateDecay}));
       this.network.propagate(currentLearningRate, 0, true, predictedReward);
