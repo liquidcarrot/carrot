@@ -4,7 +4,7 @@ const ReplayBuffer = require('./replay-buffer');
 const Experience = require('./experience');
 const Utils = require('../../util/utils');
 const Rate = require("../../methods/rate");
-const Loss = require('../../methods/loss');
+const Loss = require('../../methods/cost');
 
 /**
  * Creates a DQN-Agent
