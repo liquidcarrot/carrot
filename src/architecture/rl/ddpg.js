@@ -4,6 +4,7 @@ const ReplayBuffer = require('./replay-buffer');
 const Experience = require('./experience');
 const Utils = require('../../util/utils');
 const Rate = require('../../methods/rate');
+const Loss = require('../../methods/loss');
 
 /**
  *
@@ -62,6 +63,7 @@ function DDPG(numStates, numActions, options) {
   // Training specific variables
   this.gamma = Utils.RL.getOption(options, 'gamma', 0.7);
   this.theta = Utils.RL.getOption(options, 'theta', 0.01); // soft target update
+  this.criticLoss = Utils.RL.getOption(options, 'criticLoss', Loss.SE);
   this.isTraining = Utils.RL.getOption(options, 'isTraining', true);
   this.isUsingPER = Utils.RL.getOption(options, 'isUsingPER', true); // using prioritized experience replay
 
@@ -259,14 +261,14 @@ DDPG.prototype = {
     // Learning the actor and critic networks
     let criticGradients = criticActivation;
     for (let i = 0; i < criticActivation.length; i++) {
-      criticGradients[i] += (qPrime[i] - criticActivation[i]) ** 2;
+      criticGradients[i] += this.criticLoss(qPrime[i], criticGradients[i]);
     }
 
     let criticLearningRate = Math.max(this.learningRateCriticMin, Rate.EXP(this.learningRateCritic, this.timeStep, {gamma: this.learningRateCriticDecay}));
     this.critic.propagate(criticLearningRate, 0, true, criticGradients);
 
-    let actorLoss = Utils.mean(this.critic.activate(experience.state.concat(actorActivation), {no_trace: true}));
-    actorActivation[Utils.getMaxValueIndex(experience.action)] -= actorLoss;
+    let policyLoss = Utils.mean(this.critic.activate(experience.state.concat(actorActivation), {no_trace: true}));
+    actorActivation[Utils.getMaxValueIndex(experience.action)] -= policyLoss;
 
     let actorLearningRate = Math.max(this.learningRateActorMin, Rate.EXP(this.learningRateActor, this.timeStep, {gamma: this.learningRateActorDecay}));
     this.actor.propagate(actorLearningRate, 0, true, actorActivation);
@@ -287,7 +289,7 @@ DDPG.prototype = {
     this.actorTarget.propagate(1, 0, true, actorTargetParameters);
     this.criticTarget.propagate(1, 0, true, criticTargetParameters);
 
-    return actorLoss;
+    return policyLoss;
   },
 };
 
