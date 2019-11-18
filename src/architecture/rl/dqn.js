@@ -4,6 +4,7 @@ const ReplayBuffer = require('./replay-buffer');
 const Experience = require('./experience');
 const Utils = require('../../util/utils');
 const Rate = require("../../methods/rate");
+const Loss = require('../../methods/loss');
 
 /**
  * Creates a DQN-Agent
@@ -54,6 +55,7 @@ function DQN(numStates, numActions, options) {
   this.isUsingPER = Utils.RL.getOption(options, 'isUsingPER', true); // using prioritized experience replay
   this.isUsingSARSA = Utils.RL.getOption(options, 'isUsingSARSA', false);
   this.gamma = Utils.RL.getOption(options, 'gamma', 0.7); // future reward discount factor
+  this.loss = Utils.RL.getOption(options, 'loss', Loss.ABS);
 
   // Network creation
   this.numActions = numActions;
@@ -88,7 +90,6 @@ function DQN(numStates, numActions, options) {
   this.exploreMin = Utils.RL.getOption(options, 'exploreMin', 0.01); // AKA epsilon for epsilon-greedy policy
 
   // Set variables to null | 0
-  this.loss = 0;
   this.timeStep = 0;
   this.reward = null;
   this.state = null;
@@ -188,7 +189,7 @@ DQN.prototype = {
     let currentExploreRate = Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay}));
     let action;
     if (currentExploreRate > Math.random()) {
-      //Explore
+      // Explore
       action = Utils.randomInt(0, this.numActions - 1);
     } else if (this.isDoubleDQN) {
       // Exploit with Double-DQN
@@ -229,11 +230,12 @@ DQN.prototype = {
     const normalizedReward = (1 + newReward) / 2;
 
     // Update Q function | temporal difference method currently hardcoded
+    let loss;
     if (this.reward != null && this.isTraining) {
       let experience = new Experience(this.state, this.action, normalizedReward, this.nextState, this.nextAction, isFinalState);
       // Learn from current estimated reward to understand how wrong agent is
       experience.loss = this.study(experience);
-      this.loss = experience.loss;
+      loss = experience.loss;
 
       this.replayBuffer.add(experience);
 
@@ -241,14 +243,16 @@ DQN.prototype = {
         ? this.replayBuffer.getMiniBatchWithPER(this.learningStepsPerIteration)
         : this.replayBuffer.getRandomMiniBatch(this.learningStepsPerIteration);
 
-      //Sample the mini batch
+      // Sample the mini batch
       for (let i = 0; i < miniBatch.length; i++) {
         this.study(miniBatch[i]);
       }
+    } else {
+      loss = 1;
     }
     this.timeStep++;
     this.reward = newReward;
-    return this.loss;
+    return loss;
   },
 
   /**
@@ -262,7 +266,7 @@ DQN.prototype = {
    *
    * @todo Add dynamic loss functions & clamps, including Huber Loss
    * @todo Add target network to increase reliability
-   * @todo Consider not using a target network: https://www.ijcai.org/proceedings/2019/0379.pdf
+   * @todo Consider not using a target network: https:// www.ijcai.org/proceedings/2019/0379.pdf
    * @todo Consider renaming to sample(experience)
    */
   study: function(experience) {
@@ -278,10 +282,10 @@ DQN.prototype = {
 
     let targetQValue;
     if (experience.isFinalState) {
-      //For final state reward needs no discount factor
+      // For final state reward needs no discount factor
       targetQValue = experience.reward;
     } else if (this.isDoubleDQN) {
-      //See here: https://bit.ly/2rjp1gS
+      // See here: https:// bit.ly/2rjp1gS
       targetQValue = experience.reward + this.gamma *
         (chooseNetwork === 'A'
           ? this.networkB.activate(experience.nextState, {no_trace: true})[actionIndex]
@@ -290,7 +294,7 @@ DQN.prototype = {
           ? this.network.activate(experience.state, {no_trace: true})[experience.action]
           : this.networkB.activate(experience.state, {no_trace: true})[experience.action]);
     } else if (this.isUsingSARSA) {
-      //SARSA
+      // SARSA
       targetQValue = experience.reward
         + this.gamma * nextActions[actionIndex]
         - this.network.activate(experience.state)[actionIndex];
@@ -301,12 +305,13 @@ DQN.prototype = {
     }
 
     // Predicted current reward | called with traces for backpropagation later
-    let predictedReward;
-    predictedReward = !this.isDoubleDQN || chooseNetwork === 'A'
+    let predictedReward = !this.isDoubleDQN || chooseNetwork === 'A'
       ? this.network.activate(experience.state)
       : this.networkB.activate(experience.state);
 
-    let tdError = predictedReward[experience.action] - targetQValue;
+    let temp = predictedReward;
+    predictedReward[experience.action] = targetQValue;
+    let tdError = this.loss(predictedReward, temp);
 
     // Clamp error for robustness
     if (Math.abs(tdError) > this.tdErrorClamp) {

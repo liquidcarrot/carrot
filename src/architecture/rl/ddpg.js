@@ -63,7 +63,7 @@ function DDPG(numStates, numActions, options) {
   // Training specific variables
   this.gamma = Utils.RL.getOption(options, 'gamma', 0.7);
   this.theta = Utils.RL.getOption(options, 'theta', 0.01); // soft target update
-  this.criticLoss = Utils.RL.getOption(options, 'criticLoss', Loss.SE);
+  this.criticLoss = Utils.RL.getOption(options, 'criticLoss', Loss.MSE);
   this.isTraining = Utils.RL.getOption(options, 'isTraining', true);
   this.isUsingPER = Utils.RL.getOption(options, 'isUsingPER', true); // using prioritized experience replay
 
