@@ -19,7 +19,6 @@ const methods = {
   selection: require('./selection'),
   crossover: require('./crossover'),
   cost: require('./cost'),
-  loss: require('./loss'),
   gating: require('./gating'),
   connection: require('./connection'),
   rate: require('./rate')
