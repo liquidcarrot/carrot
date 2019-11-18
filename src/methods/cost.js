@@ -284,7 +284,7 @@ const cost = {
   /**
    * @param {number[]|number} targets Ideal value
    * @param {number[]|number} outputs Actual values
-   * @param {{delta}} options
+   * @param {{delta:number}|{}} options
    *
    * @returns {number}
    */
@@ -303,7 +303,7 @@ const cost = {
   /**
    * @param {number[]|number} targets Ideal value
    * @param {number[]|number} outputs Actual values
-   * @param {{delta:number}} options delta -> required quantile value between 0 and 1
+   * @param {{delta:number}|{}} options delta -> required quantile value between 0 and 1
    *
    * @return {number}
    */

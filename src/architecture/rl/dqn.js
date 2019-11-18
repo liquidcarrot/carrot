@@ -56,6 +56,7 @@ function DQN(numStates, numActions, options) {
   this.isUsingSARSA = Utils.RL.getOption(options, 'isUsingSARSA', false);
   this.gamma = Utils.RL.getOption(options, 'gamma', 0.7); // future reward discount factor
   this.loss = Utils.RL.getOption(options, 'loss', Loss.ABS);
+  this.lossOptions = Utils.RL.getOption(options, 'lossOptions', {});
 
   // Network creation
   this.numActions = numActions;
@@ -311,7 +312,7 @@ DQN.prototype = {
 
     let temp = predictedReward;
     predictedReward[experience.action] = targetQValue;
-    let tdError = this.loss(predictedReward, temp);
+    let tdError = this.loss(predictedReward, temp, this.lossOptions);
 
     // Clamp error for robustness
     if (Math.abs(tdError) > this.tdErrorClamp) {

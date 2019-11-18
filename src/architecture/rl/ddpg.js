@@ -63,7 +63,8 @@ function DDPG(numStates, numActions, options) {
   // Training specific variables
   this.gamma = Utils.RL.getOption(options, 'gamma', 0.7);
   this.theta = Utils.RL.getOption(options, 'theta', 0.01); // soft target update
-  this.criticLoss = Utils.RL.getOption(options, 'criticLoss', Loss.SE);
+  this.criticLoss = Utils.RL.getOption(options, 'criticLoss', Loss.MSE);
+  this.criticLossOptions = Utils.RL.getOption(options, 'criticLossOptions', {});
   this.isTraining = Utils.RL.getOption(options, 'isTraining', true);
   this.isUsingPER = Utils.RL.getOption(options, 'isUsingPER', true); // using prioritized experience replay
 
@@ -261,7 +262,7 @@ DDPG.prototype = {
     // Learning the actor and critic networks
     let criticGradients = criticActivation;
     for (let i = 0; i < criticActivation.length; i++) {
-      criticGradients[i] += this.criticLoss(qPrime[i], criticGradients[i]);
+      criticGradients[i] += this.criticLoss(qPrime[i], criticGradients[i], this.criticLossOptions);
     }
 
     let criticLearningRate = Math.max(this.learningRateCriticMin, Rate.EXP(this.learningRateCritic, this.timeStep, {gamma: this.learningRateCriticDecay}));
