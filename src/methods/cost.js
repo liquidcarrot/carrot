@@ -290,6 +290,9 @@ const cost = {
    */
   HuberLoss: function(targets, outputs, options) {
     [targets, outputs] = validate(targets, outputs);
+    if (options === undefined) {
+      options = {};
+    }
     if (options.delta === undefined || isNaN(options.delta)) {
       options.delta = 5;
     }
@@ -309,6 +312,9 @@ const cost = {
    */
   QuantileLoss: function(targets, outputs, options) {
     [targets, outputs] = validate(targets, outputs);
+    if (options === undefined) {
+      options = {};
+    }
     if (options.delta === undefined || isNaN(options.delta)) {
       options.delta = 0.5;
     }
