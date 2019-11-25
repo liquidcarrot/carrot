@@ -87,7 +87,7 @@ function Network(input_size, output_size, options) {
    * @memberof Network
    *
    * @param {Node} from The source Node
-   * @param {Node|Group} to The destination Node or Group
+   * @param {Node} to The destination Node, for groups / layers see example
    * @param {number} [weight] An initial weight for the connections to be formed
    * @param {Object} [options] Configuration object
    * @param {Object} [options.connIdMap] A mutable object with cantor numbers as lookup keys and connections ids as values
@@ -99,6 +99,14 @@ function Network(input_size, output_size, options) {
    *
    * myNetwork.connect(myNetwork.nodes[4], myNetwork.nodes[5]); // connects network node 4 to network node 5
    *
+   * @example <caption>Connecting to groups</caption>
+   * let { Network, Group } = require("@liquid-carrot/carrot");
+   *
+   * let group = new Group(5);
+   * let network = new Network(4,4)
+   * // connects all nodes in group to index 4 network node
+   * const formedConnections = group.nodes.map(node => network.connect(network.nodes[4], node));
+   *
    * @todo Make weight a part of options
    * @todo Remove shared mutable state pattern
    * @todo Return a response object with connections, connIdMap, and updated lastConnId
@@ -107,16 +115,11 @@ function Network(input_size, output_size, options) {
     options = options || {};
     const connIdMap = (options.connIdMap) ? options.connIdMap : self.connIdMap // Shared mutable state
     const lastConnId = (options.lastConnId) ? options.lastConnId : self.lastConnId // Shared mutable state
-    // many elements if dealing with groups for example
-    let connections = from.connect(to, weight, { neat: { connIdMap, lastConnId } });
-    if (connections instanceof Connection) connections = [connections];
 
-    for (let i = 0; i < connections.length; i++) {
-      let connection = connections[i];
-      self.connections.push(connection);
-    }
+    const connection = from.connect(to, weight, { neat: { connIdMap, lastConnId } });
+    self.connections.push(connection);
 
-    return connections;
+    return connection
   }
 
   // Connect input nodes with output nodes directly
@@ -125,8 +128,8 @@ function Network(input_size, output_size, options) {
       // https://stats.stackexchange.com/a/248040/147931
       const weight = (Math.random() - 0.5) * self.input_size * Math.sqrt(2 / self.input_size);
       // Neat management section | connIdMap is mutated
-      const conns = self.connect(self.nodes[i], self.nodes[j], weight, { connIdMap: self.connIdMap, lastConnId: self.lastConnId });
-      self.lastConnId = conns[conns.length-1].id // update to last known connection id
+      const conn = self.connect(self.nodes[i], self.nodes[j], weight, { connIdMap: self.connIdMap, lastConnId: self.lastConnId });
+      self.lastConnId = conn.id // update to last known connection id
     }
   }
 
@@ -461,8 +464,7 @@ function Network(input_size, output_size, options) {
     _.forEach(inputs, (input) => {
       _.forEach(outputs, (output) => {
         if (!input.isProjectingTo(output)) {
-          const connection = self.connect(input, output);
-          connections.push(connection[0]);
+          connections.push(self.connect(input, output));
         }
       });
     });
@@ -683,8 +685,8 @@ function Network(input_size, output_size, options) {
         self.nodes.splice(min_bound + 1, 0, node) // assumes there is at least one output neuron
 
         // Now create two new connections
-        const new_connection1 = self.connect(from, node, 1)[0] // Incoming connection weight set to 1, matches NEAT spec
-        const new_connection2 = self.connect(node, to, connection.weight)[0] // Outgoing connection has previous connection weight, matches NEAT spec
+        const new_connection1 = self.connect(from, node, 1) // Incoming connection weight set to 1, matches NEAT spec
+        const new_connection2 = self.connect(node, to, connection.weight) // Outgoing connection has previous connection weight, matches NEAT spec
 
         const gater = connection.gater
         if (gater != null) self.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2) // Check if the original connection was gated
@@ -1622,7 +1624,7 @@ Network.fromJSON = function(json) {
 
   json.connections.forEach((json_connection) => {
     const connection =
-    network.connect(network.nodes[json_connection.from], network.nodes[json_connection.to])[0];
+    network.connect(network.nodes[json_connection.from], network.nodes[json_connection.to]);
     connection.weight = json_connection.weight;
 
     if (json_connection.gater != null) network.gate(network.nodes[json_connection.gater], connection);
@@ -1899,7 +1901,7 @@ Network.crossOver = function(network1, network2, equal) {
     if (connection_data.to < offspring_size && connection_data.from < offspring_size) {
       const from = offspring.nodes[connection_data.from];
       const to = offspring.nodes[connection_data.to];
-      const connection = offspring.connect(from, to)[0];
+      const connection = offspring.connect(from, to);
 
       connection.weight = connection_data.weight;
 

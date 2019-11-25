@@ -151,19 +151,15 @@ describe('Network', function(){
   })
 
   describe('network.connect()', function() {
-    it('network.connect() => {Connection[]}', function () {
+    it('network.connect() => {Connection}', function () {
       const network = new Network(10, 20);
       const source_node = new Node();
       const target_node = network.nodes[25];
-      const formed_connections = network.connect(source_node, target_node, 7);
-      expect(formed_connections).to.be.an(`array`);
-      expect(formed_connections).to.be.of.length(1);
+      const connection = network.connect(source_node, target_node, 7);
 
-      const formed_connection = formed_connections[0];
-
-      expect(formed_connection).to.be.an.instanceOf(Connection);
-      expect(formed_connection.from).eql(source_node);
-      expect(formed_connection.to).eql(target_node);
+      expect(connection).to.be.an.instanceOf(Connection);
+      expect(connection.from).eql(source_node);
+      expect(connection.to).eql(target_node);
     })
   })
 
