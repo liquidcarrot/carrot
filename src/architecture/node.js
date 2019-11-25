@@ -410,7 +410,9 @@ function Node(options) {
     // Neat gene id managmement section
     if (options.neat && options.neat.connIdMap && options.neat.lastConnId) {
       const res = util.getCantorId(self, node, options.neat.connIdMap, options.neat.lastConnId)
-      options.id = options.neat.lastConnId = options.neat.connIdMap[res.key] = res.id // Mutates options.connIdMap, relies on shared mutable state, must fix
+      // Sets id for new Connection in options object
+      // Mutates options.connIdMap, scheme relies on shared mutable state, must fix
+      options.id = options.neat.lastConnId = options.neat.connIdMap[res.key] = res.id
     }
 
     const connection = new Connection(self, node, weight, options);

@@ -87,7 +87,7 @@ function Network(input_size, output_size, options) {
    * @memberof Network
    *
    * @param {Node} from The source Node
-   * @param {Node} to The destination Node, for groups / layers see example
+   * @param {Node} to The destination Node. For groups / layers see example.
    * @param {number} [weight] An initial weight for the connections to be formed
    * @param {Object} [options] Configuration object
    * @param {Object} [options.connIdMap] A mutable object with cantor numbers as lookup keys and connections ids as values
@@ -123,9 +123,11 @@ function Network(input_size, output_size, options) {
   }
 
   // Connect input nodes with output nodes directly
+  // Weight initialization is (possibly) optimized for fast backpropagation by using input neuron size
+  // @todo Implement hyperparameter optimizers better to address this problem
+  // Link: https://stats.stackexchange.com/a/248040/147931
   for (let i = 0; i < self.input_size; i++) {
     for (var j = self.input_size; j < self.output_size + self.input_size; j++) {
-      // https://stats.stackexchange.com/a/248040/147931
       const weight = (Math.random() - 0.5) * self.input_size * Math.sqrt(2 / self.input_size);
       // Neat management section | connIdMap is mutated
       const conn = self.connect(self.nodes[i], self.nodes[j], weight, { connIdMap: self.connIdMap, lastConnId: self.lastConnId });
