@@ -65,6 +65,9 @@ const util = {
   getCantorId: function(from, to, reference, lastId) {
     const response = this.cantorLookup(from, to, reference);
 
+    console.log("cantorLookup response", response)
+    console.log("id is nil check", this.isNil(response.id)) // should print true
+    console.log("expected id", lastId)
     /**
      * @typedef {Object} CantorIdResponse
      * @property {number} key - The cantor number key
@@ -72,7 +75,7 @@ const util = {
     */
     return {
       key: response.key,
-      id: (response.id >= 0 ? response.id : lastId + 1)
+      id: this.isNil(response.id) ? lastId + 1 : response.id
     }
   },
 }

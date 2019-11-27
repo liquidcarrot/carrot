@@ -65,8 +65,8 @@ function Network(input_size, output_size, options) {
 
   // Neat ID Management | Shared mutable state
   self.lastNodeId = input_size + output_size - 1; // Tracks latest node id known to the network
-  self.lastConnId = 0;
-  self.connIdMap = options.connIdMap || {};
+  self.lastConnId = options.lastConnId;
+  self.connIdMap = options.connIdMap;
 
   // Create input and output nodes
   for (let i = 0; i < input_size; i++) {
@@ -113,10 +113,15 @@ function Network(input_size, output_size, options) {
    */
   self.connect = function(from, to, weight, options) {
     options = options || {};
-    const connIdMap = (options.connIdMap) ? options.connIdMap : self.connIdMap // Shared mutable state
-    const lastConnId = (options.lastConnId) ? options.lastConnId : self.lastConnId // Shared mutable state
+    if(util.isNil(options.connIdMap)) {
+      console.log("no connection id map was passed to network.connect");
+    }
+    if(util.isNil(options.lastConnId)) {
+      console.log("no connection id map was passed to network.connect");
+    }
 
-    const connection = from.connect(to, weight, { neat: { connIdMap, lastConnId } });
+    console.log("At network level: options.connIdMap", options.connIdMap, "options.lastConnId", options.lastConnId)
+    const connection = from.connect(to, weight, options);
     self.connections.push(connection);
 
     return connection
@@ -130,7 +135,9 @@ function Network(input_size, output_size, options) {
     for (var j = self.input_size; j < self.output_size + self.input_size; j++) {
       const weight = (Math.random() - 0.5) * self.input_size * Math.sqrt(2 / self.input_size);
       // Neat management section | connIdMap is mutated
+      console.log("last id before new initial node", self.lastConnId);
       const conn = self.connect(self.nodes[i], self.nodes[j], weight, { connIdMap: self.connIdMap, lastConnId: self.lastConnId });
+      console.log("last id after new initial node", conn.id);
       self.lastConnId = conn.id // update to last known connection id
     }
   }

@@ -343,8 +343,8 @@ function Node(options) {
   * @param {Node} node Node to project a connection to
   * @param {number} [weight] Initial connection(s) [weight](https://en.wikipedia.org/wiki/Synaptic_weight)
   * @param {Object} [options={}] Configuration object
-  * @param {object} [options.neat.connIdMap] Mutable map of "from" & "to" node cantor keys with connection ids as values
-  * @param {object} [options.neat.lastConnId] The last connectionId known to the population
+  * @param {object} [options.connIdMap] Mutable map of "from" & "to" node cantor keys with connection ids as values
+  * @param {object} [options.lastConnId] The last connectionId known to the population
   * @param {boolean} [options.twosided] If `true` connect nodes to each other
   *
   * @function connect
@@ -402,17 +402,22 @@ function Node(options) {
     // Self connected node should not be a special case
     if (node === self) {
       self.connections_self.weight = weight || 1;
+      console.log("self connection detected")
       return self.connections_self;
     } else if (self.isProjectingTo(node)) {
       throw new ReferenceError("Node is already projecting to 'target'");
     }
 
     // Neat gene id managmement section
-    if (options.neat && options.neat.connIdMap && options.neat.lastConnId) {
-      const res = util.getCantorId(self, node, options.neat.connIdMap, options.neat.lastConnId)
+    // util isNil avoids bugs related to falsy zero value
+    if (options.connIdMap && !util.isNil(options.lastConnId)) {
+      console.log("neat object detected")
+      console.log("At node level: options.connIdMap", options.connIdMap, "options.lastConnId", options.lastConnId)
+      const res = util.getCantorId(self, node, options.connIdMap, options.lastConnId)
+      console.log("CantorIdResponse", res)
       // Sets id for new Connection in options object
       // Mutates options.connIdMap, scheme relies on shared mutable state, must fix
-      options.id = options.neat.lastConnId = options.neat.connIdMap[res.key] = res.id
+      options.id = options.lastConnId = options.connIdMap[res.key] = res.id
     }
 
     const connection = new Connection(self, node, weight, options);
