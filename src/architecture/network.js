@@ -113,14 +113,6 @@ function Network(input_size, output_size, options) {
    */
   self.connect = function(from, to, weight, options) {
     options = options || {};
-    if(util.isNil(options.connIdMap)) {
-      console.log("no connection id map was passed to network.connect");
-    }
-    if(util.isNil(options.lastConnId)) {
-      console.log("no connection id map was passed to network.connect");
-    }
-
-    console.log("At network level: options.connIdMap", options.connIdMap, "options.lastConnId", options.lastConnId)
     const connection = from.connect(to, weight, options);
     self.connections.push(connection);
 
@@ -135,10 +127,8 @@ function Network(input_size, output_size, options) {
     for (var j = self.input_size; j < self.output_size + self.input_size; j++) {
       const weight = (Math.random() - 0.5) * self.input_size * Math.sqrt(2 / self.input_size);
       // Neat management section | connIdMap is mutated
-      console.log("last id before new initial node", self.lastConnId);
       const conn = self.connect(self.nodes[i], self.nodes[j], weight, { connIdMap: self.connIdMap, lastConnId: self.lastConnId });
-      console.log("last id after new initial node", conn.id);
-      self.lastConnId = conn.id // update to last known connection id
+      self.lastConnId = conn.id; // update to last known connection id
     }
   }
 

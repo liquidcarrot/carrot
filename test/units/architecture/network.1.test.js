@@ -78,7 +78,6 @@ describe('Network', function(){
 
     it('new Network(2, 2, { connectionIdMap }) | ConnectionIdMap contains 4 entries', function () {
       const connectionIds = {}; // initialize connection id object
-      console.log("Testing connectionIdMap functionality")
       let network = new Network(2,2, { connIdMap: connectionIds, lastConnId: 0 }); // pass in connection id object to be mutated
 
       expect(Object.keys(connectionIds).length).equal(4); // Should be equal to the number of connections, 4
@@ -86,7 +85,7 @@ describe('Network', function(){
   })
 
   /** Architecture tests */
-  describe.skip('Network.architecture', function() {
+  describe('Network.architecture', function() {
     describe('.Construct', function() {
       it('() => Network | fails', function() {
         expect(Network.architecture.Construct).to.throw(Error);
@@ -172,7 +171,7 @@ describe('Network', function(){
     })
   })
 
-  describe.skip('network.connect()', function() {
+  describe('network.connect()', function() {
     it('network.connect() => {Connection}', function () {
       const network = new Network(10, 20);
       const source_node = new Node();
@@ -185,7 +184,7 @@ describe('Network', function(){
     })
   })
 
-  describe.skip('network.activate()', function() {
+  describe('network.activate()', function() {
     it('network.activate(Array<Number>) => {Array<Number>}', function () {
       const network = new Network(10, 20);
       const input = Array(10).fill(0).map(() => Math.random());
@@ -256,7 +255,7 @@ describe('Network', function(){
     })
   })
 
-  describe.skip('network.clear()', function() {
+  describe('network.clear()', function() {
     it('network.clear() => {undefined}', function () {
       const test_network = createUsedNetwork();
 
@@ -272,7 +271,7 @@ describe('Network', function(){
     })
   })
 
-  describe.skip('network.mutate()', function() {
+  describe('network.mutate()', function() {
 
     describe('ADD_NODE', function() {
       it('originalNetwork != newNetwork | when mutation possible', function() {
@@ -419,7 +418,7 @@ describe('Network', function(){
       })
 
       // not yet implemented
-      it.skip("(), existing node | doesn't increase network's internal lastNodeId", function () {})
+      it("(), existing node | doesn't increase network's internal lastNodeId", function () {})
     })
 
     describe('ADD_CONNECTION', function() {
@@ -544,7 +543,7 @@ describe('Network', function(){
 
   })
 
-  describe.skip('Network.mutateRandom()', function () {
+  describe('Network.mutateRandom()', function () {
     it('() => {Network}', function () {
       let template = new Network(1,2)
       let network = new architect.Perceptron(2,3,2)
@@ -609,7 +608,7 @@ describe('Network', function(){
     })
   })
 
-  describe.skip('network.clone()', function() {
+  describe('network.clone()', function() {
     it('network.clone() => {Network}', function () {
       const original = new architect.Perceptron(2,3,1)
 
@@ -627,7 +626,7 @@ describe('Network', function(){
     })
   })
 
-  describe.skip('network.addNodes()', function () {
+  describe('network.addNodes()', function () {
     it('network.addNodes(Node) => {Network}', function () {
       const test_network = new Network(10, 20);
 
@@ -704,7 +703,7 @@ describe('Network', function(){
     })
   })
 
-  describe.skip('network.propagate()', function () {
+  describe('network.propagate()', function () {
     it('network.propagate(rate, momentum, update, target_output) => {undefined}', function () {
       const upper_test_epoch_limit = 2000; // will attempt to propagate this many times
 
@@ -732,7 +731,7 @@ describe('Network', function(){
     })
   })
 
-  describe.skip('network.disconnect()', function () {
+  describe('network.disconnect()', function () {
     it('network.disconnect(Node, Node) => {undefined}', function () {
       const test_network = createUsedNetwork();
       const test_node = new Node();
@@ -750,7 +749,7 @@ describe('Network', function(){
     })
   })
 
-  describe.skip('network.gate()', function () {
+  describe('network.gate()', function () {
     it('network.gate(node_not_in_network, Connection) => {ReferenceError}', function () {
       const test_network = createUsedNetwork();
       const new_node = new Node();
@@ -772,7 +771,7 @@ describe('Network', function(){
     })
   })
 
-  describe.skip('network.ungate()', function () {
+  describe('network.ungate()', function () {
     it('network.ungate(connection_not_in_network) => {ReferenceError}', function () {
       const test_network = createUsedNetwork();
       const new_node = new Node();
@@ -796,7 +795,7 @@ describe('Network', function(){
     })
   })
 
-  describe.skip('network.remove()', function () {
+  describe('network.remove()', function () {
     it('network.remove(node_not_in_network) => {ReferenceError}', function () {
       const test_network = createUsedNetwork();
       const node_not_in_network = new Node();
@@ -848,7 +847,7 @@ describe('Network', function(){
     })
   })
 
-  describe.skip('network.set()', function () {
+  describe('network.set()', function () {
     const test_network = createUsedNetwork();
     test_network.set({ bias: 1.3 });
     test_network.nodes.forEach(node => {
@@ -856,7 +855,7 @@ describe('Network', function(){
     })
   })
 
-  describe.skip('network.train()', function () {
+  describe('network.train()', function () {
     it('network.train(dataset) => {{error:{number},iterations:{number},time:{number}}}', function () {
       const network = new Network(4,4);
 
@@ -879,7 +878,7 @@ describe('Network', function(){
     })
   })
 
-  describe.skip('network.evolve()', function () {
+  describe('network.evolve()', function () {
     // similar to network.train, with the difference that this dataset requires
     // evolving the network to be solvable
     it('network.evolve(dataset) => {{error:{number},iterations:{number},time:{number}}}', async function () {

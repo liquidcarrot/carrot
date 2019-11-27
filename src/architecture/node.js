@@ -402,7 +402,6 @@ function Node(options) {
     // Self connected node should not be a special case
     if (node === self) {
       self.connections_self.weight = weight || 1;
-      console.log("self connection detected")
       return self.connections_self;
     } else if (self.isProjectingTo(node)) {
       throw new ReferenceError("Node is already projecting to 'target'");
@@ -411,10 +410,7 @@ function Node(options) {
     // Neat gene id managmement section
     // util isNil avoids bugs related to falsy zero value
     if (options.connIdMap && !util.isNil(options.lastConnId)) {
-      console.log("neat object detected")
-      console.log("At node level: options.connIdMap", options.connIdMap, "options.lastConnId", options.lastConnId)
       const res = util.getCantorId(self, node, options.connIdMap, options.lastConnId)
-      console.log("CantorIdResponse", res)
       // Sets id for new Connection in options object
       // Mutates options.connIdMap, scheme relies on shared mutable state, must fix
       options.id = options.lastConnId = options.connIdMap[res.key] = res.id
