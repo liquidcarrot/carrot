@@ -124,7 +124,7 @@ function Network(input_size, output_size, options) {
   // @todo Implement hyperparameter optimizers better to address this problem
   // Link: https://stats.stackexchange.com/a/248040/147931
   for (let i = 0; i < self.input_size; i++) {
-    for (var j = self.input_size; j < self.output_size + self.input_size; j++) {
+    for (let j = self.input_size; j < self.output_size + self.input_size; j++) {
       const weight = (Math.random() - 0.5) * self.input_size * Math.sqrt(2 / self.input_size);
       // Neat management section | connIdMap is mutated
       const conn = self.connect(self.nodes[i], self.nodes[j], weight, { connIdMap: self.connIdMap, lastConnId: self.lastConnId });

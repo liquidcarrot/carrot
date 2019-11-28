@@ -5,13 +5,19 @@ const chalk = require('chalk');
 const { Population, Network } = require('../../../src/carrot');
 
 describe("Population", () => {
-  describe.skip("new Population()", function() {
-    it("new Population()", function() {
+  describe("new Population()", function() {
+    it.skip("new Population()", function() {
       this.timeout(10000)
       const population = new Population();
       is.population(population);
     })
-    it("new Population(options)", function() {
+    it("new Population({ inputs: 2, outputs: 2 }) | Population members have shared connectionIdMap reference", function() {
+      const population = new Population({ inputs: 4, outputs: 4, size: 3 });
+      for(let i = 0; i < population.members.length; i++) {
+        expect(population.members[i].connIdMap).equal(population.connIdMap)
+      }
+    })
+    it.skip("new Population({...})", function() {
       this.timeout(10000)
       const options = random.options.population();
       const population = new Population(options);
@@ -19,7 +25,7 @@ describe("Population", () => {
       is.population(population);
       has.options(population, options);
     })
-    it("new Population(dataset)", function() {
+    it.skip("new Population({ dataset })", function() {
       this.timeout(10000)
       const dataset = data.XNOR;
       const population = new Population(dataset);
@@ -27,7 +33,7 @@ describe("Population", () => {
       is.population(population);
       has.dataset(population, dataset);
     })
-    it("new Population(input, output)", function() {
+    it.skip("new Population({ input, output })", function() {
       this.timeout(10000)
       const inputs = _.random(1,50);
       const outputs = _.random(1,50)
@@ -36,7 +42,7 @@ describe("Population", () => {
       is.population(population);
       has.dimensions(population, inputs, outputs);
     })
-    it("new Population(dataset, options)", function() {
+    it.skip("new Population({ dataset, ... })", function() {
       this.timeout(10000)
       const dataset = data.XNOR;
       const options = random.options.population();
@@ -48,7 +54,7 @@ describe("Population", () => {
       has.options(population, options);
 
     })
-    it("new Population(input, output, options)", function() {
+    it.skip("new Population({ input, output, ... })", function() {
       this.timeout(10000)
       const inputs = _.random(1,50);
       const outputs = _.random(1,50);
@@ -60,7 +66,7 @@ describe("Population", () => {
       has.options(population, options);
       has.dimensions(population, inputs, outputs);
     })
-    it("new Population(input, output, dataset)", function() {
+    it.skip("new Population({ input, output, dataset })", function() {
       this.timeout(10000)
       const inputs = _.random(1,50);
       const outputs = _.random(1,50);
@@ -72,7 +78,7 @@ describe("Population", () => {
       has.dataset(population, dataset);
       has.dimensions(population, inputs, outputs);
     })
-    it("new Population(input, output, dataset, options)", function() {
+    it.skip("new Population({ input, output, dataset, ... })", function() {
       this.timeout(10000)
       const inputs = _.random(1, 50);
       const outputs = _.random(1, 50);

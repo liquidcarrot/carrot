@@ -14,9 +14,9 @@ const config = require('../config');
 * @param {number} [options.inputs=1] Size of input layer of the networks in the population. Used only when network template is not passed
 * @param {number} [options.outputs=1] Size of output layer of the networks in the population. Used only when network template is not passed
 * @param {Network} [options.template] A template network used to create a population of identical copies from. Warning: may slow improvement due to starting from a single "search location".
-* @param {Network[]} [options.population] An array of networks to start this population with.
-* @param {Array<{inputs:number[],outputs:number[]}>} [options.dataset] Dataset used to train networks in the population at first - _other sets of data can be passed to `neat.evolve()` after constuction_
-* @param {number} [options.population_size=50] Population size of each generation.
+* @param {Network[]} [options.members] An array of networks to start this population with.
+* @param {Array<{inputs:number[],outputs:number[]}>} [options.dataset] Dataset used to train networks in the population at first - _other sets of data can be passed to `population.evolve()` after constuction_
+* @param {number} [options.size=50] Population size of each generation.
 * @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algortihtms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
 * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
 * @param {number} [options.mutation_rate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.4.
@@ -37,7 +37,7 @@ const config = require('../config');
 * @param {mutation[]} [options.mutation] A set of allowed [mutation methods](mutation) for evolution. If unset a random mutation method from all possible mutation methods will be chosen when mutation occurs.
 *
 * @prop {number} generation A count of the generations
-* @prop {Network[]} population The current population for the neat instance. Accessible through `neat.population`
+* @prop {Network[]} population The current population for the population instance. Accessible through `population.members`
 *
 * @todo Remove very slow defaultsDeep
 *
@@ -45,10 +45,10 @@ const config = require('../config');
 * const { Population } = require("@liquid-carrot/carrot");
 *
 * // new Population()
-* let neat = new Population()
+* let population = new Population()
 *
 * // new Population(options)
-* let neat = new Population({ population_size: 100 })
+* let population = new Population({ size: 100 })
 */
 const Population = function(options) {
   const self = this;
@@ -71,8 +71,8 @@ const Population = function(options) {
    *
    * @return {Network[]} Returns an array of networks each a member of the population
    */
-  self.getPopulation = function create_networks_for_evolution(options={}) {
-    size = options.size || self.population_size
+  self.getPopulation = function create_networks(options={}) {
+    size = options.size || self.size
 
     // Prioritize options.network, otherwise use template network, otherwise use "new network"
     copyNetwork = options.network
@@ -82,16 +82,20 @@ const Population = function(options) {
       : () => new Network(self.inputs, self.outputs, { connIdMap: self.connIdMap, lastConnId: self.lastConnId })
 
     const population = []
-    for(let i = 0; i < size; i++) population.push(copyNetwork())
+    for (let i = 0; i < size; i++) {
+      const network = copyNetwork();
+      population.push(network);
+      self.lastConnId = network.lastConnId; // Update population with last known network conenction ID
+    }
 
     return population
   };
 
   // Initialise the genomes
-  self.population = self.population || self.getPopulation();
+  self.members = self.members || self.getPopulation();
 
   /**
-  * Resizes the population and adjusts the `population_size`
+  * Resizes the population and adjusts the `size`
   *
   * @function resize
   *
@@ -102,38 +106,38 @@ const Population = function(options) {
   * @param {Network[]|number} update An array of new networks to add to the existing population or a new size for the population.
   *
   * @example
-  * let neat = new Population() // default population_size = 50
+  * let population = new Population() // default size = 50
   *
-  * neat.resize(51) // Adds 1 new network to make the 51 population members
+  * population.resize(51) // Adds 1 new network to make the 51 population members
   *
-  * let neat2 = new Population()
+  * let population2 = new Population()
   *
-  * neat.resize(neat2.population) // Adds neat2 population to neat, neat now has 101 networks
+  * population.resize(population2.members) // Adds population2 members to population, population now has 101 networks
   *
-  * console.log(neat.population_size) // 101
+  * console.log(population.size) // 101
   */
   self.resize = function(update) {
     if(typeof update == 'number' || typeof update == 'string' &&	+update === +update) {
-      let offset = update - self.population.length;
+      let offset = update - self.members.length;
 
       if(offset > 0) {
-        if(self.population.length === 1) {
-          self.population.push(self.population[0].clone())
+        if(self.members.length === 1) {
+          self.members.push(self.members[0].clone())
           offset--
         }
-        while(offset-- > 0) self.population.push(self.getOffspring())
+        while(offset-- > 0) self.members.push(self.getOffspring())
       } else {
-        while(offset++ < 0) self.population.pop() // if population sorted, removes least fit first
+        while(offset++ < 0) self.members.pop() // if population sorted, removes least fit first
       }
     } else if (Array.isArray(update) && update.length) {
-      for(let i = 0; i < update.length; i++) self.population.push(update[i])
+      for(let i = 0; i < update.length; i++) self.members.push(update[i])
     } else {
       throw new Error("Population.resize needs a number or an array of new population members!")
     }
 
-    self.population_size = self.population.length
+    self.size = self.members.length
 
-    return self.population
+    return self.members
 }
 
   /**
@@ -165,10 +169,10 @@ const Population = function(options) {
     method = method ? method : self.mutation
 
     const population = []
-    for(let i = 0; i < self.population.length; i++) {
+    for(let i = 0; i < self.members.length; i++) {
       if(Math.random() <= self.mutation_rate) {
         for(let j = 0; j < self.mutation_amount; j++) {
-          population.push(mutateGenome(self.population[i], method, options))
+          population.push(mutateGenome(self.members[i], method, options))
         }
       }
     }
@@ -199,7 +203,7 @@ const Population = function(options) {
    *  { input: [1,1], output: [0] },
    * ]
    *
-   * let neat = new Population(originalSet, {
+   * let population = new Population(originalSet, {
    *  input: 1,
    *  output: 2
    * });
@@ -211,13 +215,13 @@ const Population = function(options) {
    * ]
    *
    * // evolves using evolve_dataset INSTEAD of originalSet
-   * neat.evolve(evolve_dataset)
+   * population.evolve(evolve_dataset)
    *
    * // evolves using originalSet
-   * neat.evolve()
+   * population.evolve()
    */
   self.evolve = async function(evolve_dataset, options) {
-    if (self.elitism + self.provenance > self.population_size) throw new Error("Can't evolve! Elitism + provenance exceeds population size!")
+    if (self.elitism + self.provenance > self.size) throw new Error("Can't evolve! Elitism + provenance exceeds population size!")
 
     // =======================
     // Check arguments section. First we'll check if evolve_dataset exists
@@ -231,7 +235,7 @@ const Population = function(options) {
     const isArray = (x) => Array.isArray(x) && x.length
     let evolve_set = isArray(evolve_dataset) ? evolve_dataset : isArray(self.dataset) ? self.dataset : null
 
-    let population = self.population // Shallow copy, consider changing later once full functional pattern reached
+    let population = self.members // Shallow copy, consider changing later once full functional pattern reached
 
     const hasScores = _.every(population, network => {
       // (+a === +a) "equal to self" check is ~4000% faster than regex
@@ -258,12 +262,12 @@ const Population = function(options) {
     for(let i = 0; i < self.provenance; i++) new_population.push(self.template.clone())
 
     // Breed the next individuals
-    for (let i = 0; i < self.population_size - self.elitism - self.provenance; i++) {
+    for (let i = 0; i < self.size - self.elitism - self.provenance; i++) {
       new_population.push(self.getOffspring())
     }
 
     // Replace the old population with the new population
-    population = self.population = new_population // not purely functional yet so resorting to this
+    population = self.members = new_population // not purely functional yet so resorting to this
 
     // Mutate the new population
     self.mutate()
@@ -284,7 +288,7 @@ const Population = function(options) {
 
     self.generation++
 
-    return self.population
+    return self.members
   };
 
   /**
@@ -303,10 +307,10 @@ const Population = function(options) {
   self.getParent = function get_genome_using_selection_method() {
     switch (self.selection.name) {
       case `POWER`: {
-        if (self.population[0].score < self.population[1].score) self.sort();
+        if (self.members[0].score < self.members[1].score) self.sort();
 
-        const index = Math.floor(Math.pow(Math.random(), self.selection.power) * self.population.length);
-        return self.population[index];
+        const index = Math.floor(Math.pow(Math.random(), self.selection.power) * self.members.length);
+        return self.members[index];
       }
       case `FITNESS_PROPORTIONATE`: {
         // As negative fitnesses are possible
@@ -315,36 +319,36 @@ const Population = function(options) {
 
         let total_fitness = 0;
         let minimum_fitness = 0;
-        for (let i = 0; i < self.population.length; i++) {
-          const score = self.population[i].score;
+        for (let i = 0; i < self.members.length; i++) {
+          const score = self.members[i].score;
           minimum_fitness = score < minimum_fitness ? score : minimum_fitness;
           total_fitness += score;
         }
 
         minimum_fitness = Math.abs(minimum_fitness);
-        total_fitness += minimum_fitness * self.population.length;
+        total_fitness += minimum_fitness * self.members.length;
 
         let random = Math.random() * total_fitness;
         let value = 0;
 
-        for (let i = 0; i < self.population.length; i++) {
-          const genome = self.population[i];
+        for (let i = 0; i < self.members.length; i++) {
+          const genome = self.members[i];
           value += genome.score + minimum_fitness;
           if (random < value) return genome;
         }
 
         // if all scores equal, return random genome
-        return self.population[Math.floor(Math.random() * self.population.length)];
+        return self.members[Math.floor(Math.random() * self.members.length)];
       }
       case `TOURNAMENT`: {
-        if (self.selection.size > self.population_size) {
+        if (self.selection.size > self.size) {
           throw new Error(`Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size`);
         }
 
         // Create a tournament
         const individuals = [];
         for (let i = 0; i < self.selection.size; i++) {
-          let random_agent = self.population[Math.floor(Math.random() * self.population.length)];
+          let random_agent = self.members[Math.floor(Math.random() * self.members.length)];
           individuals.push(random_agent);
         }
 
@@ -401,22 +405,22 @@ const Population = function(options) {
 
     if (self.fitnessPopulation) {
       // Evaluate fitness at population level
-      if (self.clear) for(let i = 0; i < self.population.length; i++) self.population[i].clear()
+      if (self.clear) for(let i = 0; i < self.members.length; i++) self.members[i].clear()
 
       // calculate the fitnesses
-      self.fitness(dataset, self.population);
+      self.fitness(dataset, self.members);
     } else {
       // Evaluate fitness at genome level
-      for (let i = 0; i < self.population.length; i++) {
+      for (let i = 0; i < self.members.length; i++) {
 
-        const genome = self.population[i]
+        const genome = self.members[i]
 
         // clear network state if flag set
         if (self.clear) genome.clear()
 
         genome.score = self.fitness(dataset, genome)
 
-        self.population[i] = genome
+        self.members[i] = genome
       }
     }
 
@@ -424,7 +428,7 @@ const Population = function(options) {
     self.sort()
 
     // return the fitness of the best agent, which represents the fitness of the population
-    return self.population[0]
+    return self.members[0]
   };
 
   /**
@@ -438,7 +442,7 @@ const Population = function(options) {
    *
    */
   self.sort = function sort_population_by_fitness(population) {
-    population = Array.isArray(population) && population.length ? population : self.population
+    population = Array.isArray(population) && population.length ? population : self.members
 
     population.sort(function (a, b) {
       return b.score - a.score;
@@ -458,13 +462,13 @@ const Population = function(options) {
   */
   self.getFittest = function get_fittest_population_genome() {
     // Check if evaluated. self.evaluate is an async function
-    if (typeof self.population[self.population.length - 1].score === `undefined`) {
+    if (typeof self.members[self.members.length - 1].score === `undefined`) {
       self.evaluate();
     }
 
-    if (self.population[0].score < self.population[1].score) self.sort();
+    if (self.members[0].score < self.members[1].score) self.sort();
 
-    return self.population[0];
+    return self.members[0];
   };
 
   /**
@@ -479,14 +483,14 @@ const Population = function(options) {
    * @return {number} Average fitness of the current population
    */
   self.getAverage = function get_average_population_fitness() {
-    if (typeof self.population[self.population.length - 1].score === `undefined`)
+    if (typeof self.members[self.members.length - 1].score === `undefined`)
       self.evaluate(); // self.evaluate is an async function
 
     let score = 0;
-    for (let i = 0; i < self.population.length; i++)
-      score += self.population[i].score;
+    for (let i = 0; i < self.members.length; i++)
+      score += self.members[i].score;
 
-    return score / self.population.length;
+    return score / self.members.length;
   };
 
   /**
@@ -504,8 +508,8 @@ const Population = function(options) {
    */
   self.toJSON = function export_to_json() {
     const json = [];
-    for (let i = 0; i < self.population.length; i++) {
-      json.push(self.population[i].toJSON());
+    for (let i = 0; i < self.members.length; i++) {
+      json.push(self.members[i].toJSON());
     }
     return json;
   };
@@ -525,8 +529,8 @@ const Population = function(options) {
     const population = [];
     for (let i = 0; i < json.length; i++)
       population.push(Network.fromJSON(json[i]));
-    self.population = population;
-    self.population_size = population.length;
+    self.members = population;
+    self.size = population.length;
   };
 }
 
@@ -538,7 +542,7 @@ Population.default = {
     dataset: [],
     equal: true,
     clean: false,
-    population_size: 50,
+    size: 50,
     growth: 0.0001,
     cost: methods.cost.MSE,
     amount: 1,
