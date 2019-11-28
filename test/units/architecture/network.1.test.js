@@ -62,26 +62,47 @@ describe('Network', function(){
       expect(network.nodes).to.be.of.length(30);
     })
 
-    it('new Network(input_size, output_size, { connIdMap }) | Network.connIdMap is reference of external connectionIds object', function () {
+    it('new Network(input_size, output_size, { connectionIdMap, lastConnId }) | Network.connIdMap is reference of external connectionIds object', function () {
       const connectionIds = {}; // initialize connection id object
       const network = new Network(2,2, { connIdMap: connectionIds }); // pass in connection id object to be mutated
 
       expect(connectionIds).equal(network.connIdMap); // refers to the same object
     });
 
-    it('new Network(input_size, output_size, { connectionIdMap }) | Mutates connectionIdMap', function () {
+    it('new Network(input_size, output_size, { connectionIdMap, lastConnId }) | Mutates connectionIdMap', function () {
       const connectionIds = {}; // initialize connection id object
       const network = new Network(2,2, { connIdMap: connectionIds }); // pass in connection id object to be mutated
 
       expect(connectionIds).not.eql({}); // should not be deeply equal blank object i.e. values should have changed
     });
 
-    it('new Network(2, 2, { connectionIdMap }) | ConnectionIdMap contains 4 entries', function () {
+    it('new Network(2, 2, { connectionIdMap, lastConnId }) | ConnectionIdMap contains 4 entries', function () {
       const connectionIds = {}; // initialize connection id object
       let network = new Network(2,2, { connIdMap: connectionIds, lastConnId: 0 }); // pass in connection id object to be mutated
 
       expect(Object.keys(connectionIds).length).equal(4); // Should be equal to the number of connections, 4
     });
+
+    it('new Network(2, 2, { connectionIdMap, lastConnId }) | Network.lastConnId equals 4', function () {
+      const connectionIds = {}; // initialize connection id object
+      let network = new Network(2,2, { connIdMap: connectionIds, lastConnId: 0 }); // pass in connection id object to be mutated
+
+      expect(network.lastConnId).equal(4); // Should be equal to the number of connections, 4
+    })
+
+    it('new Network(2, 2, { connectionIdMap, lastConnId }) | connectionIdMap has unique entries', function () {
+      const connectionIds = {}; // initialize connection id object
+      let network = new Network(2,2, { connIdMap: connectionIds, lastConnId: 0 }); // pass in connection id object to be mutated
+
+      // Creates an object that catalogs seen connection value, key pairs and runs a check to make sure that they are all unique
+      const keys = Object.keys(connectionIds);
+      const seen = {};
+      for(let i = 0; i < keys.length; i++) {
+        const value = connectionIds[keys[i]];
+        expect(seen[value]).equal(undefined);
+        seen[value] = keys[i]; // mark value as seen by storing key
+      }
+    })
   })
 
   /** Architecture tests */
