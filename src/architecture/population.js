@@ -10,10 +10,11 @@ const config = require('../config');
 *
 * @alpha
 *
-* @param {number} [inputs=1] Size of input layer of the networks in the population
-* @param {number} [outputs=1] Size of output layer of the networks in the population
-* @param {Array<{inputs:number[],outputs:number[]}>} [dataset] Dataset used to train networks in the population at first - _other sets of data can be passed to `neat.evolve()` after constuction_
 * @param {Object} options **Configuration Options**
+* @param {number} [options.inputs=1] Size of input layer of the networks in the population. Used only when network template is not passed
+* @param {number} [options.outputs=1] Size of output layer of the networks in the population. Used only when network template is not passed
+* @param {Network} [options.template] A template network used to create a population of identical copies from. Warning: may slow improvement due to starting from a single "search location".
+* @param {Array<{inputs:number[],outputs:number[]}>} [options.dataset] Dataset used to train networks in the population at first - _other sets of data can be passed to `neat.evolve()` after constuction_
 * @param {number} [options.population_size=50] Population size of each generation.
 * @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algortihtms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
 * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
@@ -51,12 +52,9 @@ const config = require('../config');
 const Population = function(options) {
   const self = this;
 
-  inputs = inputs || 1;
-  outputs = outputs || 1;
-  dataset = dataset || [];
   options = _.defaultsDeep(options, Population.default.options)
 
-  Object.assign(self, { inputs, outputs, dataset, ...options});
+  Object.assign(self, options);
 
   /**
    * Creates a new population
@@ -541,6 +539,9 @@ const Population = function(options) {
 Population.default = {
   options: {
     generation: 0, // internal variable
+    inputs: 1,
+    outputs: 1,
+    dataset: [],
     equal: true,
     clean: false,
     population_size: 50,
