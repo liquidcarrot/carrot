@@ -14,6 +14,7 @@ const config = require('../config');
 * @param {number} [options.inputs=1] Size of input layer of the networks in the population. Used only when network template is not passed
 * @param {number} [options.outputs=1] Size of output layer of the networks in the population. Used only when network template is not passed
 * @param {Network} [options.template] A template network used to create a population of identical copies from. Warning: may slow improvement due to starting from a single "search location".
+* @param {Network[]} [options.population] An array of networks to start this population with.
 * @param {Array<{inputs:number[],outputs:number[]}>} [options.dataset] Dataset used to train networks in the population at first - _other sets of data can be passed to `neat.evolve()` after constuction_
 * @param {number} [options.population_size=50] Population size of each generation.
 * @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algortihtms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
@@ -57,9 +58,9 @@ const Population = function(options) {
   Object.assign(self, options);
 
   /**
-   * Creates a new population
+   * Creates a new population and returns it.
    *
-   * @function createPopulation
+   * @function getPopulation
    *
    * @alpha
    *
@@ -70,22 +71,16 @@ const Population = function(options) {
    *
    * @return {Network[]} Returns an array of networks each a member of the population
    */
-  self.createPopulation = function create_networks_for_evolution(network, size) {
+  self.getPopulation = function create_networks_for_evolution(options) {
 
-    // createPopulation(size)
-    if(!size && Number.isInteger(network)) {
-      size = network
-      network = undefined
-    }
+    size = options.size || self.population_size
 
-    size = size || self.population_size
-
-    // Prioritize network, otherwise use template network, otherwise use "new network"
-    copyNetwork = network
-      ? () => network.clone()
+    // Prioritize options.network, otherwise use template network, otherwise use "new network"
+    copyNetwork = options.network
+      ? () => options.network.clone()
       : self.template
       ? () => self.template.clone()
-      : () => new Network(self.inputs, self.outputs)
+      : () => new Network(self.inputs, self.outputs, { connIdMap: self.connIdMap, lastConnId: self.lastConnId })
 
     const population = []
     for(let i = 0; i < size; i++) population.push(copyNetwork())
@@ -94,7 +89,7 @@ const Population = function(options) {
   };
 
   // Initialise the genomes
-  self.population = self.population || self.createPopulation(self.template, self.population_size);
+  self.population = self.population || self.getPopulation();
 
   /**
   * Resizes the population and adjusts the `population_size`
@@ -569,6 +564,8 @@ Population.default = {
       methods.crossover.UNIFORM,
       methods.crossover.AVERAGE
     ],
+    lastConnId: 0,
+    connIdMap: {},
     mutation: methods.mutation.ALL,
     maxNodes: Infinity,
     maxConns: Infinity,
