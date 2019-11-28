@@ -66,13 +66,12 @@ const Population = function(options) {
    *
    * @memberof Population
    *
-   * @param {Network} [network=options.template] Template network used to create population - _other networks will be "identical twins"_ - _will use `options.template`, if `network` is not defined_
-   * @param {number} [size=50] - Number of networks in created population - _how many identical twins created in new population_
+   * @param {Network} [options.network=options.template] Template network used to create population - _other networks will be "identical twins"_ - _will use `options.template`, if `network` is not defined_
+   * @param {number} [options.size=50] - Number of networks in created population - _how many identical twins created in new population_
    *
    * @return {Network[]} Returns an array of networks each a member of the population
    */
-  self.getPopulation = function create_networks_for_evolution(options) {
-
+  self.getPopulation = function create_networks_for_evolution(options={}) {
     size = options.size || self.population_size
 
     // Prioritize options.network, otherwise use template network, otherwise use "new network"
