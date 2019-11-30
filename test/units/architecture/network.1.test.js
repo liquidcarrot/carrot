@@ -450,38 +450,13 @@ describe('Network', function(){
         let network = new Network(1,1, { nodeIds, connIds });
         let network2 = new Network(1,1, { nodeIds, connIds }); // 1 connection added, .last is now 1
 
-        console.log("Network 1 connections after creation:")
-        console.log(network.connections.map(connection => connection.id))
-        console.log("network.connIds after creation", network.connIds)
-
         network = network.mutate(methods.mutation.ADD_NODE) // 2 connections added, .last is now 3
-
-        console.log("Network 1 connections after first mutation:")
-        console.log(network.connections.map(connection => connection.id))
-        console.log("Network 1 connIds after first mutation:", network.connIds)
-
-        console.log("Network 2 connections without mutation:")
-        console.log(network2.connections.map(connection => connection.id))
-        console.log("Network 2 connIds without mutation:", network2.connIds)
 
         // equivalent mutation, no change in nodeIds, .last still 3
         network2 = network2.mutate(methods.mutation.ADD_NODE)
 
-        console.log("Network 2 connections after first mutation:")
-        console.log(network2.connections.map(connection => connection.id))
-
-        console.log("Network 2 connIds after first mutation:", network2.connIds)
-
         // new structural mutation, change in nodeIds, .last now 5
         network2 = network2.mutate(methods.mutation.ADD_NODE)
-
-        console.log("Network 2 connections after second mutation:")
-        console.log(network2.connections.map(connection => connection.id))
-        console.log("Network 2 connIds after second mutation:", network2.connIds)
-
-        console.log("Network 1 connections after Network 2's second mutation:")
-        console.log(network.connections.map(connection => connection.id))
-        console.log("Network 1 connIds after Network 2's second mutation:", network.connIds)
 
         // network1 should have its connIds updated
         expect(network.connIds.last).equal(5)
