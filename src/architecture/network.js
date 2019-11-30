@@ -20,7 +20,8 @@ const mutation = methods.mutation
 *
 * @param {number} input_size Size of input layer AKA neurons in input layer
 * @param {number} output_size Size of output layer AKA neurons in output layer
-* @param {Object} [options.connIdMap] A population-level shared mutable object with node (to, from) cantor numbers as lookup keys and connection ids as values
+* @param {Object} [options.nodeIds] External mutable object with cantor numbers as lookup keys, node ids as values, and a .last key that tracks latest id
+* @param {Object} [options.connIds] External mutable object with cantor numbers as lookup keys, connection ids as values, and a .last key that tracks latest id
 *
 * @prop {number} input_size Size of input layer AKA neurons in input layer
 * @prop {number} output_size Size of output layer AKA neurons in output layer
@@ -64,18 +65,19 @@ function Network(input_size, output_size, options) {
   self.gates = []
 
   // Neat ID Management | Shared mutable state
-  self.lastNodeId = input_size + output_size - 1; // Tracks latest node id known to the network
-  self.lastConnId = options.lastConnId;
-  self.connIdMap = options.connIdMap;
+  self.nodeIds = options.nodeIds || { last: 0 }; // fallback avoids reference errors
+  self.connIds = options.connIds;
 
   // Create input and output nodes
   for (let i = 0; i < input_size; i++) {
     const new_node = new Node({ type: 'input', id: i })
+    self.nodeIds.last = i;
     self.nodes.push(new_node)
     self.input_nodes.add(new_node)
   }
   for (let i = 0; i < output_size; i++) {
     const new_node = new Node({ type: 'output', id: input_size + i })
+    self.nodeIds.last = input_size + i;
     self.nodes.push(new_node)
     self.output_nodes.add(new_node)
   }
@@ -90,8 +92,7 @@ function Network(input_size, output_size, options) {
    * @param {Node} to The destination Node. For groups / layers see example.
    * @param {number} [weight] An initial weight for the connections to be formed
    * @param {Object} [options] Configuration object
-   * @param {Object} [options.connIdMap] A mutable object with cantor numbers as lookup keys and connections ids as values
-   * @param {number} [options.lastConnId] The last known connection id
+   * @param {Object} [options.connIds] A mutable object with cantor numbers as lookup keys, connections ids as values, and a .last tracking last known id
    * @returns {Connection[]} An array of the formed connections
    *
    * @example
@@ -108,8 +109,6 @@ function Network(input_size, output_size, options) {
    * const formedConnections = group.nodes.map(node => network.connect(network.nodes[4], node));
    *
    * @todo Make weight a part of options
-   * @todo Remove shared mutable state pattern
-   * @todo Return a response object with connections, connIdMap, and updated lastConnId
    */
   self.connect = function(from, to, weight, options) {
     options = options || {};
@@ -126,9 +125,7 @@ function Network(input_size, output_size, options) {
   for (let i = 0; i < self.input_size; i++) {
     for (let j = self.input_size; j < self.output_size + self.input_size; j++) {
       const weight = (Math.random() - 0.5) * self.input_size * Math.sqrt(2 / self.input_size);
-      // Neat management section | connIdMap is mutated
-      const conn = self.connect(self.nodes[i], self.nodes[j], weight, { connIdMap: self.connIdMap, lastConnId: self.lastConnId });
-      self.lastConnId = conn.id; // update to last known connection id
+      self.connect(self.nodes[i], self.nodes[j], weight, { connIds: self.connIds });
     }
   }
 
@@ -612,8 +609,6 @@ function Network(input_size, output_size, options) {
    * @param {number} [options.maxNodes=Infinity] Maximum amount of [Nodes](node) a network can grow to
    * @param {number} [options.maxConns=Infinity] Maximum amount of [Connections](connection) a network can grow to
    * @param {number} [options.maxGates=Infinity] Maximum amount of Gates a network can grow to
-   * @param {object} [options.neat.nodeIdMap] Map of "from" & "to" node cantor nos as keys with the new node's id as the value
-   * @param {object} [options.neat.lastNodeId] The last nodeId known to the population
    *
    * @returns {network} A mutated version of this network
    *
@@ -626,9 +621,7 @@ function Network(input_size, output_size, options) {
    *
    * @todo Store deactivated / disconnected nodes in network-level connections
    * @todo Make node management order agnostic by tracking input / outputs better
-   * @todo Add connection id tracking to configuration, consists of latest population ids and a reference object
-   * @todo Don't mutate nodeIdMap directly
-   * @todo Add standalone node id population synchronization capabilities, consider maintaing internal nodeIdMap when external isn't provided
+   * @todo Add standalone node id population synchronization capabilities, consider maintaing internal nodeIds when external isn't provided
    */
   self.mutate = function(method, options) {
     if (typeof method === 'undefined') throw new Error('Mutate method is undefined!')
@@ -637,7 +630,7 @@ function Network(input_size, output_size, options) {
 
     // Helper function
     const getRandomConnection = () => {
-      if(self.nodes.length <= self.input_nodes.size) // use dynamic self.input_nodes.size instead
+      if(self.nodes.length <= self.input_nodes.size)
         throw new Error("Something went wrong. Total nodes is length is somehow less than size of inputs")
 
       return _.sample(self.connections)
@@ -652,28 +645,10 @@ function Network(input_size, output_size, options) {
         const connection = getRandomConnection()
         const from = connection.from
         const to = connection.to
-        self.disconnect(from, to) // break the existing connection, TODO: this should be stored in the future as a gene (somehwere), per the NEAT spec
+        self.disconnect(from, to) // break the existing connection and discard it, TODO: this should be stored in the future as a gene (somehwere), per the NEAT spec
 
-        /**
-        * In this section we'll check the node id reference object for the key produced
-        * by the cantor pairing function of the "from" & "to" node ids. If a key doesn't exist,
-        * a new key, value pair is added with the value being the latest sequential id for nodes.
-        * Note: this requires a sequential count to be maintained at the population level for
-        * nodes & connections and it must be passed in
-        */
-
-        let id;
-        const key = util.getCantorNumber(from.id, to.id); // Left outside for a future internal nodeIdMap
-        if(options && options.neat && options.neat.nodeIdMap && options.neat.lastNodeId) {
-          // Structural equivalent already exists
-          if(options.neat.nodeIdMap.hasOwnProperty(key)) id = self.lastNodeId = options.neat.nodeIdMap[key]
-          // Structural equivalent doesn't already exist
-          else id = self.lastNodeId = options.neat.nodeIdMap[key] = options.neat.lastNodeId + 1; // mutates nodeIdMap directly
-        } else {
-          self.lastNodeId++;
-          id = self.lastNodeId;
-        }
-
+        // Get id for new node if nodeIds is defined
+        const id = self.nodeIds ? util.manageNeatId(from, to, self.nodeIds) : undefined;
         const node = new Node({ type: 'hidden', id })
         if (mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION) // Should be an option passed into the Node constructor
 
@@ -684,9 +659,10 @@ function Network(input_size, output_size, options) {
         self.nodes.splice(min_bound + 1, 0, node) // assumes there is at least one output neuron
 
         // Now create two new connections
-        const new_connection1 = self.connect(from, node, 1) // Incoming connection weight set to 1, matches NEAT spec
-        const new_connection2 = self.connect(node, to, connection.weight) // Outgoing connection has previous connection weight, matches NEAT spec
+        const new_connection1 = self.connect(from, node, 1, { connIds: self.connIds }) // Incoming connection weight set to 1, matches NEAT spec
+        const new_connection2 = self.connect(node, to, connection.weight, { connIds: self.connIds }) // Outgoing connection has previous connection weight, matches NEAT spec
 
+        // Todo: devise a scheme to handle gate tracking
         const gater = connection.gater
         if (gater != null) self.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2) // Check if the original connection was gated
 
@@ -706,7 +682,7 @@ function Network(input_size, output_size, options) {
         const possible = self.possible(method)
         if (possible) {
           const pair = possible[Math.floor(Math.random() * possible.length)]
-          self.connect(pair[0], pair[1])
+          self.connect(pair[0], pair[1], undefined, { connIds: self.connIds })
           return self
         }
 

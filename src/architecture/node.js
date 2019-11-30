@@ -343,7 +343,7 @@ function Node(options) {
   * @param {Node} node Node to project a connection to
   * @param {number} [weight] Initial connection(s) [weight](https://en.wikipedia.org/wiki/Synaptic_weight)
   * @param {Object} [options={}] Configuration object
-  * @param {object} [options.connIdMap] Mutable map of "from" & "to" node cantor keys with connection ids as values
+  * @param {object} [options.connIds] Mutable map of "from" & "to" node cantor keys with connection ids as values
   * @param {object} [options.lastConnId] The last connectionId known to the population
   * @param {boolean} [options.twosided] If `true` connect nodes to each other
   *
@@ -387,6 +387,7 @@ function Node(options) {
   * @todo Treat self connections as normal connections, simplify code
   * @todo Make weight part of options
   * @todo Remove shared mutable state approach for tracking connection ids
+  * @todo Ensure self-connection ids are also updated and tracked.
   */
   self.connect = function(node, weight, options) {
     if (node == undefined) throw new ReferenceError("Missing required parameter 'node'");
@@ -407,21 +408,14 @@ function Node(options) {
       throw new ReferenceError("Node is already projecting to 'target'");
     }
 
-    // Neat gene id managmement section
-    // util isNil avoids bugs related to falsy zero value
-    if (options.connIdMap && !util.isNil(options.lastConnId)) {
-      const res = util.getCantorId(self, node, options.connIdMap, options.lastConnId)
-      // Sets id for new Connection in options object
-      // Mutates options.connIdMap, scheme relies on shared mutable state, must fix
-      options.id = options.lastConnId = options.connIdMap[res.key] = res.id
-    }
-
+    // Set neat id for new connection, priotize neat id object when present
+    options.id = (options.connIds) ? util.manageNeatId(self, node, options.connIds) : options.id;
     const connection = new Connection(self, node, weight, options);
     self.outgoing.push(connection);
     node.incoming.push(connection);
 
     // Recursive case should return subsequent function call
-    if(options.twosided) return node.connect(self, undefined, { neat: options.neat });
+    if(options.twosided) return node.connect(self, undefined, { connIds: options.connIds });
 
     return connection;
   },

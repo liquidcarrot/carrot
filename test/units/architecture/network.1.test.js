@@ -62,37 +62,29 @@ describe('Network', function(){
       expect(network.nodes).to.be.of.length(30);
     })
 
-    it('new Network(input_size, output_size, { connectionIdMap, lastConnId }) | Network.connIdMap is reference of external connectionIds object', function () {
-      const connectionIds = {}; // initialize connection id object
-      const network = new Network(2,2, { connIdMap: connectionIds }); // pass in connection id object to be mutated
+    it('new Network(input_size, output_size, { connectionIds }) | Network.connIds is reference of external connectionIds object', function () {
+      const connectionIds = { last: 0 }; // initialize connection id object
+      const network = new Network(2,2, { connIds: connectionIds }); // pass in connection id object to be mutated
 
-      expect(connectionIds).equal(network.connIdMap); // refers to the same object
+      expect(connectionIds).equal(network.connIds); // refers to the same object
     });
 
-    it('new Network(input_size, output_size, { connectionIdMap, lastConnId }) | Mutates connectionIdMap', function () {
-      const connectionIds = {}; // initialize connection id object
-      const network = new Network(2,2, { connIdMap: connectionIds }); // pass in connection id object to be mutated
+    it('new Network(input_size, output_size, { connectionIds }) | Mutates connectionIdMap', function () {
+      const connectionIds = { last: 0 }; // initialize connection id object
+      const network = new Network(2,2, { connIds: connectionIds }); // pass in connection id object to be mutated
 
-      expect(connectionIds).not.eql({}); // should not be deeply equal blank object i.e. values should have changed
+      expect(connectionIds).not.eql({ last: 0 }); // should not be deeply equal initial object i.e. values should have changed
     });
 
-    it('new Network(2, 2, { connectionIdMap, lastConnId }) | ConnectionIdMap contains 4 entries', function () {
-      const connectionIds = {}; // initialize connection id object
-      let network = new Network(2,2, { connIdMap: connectionIds, lastConnId: 0 }); // pass in connection id object to be mutated
-
-      expect(Object.keys(connectionIds).length).equal(4); // Should be equal to the number of connections, 4
-    });
-
-    it('new Network(2, 2, { connectionIdMap, lastConnId }) | Network.lastConnId equals 4', function () {
-      const connectionIds = {}; // initialize connection id object
-      let network = new Network(2,2, { connIdMap: connectionIds, lastConnId: 0 }); // pass in connection id object to be mutated
-
-      expect(network.lastConnId).equal(4); // Should be equal to the number of connections, 4
+    it('new Network(2, 2, { connectionIds }) | mutates connectionIds, .last equals 4', function () {
+      const connectionIds = { last: 0 }; // initialize connection id object
+      let network = new Network(2,2, { connIds: connectionIds }); // pass in connection id object to be mutated
+      expect(connectionIds.last).equal(4); // Should be equal to the number of connections, 4
     })
 
-    it('new Network(2, 2, { connectionIdMap, lastConnId }) | connectionIdMap has unique entries', function () {
-      const connectionIds = {}; // initialize connection id object
-      let network = new Network(2,2, { connIdMap: connectionIds, lastConnId: 0 }); // pass in connection id object to be mutated
+    it('new Network(2, 2, { connectionIds }) | connIds.last is equal to the latest value', function () {
+      const connectionIds = { last: 0 }; // initialize connection id object
+      let network = new Network(2,2, { connIds: connectionIds }); // pass in connection id object to be mutated
 
       // Creates an object that catalogs seen connection value, key pairs and runs a check to make sure that they are all unique
       const keys = Object.keys(connectionIds);
@@ -100,7 +92,29 @@ describe('Network', function(){
       for(let i = 0; i < keys.length; i++) {
         const value = connectionIds[keys[i]];
         expect(seen[value]).equal(undefined);
-        seen[value] = keys[i]; // mark value as seen by storing key
+        seen[value] = keys[i]; // mark value as seen by storing corresponding key
+      }
+    })
+
+    it('new Network(2, 2, { connectionIds }) | ConnectionIdMap contains 4 entries plus .last entry', function () {
+      const connectionIds = { last: 0 }; // initialize connection id object
+      let network = new Network(2,2, { connIds: connectionIds }); // pass in connection id object to be mutated
+
+      expect(Object.keys(connectionIds).length).equal(5); // Should be equal to the number of connections, 4 plus .last
+    });
+
+    it('new Network(2, 2, { connectionIds }) | connectionIdMap has unique entries, except for .last', function () {
+      const connectionIds = { last: 0 }; // initialize connection id object
+      let network = new Network(2,2, { connIds: connectionIds }); // pass in connection id object to be mutated
+
+      // Creates an object that catalogs seen connection value, key pairs and runs a check to make sure that they are all unique
+      const keys = Object.keys(connectionIds);
+      const seen = {};
+      for(let i = 0; i < keys.length; i++) {
+        if(keys[i] == "last") continue;
+        const value = connectionIds[keys[i]];
+        expect(seen[value]).equal(undefined);
+        seen[value] = keys[i]; // mark value as seen by storing corresponding key
       }
     })
   })
@@ -370,76 +384,119 @@ describe('Network', function(){
         expect(network.nodes[2].outgoing).eql([])
       })
 
-      it("({ nodeIdMap, lastNodeId }), new node | updates nodeIdMap with new node id", function check_nodeIdMap_mutation () {
-        let network = new Network(1,1)
-        const nodeIdMap = {}
-        network = network.mutate(methods.mutation.ADD_NODE, {
-          neat: {
-            nodeIdMap,
-            lastNodeId: 1
-          }
-        })
+      it("new Network({ nodeIds }), new node | updates nodeIds with new node id", function check_nodeIds_mutation () {
+        let network = new Network(1,1, { nodeIds: { last: 1 }})
+        network = network.mutate(methods.mutation.ADD_NODE)
 
-        expect(nodeIdMap[2]).equal(2)
+        expect(network.nodeIds[2]).equal(2)
       })
 
-      it("({ nodeIdMap, lastNodeId }), existing node | doesn't extend nodeIdMap with existing node ids", function () {
-        let network = new Network(1,1)
-        let network2 = new Network(1,1)
-        const nodeIdMap = {}
+      it("new Network({ nodeIds }), existing node | doesn't extend nodeIds with existing node ids", function () {
+        const nodeIds = { last: 1 }
+        let network = new Network(1,1, { nodeIds });
+        let network2 = new Network(1,1, { nodeIds });
 
-        network = network.mutate(methods.mutation.ADD_NODE, {
-          neat: { nodeIdMap, lastNodeId: 1 } // next id will be 2
-        })
+        network = network.mutate(methods.mutation.ADD_NODE);
 
-        network2 = network2.mutate(methods.mutation.ADD_NODE, {
-          neat: { nodeIdMap, lastNodeId: 67 } // next id should still be 2
-        })
+        network2 = network2.mutate(methods.mutation.ADD_NODE);
 
-        expect(Object.keys(nodeIdMap).length).equal(1)
+        expect(Object.keys(nodeIds).length).equal(2); // 1 entry plus the .last key
       })
 
-      it("({ nodeIdMap, lastNodeId }), existing node | doesn't increase network's internal lastNodeId", function () {
-        let network = new Network(1,1)
-        let network2 = new Network(1,1)
-        const nodeIdMap = {}
+      it("new Network({ nodeIds }), existing node | doesn't increase nodeIds.last", function () {
+        const nodeIds = { last: 1 }
+        let network = new Network(1,1, { nodeIds });
+        let network2 = new Network(1,1, { nodeIds });
 
-        network = network.mutate(methods.mutation.ADD_NODE, {
-          neat: { nodeIdMap, lastNodeId: 1 } // next id will be 2
-        })
+        network = network.mutate(methods.mutation.ADD_NODE) // .last is now 2
 
-        network2 = network2.mutate(methods.mutation.ADD_NODE, {
-          neat: { nodeIdMap, lastNodeId: 67 } // next id should still be 2
-        })
+        network2 = network2.mutate(methods.mutation.ADD_NODE) // should not increase nodeIds
 
-        expect(network2.lastNodeId).equal(2)
+        expect(network2.nodeIds.last).equal(2)
       })
 
-      it("({ nodeIdMap, lastNodeId }), existing node | sets existing new-node id correctly", function () {
-        let network = new Network(1,1)
-        let network2 = new Network(1,1)
-        const nodeIdMap = {}
+      it("new Network({ nodeIds }), existing node | sets existing new-node id correctly", function () {
+        const nodeIds = { last: 1 }
+        let network = new Network(1,1, { nodeIds });
+        let network2 = new Network(1,1, { nodeIds });
 
-        network = network.mutate(methods.mutation.ADD_NODE, {
-          neat: { nodeIdMap, lastNodeId: 1 } // next id will be 2
-        })
+        network = network.mutate(methods.mutation.ADD_NODE)
 
-        network2 = network2.mutate(methods.mutation.ADD_NODE, {
-          neat: { nodeIdMap, lastNodeId: 67 } // next id should still be 2
-        })
+        network2 = network2.mutate(methods.mutation.ADD_NODE)
 
         expect(network2.nodes[1].id).equal(2)
       })
 
-      it("(), new node | updates network's internal lastNodeId value", function () {
+      it("new net({ nodeIds }), new net2({ nodesIds }), new node on net2  | updates net1 nodeIds correctly", function () {
+        const nodeIds = { last: 1 }
+        let network = new Network(1,1, { nodeIds });
+        let network2 = new Network(1,1, { nodeIds });
+
+        network = network.mutate(methods.mutation.ADD_NODE)
+
+        // equivalent mutation, no change in nodeIds, .last still 2
+        network2 = network2.mutate(methods.mutation.ADD_NODE)
+
+        // new structural mutation, change in nodeIds, .last now 3
+        network2 = network2.mutate(methods.mutation.ADD_NODE)
+
+        // network1 should have its nodeIds updated
+        expect(network.nodeIds.last).equal(3)
+      })
+
+      it("new net({ nodeIds, connIds }), new net2({ nodesIds, connIds }), new node on net2  | updates net1 connIds correctly", function () {
+        const nodeIds = { last: 0 }
+        const connIds = { last: 0 }
+        let network = new Network(1,1, { nodeIds, connIds });
+        let network2 = new Network(1,1, { nodeIds, connIds }); // 1 connection added, .last is now 1
+
+        console.log("Network 1 connections after creation:")
+        console.log(network.connections.map(connection => connection.id))
+        console.log("network.connIds after creation", network.connIds)
+
+        network = network.mutate(methods.mutation.ADD_NODE) // 2 connections added, .last is now 3
+
+        console.log("Network 1 connections after first mutation:")
+        console.log(network.connections.map(connection => connection.id))
+        console.log("Network 1 connIds after first mutation:", network.connIds)
+
+        console.log("Network 2 connections without mutation:")
+        console.log(network2.connections.map(connection => connection.id))
+        console.log("Network 2 connIds without mutation:", network2.connIds)
+
+        // equivalent mutation, no change in nodeIds, .last still 3
+        network2 = network2.mutate(methods.mutation.ADD_NODE)
+
+        console.log("Network 2 connections after first mutation:")
+        console.log(network2.connections.map(connection => connection.id))
+
+        console.log("Network 2 connIds after first mutation:", network2.connIds)
+
+        // new structural mutation, change in nodeIds, .last now 5
+        network2 = network2.mutate(methods.mutation.ADD_NODE)
+
+        console.log("Network 2 connections after second mutation:")
+        console.log(network2.connections.map(connection => connection.id))
+        console.log("Network 2 connIds after second mutation:", network2.connIds)
+
+        console.log("Network 1 connections after Network 2's second mutation:")
+        console.log(network.connections.map(connection => connection.id))
+        console.log("Network 1 connIds after Network 2's second mutation:", network.connIds)
+
+        // network1 should have its connIds updated
+        expect(network.connIds.last).equal(5)
+      })
+
+      // to be implemented
+      it.skip("(), new node | updates network's internal value", function () {
         let network = new Network(1,1)
         network = network.mutate(methods.mutation.ADD_NODE)
         network = network.mutate(methods.mutation.ADD_NODE)
-        expect(network.lastNodeId).equals(3)
+        expect(network).equals(3)
       })
 
-      // not yet implemented
-      it("(), existing node | doesn't increase network's internal lastNodeId", function () {})
+      // to be implemented
+      it.skip("(), existing node | doesn't increase network's internal", function () {})
     })
 
     describe('ADD_CONNECTION', function() {

@@ -68,12 +68,27 @@ const util = {
     /**
      * @typedef {Object} CantorIdResponse
      * @property {number} key - The cantor number key
-     * @property {number} id - The id for the object
+     * @property {number} id - The sequential id
     */
     return {
       key: response.key,
       id: this.isNil(response.id) ? lastId + 1 : response.id
     }
+  },
+
+  /**
+  * Takes a neat id management object and mutates it
+  *
+  * @param {Object} from An object with a .id property
+  * @param {Object} to An object with a .id property
+  * @param {Object} reference Neat id cantor-reference object with a .last property
+  * @returns {number} A neat ID
+  */
+   manageNeatId: function(from, to, reference) {
+     const res = this.getCantorId(from, to, reference, reference.last);
+     reference[res.key] = res.id;
+     if (res.id > reference.last) reference.last = res.id;
+     return res.id;
   },
 }
 
