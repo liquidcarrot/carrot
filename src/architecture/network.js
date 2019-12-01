@@ -110,8 +110,7 @@ function Network(input_size, output_size, options) {
    *
    * @todo Make weight a part of options
    */
-  self.connect = function(from, to, weight, options) {
-    options = options || {};
+  self.connect = function(from, to, weight, options = {}) {
     const connection = from.connect(to, weight, options);
     self.connections.push(connection);
 

@@ -86,14 +86,8 @@ describe('Network', function(){
       const connectionIds = { last: 0 }; // initialize connection id object
       let network = new Network(2,2, { connIds: connectionIds }); // pass in connection id object to be mutated
 
-      // Creates an object that catalogs seen connection value, key pairs and runs a check to make sure that they are all unique
-      const keys = Object.keys(connectionIds);
-      const seen = {};
-      for(let i = 0; i < keys.length; i++) {
-        const value = connectionIds[keys[i]];
-        expect(seen[value]).equal(undefined);
-        seen[value] = keys[i]; // mark value as seen by storing corresponding key
-      }
+      const values = Object.keys(connectionIds).map(key => connectionIds[key])
+      expect(Math.max.apply(null, values)).equal(connectionIds.last)
     })
 
     it('new Network(2, 2, { connectionIds }) | ConnectionIdMap contains 4 entries plus .last entry', function () {
