@@ -403,6 +403,8 @@ function Node(options) {
     // Self connected node should not be a special case
     if (node === self) {
       self.connections_self.weight = weight || 1;
+      // Set neat id for self-connection, priotize neat id object when present
+      self.connections_self.id = (options.connIds) ? util.manageNeatId(self, node, options.connIds) : options.id;
       return self.connections_self;
     } else if (self.isProjectingTo(node)) {
       throw new ReferenceError("Node is already projecting to 'target'");
