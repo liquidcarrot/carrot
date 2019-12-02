@@ -69,7 +69,7 @@ describe('Network', function(){
       expect(connectionIds).equal(network.connIds); // refers to the same object
     });
 
-    it('new Network(input_size, output_size, { connectionIds }) | Mutates connectionIdMap', function () {
+    it('new Network(input_size, output_size, { connectionIds }) | Mutates connection IDs', function () {
       const connectionIds = { last: 0 }; // initialize connection id object
       const network = new Network(2,2, { connIds: connectionIds }); // pass in connection id object to be mutated
 
@@ -90,14 +90,14 @@ describe('Network', function(){
       expect(Math.max.apply(null, values)).equal(connectionIds.last)
     })
 
-    it('new Network(2, 2, { connectionIds }) | ConnectionIdMap contains 4 entries plus .last entry', function () {
+    it('new Network(2, 2, { connectionIds }) | connection IDs contains 4 entries plus .last entry', function () {
       const connectionIds = { last: 0 }; // initialize connection id object
       let network = new Network(2,2, { connIds: connectionIds }); // pass in connection id object to be mutated
 
       expect(Object.keys(connectionIds).length).equal(5); // Should be equal to the number of connections, 4 plus .last
     });
 
-    it('new Network(2, 2, { connectionIds }) | connectionIdMap has unique entries, except for .last', function () {
+    it('new Network(2, 2, { connectionIds }) | connection IDs has unique entries, except for .last', function () {
       const connectionIds = { last: 0 }; // initialize connection id object
       let network = new Network(2,2, { connIds: connectionIds }); // pass in connection id object to be mutated
 

@@ -2,7 +2,7 @@ const { assert, expect } = require('chai');
 const should = require('chai').should();
 const chalk = require('chalk');
 
-const { Population, Network } = require('../../../src/carrot');
+const { Population, Network, methods } = require('../../../src/carrot');
 
 describe("Population", () => {
   describe("new Population()", function() {
@@ -11,10 +11,21 @@ describe("Population", () => {
       const population = new Population();
       is.population(population);
     })
-    it("new Population({ inputs: 2, outputs: 2 }) | Population members have shared connectionIdMap reference", function() {
+    it("new Population({ inputs: 2, outputs: 2 }) | Population members have shared connIds reference", function() {
       const population = new Population({ inputs: 4, outputs: 4, size: 3 });
       for(let i = 0; i < population.members.length; i++) {
-        expect(population.members[i].connIdMap).equal(population.connIdMap)
+        expect(population.members[i].connIds).to.exist // avoids name changes giving false positives
+        expect(population.members[i].connIds).equal(population.connIds)
+      }
+    })
+    it("new Population({ inputs: 2, outputs: 2 }) | Adding a node to one population member updates all", function() {
+      const population = new Population({ inputs: 2, outputs: 2 });
+      population.members[0].mutate(methods.mutation.ADD_NODE); // Adds an entry to the internal population-level connIds object
+
+      for(let i = 0; i < population.members.length; i++) {
+        expect(population.members[i].connIds).to.exist; // avoids name changes giving false positives
+        // 4 initial entries (2x2) plus the 2 new ones from ADD_NODE and the .last entry
+        expect(Object.keys(population.members[i].connIds).length).equal(7);
       }
     })
     it.skip("new Population({...})", function() {
@@ -92,23 +103,6 @@ describe("Population", () => {
       has.options(population, options);
       has.dimensions(population, inputs, outputs);
     })
-
-    // it("new Population(population)", function() {
-    //   const population = new Population();
-    //   is.population(population);
-    // })
-    // it("new Population(population, options)", function() {
-    //   const population = new Population();
-    //   is.population(population);
-    // })
-    // it("new Population(population, dataset)", function() {
-    //   const population = new Population();
-    //   is.population(population);
-    // })
-    // it("new Population(population, dataset, options)", function() {
-    //   const population = new Population();
-    //   is.population(population);
-    // })
   })
   describe("population.getPopulation()", function() {
     it("population.getPopulation() => {Network[]}", function() {
