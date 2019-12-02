@@ -403,7 +403,6 @@ function Node(options) {
     // Self connected node should not be a special case
     if (node === self) {
       self.connections_self.weight = weight || 1;
-      // Set neat id for self-connection, priotize neat id object when present
       self.connections_self.id = (options.connIds) ? util.manageNeatId(self, node, options.connIds) : options.id;
       return self.connections_self;
     } else if (self.isProjectingTo(node)) {
@@ -412,14 +411,16 @@ function Node(options) {
 
     // Set neat id for new connection, priotize neat id object when present
     options.id = (options.connIds) ? util.manageNeatId(self, node, options.connIds) : options.id;
-    const connection = new Connection(self, node, weight, options);
+    let connection = new Connection(self, node, weight, options);
     self.outgoing.push(connection);
     node.incoming.push(connection);
 
     // Recursive case should return subsequent function call
-    if(options.twosided) return node.connect(self, undefined, { connIds: options.connIds });
+    if(options.twosided) {
+      connection = node.connect(self, undefined, { connIds: options.connIds });
+    }
 
-    return connection;
+    return connection
   },
 
   /**

@@ -82,56 +82,73 @@ describe("Node", function() {
       expect(node.connect(node)).to.be.an.instanceOf(Connection);
       expect(node.connections_self.weight).to.equal(1);
     })
+    it("node.connect(self, { connIds }) => {Connection} | mutates connIds", function() {
+      const connIds = { last: 0 }; // initialize connection id object
+      const node = new Node();
+
+      node.connect(node, undefined, { connIds }); // self-connection
+      expect(connIds).not.eql({ last: 0 });
+    })
+    it("node.connect(self, { connIds }) => {Connection}, connIds.last = 0 | .last equals 1", function() {
+      const connIds = { last: 0 }; // initialize connection id object
+      const node = new Node();
+
+      node.connect(node, undefined, { connIds }); // self-connection
+      expect(connIds.last).equal(1);
+    })
+    it("node.connect(self, { connIds, id: x }) => {Connection} | prioritizes neat id object over passed id", function() {
+      const connIds = { last: 0 }; // initialize connection id object
+      const node = new Node();
+      const node2 = new Node();
+
+      node.connect(node, undefined, { connIds, id: 97 }); // self-connection, ignore passed id when connIds present
+      expect(node.connections_self.id).eql(1); // id should be 1
+    })
     it("node.connect(node) => {Connection}", function() {
       const node = new Node();
       const other = new Node();
 
       expect(node.connect(other)).to.be.an.instanceOf(Connection);
     })
-    it("node.connect(nodes) => {Connection[]}", function() {
+    it("node.connect(node, { connIds }) => {Connection} | .last equals 1", function() {
+      const connIds = { last: 0 }; // initialize connection id object
       const node = new Node();
-      const size = Math.floor(Math.random() * 10) + 1;
-      const layer = Layer.Dense(size);
+      const node2 = new Node();
 
-      const connections = layer.nodes.map(layerNode => node.connect(layerNode));
-
-      expect(connections).to.be.an("array");
-      expect(connections.length).to.equal(size);
-
-      for (let i = 0; i < connections.length; i++) {
-        expect(connections[i]).to.be.an.instanceOf(Connection);
-      }
+      node.connect(node2, undefined, { connIds });
+      expect(connIds.last).equal(1);
     })
-    it("node.connect(node, options={ twosided: true }) => {Connection}", function() {
+    it("node.connect(node, { connIds, id: x }) => {Connection} | prioritizes neat id object over passed id", function() {
+      const connIds = { last: 0 }; // initialize connection id object
+      const node = new Node();
+      const node2 = new Node();
+
+      node.connect(node2, undefined, { connIds, id: 97 }); // ignore passed id when connIds present
+      expect(node.outgoing[0].id).equal(1); // id should be 1
+    })
+    it("node.connect(node, { twosided: true }) => {Connection} | returns opposite connection", function() {
       const node = new Node();
       const other = new Node();
       const options = {
         twosided: true
       }
 
-      expect(node.connect(other, options)).to.be.an.instanceOf(Connection);
-      expect(node.incoming).to.have.lengthOf(1);
-      expect(node.outgoing).to.have.lengthOf(1);
+      const selfConn = node.connect(other, options)
+      expect(selfConn).instanceOf(Connection);
+      expect(node.incoming).lengthOf(1);
+      expect(node.outgoing).lengthOf(1);
+      // backwards connection
+      expect(selfConn.from).equal(other); // Equal by reference
+      expect(selfConn.to).equal(node); // Equal by reference
     })
-    it("node.connect(nodes, options={ twosided: true }) => {Connection[]}", function() {
-      const node = new Node();
-      const size = Math.floor(Math.random() * 10) + 1;
-      const layer = Layer.Dense(size);
-      const options = {
-        twosided: true
-      }
+    it("node.connect(node, { twosided: true, connIds }) => {Connection} | .last increased by two", function() {
+      const connIds = { last: 0 }
+      // nodes need to be initialized with ids for neat ID scheme to work
+      const node = new Node({ id: 0 });
+      const other = new Node({ id: 1 });
 
-      const connections = layer.nodes.map(layerNode => node.connect(layerNode, options));
-
-      expect(connections).to.be.an("array");
-      expect(connections.length).to.equal(size);
-
-      for (let i = 0; i < connections.length; i++) {
-        expect(connections[i]).to.be.an.instanceOf(Connection);
-      }
-
-      expect(node.incoming).to.have.lengthOf(size);
-      expect(node.outgoing).to.have.lengthOf(size);
+      node.connect(other, { twosided: true, connIds })
+      expect(connIds.last).equal(2);
     })
   });
   describe("node.disconnect()", function() {
