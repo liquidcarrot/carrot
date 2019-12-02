@@ -18,6 +18,8 @@ const util = {
   */
   getCantorNumber: function cantor_pairing_function (a,b) {
     if (a == undefined || b == undefined) throw new ReferenceError('Missing required parameter \'a\' or \'b\'');
+    // cantor pairing returns valid seeming numbers for arguments below zero, return -1 in this case to avoid silent errors
+    if(a < 0 || b < 0) return -1;
     return 1 / 2 * (a + b) * (a + b + 1) + b;
   },
 
