@@ -62,6 +62,7 @@ function Network(input_size, output_size, options) {
   // Store all the nodes and connection genes
   self.nodes = [] // Stored in activation order
   self.connections = []
+  self.disabledConnections = []
   self.gates = []
 
   // Neat ID Management | Shared mutable state
@@ -333,7 +334,12 @@ function Network(input_size, output_size, options) {
       const conn = connections[i];
       if (conn.from === from && conn.to === to) {
         if (conn.gater !== null) self.ungate(conn);
-        connections.splice(i, 1);
+        // store removed connection
+        const removed = connections.splice(i, 1)[0];
+        // set enabled property to false
+        removed.enabled = false;
+        // Add removed connection to disabledConnections
+        self.disabledConnections.push(removed); // Add disabled connection to stored disabled connections array.
         break;
       }
     }

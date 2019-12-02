@@ -46,6 +46,7 @@ function Connection(from, to, weight, options) {
   options.id = options.id >= 0 ? options.id : -1; // -1 is a bogus number to indicate no proper id, temporary fix for null errors
 
   Object.assign(self, {
+    enabled: true,
     gain: 1,
     gater: null,
     elegibility: 0,
