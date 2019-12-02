@@ -34,6 +34,53 @@ describe("src/util/utils.js", function () {
       expect(() => util.cantorLookup({ id: 976 }, { id: 391 })).to.throw(TypeError)
     })
 
+    it("({ id: 0 }, { id: 0 }, { 0: 22 }) => { key: 0, id: 22 } | response is an object with correct key and id value", function() {
+      const response = util.cantorLookup({ id: 0 }, { id: 0 }, { 0: 22 }) // cantor pair for 0,0 is zero, use as key to retrieve value
+      expect(response).a('object')
+      expect(response.key).equal(0)
+      expect(response.id).equal(22)
+    })
+
+    it("({ id }, { id }, { last: x }) => { key: x, id: undefined } | returns id: undefined when no entry present in object", function() {
+      const response = util.cantorLookup({ id: 0 }, { id: 0 }, {})
+      expect(response.id).equal(undefined)
+    })
+  })
+  describe('util.getCantorId', function() {
+    it("should return the correspoding id when it exists in the reference object", function() {
+      const response = util.getCantorId({ id: 0 }, { id: 0 }, { 0: 22 }, 0) // cantor pair for 0,0 is zero, use as key to retrieve value
+      expect(response).a('object')
+      expect(response.key).equal(0)
+      expect(response.id).equal(22) // entry already exists otherwise would be 1
+    })
+
+    it("should return one plus the last id when there's no entry in the reference object", function() {
+      const response = util.getCantorId({ id: 0 }, { id: 0 }, { 34: 22 }, 0) // cantor pair for 0,0 is zero, use as key to retrieve value
+      expect(response).a('object')
+      expect(response.key).equal(0)
+      expect(response.id).equal(1)
+    })
+
+    it("({ id }, { id }, { ..., last: x }) => { key: 0, id: 22 } | response is an object with a key and id value", function() {
+      const response = util.getCantorId({ id: 0 }, { id: 0 }, { 0: 22, last: 0 }) // cantor pair for 0,0 is zero, use as key to retrieve value
+      expect(response).a('object')
+      expect(response.key).equal(0)
+      expect(response.id).equal(22)
+    })
+  })
+  describe('util.manageNeatId', function() {
+    it("() => TypeError", function() {
+      expect(() => util.cantorLookup()).to.throw(TypeError);
+    })
+
+    it("(number, number, referenceObject) => {ReferenceError} | errors when 'from' & 'to' are not objects with '.id' properties", function() {
+      expect(() => util.cantorLookup(1,1, { last: 0 })).to.throw(ReferenceError);
+    })
+
+    it("({ id }, { id }, null) => {TypeError} | errors when neat id reference object is missing", function() {
+      expect(() => util.cantorLookup({ id: 976 }, { id: 391 })).to.throw(TypeError)
+    })
+
     it("({ id: 0 }, { id: 0 }, { 0: 22, last: x }) => { key: 0, id: 22 } | response is an object with correct key and id value", function() {
       const response = util.cantorLookup({ id: 0 }, { id: 0 }, { 0: 22, last: 0 }) // cantor pair for 0,0 is zero, use as key to retrieve value
       expect(response).a('object')
@@ -45,16 +92,5 @@ describe("src/util/utils.js", function () {
       const response = util.cantorLookup({ id: 0 }, { id: 0 }, { last: 0 })
       expect(response.id).equal(undefined)
     })
-
-  })
-  describe('util.getCantorId', function() {
-    it("", function() {})
-    it("", function() {})
-    it("", function() {})
-  })
-  describe('util.manageNeatId', function() {
-    it("", function() {})
-    it("", function() {})
-    it("", function() {})
   })
 })
