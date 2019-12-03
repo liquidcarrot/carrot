@@ -323,7 +323,8 @@ function Network(input_size, output_size, options) {
    *
    * @param {Network} network1 First parent network
    * @param {Network} network2 Second parent network
-   * @param {boolean} [equal] Flag to indicate equally fit Networks
+   * @param {object} options Configuration Object
+   * @param {boolean} [options.equal] Flag to indicate equally fit Networks
    *
    * @returns {Network} New network created from mixing parent networks
    *
@@ -337,7 +338,7 @@ function Network(input_size, output_size, options) {
    * // Produce an offspring, network1 is the preffered network
    * let network3 = network1.crossOver(network1, network2);
    */
-  self.crossOver = function(network1, network2, equal) {
+  self.crossOver = function(network1, network2, options={}) {
     // crossover works really really bad - although it works (I guess)
     // TODO: refactor
     if (network1.input_size !== network2.input_size || network1.output_size !== network2.output_size) {
@@ -357,7 +358,7 @@ function Network(input_size, output_size, options) {
 
     // Determine offspring node size
     let offspring_size;
-    if (equal || score1 === score2) {
+    if (options.equal || score1 === score2) {
       const max = Math.max(network1.nodes.length, network2.nodes.length);
       const min = Math.min(network1.nodes.length, network2.nodes.length);
       offspring_size = Math.floor(Math.random() * (max - min + 1) + min);
@@ -502,13 +503,13 @@ function Network(input_size, output_size, options) {
 
         // Because deleting is expensive, just set it to some value
         n2connections[keys1[i]] = undefined;
-      } else if (score1 >= score2 || equal) {
+      } else if (score1 >= score2 || options.equal) {
         connections.push(n1connections[keys1[i]]);
       }
     }
 
     // Excess/disjoint gene
-    if (score2 >= score1 || equal) {
+    if (score2 >= score1 || options.equal) {
       for (i = 0; i < keys2.length; i++) {
         if (typeof n2connections[keys2[i]] !== `undefined`) {
           connections.push(n2connections[keys2[i]]);
@@ -3054,8 +3055,8 @@ const Instinct = function(inputs, outputs, dataset, options) {
   self.getOffspring = function() {
     const parent1 = self.getParent();
     const parent2 = self.getParent();
-    
-    return parent1.crossOver(parent1, parent2, self.equal);
+
+    return parent1.crossOver(parent1, parent2, { equal: self.equal });
   };
 
   /**

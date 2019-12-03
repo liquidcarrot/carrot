@@ -588,7 +588,7 @@ const Neat = function(inputs, outputs, dataset, options) {
     const parent2 = self.getParent();
 
     // parent1 hard-coded as preferred network
-    return parent1.crossOver(parent1, parent2, self.equal);
+    return parent1.crossOver(parent1, parent2, { equal: self.equal });
   };
 
   /**
