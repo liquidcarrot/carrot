@@ -2,17 +2,18 @@
   "name": "@liquid-carrot/carrot",
   "version": "0.3.18",
   "description": "A Simple Node.js AI Library for Neural Network",
-  "main": "src/carrot.js",
-  "module": "src/carrot.js",
-  "unpkg": "dist/carrot.umd2.min.js",
-  "jsdelivr": "dist/carrot.umd2.min.js",
+  "main": "dist/index.min.js",
+  "module": "dist/index.min.js",
+  "unpkg": "dist/carrot.browser.min.js",
+  "jsdelivr": "dist/carrot.browser.min.js",
   "browser": {
     "fs": false,
     "child_process": false
   },
   "scripts": {
     "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | coveralls && rm -rf ./src-cov",
-    "build:src": "./node_modules/.bin/webpack",
+    "build:src": "node scripts/src.build.js",
+    "build:src:webpack": "./node_modules/.bin/webpack",
     "deploy:docs": "node theme/deploy-docs.js",
     "test": "./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha --recursive test/ --exclude test/unit.js",
     "lint": "./node_modules/.bin/eslint --ignore-path .eslintignore .",
@@ -85,6 +86,7 @@
     "nodemon": "^1.19.2",
     "nyc": "^14.1.1",
     "parallel-webpack": "^2.4.0",
+    "parcel-bundler": "^1.12.4",
     "webpack": "^4.41.0",
     "webpack-cli": "^3.3.9"
   },
