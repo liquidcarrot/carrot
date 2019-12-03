@@ -113,7 +113,154 @@ describe('Network', function(){
     })
   })
 
-  /** Architecture tests */
+  describe('network.activate()', function() {
+    it('network.activate(Array<Number>) => {Array<Number>}', function () {
+      const network = new Network(10, 20);
+      const input = Array(10).fill(0).map(() => Math.random());
+      const simple_case_output = network.activate(input);
+      expect(simple_case_output).to.be.an("array");
+      expect(simple_case_output).to.be.of.length(20);
+      simple_case_output.forEach((val) => expect(val).to.be.a('number'));
+
+      // add a node and check that the output changed
+      const new_node = new Node();
+      network.addNodes(new_node);
+      network.nodes[7].connect(new_node);
+      new_node.connect(network.nodes[24]);
+
+      const added_node_output = network.activate(input);
+
+      for (let i = 0; i < 20; i++) {
+        if (i !== 14) { // the added node was connected to output 14 (node 24 in the network)
+          expect(simple_case_output[i]).to.equal(added_node_output[i]);
+        } else {
+          expect(simple_case_output[i]).to.not.equal(added_node_output[i]);
+        }
+      }
+
+      // run again (without changing the network) and check that the output hasn't changed
+      const rerun_output = network.activate(input);
+      for (let i = 0; i < 20; i++) {
+        expect(rerun_output[i]).to.equal(added_node_output[i]);
+      }
+    })
+    it('network.activate(Array<Number>, {dropout_rate: Number}) => {Array<Number>}', function () {
+      // check that droupout=false (so training=false) returns same values twice
+      // check that droupout=true returns different from drouput=false, and different again on rerun
+      const network = new Network(10, 20);
+
+      // add some nodes that will (or not) be dropped out
+      const new_nodes = Array(10).fill({}).map(() => new Node());
+      network.addNodes(new_nodes);
+      // connect the nodes randomly
+      new_nodes.forEach(node => {
+        const input_node_index = Math.floor(Math.random() * 10);
+        const output_node_index = 10 + Math.floor(Math.random() * 20);
+        network.nodes[input_node_index].connect(node);
+        node.connect(network.nodes[output_node_index]);
+      });
+
+      // generate random input to test the network
+      const input = Array(10).fill(0).map(() => Math.random());
+
+      // outputs to test (in)equality
+      const no_dropout_options = {dropout_rate: 0};
+      const normal_dropout_options = {dropout_rate: 0.5};
+      const all_nodes_dropped_options = {dropout_rate: 1};
+
+      const first_dropout_off_output = network.activate(input, no_dropout_options);
+      const second_dropout_off_output = network.activate(input, no_dropout_options);
+      const first_dropout_on_output = network.activate(input, normal_dropout_options);
+      const second_dropout_on_output = network.activate(input, normal_dropout_options);
+      const first_full_dropout_output = network.activate(input, all_nodes_dropped_options);
+      const second_full_dropout_output = network.activate(input, all_nodes_dropped_options);
+
+      // check the results..
+      expect(first_dropout_off_output).to.eql(second_dropout_off_output);
+      expect(first_dropout_off_output).to.not.eql(first_dropout_on_output);
+      expect(first_dropout_on_output).to.not.eql(second_dropout_on_output);
+      expect(first_dropout_on_output).to.not.eql(first_full_dropout_output);
+      expect(first_full_dropout_output).to.eql(second_full_dropout_output);
+    })
+  })
+
+  describe('network.addNodes()', function () {
+    it('network.addNodes(Node) => {Network}', function () {
+      const test_network = new Network(10, 20);
+
+      // test the network before adding the nodes
+      // generate random input to test the network
+      const random_input = Array(10).fill(0).map(() => Math.random());
+      const original_output = test_network.activate(random_input, { dropout_rate: 0 });
+
+      // add the nodes
+      const test_node = new Node();
+      test_network.nodes[7].connect(test_node);
+      test_node.connect(test_network.nodes[27]);
+      test_network.addNodes(test_node);
+
+      // test the network after adding the nodes. The output should be different
+      expect(test_network.nodes).to.be.of.length(31);
+      const new_output = test_network.activate(random_input, { dropout_rate: 0 });
+      expect(new_output).to.not.eql(original_output);
+
+    })
+
+    it('network.addNodes(Node[]) => {Network}', function () {
+      const test_network = new Network(10, 20);
+
+      // test the network before adding the nodes
+      // generate random input to test the network
+      const random_input = Array(10).fill(0).map(() => Math.random());
+      const original_output = test_network.activate(random_input, { dropout_rate: 0 });
+
+      // add the nodes
+      const test_node = new Node();
+      test_network.nodes[7].connect(test_node);
+      test_node.connect(test_network.nodes[27]);
+
+      const test_node2 = new Node();
+      test_network.nodes[5].connect(test_node2);
+      test_node2.connect(test_network.nodes[25]);
+
+      const node_array = [test_node, test_node2];
+      test_network.addNodes(node_array);
+
+      // test the network after adding the nodes. The output should be different
+      expect(test_network.nodes).to.be.of.length(32);
+      const new_output = test_network.activate(random_input, { dropout_rate: 0 });
+      expect(new_output).to.not.eql(original_output);
+    })
+
+    it('network.addNodes(Group) => {Network}', function () {
+      const test_network = new Network(10, 20);
+
+      // test the network before adding the nodes
+      // generate random input to test the network
+      const random_input = Array(10).fill(0).map(() => Math.random());
+      const original_output = test_network.activate(random_input, { dropout_rate: 0 });
+
+      // add the nodes
+      const test_group = new Group(2);
+      const test_node = test_group.nodes[0];
+
+
+      test_network.nodes[7].connect(test_node);
+      test_node.connect(test_network.nodes[27]);
+
+      const test_node2 = test_group.nodes[1];
+      test_network.nodes[5].connect(test_node2);
+      test_node2.connect(test_network.nodes[25]);
+
+      test_network.addNodes(test_group);
+
+      // test the network after adding the nodes. The output should be different
+      expect(test_network.nodes).to.be.of.length(32);
+      const new_output = test_network.activate(random_input, { dropout_rate: 0 });
+      expect(new_output).to.not.eql(original_output);
+    })
+  })
+
   describe('Network.architecture', function() {
     describe('.Construct', function() {
       it('() => Network | fails', function() {
@@ -200,90 +347,6 @@ describe('Network', function(){
     })
   })
 
-  describe('network.connect()', function() {
-    it('network.connect() => {Connection}', function () {
-      const network = new Network(10, 20);
-      const source_node = new Node();
-      const target_node = network.nodes[25];
-      const connection = network.connect(source_node, target_node, 7);
-
-      expect(connection).to.be.an.instanceOf(Connection);
-      expect(connection.from).eql(source_node);
-      expect(connection.to).eql(target_node);
-    })
-  })
-
-  describe('network.activate()', function() {
-    it('network.activate(Array<Number>) => {Array<Number>}', function () {
-      const network = new Network(10, 20);
-      const input = Array(10).fill(0).map(() => Math.random());
-      const simple_case_output = network.activate(input);
-      expect(simple_case_output).to.be.an("array");
-      expect(simple_case_output).to.be.of.length(20);
-      simple_case_output.forEach((val) => expect(val).to.be.a('number'));
-
-      // add a node and check that the output changed
-      const new_node = new Node();
-      network.addNodes(new_node);
-      network.nodes[7].connect(new_node);
-      new_node.connect(network.nodes[24]);
-
-      const added_node_output = network.activate(input);
-
-      for (let i = 0; i < 20; i++) {
-        if (i !== 14) { // the added node was connected to output 14 (node 24 in the network)
-          expect(simple_case_output[i]).to.equal(added_node_output[i]);
-        } else {
-          expect(simple_case_output[i]).to.not.equal(added_node_output[i]);
-        }
-      }
-
-      // run again (without changing the network) and check that the output hasn't changed
-      const rerun_output = network.activate(input);
-      for (let i = 0; i < 20; i++) {
-        expect(rerun_output[i]).to.equal(added_node_output[i]);
-      }
-    })
-    it('network.activate(Array<Number>, {dropout_rate: Number}) => {Array<Number>}', function () {
-      // check that droupout=false (so training=false) returns same values twice
-      // check that droupout=true returns different from drouput=false, and different again on rerun
-      const network = new Network(10, 20);
-
-      // add some nodes that will (or not) be dropped out
-      const new_nodes = Array(10).fill({}).map(() => new Node());
-      network.addNodes(new_nodes);
-      // connect the nodes randomly
-      new_nodes.forEach(node => {
-        const input_node_index = Math.floor(Math.random() * 10);
-        const output_node_index = 10 + Math.floor(Math.random() * 20);
-        network.nodes[input_node_index].connect(node);
-        node.connect(network.nodes[output_node_index]);
-      });
-
-      // generate random input to test the network
-      const input = Array(10).fill(0).map(() => Math.random());
-
-      // outputs to test (in)equality
-      const no_dropout_options = {dropout_rate: 0};
-      const normal_dropout_options = {dropout_rate: 0.5};
-      const all_nodes_dropped_options = {dropout_rate: 1};
-
-      const first_dropout_off_output = network.activate(input, no_dropout_options);
-      const second_dropout_off_output = network.activate(input, no_dropout_options);
-      const first_dropout_on_output = network.activate(input, normal_dropout_options);
-      const second_dropout_on_output = network.activate(input, normal_dropout_options);
-      const first_full_dropout_output = network.activate(input, all_nodes_dropped_options);
-      const second_full_dropout_output = network.activate(input, all_nodes_dropped_options);
-
-      // check the results..
-      expect(first_dropout_off_output).to.eql(second_dropout_off_output);
-      expect(first_dropout_off_output).to.not.eql(first_dropout_on_output);
-      expect(first_dropout_on_output).to.not.eql(second_dropout_on_output);
-      expect(first_dropout_on_output).to.not.eql(first_full_dropout_output);
-      expect(first_full_dropout_output).to.eql(second_full_dropout_output);
-    })
-  })
-
   describe('network.clear()', function() {
     it('network.clear() => {undefined}', function () {
       const test_network = createUsedNetwork();
@@ -297,6 +360,127 @@ describe('Network', function(){
         expect(node.state).to.equal(0);
         expect(node.activation).to.equal(0);
       });
+    })
+  })
+
+  describe('network.clone()', function() {
+    it('network.clone() => {Network}', function () {
+      const original = new architect.Perceptron(2,3,1)
+
+      const copy = original.clone()
+
+      expect(copy).eql(original)
+    })
+
+    it("network.clone() | Shouldn't return a shallow copy", function () {
+      const original = new architect.Perceptron(2,3,1)
+
+      const copy = original.clone()
+
+      expect(copy).not.equal(original)
+    })
+  })
+
+  describe('network.connect()', function() {
+    it('network.connect() => {Connection}', function () {
+      const network = new Network(10, 20);
+      const source_node = new Node();
+      const target_node = network.nodes[25];
+      const connection = network.connect(source_node, target_node, 7);
+
+      expect(connection).to.be.an.instanceOf(Connection);
+      expect(connection.from).eql(source_node);
+      expect(connection.to).eql(target_node);
+    })
+  })
+
+  describe('network.crossOver()', function () {
+    it('() => {Network}', function() {
+      const network = new Network(4,4);
+      const network1 = new Network(4,4);
+
+      expect(Network.crossOver(network, network1)).instanceOf(Network);
+    })
+
+    it('crossOver(network) => {Network} | Network.connections.length > 0', function() {
+      const network = new Network(4,4);
+      const network1 = new Network(4,4);
+
+      expect(Network.crossOver(network, network1).connections.length).not.equal(1);
+    })
+  })
+
+  describe('network.disconnect()', function () {
+    it('network.disconnect(Node, Node) => {undefined}', function () {
+      const test_network = createUsedNetwork();
+      const test_node = new Node();
+      test_network.nodes[2].connect(test_node);
+      test_node.connect(test_network.nodes[16]);
+      test_network.addNodes(test_node);
+
+      const before_network_connection_size = test_network.connections.length;
+
+      test_network.disconnect(test_node, test_network.nodes[16]);
+      test_network.disconnect(test_network.nodes[2], test_node);
+
+      expect(test_network.connections.length).to.equal(before_network_connection_size - 1);
+      expect(test_node.outgoing).to.be.empty;
+    })
+  })
+
+  describe('network.evolve()', function () {
+    // similar to network.train, with the difference that this dataset requires
+    // evolving the network to be solvable
+    it('network.evolve(dataset) => {{error:{number},iterations:{number},time:{number}}}', async function () {
+      this.timeout(30000);
+      const network = new Network(2,1);
+      for (let i = 0; i < 10; i++) {
+        network.mutate(mutation.ADD_NODE)
+      }
+
+      // multiplies the two inputs
+      const dataset = [
+        { input: [1,0], output: [0]},
+        { input: [0,1], output: [0]},
+        { input: [1,1], output: [1]},
+        { input: [2,1], output: [2]},
+        { input: [2,2], output: [4]},
+        { input: [2,3], output: [6]},
+        { input: [3,3], output: [9]},
+        { input: [-3,3], output: [-9]},
+      ];
+
+      const initial = network.test(dataset);
+      const test_return = await network.evolve(dataset, { iterations: 5 });
+      // TODO: 5 iterations is nothing but it's still taking over 2 seconds. Must be improved a TON.
+      const final = network.test(dataset);
+
+      expect(test_return.error).to.be.a('number');
+      expect(test_return.iterations).to.be.a('number');
+      expect(test_return.time).to.be.a('number');
+      expect(final.error).to.be.below(initial.error);
+    })
+  })
+
+  describe('network.gate()', function () {
+    it('network.gate(node_not_in_network, Connection) => {ReferenceError}', function () {
+      const test_network = createUsedNetwork();
+      const new_node = new Node();
+      const connection = new_node.connect(test_network.nodes[20]);
+
+      expect(() => {test_network.gate(new_node, connection)}).to.throw(ReferenceError);
+    })
+    it('network.gate(Node, Connection) => {undefined}', function () {
+      const test_network = createUsedNetwork();
+      const new_node = new Node();
+      const connection = new_node.connect(test_network.nodes[20]);
+      test_network.addNodes(new_node);
+
+      const before_number_of_gates = test_network.gates.length;
+      test_network.gate(new_node, connection);
+      expect(test_network.gates).to.be.of.length(before_number_of_gates + 1);
+      expect(connection.gater).to.eql(new_node);
+      expect(new_node.gated).to.have.lengthOf(1);
     })
   })
 
@@ -655,101 +839,6 @@ describe('Network', function(){
     })
   })
 
-  describe('network.clone()', function() {
-    it('network.clone() => {Network}', function () {
-      const original = new architect.Perceptron(2,3,1)
-
-      const copy = original.clone()
-
-      expect(copy).eql(original)
-    })
-
-    it("network.clone() | Shouldn't return a shallow copy", function () {
-      const original = new architect.Perceptron(2,3,1)
-
-      const copy = original.clone()
-
-      expect(copy).not.equal(original)
-    })
-  })
-
-  describe('network.addNodes()', function () {
-    it('network.addNodes(Node) => {Network}', function () {
-      const test_network = new Network(10, 20);
-
-      // test the network before adding the nodes
-      // generate random input to test the network
-      const random_input = Array(10).fill(0).map(() => Math.random());
-      const original_output = test_network.activate(random_input, { dropout_rate: 0 });
-
-      // add the nodes
-      const test_node = new Node();
-      test_network.nodes[7].connect(test_node);
-      test_node.connect(test_network.nodes[27]);
-      test_network.addNodes(test_node);
-
-      // test the network after adding the nodes. The output should be different
-      expect(test_network.nodes).to.be.of.length(31);
-      const new_output = test_network.activate(random_input, { dropout_rate: 0 });
-      expect(new_output).to.not.eql(original_output);
-
-    })
-
-    it('network.addNodes(Node[]) => {Network}', function () {
-      const test_network = new Network(10, 20);
-
-      // test the network before adding the nodes
-      // generate random input to test the network
-      const random_input = Array(10).fill(0).map(() => Math.random());
-      const original_output = test_network.activate(random_input, { dropout_rate: 0 });
-
-      // add the nodes
-      const test_node = new Node();
-      test_network.nodes[7].connect(test_node);
-      test_node.connect(test_network.nodes[27]);
-
-      const test_node2 = new Node();
-      test_network.nodes[5].connect(test_node2);
-      test_node2.connect(test_network.nodes[25]);
-
-      const node_array = [test_node, test_node2];
-      test_network.addNodes(node_array);
-
-      // test the network after adding the nodes. The output should be different
-      expect(test_network.nodes).to.be.of.length(32);
-      const new_output = test_network.activate(random_input, { dropout_rate: 0 });
-      expect(new_output).to.not.eql(original_output);
-    })
-
-    it('network.addNodes(Group) => {Network}', function () {
-      const test_network = new Network(10, 20);
-
-      // test the network before adding the nodes
-      // generate random input to test the network
-      const random_input = Array(10).fill(0).map(() => Math.random());
-      const original_output = test_network.activate(random_input, { dropout_rate: 0 });
-
-      // add the nodes
-      const test_group = new Group(2);
-      const test_node = test_group.nodes[0];
-
-
-      test_network.nodes[7].connect(test_node);
-      test_node.connect(test_network.nodes[27]);
-
-      const test_node2 = test_group.nodes[1];
-      test_network.nodes[5].connect(test_node2);
-      test_node2.connect(test_network.nodes[25]);
-
-      test_network.addNodes(test_group);
-
-      // test the network after adding the nodes. The output should be different
-      expect(test_network.nodes).to.be.of.length(32);
-      const new_output = test_network.activate(random_input, { dropout_rate: 0 });
-      expect(new_output).to.not.eql(original_output);
-    })
-  })
-
   describe('network.propagate()', function () {
     it('network.propagate(rate, momentum, update, target_output) => {undefined}', function () {
       const upper_test_epoch_limit = 2000; // will attempt to propagate this many times
@@ -775,70 +864,6 @@ describe('Network', function(){
         expect(value).to.be.closeTo(ideal_output[index], epsilon);
       });
 
-    })
-  })
-
-  describe('network.disconnect()', function () {
-    it('network.disconnect(Node, Node) => {undefined}', function () {
-      const test_network = createUsedNetwork();
-      const test_node = new Node();
-      test_network.nodes[2].connect(test_node);
-      test_node.connect(test_network.nodes[16]);
-      test_network.addNodes(test_node);
-
-      const before_network_connection_size = test_network.connections.length;
-
-      test_network.disconnect(test_node, test_network.nodes[16]);
-      test_network.disconnect(test_network.nodes[2], test_node);
-
-      expect(test_network.connections.length).to.equal(before_network_connection_size - 1);
-      expect(test_node.outgoing).to.be.empty;
-    })
-  })
-
-  describe('network.gate()', function () {
-    it('network.gate(node_not_in_network, Connection) => {ReferenceError}', function () {
-      const test_network = createUsedNetwork();
-      const new_node = new Node();
-      const connection = new_node.connect(test_network.nodes[20]);
-
-      expect(() => {test_network.gate(new_node, connection)}).to.throw(ReferenceError);
-    })
-    it('network.gate(Node, Connection) => {undefined}', function () {
-      const test_network = createUsedNetwork();
-      const new_node = new Node();
-      const connection = new_node.connect(test_network.nodes[20]);
-      test_network.addNodes(new_node);
-
-      const before_number_of_gates = test_network.gates.length;
-      test_network.gate(new_node, connection);
-      expect(test_network.gates).to.be.of.length(before_number_of_gates + 1);
-      expect(connection.gater).to.eql(new_node);
-      expect(new_node.gated).to.have.lengthOf(1);
-    })
-  })
-
-  describe('network.ungate()', function () {
-    it('network.ungate(connection_not_in_network) => {ReferenceError}', function () {
-      const test_network = createUsedNetwork();
-      const new_node = new Node();
-      const connection = new_node.connect(test_network.nodes[20]);
-      new_node.gate(connection);
-
-      expect(() => {test_network.ungate(connection)}).to.throw(Error);
-    })
-    it('network.ungate(Connection) => {undefined}', function () {
-      const test_network = createUsedNetwork();
-      const new_node = new Node();
-      const connection = new_node.connect(test_network.nodes[20]);
-      test_network.addNodes(new_node);
-      test_network.gate(new_node, connection);
-
-      const before_number_of_gates = test_network.gates.length;
-      test_network.ungate(connection);
-      expect(test_network.gates).to.be.of.length(before_number_of_gates - 1);
-      expect(connection.gater).to.not.exist;
-      expect(new_node.gated).to.have.lengthOf(0);
     })
   })
 
@@ -925,37 +950,27 @@ describe('Network', function(){
     })
   })
 
-  describe('network.evolve()', function () {
-    // similar to network.train, with the difference that this dataset requires
-    // evolving the network to be solvable
-    it('network.evolve(dataset) => {{error:{number},iterations:{number},time:{number}}}', async function () {
-      this.timeout(30000);
-      const network = new Network(2,1);
-      for (let i = 0; i < 10; i++) {
-        network.mutate(mutation.ADD_NODE)
-      }
+  describe('network.ungate()', function () {
+    it('network.ungate(connection_not_in_network) => {ReferenceError}', function () {
+      const test_network = createUsedNetwork();
+      const new_node = new Node();
+      const connection = new_node.connect(test_network.nodes[20]);
+      new_node.gate(connection);
 
-      // multiplies the two inputs
-      const dataset = [
-        { input: [1,0], output: [0]},
-        { input: [0,1], output: [0]},
-        { input: [1,1], output: [1]},
-        { input: [2,1], output: [2]},
-        { input: [2,2], output: [4]},
-        { input: [2,3], output: [6]},
-        { input: [3,3], output: [9]},
-        { input: [-3,3], output: [-9]},
-      ];
+      expect(() => {test_network.ungate(connection)}).to.throw(Error);
+    })
+    it('network.ungate(Connection) => {undefined}', function () {
+      const test_network = createUsedNetwork();
+      const new_node = new Node();
+      const connection = new_node.connect(test_network.nodes[20]);
+      test_network.addNodes(new_node);
+      test_network.gate(new_node, connection);
 
-      const initial = network.test(dataset);
-      const test_return = await network.evolve(dataset, { iterations: 5 });
-      // TODO: 5 iterations is nothing but it's still taking over 2 seconds. Must be improved a TON.
-      const final = network.test(dataset);
-
-      expect(test_return.error).to.be.a('number');
-      expect(test_return.iterations).to.be.a('number');
-      expect(test_return.time).to.be.a('number');
-      expect(final.error).to.be.below(initial.error);
+      const before_number_of_gates = test_network.gates.length;
+      test_network.ungate(connection);
+      expect(test_network.gates).to.be.of.length(before_number_of_gates - 1);
+      expect(connection.gater).to.not.exist;
+      expect(new_node.gated).to.have.lengthOf(0);
     })
   })
 })
