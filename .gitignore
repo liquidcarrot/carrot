@@ -1,3 +1,6 @@
+# Parcel cache directory
+.cache
+
 # Sandbox
 sandbox
 
