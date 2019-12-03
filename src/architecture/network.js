@@ -315,6 +315,227 @@ function Network(input_size, output_size, options) {
   }
 
   /**
+   * Create an offspring from two parent networks.
+   *
+   * Networks are not required to have the same size, however input and output size should be the same!
+   *
+   * @todo Add custom [crossover](crossover) method customization
+   *
+   * @param {Network} network1 First parent network
+   * @param {Network} network2 Second parent network
+   * @param {boolean} [equal] Flag to indicate equally fit Networks
+   *
+   * @returns {Network} New network created from mixing parent networks
+   *
+   * @example
+   * let { Network, architect } = require("@liquid-carrot/carrot");
+   *
+   * // Initialise two parent networks
+   * let network1 = new architect.Perceptron(2, 4, 3);
+   * let network2 = new architect.Perceptron(2, 4, 5, 3);
+   *
+   * // Produce an offspring, network1 is the preffered network
+   * let network3 = network1.crossOver(network1, network2);
+   */
+  self.crossOver = function(network1, network2, equal) {
+    // crossover works really really bad - although it works (I guess)
+    // TODO: refactor
+    if (network1.input_size !== network2.input_size || network1.output_size !== network2.output_size) {
+      throw new Error("Networks don`t have the same input/output size!");
+    }
+
+    // Initialise offspring
+    const offspring = new Network(network1.input_size, network1.output_size);
+    offspring.connections = [];
+    offspring.nodes = [];
+    offspring.input_nodes = new Set();
+    offspring.output_nodes = new Set();
+
+    // Save scores and create a copy
+    const score1 = network1.score || 0;
+    const score2 = network2.score || 0;
+
+    // Determine offspring node size
+    let offspring_size;
+    if (equal || score1 === score2) {
+      const max = Math.max(network1.nodes.length, network2.nodes.length);
+      const min = Math.min(network1.nodes.length, network2.nodes.length);
+      offspring_size = Math.floor(Math.random() * (max - min + 1) + min);
+    } else if (score1 > score2) {
+      offspring_size = network1.nodes.length;
+    } else {
+      offspring_size = network2.nodes.length;
+    }
+
+    // Rename some variables for easier reading
+    // both networks (should) have equal input/output size
+    const input_size = network1.input_size;
+    const output_size = network1.output_size;
+
+    // Set indexes so we don't need indexOf
+    let i;
+    for (i = 0; i < network1.nodes.length; i++) {
+      network1.nodes[i].index = i;
+    }
+
+    for (i = 0; i < network2.nodes.length; i++) {
+      network2.nodes[i].index = i;
+    }
+
+    // Assign nodes from parents to offspring
+    for (i = 0; i < offspring_size; i++) {
+      // TODO: First assign input and output nodes, then get hidden nodes
+      // SUPER WIP
+      let chosen_node;
+      let chosen_node_type = ''; // will be one of 'input', 'output', 'hidden'
+
+      // first select input nodes
+      if (i < input_size) {
+        chosen_node_type = 'input';
+        // choose if the chosen input node will come from network 1 or 2
+        // then go to the i-th input node of the selected network and choose the node
+        const source_network = Math.random() >= 0.5 ? network1 : network2;
+        // get the i-th input node
+        let input_number = -1;
+        let j = -1; // index to scroll through the source network's nodes
+        while (input_number < i) { // basically move forward until desired input number is found
+          j++;
+          if (j >= source_network.nodes.length) {
+            // something is wrong...
+            throw RangeError('something is wrong with the size of the input');
+          }
+          if (source_network.input_nodes.has(source_network.nodes[j])) {
+            input_number++;
+          }
+        }
+        // now j is the index of the i-th input in the source network
+        chosen_node = source_network.nodes[j];
+      } else if (i < input_size + output_size) { // now select output nodes
+        chosen_node_type = 'output';
+        // choose if the chosen output node will come from network 1 or 2
+        // then go to the i-th output node of the selected network and choose the node
+        const source_network = Math.random() >= 0.5 ? network1 : network2;
+        // get the i-th output node
+        let output_number = -1;
+        let j = -1; // index to scroll through the source network's nodes
+        while (output_number < i - input_size) { // basically move forward until desired output number is found
+          j++;
+          if (j >= source_network.nodes.length) {
+            // something is wrong...
+            throw RangeError('something is wrong with the size of the output');
+          }
+          if (source_network.output_nodes.has(source_network.nodes[j])) {
+            output_number++;
+          }
+        }
+        // now j is the index of the i-th output in the source network
+        chosen_node = source_network.nodes[j];
+      } else {
+        chosen_node_type = 'hidden';
+        // now select hidden nodes
+        let source_network;
+        if (i >= network1.nodes.length) {
+          source_network = network2;
+        } else if (i >= network2.nodes.length) {
+          source_network = network1;
+        } else {
+          source_network = Math.random() >= 0.5 ? network1 : network2;
+        }
+        // consider adding a hidden nodes array
+        const chosen_node_index = Math.floor(Math.random() * source_network.nodes.length);
+        chosen_node = source_network.nodes[chosen_node_index];
+      }
+
+      const new_node = new Node({
+        bias: chosen_node.bias,
+        squash: chosen_node.squash,
+        type: chosen_node.type,
+      });
+
+      // add to the corresponding set if input or output
+      if (chosen_node_type === 'input') {
+        offspring.input_nodes.add(new_node);
+      } else if (chosen_node_type === 'output') {
+        offspring.output_nodes.add(new_node);
+      }
+
+      offspring.nodes.push(new_node);
+    }
+
+    // Create arrays of connection genes
+    const n1connections = {};
+    const n2connections = {};
+
+    // Add the connections of network 1
+    for (i = 0; i < network1.connections.length; i++) {
+      const connection = network1.connections[i];
+      const data = {
+        weight: connection.weight,
+        from: connection.from.index,
+        to: connection.to.index,
+        gater: connection.gater != null ? connection.gater.index : -1
+      };
+      n1connections[util.getCantorNumber(data.from, data.to)] = data;
+    }
+
+    // Add the connections of network 2
+    for (i = 0; i < network2.connections.length; i++) {
+      const connection = network2.connections[i];
+      const data = {
+        weight: connection.weight,
+        from: connection.from.index,
+        to: connection.to.index,
+        gater: connection.gater != null ? connection.gater.index : -1
+      };
+      n2connections[util.getCantorNumber(data.from, data.to)] = data;
+    }
+
+    // Split common conn genes from disjoint or excess conn genes
+    var connections = [];
+    var keys1 = Object.keys(n1connections);
+    var keys2 = Object.keys(n2connections);
+    for (i = keys1.length - 1; i >= 0; i--) {
+      // Common gene
+      if (typeof n2connections[keys1[i]] !== `undefined`) {
+        const connection = Math.random() >= 0.5 ? n1connections[keys1[i]] : n2connections[keys1[i]];
+        connections.push(connection);
+
+        // Because deleting is expensive, just set it to some value
+        n2connections[keys1[i]] = undefined;
+      } else if (score1 >= score2 || equal) {
+        connections.push(n1connections[keys1[i]]);
+      }
+    }
+
+    // Excess/disjoint gene
+    if (score2 >= score1 || equal) {
+      for (i = 0; i < keys2.length; i++) {
+        if (typeof n2connections[keys2[i]] !== `undefined`) {
+          connections.push(n2connections[keys2[i]]);
+        }
+      }
+    }
+
+    // Add common conn genes uniformly
+    for (i = 0; i < connections.length; i++) {
+      let connection_data = connections[i];
+      if (connection_data.to < offspring_size && connection_data.from < offspring_size) {
+        const from = offspring.nodes[connection_data.from];
+        const to = offspring.nodes[connection_data.to];
+        const connection = offspring.connect(from, to);
+
+        connection.weight = connection_data.weight;
+
+        if (connection_data.gater !== -1 && connection_data.gater < offspring_size) {
+          offspring.gate(offspring.nodes[connection_data.gater], connection);
+        }
+      }
+    }
+
+    return offspring;
+  }
+
+  /**
    * Removes the connection of the `from` node to the `to` node
    *
    * @function disconnect
@@ -1674,227 +1895,6 @@ Network.merge = function(network1, network2) {
 }
 
 /**
- * Create an offspring from two parent networks.
- *
- * Networks are not required to have the same size, however input and output size should be the same!
- *
- * @todo Add custom [crossover](crossover) method customization
- *
- * @param {Network} network1 First parent network
- * @param {Network} network2 Second parent network
- * @param {boolean} [equal] Flag to indicate equally fit Networks
- *
- * @returns {Network} New network created from mixing parent networks
- *
- * @example
- * let { Network, architect } = require("@liquid-carrot/carrot");
- *
- * // Initialise two parent networks
- * let network1 = new architect.Perceptron(2, 4, 3);
- * let network2 = new architect.Perceptron(2, 4, 5, 3);
- *
- * // Produce an offspring
- * let network3 = Network.crossOver(network1, network2);
- */
-Network.crossOver = function(network1, network2, equal) {
-  // crossover works really really bad - although it works (I guess)
-  // TODO: refactor
-  if (network1.input_size !== network2.input_size || network1.output_size !== network2.output_size) {
-    throw new Error("Networks don`t have the same input/output size!");
-  }
-
-  // Initialise offspring
-  const offspring = new Network(network1.input_size, network1.output_size);
-  offspring.connections = [];
-  offspring.nodes = [];
-  offspring.input_nodes = new Set();
-  offspring.output_nodes = new Set();
-
-  // Save scores and create a copy
-  const score1 = network1.score || 0;
-  const score2 = network2.score || 0;
-
-  // Determine offspring node size
-  let offspring_size;
-  if (equal || score1 === score2) {
-    const max = Math.max(network1.nodes.length, network2.nodes.length);
-    const min = Math.min(network1.nodes.length, network2.nodes.length);
-    offspring_size = Math.floor(Math.random() * (max - min + 1) + min);
-  } else if (score1 > score2) {
-    offspring_size = network1.nodes.length;
-  } else {
-    offspring_size = network2.nodes.length;
-  }
-
-  // Rename some variables for easier reading
-  // both networks (should) have equal input/output size
-  const input_size = network1.input_size;
-  const output_size = network1.output_size;
-
-  // Set indexes so we don't need indexOf
-  let i;
-  for (i = 0; i < network1.nodes.length; i++) {
-    network1.nodes[i].index = i;
-  }
-
-  for (i = 0; i < network2.nodes.length; i++) {
-    network2.nodes[i].index = i;
-  }
-
-  // Assign nodes from parents to offspring
-  for (i = 0; i < offspring_size; i++) {
-    // TODO: First assign input and output nodes, then get hidden nodes
-    // SUPER WIP
-    let chosen_node;
-    let chosen_node_type = ''; // will be one of 'input', 'output', 'hidden'
-
-    // first select input nodes
-    if (i < input_size) {
-      chosen_node_type = 'input';
-      // choose if the chosen input node will come from network 1 or 2
-      // then go to the i-th input node of the selected network and choose the node
-      const source_network = Math.random() >= 0.5 ? network1 : network2;
-      // get the i-th input node
-      let input_number = -1;
-      let j = -1; // index to scroll through the source network's nodes
-      while (input_number < i) { // basically move forward until desired input number is found
-        j++;
-        if (j >= source_network.nodes.length) {
-          // something is wrong...
-          throw RangeError('something is wrong with the size of the input');
-        }
-        if (source_network.input_nodes.has(source_network.nodes[j])) {
-          input_number++;
-        }
-      }
-      // now j is the index of the i-th input in the source network
-      chosen_node = source_network.nodes[j];
-    } else if (i < input_size + output_size) { // now select output nodes
-      chosen_node_type = 'output';
-      // choose if the chosen output node will come from network 1 or 2
-      // then go to the i-th output node of the selected network and choose the node
-      const source_network = Math.random() >= 0.5 ? network1 : network2;
-      // get the i-th output node
-      let output_number = -1;
-      let j = -1; // index to scroll through the source network's nodes
-      while (output_number < i - input_size) { // basically move forward until desired output number is found
-        j++;
-        if (j >= source_network.nodes.length) {
-          // something is wrong...
-          throw RangeError('something is wrong with the size of the output');
-        }
-        if (source_network.output_nodes.has(source_network.nodes[j])) {
-          output_number++;
-        }
-      }
-      // now j is the index of the i-th output in the source network
-      chosen_node = source_network.nodes[j];
-    } else {
-      chosen_node_type = 'hidden';
-      // now select hidden nodes
-      let source_network;
-      if (i >= network1.nodes.length) {
-        source_network = network2;
-      } else if (i >= network2.nodes.length) {
-        source_network = network1;
-      } else {
-        source_network = Math.random() >= 0.5 ? network1 : network2;
-      }
-      // consider adding a hidden nodes array
-      const chosen_node_index = Math.floor(Math.random() * source_network.nodes.length);
-      chosen_node = source_network.nodes[chosen_node_index];
-    }
-
-    const new_node = new Node({
-      bias: chosen_node.bias,
-      squash: chosen_node.squash,
-      type: chosen_node.type,
-    });
-
-    // add to the corresponding set if input or output
-    if (chosen_node_type === 'input') {
-      offspring.input_nodes.add(new_node);
-    } else if (chosen_node_type === 'output') {
-      offspring.output_nodes.add(new_node);
-    }
-
-    offspring.nodes.push(new_node);
-  }
-
-  // Create arrays of connection genes
-  const n1connections = {};
-  const n2connections = {};
-
-  // Add the connections of network 1
-  for (i = 0; i < network1.connections.length; i++) {
-    const connection = network1.connections[i];
-    const data = {
-      weight: connection.weight,
-      from: connection.from.index,
-      to: connection.to.index,
-      gater: connection.gater != null ? connection.gater.index : -1
-    };
-    n1connections[util.getCantorNumber(data.from, data.to)] = data;
-  }
-
-  // Add the connections of network 2
-  for (i = 0; i < network2.connections.length; i++) {
-    const connection = network2.connections[i];
-    const data = {
-      weight: connection.weight,
-      from: connection.from.index,
-      to: connection.to.index,
-      gater: connection.gater != null ? connection.gater.index : -1
-    };
-    n2connections[util.getCantorNumber(data.from, data.to)] = data;
-  }
-
-  // Split common conn genes from disjoint or excess conn genes
-  var connections = [];
-  var keys1 = Object.keys(n1connections);
-  var keys2 = Object.keys(n2connections);
-  for (i = keys1.length - 1; i >= 0; i--) {
-    // Common gene
-    if (typeof n2connections[keys1[i]] !== `undefined`) {
-      const connection = Math.random() >= 0.5 ? n1connections[keys1[i]] : n2connections[keys1[i]];
-      connections.push(connection);
-
-      // Because deleting is expensive, just set it to some value
-      n2connections[keys1[i]] = undefined;
-    } else if (score1 >= score2 || equal) {
-      connections.push(n1connections[keys1[i]]);
-    }
-  }
-
-  // Excess/disjoint gene
-  if (score2 >= score1 || equal) {
-    for (i = 0; i < keys2.length; i++) {
-      if (typeof n2connections[keys2[i]] !== `undefined`) {
-        connections.push(n2connections[keys2[i]]);
-      }
-    }
-  }
-
-  // Add common conn genes uniformly
-  for (i = 0; i < connections.length; i++) {
-    let connection_data = connections[i];
-    if (connection_data.to < offspring_size && connection_data.from < offspring_size) {
-      const from = offspring.nodes[connection_data.from];
-      const to = offspring.nodes[connection_data.to];
-      const connection = offspring.connect(from, to);
-
-      connection.weight = connection_data.weight;
-
-      if (connection_data.gater !== -1 && connection_data.gater < offspring_size) {
-        offspring.gate(offspring.nodes[connection_data.gater], connection);
-      }
-    }
-  }
-
-  return offspring;
-}
-
-/**
  *
  * Preconfigured neural networks!
  *
@@ -3054,8 +3054,8 @@ const Instinct = function(inputs, outputs, dataset, options) {
   self.getOffspring = function() {
     const parent1 = self.getParent();
     const parent2 = self.getParent();
-
-    return Network.crossOver(parent1, parent2, self.equal);
+    
+    return parent1.crossOver(parent1, parent2, self.equal);
   };
 
   /**

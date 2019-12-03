@@ -399,14 +399,14 @@ describe('Network', function(){
       const network = new Network(4,4);
       const network1 = new Network(4,4);
 
-      expect(Network.crossOver(network, network1)).instanceOf(Network);
+      expect(network.crossOver(network, network1)).instanceOf(Network);
     })
 
     it('crossOver(network) => {Network} | Network.connections.length > 0', function() {
       const network = new Network(4,4);
       const network1 = new Network(4,4);
 
-      expect(Network.crossOver(network, network1).connections.length).not.equal(1);
+      expect(network.crossOver(network, network1).connections.length).not.equal(1);
     })
   })
 
