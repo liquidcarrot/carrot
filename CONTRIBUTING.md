@@ -66,6 +66,7 @@ Runs `scripts/src.build.js` and creates/updates four files in `dist/`:
 * `dist/index.browser.js`: _compiled for Browser development_
 * `dist/index.browser.min.js`: _compiled for Browser production_
 
+
 **Build Test Suite**
 
 ```
@@ -82,6 +83,12 @@ npm run build:docs
 ```
 
 Runs `scripts/docs.build.js` and generates publicly available documentation as HTML files in the `docs/` and Markdown in `DOCUMENTATION.md` using [`jsdoc`](https://www.npmjs.com/package/jsdoc) and [`jsdoc2md`](https://www.npmjs.com/package/jsdoc-to-markdown), respectively.
+
+**[DEPRECATED] Bundling Source Code w/ Webpack**
+
+```
+npm run build:src:webpack
+```
 
 ## Using the issue tracker
 
