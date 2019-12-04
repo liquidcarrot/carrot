@@ -11,7 +11,7 @@ config.warnings = false;
 describe('Network.evolve()', function () {
 
   it('AND', async function () {
-    this.timeout(40000);
+    this.timeout(1000);
 
     // Train the AND gate
     const trainingSet = [
@@ -34,7 +34,7 @@ describe('Network.evolve()', function () {
     assert.isBelow(results.error, 0.03);
   })
   it('XOR', async function () {
-    this.timeout(40000);
+    this.timeout(1000);
     // Train the XOR gate
     const trainingSet = [
       { input: [0, 0], output: [0] },
@@ -55,7 +55,7 @@ describe('Network.evolve()', function () {
     assert.isBelow(results.error, 0.03);
   })
   it('XNOR', async function () {
-    this.timeout(60000);
+    this.timeout(1000);
 
     // Train the XNOR gate
     const trainingSet = [
