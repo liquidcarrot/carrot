@@ -338,6 +338,59 @@ function Node(options) {
   },
 
   /**
+  * Clears this node's state information - _i.e. resets node and its connections to "factory settings"_
+  *
+  * `node.clear()` is useful for predicting timeseries with LSTMs.
+  *
+  * @function clear
+  * @memberof Node
+  *
+  * @example
+  * const { Node } = require("@liquid-carrot/carrot");
+  *
+  * let node = new Node();
+  *
+  * node.activate([1, 0]);
+  * node.propagate([1]);
+  *
+  * console.log(node); // Node has state information (e.g. `node.derivative`)
+  *
+  * node.clear(); // Factory resets node
+  *
+  * console.log(node); // Node has no state information
+  */
+  self.clear = function() {
+    for (let index = 0; index < self.incoming.length; index++) {
+      const connection = self.incoming[index];
+
+      connection.elegibility = 0;
+      connection.xtrace_nodes = []
+      connection.xtrace_values = [];
+    }
+
+    for (let index = 0; index < self.gated.length; index++) {
+      const connection = self.gated[index];
+      connection.gain = 0;
+    }
+
+    self.error_responsibility = self.error_projected = self.error_gated = 0;
+    self.old = self.state = self.activation = 0;
+  },
+
+  /**
+  * Returns a deep copy of the Node.
+  * @beta
+  *
+  * @function clone
+  * @memberof Node
+  *
+  * @returns {Node} Returns an identical node
+  */
+  self.clone = function() {
+    return _.cloneDeep(self)
+  },
+
+  /**
   * Connects this node to the given node
   *
   * @param {Node} node Node to project a connection to
@@ -599,46 +652,6 @@ function Node(options) {
     }
 
     return connections;
-  },
-
-  /**
-  * Clears this node's state information - _i.e. resets node and its connections to "factory settings"_
-  *
-  * `node.clear()` is useful for predicting timeseries with LSTMs.
-  *
-  * @function clear
-  * @memberof Node
-  *
-  * @example
-  * const { Node } = require("@liquid-carrot/carrot");
-  *
-  * let node = new Node();
-  *
-  * node.activate([1, 0]);
-  * node.propagate([1]);
-  *
-  * console.log(node); // Node has state information (e.g. `node.derivative`)
-  *
-  * node.clear(); // Factory resets node
-  *
-  * console.log(node); // Node has no state information
-  */
-  self.clear = function() {
-    for (let index = 0; index < self.incoming.length; index++) {
-      const connection = self.incoming[index];
-
-      connection.elegibility = 0;
-      connection.xtrace_nodes = []
-      connection.xtrace_values = [];
-    }
-
-    for (let index = 0; index < self.gated.length; index++) {
-      const connection = self.gated[index];
-      connection.gain = 0;
-    }
-
-    self.error_responsibility = self.error_projected = self.error_gated = 0;
-    self.old = self.state = self.activation = 0;
   },
 
   /**
