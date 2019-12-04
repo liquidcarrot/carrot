@@ -581,14 +581,14 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    * @returns {Network} Child network
    *
-   * @todo Move fitness checking crossover-code into this function
    */
   self.getOffspring = function() {
     const parent1 = self.getParent();
     const parent2 = self.getParent();
 
-    // parent1 hard-coded as preferred network
-    return parent1.crossOver(parent1, parent2, { equal: self.equal });
+    // option to treat networks as equally fit
+    const equal = self.equal;
+    return (equal || parent1.score > parent2.score) ? parent1.crossOver(parent2, { equal }) : parent2.crossOver(parent1)
   };
 
   /**

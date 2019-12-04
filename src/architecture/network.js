@@ -336,55 +336,45 @@ function Network(input_size, output_size, options) {
    * let network2 = new architect.Perceptron(2, 4, 5, 3);
    *
    * // Produce an offspring, network1 is the preffered network
-   * let network3 = network1.crossOver(network1, network2);
+   * let network3 = network1.crossOver(network2);
+   *
+   * @todo Heavily refactor and simplify, works terribly right now
+   * @todo Swap gene matching algorithm
+   * @todo Add construction flag to avoid having to over-write new Network properties
+   * @todo Update input_size and output_size to use the dynamic input_nodes.size / output_nodes.size instead
+   * @todo Add tests checking for parent-consistent input, hidden, output neurons in offspring
+   * @todo Add more tests
    */
-  self.crossOver = function(network1, network2, options={}) {
-    // crossover works really really bad - although it works (I guess)
-    // TODO: refactor
-    if (network1.input_size !== network2.input_size || network1.output_size !== network2.output_size) {
+  self.crossOver = function(other, options={}) {
+    if (self.input_size !== other.input_size || self.output_size !== other.output_size) {
       throw new Error("Networks don`t have the same input/output size!");
     }
 
     // Initialise offspring
-    const offspring = new Network(network1.input_size, network1.output_size);
+    const offspring = new Network(self.input_size, self.output_size);
     offspring.connections = [];
     offspring.nodes = [];
     offspring.input_nodes = new Set();
     offspring.output_nodes = new Set();
 
-    // Save scores and create a copy
-    const score1 = network1.score || 0;
-    const score2 = network2.score || 0;
-
-    // Determine offspring node size
-    let offspring_size;
-    if (options.equal || score1 === score2) {
-      const max = Math.max(network1.nodes.length, network2.nodes.length);
-      const min = Math.min(network1.nodes.length, network2.nodes.length);
-      offspring_size = Math.floor(Math.random() * (max - min + 1) + min);
-    } else if (score1 > score2) {
-      offspring_size = network1.nodes.length;
-    } else {
-      offspring_size = network2.nodes.length;
-    }
-
     // Rename some variables for easier reading
     // both networks (should) have equal input/output size
-    const input_size = network1.input_size;
-    const output_size = network1.output_size;
+    const input_size = self.input_size;
+    const output_size = self.output_size;
 
-    // Set indexes so we don't need indexOf
-    let i;
-    for (i = 0; i < network1.nodes.length; i++) {
-      network1.nodes[i].index = i;
-    }
-
-    for (i = 0; i < network2.nodes.length; i++) {
-      network2.nodes[i].index = i;
+    // Determine offspring size, does not match neat spec
+    let size;
+    if(options.equal) {
+      const max = Math.max(self.nodes.length, other.nodes.length);
+      const min = Math.min(self.nodes.length, other.nodes.length);
+      size = Math.floor(Math.random() * (max - min + 1) + min);
+    } else {
+      size = self.nodes.length;
     }
 
     // Assign nodes from parents to offspring
-    for (i = 0; i < offspring_size; i++) {
+    // Needs refactoring ASAP, update to work by using selected connections first and then retrieving the appropriate nodes
+    for (let i = 0; i < size; i++) {
       // TODO: First assign input and output nodes, then get hidden nodes
       // SUPER WIP
       let chosen_node;
@@ -395,7 +385,7 @@ function Network(input_size, output_size, options) {
         chosen_node_type = 'input';
         // choose if the chosen input node will come from network 1 or 2
         // then go to the i-th input node of the selected network and choose the node
-        const source_network = Math.random() >= 0.5 ? network1 : network2;
+        const source_network = Math.random() >= 0.5 ? self : other;
         // get the i-th input node
         let input_number = -1;
         let j = -1; // index to scroll through the source network's nodes
@@ -415,7 +405,7 @@ function Network(input_size, output_size, options) {
         chosen_node_type = 'output';
         // choose if the chosen output node will come from network 1 or 2
         // then go to the i-th output node of the selected network and choose the node
-        const source_network = Math.random() >= 0.5 ? network1 : network2;
+        const source_network = Math.random() >= 0.5 ? self : other;
         // get the i-th output node
         let output_number = -1;
         let j = -1; // index to scroll through the source network's nodes
@@ -435,12 +425,12 @@ function Network(input_size, output_size, options) {
         chosen_node_type = 'hidden';
         // now select hidden nodes
         let source_network;
-        if (i >= network1.nodes.length) {
-          source_network = network2;
-        } else if (i >= network2.nodes.length) {
-          source_network = network1;
+        if (i >= self.nodes.length) {
+          source_network = other;
+        } else if (i >= other.nodes.length) {
+          source_network = self;
         } else {
-          source_network = Math.random() >= 0.5 ? network1 : network2;
+          source_network = Math.random() >= 0.5 ? self : other;
         }
         // consider adding a hidden nodes array
         const chosen_node_index = Math.floor(Math.random() * source_network.nodes.length);
@@ -463,72 +453,83 @@ function Network(input_size, output_size, options) {
       offspring.nodes.push(new_node);
     }
 
-    // Create arrays of connection genes
-    const n1connections = {};
-    const n2connections = {};
-
-    // Add the connections of network 1
-    for (i = 0; i < network1.connections.length; i++) {
-      const connection = network1.connections[i];
-      const data = {
-        weight: connection.weight,
-        from: connection.from.index,
-        to: connection.to.index,
-        gater: connection.gater != null ? connection.gater.index : -1
-      };
-      n1connections[util.getCantorNumber(data.from, data.to)] = data;
+    // Set indexes so we don't need indexOf
+    // Used, presumably, to preserve activation order -- this can be obviated with propert node.type management
+    // Or by keeping arrays of input, hidden, output at the network level
+    // Or preferrably both for redundancy's sake
+    for (let i = 0; i < self.nodes.length; i++) {
+      self.nodes[i].index = i;
     }
 
-    // Add the connections of network 2
-    for (i = 0; i < network2.connections.length; i++) {
-      const connection = network2.connections[i];
-      const data = {
-        weight: connection.weight,
-        from: connection.from.index,
-        to: connection.to.index,
-        gater: connection.gater != null ? connection.gater.index : -1
-      };
-      n2connections[util.getCantorNumber(data.from, data.to)] = data;
+    for (let i = 0; i < other.nodes.length; i++) {
+      other.nodes[i].index = i;
     }
 
-    // Split common conn genes from disjoint or excess conn genes
-    var connections = [];
-    var keys1 = Object.keys(n1connections);
-    var keys2 = Object.keys(n2connections);
-    for (i = keys1.length - 1; i >= 0; i--) {
-      // Common gene
-      if (typeof n2connections[keys1[i]] !== `undefined`) {
-        const connection = Math.random() >= 0.5 ? n1connections[keys1[i]] : n2connections[keys1[i]];
+    // Helper function to create connection gene objects
+    const buildConns = function(network) {
+      const object = {};
+      for (i = 0; i < network.connections.length; i++) {
+        const connection = network.connections[i];
+        const data = {
+          weight: connection.weight,
+          from: connection.from.index,
+          to: connection.to.index,
+          gater: connection.gater != null ? connection.gater.index : -1
+        };
+        object[util.getCantorNumber(data.from, data.to)] = data;
+      }
+      return object;
+    }
+
+    // Build fitter connections object
+    const fitterCs = buildConns(self)
+
+    // Build other connections object
+    const otherCs = buildConns(other)
+
+    // Build connections object that will be used to construct new offspring network
+    const connections = [];
+    const fitKeys = Object.keys(fitterCs);
+    const otherKeys = Object.keys(otherCs);
+    for (i = fitKeys.length - 1; i >= 0; i--) {
+      // Disjoint gene in fitter but not in other's
+      if (util.isNil(otherCs[fitKeys[i]])) {
+        connections.push(fitterCs[fitKeys[i]]);
+      } else {
+        // Common to both networks, chance-based inheritance
+        const connection = Math.random() >= 0.5 ? fitterCs[fitKeys[i]] : otherCs[fitKeys[i]];
+        if(util.isNil(connection)) throw new Error("Undefined connection")
         connections.push(connection);
 
         // Because deleting is expensive, just set it to some value
-        n2connections[keys1[i]] = undefined;
-      } else if (score1 >= score2 || options.equal) {
-        connections.push(n1connections[keys1[i]]);
+        otherCs[fitKeys[i]] = undefined;
       }
     }
 
-    // Excess/disjoint gene
-    if (score2 >= score1 || options.equal) {
-      for (i = 0; i < keys2.length; i++) {
-        if (typeof n2connections[keys2[i]] !== `undefined`) {
-          connections.push(n2connections[keys2[i]]);
-        }
+    // Excess/disjoint genes in less-fit network, only inherit these if networks are equal
+    if (options.equal) {
+      for (i = 0; i < otherKeys.length; i++) {
+        // If undefined, connections already added
+        if(util.isNil(otherCs[otherKeys[i]])) continue;
+        connections.push(otherCs[otherKeys[i]]);
       }
     }
 
-    // Add common conn genes uniformly
+    // Construct offspring by adding connections
     for (i = 0; i < connections.length; i++) {
-      let connection_data = connections[i];
-      if (connection_data.to < offspring_size && connection_data.from < offspring_size) {
-        const from = offspring.nodes[connection_data.from];
-        const to = offspring.nodes[connection_data.to];
+      let conn = connections[i];
+      if (conn.to < size && conn.from < size) {
+        const from = offspring.nodes[conn.from];
+        const to = offspring.nodes[conn.to];
+        // Adds new connection to offspring.connections
         const connection = offspring.connect(from, to);
-
-        connection.weight = connection_data.weight;
-
-        if (connection_data.gater !== -1 && connection_data.gater < offspring_size) {
-          offspring.gate(offspring.nodes[connection_data.gater], connection);
+        // could be connecting offspring connections to this network which would be a silent bug
+        if(offspring.connections[offspring.connections.length - 1] !== connection) throw new Error("Offpsring connection failure during crossover");
+        // Copy connection weight
+        connection.weight = conn.weight;
+        // Manage weight if needed
+        if (conn.gater !== -1 && conn.gater < size) {
+          offspring.gate(offspring.nodes[conn.gater], connection);
         }
       }
     }
@@ -3056,7 +3057,9 @@ const Instinct = function(inputs, outputs, dataset, options) {
     const parent1 = self.getParent();
     const parent2 = self.getParent();
 
-    return parent1.crossOver(parent1, parent2, { equal: self.equal });
+    // option to treat networks as equally fit
+    const equal = self.equal;
+    return (equal || parent1.score > parent2.score) ? parent1.crossOver(parent2, { equal }) : parent2.crossOver(parent1)
   };
 
   /**
