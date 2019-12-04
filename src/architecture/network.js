@@ -531,6 +531,7 @@ function Network(input_size, output_size, options) {
         } else {
           // Just adds new disabled connection to offspring.connections
           connection = new Connection(from, to, conn.weight, { id: conn.id, enabled: false });
+          offspring.connections.push(connection);
         }
 
         // Manage weight if needed
