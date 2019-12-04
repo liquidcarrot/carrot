@@ -344,6 +344,7 @@ function Network(input_size, output_size, options) {
    * @todo Update input_size and output_size to use the dynamic input_nodes.size / output_nodes.size instead
    * @todo Add tests checking for parent-consistent input, hidden, output neurons in offspring
    * @todo Add more tests
+   * @todo Change options.equal to be false by default if not already
    */
   self.crossOver = function(other, options={}) {
     if (self.input_size !== other.input_size || self.output_size !== other.output_size) {
@@ -471,37 +472,38 @@ function Network(input_size, output_size, options) {
       for (i = 0; i < network.connections.length; i++) {
         const connection = network.connections[i];
         const data = {
+          fromIndex: connection.from.index,
+          toIndex: connection.to.index,
+          id: connection.id,
           weight: connection.weight,
-          from: connection.from.index,
-          to: connection.to.index,
-          gater: connection.gater != null ? connection.gater.index : -1
+          enabled: connection.enabled,
+          gater: connection.gater != null ? connection.gater.index : -1,
         };
-        object[util.getCantorNumber(data.from, data.to)] = data;
+        object[util.getCantorNumber(data.fromIndex, data.toIndex)] = data;
       }
       return object;
     }
-
-    // Build fitter connections object
-    const fitterCs = buildConns(self)
-
-    // Build other connections object
-    const otherCs = buildConns(other)
+    const fitterCs = buildConns(self) // Build fitter connections object
+    const otherCs = buildConns(other) // Build other connections object
 
     // Build connections object that will be used to construct new offspring network
     const connections = [];
     const fitKeys = Object.keys(fitterCs);
     const otherKeys = Object.keys(otherCs);
     for (i = fitKeys.length - 1; i >= 0; i--) {
-      // Disjoint gene in fitter but not in other's
-      if (util.isNil(otherCs[fitKeys[i]])) {
-        connections.push(fitterCs[fitKeys[i]]);
+      const fittestConn = fitterCs[fitKeys[i]];
+      const otherConn = otherCs[fitKeys[i]];
+      if (util.isNil(otherConn)) {
+        connections.push(fittestConn);
       } else {
-        // Common to both networks, chance-based inheritance
-        const connection = Math.random() >= 0.5 ? fitterCs[fitKeys[i]] : otherCs[fitKeys[i]];
-        if(util.isNil(connection)) throw new Error("Undefined connection")
+        // Gene common to both networks, chance-based inheritance
+        const connection = Math.random() >= 0.5 ? fittestConn : otherConn;
+
+        // According to Neat spec: 75% chance inherited gene is disabled if it's disabled in either parent
+        connection.enabled = (!fittestConn.enabled || !otherConn.enabled) ? (Math.random() > .75) : true
         connections.push(connection);
 
-        // Because deleting is expensive, just set it to some value
+        // Deleting is expensive. Reset connection entry
         otherCs[fitKeys[i]] = undefined;
       }
     }
@@ -518,15 +520,19 @@ function Network(input_size, output_size, options) {
     // Construct offspring by adding connections
     for (i = 0; i < connections.length; i++) {
       let conn = connections[i];
-      if (conn.to < size && conn.from < size) {
-        const from = offspring.nodes[conn.from];
-        const to = offspring.nodes[conn.to];
-        // Adds new connection to offspring.connections
-        const connection = offspring.connect(from, to);
-        // could be connecting offspring connections to this network which would be a silent bug
-        if(offspring.connections[offspring.connections.length - 1] !== connection) throw new Error("Offpsring connection failure during crossover");
-        // Copy connection weight
-        connection.weight = conn.weight;
+      if (conn.toIndex < size && conn.fromIndex < size) {
+        const from = offspring.nodes[conn.fromIndex];
+        const to = offspring.nodes[conn.toIndex];
+
+        let connection;
+        if(conn.enabled) {
+          // Connects relevant nodes and adds to offspring.connections
+          connection = offspring.connect(from, to, conn.weight, { id: conn.id, enabled: true });
+        } else {
+          // Just adds new disabled connection to offspring.connections
+          connection = new Connection(from, to, conn.weight, { id: conn.id, enabled: false });
+        }
+
         // Manage weight if needed
         if (conn.gater !== -1 && conn.gater < size) {
           offspring.gate(offspring.nodes[conn.gater], connection);
