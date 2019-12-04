@@ -3210,7 +3210,7 @@ const Instinct = function(inputs, outputs, dataset, options) {
 Instinct.default = {
   options: {
     generation: 0, // internal variable
-    equal: true,
+    equal: false,
     clean: false,
     population_size: 50,
     growth: 0.0001,

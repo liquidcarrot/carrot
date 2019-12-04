@@ -733,7 +733,7 @@ const Neat = function(inputs, outputs, dataset, options) {
 Neat.default = {
   options: {
     generation: 0, // internal variable
-    equal: true,
+    equal: false,
     clean: false,
     population_size: 50,
     growth: 0.0001,
