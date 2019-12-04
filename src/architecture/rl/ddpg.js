@@ -4,6 +4,7 @@ const ReplayBuffer = require('./replay-buffer');
 const Experience = require('./experience');
 const Utils = require('../../util/utils');
 const Rate = require('../../methods/rate');
+const Loss = require('../../methods/cost');
 
 /**
  *
@@ -11,43 +12,35 @@ const Rate = require('../../methods/rate');
  *
  * Used to do reinforcement learning with an DDPG Agent
  *
- * @alpha
+ * @beta
  *
  * @constructs DDPG
  *
  * @param {int} numStates
  * @param {int} numActions
  * @param {{
- *   hiddenNeuronsActor: {int[]},
- *   hiddenNeuronsCritic: {int[]},
- *   actor: {Network},
- *   critic: {Network},
- *   actorTarget: {Network},
- *   criticTarget: {Network},
- *   learningRateActor: {number},
- *   learningRateActorDecay: {number},
- *   learningRateActorMin: {number},
- *   learningRateCritic: {number},
- *   learningRateCriticDecay: {number},
- *   learningRateCriticMin: {number},
- *   learningRateActorTarget: {number},
- *   learningRateActorTargetDecay: {number},
- *   learningRateActorTargetMin: {number},
- *   learningRateCriticTarget: {number},
- *   learningRateCriticTargetDecay: {number},
- *   learningRateCriticTargetMin: {number},
- *   explore: {number},
- *   exploreDecay: {number},
- *   exploreMin: {number},
- *   isTraining: {boolean},
- *   isUsingPER: {boolean},
- *   experienceSize: {int},
- *   learningStepsPerIteration: {int},
- *   gamma: {number},
- *   theta: {number}
+ *   hiddenNeuronsActor: int[],
+ *   hiddenNeuronsCritic: int[],
+ *   actor: Network,
+ *   critic: Network,
+ *   actorTarget: Network,
+ *   criticTarget: Network,
+ *   learningRateActor: number,
+ *   learningRateActorDecay: number,
+ *   learningRateActorMin: number,
+ *   learningRateCritic: number,
+ *   learningRateCriticDecay: number,
+ *   learningRateCriticMin: number,
+ *   noiseStandardDeviation: number,
+ *   noiseStandardDeviationDecay: number,
+ *   noiseStandardDeviationMin: number,
+ *   isTraining: boolean,
+ *   isUsingPER: boolean,
+ *   experienceSize: int,
+ *   learningStepsPerIteration: int,
+ *   gamma: number,
+ *   theta: number
  * }} options JSON object which contains all custom options
- *
- * @todo replace epsilon-greedy with OUNoise
  */
 function DDPG(numStates, numActions, options) {
   // Network creation
@@ -70,6 +63,8 @@ function DDPG(numStates, numActions, options) {
   // Training specific variables
   this.gamma = Utils.RL.getOption(options, 'gamma', 0.7);
   this.theta = Utils.RL.getOption(options, 'theta', 0.01); // soft target update
+  this.criticLoss = Utils.RL.getOption(options, 'criticLoss', Loss.MSE);
+  this.criticLossOptions = Utils.RL.getOption(options, 'criticLossOptions', {});
   this.isTraining = Utils.RL.getOption(options, 'isTraining', true);
   this.isUsingPER = Utils.RL.getOption(options, 'isUsingPER', true); // using prioritized experience replay
 
@@ -81,21 +76,12 @@ function DDPG(numStates, numActions, options) {
   this.learningRateCriticDecay = Utils.RL.getOption(options, 'learningRateCriticDecay', this.learningRateActorDecay); // AKA alpha value function learning rate
   this.learningRateCriticMin = Utils.RL.getOption(options, 'learningRateCriticMin', this.learningRateActorMin); // AKA alpha value function learning rate
 
-  this.learningRateActorTarget = Utils.RL.getOption(options, 'learningRateActorTarget', this.learningRateActor); // AKA alpha value function learning rate
-  this.learningRateActorTargetDecay = Utils.RL.getOption(options, 'learningRateActorTargetDecay', this.learningRateActorDecay); // AKA alpha value function learning rate
-  this.learningRateActorTargetMin = Utils.RL.getOption(options, 'learningRateActorTargetMin', this.learningRateActorMin); // AKA alpha value function learning rate
-
-  this.learningRateCriticTarget = Utils.RL.getOption(options, 'learningRateCriticTarget', this.learningRateCritic); // AKA alpha value function learning rate
-  this.learningRateCriticTargetDecay = Utils.RL.getOption(options, 'learningRateCriticTargetDecay', this.learningRateCriticDecay); // AKA alpha value function learning rate
-  this.learningRateCriticTargetMin = Utils.RL.getOption(options, 'learningRateCriticTargetMin', this.learningRateCriticMin); // AKA alpha value function learning rate
-
   // Exploration / Exploitation management
-  this.explore = Utils.RL.getOption(options, 'explore', 0.3); // AKA epsilon for epsilon-greedy policy
-  this.exploreDecay = Utils.RL.getOption(options, 'exploreDecay', 0.9999); // AKA epsilon for epsilon-greedy policy
-  this.exploreMin = Utils.RL.getOption(options, 'exploreMin', 0.01); // AKA epsilon for epsilon-greedy policy
+  this.noiseStandardDeviation = Utils.RL.getOption(options, 'noiseStandardDeviation', 0.3); // AKA epsilon for epsilon-greedy policy
+  this.noiseStandardDeviationDecay = Utils.RL.getOption(options, 'noiseStandardDeviationDecay', 0.9999); // AKA epsilon for epsilon-greedy policy
+  this.noiseStandardDeviationMin = Utils.RL.getOption(options, 'noiseStandardDeviationMin', 0.01); // AKA epsilon for epsilon-greedy policy
 
   this.timeStep = 0;
-  this.loss = 0;
   this.actions = [];
   this.state = null;
   this.lastState = null;
@@ -110,57 +96,55 @@ DDPG.prototype = {
    *
    * @return {{
    *   actor: {
-   *     input:{number},
-   *     output:{number},
-   *     dropout:{number},
+   *     input:number,
+   *     output:number,
+   *     dropout:number,
    *     nodes:Array<object>,
    *     connections:Array<object>
    *   },
    *   critic: {
-   *     input:{number},
-   *     output:{number},
-   *     dropout:{number},
+   *     input:number,
+   *     output:number,
+   *     dropout:number,
    *     nodes:Array<object>,
    *     connections:Array<object>
    *   },
    *   actorTarget: {
-   *     input:{number},
-   *     output:{number},
-   *     dropout:{number},
+   *     input:number,
+   *     output:number,
+   *     dropout:number,
    *     nodes:Array<object>,
    *     connections:Array<object>
    *   },
    *   criticTarget: {
-   *     input:{number},
-   *     output:{number},
-   *     dropout:{number},
+   *     input:number,
+   *     output:number,
+   *     dropout:number,
    *     nodes:Array<object>,
    *     connections:Array<object>
    *   },
-   *   gamma: {number},
-   *   theta: {number},
-   *   explore: {number},
-   *   exploreDecay: {number},
-   *   exploreMin: {number},
-   *   learningRateActor: {number},
-   *   learningRateActorDecay: {number},
-   *   learningRateActorMin: {number},
-   *   learningRateCritic: {number},
-   *   learningRateCriticDecay: {number},
-   *   learningRateCriticMin: {number},
-   *   learningRateActorTarget: {number},
-   *   learningRateActorTargetDecay: {number},
-   *   learningRateActorTargetMin: {number},
-   *   learningRateCriticTarget: {number},
-   *   learningRateCriticTargetDecay: {number},
-   *   learningRateCriticTargetMin: {number},
-   *   isTraining: {boolean},
-   *   isUsingPER: {boolean},
-   *   timeStep: {int},
-   *   experience:{ReplayBuffer}
+   *   gamma: number,
+   *   theta: number,
+   *   noiseStandardDeviation: number,
+   *   noiseStandardDeviationDecay: number,
+   *   noiseStandardDeviationMin: number,
+   *   learningRateActor: number,
+   *   learningRateActorDecay: number,
+   *   learningRateActorMin: number,
+   *   learningRateCritic: number,
+   *   learningRateCriticDecay: number,
+   *   learningRateCriticMin: number,
+   *   isTraining: boolean,
+   *   isUsingPER: boolean,
+   *   timeStep: int,
+   *   replayBuffer:
+   *   ReplayBuffer|{
+   *     buffer: Experience[],
+   *     maxSize: int,
+   *     sumOfAbsLosses: number,
+   *     noiseRate: number
+   *    }
    * }} json JSON String JSON String which represents this DDPG agent
-   *
-   * @todo Create unit test
    */
   toJSON: function() {
     let json = {};
@@ -172,9 +156,9 @@ DDPG.prototype = {
     json.gamma = this.gamma;
     json.theta = this.theta;
 
-    json.explore = this.explore;
-    json.exploreDecay = this.exploreDecay;
-    json.exploreMin = this.exploreMin;
+    json.noiseStandardDeviation = this.noiseStandardDeviation;
+    json.noiseStandardDeviationDecay = this.noiseStandardDeviationDecay;
+    json.noiseStandardDeviationMin = this.noiseStandardDeviationMin;
 
     json.learningRateActor = this.learningRateActor;
     json.learningRateActorDecay = this.learningRateActorDecay;
@@ -183,14 +167,6 @@ DDPG.prototype = {
     json.learningRateCritic = this.learningRateCritic;
     json.learningRateCriticDecay = this.learningRateCriticDecay;
     json.learningRateCriticMin = this.learningRateCriticMin;
-
-    json.learningRateActorTarget = this.learningRateActorTarget;
-    json.learningRateActorTargetDecay = this.learningRateActorTargetDecay;
-    json.learningRateActorTargetMin = this.learningRateActorTargetMin;
-
-    json.learningRateCriticTarget = this.learningRateCriticTarget;
-    json.learningRateCriticTargetDecay = this.learningRateCriticTargetDecay;
-    json.learningRateCriticTargetMin = this.learningRateCriticTargetMin;
 
     json.isTraining = this.isTraining;
     json.isUsingPER = this.isUsingPER;
@@ -216,19 +192,15 @@ DDPG.prototype = {
    *
    * @param {number[]} state current state (float arr with values from [0,1])
    * @return {int} The action which the DQN would take at this state; action ∈ [0, this.numActions-1]
-   *
-   * @todo replacing explore with OUNoise -> Continuous Action Space
    */
   act: function(state) {
-    let action = this.actor.activate(state);
+    let noiseFactor = Math.max(this.noiseStandardDeviationMin, Rate.EXP(this.noiseStandardDeviation, this.timeStep, {gamma: this.noiseStandardDeviationDecay}));
+    let action = Utils.addGaussianNoiseToNetwork(this.actor, noiseFactor).activate(state);
     this.actions = action;
     this.lastState = this.state;
     this.state = state;
 
-    let currentExploreRate = Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay}));
-    return currentExploreRate > Math.random()
-      ? Utils.randomInt(0, this.numActions - 1)
-      : Utils.getMaxValueIndex(action);
+    return Utils.getMaxValueIndex(action);
   },
 
   /**
@@ -250,10 +222,10 @@ DDPG.prototype = {
     if (this.timeStep === 1 || !this.isTraining) {
       return 1;
     }
-    let experience = new Experience(this.lastState, this.actions, normalizedReward, this.state, isFinalState);
+    let experience = new Experience(this.lastState, this.actions, normalizedReward, this.state, 0, isFinalState);
     this.replayBuffer.add(experience);
 
-    this.loss = this.study(experience);
+    let loss = this.study(experience);
 
     let miniBatch = this.isUsingPER
       ? this.replayBuffer.getMiniBatchWithPER(this.learningStepsPerIteration)
@@ -262,7 +234,7 @@ DDPG.prototype = {
     for (let i = 0; i < miniBatch.length; i++) {
       this.study(miniBatch[i]);
     }
-    return this.loss;
+    return loss;
   },
 
   /**
@@ -273,12 +245,13 @@ DDPG.prototype = {
    *
    * @param {Experience} experience the experience to learn from
    * @returns {number} Actor loss value; loss ∈ [-1,1]
-   *
-   * @todo Add dynamic loss functions & clamps, including Huber Loss
    */
   study: function(experience) {
-    let qValues = this.critic.activate(experience.state.concat(experience.action));
-    let nextQ = this.criticTarget.activate(experience.nextState.concat(this.actorTarget.activate(experience.nextState)));
+    let stateActionArr = experience.state.concat(experience.action);
+    let criticActivation = this.critic.activate(stateActionArr);
+    let actorActivation = this.actor.activate(experience.state);
+
+    let nextQ = this.criticTarget.activate(experience.nextState.concat(this.actorTarget.activate(experience.nextState, {no_trace: true})), {no_trace: true});
     let qPrime = [];
     for (let i = 0; i < nextQ.length; i++) {
       qPrime.push(experience.isFinalState
@@ -287,105 +260,95 @@ DDPG.prototype = {
     }
 
     // Learning the actor and critic networks
-    let criticGradients = this.critic.activate(experience.state.concat(experience.action));
-    for (let i = 0; i < qValues.length; i++) {
-      criticGradients[i] += Math.pow(qPrime[i] - qValues[i], 2);
+    let criticGradients = criticActivation;
+    for (let i = 0; i < criticActivation.length; i++) {
+      criticGradients[i] += this.criticLoss(qPrime[i], criticGradients[i], this.criticLossOptions);
     }
 
-    //TODO Might be a bug
     let criticLearningRate = Math.max(this.learningRateCriticMin, Rate.EXP(this.learningRateCritic, this.timeStep, {gamma: this.learningRateCriticDecay}));
     this.critic.propagate(criticLearningRate, 0, true, criticGradients);
 
-    let actorLoss = -Utils.mean(this.critic.activate(experience.state.concat(this.actor.activate(experience.state))));
-    let gradients = this.actor.activate(experience.state);
-    gradients[Utils.getMaxValueIndex(experience.action)] += actorLoss;
+    let policyLoss = Utils.mean(this.critic.activate(experience.state.concat(actorActivation), {no_trace: true}));
+    actorActivation[Utils.getMaxValueIndex(experience.action)] -= policyLoss;
 
     let actorLearningRate = Math.max(this.learningRateActorMin, Rate.EXP(this.learningRateActor, this.timeStep, {gamma: this.learningRateActorDecay}));
-    this.actor.propagate(actorLearningRate, 0, true, gradients);
+    this.actor.propagate(actorLearningRate, 0, true, actorActivation);
 
     // Learning the actorTarget and criticTarget networks
-    let actorParameters = this.actor.activate(experience.state);
+    let actorParameters = this.actor.activate(experience.state, {no_trace: true});
     let actorTargetParameters = this.actorTarget.activate(experience.state);
-    let criticParameters = this.critic.activate(experience.state.concat(experience.action));
-    let criticTargetParameters = this.criticTarget.activate(experience.state.concat(experience.action));
+    let criticParameters = this.critic.activate(stateActionArr, {no_trace: true});
+    let criticTargetParameters = this.criticTarget.activate(stateActionArr);
     for (let i = 0; i < actorParameters.length; i++) {
-      actorTargetParameters[i] = this.theta * actorParameters[i] + (1 - this.theta) * actorTargetParameters;
+      actorTargetParameters[i] *= this.theta * actorParameters[i] + (1 - this.theta);
     }
     for (let i = 0; i < criticParameters.length; i++) {
-      criticTargetParameters[i] = this.theta * criticParameters[i] + (1 - this.theta) * criticTargetParameters;
+      criticTargetParameters[i] *= this.theta * criticParameters[i] + (1 - this.theta);
     }
 
-    let actorTargetLearningRate = Math.max(this.learningRateActorTargetMin, Rate.EXP(this.learningRateActorTarget, this.timeStep, {gamma: this.learningRateActorTargetDecay}));
-    this.actorTarget.propagate(actorTargetLearningRate, 0, true, actorTargetParameters);
+    //Learning rate of 1 --> copy parameters
+    this.actorTarget.propagate(1, 0, true, actorTargetParameters);
+    this.criticTarget.propagate(1, 0, true, criticTargetParameters);
 
-    let criticTargetLearningRate = Math.max(this.learningRateCriticTargetMin, Rate.EXP(this.learningRateCriticTarget, this.timeStep, {gamma: this.learningRateCriticTargetDecay}));
-    this.criticTarget.propagate(criticTargetLearningRate, 0, true, criticTargetParameters);
-
-    return actorLoss;
+    return policyLoss;
   },
 };
 
 /**
+ * @param {{
  *   actor: {
- *     input:{number},
- *     output:{number},
- *     dropout:{number},
+ *     input:number,
+ *     output:number,
+ *     dropout:number,
  *     nodes:Array<object>,
  *     connections:Array<object>
  *   },
  *   critic: {
- *     input:{number},
- *     output:{number},
- *     dropout:{number},
+ *     input:number,
+ *     output:number,
+ *     dropout:number,
  *     nodes:Array<object>,
  *     connections:Array<object>
  *   },
  *   actorTarget: {
- *     input:{number},
- *     output:{number},
- *     dropout:{number},
+ *     input:number,
+ *     output:number,
+ *     dropout:number,
  *     nodes:Array<object>,
  *     connections:Array<object>
  *   },
  *   criticTarget: {
- *     input:{number},
- *     output:{number},
- *     dropout:{number},
+ *     input:number,
+ *     output:number,
+ *     dropout:number,
  *     nodes:Array<object>,
  *     connections:Array<object>
  *   },
- *   gamma: {number},
- *   theta: {number},
- *   explore: {number},
- *   exploreDecay: {number},
- *   exploreMin: {number},
- *   learningRateActor: {number},
- *   learningRateActorDecay: {number},
- *   learningRateActorMin: {number},
- *   learningRateCritic: {number},
- *   learningRateCriticDecay: {number},
- *   learningRateCriticMin: {number},
- *   learningRateActorTarget: {number},
- *   learningRateActorTargetDecay: {number},
- *   learningRateActorTargetMin: {number},
- *   learningRateCriticTarget: {number},
- *   learningRateCriticTargetDecay: {number},
- *   learningRateCriticTargetMin: {number},
- *   isTraining: {boolean},
- *   isUsingPER: {boolean},
- *   timeStep: {int},
- *   replayBuffer: {
+ *   gamma: number,
+ *   theta: number,
+ *   noiseStandardDeviation: number,
+ *   noiseStandardDeviationDecay: number,
+ *   noiseStandardDeviationMin: number,
+ *   learningRateActor: number,
+ *   learningRateActorDecay: number,
+ *   learningRateActorMin: number,
+ *   learningRateCritic: number,
+ *   learningRateCriticDecay: number,
+ *   learningRateCriticMin: number,
+ *   isTraining: boolean,
+ *   isUsingPER: boolean,
+ *   timeStep: int,
+ *   replayBuffer:
  *   ReplayBuffer|{
- *     buffer: {Experience[]},
- *     maxSize: {int},
- *     sumOfAbsLosses: {number},
- *     noiseRate: {number}
- *    }}
+ *     buffer: Experience[],
+ *     maxSize: int,
+ *     sumOfAbsLosses: number,
+ *     noiseRate: number
+ *    }
  * }} json JSON String JSON String which represents this DDPG agent
  *
  * @return {DDPG} the agent with specs from json
  *
- * @todo Create unit tests
  * @param json
  */
 DDPG.fromJSON = function(json) {

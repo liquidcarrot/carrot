@@ -45,9 +45,9 @@ function testAgentEquality(agent, copy) {
   expect(agent.replayBuffer.noiseRate).equal(copy.replayBuffer.noiseRate);
   expect(agent.replayBuffer.sumOfAbsLosses).equal(copy.replayBuffer.sumOfAbsLosses);
 
-  expect(agent.explore).equal(copy.explore);
-  expect(agent.exploreDecay).equal(copy.exploreDecay);
-  expect(agent.exploreMin).equal(copy.exploreMin);
+  expect(agent.noiseStandardDeviation).equal(copy.noiseStandardDeviation);
+  expect(agent.noiseStandardDeviationDecay).equal(copy.noiseStandardDeviationDecay);
+  expect(agent.noiseStandardDeviationMin).equal(copy.noiseStandardDeviationMin);
 
   expect(agent.learningRateActor).equal(copy.learningRateActor);
   expect(agent.learningRateActorDecay).equal(copy.learningRateActorDecay);
@@ -56,14 +56,6 @@ function testAgentEquality(agent, copy) {
   expect(agent.learningRateCritic).equal(copy.learningRateCritic);
   expect(agent.learningRateCriticDecay).equal(copy.learningRateCriticDecay);
   expect(agent.learningRateCriticMin).equal(copy.learningRateCriticMin);
-
-  expect(agent.learningRateActorTarget).equal(copy.learningRateActorTarget);
-  expect(agent.learningRateActorTargetDecay).equal(copy.learningRateActorTargetDecay);
-  expect(agent.learningRateActorTargetMin).equal(copy.learningRateActorTargetMin);
-
-  expect(agent.learningRateCriticTarget).equal(copy.learningRateCriticTarget);
-  expect(agent.learningRateCriticTargetDecay).equal(copy.learningRateCriticTargetDecay);
-  expect(agent.learningRateCriticTargetMin).equal(copy.learningRateCriticTargetMin);
 }
 
 function testLearning(agent) {
@@ -98,7 +90,7 @@ function testLearning(agent) {
 describe('DDPG', function() {
   it('Object creation', function() {
     this.timeout(10000);
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 10; i++) {
       let numStates = Math.floor(Math.random() * 100 + 1);
       let numActions = Math.floor(Math.random() * 100 + 1);
       let agent = new DDPG(numStates, numActions, {});
@@ -117,24 +109,26 @@ describe('DDPG', function() {
     }
   });
   it('test learning capabilities with PER', function() {
-    this.timeout(2000);
+    console.time('Learning: DDPG, PER');
     let agent = new DDPG(1, 2, {
       gamma: 0.3,
       explore: 0,
       isUsingPER: true,
+      noiseStandardDeviation: Utils.randomInt(1, 10) / 10,
+      noiseStandardDeviationDecay: Utils.randomInt(1, 10) / 10,
+      noiseStandardDeviationMin: Utils.randomInt(1, 10) / 10,
     });
     expect(testLearning(agent) >= 0.9).to.be.true;
+    console.timeEnd('Learning: DDPG, PER');
   });
 
   it('toJSON - fromJSON', function() {
-    this.timeout(10000);
     for (let i = 0; i < 10; i++) {
       let numStates = Math.floor(Math.random() * 50 + 1);
       let numActions = Math.floor(Math.random() * 50 + 1);
-      let hiddenNeurons = [Utils.randomInt(1, 100), Utils.randomInt(1, 100)];
 
       let agent = new DDPG(numStates, numActions, {
-        hiddenNeurons: hiddenNeurons,
+        hiddenNeurons: [Utils.randomInt(1, 100), Utils.randomInt(1, 100)],
         gamma: Math.random(),
         theta: Math.random(),
         tdErrorClamp: 0.6,
@@ -142,9 +136,9 @@ describe('DDPG', function() {
         noisyPER: Math.random(),
         experienceSize: Utils.randomInt(1000, 50000),
         isUsingPER: true,
-        explore: Math.random(),
-        exploreDecay: Math.random(),
-        exploreMin: Math.random() / 10,
+        noiseStandardDeviation: Math.random() * 0.3 + 0.1,
+        noiseStandardDeviationDecay: Math.random() * 0.7 + 0.1,
+        noiseStandardDeviationMin: Math.random() * 0.1 + 0.1,
       });
 
       testAgentEquality(agent, DDPG.fromJSON(agent.toJSON()));

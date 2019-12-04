@@ -82,7 +82,7 @@ function testAgentEquality(agent, copy) {
 
 describe('DQN', function () {
   it('Object creation', function () {
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 10; i++) {
       let numStates = Math.floor(Math.random() * 100 + 1);
       let numActions = Math.floor(Math.random() * 100 + 1);
       let agent = new DQN(numStates, numActions, {});
@@ -92,6 +92,7 @@ describe('DQN', function () {
     }
   });
   it('test learning capabilities with normal DQN with PER', function() {
+    console.time('Learning: DQN, PER');
     let agent = new DQN(1, 2, {
       gamma: 0.3,
       hidden: [4],
@@ -99,9 +100,25 @@ describe('DQN', function () {
       isDoubleDQN: false,
     });
     expect(testLearning(agent) >= 0.9).to.be.true;
+    console.timeEnd('Learning: DQN, PER');
+  });
+
+  it('test learning capabilities with normal DQN and SARSA with PER', function() {
+    console.time('Learning: DQN, SARSA, PER');
+    let agent = new DQN(1, 2, {
+      gamma: 0.3,
+      hidden: [4],
+      explore: 0,
+      isDoubleDQN: false,
+      isUsingPER: true,
+      isUsingSARSA: true,
+    });
+    expect(testLearning(agent) >= 0.9).to.be.true;
+    console.timeEnd('Learning: DQN, SARSA, PER');
   });
 
   it('test learning capabilities with Double-DQN with PER', function() {
+    console.time('Learning: D-DQN, PER');
     let agent = new DQN(1, 2, {
       gamma: 0.3,
       hidden: [4],
@@ -109,9 +126,24 @@ describe('DQN', function () {
       isDoubleDQN: true,
     });
     expect(testLearning(agent) >= 0.9).to.be.true;
+    console.timeEnd('Learning: D-DQN, PER');
+  });
+
+  it('test learning capabilities with Double-DQN and SARSA with PER', function() {
+    console.time('Learning: D-DQN, SARSA PER');
+    let agent = new DQN(1, 2, {
+      gamma: 0.3,
+      hidden: [4],
+      explore: 0,
+      isDoubleDQN: true,
+      isUsingSARSA: true,
+    });
+    expect(testLearning(agent) >= 0.9).to.be.true;
+    console.timeEnd('Learning: D-DQN, SARSA PER');
   });
 
   it('test learning capabilities with normal DQN without PER', function() {
+    console.time('Learning: DQN');
     let agent = new DQN(1, 2, {
       gamma: 0.3,
       hidden: [4],
@@ -120,9 +152,24 @@ describe('DQN', function () {
       isUsingPER: false,
     });
     expect(testLearning(agent) >= 0.9).to.be.true;
+    console.timeEnd('Learning: DQN');
+  });
+  it('test learning capabilities with normal DQN and SARSA without PER', function() {
+    console.time('Learning: DQN, SARSA');
+    let agent = new DQN(1, 2, {
+      gamma: 0.3,
+      hidden: [4],
+      explore: 0,
+      isDoubleDQN: false,
+      isUsingPER: false,
+      isUsingSARSA: true,
+    });
+    expect(testLearning(agent) >= 0.9).to.be.true;
+    console.timeEnd('Learning: DQN, SARSA');
   });
 
   it('test learning capabilities with Double-DQN without PER', function() {
+    console.time('Learning: D-DQN');
     let agent = new DQN(1, 2, {
       gamma: 0.3,
       hidden: [4],
@@ -131,11 +178,24 @@ describe('DQN', function () {
       isUsingPER: false,
     });
     expect(testLearning(agent) >= 0.9).to.be.true;
+    console.timeEnd('Learning: D-DQN');
+  });
+
+  it('test learning capabilities with Double-DQN and SARSA without PER', function() {
+    console.time('Learning: D-DQN, SARSA');
+    let agent = new DQN(1, 2, {
+      gamma: 0.3,
+      hidden: [4],
+      explore: 0,
+      isDoubleDQN: true,
+      isUsingPER: false,
+      isUsingSARSA: true,
+    });
+    expect(testLearning(agent) >= 0.9).to.be.true;
+    console.timeEnd('Learning: D-DQN, SARSA');
   });
 
   it('toJSON - fromJSON', function() {
-    this.timeout(10000);
-    for(let i = 0; i < 5;i++){
       let numStates = Math.floor(Math.random() * 50 + 1);
       let numActions = Math.floor(Math.random() * 50 + 1);
       let hiddenNeurons = [Utils.randomInt(1,100),Utils.randomInt(1,100)];
@@ -161,6 +221,5 @@ describe('DQN', function () {
       });
 
       testAgentEquality(agent, DQN.fromJSON(agent.toJSON()));
-    }
   });
 });

@@ -19,10 +19,10 @@ ReplayBuffer.prototype = {
   /**
    * Save function
    * @return {{
-   *   buffer: {Experience[]},
-   *   maxSize: {int},
-   *   sumOfAbsLosses: {number},
-   *   noiseRate: {number}
+   *   buffer: Experience[],
+   *   maxSize: int,
+   *   sumOfAbsLosses: number,
+   *   noiseRate: number
    * }}
    */
   toJSON: function() {
@@ -73,14 +73,14 @@ ReplayBuffer.prototype = {
    * This method creates a mini batch of buffered experiences.
    * Higher loss values --> higher probability
    *
-   * @param {int} size the size of the minibatch.
+   * @param {int} batchSize the size of the MiniBatch.
    * @returns {Experience[]} mini batch chosen with PER
    *
    * @todo Create unit test
    */
-  getMiniBatchWithPER(size) {
-    if (size >= this.buffer.length) {
-      //If MiniBatch size is bigger than this.buffer, then we return the full buffer
+  getMiniBatchWithPER(batchSize) {
+    if (batchSize >= this.buffer.length) {
+      //If MiniBatch batchSize is bigger than this.buffer, then we return the full buffer
       return this.buffer;
     }
 
@@ -88,7 +88,7 @@ ReplayBuffer.prototype = {
     let bufferCopy = this.buffer.slice(0);
     let sumOfAbsLossesCopy = this.sumOfAbsLosses;
 
-    for (let i = 0; i < size; i++) {
+    for (let i = 0; i < batchSize; i++) {
       for (let j = 0; j < bufferCopy.length; j++) {
         if (Math.random() * (1 + this.noiseRate) - this.noiseRate / 2 <= Math.abs(bufferCopy[j].loss) / sumOfAbsLossesCopy) {
           let exp = bufferCopy.splice(j, 1)[0];
@@ -107,10 +107,10 @@ ReplayBuffer.prototype = {
  * Load function
  *
  * @param {{
- *   buffer: {Experience[]},
- *   maxSize: {int},
- *   sumOfAbsLosses: {number},
- *   noiseRate: {number}
+ *   buffer: Experience[],
+ *   maxSize: int,
+ *   sumOfAbsLosses: number,
+ *   noiseRate: number
  * }} json
  */
 ReplayBuffer.fromJSON = function(json) {
