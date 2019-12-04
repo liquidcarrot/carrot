@@ -1,4 +1,4 @@
-const Carrot = {
+module.exports = {
   activation: require('./methods/activation'),
   cost: require('./methods/cost'),
   methods: require('./methods/methods'),
@@ -14,28 +14,3 @@ const Carrot = {
   GAN: require('./gan'),
   multi: require('./multithreading/multi'),
 };
-
-// CommonJS & AMD
-if (typeof define !== 'undefined' && define.amd) {
-  define([], function() {
-    return Carrot;
-  });
-}
-
-// Node.js
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = Carrot;
-}
-
-// Browser
-if (typeof window === 'object') {
-  (function() {
-    const old = window['carrot'];
-    Carrot.ninja = function() {
-      window['carrot'] = old;
-      return Carrot;
-    };
-  })();
-
-  window['carrot'] = Carrot;
-}
