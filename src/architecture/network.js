@@ -67,7 +67,7 @@ function Network(input_size, output_size, options) {
 
   // Neat ID Management | Shared mutable state
   self.nodeIds = options.nodeIds || { last: 0 }; // fallback avoids reference errors
-  self.connIds = options.connIds;
+  self.connIds = options.connIds || { last: 0 }; // fallback avoids reference errors
 
   // Create input and output nodes
   for (let i = 0; i < input_size; i++) {
