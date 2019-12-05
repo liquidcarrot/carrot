@@ -51,6 +51,7 @@ function Node(options) {
 
   Object.assign(self, {
     id: -1, // Indicates bogus id, id's must be zero or larger
+    type: "hidden",
     bias: Math.random() * 2 - 1,
     squash: methods.activation.LOGISTIC,
     activation: 0,
