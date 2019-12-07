@@ -524,14 +524,14 @@ function Network(input_size, output_size, options) {
     const buildConns = function(network) {
       const object = {};
       for (i = 0; i < network.connections.length; i++) {
-        const connection = network.connections[i];
+        const conn = network.connections[i];
         const data = {
-          fromIndex: connection.from.index,
-          toIndex: connection.to.index,
-          id: connection.id,
-          weight: connection.weight,
-          enabled: connection.enabled,
-          gater: connection.gater != null ? connection.gater.index : -1,
+          fromIndex: conn.from.index,
+          toIndex: conn.to.index,
+          id: conn.id,
+          weight: conn.weight,
+          enabled: conn.enabled,
+          gater: conn.gater != null ? conn.gater.index : -1,
         };
         object[util.getCantorNumber(data.fromIndex, data.toIndex)] = data;
       }
