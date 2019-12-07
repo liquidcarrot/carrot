@@ -394,7 +394,23 @@ describe('Network', function(){
     })
   })
 
-  describe('network.crossOver()', function () {
+  describe('network.createOffspring()', function () {
+    it('() => {Network}', function() {
+      const network = new Network(4,4);
+      const network1 = new Network(4,4);
+
+      expect(network.createOffspring(network1)).instanceOf(Network);
+    })
+
+    it('createOffspring(network) => {Network} | Network.connections.length > 0', function() {
+      const network = new Network(4,4);
+      const network1 = new Network(4,4);
+
+      expect(network.createOffspring(network1).connections.length).not.equal(1);
+    })
+  })
+
+  describe.skip('network.crossOver()', function () {
     it('() => {Network}', function() {
       const network = new Network(4,4);
       const network1 = new Network(4,4);

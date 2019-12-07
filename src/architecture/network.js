@@ -319,7 +319,10 @@ function Network(input_size, output_size, options) {
    *
    * Networks are not required to have the same size, however input and output size should be the same!
    *
-   * @todo Add custom [crossover](crossover) method customization
+   * @function createOffspring
+   * @memberof Network
+   *
+   * @beta
    *
    * @param {Network} network1 First parent network
    * @param {Network} network2 Second parent network
@@ -336,17 +339,16 @@ function Network(input_size, output_size, options) {
    * let network2 = new architect.Perceptron(2, 4, 5, 3);
    *
    * // Produce an offspring, network1 is the preffered network
-   * let network3 = network1.crossOver(network2);
+   * let network3 = network1.createOffspring(network2);
    *
-   * @todo Heavily refactor and simplify, works terribly right now
-   * @todo Swap gene matching algorithm
-   * @todo Add construction flag to avoid having to over-write new Network properties
-   * @todo Update input_size and output_size to use the dynamic input_nodes.size / output_nodes.size instead
+   * @todo Add network construction flag to avoid having to over-write new Network properties
+   * @todo Preserve ideal node activation order in offspring network
+   * @todo Add tests ensuring that connIds and nodeIds are passed on to the offspring
    * @todo Add tests checking for parent-consistent input, hidden, output neurons in offspring
+   * @todo Add tests ensuring that connections are enabled / disabled correctly
    * @todo Add more tests
-   * @todo Change options.equal to be false by default if not already
    */
-  self.crossOver = function(other, options={}) {
+  self.createOffspring = function(other, options={}) {
     if (self.input_size !== other.input_size || self.output_size !== other.output_size) {
       throw new Error("Networks don`t have the same input/output size!");
     }
@@ -454,6 +456,65 @@ function Network(input_size, output_size, options) {
       offspring.nodes.push(new_node);
     }
 
+    const connections = self.crossOver(other, options)
+
+    // Construct offspring by adding connections
+    for (i = 0; i < connections.length; i++) {
+      let conn = connections[i];
+      if (conn.toIndex < size && conn.fromIndex < size) {
+        const from = offspring.nodes[conn.fromIndex];
+        const to = offspring.nodes[conn.toIndex];
+
+        let connection;
+        if(conn.enabled) {
+          // Connects relevant nodes and adds to offspring.connections
+          connection = offspring.connect(from, to, conn.weight, { id: conn.id, enabled: true });
+        } else {
+          // Just adds new disabled connection to offspring.connections
+          connection = new Connection(from, to, conn.weight, { id: conn.id, enabled: false });
+          offspring.connections.push(connection);
+        }
+
+        // Manage weight if needed
+        if (conn.gater !== -1 && conn.gater < size) {
+          offspring.gate(offspring.nodes[conn.gater], connection);
+        }
+      }
+    }
+
+    return offspring;
+  }
+
+  /**
+ * Mix genetic material from two parent networks.
+ *
+ * @param {Network} network1 First parent network
+ * @param {Network} network2 Second parent network
+ * @param {object} options Configuration Object
+ * @param {boolean} [options.equal] Flag to indicate equally fit Networks
+ *
+ * @function crossOver
+ * @memberof Network
+ *
+ * @beta
+ *
+ * @returns {object[]} Array of connection data entries (genes) to be used in building offspring
+ *
+ * @example
+ * let { Network, architect } = require("@liquid-carrot/carrot");
+ *
+ * // Initialise two parent networks
+ * const network1 = new architect.Perceptron(2, 4, 3);
+ * const network2 = new architect.Perceptron(2, 4, 5, 3);
+ *
+ * // Mix and select connections, network1 is the preffered network
+ * const selectedConnections = network1.crossOver(network2);
+ *
+ * @todo Add custom [crossover](crossover) method customization
+ * @todo Consider swapping gene matching algorithm
+ * @todo Add more tests
+ */
+  self.crossOver = function(other, options={}) {
     // Set indexes so we don't need indexOf
     // Used, presumably, to preserve activation order
     for (let i = 0; i < self.nodes.length; i++) { self.nodes[i].index = i; }
@@ -510,31 +571,7 @@ function Network(input_size, output_size, options) {
       }
     }
 
-    // Construct offspring by adding connections
-    for (i = 0; i < connections.length; i++) {
-      let conn = connections[i];
-      if (conn.toIndex < size && conn.fromIndex < size) {
-        const from = offspring.nodes[conn.fromIndex];
-        const to = offspring.nodes[conn.toIndex];
-
-        let connection;
-        if(conn.enabled) {
-          // Connects relevant nodes and adds to offspring.connections
-          connection = offspring.connect(from, to, conn.weight, { id: conn.id, enabled: true });
-        } else {
-          // Just adds new disabled connection to offspring.connections
-          connection = new Connection(from, to, conn.weight, { id: conn.id, enabled: false });
-          offspring.connections.push(connection);
-        }
-
-        // Manage weight if needed
-        if (conn.gater !== -1 && conn.gater < size) {
-          offspring.gate(offspring.nodes[conn.gater], connection);
-        }
-      }
-    }
-
-    return offspring;
+    return connections;
   }
 
   /**
@@ -3059,7 +3096,7 @@ const Instinct = function(inputs, outputs, dataset, options) {
 
     // option to treat networks as equally fit
     const equal = self.equal;
-    return (equal || parent1.score > parent2.score) ? parent1.crossOver(parent2, { equal }) : parent2.crossOver(parent1)
+    return (equal || parent1.score > parent2.score) ? parent1.createOffspring(parent2, { equal }) : parent2.createOffspring(parent1)
   };
 
   /**

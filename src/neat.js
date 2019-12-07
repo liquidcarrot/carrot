@@ -588,7 +588,7 @@ const Neat = function(inputs, outputs, dataset, options) {
 
     // option to treat networks as equally fit
     const equal = self.equal;
-    return (equal || parent1.score > parent2.score) ? parent1.crossOver(parent2, { equal }) : parent2.crossOver(parent1)
+    return (equal || parent1.score > parent2.score) ? parent1.createOffspring(parent2, { equal }) : parent2.createOffspring(parent1)
   };
 
   /**

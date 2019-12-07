@@ -70,7 +70,7 @@ describe('Network', function () {
       }
 
       // Crossover
-      var network = network1.crossOver(network1, network2);
+      var network = network1.createOffspring(network1, network2);
 
       // Check if the network is feed-forward correctly
       for (i = 0; i < network.connections.length; i++) {
