@@ -539,7 +539,7 @@ Population.default = {
     inputs: 1,
     outputs: 1,
     dataset: [],
-    equal: true,
+    equal: false,
     clean: false,
     size: 50,
     growth: 0.0001,

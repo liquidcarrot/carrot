@@ -2658,7 +2658,7 @@ const Instinct = function(inputs, outputs, dataset, options) {
       ? () => network.clone()
       : self.template
       ? () => self.template.clone()
-      : () => new Network(self.inputs, self.outputs)
+      : () => new Network(self.inputs, self.outputs, { connIds: self.connIds, nodeIds: self.nodeIds })
 
     const population = []
     for(let i = 0; i < size; i++) population.push(copyNetwork())
@@ -3238,6 +3238,12 @@ Instinct.default = {
       methods.crossover.UNIFORM,
       methods.crossover.AVERAGE
     ],
+    nodeIds: {
+      last: 0
+    },
+    connIds: {
+      last: 0
+    },
     mutation: methods.mutation.ALL,
     maxNodes: Infinity,
     maxConns: Infinity,

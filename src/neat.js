@@ -1,7 +1,7 @@
-const _ = require(`lodash`);
-const Network = require(`./architecture/network`);
-const methods = require(`./methods/methods`);
-const config = require(`./config`);
+const _ = require('lodash');
+const Network = require('./architecture/network');
+const methods = require('./methods/methods');
+const config = require('./config');
 
 /**
 * Runs the NEAT algorithm on group of neural networks.
@@ -179,7 +179,7 @@ const Neat = function(inputs, outputs, dataset, options) {
       ? () => network.clone()
       : self.template
       ? () => self.template.clone()
-      : () => new Network(self.inputs, self.outputs)
+      : () => new Network(self.inputs, self.outputs, { connIds: self.connIds, nodeIds: self.nodeIds })
 
     const population = []
     for(let i = 0; i < size; i++) population.push(copyNetwork())
@@ -760,6 +760,12 @@ Neat.default = {
       methods.crossover.UNIFORM,
       methods.crossover.AVERAGE
     ],
+    nodeIds: {
+      last: 0
+    },
+    connIds: {
+      last: 0
+    },
     mutation: methods.mutation.ALL,
     maxNodes: Infinity,
     maxConns: Infinity,
