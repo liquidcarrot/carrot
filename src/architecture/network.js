@@ -455,16 +455,9 @@ function Network(input_size, output_size, options) {
     }
 
     // Set indexes so we don't need indexOf
-    // Used, presumably, to preserve activation order -- this can be obviated with propert node.type management
-    // Or by keeping arrays of input, hidden, output at the network level
-    // Or preferrably both for redundancy's sake
-    for (let i = 0; i < self.nodes.length; i++) {
-      self.nodes[i].index = i;
-    }
-
-    for (let i = 0; i < other.nodes.length; i++) {
-      other.nodes[i].index = i;
-    }
+    // Used, presumably, to preserve activation order
+    for (let i = 0; i < self.nodes.length; i++) { self.nodes[i].index = i; }
+    for (let i = 0; i < other.nodes.length; i++) { other.nodes[i].index = i; }
 
     // Helper function to create connection gene objects
     const buildConns = function(network) {
@@ -483,16 +476,16 @@ function Network(input_size, output_size, options) {
       }
       return object;
     }
-    const fitterCs = buildConns(self) // Build fitter connections object
+    const bestCs = buildConns(self) // Build fitter connections object
     const otherCs = buildConns(other) // Build other connections object
 
     // Build connections object that will be used to construct new offspring network
     const connections = [];
-    const fitKeys = Object.keys(fitterCs);
+    const bestKeys = Object.keys(bestCs);
     const otherKeys = Object.keys(otherCs);
-    for (i = fitKeys.length - 1; i >= 0; i--) {
-      const fittestConn = fitterCs[fitKeys[i]];
-      const otherConn = otherCs[fitKeys[i]];
+    for (i = bestKeys.length - 1; i >= 0; i--) {
+      const fittestConn = bestCs[bestKeys[i]];
+      const otherConn = otherCs[bestKeys[i]];
       if (util.isNil(otherConn)) {
         connections.push(fittestConn);
       } else {
@@ -504,7 +497,7 @@ function Network(input_size, output_size, options) {
         connections.push(connection);
 
         // Deleting is expensive. Reset connection entry
-        otherCs[fitKeys[i]] = undefined;
+        otherCs[bestKeys[i]] = undefined;
       }
     }
 
