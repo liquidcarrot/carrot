@@ -5,7 +5,7 @@ const { mutation } = methods;
 describe("gating", function() {
   Object.keys(mutation).forEach(function(type) {
     describe(`mutation.${type}`, function() {
-      if(type === "ALL" || type === "FFW") {
+      if(type === "ALL" || type === "FFW" || type == "NEATSTANDARD") {
         it(`mutation.${type} => {Array}`, function() {
           expect(mutation[type]).to.be.an("array");
           expect(mutation[type]).to.be.an.instanceof(Array);

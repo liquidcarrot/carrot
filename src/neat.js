@@ -766,7 +766,7 @@ Neat.default = {
     connIds: {
       last: 0
     },
-    mutation: methods.mutation.ALL,
+    mutation: methods.mutation.NEATSTANDARD,
     maxNodes: Infinity,
     maxConns: Infinity,
     maxGates: Infinity

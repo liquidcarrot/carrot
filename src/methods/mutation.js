@@ -370,4 +370,26 @@ mutation.FFW = [
   mutation.SWAP_NODES,
 ];
 
+/**
+ *
+ * Array of the two methods in canonical Neat
+ *
+ * @constant
+ * @type {array}
+ * @default
+ *
+ * @example <caption>A group of mutation methods for evolution</caption>
+ * let { methods, Network } = require("@liquid-carrot/carrot");
+ *
+ * let myNetwork = new Network(5, 10, 5);
+ *
+ * network.evolve(trainingset, {
+ *  mutation: methods.mutation.NEATSTANDARD// ADD_NODE and ADD_CONN
+ * }
+ */
+mutation.NEATSTANDARD = [
+  mutation.ADD_NODE,
+  mutation.ADD_CONN,
+];
+
 module.exports = mutation;
