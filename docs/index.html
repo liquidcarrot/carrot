@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Home - Documentation</title>
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Connection.html">Connection</a></li></ul>
+</nav>
+
+<div id="main">
+    
+
+    
+
+
+
+    
+
+
+    <section class="package">
+        <h3> </h3>		
+    </section>
+
+
+
+
+
+
+
+
+
+    
+
+
+
+    <section class="readme">
+        <article><h1>Liquid Carrot</h1>
+<blockquote>
+<p>Building the best JavaScript Deep Learning Framework</p>
+</blockquote>
+<h1>TODO</h1>
+<ul>
+<li>[ ] Create a second local repo of carrot where I port these changes in this branch to the main/master branch.</li>
+<li>[ ] Get a dashboard template off of ThemeForest and use it to create a benchmark and test reporter for benchmark.js and Mocha; checkout Mocha Awesome Reporter for inspiration on creating reporters</li>
+<li>[ ] Use <a href="https://www.chartjs.org/samples/latest/charts/area/line-datasets.html">Chart.js</a> to show historical benchmarking performance:</li>
+<li>[ ] Add a &quot;Why TypeScript?&quot; &amp; &quot;How to TypeScript?&quot; section</li>
+<li>[ ] Add live TypeScript JSDoc to Markdown build &amp; development support</li>
+<li>[ ] Use <a href="https://www.npmjs.com/package/ts-mocha"><code>ts-mocha</code></a> for running hot-reloading TypeScript tests - instead of the current pre-compiled JavaScript.</li>
+<li>[ ] Use <code>babel-online-macro</code> trans pilers to have semantic loops compiled into performant loops.</li>
+<li>[ ] Look into <a href="https://www.npmjs.com/package/for-more">threading <code>for</code> loops</a>.</li>
+<li>[ ] Look into threading in Node and Browser - <em>great tools/dependencies <a href="https://www.npmjs.com/package/hamsters.js">hamster.js</a>, <a href="https://parallel.js.org/">parallel.js</a>, <a href="https://github.com/lukeschaefer/WorkerB/blob/master/WorkerB.js">here</a>, <a href="https://www.npmjs.com/package/threads">here</a>, <a href="https://github.com/josdejong/workerpool">here</a>, <a href="https://www.npmjs.com/package/worker-farm">here</a>, <a href="https://www.npmjs.com/package/worker">here</a>, <a href="https://www.npmjs.com/package/multithreading-toolkit">here</a>, <a href="https://www.npmjs.com/package/parallel-function">here</a></em></li>
+<li>[ ] Review <a href="https://github.com/ChristosChristofidis/awesome-deep-learning"><code>awesome-deep-learning</code></a></li>
+<li>[ ] Review <a href="https://github.com/terryum/awesome-deep-learning-papers"><code>awesome-deep-learning-papers</code></a></li>
+<li>[ ] Review <a href="https://github.com/guillaume-chevalier/awesome-deep-learning-resources"><code>awesome-deep-learning-resources</code></a></li>
+<li>[ ] Review <a href="https://github.com/tigerneil/awesome-deep-rl"><code>awesome-deep-rl</code></a></li>
+<li>[ ] Review <a href="https://github.com/kjw0612/awesome-deep-vision"><code>awesome-deep-vision</code></a></li>
+<li>[ ] Review <a href="https://xstate.js.org/docs/">XState.js</a> - <em>Recommended by Gavin Ray97</em></li>
+<li>[x] Add live markdown editor - <em>Atom &amp; VScode have live preview plugins</em></li>
+<li>[x] Change HTML Documentation hot-reloading to an event driven architecture and away from the hard coded time (5 second) delay in <code>npm run serve:docs</code> - <em><strong>SOLVED W/ PARCEL</strong></em></li>
+<li>[x] Try <code>parcel</code> - <em>instead of <code>webpack</code></em> - <em><strong>SWITCHED TO <code>PARCEL</code></strong></em></li>
+<li>[x] Run test suite after <code>webpack</code> packages <code>src</code> code - <em>i.e. use a webpack compiler hook to trigger the tests</em> - <em><strong>SOLVED W/ PARCEL</strong></em></li>
+</ul>
+<h3>TODO NPM Scripts</h3>
+<ul>
+<li>[x] <code>build</code></li>
+<li>[x] <code>build:docs</code></li>
+<li>[x] <code>build:tests</code></li>
+<li>[x] <code>build:src</code></li>
+<li>[ ] <code>build:bench</code></li>
+<li>[ ] <code>build:demos</code></li>
+<li>[x] <code>dev</code></li>
+<li>[x] <code>dev:docs</code></li>
+<li>[x] <code>dev:tests</code></li>
+<li>[x] <code>dev:src</code></li>
+<li>[ ] <code>dev:bench</code></li>
+<li>[ ] <code>dev:demos</code></li>
+</ul>
+<h1>FAQ</h1>
+<ul>
+<li><strong>How can I help support Liquid Carrot?</strong>
+<ul>
+<li>Star this repository</li>
+<li><a href="CONTRIBUTING.md">Become a contributor</a></li>
+<li><a href="SPONSORING.md">Sponsor us</a></li>
+</ul>
+</li>
+</ul>
+<h1>Bibliography</h1>
+<ul>
+<li><a href="https://medium.com/netscape/nodemon-events-run-tasks-at-server-start-restart-crash-exit-93a34c54dfd8">Live Reloading &amp; Pre/Post Scripts w/ <code>nodemon</code></a></li>
+</ul></article>
+    </section>
+
+
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Sat Dec 07 2019 15:10:23 GMT-0500 (Eastern Standard Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+
+
+</body>
+</html>

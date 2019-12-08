@@ -1,0 +1,27 @@
+{
+  "name": "Example",
+  "date": "2019-11-30T04:40:25.225Z",
+  "version": "1.0.0",
+  "results": [
+    {
+      "name": "Reduce two elements",
+      "ops": 13490000,
+      "margin": 2.01,
+      "percentSlower": 0
+    },
+    {
+      "name": "Reduce five elements",
+      "ops": 11626357,
+      "margin": 9.01,
+      "percentSlower": 13.81
+    }
+  ],
+  "fastest": {
+    "name": "Reduce two elements",
+    "index": 0
+  },
+  "slowest": {
+    "name": "Reduce five elements",
+    "index": 1
+  }
+}

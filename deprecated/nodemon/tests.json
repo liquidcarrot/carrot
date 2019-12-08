@@ -1,0 +1,10 @@
+{
+  "watch": ["src","test"],
+  "ignore": ["test/browser.js"],
+  "ext": "ts js",
+  "verbose": true,
+  "exec": "mocha",
+  "events": {
+    "start": "npm run build:tests"
+  }
+}

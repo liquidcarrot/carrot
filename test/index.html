@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Testing</title>
+  <link href="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.css" rel="stylesheet" />
+  <script src="https://unpkg.com/mocha@4.0.1/mocha.js"></script>
+</head>
+<body>
+  <div id="mocha"></div>
+
+  <script>
+    mocha.setup('bdd');
+  </script>
+
+  <script src="browser.js"></script>
+
+  <script>
+    mocha.checkLeaks();
+    mocha.run();
+  </script>
+</body>
+</html>

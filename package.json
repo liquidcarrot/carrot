@@ -1,0 +1,66 @@
+{
+  "name": "@liquidcarrot/neural",
+  "version": "1.0.0",
+  "description": "Neural Networks and Deep Learning in Node.js & Browser",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm run test:node",
+    "test:node": "mocha test/node.js",
+    "test:browser": "",
+    "build": "node script/build.js",
+    "build:docs": "node scripts/docs.build.js",
+    "build:tests": "node scripts/tests.build.js",
+    "build:src": "node scripts/src.build.js",
+    "serve": "",
+    "serve:docs": "live-server docs/",
+    "serve:tests": "live-server test/",
+    "serve:demos": "",
+    "dev": "node scripts/dev.js",
+    "dev:docs": "node scripts/docs.dev.js",
+    "dev:tests": "node scripts/tests.dev.js",
+    "dev:demos": "",
+    "dev:src": "node scripts/src.dev.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/liquidcarrot/carrot.git"
+  },
+  "author": "Liquid Carrot <people@liquidcarrot.io> (https://liquidcarrot.io)",
+  "contributors": [
+    "Luis Carbonell <luiscarbonell5683@gmail.com> (https://luiscarbonell.com)",
+    "Christian Echevarria <christian.george.echevarria@gmail.com>"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/liquidcarrot/carrot/issues"
+  },
+  "homepage": "https://github.com/liquidcarrot/carrot#readme",
+  "bit": {
+    "env": {},
+    "componentsDefaultDirectory": "components/{name}",
+    "packageManager": "npm"
+  },
+  "devDependencies": {
+    "@types/mocha": "^5.2.7",
+    "benchmark": "^2.1.4",
+    "benny": "^3.6.14",
+    "chai": "^4.2.0",
+    "chalk": "^3.0.0",
+    "concurrently": "^5.0.0",
+    "jsdoc": "^3.6.3",
+    "jsdoc-plugin-typescript": "^2.0.5",
+    "live-server": "^1.2.1",
+    "mocha": "^6.2.2",
+    "nodemon": "^1.19.4",
+    "parcel-bundler": "^1.12.4",
+    "shelljs": "^0.8.3",
+    "ts-node": "^8.5.2",
+    "typedoc": "^0.15.2",
+    "typescript": "^3.7.2",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
+  },
+  "dependencies": {
+    "docdash": "^1.1.1"
+  }
+}

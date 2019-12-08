@@ -1,0 +1,9 @@
+# Environment Variables
+*.env
+.env
+
+# Node Modules
+node_modules
+
+# Parcel Cache
+.cache
