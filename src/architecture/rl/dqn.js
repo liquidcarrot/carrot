@@ -1,4 +1,3 @@
-const architect = require('../architect');
 const Network = require('../network');
 const ReplayBuffer = require('./replay-buffer');
 const Experience = require('./experience');
@@ -62,9 +61,9 @@ function DQN(numStates, numActions, options) {
   this.numActions = numActions;
   this.hiddenNeurons = Utils.RL.getOption(options, 'hiddenNeurons', [10]);
   this.hiddenNeuronsB = Utils.RL.getOption(options, 'hiddenNeuronsB', this.hiddenNeurons);
-  this.network = Utils.RL.getOption(options, 'network', new architect.Perceptron(numStates, ...this.hiddenNeurons, numActions));
+  this.network = Utils.RL.getOption(options, 'network', new Network.architecture.Perceptron(numStates, ...this.hiddenNeurons, numActions));
   this.networkB = this.isDoubleDQN
-    ? Utils.RL.getOption(options, 'networkB', new architect.Perceptron(numStates, ...this.hiddenNeuronsB, numActions))
+    ? Utils.RL.getOption(options, 'networkB', new Network.architecture.Perceptron(numStates, ...this.hiddenNeuronsB, numActions))
     : null;
 
   // Learning rate

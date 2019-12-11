@@ -47,8 +47,8 @@ function DDPG(numStates, numActions, options) {
   let hiddenNeuronsActor = Utils.RL.getOption(options, 'hiddenNeuronsActor', [10]);
   let hiddenNeuronsCritic = Utils.RL.getOption(options, 'hiddenNeuronsCritic', hiddenNeuronsActor);
 
-  this.actor = Utils.RL.getOption(options, 'actor', new architect.Perceptron(numStates, hiddenNeuronsActor, numActions));
-  this.critic = Utils.RL.getOption(options, 'critic', new architect.Perceptron(numStates + numActions, hiddenNeuronsCritic, numActions));
+  this.actor = Utils.RL.getOption(options, 'actor', new Network.architecture.Perceptron(numStates, hiddenNeuronsActor, numActions));
+  this.critic = Utils.RL.getOption(options, 'critic', new Network.architecture.Perceptron(numStates + numActions, hiddenNeuronsCritic, numActions));
   this.actorTarget = Utils.RL.getOption(options, 'actorTarget', Network.fromJSON(this.actor.toJSON()));
   this.criticTarget = Utils.RL.getOption(options, 'criticTarget', Network.fromJSON(this.critic.toJSON()));
 
