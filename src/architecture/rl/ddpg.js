@@ -61,6 +61,7 @@ function DDPG(numStates, numActions, options) {
   this.learningStepsPerIteration = Utils.RL.getOption(options, 'learningStepsPerIteration', 20);
 
   // Training specific variables
+  this.isContinuousTask = Utils.RL.getOption(options, 'isContinuousTask', false);
   this.gamma = Utils.RL.getOption(options, 'gamma', 0.7);
   this.theta = Utils.RL.getOption(options, 'theta', 0.01); // soft target update
   this.criticLoss = Utils.RL.getOption(options, 'criticLoss', Loss.MSE);
@@ -191,7 +192,7 @@ DDPG.prototype = {
    * @memberof DDPG
    *
    * @param {number[]} state current state (float arr with values from [0,1])
-   * @return {int} The action which the DQN would take at this state; action ∈ [0, this.numActions-1]
+   * @return {int|number[]} The action which the DQN would take at this state; action ∈ [0, this.numActions-1] or the complete action array with the QValues for continuous tasks
    */
   act: function(state) {
     let noiseFactor = Math.max(this.noiseStandardDeviationMin, Rate.EXP(this.noiseStandardDeviation, this.timeStep, {gamma: this.noiseStandardDeviationDecay}));
@@ -199,8 +200,11 @@ DDPG.prototype = {
     this.actions = action;
     this.lastState = this.state;
     this.state = state;
-
-    return Utils.getMaxValueIndex(action);
+    if (this.isContinuousTask) {
+      return action;
+    } else {
+      return Utils.getMaxValueIndex(action);
+    }
   },
 
   /**
