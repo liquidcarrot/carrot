@@ -567,7 +567,7 @@ function Network(input_size, output_size) {
         // break out early if there aren't enough nodes to swap
         if((self.nodes.length - 1) - self.input_size - (method.mutateOutput ? 0 : self.output_size) < 2) return false;
 
-        const filterFn = (method.mutateOutput) ? (node) => (node.type !== `input`) : (node) => (node.type !== `input` && node.type !== `output`)
+        const filterFn = (method.mutateOutput) ? node => node.type !== `input` : (node) => (node.type !== `input` && node.type !== `output`);
 
         candidates = _.filter(self.nodes, filterFn)
 
@@ -1911,58 +1911,60 @@ Network.crossOver = function(network1, network2, equal) {
 }
 
 /**
+ * Creates a DQN network
+ /**
  *
  * Preconfigured neural networks!
  *
  * Ready to be built with simple one line functions.
  *
  * @namespace
-*/
+ */
 Network.architecture = {
   /**
-  * Constructs a network from a given array of connected nodes
-  *
-  * Behind the scenes, Construct expects nodes to have connections and gates already made which it uses to infer the structure of the network and assemble it.
-  *
-  * It's useful because it's a generic function to produce a network from custom architectures
-  *
-  * @param {Group[]|Layer[]|Node[]} list A list of Groups, Layers, and Nodes to combine into a Network
-  *
-  * @example <caption>A Network built with Nodes</caption>
-  * let { architect } = require("@liquid-carrot/carrot");
-  *
-  * var A = new Node();
-  * var B = new Node();
-  * var C = new Node();
-  * var D = new Node();
-  *
-  * // Create connections
-  * A.connect(B);
-  * A.connect(C);
-  * B.connect(D);
-  * C.connect(D);
-  *
-  * // Construct a network
-  * var network = architect.Construct([A, B, C, D]);
-  *
-  * @example <caption>A Network built with Groups</caption>
-  * let { architect } = require("@liquid-carrot/carrot");
-  *
-  * var A = new Group(4);
-  * var B = new Group(2);
-  * var C = new Group(6);
-  *
-  * // Create connections between the groups
-  * A.connect(B);
-  * A.connect(C);
-  * B.connect(C);
-  *
-  * // Construct a square-looking network
-  * var network = architect.Construct([A, B, C, D]);
-  *
-  * @returns {Network}
-  */
-  Construct: function (list) {
+   * Constructs a network from a given array of connected nodes
+   *
+   * Behind the scenes, Construct expects nodes to have connections and gates already made which it uses to infer the structure of the network and assemble it.
+   *
+   * It's useful because it's a generic function to produce a network from custom architectures
+   *
+   * @param {Group[]|Layer[]|Node[]} list A list of Groups, Layers, and Nodes to combine into a Network
+   *
+   * @example <caption>A Network built with Nodes</caption>
+   * let { architect } = require("@liquid-carrot/carrot");
+   *
+   * var A = new Node();
+   * var B = new Node();
+   * var C = new Node();
+   * var D = new Node();
+   *
+   * // Create connections
+   * A.connect(B);
+   * A.connect(C);
+   * B.connect(D);
+   * C.connect(D);
+   *
+   * // Construct a network
+   * var network = architect.Construct([A, B, C, D]);
+   *
+   * @example <caption>A Network built with Groups</caption>
+   * let { architect } = require("@liquid-carrot/carrot");
+   *
+   * var A = new Group(4);
+   * var B = new Group(2);
+   * var C = new Group(6);
+   *
+   * // Create connections between the groups
+   * A.connect(B);
+   * A.connect(C);
+   * B.connect(C);
+   *
+   * // Construct a square-looking network
+   * var network = architect.Construct([A, B, C, D]);
+   *
+   * @returns {Network}
+   */
+  Construct: function(list) {
     // Create a network
     const network = new Network(0, 0);
 
@@ -2009,37 +2011,37 @@ Network.architecture = {
       }
     }
     // backward compatibility
-    network.input = network.input_size
-    network.output = network.output_size
+    network.input = network.input_size;
+    network.output = network.output_size;
 
     // Input nodes are always first, output nodes are always last
     nodes = inputs.concat(nodes).concat(outputs);
 
-    if (network.input_size === 0 || network.output_size === 0) throw new Error('Given nodes have no clear input/output node!')
+    if (network.input_size === 0 || network.output_size === 0) throw new Error('Given nodes have no clear input/output node!');
 
     // Adds nodes, connections, and gates
-    network.addNodes(nodes)
+    network.addNodes(nodes);
 
-    return network
+    return network;
   },
 
   /**
-  * Creates a multilayer perceptron (MLP)
-  *
-  * @param {...number} layer_neurons Number of neurons in input layer, hidden layer(s), and output layer as a series of numbers (min 3 arguments)
-  *
-  * @example
-  * let { architect } = require("@liquid-carrot/carrot");
-  *
-  * // Input 2 neurons, Hidden layer: 3 neurons, Output: 1 neuron
-  * let my_perceptron = new architect.Perceptron(2,3,1);
-  *
-  * // Input: 2 neurons, 4 Hidden layers: 10 neurons, Output: 1 neuron
-  * let my_perceptron = new architect.Perceptron(2, 10, 10, 10, 10, 1);
-  *
-  * @returns {Network} Feed forward neural network
-  */
-  Perceptron: function () {
+   * Creates a multilayer perceptron (MLP)
+   *
+   * @param {...number} layer_neurons Number of neurons in input layer, hidden layer(s), and output layer as a series of numbers (min 3 arguments)
+   *
+   * @example
+   * let { architect } = require("@liquid-carrot/carrot");
+   *
+   * // Input 2 neurons, Hidden layer: 3 neurons, Output: 1 neuron
+   * let my_perceptron = new architect.Perceptron(2,3,1);
+   *
+   * // Input: 2 neurons, 4 Hidden layers: 10 neurons, Output: 1 neuron
+   * let my_perceptron = new architect.Perceptron(2, 10, 10, 10, 10, 1);
+   *
+   * @returns {Network} Feed forward neural network
+   */
+  Perceptron: function() {
     // Convert arguments to Array
     const layers = Array.from(arguments);
 
@@ -2060,39 +2062,39 @@ Network.architecture = {
   },
 
   /**
-  * Creates a randomly connected network
-  *
-  * @param {number} input Number of input nodes
-  * @param {number} [hidden] Number of nodes inbetween input and output
-  * @param {number} output Number of output nodes
-  * @param {object} [options] Configuration options
-  * @param {number} [options.connections=hidden*2] Number of connections (Larger than hidden)
-  * @param {number} [options.backconnections=0] Number of recurrent connections
-  * @param {number} [options.selfconnections=0] Number of self connections
-  * @param {number} [options.gates=0] Number of gates
-  *
-  * @example
-  * let { architect } = require("@liquid-carrot/carrot");
-  *
-  * let network = architect.Random(1, 20, 2, {
-  *   connections: 40,
-  *   gates: 4,
-  *   selfconnections: 4
-  * });
-  *
-  * @returns {Network}
-  */
-  Random: function (input, hidden, output, options) {
+   * Creates a randomly connected network
+   *
+   * @param {number} input Number of input nodes
+   * @param {number} [hidden] Number of nodes inbetween input and output
+   * @param {number} output Number of output nodes
+   * @param {object} [options] Configuration options
+   * @param {number} [options.connections=hidden*2] Number of connections (Larger than hidden)
+   * @param {number} [options.backconnections=0] Number of recurrent connections
+   * @param {number} [options.selfconnections=0] Number of self connections
+   * @param {number} [options.gates=0] Number of gates
+   *
+   * @example
+   * let { architect } = require("@liquid-carrot/carrot");
+   *
+   * let network = architect.Random(1, 20, 2, {
+   *   connections: 40,
+   *   gates: 4,
+   *   selfconnections: 4
+   * });
+   *
+   * @returns {Network}
+   */
+  Random: function(input, hidden, output, options) {
     // Random(input, output)
-    if(!(output, options)) {
+    if (!(output, options)) {
       output = hidden;
       hidden = undefined;
     }
     // Random(input, output, options)
-    else if(!options && _.isPlainObject(output)) {
-        options = output;
-        output = hidden;
-        hidden = undefined;
+    else if (!options && _.isPlainObject(output)) {
+      options = output;
+      output = hidden;
+      hidden = undefined;
     }
 
     hidden = hidden || 0;
@@ -2100,7 +2102,7 @@ Network.architecture = {
       connections: hidden * 2,
       backconnections: 0,
       selfconnections: 0,
-      gates: 0
+      gates: 0,
     });
 
     const network = new Network(input, output);
@@ -2115,48 +2117,48 @@ Network.architecture = {
   },
 
   /**
-  * Creates a long short-term memory network
-  *
-  * @see {@link https://en.wikipedia.org/wiki/Long_short-term_memory|LSTM on Wikipedia}
-  *
-  * @param {number} input Number of input nodes
-  * @param {...number} memory Number of memory block_size assemblies (input gate, memory cell, forget gate, and output gate) per layer
-  * @param {number} output Number of output nodes
-  * @param {object} [options] Configuration options
-  * @param {boolean} [options.memory_to_memory=false] Form internal connections between memory blocks
-  * @param {boolean} [options.output_to_memory=false] Form output to memory layer connections and gate them
-  * @param {boolean} [options.output_to_gates=false] Form output to gate connections (connects to all gates)
-  * @param {boolean} [options.input_to_output=true] Form direct input to output connections
-  * @param {boolean} [options.input_to_deep=true] Form input to memory layer conections and gate them
-  *
-  * @example <caption>While training sequences or timeseries prediction, set the clear option to true in training</caption>
-  * let { architect } = require("@liquid-carrot/carrot");
-  *
-  * // Input, memory block_size layer, output
-  * let my_LSTM = new architect.LSTM(2,6,1);
-  *
-  * // with multiple memory block_size layer_sizes
-  * let my_LSTM = new architect.LSTM(2, 4, 4, 4, 1);
-  *
-  * // with options
-  * var options = {
-  *   memory_to_memory: false,    // default
-  *   output_to_memory: false,    // default
-  *   output_to_gates: false,     // default
-  *   input_to_output: true,      // default
-  *   input_to_deep: true         // default
-  * };
-  *
-  * let my_LSTM = new architect.LSTM(2, 4, 4, 4, 1, options);
-  *
-  * @returns {Network}
-  */
-  LSTM: function () {
+   * Creates a long short-term memory network
+   *
+   * @see {@link https://en.wikipedia.org/wiki/Long_short-term_memory|LSTM on Wikipedia}
+   *
+   * @param {number} input Number of input nodes
+   * @param {...number} memory Number of memory block_size assemblies (input gate, memory cell, forget gate, and output gate) per layer
+   * @param {number} output Number of output nodes
+   * @param {object} [options] Configuration options
+   * @param {boolean} [options.memory_to_memory=false] Form internal connections between memory blocks
+   * @param {boolean} [options.output_to_memory=false] Form output to memory layer connections and gate them
+   * @param {boolean} [options.output_to_gates=false] Form output to gate connections (connects to all gates)
+   * @param {boolean} [options.input_to_output=true] Form direct input to output connections
+   * @param {boolean} [options.input_to_deep=true] Form input to memory layer conections and gate them
+   *
+   * @example <caption>While training sequences or timeseries prediction, set the clear option to true in training</caption>
+   * let { architect } = require("@liquid-carrot/carrot");
+   *
+   * // Input, memory block_size layer, output
+   * let my_LSTM = new architect.LSTM(2,6,1);
+   *
+   * // with multiple memory block_size layer_sizes
+   * let my_LSTM = new architect.LSTM(2, 4, 4, 4, 1);
+   *
+   * // with options
+   * var options = {
+   *   memory_to_memory: false,    // default
+   *   output_to_memory: false,    // default
+   *   output_to_gates: false,     // default
+   *   input_to_output: true,      // default
+   *   input_to_deep: true         // default
+   * };
+   *
+   * let my_LSTM = new architect.LSTM(2, 4, 4, 4, 1, options);
+   *
+   * @returns {Network}
+   */
+  LSTM: function() {
     const layer_sizes_and_options = Array.from(arguments);
 
     const output_size_or_options = layer_sizes_and_options.slice(-1)[0];
 
-    let layer_sizes, options
+    let layer_sizes, options;
 
     // find out if options were passed
     if (typeof output_size_or_options === 'number') {
@@ -2176,18 +2178,18 @@ Network.architecture = {
       output_to_memory: false,
       output_to_gates: false,
       input_to_output: true,
-      input_to_deep: true
+      input_to_deep: true,
     });
 
 
     const input_layer = new Group(layer_sizes.shift()); // first argument
     input_layer.set({
-      type: 'input'
+      type: 'input',
     });
 
     const output_layer = new Group(layer_sizes.pop());
     output_layer.set({
-      type: 'output'
+      type: 'output',
     });
 
     // check if input to output direct connection
@@ -2210,13 +2212,13 @@ Network.architecture = {
       const block_output = index === block_sizes.length - 1 ? output_layer : new Group(block_size);
 
       input_gate.set({
-        bias: 1
+        bias: 1,
       });
       forget_gate.set({
-        bias: 1
+        bias: 1,
       });
       output_gate.set({
-        bias: 1
+        bias: 1,
       });
 
       // Connect the input with all the nodes
@@ -2287,46 +2289,46 @@ Network.architecture = {
   },
 
   /**
-  * Creates a gated recurrent unit network
-  *
-  * @param {number} input Number of input nodes
-  * @param {...number} units Number of gated recurrent units per layer
-  * @param {number} output Number of output nodes
-  *
-  * @example <caption>GRU is being tested, and may not always work for your dataset.</caption>
-  * let { architect } = require("@liquid-carrot/carrot");
-  *
-  * // Input, gated recurrent unit layer, output
-  * let my_LSTM = new architect.GRU(2,6,1);
-  *
-  * // with multiple layers of gated recurrent units
-  * let my_LSTM = new architect.GRU(2, 4, 4, 4, 1);
-  *
-  * @example <caption>Training XOR gate</caption>
-  * let { architect } = require("@liquid-carrot/carrot");
-  *
-  * var training_set = [
-  *   { input: [0], output: [0]},
-  *   { input: [1], output: [1]},
-  *   { input: [1], output: [0]},
-  *   { input: [0], output: [1]},
-  *   { input: [0], output: [0]}
-  * ];
-  *
-  * var network = new architect.GRU(1,1,1);
-  *
-  * // Train a sequence: 00100100..
-  * network.train(training_set, {
-  *   log: 1,
-  *   rate: 0.1, // lower rates work best
-  *   error: 0.005,
-  *   iterations: 3000,
-  *   clear: true // set to true while training
-  * });
-  *
-  * @returns {Network}
-  */
-  GRU: function () {
+   * Creates a gated recurrent unit network
+   *
+   * @param {number} input Number of input nodes
+   * @param {...number} units Number of gated recurrent units per layer
+   * @param {number} output Number of output nodes
+   *
+   * @example <caption>GRU is being tested, and may not always work for your dataset.</caption>
+   * let { architect } = require("@liquid-carrot/carrot");
+   *
+   * // Input, gated recurrent unit layer, output
+   * let my_LSTM = new architect.GRU(2,6,1);
+   *
+   * // with multiple layers of gated recurrent units
+   * let my_LSTM = new architect.GRU(2, 4, 4, 4, 1);
+   *
+   * @example <caption>Training XOR gate</caption>
+   * let { architect } = require("@liquid-carrot/carrot");
+   *
+   * var training_set = [
+   *   { input: [0], output: [0]},
+   *   { input: [1], output: [1]},
+   *   { input: [1], output: [0]},
+   *   { input: [0], output: [1]},
+   *   { input: [0], output: [0]}
+   * ];
+   *
+   * var network = new architect.GRU(1,1,1);
+   *
+   * // Train a sequence: 00100100..
+   * network.train(training_set, {
+   *   log: 1,
+   *   rate: 0.1, // lower rates work best
+   *   error: 0.005,
+   *   iterations: 3000,
+   *   clear: true // set to true while training
+   * });
+   *
+   * @returns {Network}
+   */
+  GRU: function() {
     const layer_sizes = Array.from(arguments);
     if (layer_sizes.length < 3) throw new Error('You have to specify at least 3 layer sizes');
 
@@ -2339,7 +2341,7 @@ Network.architecture = {
 
     let previous = input_layer;
     for (var i = 0; i < block_sizes.length; i++) {
-      const layer = Layer.GRU(block_sizes[i])
+      const layer = Layer.GRU(block_sizes[i]);
       previous.connect(layer);
       previous = layer;
 
@@ -2353,74 +2355,74 @@ Network.architecture = {
   },
 
   /**
-  * Creates a hopfield network of the given size
-  *
-  * @param {number} size Number of inputs and outputs (which is the same number)
-  *
-  * @example <caption>Output will always be binary due to `Activation.STEP` function.</caption>
-  * let { architect } = require("@liquid-carrot/carrot");
-  *
-  * var network = architect.Hopfield(10);
-  * var training_set = [
-  *   { input: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1], output: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1] },
-  *   { input: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0], output: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0] }
-  * ];
-  *
-  * network.train(training_set);
-  *
-  * network.activate([0,1,0,1,0,1,0,1,1,1]); // [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-  * network.activate([1,1,1,1,1,0,0,1,0,0]); // [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]
-  *
-  * @returns {Network}
-  */
-  Hopfield: function (size) {
-    const input = new Group(size, "input")
-    const output = new Group(size, "output")
+   * Creates a hopfield network of the given size
+   *
+   * @param {number} size Number of inputs and outputs (which is the same number)
+   *
+   * @example <caption>Output will always be binary due to `Activation.STEP` function.</caption>
+   * let { architect } = require("@liquid-carrot/carrot");
+   *
+   * var network = architect.Hopfield(10);
+   * var training_set = [
+   *   { input: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1], output: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1] },
+   *   { input: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0], output: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0] }
+   * ];
+   *
+   * network.train(training_set);
+   *
+   * network.activate([0,1,0,1,0,1,0,1,1,1]); // [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+   * network.activate([1,1,1,1,1,0,0,1,0,0]); // [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]
+   *
+   * @returns {Network}
+   */
+  Hopfield: function(size) {
+    const input = new Group(size, 'input');
+    const output = new Group(size, 'output');
 
-    input.connect(output, methods.connection.ALL_TO_ALL)
+    input.connect(output, methods.connection.ALL_TO_ALL);
 
     output.set({
-      squash: methods.activation.STEP
-    })
+      squash: methods.activation.STEP,
+    });
 
-    return Network.architecture.Construct([input, output])
+    return Network.architecture.Construct([input, output]);
   },
 
   /**
-  * Creates a NARX network (remember previous inputs/outputs)
-  * @alpha cannot make standalone network. TODO: be able to make standalone network
-  *
-  * @param {number} input Number of input nodes
-  * @param {number[]|number} hidden Array of hidden layer sizes, e.g. [10,20,10] If only one hidden layer, can be a number (of nodes)
-  * @param {number} output Number of output nodes
-  * @param {number} input_memory Number of previous inputs to remember
-  * @param {number} output_memory Number of previous outputs to remember
-  *
-  * @example
-  * let { architect } = require("@liquid-carrot/carrot");
-  *
-  * let narx = new architect.NARX(1, 5, 1, 3, 3);
-  *
-  * // Training a sequence
-  * let training_data = [
-  *   { input: [0], output: [0] },
-  *   { input: [0], output: [0] },
-  *   { input: [0], output: [1] },
-  *   { input: [1], output: [0] },
-  *   { input: [0], output: [0] },
-  *   { input: [0], output: [0] },
-  *   { input: [0], output: [1] },
-  * ];
-  * narx.train(training_data, {
-  *   log: 1,
-  *   iterations: 3000,
-  *   error: 0.03,
-  *   rate: 0.05
-  * });
-  *
-  * @returns {Network}
-  */
-  NARX: function (input_size, hidden_sizes, output_size, input_memory_size, output_memory_size) {
+   * Creates a NARX network (remember previous inputs/outputs)
+   * @alpha cannot make standalone network. TODO: be able to make standalone network
+   *
+   * @param {number} input Number of input nodes
+   * @param {number[]|number} hidden Array of hidden layer sizes, e.g. [10,20,10] If only one hidden layer, can be a number (of nodes)
+   * @param {number} output Number of output nodes
+   * @param {number} input_memory Number of previous inputs to remember
+   * @param {number} output_memory Number of previous outputs to remember
+   *
+   * @example
+   * let { architect } = require("@liquid-carrot/carrot");
+   *
+   * let narx = new architect.NARX(1, 5, 1, 3, 3);
+   *
+   * // Training a sequence
+   * let training_data = [
+   *   { input: [0], output: [0] },
+   *   { input: [0], output: [0] },
+   *   { input: [0], output: [1] },
+   *   { input: [1], output: [0] },
+   *   { input: [0], output: [0] },
+   *   { input: [0], output: [0] },
+   *   { input: [0], output: [1] },
+   * ];
+   * narx.train(training_data, {
+   *   log: 1,
+   *   iterations: 3000,
+   *   error: 0.03,
+   *   rate: 0.05
+   * });
+   *
+   * @returns {Network}
+   */
+  NARX: function(input_size, hidden_sizes, output_size, input_memory_size, output_memory_size) {
     if (!Array.isArray(hidden_sizes)) {
       hidden_sizes = [hidden_sizes];
     }
@@ -2467,10 +2469,10 @@ Network.architecture = {
 
 
     input_layer.set({
-      type: 'input'
+      type: 'input',
     });
     output_layer.set({
-      type: 'output'
+      type: 'output',
     });
 
     return Network.architecture.Construct(nodes);
@@ -2481,238 +2483,10 @@ Network.architecture = {
    */
   Liquid: function() {
     // Code here....
-  }
+  },
 }
 
-/**
- * Creates a DQN network
- *
- * Used to do reinforcement learning
- *
- * @alpha
- *
- * @constructs Network.architecture.DQN
- *
- * @param {number} input The amount of input neurons
- * @param {...number} hidden The amount of hidden neurons
- * @param {number} actions The number of actions per state, also the amount of output neurons of the network
- *
- * @param {object} options A configuration object
- * @param {number} explore Exploration rate. A rate for the network to choose between exploring new states ("explore") or maximizing the value of known states ("exploit"). A.K.A Epsilon
- *
- * @example
- * let { Network } = require("@liquid-carrot/carrot");
- *
- *
-*/
-Network.architecture.DQN = function() {
-  const args = Array.from(arguments);
-
-  // assumes last element is options object
-  let options = args.pop()
-
-  // layer sizes is remaining arguments
-  layer_sizes = args
-
-  if (layer_sizes.length < 3) {
-    throw new Error('Please specify at least 3 layer sizes, 1. inputs, 2. hidden, 3. actions (outputs)');
-  }
-
-  options = _.defaultsDeep(options, Network.architecture.DQN.defaults)
-  options.network = options.network || new Network.architecture.LSTM(...layer_sizes) // Q function
-
-  Object.assign(this, options)
-}
-
-Network.architecture.DQN.defaults = {
-  // Network & state memory
-  state: null,
-  action: null,
-  reward: null,
-  next_state: null,
-  next_action: null,
-
-  // Learning and update
-  learning_rate: 0.1, // AKA alpha
-  loss_clamp: false, // usually a number
-  loss: 0,
-
-  // Experience replay
-  experience: [], // experience
-  experience_index: 0, // where to insert
-  experience_limit: 10000, // maximum amount of experience to remember
-  experience_interval: 10, // Interval to choosing when to add experience
-  experience_counter: 0, // Counter for experience_index used to roll-over when experience_limit passed
-  replay_batch_size: 100,
-
-  // Exploration / Exploitation management
-  explore_decay_rate: 12, // To be added
-  explore_max: .99, // To be added
-  explore_min: 0, // To be added
-  explore: .9, // Exploration rate AKA epsilon
-
-  // Reward calculation
-  discount: 0.9, // AKA gamma
-  reward_clamp: false // usually a number
-}
-Network.architecture.DQN.prototype = {
-  /**
-   * Selects an action by choosing between exploring new states (learning) and exploiting known best states (performing).
-   *
-   * The choice of whether to explore or exploit is determined using the exploration rate set by `explore`.
-   *
-   * The higher explore is, the more the network will explore new states. The lower it is the more the network will pick the best from known states.
-   *
-   * It's best to set a high rate of exploration initially and let it decay over time as the network learns how to perform optimally.
-   *
-   * Like people, the network almost certainly does not know what is best initially and will not learn what is if it doesn't explore.
-   *
-   * @param {number[]} state The current state which is an array of possible actions that the agent can take
-   *
-   * @returns An index representing the networks guess for the highest reward action.
-   */
-  activate: function(state) {
-
-    // epsilon greedy strategy
-    let action = (Math.random() > this.explore)
-      ? this.getMaxValueIndex(this.network.activate(state))
-      : Math.floor(Math.random() * this.network.output_size)
-
-    // shift state memory
-    this.state = this.next_state
-    this.action = this.next_action
-    this.next_state = state
-    this.next_action = action
-
-    return action;
-  },
-  /**
-   * Use a new reward to update the Q policy (network)
-   *
-   * @param {number} new_reward Reward provided by the environment, used to update the Q function
-   *
-   * @returns {number} How novel this reward was to the Q policy, can be thought of as network prediction error
-   */
-  reward: function(new_reward) {
-
-    // Update Q function | temporal difference method currently hardcoded
-    if(!(this.reward == null) && this.learning_rate > 0) {
-
-      // Learn from current estimated reward to understand how wrong agent is
-      this.loss = this.learnTD(this.state, this.action, this.reward, this.next_state, this.next_action)
-
-      // Decide if we should keep this experience in replay
-      if(this.experience_counter % this.experience_interval === 0) {
-        this.remember([this.state, this.action, this.reward, this.next_state, this.next_action, this.loss])
-      }
-
-      this.experience_counter += 1
-
-      // learn from previous experiences
-      this.learnFromMemory()
-    }
-
-    this.reward = new_reward; // store for next update
-
-    return this.loss
-  },
-  /**
-   * Adds an experience / a transition (state, action, reward, next_state, next_action) to replay memory i.e. experience in memory.
-   *
-   * Internally has an index of the last experience and appends the inccoming experience to the next index.
-   *
-   * When the `experience_limit` is reached it rolls over to the first index in the experience array and begins to overwrite previous experiences.
-   *
-   * Mutates `experience` array and `experience_index` directly
-   *
-   * @param {number[]} transition An array composed of a state, action, reward, next_state, next_action
-   *
-   */
-  remember: function(transition) {
-    let index = this.experience_index
-
-    this.experience[index] = transition
-
-    index += 1
-
-    // roll over when we reach the experience_limit
-    this.experience_index = (index > this.experience_limit) ? 0 : index
-  },
-  /**
-   * Samples experience from replay memory and learns from it.
-   *
-   * This helps the model learn more generalized solutions and not overfit to some class of samples (states / situations)
-   *
-   */
-  learnFromMemory: function() {
-    //Sort by loss_value
-    //Very inefficient a sorted insertion might be better
-    this.experience.sort(function (a, b){
-      return b[5] - a[5]; //descending
-    });
-
-    for(let k = 0; k < this.replay_batch_size; k++) {
-      for(let i = 0; i < this.experience.length; i++) {
-        //Priority replay
-        //Improvement: improve distribution
-        if(Math.random() < 1 / (i + 2)) {
-          this.learnTD(...this.experience[i]);
-          break;
-        }
-      }
-    }
-  },
-  /**
-   * Evaluate function, creates temporal difference error and propagates it through network
-   *
-   * @param {number[]} state An array of actions representing the present state
-   * @param {number} action The index of the best action to take. Each action is an output of the underlying neural network so the index represents the best output / action from the network.
-   * @param {number} reward The understood reward for taking the selected `action` at the present `state`
-   * @param {number[]} next_state The state that results from taking the selected `action`
-   * @param {number} next_action The next best (highest expected reward) action to take
-   *
-   */
-  learnTD: function(state, action, reward, next_state, next_action) {
-
-    // Compute target Q value, called without traces so it won't affect backprop
-    const next_actions = this.network.activate(next_state, { no_trace: true })
-
-    // Q(s,a) = r + gamma * max_a' Q(s',a')
-    const target_reward = reward + this.discount * next_actions[this.getMaxValueIndex(next_actions)]
-
-    // Predicted current reward | called with traces for backprop later
-    const predicted_reward = this.network.activate(state)
-
-    let td_error = predicted_reward[action] - target_reward
-    const clamp = this.loss_clamp;
-
-    // Clamp error for robustness | To-Do: huber loss
-    // td_error = (Math.abs(td_error) <= clamp) ? td_error : (td_error > clamp) ? clamp : -clamp
-
-    //Huber loss
-    td_error =  Math.abs(td_error) <= clamp ? 0.5 * td_error * td_error : clamp * (Math.abs(td_error) - 0.5 * clamp);
-
-    // TO-DO: Add target network to increase reliability
-
-    // Backpropagation using temporal difference error
-    this.network.propagate(this.learning_rate, 0, true, [target_reward])
-
-    return td_error;
-  },
-
-  getMaxValueIndex: function (arr){
-    let index = 0;
-    let maxValue = arr[0];
-    for(let i = 1; i < arr.length;i++){
-      if(arr[i] > maxValue){
-        maxValue = arr[i];
-        index = i;
-      }
-    }
-    return index;
-  }
-}
-module.exports = Network
+module.exports = Network;
 
 /**
 * Runs the NEAT algorithm on group of neural networks.
