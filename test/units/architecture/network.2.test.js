@@ -325,15 +325,3 @@ describe('Network', function () {
     });
   });
 });
-
-describe('Network.architecture', function () {
-  describe('DQN', function () {
-    it('() => {Network}', function () {
-      let DQN = new Network.architecture.DQN(2, 3, 3, 2, {})
-      
-      expect(DQN)
-    })
-    
-    
-  })
-})
