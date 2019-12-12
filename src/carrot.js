@@ -12,7 +12,9 @@ const Carrot = {
   Neat: require('./neat'),
   Population: require('./architecture/population'),
   GAN: require('./gan'),
-  multi: require('./multithreading/multi')
+  multi: require('./multithreading/multi'),
+  DQN: require('./architecture/rl/dqn'),
+  DDPG: require('./architecture/rl/ddpg'),
 };
 
 // CommonJS & AMD

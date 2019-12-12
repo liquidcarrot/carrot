@@ -1909,9 +1909,6 @@ Network.crossOver = function(network1, network2, equal) {
 
   return offspring;
 }
-
-/**
- * Creates a DQN network
  /**
  *
  * Preconfigured neural networks!
