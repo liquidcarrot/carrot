@@ -74,16 +74,16 @@
     "chai-as-promised": "^7.1.1",
     "chai-each": "0.0.1",
     "chalk": "^2.4.2",
-    "copy-webpack-plugin": "^5.0.4",
-    "coveralls": "^3.0.6",
+    "copy-webpack-plugin": "^5.1.1",
+    "coveralls": "^3.0.9",
     "faker": "^4.1.0",
     "jsdoc": "^3.6.3",
-    "mocha": "^6.2.0",
-    "nodemon": "^1.19.2",
+    "mocha": "^6.2.2",
+    "nodemon": "^1.19.4",
     "nyc": "^13.3.0",
     "parallel-webpack": "^2.4.0",
-    "webpack": "^4.41.0",
-    "webpack-cli": "^3.3.9"
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10"
   },
   "nyc": {
     "include": [
