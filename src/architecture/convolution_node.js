@@ -79,7 +79,25 @@ ConvolutionalNode.prototype = {
 
 
   propagate: function(target, options) {
-    //TODO
+    if (!options && _.isPlainObject(target)) {
+      options = target;
+      target = undefined;
+    }
+
+    if (target !== undefined && target.length !== this.nodes.length || math.multiply(this.dimension) !== this.nodes.length) {
+      throw new RangeError('Array with values should be same as the amount of nodes!');
+    }
+
+    const errors = [];
+    for (let i = 0; i < this.nodes.length; i++) {
+      if (target === undefined) {
+        errors.push(this.nodes[i].propagate(options));
+      } else {
+        errors.push(this.nodes[i].propagate(target[i], options));
+      }
+    }
+
+    return errors;
   },
 
 
