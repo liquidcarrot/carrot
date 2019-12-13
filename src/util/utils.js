@@ -114,28 +114,6 @@ let shuffle = function(arr) {
 };
 
 /**
- * This method flattens an array.
- *
- * @function flatten
- *
- * @param {T[[]]} arr input array
- * @returns {T[]} flatten array
- *
- * Source: https://stackoverflow.com/a/2450976
- */
-let flatten = function(arr) {
-  let out = [];
-  let index = 0;
-  for (let i = 0; i < arr.length; i++) {
-    for (let j = 0; j < arr[i].length; j++) {
-      out[index] = arr[i][j];
-      index++;
-    }
-  }
-  return out;
-};
-
-/**
  * This method picks a random element from an given array.
  *
  * @function pickRandom

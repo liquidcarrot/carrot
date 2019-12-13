@@ -79,7 +79,7 @@ ConvolutionalNode.prototype = {
         outputTensor[x][y] = activation;
       }
     }
-    return utils.flatten(outputTensor);
+    return outputTensor.flat(); //depth 1: Should be enough
   },
 
   /**
