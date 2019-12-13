@@ -220,6 +220,8 @@ function Network(input_size, output_size) {
    * @param {boolean} update=false When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
    * @param {number[]} target Ideal values of the previous activate. Will use the difference to improve the weights
    *
+   * @todo watch out the Convolutional node and pool node at propagation (changing of dimensions)
+   *
    * @example
    * let { Network } = require("@liquid-carrot/carrot");
    *
