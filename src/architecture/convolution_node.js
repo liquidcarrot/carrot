@@ -2,7 +2,6 @@ const methods = require('../methods/methods');
 const config = require('../config');
 const Node = require('./node');
 const math = require('./../util/math');
-const utils = require('./../util/utils');
 
 
 function ConvolutionalNode(dimension) {
