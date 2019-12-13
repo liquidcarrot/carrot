@@ -23,6 +23,11 @@ function ConvolutionalNode(dimension) {
 }
 
 ConvolutionalNode.prototype = {
+  /**
+   *
+   * @param {number[]} inputs
+   * @returns {number[]} output
+   */
   activate: function(inputs) {
     if (math.multiply(this.dimension) < this.outgoing.length) {
       throw new ReferenceError('Can\'t have more outgoing connections than filter dimension!');
@@ -77,7 +82,12 @@ ConvolutionalNode.prototype = {
     return utils.flatten(outputTensor);
   },
 
-
+  /**
+   *
+   * @param {number[]} target
+   * @param {Object} [options]
+   * @returns {[]}
+   */
   propagate: function(target, options) {
     if (!options && _.isPlainObject(target)) {
       options = target;
@@ -100,7 +110,15 @@ ConvolutionalNode.prototype = {
     return errors;
   },
 
-
+  /**
+   *
+   *
+   * @param {Group|Layer|Node} target Node(s) to form connections to
+   * @param {connection} method [Connection Method](connection), determines how the nodes in this group will connect to the target (e.g. one-to-one, all-to-all)
+   * @param {number} weight Weight of the connection(s)
+   *
+   * @returns {Connection[]} The formed connections
+   */
   connect: function(target, method, weight) {
     const isSelfTarget = target.nodes ? this.nodes === target.nodes : false;
 
@@ -162,7 +180,11 @@ ConvolutionalNode.prototype = {
     return newConnections;
   },
 
-
+  /**
+   *
+   * @param {Connection[]|Connection} connections Connections to gate
+   * @param {gating} method [Gating Method](gating)
+   */
   gate: function(connections, method) {
     if (method === undefined) throw new TypeError('Please specify Gating.INPUT, Gating.OUTPUT');
 
@@ -217,6 +239,11 @@ ConvolutionalNode.prototype = {
   },
 
 
+  /**
+   * Sets the value of a property for every node
+   *
+   * @param {Object} options A configuration object
+   */
   set: function(options) {
     if (typeof options !== 'object') throw TypeError(`options has to be an object with the properties to set and the desired values`);
     for (let index = 0; index < this.nodes.length; index++) {
@@ -225,6 +252,11 @@ ConvolutionalNode.prototype = {
   },
 
 
+  /**
+   *
+   * @param {Group|Node} target Node(s) to remove connections to/from
+   * @param {boolean} [twosided=false] Set to true, to disconnect both to and from connections simultaneously (applies to two-sided [Connections](Connection) only)
+   */
   disconnect: function(target, twosided) {
     twosided = twosided || false;
 
@@ -260,14 +292,20 @@ ConvolutionalNode.prototype = {
   },
 
 
+  /**
+   * Clear the context of the nodes in this convolutional node
+   */
   clear: function() {
     for (let i = 0; i < this.nodes.length; i++) {
       this.nodes[i].clear();
     }
-    return this;
   },
 
 
+  /**
+   * Add the nodes to the convolutional node
+   * @param  {Node|Node[]|Group} nodesToAdd The nodes to add
+   */
   addNodes: function(nodesToAdd) {
     if (nodesToAdd instanceof Node) {
       nodesToAdd = [nodesToAdd];
