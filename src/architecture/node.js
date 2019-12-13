@@ -293,7 +293,7 @@ function Node(options) {
         const node = connection.to;
         const influence = (node.connections_self.gater === self ? node.old : 0) + connection.weight * connection.from.activation;
 
-        self.error_gated += node.error_reponsibility * influence;
+        self.error_gated += node.error_responsibility * influence;
       }
       self.error_gated *= self.derivative || 1;
 
