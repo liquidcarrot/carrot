@@ -162,7 +162,6 @@ module.exports.shuffle = shuffle;
 module.exports.randomInt = randomInt;
 module.exports.pickRandom = pickRandom;
 module.exports.mean = mean;
-module.exports.flatten = flatten;
 module.exports.gaussianNoise = gaussianNoise;
 module.exports.addGaussianNoiseToNetwork = addGaussianNoiseToNetwork;
 module.exports.RL = RL;
