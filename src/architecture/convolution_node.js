@@ -43,7 +43,6 @@ ConvolutionalNode.prototype = {
       throw new RangeError('Array with values should be same as the inputDimension flattened!');
     }
 
-    let outputTensor = [[], []];
     if (inputs === undefined) {
       let inputIndex = 0;
       for (let i = 0; i < this.incomingDimension.length; i++) {
@@ -65,6 +64,7 @@ ConvolutionalNode.prototype = {
       }
     }
 
+    let outputTensor = [[], []];
     for (let x = 0; x <= this.incomingDimension[0] - this.dimension[0]; x++) {
       for (let y = 0; y <= this.incomingDimension[1] - this.dimension[1]; y++) {
         let activation = 0.0;
