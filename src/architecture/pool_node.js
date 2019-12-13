@@ -1,50 +1,41 @@
 const methods = require('../methods/methods');
 const config = require('../config');
+const Connection = require('./connection');
 const Node = require('./node');
 const math = require('./../util/math');
-const utils = require('./../util/utils');
 
 
-function ConvolutionalNode(dimension) {
-  this.nodes = [];
-  this.connectionsSelf = [];
+function PoolNode(dimension) {
+  this.connectionsSelf = new Connection(this, this, 0);
   this.incomingDimension = [];
   this.incoming = [];
   this.outgoing = [];
   this.dimension = dimension;
-  this.nodes = [];
-
-  // creating nodes
-  let index = 0;
-  for (let i = 0; i < math.multiply(this.dimension); i++) {
-    this.nodes[index] = new Node();
-  }
-
+  this.isMaxPooling = false;
 }
 
-ConvolutionalNode.prototype = {
+PoolNode.prototype = {
   /**
    *
    * @param {number[]} inputs
    * @returns {number[]} output
    */
   activate: function(inputs) {
-    if (math.multiply(this.dimension) < this.outgoing.length) {
-      throw new ReferenceError('Can\'t have more outgoing connections than filter dimension!');
-    }
     if (math.multiply(this.dimension) > this.incoming.length) {
-      throw new ReferenceError('Filter dimension can\'t be greater than incoming connections!');
+      throw new Error('Filter dimension can\'t be greater than incoming connections!');
     }
     for (let i = 0; i < this.dimension.length; i++) {
       if (this.dimension[i] > this.incomingDimension[i]) {
-        throw new ReferenceError('Filter dimension can\'t be greater than incoming connections!');
+        throw new Error('Filter dimension can\'t be greater than incoming connections!');
+      }
+      if (this.incomingDimension[i] % this.dimension[i] !== 0) {
+        throw new RangeError('Pool node dimension doesn\'t match input dimension');
       }
     }
     if (inputs !== undefined && inputs.length !== math.multiply(this.incomingDimension)) {
       throw new RangeError('Array with values should be same as the inputDimension flattened!');
     }
 
-    let outputTensor = [[], []];
     if (inputs === undefined) {
       let inputIndex = 0;
       for (let i = 0; i < this.incomingDimension.length; i++) {
@@ -66,176 +57,94 @@ ConvolutionalNode.prototype = {
       }
     }
 
-    for (let x = 0; x <= this.incomingDimension[0] - this.dimension[0]; x++) {
-      for (let y = 0; y <= this.incomingDimension[1] - this.dimension[1]; y++) {
-        let activation = 0.0;
-        let nodeIndex = 0;
+    let outputTensor = [[], []];
+    for (let x = 0; x <= this.incomingDimension[0] - this.dimension[0]; x += this.dimension[0]) {
+      for (let y = 0; y <= this.incomingDimension[1] - this.dimension[1]; y += this.dimension[1]) {
+        let sum = 0;
+        let max = -Infinity;
         for (let dx = 0; dx < this.dimension[0]; dx++) {
           for (let dy = 0; dy < this.dimension[1]; dy++) {
-            activation += this.nodes[nodeIndex].activate(inputTensor[x + dx][y + dy]);
-            nodeIndex++;
+            sum += inputTensor[x + dx][y + dy];
+            if (inputTensor[x + dx][y + dy] > max) {
+              max = inputTensor[x + dx][y + dy];
+            }
           }
         }
-        outputTensor[x][y] = activation;
+        outputTensor[x][y] = this.isMaxPooling
+          ? max // Max
+          : sum / math.multiply(this.dimension); // Mean
       }
     }
     return outputTensor.flat(); //depth 1: Should be enough
   },
 
-  /**
-   *
-   * @param {number[]} target
-   * @param {Object} [options]
-   * @returns {[]}
-   */
-  propagate: function(target, options) {
-    if (!options && _.isPlainObject(target)) {
-      options = target;
-      target = undefined;
-    }
+  noTraceActivate: function(input) {
+    return self.activate(input);
+  },
 
-    if (target !== undefined && target.length !== this.nodes.length || math.multiply(this.dimension) !== this.nodes.length) {
-      throw new RangeError('Array with values should be same as the amount of nodes!');
-    }
-
-    const errors = [];
-    for (let i = 0; i < this.nodes.length; i++) {
-      if (target === undefined) {
-        errors.push(this.nodes[i].propagate(options));
-      } else {
-        errors.push(this.nodes[i].propagate(target[i], options));
-      }
-    }
-
-    return errors;
+  propagate: function() {
+    //Keep smiling :-)
   },
 
   /**
    *
+   * @param {Node|Node[]} nodes Node(s) to project connection(s) to
+   * @param {number} [weight] Initial connection(s) [weight](https://en.wikipedia.org/wiki/Synaptic_weight)
+   * @param {Object} [options={}]
    *
-   * @param {Group|Layer|Node} target Node(s) to form connections to
-   * @param {connection} method [Connection Method](connection), determines how the nodes in this group will connect to the target (e.g. one-to-one, all-to-all)
-   * @param {number} weight Weight of the connection(s)
-   *
-   * @returns {Connection[]} The formed connections
+   * @returns {Connection[]|Connection}
    */
-  connect: function(target, method, weight) {
-    const isSelfTarget = target.nodes ? this.nodes === target.nodes : false;
+  connect: function(nodes, weight, options) {
+    if (nodes === undefined) throw new ReferenceError('Missing required parameter \'nodes\'');
 
-    if (method === undefined) {
-      if (isSelfTarget) {
-        if (config.warnings) console.warn('No group connection specified, using ONE_TO_ONE');
-        method = methods.connection.ONE_TO_ONE;
+    if (options === undefined && typeof weight === 'object') {
+      options = weight;
+      weight = undefined;
+    }
+
+    options = options || {};
+
+    if (nodes instanceof Node) {
+      if (this.isProjectingTo(nodes)) {
+        throw new ReferenceError('Node is already projecting to \'target\'');
       } else {
-        if (config.warnings) console.warn('No group connection specified, using ALL_TO_ALL');
-        method = methods.connection.ALL_TO_ALL;
-      }
-    }
+        const connection = new Connection(this, nodes, weight, options);
 
-    let targetNodes = [];
-    if (target.input_nodes) {
-      targetNodes = target.input_nodes;
-    } else if (target.nodes) {
-      targetNodes = target.nodes;
-    } else if (target instanceof Node) {
-      targetNodes = [target];
-    } else {
-      throw new TypeError('Type of target not supported');
-    }
-
-    if (method === methods.connection.ONE_TO_ONE && this.nodes.length !== targetNodes.length) {
-      throw new RangeError('Method is one-to-one but there are unequal number of source and target nodes');
-    }
-
-    const newConnections = [];
-
-    targetNodes:
-      for (let i = 0; i < targetNodes.length; i++) {
-        if (method === methods.connection.ALL_TO_ELSE) {
-          for (let j = 0; j < this.nodes.length; j++) {
-            if (targetNodes[i] === this.nodes[j]) {
-              continue targetNodes;
-            }
-          }
-        }
-        if (method === methods.connection.ONE_TO_ONE) {
-          newConnections.push(this.nodes[i].connect(targetNodes[i], weight));
-        } else { //ALL_TO_ALL or ALL_TO_ELSE
-          for (let j = 0; j < this.nodes.length; j++) {
-            newConnections.push(this.nodes[j].connect(targetNodes[i], weight));
-          }
-        }
-      }
-
-    for (let i = 0; i < newConnections.length; i++) {
-      const connection = newConnections[i];
-      if (isSelfTarget) {
-        this.connectionsSelf.push(connection);
-      } else {
         this.outgoing.push(connection);
-        target.incoming.push(connection);
-      }
-    }
+        nodes.incoming.push(connection);
 
-    return newConnections;
+        if (options.twosided) {
+          nodes.connect(this);
+        }
+        return connection;
+      }
+    } else if (Array.isArray(nodes)) {
+      const connections = [];
+
+      for (let i = 0; i < nodes.length; i++) {
+        const connection = new Connection(this, nodes[i], weight, options);
+
+        this.outgoing.push(connection);
+        nodes[i].incoming.push(connection);
+        connections.push(connection);
+
+        if (options.twosided) {
+          nodes[i].connect(this);
+        }
+      }
+
+      return connections;
+    } else {
+      throw new TypeError(`Parameter 'target': Expected 'Node' or 'Node[]' - but recieved, ${nodes}`);
+    }
   },
 
-  /**
-   *
-   * @param {Connection[]|Connection} connections Connections to gate
-   * @param {gating} method [Gating Method](gating)
-   */
-  gate: function(connections, method) {
-    if (method === undefined) throw new TypeError('Please specify Gating.INPUT, Gating.OUTPUT');
+  gate: function() {
+    //Pool Node Can't gate
+  },
 
-    if (!Array.isArray(connections)) connections = [connections];
-
-    const nodesFrom = [];
-    const nodesTo = [];
-
-    for (let i = 0; i < connections.length; i++) {
-      const connection = connections[i];
-      if (!nodesFrom.includes(connection.from)) nodesFrom.push(connection.from);
-      if (!nodesTo.includes(connection.to)) nodesTo.push(connection.to);
-    }
-
-    switch (method) {
-      case methods.gating.INPUT:
-        for (let i = 0; i < nodesTo.length; i++) {
-          const node = nodesTo[i];
-          const gater = this.nodes[i % this.nodes.length];
-
-          for (let j = 0; j < node.incoming.length; j++) {
-            const connection = node.incoming[j];
-            if (connections.includes(connection)) {
-              gater.gate(connection);
-            }
-          }
-        }
-        break;
-      case methods.gating.OUTPUT:
-        for (let i = 0; i < nodesFrom.length; i++) {
-          const node = nodesFrom[i];
-          const gater = this.nodes[i % this.nodes.length];
-
-          for (let j = 0; j < node.outgoing.length; j++) {
-            const connection = node.outgoing[j];
-            if (connections.includes(connection)) {
-              gater.gate(connection);
-            }
-          }
-        }
-        break;
-      case methods.gating.SELF:
-        for (let i = 0; i < nodesFrom.length; i++) {
-          const node = nodesFrom[i];
-          const gater = this.nodes[i % this.nodes.length];
-
-          if (connections.includes(node.connections_self)) {
-            gater.gate(node.connections_self);
-          }
-        }
-    }
+  ungate: function() {
+    //Pool Node Can't gate
   },
 
 
@@ -291,30 +200,73 @@ ConvolutionalNode.prototype = {
     }
   },
 
+  isProjectingTo: function(nodes) {
+    if (nodes === undefined) throw new ReferenceError('Missing required parameter \'nodes\'');
 
-  /**
-   * Clear the context of the nodes in this convolutional node
-   */
-  clear: function() {
-    for (let i = 0; i < this.nodes.length; i++) {
-      this.nodes[i].clear();
+    if (nodes === this) {
+      return this.connectionsSelf.weight !== 0;
+    } else if (!Array.isArray(nodes)) {
+      for (let i = 0; i < this.outgoing.length; i++) {
+        if (this.outgoing[i].to === nodes) {
+          return true;
+        }
+      }
+      return false;
+    } else {
+      let projectingTo = 0;
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = 0; j < this.outgoing.length; j++) {
+          if (this.outgoing[j].to === nodes[i]) {
+            projectingTo++;
+            break;
+          }
+        }
+      }
+      return nodes.length === projectingTo;
     }
   },
 
+  isProjectedBy: function(nodes) {
+    if (nodes === undefined) throw new ReferenceError('Missing required parameter \'nodes\'');
+
+    if (nodes === this) {
+      return this.connections_self.weight !== 0;
+    } else if (!Array.isArray(nodes)) {
+      for (let i = 0; i < this.incoming.length; i++) {
+        if (this.incoming[i].from === nodes) {
+          return true;
+        }
+      }
+      return false;
+    } else {
+      let projectedBy = 0;
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = 0; j < this.incoming.length; j++) {
+          if (this.incoming[j].from === nodes[i]) {
+            projectedBy++;
+            break;
+          }
+        }
+      }
+
+      return nodes.length === projectedBy;
+    }
+  },
+
+  mutate: function() {
+    this.isMaxPooling = Math.random() <= 0.5; //Just mutate between Mean\Max Pooling
+  },
 
   /**
-   * Add the nodes to the convolutional node
-   * @param  {Node|Node[]|Group} nodesToAdd The nodes to add
+   * Clears this node's state information - _i.e. resets node and its connections to "factory settings"_
    */
-  addNodes: function(nodesToAdd) {
-    if (nodesToAdd instanceof Node) {
-      nodesToAdd = [nodesToAdd];
-    } else if (nodesToAdd instanceof Group) {
-      nodesToAdd = nodesToAdd.nodes;
-    }
+  clear: function() {
+    for (let index = 0; index < this.incoming.length; index++) {
+      const connection = this.incoming[index];
 
-    if (math.multiply(this.dimension) >= this.nodes.length + nodesToAdd.length) {
-      this.nodes.push(...nodesToAdd);
+      connection.elegibility = 0;
+      connection.xtrace_nodes = [];
+      connection.xtrace_values = [];
     }
   },
 };
