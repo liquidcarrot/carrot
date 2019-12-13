@@ -104,6 +104,7 @@ describe('DQN', function () {
   });
 
   it('test learning capabilities with normal DQN and SARSA with PER', function() {
+    this.timeout(10000);
     console.time('Learning: DQN, SARSA, PER');
     let agent = new DQN(1, 2, {
       gamma: 0.3,
