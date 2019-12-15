@@ -1,40 +1,42 @@
-const config = require("../config")
-const multi = require("../multithreading/multi")
-const methods = require("../methods/methods")
-const Group = require("./group")
-const Layer = require("./layer")
-const Connection = require("./connection")
-const Node = require("./node")
-const _ = require("lodash")
+const config = require('../config');
+const multi = require('../multithreading/multi');
+const methods = require('../methods/methods');
+const Group = require('./group');
+const Layer = require('./layer');
+const Connection = require('./connection');
+const Node = require('./node');
+const ConvolutionalNode = require('./convolution_node');
+const PoolNode = require('./pool_node');
+const _ = require('lodash');
 
 // Easier variable naming
-const mutation = methods.mutation
+const mutation = methods.mutation;
 
 /**
-* Create a neural network
-*
-* Networks are easy to create, all you need to specify is an `input` and an `output` size.
-*
-* @constructs Network
-*
-* @param {number} input_size Size of input layer AKA neurons in input layer
-* @param {number} output_size Size of output layer AKA neurons in output layer
-*
-* @prop {number} input_size Size of input layer AKA neurons in input layer
-* @prop {number} output_size Size of output layer AKA neurons in output layer
-* @prop {Array<Node>} nodes Nodes currently within the network
-* @prop {Array<Node>} gates Gates within the network
-* @prop {Array<Connection>} connections Connections within the network
-*
-* @example
-* let { Network, architect } = require("@liquid-carrot/carrot");
-*
-* // Network with 2 input neurons and 1 output neuron
-* let myNetwork = new Network(2, 1);
-*
-* // and a multi-layered network
-* let myNetwork = new architect.Perceptron(5, 20, 10, 5, 1)
-*/
+ * Create a neural network
+ *
+ * Networks are easy to create, all you need to specify is an `input` and an `output` size.
+ *
+ * @constructs Network
+ *
+ * @param {number} input_size Size of input layer AKA neurons in input layer
+ * @param {number} output_size Size of output layer AKA neurons in output layer
+ *
+ * @prop {number} input_size Size of input layer AKA neurons in input layer
+ * @prop {number} output_size Size of output layer AKA neurons in output layer
+ * @prop {Array<Node>} nodes Nodes currently within the network
+ * @prop {Array<Node>} gates Gates within the network
+ * @prop {Array<Connection>} connections Connections within the network
+ *
+ * @example
+ * let { Network, architect } = require("@liquid-carrot/carrot");
+ *
+ * // Network with 2 input neurons and 1 output neuron
+ * let myNetwork = new Network(2, 1);
+ *
+ * // and a multi-layered network
+ * let myNetwork = new architect.Perceptron(5, 20, 10, 5, 1)
+ */
 function Network(input_size, output_size) {
   if (typeof input_size === `undefined` || typeof output_size === `undefined`) throw new TypeError(`No input or output size given`);
 
@@ -74,8 +76,8 @@ function Network(input_size, output_size) {
    * @function connect
    * @memberof Network
    *
-   * @param {Node} from The source Node
-   * @param {Node|Group} to The destination Node or Group
+   * @param {Node|Group|ConvolutionalNode|PoolNode} from The source Node
+   * @param {Node|Group|ConvolutionalNode|PoolNode} to The destination Node or Group
    * @param {number} [weight] An initial weight for the connections to be formed
    *
    * @returns {Connection[]} An array of the formed connections
@@ -488,20 +490,34 @@ function Network(input_size, output_size) {
     const self = this
     let candidates = []
     switch (method.name) {
-      case "SUB_NODE": {
-        candidates = _.filter(self.nodes, function(node) { return (!self.input_nodes.has(node) && !self.output_nodes.has(node)) }) // assumes input & output node 'type' has been set
-        return candidates.length ? candidates : false
+      case 'SUB_NODE': {
+        candidates = _.filter(self.nodes, function(node) {
+          return (!self.input_nodes.has(node) && !self.output_nodes.has(node));
+        }); // assumes input & output node 'type' has been set
+        return candidates.length ? candidates : false;
       }
-      case "ADD_CONN": {
+      case 'SUB_CONV_NODE': {
+        candidates = _.filter(self.nodes, function(node) {
+          return (typeof node instanceof ConvolutionalNode) && (!self.input_nodes.has(node) && !self.output_nodes.has(node));
+        }); // assumes input & output node 'type' has been set
+        return candidates.length ? candidates : false;
+      }
+      case 'SUB_POOL_NODE': {
+        candidates = _.filter(self.nodes, function(node) {
+          return (typeof node instanceof PoolNode) && (!self.input_nodes.has(node) && !self.output_nodes.has(node));
+        }); // assumes input & output node 'type' has been set
+        return candidates.length ? candidates : false;
+      }
+      case 'ADD_CONN': {
         for (let i = 0; i < self.nodes.length - self.output_size; i++) {
-          const node1 = self.nodes[i]
+          const node1 = self.nodes[i];
           for (let j = Math.max(i + 1, self.input_size); j < self.nodes.length; j++) {
-            const node2 = self.nodes[j]
-            if (!node1.isProjectingTo(node2)) candidates.push([node1, node2])
+            const node2 = self.nodes[j];
+            if (!node1.isProjectingTo(node2)) candidates.push([node1, node2]);
           }
         }
 
-        return candidates.length ? candidates : false
+        return candidates.length ? candidates : false;
       }
       case "REMOVE_CONN": // alias for sub_conn
       case "SUB_CONN": {
@@ -616,10 +632,10 @@ function Network(input_size, output_size) {
     switch (method.name) {
       // Looks for an existing connection and places a node in between
       case "ADD_NODE": {
-        if(self.nodes.length >= maxNodes) return null
+        if (self.nodes.length >= maxNodes) return null;
 
-        const node = new Node({ type: 'hidden' })
-        if (mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION) // this should be an option passed into the Node constructor
+        const node = new Node({type: 'hidden'});
+        if (mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION); // this should be an option passed into the Node constructor
 
         // Note for the future: this makes the assumption that nodes can only be placed
         // between existing connections, but what this means is that connections will never
@@ -627,110 +643,186 @@ function Network(input_size, output_size) {
         // This means connections across inputs / outputs will not be formed
         // And it also means that "peripheral" connections between output neurons and neurons that connect
         // back into the network will also not be formed.
-        const connection = getRandomConnection()
-        const from = connection.from
-        const to = connection.to
-        self.disconnect(from, to) // break the existing connection
+        const connection = getRandomConnection();
+        const from = connection.from;
+        const to = connection.to;
+        self.disconnect(from, to); // break the existing connection
 
         // Make sure new node is between from & to
         // Accomodates assumption that: nodes array is ordered: ["inputs", "hidden", "outputs"]
         // Should be agnostic by setting a node .type value and updating the way ".activate" works
-        let min_bound = self.nodes.indexOf(from) // Shouldn't use expensive ".indexOf", we should track neuron index numbers in the "to" & "from" of connections instead and access nodes later if needed
-        min_bound = (min_bound >= self.input_nodes.size - 1) ? min_bound : self.input_nodes.size - 1 // make sure after to insert after all input neurons
-        self.nodes.splice(min_bound + 1, 0, node) // assumes there is at least one output neuron
+        let min_bound = self.nodes.indexOf(from); // Shouldn't use expensive ".indexOf", we should track neuron index numbers in the "to" & "from" of connections instead and access nodes later if needed
+        min_bound = (min_bound >= self.input_nodes.size - 1) ? min_bound : self.input_nodes.size - 1; // make sure after to insert after all input neurons
+        self.nodes.splice(min_bound + 1, 0, node); // assumes there is at least one output neuron
 
         // Now create two new connections
-        const new_connection1 = self.connect(from, node)[0]
-        const new_connection2 = self.connect(node, to)[0]
+        const new_connection1 = self.connect(from, node)[0];
+        const new_connection2 = self.connect(node, to)[0];
 
-        const gater = connection.gater
-        if (gater != null) self.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2) // Check if the original connection was gated
+        const gater = connection.gater;
+        if (gater != null) self.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2); // Check if the original connection was gated
 
-        return self
+        return self;
       }
-      case "SUB_NODE": {
-        const possible = self.possible(method)
+      case 'SUB_NODE': {
+        const possible = self.possible(method);
         if (possible) {
-          self.remove(_.sample(possible))
-          return self
-        }
-        return null
-      }
-      case "ADD_CONN": {
-        if(self.connections.length >= maxConns) return null // Check user constraint
-
-        const possible = self.possible(method)
-        if (possible) {
-          const pair = possible[Math.floor(Math.random() * possible.length)]
-          self.connect(pair[0], pair[1])
-          return self
-        }
-
-        return null
-      }
-      case "REMOVE_CONN": // alias for sub_conn
-      case "SUB_CONN": {
-        const possible = self.possible(method)
-        if (possible) {
-          const chosen = _.sample(possible)
-          self.disconnect(chosen.from, chosen.to)
-          return self
-        }
-
-        return null
-      }
-      case "MOD_WEIGHT": {
-        const chosen_connection = getRandomConnection() // get a random connection to modify weight
-        chosen_connection.weight += Math.random() * (method.max - method.min) + method.min
-
-        return self
-      }
-      case "MOD_BIAS": {
-        if (self.nodes.length <= self.input_size) return null;
-        // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
-        const node_to_mutate = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)]
-        node_to_mutate.mutate(method)
-
-        return self
-      }
-      case "MOD_ACTIVATION": {
-        const possible = self.possible(method)
-        if (possible) {
-          _.sample(possible).mutate(method) // Mutate a random node out of filtered collection, MOD_ACTIVATION is a neuron-level concern
-          return self
-        }
-        return null
-      }
-      case "ADD_SELF_CONN": {
-        const possible = self.possible(method)
-        if (possible) {
-          const node = possible[Math.floor(Math.random() * possible.length)]
-          self.connect(node, node) // Create the self-connection
-          return self
-        }
-        return null
-      }
-      case "SUB_SELF_CONN": {
-        const possible = self.possible(method)
-        if (possible) {
-          const chosen_connection = possible[Math.floor(Math.random() * possible.length)];
-          self.disconnect(chosen_connection.from, chosen_connection.to);
-          return self
+          self.remove(_.sample(possible));
+          return self;
         }
         return null;
       }
-      case "ADD_GATE": {
-        // Check user constraint
-        if(self.gates.length >= maxGates) return null
+      case 'ADD_CONV_NODE': {
+        if (self.nodes.length >= maxNodes) return null;
 
-        const possible = self.possible(method)
+        const node = new ConvolutionalNode([1, 1]);
+        for (let i = 0; i < node.nodes.length; i++) {
+          node.nodes[i].mutate(mutation.MOD_ACTIVATION);
+        }
+
+        const connection = getRandomConnection();
+        const from = connection.from;
+        const to = connection.to;
+        self.disconnect(from, to); // break the existing connection
+
+        let min_bound = self.nodes.indexOf(from);
+        min_bound = (min_bound >= self.input_nodes.size - 1) ? min_bound : self.input_nodes.size - 1;
+        self.nodes.splice(min_bound + 1, 0, node);
+
+        const new_connection1 = self.connect(from, node)[0];
+        const new_connection2 = self.connect(node, to)[0];
+
+        const gater = connection.gater;
+        if (gater != null) {
+          self.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2);
+        }
+
+        return self;
+      }
+      case 'SUB_CONV_NODE': {
+        const possible = self.possible(method);
+        if (possible) {
+          self.remove(_.sample(possible));
+          return self;
+        }
+        return null;
+      }
+      case 'ADD_POOL_NODE': {
+        if (self.nodes.length >= maxNodes) return null;
+
+        const node = new PoolNode([1, 1]);
+        if (mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_POOL_NODE); // this should be an option passed into the Node constructor
+
+        // Note for the future: this makes the assumption that nodes can only be placed
+        // between existing connections, but what this means is that connections will never
+        // be formed where there is not a connection right now.
+        // This means connections across inputs / outputs will not be formed
+        // And it also means that "peripheral" connections between output neurons and neurons that connect
+        // back into the network will also not be formed.
+        const connection = getRandomConnection();
+        const from = connection.from;
+        const to = connection.to;
+        self.disconnect(from, to); // break the existing connection
+
+        // Make sure new node is between from & to
+        // Accomodates assumption that: nodes array is ordered: ["inputs", "hidden", "outputs"]
+        // Should be agnostic by setting a node .type value and updating the way ".activate" works
+        let min_bound = self.nodes.indexOf(from); // Shouldn't use expensive ".indexOf", we should track neuron index numbers in the "to" & "from" of connections instead and access nodes later if needed
+        min_bound = (min_bound >= self.input_nodes.size - 1) ? min_bound : self.input_nodes.size - 1; // make sure after to insert after all input neurons
+        self.nodes.splice(min_bound + 1, 0, node); // assumes there is at least one output neuron
+
+        // Now create two new connections
+        const new_connection1 = self.connect(from, node)[0];
+        const new_connection2 = self.connect(node, to)[0];
+
+        const gater = connection.gater;
+        if (gater != null) self.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2); // Check if the original connection was gated
+
+        return self;
+      }
+      case 'SUB_POOL_NODE': {
+        const possible = self.possible(method);
+        if (possible) {
+          self.remove(_.sample(possible));
+          return self;
+        }
+        return null;
+      }
+      case 'ADD_CONN': {
+        if (self.connections.length >= maxConns) return null; // Check user constraint
+
+        const possible = self.possible(method);
+        if (possible) {
+          const pair = possible[Math.floor(Math.random() * possible.length)];
+          self.connect(pair[0], pair[1]);
+          return self;
+        }
+
+        return null;
+      }
+      case 'REMOVE_CONN': // alias for sub_conn
+      case 'SUB_CONN': {
+        const possible = self.possible(method);
+        if (possible) {
+          const chosen = _.sample(possible);
+          self.disconnect(chosen.from, chosen.to);
+          return self;
+        }
+
+        return null;
+      }
+      case 'MOD_WEIGHT': {
+        const chosen_connection = getRandomConnection(); // get a random connection to modify weight
+        chosen_connection.weight += Math.random() * (method.max - method.min) + method.min;
+
+        return self;
+      }
+      case 'MOD_BIAS': {
+        if (self.nodes.length <= self.input_size) return null;
+        // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
+        const node_to_mutate = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)];
+        node_to_mutate.mutate(method);
+
+        return self;
+      }
+      case 'MOD_ACTIVATION': {
+        const possible = self.possible(method);
+        if (possible) {
+          _.sample(possible).mutate(method); // Mutate a random node out of filtered collection, MOD_ACTIVATION is a neuron-level concern
+          return self;
+        }
+        return null;
+      }
+      case 'ADD_SELF_CONN': {
+        const possible = self.possible(method);
+        if (possible) {
+          const node = possible[Math.floor(Math.random() * possible.length)];
+          self.connect(node, node); // Create the self-connection
+          return self;
+        }
+        return null;
+      }
+      case 'SUB_SELF_CONN': {
+        const possible = self.possible(method);
+        if (possible) {
+          const chosen_connection = possible[Math.floor(Math.random() * possible.length)];
+          self.disconnect(chosen_connection.from, chosen_connection.to);
+          return self;
+        }
+        return null;
+      }
+      case 'ADD_GATE': {
+        // Check user constraint
+        if (self.gates.length >= maxGates) return null;
+
+        const possible = self.possible(method);
         if (possible) {
           // Select a random gater node and connection, can't be gated by input | makes ["input", "hidden", "output"] assumption
-          const node = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)]
-          const conn = possible[Math.floor(Math.random() * possible.length)]
+          const node = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)];
+          const conn = possible[Math.floor(Math.random() * possible.length)];
 
-          self.gate(node, conn) // Gate the connection with the node
-          return self
+          self.gate(node, conn); // Gate the connection with the node
+          return self;
         }
         return null
       }

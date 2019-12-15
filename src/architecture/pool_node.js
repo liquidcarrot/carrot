@@ -273,4 +273,4 @@ PoolNode.prototype = {
   },
 };
 
-module.exports = ConvolutionalNode;
+module.exports = PoolNode;

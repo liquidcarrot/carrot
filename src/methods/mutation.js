@@ -66,7 +66,43 @@ const mutation = {
    */
   SUB_NODE: {
     name: 'SUB_NODE',
-    keep_gates: true
+    keep_gates: true,
+  },
+  /**
+   * @constant
+   * @type {object}
+   * @description Adds a convolutional node
+   * @default
+   */
+  ADD_CONV_NODE: {
+    name: 'ADD_CONV_NODE',
+  },
+  /**
+   * @constant
+   * @type {object}
+   * @description Removes a convolutional node
+   * @default
+   */
+  SUB_CONV_NODE: {
+    name: 'SUB_CONV_NODE',
+  },
+  /**
+   * @constant
+   * @type {object}
+   * @description Adds a pool node
+   * @default
+   */
+  ADD_POOL_NODE: {
+    name: 'ADD_CONV_NODE',
+  },
+  /**
+   * @constant
+   * @type {object}
+   * @description Removes a pool node
+   * @default
+   */
+  SUB_POOL_NODE: {
+    name: 'SUB_CONV_NODE',
   },
   /**
    * @constant
@@ -337,6 +373,10 @@ const mutation = {
 mutation.ALL = [
   mutation.ADD_NODE,
   mutation.SUB_NODE,
+  mutation.ADD_CONV_NODE,
+  mutation.SUB_CONV_NODE,
+  mutation.ADD_POOL_NODE,
+  mutation.SUB_POOL_NODE,
   mutation.ADD_CONN,
   mutation.SUB_CONN,
   mutation.MOD_WEIGHT,
