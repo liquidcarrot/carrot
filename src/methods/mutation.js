@@ -304,8 +304,17 @@ const mutation = {
    */
   SWAP_NODES: {
     name: 'SWAP_NODES',
-    mutateOutput: false
-  }
+    mutateOutput: false,
+  },
+  /**
+   * @constant
+   * @type {object}
+   * @description Change between Max- and Mean-Pooling
+   * @default
+   */
+  MOD_POOL_NODE: {
+    name: 'MOD_POOL_NODE',
+  },
 };
 
 /**
@@ -339,7 +348,8 @@ mutation.ALL = [
   mutation.SUB_SELF_CONN,
   mutation.ADD_BACK_CONN,
   mutation.SUB_BACK_CONN,
-  mutation.SWAP_NODES
+  mutation.SWAP_NODES,
+  mutation.MOD_POOL_NODE,
 ];
 
 /**
@@ -367,7 +377,8 @@ mutation.FFW = [
   mutation.MOD_WEIGHT,
   mutation.MOD_BIAS,
   mutation.MOD_ACTIVATION,
-  mutation.SWAP_NODES
+  mutation.SWAP_NODES,
+  mutation.MOD_POOL_NODE,
 ];
 
 module.exports = mutation;

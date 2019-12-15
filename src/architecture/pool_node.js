@@ -253,8 +253,10 @@ PoolNode.prototype = {
     }
   },
 
-  mutate: function() {
-    this.isMaxPooling = Math.random() <= 0.5; //Just mutate between Mean\Max Pooling
+  mutate: function(method) {
+    if (method === methods.mutation.MOD_POOL_NODE) {
+      this.isMaxPooling = !this.isMaxPooling; //Just mutate between Mean\Max Pooling
+    }
   },
 
   /**
