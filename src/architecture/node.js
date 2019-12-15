@@ -1,49 +1,51 @@
-const _ = require("lodash");
+const _ = require('lodash');
 const methods = require('../methods/methods');
 const Connection = require('./connection');
+const PoolNode = require('./pool_node');
+const ConvolutionalNode = require('./convolution_node');
 const config = require('../config');
 // const Group = require("./group");
 // const Layer = require("./layer");
 
 /**
-* Creates a new neuron/node
-*
-* Neurons are the basic unit of the neural network. They can be connected together, or used to gate connections between other neurons. A Neuron can perform basically 4 operations: form connections, gate connections, activate and [propagate](https://www.youtube.com/watch?v=Ilg3gGewQ5U).
-*
-* For more information check:
-* - [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
-* - [here](https://en.wikipedia.org/wiki/Artificial_neuron)
-* - [here](https://wagenaartje.github.io/neataptic/docs/architecture/node/)
-* - [here](https://github.com/cazala/synaptic/wiki/Neural-Networks-101)
-* - [here](https://keras.io/backend/#bias_add)
-*
-* @constructs Node
-*
-* @param {Object|Node} [options] Options Object or template `Node`
-* @param {number} [options.bias] Neuron's bias [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
-*
-* @prop {number} bias Neuron's bias [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
-* @prop {activation} squash [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0)
-* @prop {string} type
-* @prop {number} activation Output value
-* @prop {number} state
-* @prop {number} old
-* @prop {number} mask=1 Used for dropout. This is either 0 (ignored) or 1 (included) during training and is used to avoid [overfit](https://www.kdnuggets.com/2015/04/preventing-overfitting-neural-networks.html).
-* @prop {number} previousDeltaBias
-* @prop {number} totalDeltaBias
-* @prop {Array<Connection>} incoming Incoming connections to this node
-* @prop {Array<Connection>} outgoing Outgoing connections from this node
-* @prop {Array<Connection>} gated Connections this node gates
-* @prop {Connection} connections_self A self-connection
-* @prop {number} error.responsibility
-* @prop {number} error.projected
-* @prop {number} error.gated
-*
-* @example
-* let { Node } = require("@liquid-carrot/carrot");
-*
-* let node = new Node();
-*/
+ * Creates a new neuron/node
+ *
+ * Neurons are the basic unit of the neural network. They can be connected together, or used to gate connections between other neurons. A Neuron can perform basically 4 operations: form connections, gate connections, activate and [propagate](https://www.youtube.com/watch?v=Ilg3gGewQ5U).
+ *
+ * For more information check:
+ * - [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
+ * - [here](https://en.wikipedia.org/wiki/Artificial_neuron)
+ * - [here](https://wagenaartje.github.io/neataptic/docs/architecture/node/)
+ * - [here](https://github.com/cazala/synaptic/wiki/Neural-Networks-101)
+ * - [here](https://keras.io/backend/#bias_add)
+ *
+ * @constructs Node
+ *
+ * @param {Object|Node} [options] Options Object or template `Node`
+ * @param {number} [options.bias] Neuron's bias [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
+ *
+ * @prop {number} bias Neuron's bias [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
+ * @prop {activation} squash [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0)
+ * @prop {string} type
+ * @prop {number} activation Output value
+ * @prop {number} state
+ * @prop {number} old
+ * @prop {number} mask=1 Used for dropout. This is either 0 (ignored) or 1 (included) during training and is used to avoid [overfit](https://www.kdnuggets.com/2015/04/preventing-overfitting-neural-networks.html).
+ * @prop {number} previousDeltaBias
+ * @prop {number} totalDeltaBias
+ * @prop {Array<Connection>} incoming Incoming connections to this node
+ * @prop {Array<Connection>} outgoing Outgoing connections from this node
+ * @prop {Array<Connection>} gated Connections this node gates
+ * @prop {Connection} connections_self A self-connection
+ * @prop {number} error.responsibility
+ * @prop {number} error.projected
+ * @prop {number} error.gated
+ *
+ * @example
+ * let { Node } = require("@liquid-carrot/carrot");
+ *
+ * let node = new Node();
+ */
 function Node(options) {
   let self = this;
 
@@ -389,18 +391,19 @@ function Node(options) {
 
     options = options || {};
 
-    if (nodes instanceof Node) {
+    if (nodes instanceof Node || nodes instanceof PoolNode) {
       if (nodes === self) {
         self.connections_self.weight = weight || 1;
         return self.connections_self;
-      } else if (self.isProjectingTo(nodes)) throw new ReferenceError("Node is already projecting to 'target'");
-      else {
+      } else if (self.isProjectingTo(nodes)) {
+        throw new ReferenceError('Node is already projecting to \'target\'');
+      } else {
         const connection = new Connection(self, nodes, weight, options);
 
         self.outgoing.push(connection);
         nodes.incoming.push(connection);
 
-        if(options.twosided) nodes.connect(self);
+        if (options.twosided) nodes.connect(self);
 
         return connection;
       }
@@ -415,12 +418,28 @@ function Node(options) {
         nodes[index].incoming.push(connection);
         connections.push(connection);
 
-        if(options.twosided) nodes[index].connect(self);
+        if (options.twosided) nodes[index].connect(self);
       }
 
       return connections;
+    } else if (nodes instanceof ConvolutionalNode) {
+      nodes = nodes.nodes;
+      const connections = [];
+
+      for (let index = 0; index < nodes.length; index++) {
+        const connection = new Connection(self, nodes[index], weight, options);
+
+        self.outgoing.push(connection);
+        nodes[index].incoming.push(connection);
+        connections.push(connection);
+
+        if (options.twosided) nodes[index].connect(self);
+      }
+      return connections;
+    } else {
+      console.log(nodes);
+      throw new TypeError(`Parameter 'target': Expected 'Node' or 'Node[]' - but recieved, ${nodes}`);
     }
-    else throw new TypeError(`Parameter 'target': Expected 'Node' or 'Node[]' - but recieved, ${nodes}`);
   },
 
   /**
