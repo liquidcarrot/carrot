@@ -192,11 +192,19 @@ DDPG.prototype = {
    * @memberof DDPG
    *
    * @param {number[]} state current state (float arr with values from [0,1])
+   * @param {number[]} prohibitedActions all prohibited actions at this state
    * @return {int|number[]} The action which the DQN would take at this state; action ∈ [0, this.numActions-1] or the complete action array with the QValues for continuous tasks
    */
-  act: function(state) {
+  act: function(state, prohibitedActions) {
+    if (prohibitedActions === undefined) {
+      prohibitedActions = [];
+    }
+
     let noiseFactor = Math.max(this.noiseStandardDeviationMin, Rate.EXP(this.noiseStandardDeviation, this.timeStep, {gamma: this.noiseStandardDeviationDecay}));
     let action = Utils.addGaussianNoiseToNetwork(this.actor, noiseFactor).activate(state);
+    for (let i = 0; i < prohibitedActions.length; i++) {
+      action[prohibitedActions[i]] = -1;
+    }
     this.actions = action;
     this.lastState = this.state;
     this.state = state;
