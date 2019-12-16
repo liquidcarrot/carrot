@@ -3,6 +3,7 @@ const methods = require('../methods/methods');
 const Connection = require('./connection');
 //const PoolNode = require('./pool_node');
 const config = require('../config');
+const math = require('../util/math');
 // const Group = require("./group");
 // const Layer = require("./layer");
 
@@ -423,7 +424,6 @@ function Node(options) {
       return connections;
     } else if (nodes.nodes !== undefined && Array.isArray(nodes.nodes)) {
       const connections = [];
-
       for (let index = 0; index < nodes.nodes.length; index++) {
         const connection = new Connection(self, nodes.nodes[index], weight, options);
 
@@ -433,6 +433,9 @@ function Node(options) {
         nodes.incoming.push(connection);
 
         if (options.twosided) nodes.nodes[index].connect(self);
+      }
+      while (nodes.outgoing.length > math.multiply(nodes.dimension)) {
+        nodes.dimension[Math.random() <= 0.5 ? 0 : 1]++;
       }
       return connections;
     } else {
