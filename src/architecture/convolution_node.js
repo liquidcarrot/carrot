@@ -5,8 +5,8 @@ const math = require('./../util/math');
 
 
 function ConvolutionalNode(dimension) {
-  if(dimension === undefined){
-    dimension = [1, 1];
+  if(dimension === undefined || !Array.isArray(dimension)){
+    throw new TypeError("Dimensions is required and must be an array of numbers");
   }
   this.nodes = [];
   this.connectionsSelf = [];
@@ -17,9 +17,8 @@ function ConvolutionalNode(dimension) {
   this.nodes = [];
 
   // creating nodes
-  let index = 0;
   for (let i = 0; i < math.multiply(this.dimension); i++) {
-    this.nodes[index] = new Node({type: 'hidden'});
+    this.nodes.push(new Node({type: 'hidden'}));
   }
 
 }
