@@ -8,8 +8,8 @@ const math = require('./../util/math');
 
 
 function ConvolutionalNode(dimension) {
-  if(dimension === undefined || !Array.isArray(dimension)){
-    throw new TypeError("Dimensions is required and must be an array of numbers");
+  if (dimension === undefined || !Array.isArray(dimension)) {
+    throw new TypeError('Dimensions is required and must be an array of numbers');
   }
 
   this.nodes = [];
@@ -24,7 +24,6 @@ function ConvolutionalNode(dimension) {
   for (let i = 0; i < math.multiply(this.dimension); i++) {
     this.nodes.push(new Node({type: 'hidden'}));
   }
-
 }
 
 ConvolutionalNode.prototype = {
@@ -303,8 +302,15 @@ ConvolutionalNode.prototype = {
           }
         }
     }
-  }
-  ,
+  },
+
+
+  /**
+   * @todo
+   */
+  mutate: function(method) {
+
+  },
 
 
   /**
@@ -317,8 +323,7 @@ ConvolutionalNode.prototype = {
     for (let index = 0; index < this.nodes.length; index++) {
       Object.assign(this.nodes[index], options);
     }
-  }
-  ,
+  },
 
 
   /**
@@ -358,8 +363,7 @@ ConvolutionalNode.prototype = {
         this.outgoing = this.outgoing.filter(connection => connection.from !== this.nodes[i] || connection.to !== target);
       }
     }
-  }
-  ,
+  },
 
 
   /**
@@ -369,8 +373,7 @@ ConvolutionalNode.prototype = {
     for (let i = 0; i < this.nodes.length; i++) {
       this.nodes[i].clear();
     }
-  }
-  ,
+  },
 
 
   /**
@@ -387,8 +390,7 @@ ConvolutionalNode.prototype = {
     if (math.multiply(this.dimension) >= this.nodes.length + nodesToAdd.length) {
       this.nodes.push(...nodesToAdd);
     }
-  }
-  ,
+  },
 };
 
 module.exports = ConvolutionalNode;
