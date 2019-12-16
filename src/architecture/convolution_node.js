@@ -8,6 +8,7 @@ function ConvolutionalNode(dimension) {
   if(dimension === undefined || !Array.isArray(dimension)){
     throw new TypeError("Dimensions is required and must be an array of numbers");
   }
+
   this.nodes = [];
   this.connectionsSelf = [];
   this.incomingDimension = [];
@@ -31,14 +32,14 @@ ConvolutionalNode.prototype = {
    */
   activate: function(inputs) {
     if (math.multiply(this.dimension) < this.outgoing.length) {
-      throw new ReferenceError('Can\'t have more outgoing connections than filter dimension!');
+      throw new RangeError('Can\'t have more outgoing connections than filter dimension!');
     }
     if (math.multiply(this.dimension) > this.incoming.length) {
-      throw new ReferenceError('Filter dimension can\'t be greater than incoming connections!');
+      throw new RangeError('Filter dimension can\'t be greater than incoming connections!');
     }
     for (let i = 0; i < this.dimension.length; i++) {
       if (this.dimension[i] > this.incomingDimension[i]) {
-        throw new ReferenceError('Filter dimension can\'t be greater than incoming connections!');
+        throw new RangeError('Filter dimension can\'t be greater than incoming connections!');
       }
     }
     if (inputs !== undefined && inputs.length !== math.multiply(this.incomingDimension)) {
@@ -115,7 +116,7 @@ ConvolutionalNode.prototype = {
    *
    *
    * @param {Group|Layer|Node} target Node(s) to form connections to
-   * @param {connection} method [Connection Method](connection), determines how the nodes in this group will connect to the target (e.g. one-to-one, all-to-all)
+   * @param {methods.connections} method [Connection Method](connection), determines how the nodes in this group will connect to the target (e.g. one-to-one, all-to-all)
    * @param {number} weight Weight of the connection(s)
    *
    * @returns {Connection[]} The formed connections
