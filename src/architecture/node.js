@@ -524,8 +524,8 @@ function Node(options) {
             self.outgoing.splice(j, 1);
             connection.to.incoming.splice(connection.to.incoming.indexOf(connection), 1);
 
-            if(connection.gater != undefined) connection.gater.ungate(connection);
-            if(options.twosided) nodes[i].disconnect(self);
+            if (connection.gater != undefined) connection.gater.ungate(connection);
+            if (options.twosided) nodes[i].disconnect(self);
 
             connections.push(connection);
 
@@ -535,8 +535,33 @@ function Node(options) {
       }
 
       return connections;
+    } else if (nodes.nodes !== undefined && Array.isArray(nodes.nodes)) {
+      const connections = [];
+
+      for (let i = 0; i < nodes.nodes.length; i++) {
+        for (let j = 0; j < self.outgoing.length; j++) {
+          const connection = self.outgoing[j];
+          if (connection.to === nodes.nodes[i]) {
+            self.outgoing.splice(j, 1);
+            connection.to.incoming.splice(connection.to.incoming.indexOf(connection), 1);
+
+            if (connection.gater !== undefined) {
+              connection.gater.ungate(connection);
+            }
+            if (options.twosided) {
+              nodes.disconnect(self);
+            }
+
+            connections.push(connection);
+            break;
+          }
+        }
+      }
+
+      return connections;
+    } else {
+      throw new TypeError(`Parameter 'target': Expected 'Node' or 'Node[]' - but recieved, ${nodes}`);
     }
-    else throw new TypeError(`Parameter 'target': Expected 'Node' or 'Node[]' - but recieved, ${nodes}`);
   },
 
   /**

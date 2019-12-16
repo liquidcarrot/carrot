@@ -535,8 +535,13 @@ function Network(input_size, output_size) {
       }
       case "ADD_SELF_CONN": {
         for (let i = self.input_size; i < self.nodes.length; i++) {
-          const node = self.nodes[i]
-          if (node.connections_self.weight === 0) candidates.push(node)
+          const node = self.nodes[i];
+          if (node instanceof ConvolutionalNode) {
+            break;
+          }
+          if (node.connections_self.weight === 0) {
+            candidates.push(node);
+          }
         }
 
         return candidates.length ? candidates : false
@@ -781,7 +786,13 @@ function Network(input_size, output_size) {
         if (self.nodes.length <= self.input_size) return null;
         // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
         const node_to_mutate = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)];
-        node_to_mutate.mutate(method);
+        if (node_to_mutate instanceof ConvolutionalNode) {
+          for (let i = 0; i < node_to_mutate.nodes.length; i++) {
+            node_to_mutate.nodes[i].mutate(method);
+          }
+        } else {
+          node_to_mutate.mutate(method);
+        }
 
         return self;
       }
@@ -1931,12 +1942,25 @@ Network.crossOver = function(network1, network2, equal) {
       const chosen_node_index = Math.floor(Math.random() * source_network.nodes.length);
       chosen_node = source_network.nodes[chosen_node_index];
     }
-
-    const new_node = new Node({
-      bias: chosen_node.bias,
-      squash: typeof chosen_node.nodes === `undefined` ? chosen_node.squash : chosen_node.nodes[0].squash,
-      type: chosen_node.type,
-    });
+    let new_node;
+    if (chosen_node instanceof ConvolutionalNode) {
+      new_node = new ConvolutionalNode(chosen_node.dimension);
+      for (let i = 0; i < chosen_node.nodes.length; i++) {
+        new_node.nodes[i] = new Node({
+          bias: chosen_node.nodes[i].bias,
+          squash: chosen_node.nodes[i].squash,
+          type: chosen_node.nodes[i].type,
+        });
+      }
+    } else if (chosen_node instanceof PoolNode) {
+      new_node = new PoolNode(chosen_node.dimension);
+    } else {
+      new_node = new Node({
+        bias: chosen_node.bias,
+        squash: chosen_node.squash,
+        type: chosen_node.type,
+      });
+    }
 
     // add to the corresponding set if input or output
     if (chosen_node_type === 'input') {

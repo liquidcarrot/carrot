@@ -1,7 +1,9 @@
 const methods = require('../methods/methods');
 const config = require('../config');
 const Node = require('./node');
+const Group = require('./group');
 const PoolNode = require('./pool_node');
+const Connection = require('./connection');
 const math = require('./../util/math');
 
 
@@ -36,6 +38,8 @@ ConvolutionalNode.prototype = {
       inputs = undefined; //don't wont objects really
     }
     if (math.multiply(this.dimension) < this.outgoing.length) {
+      console.log(math.multiply(this.dimension) + ' - ' + this.outgoing.length);
+      //TODO this is thrown at npm test
       throw new RangeError('Can\'t have more outgoing connections than filter dimension!');
     }
     if (math.multiply(this.dimension) > this.incoming.length) {
@@ -186,11 +190,69 @@ ConvolutionalNode.prototype = {
   },
 
   /**
+   * Checks if this node has an outgoing connection(s) into the given node(s)
+   *
+   * @function isProjectingTo
+   * @memberof Node
+   *
+   * @param {Node|Node[]} nodes Checks if this node has outgoing connection(s) into `node(s)`
+   *
+   * @returns {boolean} Returns true, iff this node has an outgoing connection into every node(s)
+   *
+   * @example <caption>Check one <code>node</code></caption>
+   * const { Node } = require("@liquid-carrot/carrot");
+   *
+   * let other_node = new Node();
+   * let node = new Node();
+   * node.connect(other_node);
+   *
+   * console.log(node.isProjectingTo(other_node)); // true
+   *
+   * @example <caption>Check many <code>nodes</code></caption>
+   * const { Node } = require("@liquid-carrot/carrot");
+   *
+   * let other_nodes = Array.from({ length: 5 }, () => new Node());
+   * let node = new Node();
+   *
+   * other_nodes.forEach(other_node => node.connect(other_node));
+   *
+   * console.log(node.isProjectingTo(other_nodes)); // true
+   */
+  isProjectingTo: function(nodes) {
+    if (nodes === undefined) throw new ReferenceError('Missing required parameter \'nodes\'');
+
+    if (nodes === this) {
+      return this.connections_self.weight !== 0;
+    } else if (!Array.isArray(nodes)) {
+      for (let i = 0; i < this.outgoing.length; i++) {
+        if (this.outgoing[i].to === nodes) {
+          return true;
+        }
+      }
+      return false;
+    } else {
+      // START: nodes.every()
+      let projecting_to = 0;
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = 0; j < this.outgoing.length; j++) {
+          if (this.outgoing[j].to === nodes[i]) {
+            projecting_to++;
+            break;
+          }
+        }
+      }
+      // END: nodes.every()
+
+      return nodes.length === projecting_to;
+    }
+  },
+
+  /**
    *
    * @param {Connection[]|Connection} connections Connections to gate
    * @param {gating} method [Gating Method](gating)
    */
-  gate: function(connections, method) {
+  gate: function(connections, method = methods.gating.INPUT /*todo delete this default value */) {
     if (method === undefined) throw new TypeError('Please specify Gating.INPUT, Gating.OUTPUT');
 
     if (!Array.isArray(connections)) connections = [connections];
@@ -241,7 +303,8 @@ ConvolutionalNode.prototype = {
           }
         }
     }
-  },
+  }
+  ,
 
 
   /**
@@ -254,7 +317,8 @@ ConvolutionalNode.prototype = {
     for (let index = 0; index < this.nodes.length; index++) {
       Object.assign(this.nodes[index], options);
     }
-  },
+  }
+  ,
 
 
   /**
@@ -294,7 +358,8 @@ ConvolutionalNode.prototype = {
         this.outgoing = this.outgoing.filter(connection => connection.from !== this.nodes[i] || connection.to !== target);
       }
     }
-  },
+  }
+  ,
 
 
   /**
@@ -304,7 +369,8 @@ ConvolutionalNode.prototype = {
     for (let i = 0; i < this.nodes.length; i++) {
       this.nodes[i].clear();
     }
-  },
+  }
+  ,
 
 
   /**
@@ -321,7 +387,8 @@ ConvolutionalNode.prototype = {
     if (math.multiply(this.dimension) >= this.nodes.length + nodesToAdd.length) {
       this.nodes.push(...nodesToAdd);
     }
-  },
+  }
+  ,
 };
 
 module.exports = ConvolutionalNode;
