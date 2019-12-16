@@ -422,17 +422,17 @@ function Node(options) {
 
       return connections;
     } else if (nodes.nodes !== undefined && Array.isArray(nodes.nodes)) {
-      nodes = nodes.nodes;
       const connections = [];
 
       for (let index = 0; index < nodes.length; index++) {
-        const connection = new Connection(self, nodes[index], weight, options);
+        const connection = new Connection(self, nodes.nodes[index], weight, options);
 
         self.outgoing.push(connection);
-        nodes[index].incoming.push(connection);
+        nodes.nodes[index].incoming.push(connection);
         connections.push(connection);
+        nodes.incoming.push(connection);
 
-        if (options.twosided) nodes[index].connect(self);
+        if (options.twosided) nodes.nodes[index].connect(self);
       }
       return connections;
     } else {
