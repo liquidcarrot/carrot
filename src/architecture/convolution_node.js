@@ -16,7 +16,7 @@ function ConvolutionalNode(dimension) {
   // creating nodes
   let index = 0;
   for (let i = 0; i < math.multiply(this.dimension); i++) {
-    this.nodes[index] = new Node();
+    this.nodes[index] = new Node({type: 'hidden'});
   }
 
 }
