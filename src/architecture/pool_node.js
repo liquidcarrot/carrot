@@ -2,6 +2,7 @@ const methods = require('../methods/methods');
 const config = require('../config');
 const Connection = require('./connection');
 const Node = require('./node');
+const ConvolutionalNode = require('./convolution_node');
 const math = require('./../util/math');
 
 
@@ -88,7 +89,7 @@ PoolNode.prototype = {
 
   /**
    *
-   * @param {Node|Node[]} nodes Node(s) to project connection(s) to
+   * @param {Node|Node[]|ConvolutionalNode|PoolNode} nodes Node(s) to project connection(s) to
    * @param {number} [weight] Initial connection(s) [weight](https://en.wikipedia.org/wiki/Synaptic_weight)
    * @param {Object} [options={}]
    *
@@ -104,7 +105,7 @@ PoolNode.prototype = {
 
     options = options || {};
 
-    if (nodes instanceof Node) {
+    if (nodes instanceof Node || nodes instanceof PoolNode) {
       if (this.isProjectingTo(nodes)) {
         throw new ReferenceError('Node is already projecting to \'target\'');
       } else {
@@ -133,6 +134,20 @@ PoolNode.prototype = {
         }
       }
 
+      return connections;
+    } else if (nodes.nodes !== undefined && Array.isArray(nodes.nodes)) {
+      nodes = nodes.nodes;
+      const connections = [];
+
+      for (let index = 0; index < nodes.length; index++) {
+        const connection = new Connection(self, nodes[index], weight, options);
+
+        self.outgoing.push(connection);
+        nodes[index].incoming.push(connection);
+        connections.push(connection);
+
+        if (options.twosided) nodes[index].connect(self);
+      }
       return connections;
     } else {
       throw new TypeError(`Parameter 'target': Expected 'Node' or 'Node[]' - but recieved, ${nodes}`);
@@ -169,7 +184,7 @@ PoolNode.prototype = {
   disconnect: function(target, twosided) {
     twosided = twosided || false;
 
-    if (target instanceof Group) {
+    if (target instanceof Group || target instanceof ConvolutionalNode) {
       for (let i = 0; i < this.nodes.length; i++) {
         for (let j = 0; j < target.nodes.length; j++) {
           this.nodes[i].disconnect(target.nodes[j], {twosided});
@@ -188,7 +203,7 @@ PoolNode.prototype = {
           });
         }
       }
-    } else if (target instanceof Node) {
+    } else if (target instanceof Node || target instanceof PoolNode) {
       for (let i = 0; i < this.nodes.length; i++) {
         this.nodes[i].disconnect(target, {twosided});
 

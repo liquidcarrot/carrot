@@ -1,6 +1,7 @@
 const methods = require('../methods/methods');
 const config = require('../config');
 const Node = require('./node');
+const PoolNode = require('./pool_node');
 const math = require('./../util/math');
 
 
@@ -139,9 +140,10 @@ ConvolutionalNode.prototype = {
       targetNodes = target.input_nodes;
     } else if (target.nodes) {
       targetNodes = target.nodes;
-    } else if (target instanceof Node) {
+    } else if (target instanceof PoolNode || target instanceof Node) {
       targetNodes = [target];
     } else {
+      console.log(typeof target);
       throw new TypeError('Type of target not supported');
     }
 

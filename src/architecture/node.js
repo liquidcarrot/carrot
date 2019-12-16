@@ -1,8 +1,7 @@
 const _ = require('lodash');
 const methods = require('../methods/methods');
 const Connection = require('./connection');
-const PoolNode = require('./pool_node');
-const ConvolutionalNode = require('./convolution_node');
+//const PoolNode = require('./pool_node');
 const config = require('../config');
 // const Group = require("./group");
 // const Layer = require("./layer");
@@ -382,16 +381,17 @@ function Node(options) {
   * console.log(connection); // Connection { from: [Object object], to: [Object object], ...}
   */
   self.connect = function(nodes, weight, options) {
-    if (nodes == undefined) throw new ReferenceError("Missing required parameter 'nodes'");
+    if (nodes == undefined) throw new ReferenceError('Missing required parameter \'nodes\'');
 
-    if(options == undefined && typeof weight === "object") {
+    if (options == undefined && typeof weight === 'object') {
       options = weight;
       weight = undefined;
     }
 
     options = options || {};
 
-    if (nodes instanceof Node || nodes instanceof PoolNode) {
+    //if (nodes instanceof Node || nodes instanceof PoolNode) {
+    if (nodes instanceof Node) {
       if (nodes === self) {
         self.connections_self.weight = weight || 1;
         return self.connections_self;
@@ -407,8 +407,7 @@ function Node(options) {
 
         return connection;
       }
-    }
-    else if (Array.isArray(nodes)) {
+    } else if (Array.isArray(nodes)) {
       const connections = [];
 
       for (let index = 0; index < nodes.length; index++) {
@@ -422,7 +421,7 @@ function Node(options) {
       }
 
       return connections;
-    } else if (nodes instanceof ConvolutionalNode) {
+    } else if (nodes.nodes !== undefined && Array.isArray(nodes.nodes)) {
       nodes = nodes.nodes;
       const connections = [];
 
