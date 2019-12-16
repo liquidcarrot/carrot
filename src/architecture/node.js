@@ -176,14 +176,14 @@ function Node(options) {
 
       return self.activation;
     } else {
-      if(self.type === "input") return self.activation = 0
+      if (self.type === 'input') return self.activation = 0;
 
-      self.state = activate()
-      self.activation = self.squash(self.state) // Squash Activation
+      self.state = activate();
+      self.activation = self.squash(self.state); // Squash Activation
 
       // Adjust 'gain' (to gated connections)
       for (let i = 0; i < self.gated.length; i++) {
-        self.gated[i].gain = self.activation
+        self.gated[i].gain = self.activation;
       }
 
       return self.activation;
@@ -436,7 +436,6 @@ function Node(options) {
       }
       return connections;
     } else {
-      console.log(nodes);
       throw new TypeError(`Parameter 'target': Expected 'Node' or 'Node[]' - but recieved, ${nodes}`);
     }
   },

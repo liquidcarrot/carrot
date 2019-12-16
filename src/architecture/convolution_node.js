@@ -146,7 +146,6 @@ ConvolutionalNode.prototype = {
     } else if (target instanceof PoolNode || target instanceof Node) {
       targetNodes = [target];
     } else {
-      console.log(typeof target);
       throw new TypeError('Type of target not supported');
     }
 
@@ -183,7 +182,6 @@ ConvolutionalNode.prototype = {
         target.incoming.push(connection);
       }
     }
-
     return newConnections;
   },
 
