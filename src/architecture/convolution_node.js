@@ -5,6 +5,9 @@ const math = require('./../util/math');
 
 
 function ConvolutionalNode(dimension) {
+  if(dimension === undefined){
+    dimension = [1, 1];
+  }
   this.nodes = [];
   this.connectionsSelf = [];
   this.incomingDimension = [];
