@@ -28,10 +28,13 @@ function ConvolutionalNode(dimension) {
 ConvolutionalNode.prototype = {
   /**
    *
-   * @param {number[]} inputs
+   * @param {number[]|object} inputs
    * @returns {number[]} output
    */
   activate: function(inputs) {
+    if (!Array.isArray(inputs) || !isNaN(inputs[0])) {
+      inputs = undefined; //don't wont objects really
+    }
     if (math.multiply(this.dimension) < this.outgoing.length) {
       throw new RangeError('Can\'t have more outgoing connections than filter dimension!');
     }

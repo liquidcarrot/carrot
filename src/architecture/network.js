@@ -1843,12 +1843,29 @@ Network.crossOver = function(network1, network2, equal) {
 
   // Set indexes so we don't need indexOf
   let i;
+  let nodeIndex = 0;
   for (i = 0; i < network1.nodes.length; i++) {
-    network1.nodes[i].index = i;
+    if (typeof network1.nodes[i].nodes !== `undefined` && Array.isArray(network1.nodes[i].nodes)) {
+      for (let j = 0; j < network1.nodes[i].nodes.length; j++) {
+        network1.nodes[i].nodes[j].index = nodeIndex;
+        nodeIndex++;
+      }
+    } else {
+      network1.nodes[i].index = nodeIndex;
+      nodeIndex++;
+    }
   }
-
+  nodeIndex = 0;
   for (i = 0; i < network2.nodes.length; i++) {
-    network2.nodes[i].index = i;
+    if (typeof network2.nodes[i].nodes !== `undefined` && Array.isArray(network2.nodes[i].nodes)) {
+      for (let j = 0; j < network2.nodes[i].nodes.length; j++) {
+        network2.nodes[i].nodes[j].index = nodeIndex;
+        nodeIndex++;
+      }
+    } else {
+      network2.nodes[i].index = nodeIndex;
+      nodeIndex++;
+    }
   }
 
   // Assign nodes from parents to offspring
@@ -1917,7 +1934,7 @@ Network.crossOver = function(network1, network2, equal) {
 
     const new_node = new Node({
       bias: chosen_node.bias,
-      squash: chosen_node.squash,
+      squash: typeof chosen_node.nodes === `undefined` ? chosen_node.squash : chosen_node.nodes[0].squash,
       type: chosen_node.type,
     });
 

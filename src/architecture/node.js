@@ -424,7 +424,7 @@ function Node(options) {
     } else if (nodes.nodes !== undefined && Array.isArray(nodes.nodes)) {
       const connections = [];
 
-      for (let index = 0; index < nodes.length; index++) {
+      for (let index = 0; index < nodes.nodes.length; index++) {
         const connection = new Connection(self, nodes.nodes[index], weight, options);
 
         self.outgoing.push(connection);

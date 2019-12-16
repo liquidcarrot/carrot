@@ -78,7 +78,7 @@ function Connection (from, to, weight, options) {
 * @returns {number} - An Integer that uniquely represents a pair of Integers
 */
 Connection.innovationID = function (a, b) {
-  if(a == undefined || b == undefined) throw new ReferenceError("Missing required parameter 'a' or 'b'");
+  if (a == undefined || b == undefined) throw new ReferenceError('Missing required parameter \'a\' or \'b\'');
 
   return 1 / 2 * (a + b) * (a + b + 1) + b;
 };
