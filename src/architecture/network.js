@@ -8,6 +8,7 @@ const Node = require('./node');
 const ConvolutionalNode = require('./convolution_node');
 const PoolNode = require('./pool_node');
 const _ = require('lodash');
+const math = require('./../util/math');
 
 // Easier variable naming
 const mutation = methods.mutation;
@@ -487,24 +488,24 @@ function Network(input_size, output_size) {
    * network.possible(mutation.SUB_NODE) // returns an array of nodes that can be removed
    */
   self.possible = function(method) {
-    const self = this
-    let candidates = []
+    const self = this;
+    let candidates = [];
     switch (method.name) {
       case 'SUB_NODE': {
         candidates = _.filter(self.nodes, function(node) {
-          return (!self.input_nodes.has(node) && !self.output_nodes.has(node));
+          return (!self.input_nodes.has(node) && !self.output_nodes.has(node) && !node instanceof ConvolutionalNode);
         }); // assumes input & output node 'type' has been set
         return candidates.length ? candidates : false;
       }
       case 'SUB_CONV_NODE': {
         candidates = _.filter(self.nodes, function(node) {
-          return (typeof node instanceof ConvolutionalNode) && (!self.input_nodes.has(node) && !self.output_nodes.has(node));
+          return typeof node instanceof ConvolutionalNode && !self.input_nodes.has(node) && !self.output_nodes.has(node);
         }); // assumes input & output node 'type' has been set
         return candidates.length ? candidates : false;
       }
       case 'SUB_POOL_NODE': {
         candidates = _.filter(self.nodes, function(node) {
-          return (typeof node instanceof PoolNode) && (!self.input_nodes.has(node) && !self.output_nodes.has(node));
+          return typeof node instanceof PoolNode && !self.input_nodes.has(node) && !self.output_nodes.has(node);
         }); // assumes input & output node 'type' has been set
         return candidates.length ? candidates : false;
       }
@@ -513,7 +514,9 @@ function Network(input_size, output_size) {
           const node1 = self.nodes[i];
           for (let j = Math.max(i + 1, self.input_size); j < self.nodes.length; j++) {
             const node2 = self.nodes[j];
-            if (!node1.isProjectingTo(node2)) candidates.push([node1, node2]);
+            if (!node1.isProjectingTo(node2) && (!node1 instanceof ConvolutionalNode || math.multiply(node1.incomingDimension) >= 1 + math.multiply(node1.dimension))) {
+              candidates.push([node1, node2]);
+            }
           }
         }
 
@@ -523,9 +526,11 @@ function Network(input_size, output_size) {
       case "SUB_CONN": {
         _.each(self.connections, (conn) => {
           // Check if it is not disabling a node
-          if (conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && self.nodes.indexOf(conn.to) > self.nodes.indexOf(conn.from))
-            candidates.push(conn)
-        })
+          if (conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && self.nodes.indexOf(conn.to) > self.nodes.indexOf(conn.from) &&
+            (!conn.to instanceof ConvolutionalNode || math.multiply(conn.to.incomingDimension) - 1 >= math.multiply(conn.to.dimension))) {
+            candidates.push(conn);
+          }
+        });
 
         return candidates.length ? candidates : false
       }
@@ -537,7 +542,11 @@ function Network(input_size, output_size) {
         for (let i = self.input_size; i < self.nodes.length; i++) {
           const node = self.nodes[i];
           if (node instanceof ConvolutionalNode) {
-            break;
+            for (let i = 0; i < node.connectionsSelf.length; i++) {
+              if (node.connectionsSelf[i].weight === 0) {
+                candidates.push(node);
+              }
+            }
           }
           if (node.connections_self.weight === 0) {
             candidates.push(node);
@@ -550,11 +559,34 @@ function Network(input_size, output_size) {
         // Very slow implementation.
         // TODO: Huge speed up by storing a Set is_self_connection<id -> node>
         for (let i = 0; i < self.connections.length; i++) {
-          const conn = self.connections[i]
-          if (conn.from == conn.to) candidates.push(conn)
+          const conn = self.connections[i];
+          if (conn.from instanceof ConvolutionalNode && conn.to instanceof ConvolutionalNode) {
+            for (let i = 0; i < conn.from.nodes; i++) {
+              for (let j = 0; j < conn.to.nodes; j++) {
+                if (conn.from.nodes[i] === conn.to.nodes[j]) {
+                  candidates.push(conn);
+                }
+              }
+            }
+          } else if (conn.from instanceof ConvolutionalNode) {
+            for (let i = 0; i < conn.from.nodes; i++) {
+              if (conn.from.nodes[i] === conn.to) {
+                candidates.push(conn);
+              }
+            }
+          } else if (conn.to instanceof ConvolutionalNode) {
+            for (let i = 0; i < conn.to.nodes; i++) {
+              if (conn.to.nodes[i] === conn.from) {
+                candidates.push(conn);
+              }
+            }
+          } else {
+            if (conn.from === conn.to) {
+              candidates.push(conn);
+            }
+          }
         }
-
-        return candidates.length ? candidates : false
+        return candidates.length ? candidates : false;
       }
       case "ADD_GATE": {
         self.connections.forEach((conn) => {
