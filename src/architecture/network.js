@@ -498,15 +498,15 @@ function Network(input_size, output_size) {
         return candidates.length ? candidates : false;
       }
       case 'SUB_CONV_NODE': {
-        candidates = _.filter(self.nodes, function(node) {
-          return typeof node instanceof ConvolutionalNode && !self.input_nodes.has(node) && !self.output_nodes.has(node);
-        }); // assumes input & output node 'type' has been set
+        candidates = _.filter(self.nodes, function (node) {
+          return node instanceof ConvolutionalNode;
+        });
         return candidates.length ? candidates : false;
       }
       case 'SUB_POOL_NODE': {
-        candidates = _.filter(self.nodes, function(node) {
-          return typeof node instanceof PoolNode && !self.input_nodes.has(node) && !self.output_nodes.has(node);
-        }); // assumes input & output node 'type' has been set
+        candidates = _.filter(self.nodes, function (node) {
+          return typeof node instanceof PoolNode
+        });
         return candidates.length ? candidates : false;
       }
       case 'ADD_CONN': {
