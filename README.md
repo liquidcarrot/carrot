@@ -90,7 +90,7 @@ Check out [this article](https://www.oreilly.com/radar/neuroevolution-a-differen
 
 💡 Curious about how neural-networks can understand speech and video?
 
-Check out [this video on Recurrent Neural Networks](https://www.youtube.com/watch?v=LHXXI4-IEns), from @LearnedVector, on YouTube
+Check out [this video on Recurrent Neural Networks](https://www.youtube.com/watch?v=LHXXI4-IEns), from [@LearnedVector](https://github.com/LearnedVector), on YouTube
 
 This is a simple **perceptron**:
 
