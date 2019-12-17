@@ -536,6 +536,11 @@ function Network(input_size, output_size) {
       }
       case "MOD_ACTIVATION": {
         candidates = _.filter(self.nodes, method.mutateOutput ? (node) => node.type !== 'input' : (node) => node.type !== 'input' && node.type !== 'output')
+        for (let i = 0; i < self.nodes.length; i++) {
+          if (self.nodes[i] instanceof ConvolutionalNode && candidates.indexOf(self.nodes[i]) !== -1) {
+            candidates.push(self.nodes[i]);
+          }
+        }
         return candidates.length ? candidates : false
       }
       case "ADD_SELF_CONN": {
@@ -561,29 +566,27 @@ function Network(input_size, output_size) {
         for (let i = 0; i < self.connections.length; i++) {
           const conn = self.connections[i];
           if (conn.from instanceof ConvolutionalNode && conn.to instanceof ConvolutionalNode) {
-            for (let i = 0; i < conn.from.nodes; i++) {
-              for (let j = 0; j < conn.to.nodes; j++) {
-                if (conn.from.nodes[i] === conn.to.nodes[j]) {
+            for (let x = 0; x < conn.from.nodes; x++) {
+              for (let y = 0; y < conn.to.nodes; y++) {
+                if (conn.from.nodes[x] === conn.to.nodes[y]) {
                   candidates.push(conn);
                 }
               }
             }
           } else if (conn.from instanceof ConvolutionalNode) {
-            for (let i = 0; i < conn.from.nodes; i++) {
-              if (conn.from.nodes[i] === conn.to) {
+            for (let x = 0; x < conn.from.nodes; x++) {
+              if (conn.from.nodes[x] === conn.to) {
                 candidates.push(conn);
               }
             }
           } else if (conn.to instanceof ConvolutionalNode) {
-            for (let i = 0; i < conn.to.nodes; i++) {
-              if (conn.to.nodes[i] === conn.from) {
+            for (let x = 0; x < conn.to.nodes; x++) {
+              if (conn.to.nodes[x] === conn.from) {
                 candidates.push(conn);
               }
             }
-          } else {
-            if (conn.from === conn.to) {
-              candidates.push(conn);
-            }
+          } else if (conn.from === conn.to) {
+            candidates.push(conn);
           }
         }
         return candidates.length ? candidates : false;
@@ -601,10 +604,33 @@ function Network(input_size, output_size) {
       }
       case "ADD_BACK_CONN": {
         for (let i = self.input_size; i < self.nodes.length; i++) {
-          const node1 = self.nodes[i]
+          const node1 = self.nodes[i];
           for (let j = self.input_size; j < i; j++) {
-            const node2 = self.nodes[j]
-            if (!node1.isProjectingTo(node2)) candidates.push([node1, node2])
+            const node2 = self.nodes[j];
+
+            if (node1 instanceof ConvolutionalNode && node2 instanceof ConvolutionalNode) {
+              for (let x = 0; x < node1.nodes.length; x++) {
+                for (let y = 0; y < node2.nodes.length; y++) {
+                  if (!node1.nodes[x].isProjectingTo(node2.nodes[y])) {
+                    candidates.push([node1.nodes[x], node2.nodes[y]]);
+                  }
+                }
+              }
+            } else if (node1 instanceof ConvolutionalNode) {
+              for (let x = 0; x < node1.nodes.length; x++) {
+                if (!node1.nodes[x].isProjectingTo(node2)) {
+                  candidates.push([node1.nodes[x], node2]);
+                }
+              }
+            } else if (node2 instanceof ConvolutionalNode) {
+              for (let x = 0; x < node2.nodes.length; x++) {
+                if (!node1.isProjectingTo(node2.nodes[x])) {
+                  candidates.push([node1, node2.nodes[x]]);
+                }
+              }
+            } else if (!node1.isProjectingTo(node2)) {
+              candidates.push([node1, node2])
+            }
           }
         }
 
@@ -612,17 +638,23 @@ function Network(input_size, output_size) {
       }
       case "SUB_BACK_CONN": {
         _.each(self.connections, (conn) => {
-          if (conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && self.nodes.indexOf(conn.from) > self.nodes.indexOf(conn.to))
+          if (conn.from.outgoing.length > 1
+            && conn.to.incoming.length > 1
+            && self.nodes.indexOf(conn.from) > self.nodes.indexOf(conn.to))
             candidates.push(conn)
-        })
+        });
 
         return candidates.length ? candidates : false
       }
       case "SWAP_NODES": {
         // break out early if there aren't enough nodes to swap
-        if((self.nodes.length - 1) - self.input_size - (method.mutateOutput ? 0 : self.output_size) < 2) return false;
+        if (self.nodes.length - 1 - self.input_size - (method.mutateOutput ? 0 : self.output_size) < 2) {
+          return false;
+        }
 
-        const filterFn = (method.mutateOutput) ? node => node.type !== `input` : (node) => (node.type !== `input` && node.type !== `output`);
+        const filterFn = (method.mutateOutput)
+          ? node => node.type !== `input`
+          : (node) => (node.type !== `input` && node.type !== `output`);
 
         candidates = _.filter(self.nodes, filterFn)
 
