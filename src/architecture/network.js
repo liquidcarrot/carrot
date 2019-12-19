@@ -444,6 +444,7 @@ function Network(input_size, output_size, options) {
         bias: chosen_node.bias,
         squash: chosen_node.squash,
         type: chosen_node.type,
+        id: chosen_node.id
       });
 
       // add to the corresponding set if input or output
@@ -512,6 +513,7 @@ function Network(input_size, output_size, options) {
  *
  * @todo Add custom [crossover](crossover) method customization
  * @todo Consider swapping gene matching algorithm
+ * @todo Ensure that nodes copied into new networks have same ids
  * @todo Add more tests
  */
   self.crossOver = function(other, options={}) {
