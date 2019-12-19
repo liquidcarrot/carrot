@@ -457,6 +457,7 @@ function Network(input_size, output_size, options) {
       offspring.nodes.push(new_node);
     }
 
+    // Select connections that will be passed down to offspring
     const connections = self.crossOver(other, options)
 
     // Construct offspring by adding connections
@@ -487,7 +488,7 @@ function Network(input_size, output_size, options) {
   }
 
   /**
- * Mix genetic material from two parent networks.
+ * Mix genetic material from two parent networks. Used to select connections that will be passed down to offspring network
  *
  * @param {Network} network1 First parent network
  * @param {Network} network2 Second parent network
@@ -528,6 +529,8 @@ function Network(input_size, output_size, options) {
       for (i = 0; i < network.connections.length; i++) {
         const conn = network.connections[i];
         const data = {
+          from: conn.from,
+          to: conn.to,
           fromIndex: conn.from.index,
           toIndex: conn.to.index,
           id: conn.id,
