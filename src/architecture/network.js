@@ -343,7 +343,7 @@ function Network(input_size, output_size, options) {
    *
    * @todo Add network construction flag to avoid having to over-write new Network properties
    * @todo Preserve ideal node activation order in offspring network
-   * @todo Add tests ensuring that connIds and nodeIds are passed on to the offspring
+   * @todo Add test to ensure that offspring .connIds and .nodeIds is a reference to parent's
    * @todo Add tests checking for parent-consistent input, hidden, output neurons in offspring
    * @todo Add tests ensuring that connections are enabled / disabled correctly
    * @todo Add more tests
@@ -353,8 +353,8 @@ function Network(input_size, output_size, options) {
       throw new Error("Networks don`t have the same input/output size!");
     }
 
-    // Initialise offspring
-    const offspring = new Network(self.input_size, self.output_size);
+    // Initialize offspring with node and connection id tracking
+    const offspring = new Network(self.input_size, self.output_size, { nodeIds: self.nodeIds, connIds: self.connIds });
     offspring.connections = [];
     offspring.nodes = [];
     offspring.input_nodes = new Set();
