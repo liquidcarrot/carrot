@@ -390,6 +390,7 @@ mutation.FFW = [
 mutation.NEATSTANDARD = [
   mutation.ADD_NODE,
   mutation.ADD_CONN,
+  mutation.MOD_WEIGHT
 ];
 
 module.exports = mutation;
