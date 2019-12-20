@@ -860,7 +860,8 @@ function Node(options) {
       bias: self.bias,
       type: self.type,
       squash: self.squash.name,
-      mask: self.mask
+      mask: self.mask,
+      shared: self.shared,
     };
   }
 }
