@@ -62,7 +62,7 @@ function Node(options) {
     incoming: [],
     outgoing: [],
     gated: [],
-    shared: [],
+    sharedIncoming: null,
     connections_self: new Connection(self, self, 0),
     error_responsibility: 0,
     error_projected: 0,
@@ -325,9 +325,8 @@ function Node(options) {
     self.delta_bias_total += options.rate * self.error_responsibility;
     if (options.update) {
       self.delta_bias_total += options.momentum * self.delta_bias_previous;
-      self.bias += self.delta_bias_total;
-      for (let i = 0; i < self.shared.length; i++) {
-        self.shared[i].bias = self.bias;
+      if (self.sharedIncoming === null) {
+        self.bias += self.delta_bias_total;
       }
       self.delta_bias_previous = self.delta_bias_total;
       self.delta_bias_total = 0;
@@ -710,9 +709,8 @@ function Node(options) {
         }
         break;
       case methods.mutation.MOD_BIAS:
-        self.bias += Math.random() * (options.method.max - options.method.min) + options.method.min;
-        for (let i = 0; i < self.shared.length; i++) {
-          self.shared[i].bias = self.bias;
+        if (self.sharedIncoming === null) {
+          self.bias += Math.random() * (options.method.max - options.method.min) + options.method.min;
         }
         break;
     }

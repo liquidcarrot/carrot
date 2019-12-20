@@ -553,8 +553,8 @@ function Network(input_size, output_size) {
       }
       case 'SUB_SHARED_WEIGHT': {
         for (let i = 0; i < self.nodes.length; i++) {
-          for (let j = 0; j < self.nodes[i].shared.length; j++) {
-            candidates.push([self.nodes[i], self.nodes[i].shared[j]]);
+          if (self.nodes[i].sharedIncoming !== null) {
+            candidates.push(self.nodes[i]);
           }
         }
         return candidates.length > 0 ? candidates : false;
@@ -674,17 +674,13 @@ function Network(input_size, output_size) {
         if (possible.length >= 2) {
           // Return a random node out of the filtered collection
           const node1 = _.sample(possible);
-
           // Filter node1 from collection
           const possible2 = _.filter(possible, (node) => node !== node1);
-
           if (!possible2) return null;
-
           // Get random node from filtered collection (excludes node1)
           const node2 = _.sample(possible2);
-          node1.shared.push(node2);
-          node2.shared.push(node1);
-
+          node2.sharedIncoming = node1;
+          node2.bias = node1.bias;
           return self;
         }
 
@@ -693,11 +689,7 @@ function Network(input_size, output_size) {
       case 'SUB_SHARED_WEIGHT': {
         const possible = self.possible(method);
         if (possible) {
-          const nodePair = _.sample(possible);
-
-          nodePair[0].shared.splice(nodePair[0].shared.indexOf(nodePair[1]), 1);
-          nodePair[1].shared.splice(nodePair[1].shared.indexOf(nodePair[0]), 1);
-
+          _.sample(possible).sharedIncoming = null;
           return self;
         }
 
