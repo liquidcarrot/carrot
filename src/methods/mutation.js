@@ -375,7 +375,9 @@ mutation.FFW = [
   mutation.MOD_WEIGHT,
   mutation.MOD_BIAS,
   mutation.MOD_ACTIVATION,
-  mutation.SWAP_NODES
+  mutation.SWAP_NODES,
+  mutation.ADD_SHARED_WEIGHT,
+  mutation.SUB_SHARED_WEIGHT,
 ];
 
 module.exports = mutation;
