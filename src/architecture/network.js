@@ -492,68 +492,83 @@ function Network(input_size, output_size) {
       }
       case "ADD_CONN": {
         for (let i = 0; i < self.nodes.length - self.output_size; i++) {
-          const node1 = self.nodes[i]
+          const node1 = self.nodes[i];
           for (let j = Math.max(i + 1, self.input_size); j < self.nodes.length; j++) {
-            const node2 = self.nodes[j]
-            if (!node1.isProjectingTo(node2)) candidates.push([node1, node2])
+            const node2 = self.nodes[j];
+            if (!node1.isProjectingTo(node2)) candidates.push([node1, node2]);
           }
         }
 
-        return candidates.length ? candidates : false
+        return candidates.length ? candidates : false;
       }
-      case "REMOVE_CONN": // alias for sub_conn
-      case "SUB_CONN": {
+      case 'REMOVE_CONN': // alias for sub_conn
+      case 'SUB_CONN': {
         _.each(self.connections, (conn) => {
           // Check if it is not disabling a node
-          if (conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && self.nodes.indexOf(conn.to) > self.nodes.indexOf(conn.from))
-            candidates.push(conn)
-        })
+          if (conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && self.nodes.indexOf(conn.to) > self.nodes.indexOf(conn.from)) {
+            candidates.push(conn);
+          }
+        });
 
-        return candidates.length ? candidates : false
+        return candidates.length ? candidates : false;
       }
-      case "MOD_ACTIVATION": {
-        candidates = _.filter(self.nodes, method.mutateOutput ? (node) => node.type !== 'input' : (node) => node.type !== 'input' && node.type !== 'output')
-        return candidates.length ? candidates : false
+      case 'MOD_ACTIVATION': {
+        candidates = _.filter(self.nodes, method.mutateOutput ? (node) => node.type !== 'input' : (node) => node.type !== 'input' && node.type !== 'output');
+        return candidates.length ? candidates : false;
       }
-      case "ADD_SELF_CONN": {
+      case 'ADD_SELF_CONN': {
         for (let i = self.input_size; i < self.nodes.length; i++) {
-          const node = self.nodes[i]
-          if (node.connections_self.weight === 0) candidates.push(node)
+          const node = self.nodes[i];
+          if (node.connections_self.weight === 0) candidates.push(node);
         }
 
-        return candidates.length ? candidates : false
+        return candidates.length ? candidates : false;
       }
-      case "SUB_SELF_CONN": {
+      case 'SUB_SELF_CONN': {
         // Very slow implementation.
         // TODO: Huge speed up by storing a Set is_self_connection<id -> node>
         for (let i = 0; i < self.connections.length; i++) {
-          const conn = self.connections[i]
-          if (conn.from == conn.to) candidates.push(conn)
+          const conn = self.connections[i];
+          if (conn.from == conn.to) candidates.push(conn);
         }
 
-        return candidates.length ? candidates : false
+        return candidates.length ? candidates : false;
       }
-      case "ADD_GATE": {
+      case 'ADD_GATE': {
         self.connections.forEach((conn) => {
           if (conn.gater === null) {
             candidates.push(conn);
           }
         });
-        return candidates.length ? candidates : false
+        return candidates.length ? candidates : false;
       }
-      case "SUB_GATE": {
-        return (self.gates.length > 0) ? [] : false
+      case 'SUB_GATE': {
+        return (self.gates.length > 0) ? [] : false;
       }
-      case "ADD_BACK_CONN": {
+      case 'ADD_SHARED_WEIGHT': {
+        candidates = _.filter(self.nodes, function(node) {
+          return !self.input_nodes.has(node) && !self.output_nodes.has(node);
+        }); // assumes input & output node 'type' has been set
+        return candidates.length > 0 ? candidates : false;
+      }
+      case 'SUB_SHARED_WEIGHT': {
+        for (let i = 0; i < self.nodes.length; i++) {
+          for (let j = 0; j < self.nodes[i].shared.length; j++) {
+            candidates.push([self.nodes[i], self.nodes[i].shared[j]]);
+          }
+        }
+        return candidates.length > 0 ? candidates : false;
+      }
+      case 'ADD_BACK_CONN': {
         for (let i = self.input_size; i < self.nodes.length; i++) {
-          const node1 = self.nodes[i]
+          const node1 = self.nodes[i];
           for (let j = self.input_size; j < i; j++) {
-            const node2 = self.nodes[j]
-            if (!node1.isProjectingTo(node2)) candidates.push([node1, node2])
+            const node2 = self.nodes[j];
+            if (!node1.isProjectingTo(node2)) candidates.push([node1, node2]);
           }
         }
 
-        return candidates.length ? candidates : false
+        return candidates.length ? candidates : false;
       }
       case "SUB_BACK_CONN": {
         _.each(self.connections, (conn) => {
@@ -614,10 +629,10 @@ function Network(input_size, output_size) {
     switch (method.name) {
       // Looks for an existing connection and places a node in between
       case "ADD_NODE": {
-        if(self.nodes.length >= maxNodes) return null
+        if (self.nodes.length >= maxNodes) return null;
 
-        const node = new Node({ type: 'hidden' })
-        if (mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION) // this should be an option passed into the Node constructor
+        const node = new Node({type: 'hidden'});
+        if (mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION); // this should be an option passed into the Node constructor
 
         // Note for the future: this makes the assumption that nodes can only be placed
         // between existing connections, but what this means is that connections will never
@@ -625,110 +640,144 @@ function Network(input_size, output_size) {
         // This means connections across inputs / outputs will not be formed
         // And it also means that "peripheral" connections between output neurons and neurons that connect
         // back into the network will also not be formed.
-        const connection = getRandomConnection()
-        const from = connection.from
-        const to = connection.to
-        self.disconnect(from, to) // break the existing connection
+        const connection = getRandomConnection();
+        const from = connection.from;
+        const to = connection.to;
+        self.disconnect(from, to); // break the existing connection
 
         // Make sure new node is between from & to
         // Accomodates assumption that: nodes array is ordered: ["inputs", "hidden", "outputs"]
         // Should be agnostic by setting a node .type value and updating the way ".activate" works
-        let min_bound = self.nodes.indexOf(from) // Shouldn't use expensive ".indexOf", we should track neuron index numbers in the "to" & "from" of connections instead and access nodes later if needed
-        min_bound = (min_bound >= self.input_nodes.size - 1) ? min_bound : self.input_nodes.size - 1 // make sure after to insert after all input neurons
-        self.nodes.splice(min_bound + 1, 0, node) // assumes there is at least one output neuron
+        let min_bound = self.nodes.indexOf(from); // Shouldn't use expensive ".indexOf", we should track neuron index numbers in the "to" & "from" of connections instead and access nodes later if needed
+        min_bound = (min_bound >= self.input_nodes.size - 1) ? min_bound : self.input_nodes.size - 1; // make sure after to insert after all input neurons
+        self.nodes.splice(min_bound + 1, 0, node); // assumes there is at least one output neuron
 
         // Now create two new connections
-        const new_connection1 = self.connect(from, node)[0]
-        const new_connection2 = self.connect(node, to)[0]
+        const new_connection1 = self.connect(from, node)[0];
+        const new_connection2 = self.connect(node, to)[0];
 
-        const gater = connection.gater
-        if (gater != null) self.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2) // Check if the original connection was gated
+        const gater = connection.gater;
+        if (gater != null) self.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2); // Check if the original connection was gated
 
-        return self
+        return self;
       }
-      case "SUB_NODE": {
-        const possible = self.possible(method)
+      case 'SUB_NODE': {
+        const possible = self.possible(method);
         if (possible) {
-          self.remove(_.sample(possible))
-          return self
-        }
-        return null
-      }
-      case "ADD_CONN": {
-        if(self.connections.length >= maxConns) return null // Check user constraint
-
-        const possible = self.possible(method)
-        if (possible) {
-          const pair = possible[Math.floor(Math.random() * possible.length)]
-          self.connect(pair[0], pair[1])
-          return self
-        }
-
-        return null
-      }
-      case "REMOVE_CONN": // alias for sub_conn
-      case "SUB_CONN": {
-        const possible = self.possible(method)
-        if (possible) {
-          const chosen = _.sample(possible)
-          self.disconnect(chosen.from, chosen.to)
-          return self
-        }
-
-        return null
-      }
-      case "MOD_WEIGHT": {
-        const chosen_connection = getRandomConnection() // get a random connection to modify weight
-        chosen_connection.weight += Math.random() * (method.max - method.min) + method.min
-
-        return self
-      }
-      case "MOD_BIAS": {
-        if (self.nodes.length <= self.input_size) return null;
-        // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
-        const node_to_mutate = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)]
-        node_to_mutate.mutate(method)
-
-        return self
-      }
-      case "MOD_ACTIVATION": {
-        const possible = self.possible(method)
-        if (possible) {
-          _.sample(possible).mutate(method) // Mutate a random node out of filtered collection, MOD_ACTIVATION is a neuron-level concern
-          return self
-        }
-        return null
-      }
-      case "ADD_SELF_CONN": {
-        const possible = self.possible(method)
-        if (possible) {
-          const node = possible[Math.floor(Math.random() * possible.length)]
-          self.connect(node, node) // Create the self-connection
-          return self
-        }
-        return null
-      }
-      case "SUB_SELF_CONN": {
-        const possible = self.possible(method)
-        if (possible) {
-          const chosen_connection = possible[Math.floor(Math.random() * possible.length)];
-          self.disconnect(chosen_connection.from, chosen_connection.to);
-          return self
+          self.remove(_.sample(possible));
+          return self;
         }
         return null;
       }
-      case "ADD_GATE": {
-        // Check user constraint
-        if(self.gates.length >= maxGates) return null
+      case 'ADD_SHARED_WEIGHT': {
+        const possible = self.possible(method);
+        if (possible.length >= 2) {
+          // Return a random node out of the filtered collection
+          const node1 = _.sample(possible);
 
-        const possible = self.possible(method)
+          // Filter node1 from collection
+          const possible2 = _.filter(possible, (node) => node !== node1);
+
+          if (!possible2) return null;
+
+          // Get random node from filtered collection (excludes node1)
+          const node2 = _.sample(possible2);
+          node1.shared.push(node2);
+          node2.shared.push(node1);
+
+          return self;
+        }
+
+        return null;
+      }
+      case 'SUB_SHARED_WEIGHT': {
+        const possible = self.possible(method);
+        if (possible) {
+          const nodePair = _.sample(possible);
+
+          nodePair[0].shared.splice(nodePair[0].shared.indexOf(nodePair[1]), 1);
+          nodePair[1].shared.splice(nodePair[1].shared.indexOf(nodePair[0]), 1);
+
+          return self;
+        }
+
+        return null;
+      }
+      case 'ADD_CONN': {
+        if (self.connections.length >= maxConns) return null; // Check user constraint
+
+        const possible = self.possible(method);
+        if (possible) {
+          const pair = possible[Math.floor(Math.random() * possible.length)];
+          self.connect(pair[0], pair[1]);
+          return self;
+        }
+
+        return null;
+      }
+      case 'REMOVE_CONN': // alias for sub_conn
+      case 'SUB_CONN': {
+        const possible = self.possible(method);
+        if (possible) {
+          const chosen = _.sample(possible);
+          self.disconnect(chosen.from, chosen.to);
+          return self;
+        }
+
+        return null;
+      }
+      case 'MOD_WEIGHT': {
+        const chosen_connection = getRandomConnection(); // get a random connection to modify weight
+        chosen_connection.weight += Math.random() * (method.max - method.min) + method.min;
+
+        return self;
+      }
+      case 'MOD_BIAS': {
+        if (self.nodes.length <= self.input_size) return null;
+        // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
+        const node_to_mutate = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)];
+        node_to_mutate.mutate(method);
+
+        return self;
+      }
+      case 'MOD_ACTIVATION': {
+        const possible = self.possible(method);
+        if (possible) {
+          _.sample(possible).mutate(method); // Mutate a random node out of filtered collection, MOD_ACTIVATION is a neuron-level concern
+          return self;
+        }
+        return null;
+      }
+      case 'ADD_SELF_CONN': {
+        const possible = self.possible(method);
+        if (possible) {
+          const node = possible[Math.floor(Math.random() * possible.length)];
+          self.connect(node, node); // Create the self-connection
+          return self;
+        }
+        return null;
+      }
+      case 'SUB_SELF_CONN': {
+        const possible = self.possible(method);
+        if (possible) {
+          const chosen_connection = possible[Math.floor(Math.random() * possible.length)];
+          self.disconnect(chosen_connection.from, chosen_connection.to);
+          return self;
+        }
+        return null;
+      }
+      case 'ADD_GATE': {
+        // Check user constraint
+        if (self.gates.length >= maxGates) return null;
+
+        const possible = self.possible(method);
         if (possible) {
           // Select a random gater node and connection, can't be gated by input | makes ["input", "hidden", "output"] assumption
-          const node = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)]
-          const conn = possible[Math.floor(Math.random() * possible.length)]
+          const node = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)];
+          const conn = possible[Math.floor(Math.random() * possible.length)];
 
-          self.gate(node, conn) // Gate the connection with the node
-          return self
+          self.gate(node, conn); // Gate the connection with the node
+          return self;
         }
         return null
       }

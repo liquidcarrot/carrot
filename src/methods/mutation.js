@@ -304,8 +304,14 @@ const mutation = {
    */
   SWAP_NODES: {
     name: 'SWAP_NODES',
-    mutateOutput: false
-  }
+    mutateOutput: false,
+  },
+  ADD_SHARED_WEIGHT: {
+    name: 'ADD_SHARED_WEIGHT',
+  },
+  SUB_SHARED_WEIGHT: {
+    name: 'SUB_SHARED_WEIGHT',
+  },
 };
 
 /**
@@ -339,7 +345,9 @@ mutation.ALL = [
   mutation.SUB_SELF_CONN,
   mutation.ADD_BACK_CONN,
   mutation.SUB_BACK_CONN,
-  mutation.SWAP_NODES
+  mutation.SWAP_NODES,
+  mutation.ADD_SHARED_WEIGHT,
+  mutation.SUB_SHARED_WEIGHT,
 ];
 
 /**

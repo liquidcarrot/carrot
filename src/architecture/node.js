@@ -62,11 +62,12 @@ function Node(options) {
     incoming: [],
     outgoing: [],
     gated: [],
+    shared: [],
     connections_self: new Connection(self, self, 0),
     error_responsibility: 0,
     error_projected: 0,
     error_gated: 0,
-    ...options
+    ...options,
   })
 
   /**
@@ -325,6 +326,9 @@ function Node(options) {
     if (options.update) {
       self.delta_bias_total += options.momentum * self.delta_bias_previous;
       self.bias += self.delta_bias_total;
+      for (let i = 0; i < self.shared.length; i++) {
+        self.shared[i].bias = self.bias;
+      }
       self.delta_bias_previous = self.delta_bias_total;
       self.delta_bias_total = 0;
     }
@@ -699,11 +703,17 @@ function Node(options) {
 
     switch(options.method) {
       case methods.mutation.MOD_ACTIVATION:
-        if(options.allowed) self.squash = options.allowed[random_index(options.allowed.length, options.allowed.indexOf(self.squash))];
-        else self.squash = methods.activation[random_key(Object.keys(methods.activation), self.squash.name)]
+        if (options.allowed) {
+          self.squash = options.allowed[random_index(options.allowed.length, options.allowed.indexOf(self.squash))];
+        } else {
+          self.squash = methods.activation[random_key(Object.keys(methods.activation), self.squash.name)];
+        }
         break;
       case methods.mutation.MOD_BIAS:
         self.bias += Math.random() * (options.method.max - options.method.min) + options.method.min;
+        for (let i = 0; i < self.shared.length; i++) {
+          self.shared[i].bias = self.bias;
+        }
         break;
     }
   },
