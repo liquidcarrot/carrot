@@ -92,6 +92,7 @@ describe('DQN', function () {
     }
   });
   it('test learning capabilities with normal DQN with PER', function() {
+    this.timeout(10000);
     console.time('Learning: DQN, PER');
     let agent = new DQN(1, 2, {
       gamma: 0.3,
@@ -119,6 +120,7 @@ describe('DQN', function () {
   });
 
   it('test learning capabilities with Double-DQN with PER', function() {
+    this.timeout(10000);
     console.time('Learning: D-DQN, PER');
     let agent = new DQN(1, 2, {
       gamma: 0.3,
@@ -131,6 +133,7 @@ describe('DQN', function () {
   });
 
   it('test learning capabilities with Double-DQN and SARSA with PER', function() {
+    this.timeout(10000);
     console.time('Learning: D-DQN, SARSA PER');
     let agent = new DQN(1, 2, {
       gamma: 0.3,
@@ -144,6 +147,7 @@ describe('DQN', function () {
   });
 
   it('test learning capabilities with normal DQN without PER', function() {
+    this.timeout(10000);
     console.time('Learning: DQN');
     let agent = new DQN(1, 2, {
       gamma: 0.3,
@@ -156,6 +160,7 @@ describe('DQN', function () {
     console.timeEnd('Learning: DQN');
   });
   it('test learning capabilities with normal DQN and SARSA without PER', function() {
+    this.timeout(10000);
     console.time('Learning: DQN, SARSA');
     let agent = new DQN(1, 2, {
       gamma: 0.3,
@@ -170,6 +175,7 @@ describe('DQN', function () {
   });
 
   it('test learning capabilities with Double-DQN without PER', function() {
+    this.timeout(10000);
     console.time('Learning: D-DQN');
     let agent = new DQN(1, 2, {
       gamma: 0.3,
@@ -183,6 +189,7 @@ describe('DQN', function () {
   });
 
   it('test learning capabilities with Double-DQN and SARSA without PER', function() {
+    this.timeout(10000);
     console.time('Learning: D-DQN, SARSA');
     let agent = new DQN(1, 2, {
       gamma: 0.3,
