@@ -109,6 +109,7 @@ describe('DDPG', function() {
     }
   });
   it('test learning capabilities with PER', function() {
+    this.timeout(10000);
     console.time('Learning: DDPG, PER');
     let agent = new DDPG(1, 2, {
       gamma: 0.3,
