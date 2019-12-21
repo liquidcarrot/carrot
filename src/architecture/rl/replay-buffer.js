@@ -77,6 +77,7 @@ ReplayBuffer.prototype = {
    * @returns {Experience[]} mini batch chosen with PER
    *
    * @todo Create unit test
+   * @todo there is a bug in minibatch creation
    */
   getMiniBatchWithPER(batchSize) {
     if (batchSize >= this.buffer.length) {
