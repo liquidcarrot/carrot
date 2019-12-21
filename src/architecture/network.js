@@ -545,18 +545,16 @@ function Network(input_size, output_size) {
       case 'SUB_GATE': {
         return (self.gates.length > 0) ? [] : false;
       }
-      case 'ADD_SHARED_WEIGHT': {
+      case 'ADD_SHARED_BIAS': {
         candidates = _.filter(self.nodes, function(node) {
           return !self.input_nodes.has(node) && !self.output_nodes.has(node);
         }); // assumes input & output node 'type' has been set
         return candidates.length > 0 ? candidates : false;
       }
-      case 'SUB_SHARED_WEIGHT': {
-        for (let i = 0; i < self.nodes.length; i++) {
-          if (self.nodes[i].sharedIncoming !== null) {
-            candidates.push(self.nodes[i]);
-          }
-        }
+      case 'SUB_SHARED_BIAS': {
+        candidates = _.filter(self.nodes, function(node) {
+          return node.sharedIncoming !== null;
+        });
         return candidates.length > 0 ? candidates : false;
       }
       case 'ADD_BACK_CONN': {
@@ -669,7 +667,7 @@ function Network(input_size, output_size) {
         }
         return null;
       }
-      case 'ADD_SHARED_WEIGHT': {
+      case 'ADD_SHARED_BIAS': {
         const possible = self.possible(method);
         if (possible.length >= 2) {
           // Return a random node out of the filtered collection
@@ -686,7 +684,7 @@ function Network(input_size, output_size) {
 
         return null;
       }
-      case 'SUB_SHARED_WEIGHT': {
+      case 'SUB_SHARED_BIAS': {
         const possible = self.possible(method);
         if (possible) {
           _.sample(possible).sharedIncoming = null;

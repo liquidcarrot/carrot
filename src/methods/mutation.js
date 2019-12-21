@@ -306,11 +306,11 @@ const mutation = {
     name: 'SWAP_NODES',
     mutateOutput: false,
   },
-  ADD_SHARED_WEIGHT: {
-    name: 'ADD_SHARED_WEIGHT',
+  ADD_SHARED_BIAS: {
+    name: 'ADD_SHARED_BIAS',
   },
-  SUB_SHARED_WEIGHT: {
-    name: 'SUB_SHARED_WEIGHT',
+  SUB_SHARED_BIAS: {
+    name: 'SUB_SHARED_BIAS',
   },
 };
 
@@ -346,8 +346,8 @@ mutation.ALL = [
   mutation.ADD_BACK_CONN,
   mutation.SUB_BACK_CONN,
   mutation.SWAP_NODES,
-  mutation.ADD_SHARED_WEIGHT,
-  mutation.SUB_SHARED_WEIGHT,
+  mutation.ADD_SHARED_BIAS,
+  mutation.SUB_SHARED_BIAS,
 ];
 
 /**
@@ -376,8 +376,8 @@ mutation.FFW = [
   mutation.MOD_BIAS,
   mutation.MOD_ACTIVATION,
   mutation.SWAP_NODES,
-  mutation.ADD_SHARED_WEIGHT,
-  mutation.SUB_SHARED_WEIGHT,
+  mutation.ADD_SHARED_BIAS,
+  mutation.SUB_SHARED_BIAS,
 ];
 
 module.exports = mutation;
