@@ -88,7 +88,7 @@ ReplayBuffer.prototype = {
     let bufferCopy = this.buffer.slice(0);
     let sumOfAbsLossesCopy = this.sumOfAbsLosses;
 
-    for (let i = 0; i <= batchSize; i++) {
+    for (let i = 0; miniBatch.length < batchSize; i++) {
       for (let j = 0; j < bufferCopy.length; j++) {
         if (Math.random() * (1 + this.noiseRate) - this.noiseRate / 2 <= Math.abs(bufferCopy[j].loss) / sumOfAbsLossesCopy) {
           let exp = bufferCopy.splice(j, 1)[0];
