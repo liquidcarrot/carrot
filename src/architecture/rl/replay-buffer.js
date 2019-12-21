@@ -8,11 +8,11 @@ const Utils = require('../../util/utils');
  * @param {number} noiseRate this variable will add a noise to the PER, so there is more randomness
  * @constructor
  */
-function ReplayBuffer(maxSize, noiseRate = 0.1) {
+function ReplayBuffer(maxSize, noiseRate) {
   this.buffer = [];
   this.maxSize = maxSize;
   this.sumOfAbsLosses = 0; //used for PER
-  this.noiseRate = noiseRate;
+  this.noiseRate = noiseRate || 0;
 }
 
 ReplayBuffer.prototype = {
@@ -77,6 +77,7 @@ ReplayBuffer.prototype = {
    * @returns {Experience[]} mini batch chosen with PER
    *
    * @todo Create unit test
+   * @todo there is a bug in minibatch creation
    */
   getMiniBatchWithPER(batchSize) {
     if (batchSize >= this.buffer.length) {
@@ -88,7 +89,7 @@ ReplayBuffer.prototype = {
     let bufferCopy = this.buffer.slice(0);
     let sumOfAbsLossesCopy = this.sumOfAbsLosses;
 
-    for (let i = 0; i < batchSize; i++) {
+    for (let i = 0; miniBatch.length < batchSize; i++) {
       for (let j = 0; j < bufferCopy.length; j++) {
         if (Math.random() * (1 + this.noiseRate) - this.noiseRate / 2 <= Math.abs(bufferCopy[j].loss) / sumOfAbsLossesCopy) {
           let exp = bufferCopy.splice(j, 1)[0];

@@ -82,6 +82,7 @@ function testAgentEquality(agent, copy) {
 
 describe('DQN', function () {
   it('Object creation', function () {
+    this.timeout(10000);
     for (let i = 0; i < 10; i++) {
       let numStates = Math.floor(Math.random() * 100 + 1);
       let numActions = Math.floor(Math.random() * 100 + 1);
@@ -204,30 +205,31 @@ describe('DQN', function () {
   });
 
   it('toJSON - fromJSON', function() {
-      let numStates = Math.floor(Math.random() * 50 + 1);
-      let numActions = Math.floor(Math.random() * 50 + 1);
-      let hiddenNeurons = [Utils.randomInt(1,100),Utils.randomInt(1,100)];
+    this.timeout(10000);
+    let numStates = Math.floor(Math.random() * 50 + 1);
+    let numActions = Math.floor(Math.random() * 50 + 1);
+    let hiddenNeurons = [Utils.randomInt(1, 100), Utils.randomInt(1, 100)];
 
-      let agent = new DQN(numStates, numActions, {
-        hiddenNeurons: hiddenNeurons,
-        gamma: Math.random(),
-        tdErrorClamp: 0.6,
-        learningStepsPerIteration: Utils.randomInt(20,50),
-        noisyPER: Math.random(),
-        experienceSize: Utils.randomInt(1000,50000),
-        isUsingPER: true,
-        isDoubleDQN: true,
-        explore: Math.random(),
-        exploreDecay: Math.random(),
-        exploreMin: Math.random()/10,
-        learningRate: Math.random(),
-        learningRateDecay: Math.random(),
-        learningRateMin: Math.random()/10,
-        learningRateB: Math.random(),
-        learningRateBDecay: Math.random(),
-        learningRateBMin: Math.random() /10,
-      });
+    let agent = new DQN(numStates, numActions, {
+      hiddenNeurons: hiddenNeurons,
+      gamma: Math.random(),
+      tdErrorClamp: 0.6,
+      learningStepsPerIteration: Utils.randomInt(20, 50),
+      noisyPER: Math.random(),
+      experienceSize: Utils.randomInt(1000, 50000),
+      isUsingPER: true,
+      isDoubleDQN: true,
+      explore: Math.random(),
+      exploreDecay: Math.random(),
+      exploreMin: Math.random() / 10,
+      learningRate: Math.random(),
+      learningRateDecay: Math.random(),
+      learningRateMin: Math.random() / 10,
+      learningRateB: Math.random(),
+      learningRateBDecay: Math.random(),
+      learningRateBMin: Math.random() / 10,
+    });
 
-      testAgentEquality(agent, DQN.fromJSON(agent.toJSON()));
+    testAgentEquality(agent, DQN.fromJSON(agent.toJSON()));
   });
 });
