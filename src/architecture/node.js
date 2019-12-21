@@ -117,6 +117,9 @@ function Node(options) {
     // DRY abstraction
     const activate = function() {
       // Activate (from self)
+      if (self.sharedIncoming !== null) {
+        self.bias = self.sharedIncoming.bias;
+      }
       self.state = self.connections_self.gain * self.connections_self.weight * self.state + self.bias;
 
       // Activate (from incoming connections)
@@ -125,7 +128,7 @@ function Node(options) {
         self.state += conn.from.activation * conn.weight * conn.gain;
       }
 
-      return self.state
+      return self.state;
     }
 
     if(options.trace) {
