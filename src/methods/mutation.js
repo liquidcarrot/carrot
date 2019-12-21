@@ -312,6 +312,12 @@ const mutation = {
   SUB_SHARED_BIAS: {
     name: 'SUB_SHARED_BIAS',
   },
+  ADD_SHARED_WEIGHT: {
+    name: 'ADD_SHARED_WEIGHT',
+  },
+  SUB_SHARED_WEIGHT: {
+    name: 'SUB_SHARED_WEIGHT',
+  },
 };
 
 /**
@@ -348,6 +354,8 @@ mutation.ALL = [
   mutation.SWAP_NODES,
   mutation.ADD_SHARED_BIAS,
   mutation.SUB_SHARED_BIAS,
+  mutation.ADD_SHARED_WEIGHT,
+  mutation.SUB_SHARED_WEIGHT,
 ];
 
 /**

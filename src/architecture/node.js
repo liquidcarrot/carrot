@@ -285,7 +285,6 @@ function Node(options) {
       self.error_projected = 0;
       for (let i = 0; i < self.outgoing.length; i++) {
         const connection = self.outgoing[i];
-
         self.error_projected += connection.to.error_responsibility * connection.weight * connection.gain;
       }
       self.error_projected *= self.derivative || 1;
@@ -318,7 +317,9 @@ function Node(options) {
       connection.delta_weights_total += options.rate * gradient * self.mask;
       if (options.update) {
         connection.delta_weights_total += options.momentum * connection.delta_weights_previous;
-        connection.weight += connection.delta_weights_total;
+        if (connection.sharedIncoming === null) {
+          connection.weight += connection.delta_weights_total;
+        }
         connection.delta_weights_previous = connection.delta_weights_total;
         connection.delta_weights_total = 0;
       }

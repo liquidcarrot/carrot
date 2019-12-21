@@ -546,14 +546,23 @@ function Network(input_size, output_size) {
         return (self.gates.length > 0) ? [] : false;
       }
       case 'ADD_SHARED_BIAS': {
-        candidates = _.filter(self.nodes, function(node) {
+        candidates = _.filter(self.nodes, function (node) {
           return !self.input_nodes.has(node) && !self.output_nodes.has(node);
         }); // assumes input & output node 'type' has been set
         return candidates.length > 0 ? candidates : false;
       }
       case 'SUB_SHARED_BIAS': {
-        candidates = _.filter(self.nodes, function(node) {
+        candidates = _.filter(self.nodes, function (node) {
           return node.sharedIncoming !== null;
+        });
+        return candidates.length > 0 ? candidates : false;
+      }
+      case 'ADD_SHARED_WEIGHT': {
+        return self.connections.length > 0 ? self.connections : false;
+      }
+      case 'SUB_SHARED_WEIGHT': {
+        candidates = _.filter(self.connections, function (conn) {
+          return conn.sharedIncoming !== null;
         });
         return candidates.length > 0 ? candidates : false;
       }
@@ -618,10 +627,12 @@ function Network(input_size, output_size) {
 
     // Helper function
     const getRandomConnection = () => {
-      if(self.nodes.length <= self.input_nodes.size) // use dynamic self.input_nodes.size instead
+      if (self.nodes.length <= self.input_nodes.size) // use dynamic self.input_nodes.size instead
         throw new Error("Something went wrong. Total nodes is length is somehow less than size of inputs")
-
-      return _.sample(self.connections)
+      let candidates = _.filter(self.connections, function (conn) {
+        return conn.sharedIncoming === null;
+      });
+      return _.sample(candidates)
     }
 
     switch (method.name) {
@@ -693,6 +704,32 @@ function Network(input_size, output_size) {
 
         return null;
       }
+      case 'ADD_SHARED_WEIGHT': {
+        const possible = self.possible(method);
+        if (possible.length >= 2) {
+          // Return a random connection out of the filtered collection
+          const conn1 = _.sample(possible);
+          // Filter conn1 from collection
+          const possible2 = _.filter(possible, (conn) => conn !== conn1);
+          if (!possible2) return null;
+          // Get random connection from filtered collection (excludes conn1)
+          const conn2 = _.sample(possible2);
+          conn2.sharedIncoming = conn1;
+          conn2.weight = conn1.weight;
+          return self;
+        }
+
+        return null;
+      }
+      case 'SUB_SHARED_WEIGHT': {
+        const possible = self.possible(method);
+        if (possible) {
+          _.sample(possible).sharedIncoming = null;
+          return self;
+        }
+
+        return null;
+      }
       case 'ADD_CONN': {
         if (self.connections.length >= maxConns) return null; // Check user constraint
 
@@ -719,7 +756,6 @@ function Network(input_size, output_size) {
       case 'MOD_WEIGHT': {
         const chosen_connection = getRandomConnection(); // get a random connection to modify weight
         chosen_connection.weight += Math.random() * (method.max - method.min) + method.min;
-
         return self;
       }
       case 'MOD_BIAS': {
@@ -727,7 +763,6 @@ function Network(input_size, output_size) {
         // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
         const node_to_mutate = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)];
         node_to_mutate.mutate(method);
-
         return self;
       }
       case 'MOD_ACTIVATION': {

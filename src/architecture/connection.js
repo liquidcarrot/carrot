@@ -49,6 +49,7 @@ function Connection (from, to, weight, options) {
     delta_weights_total: 0,
     delta_weights: [],
     xtrace_nodes: [],
+    sharedIncoming: null,
     xtrace_values: []
   }, options, { from, to, weight});
 
