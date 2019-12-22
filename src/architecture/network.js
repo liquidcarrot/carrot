@@ -666,7 +666,10 @@ function Network(input_size, output_size, options) {
       throw new Error(`This connection is not gated!`);
     }
 
+    // Remove gated connection from network's .gate array
     self.gates.splice(index, 1);
+    // Remove node from connection.gater, reset the connection's gain
+    // and also remove the connection from the node's ".gated" array  
     connection.gater.ungate(connection);
   }
 
