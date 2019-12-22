@@ -638,8 +638,11 @@ function Node(options) {
     if (connections == undefined) throw new ReferenceError("Missing required parameter 'connections'");
 
     if (!Array.isArray(connections)) {
+      // remove the connection from node's ".gated" array
       self.gated.splice(self.gated.indexOf(connections), 1);
+      // remove the ".gater" node from the connection
       connections.gater = null;
+      // reset the ".gain" of connection to 1, ".gain" is multiplied by connection weight
       connections.gain = 1;
     } else {
       for (let i = 0; i < connections.length; i++) {
