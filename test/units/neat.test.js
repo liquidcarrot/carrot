@@ -611,7 +611,7 @@ describe("Neat", function() {
       neat.evolve().should.be.rejected
     })
 
-    it("new Neat(), neat.evolve(null) | Runs, .score set", async function () {
+    it("new Neat(), neat.evolve(null), .score set | Runs", async function () {
       const neat = new Neat(2,1, { population_size: 2 }) // reduced population to shorten test times
 
       let { population } = neat
@@ -629,6 +629,24 @@ describe("Neat", function() {
       population = neat.population = await neat.evolve(null)
 
       expect(population).not.eql(originalPopulation)
+    })
+
+    it("new Neat(), neat.evolve(null), x100 | Doesn't fail", async function () {
+      // XOR dataset
+      const originalSet = [
+       { input: [0,0], output: [0] },
+       { input: [0,1], output: [1] },
+       { input: [1,0], output: [1] },
+       { input: [1,1], output: [0] },
+      ]
+
+      let neat = new Neat(2, 1, originalSet);
+
+      let times = 50;
+      while(times) {
+        neat.evolve();
+        times--; // reduce times by one, when times = zero breaks while loop
+      }
     })
 
     it("new Neat(), neat.evolve(null, filter, adjust) | Runs, .score set", async function () {
