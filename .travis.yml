@@ -3,7 +3,7 @@ node_js:
   - "node"
 
 before_install:
-  - apt-get update -y
-  - apt-get install xserver-xorg-dev libxi-dev libxext-dev -y
+  - sudo apt-get update -y
+  - sudo apt-get install xserver-xorg-dev libxi-dev libxext-dev -y
 
 after_success: npm run coverage
