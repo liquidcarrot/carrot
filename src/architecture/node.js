@@ -552,6 +552,9 @@ function Node(options) {
           return conn;
         }
       }
+
+      // node not found
+      throw new Error('Attempting to disconnect unconnected nodes')
     }
 
     if(nodes instanceof Node) {

@@ -62,8 +62,10 @@ function Network(input_size, output_size, options) {
   // Store all the nodes and connection genes
   self.nodes = [] // Stored in activation order
   self.connections = []
-  self.disabledConnections = []
   self.gates = []
+
+  // Debugging meta-information
+  self.mutations = [];
 
   // Neat ID Management | Shared mutable state
   self.nodeIds = options.nodeIds || { last: 0 }; // fallback avoids reference errors
@@ -593,21 +595,26 @@ function Network(input_size, output_size, options) {
    * // now node 4 does not have an effect on the output of node 5 anymore
    */
   self.disconnect = function(from, to) {
-    // Delete the connection in the network's connection array
-    const connections = self.connections;
-    for (let i = 0; i < connections.length; i++) {
-      const conn = connections[i];
+    // Manage the network's connection array
+    let found = false;
+    const conns = self.connections;
+    for (let i = 0; i < conns.length; i++) {
+      const conn = conns[i];
       if (conn.from === from && conn.to === to) {
+        if(!conn.enabled) throw new Error("Connection already disconnected!")
+
+        // disable connection
+        conn.enabled = false;
+
+        // remove gate if needed
         if (conn.gater !== null) self.ungate(conn);
-        // store removed connection
-        const removed = connections.splice(i, 1)[0];
-        // set enabled property to false
-        removed.enabled = false;
-        // Add removed connection to disabledConnections
-        self.disabledConnections.push(removed); // Add disabled connection to stored disabled connections array.
-        break;
+
+        // Mark as found, used for error checking
+        found = true; break;
       }
     }
+
+    if(!found) throw new Error('No matching connection found in network')
 
     // Delete & return the connection at the sending and receiving neuron
     return from.disconnect(to)
@@ -669,7 +676,7 @@ function Network(input_size, output_size, options) {
     // Remove gated connection from network's .gate array
     self.gates.splice(index, 1);
     // Remove node from connection.gater, reset the connection's gain
-    // and also remove the connection from the node's ".gated" array  
+    // and also remove the connection from the node's ".gated" array
     connection.gater.ungate(connection);
   }
 
@@ -688,20 +695,21 @@ function Network(input_size, output_size, options) {
    *
    * // Remove a node
    * myNetwork.remove(myNetwork.nodes[2]);
+   *
+   * @todo Completely refactor
+   * @todo Redo tests
    */
   self.remove = function(node) {
     const index = self.nodes.indexOf(node);
 
-    if (index === -1) {
-      throw new ReferenceError(`This node does not exist in the network!`);
-    }
+    if (index === -1) throw new ReferenceError(`This node does not exist in the network!`);
 
     // Keep track of gates
     const gates = [];
 
     // Remove self recursive connections - these would not be able
     // to connect/disconnect to/from other nodes
-    self.disconnect(node, node);
+    if(node.isProjectingTo(node)) self.disconnect(node, node);
 
     // Get all its inputting nodes
     const inputs = [];
@@ -870,6 +878,49 @@ function Network(input_size, output_size, options) {
   }
 
   /**
+  * Get a random, but enabled, connection reference from the networks connection array
+  *
+  * @function mutate
+  * @memberof Network
+  *
+  * @expects Connections to have a .enabled property
+  *
+  * @returns {Connection} A random enabled connection reference from the network
+  *
+  * @todo Consider adding network.active array for tracking active connections exclusively
+  */
+  self.getRandomConnection = function() {
+    // Rename for readability
+    const conns = self.connections;
+
+    // Store array indexes to know which have already been checked
+    const keys = Object.keys(conns);
+    while(keys.length) {
+      // Get a random key index
+      const index = Math.floor(Math.random() * keys.length)
+
+      // Get the corresponding key
+      const key = keys[index];
+
+      // Get the corresponding connection
+      const conn = conns[key];
+
+      // If the connection is enabled, return the connection reference
+      if(conn.enabled) return conn;
+
+      // If not, remove the key and start over
+      keys.splice(index, 1);
+    }
+
+    // No suitable connection found
+    throw new Error(`No enabled connections within network!
+      Total connections: ${conns.length}
+      Connection statuses: ${conns.map(conn => conn.enabled)}
+      Mutations: ${self.mutations}
+    `)
+  }
+
+  /**
    * Mutates the network with the given method.
    *
    * @function mutate
@@ -892,7 +943,7 @@ function Network(input_size, output_size, options) {
    *
    * myNetwork = myNetwork.mutate(mutation.ADD_GATE) // returns a mutated network with an added gate
    *
-   * @todo Store deactivated / disconnected nodes in network-level connections
+   * @todo Create a comprehensive logging system
    * @todo Make node management order agnostic by tracking input / outputs better
    * @todo Add standalone node id population synchronization capabilities, consider maintaing internal nodeIds when external isn't provided
    */
@@ -901,12 +952,9 @@ function Network(input_size, output_size, options) {
 
     const { maxNodes, maxConns, maxGates } = options || {}
 
-    // Helper function
-    const getRandomConnection = () => {
-      if(self.nodes.length <= self.input_nodes.size)
-        throw new Error("Something went wrong. Total nodes is length is somehow less than size of inputs")
-
-      return _.sample(self.connections)
+    // Logging utility, to be expanded upon
+    const trackMutation = function(name) {
+      self.mutations.push(name)
     }
 
     switch (method.name) {
@@ -915,10 +963,10 @@ function Network(input_size, output_size, options) {
         if(self.nodes.length >= maxNodes) return null // Check user constraint
 
         // Only places nodes where existing connections are
-        const connection = getRandomConnection()
+        const connection = self.getRandomConnection()
         const from = connection.from
         const to = connection.to
-        self.disconnect(from, to) // break the existing connection and discard it, TODO: this should be stored in the future as a gene (somehwere), per the NEAT spec
+        self.disconnect(from, to) // disable the connection at the network-level and remove the outgoing / incoming references at the node level
 
         // Get id for new node if nodeIds is defined
         const id = self.nodeIds ? util.manageNeatId(from, to, self.nodeIds) : undefined;
@@ -939,14 +987,25 @@ function Network(input_size, output_size, options) {
         const gater = connection.gater
         if (gater != null) self.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2) // Check if the original connection was gated
 
+        // Add mutation to tracking array
+        trackMutation(method.name)
+
         return self
       }
       case "SUB_NODE": {
         const possible = self.possible(method)
         if (possible) {
           self.remove(_.sample(possible))
+
+          // Add mutation to tracking array
+          trackMutation(method.name)
+
           return self
         }
+
+        // Add attempted mutation to tracking array
+        trackMutation(method.name + " (attempted)")
+
         return null
       }
       case "ADD_CONN": {
@@ -956,8 +1015,15 @@ function Network(input_size, output_size, options) {
         if (possible) {
           const pair = possible[Math.floor(Math.random() * possible.length)]
           self.connect(pair[0], pair[1], undefined, { connIds: self.connIds })
+
+          // Add mutation to tracking array
+          trackMutation(method.name)
+
           return self
         }
+
+        // Add attempted mutation to tracking array
+        trackMutation(method.name + " (attempted)")
 
         return null
       }
@@ -967,14 +1033,24 @@ function Network(input_size, output_size, options) {
         if (possible) {
           const chosen = _.sample(possible)
           self.disconnect(chosen.from, chosen.to)
+
+          // Add mutation to tracking array
+          trackMutation(method.name)
+
           return self
         }
+
+        // Add attempted mutation to tracking array
+        trackMutation(method.name + " (attempted)")
 
         return null
       }
       case "MOD_WEIGHT": {
-        const chosen_connection = getRandomConnection() // get a random connection to modify weight
+        const chosen_connection = self.getRandomConnection() // get a random connection to modify weight
         chosen_connection.weight += Math.random() * (method.max - method.min) + method.min
+
+        // Add mutation to tracking array
+        trackMutation(method.name)
 
         return self
       }
@@ -984,14 +1060,25 @@ function Network(input_size, output_size, options) {
         const node_to_mutate = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)]
         node_to_mutate.mutate(method)
 
+        // Add mutation to tracking array
+        trackMutation(method.name)
+
         return self
       }
       case "MOD_ACTIVATION": {
         const possible = self.possible(method)
         if (possible) {
           _.sample(possible).mutate(method) // Mutate a random node out of filtered collection, MOD_ACTIVATION is a neuron-level concern
+
+          // Add mutation to tracking array
+          trackMutation(method.name)
+
           return self
         }
+
+        // Add attempted mutation to tracking array
+        trackMutation(method.name + " (attempted)")
+
         return null
       }
       case "ADD_SELF_CONN": {
@@ -999,8 +1086,16 @@ function Network(input_size, output_size, options) {
         if (possible) {
           const node = possible[Math.floor(Math.random() * possible.length)]
           self.connect(node, node) // Create the self-connection
+
+          // Add mutation to tracking array
+          trackMutation(method.name)
+
           return self
         }
+
+        // Add attempted mutation to tracking array
+        trackMutation(method.name + " (attempted)")
+
         return null
       }
       case "SUB_SELF_CONN": {
@@ -1008,8 +1103,16 @@ function Network(input_size, output_size, options) {
         if (possible) {
           const chosen_connection = possible[Math.floor(Math.random() * possible.length)];
           self.disconnect(chosen_connection.from, chosen_connection.to);
+
+          // Add mutation to tracking array
+          trackMutation(method.name)
+
           return self
         }
+
+        // Add attempted mutation to tracking array
+        trackMutation(method.name + " (attempted)")
+
         return null;
       }
       case "ADD_GATE": {
@@ -1023,24 +1126,48 @@ function Network(input_size, output_size, options) {
           const conn = possible[Math.floor(Math.random() * possible.length)]
 
           self.gate(node, conn) // Gate the connection with the node
+
+          // Add mutation to tracking array
+          trackMutation(method.name)
+
           return self
         }
+
+        // Add attempted mutation to tracking array
+        trackMutation(method.name + " (attempted)")
+
         return null
       }
       case "SUB_GATE": {
         if (self.possible(method)) {
           self.ungate(self.gates[Math.floor(Math.random() * self.gates.length)])
+
+          // Add mutation to tracking array
+          trackMutation(method.name)
+
           return self
         }
-        return null
+
+        // Add attempted mutation to tracking array
+        trackMutation(method.name + " (attempted)")
+
+        return null;
       }
       case "ADD_BACK_CONN": {
         const possible = self.possible(method)
         if (possible) {
           const pair = possible[Math.floor(Math.random() * possible.length)]
           self.connect(pair[0], pair[1])
+
+          // Add mutation to tracking array
+          trackMutation(method.name)
+
           return self
         }
+
+        // Add attempted mutation to tracking array
+        trackMutation(method.name + " (attempted)")
+
         return null
       }
       case "SUB_BACK_CONN": {
@@ -1048,8 +1175,16 @@ function Network(input_size, output_size, options) {
         if (possible) {
           const random_connection = possible[Math.floor(Math.random() * possible.length)]
           self.disconnect(random_connection.from, random_connection.to)
+
+          // Add mutation to tracking array
+          trackMutation(method.name)
+
           return self
         }
+
+        // Add attempted mutation to tracking array
+        trackMutation(method.name + " (attempted)")
+
         return null
       }
       case "SWAP_NODES": {
@@ -1071,8 +1206,15 @@ function Network(input_size, output_size, options) {
           node1.squash = node2.squash
           node2.bias = bias_temp
           node2.squash = squash_temp
+
+          // Add mutation to tracking array
+          trackMutation(method.name)
+
           return self
         }
+
+        // Add attempted mutation to tracking array
+        trackMutation(method.name + " (attempted)")
 
         return null
       }
@@ -1108,8 +1250,8 @@ function Network(input_size, output_size, options) {
       possible.splice(x,1)
     }
 
-    // Return null when mutation is impossible
-    return null
+    // Return unmodified self when mutation is impossible
+    return self
   }
 
   /**
