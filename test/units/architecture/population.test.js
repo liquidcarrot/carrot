@@ -158,7 +158,7 @@ describe("Population", () => {
       const size = Math.ceil(Math.random() * 100);
 
       const population = new Population();
-      const population = population.getPopulation(size);
+      const pop_size = population.getPopulation(size);
 
       expect(population).to.be.an.instanceof(Array);
       expect(population).to.have.lengthOf(size);
@@ -172,7 +172,7 @@ describe("Population", () => {
       const size = Math.ceil(Math.random() * 100);
 
       const population = new Population();
-      const population = population.getPopulation(size);
+      const pop_size = population.getPopulation(size);
 
       expect(population[0]).not.equal(population[1]);
     })
