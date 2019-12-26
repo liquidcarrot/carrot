@@ -1,6 +1,6 @@
 const _ = require("lodash");
 const { expect } = require("chai");
-const { Neat } = require("../src/carrot");
+const { Neat } = require("../src/index");
 
 const has = {
   options: (object, options) => {
@@ -13,7 +13,7 @@ const has = {
   dataset: (object, dataset) => {
     expect(object.dataset).to.equal(dataset);
     expect(object.dataset).to.eql(dataset);
-    
+
     _.each(object.dataset, (datum, index) => {
       expect(datum).to.equal(dataset[index]);
       expect(datum).to.eql(dataset[index]);

@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { methods } = require('../../../src/carrot');
+const { methods } = require('../../../src/index');
 const { selection } = methods;
 
 describe("selection", function() {

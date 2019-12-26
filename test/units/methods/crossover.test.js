@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { methods }  = require('../../../src/carrot');
+const { methods }  = require('../../../src/index');
 const { crossover } = methods;
 
 describe("crossover", function(){
@@ -19,7 +19,3 @@ describe("crossover", function(){
     })
   })
 })
-
-
- 
- 

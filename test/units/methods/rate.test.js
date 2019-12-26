@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { methods } = require('../../../src/carrot');
+const { methods } = require('../../../src/index');
 const { rate } = methods;
 
 describe("rate", function() {
@@ -12,12 +12,12 @@ describe("rate", function() {
         power: Math.ceil(Math.random() * 5),
         step_size: Math.ceil(Math.random() * 100)
       }
-      
+
       // @returns {ReferenceError}
       it(`rate.${type}() => {ReferenceError}`, function() {
         expect(() => rate[type]()).to.throw(ReferenceError);
       })
-      
+
       // @returns {number}
       it(`rate.${type}(base_rate=${base_rate}, iteration=${iteration}) => {number}`, function() {
         expect(rate[type](base_rate, iteration)).to.be.a("number");
