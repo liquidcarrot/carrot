@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="utf-8">
-    <title>Liquid Carrot - connection - Documentation</title>
+    <title>Liquid Carrot - Connection - Documentation</title>
     <link href="/liquid-carrot-favicon.png" rel="shortcut icon"/>
 
 
@@ -60,8 +60,8 @@
         <div class="navbar-start">
             <a class="navbar-item" href="/">Home</a>
             <a class="navbar-item" href="/carrot">Docs</a>
-            <a class="navbar-item" href="https://github.com/liquidcarrot/carrot" target="_blank"><i
-                    aria-hidden="true" class="ion-social-github"></i></a>
+            <a class="navbar-item" href="https://github.com/liquidcarrot/carrot" target="_blank"><i aria-hidden="true"
+                                                                                                    class="ion-social-github"></i></a>
             <div class="navbar-item has-dropdown is-hoverable">
                 <a class="navbar-link">
                     Versions
@@ -110,10 +110,10 @@
 <nav>
     <h3>Classes</h3>
     <ul>
-        <li><a href="Connection.html">Connection</a>
+        <li><a href="Connection_.html">Connection</a>
             <ul class='methods'>
-                <li data-type='method'><a href="Connection.html#.innovationID">innovationID</a></li>
-                <li data-type='method'><a href="Connection.html#.toJSON">toJSON</a></li>
+                <li data-type='method'><a href="Connection_.html#.innovationID">innovationID</a></li>
+                <li data-type='method'><a href="Connection_.html#.toJSON">toJSON</a></li>
             </ul>
         </li>
         <li><a href="Group.html">Group</a>
@@ -228,11 +228,11 @@
                 <li data-type='method'><a href="architect.html#.Random">Random</a></li>
             </ul>
         </li>
-        <li><a href="connection_.html">connection</a>
+        <li><a href="connection.html">connection</a>
             <ul class='members'>
-                <li data-type='member'><a href="connection_.html#.ALL_TO_ALL">ALL_TO_ALL</a></li>
-                <li data-type='member'><a href="connection_.html#.ALL_TO_ELSE">ALL_TO_ELSE</a></li>
-                <li data-type='member'><a href="connection_.html#.ONE_TO_ONE">ONE_TO_ONE</a></li>
+                <li data-type='member'><a href="connection.html#.ALL_TO_ALL">ALL_TO_ALL</a></li>
+                <li data-type='member'><a href="connection.html#.ALL_TO_ELSE">ALL_TO_ELSE</a></li>
+                <li data-type='member'><a href="connection.html#.ONE_TO_ONE">ONE_TO_ONE</a></li>
             </ul>
         </li>
         <li><a href="cost.html">cost</a>
@@ -312,7 +312,7 @@
         <div class="column is-11-desktop is-10-widescreen">
 
 
-            <h1 class="page-title">connection</h1>
+            <h1 class="page-title">Connection</h1>
 
 
             <section>
@@ -327,15 +327,523 @@
                     <div class="container-overview">
 
 
-                        <div class="description"><p>Specifies the way two <a href="Group">Groups</a> are connected.</p>
-                            <p>Connections can be made between groups using these built-in connection methods and within
-                                a group
-                                itself by calling the <a href="Group">Group</a> connection method with itself as a
-                                target.</p>
-                            <p>To learn more about the formed connections between <a href="Node">Nodes</a>, <a
-                                    href="Group">Groups</a>, and <a href="Layer">Layers</a> please see <a
-                                    href="Connection_">Connection</a>
-                            </p></div>
+                        <h4 class="name" id="Connection"><span class="type-signature"></span>new Connection
+
+                            <span class="signature mobile-break">(from, to, weight<span
+                                    class="signature-attributes">opt</span>, options<span class="signature-attributes">opt</span>)</span><span
+                                    class="type-signature mobile-break"></span>
+
+
+                            <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an
+                                issue</a>
+
+
+                        </h4>
+
+
+                        <div class="description">
+                            <p>A connection instance describes the connection between two nodes. If you're looking for
+                                connections between <a href="Group">Groups</a> please see <a href="connection">Connection
+                                    Methods</a></p>
+                        </div>
+
+
+                        <h5>Parameters:</h5>
+
+                        <div class="table-overflow">
+                            <table class="params">
+                                <thead>
+                                <tr>
+
+                                    <th>Name</th>
+
+
+                                    <th>Type</th>
+
+
+                                    <th>Default</th>
+
+
+                                    <th class="last">Description</th>
+                                </tr>
+                                </thead>
+
+                                <tbody>
+
+
+                                <tr>
+
+                                    <td class="name"><code>from</code></td>
+
+
+                                    <td class="type">
+
+
+                                        <span class="param-type"><a href="Node.html">Node</a></span>
+
+
+                                    </td>
+
+
+                                    <td class="default">
+
+                                    </td>
+
+
+                                    <td class="description last"><p>Connection origin node (neuron)</p></td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td class="name"><code>to</code></td>
+
+
+                                    <td class="type">
+
+
+                                        <span class="param-type"><a href="Node.html">Node</a></span>
+
+
+                                    </td>
+
+
+                                    <td class="default">
+
+                                    </td>
+
+
+                                    <td class="description last"><p>Connection destination node (neuron)</p></td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td class="name"><code>weight</code></td>
+
+
+                                    <td class="type">
+
+
+                                        <span class="param-type">number</span>
+
+
+                                        <span class="attribute">&lt;optional&gt;</span>
+
+
+                                    </td>
+
+
+                                    <td class="default">
+
+                                        <code>random</code>
+
+                                    </td>
+
+
+                                    <td class="description last"><p>Weight of the connection</p></td>
+
+                                </tr>
+
+
+                                <tr>
+
+                                    <td class="name"><code>options</code></td>
+
+
+                                    <td class="description last" colspan="2">
+
+                                        <h6>Properties</h6>
+
+                                        <div class="table-overflow">
+                                            <table class="params">
+                                                <thead>
+                                                <tr>
+
+                                                    <th>Name</th>
+
+
+                                                    <th>Type</th>
+
+
+                                                    <th>Default</th>
+
+
+                                                    <th class="last">Description</th>
+                                                </tr>
+                                                </thead>
+
+                                                <tbody>
+
+
+                                                <tr>
+
+                                                    <td class="name"><code>gain</code></td>
+
+
+                                                    <td class="type">
+
+
+                                                        <span class="param-type">number</span>
+
+
+                                                        <span class="attribute">&lt;optional&gt;</span>
+
+
+                                                    </td>
+
+
+                                                    <td class="default">
+
+                                                        <code>1</code>
+
+                                                    </td>
+
+
+                                                    <td class="description last"></td>
+
+                                                </tr>
+
+
+                                                <tr>
+
+                                                    <td class="name"><code>gater</code></td>
+
+
+                                                    <td class="type">
+
+
+                                                        <span class="param-type"><a href="Node.html">Node</a></span>
+
+
+                                                        <span class="attribute">&lt;optional&gt;</span>
+
+
+                                                    </td>
+
+
+                                                    <td class="default">
+
+                                                    </td>
+
+
+                                                    <td class="description last"></td>
+
+                                                </tr>
+
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </td>
+
+
+                                </tr>
+
+
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                        <h5 class="subsection-title">Properties:</h5>
+
+
+                        <table class="props">
+                            <thead>
+                            <tr>
+
+                                <th>Name</th>
+
+
+                                <th>Type</th>
+
+
+                                <th>Default</th>
+
+
+                                <th class="last">Description</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+
+
+                            <tr>
+
+                                <td class="name"><code>from</code></td>
+
+
+                                <td class="type">
+
+
+                                    <span class="param-type"><a href="Node.html">Node</a></span>
+
+
+                                </td>
+
+
+                                <td class="default">
+
+                                </td>
+
+
+                                <td class="description last"><p>Connection origin node (neuron)</p></td>
+                            </tr>
+
+
+                            <tr>
+
+                                <td class="name"><code>to</code></td>
+
+
+                                <td class="type">
+
+
+                                    <span class="param-type"><a href="Node.html">Node</a></span>
+
+
+                                </td>
+
+
+                                <td class="default">
+
+                                </td>
+
+
+                                <td class="description last"><p>Connection destination node (neuron)</p></td>
+                            </tr>
+
+
+                            <tr>
+
+                                <td class="name"><code>weight</code></td>
+
+
+                                <td class="type">
+
+
+                                    <span class="param-type">number</span>
+
+
+                                </td>
+
+
+                                <td class="default">
+
+                                    <code>random</code>
+
+                                </td>
+
+
+                                <td class="description last"><p>Weight of the connection</p></td>
+                            </tr>
+
+
+                            <tr>
+
+                                <td class="name"><code>gain</code></td>
+
+
+                                <td class="type">
+
+
+                                    <span class="param-type">number</span>
+
+
+                                </td>
+
+
+                                <td class="default">
+
+                                    <code>1</code>
+
+                                </td>
+
+
+                                <td class="description last"><p>Used for gating, gets multiplied with weight</p></td>
+                            </tr>
+
+
+                            <tr>
+
+                                <td class="name"><code>gater</code></td>
+
+
+                                <td class="type">
+
+
+                                    <span class="param-type"><a href="Node.html">Node</a></span>
+
+
+                                </td>
+
+
+                                <td class="default">
+
+                                    <code>null</code>
+
+                                </td>
+
+
+                                <td class="description last"><p>The node gating this connection</p></td>
+                            </tr>
+
+
+                            <tr>
+
+                                <td class="name"><code>elegibility</code></td>
+
+
+                                <td class="type">
+
+
+                                    <span class="param-type">number</span>
+
+
+                                </td>
+
+
+                                <td class="default">
+
+                                    <code>0</code>
+
+                                </td>
+
+
+                                <td class="description last"></td>
+                            </tr>
+
+
+                            <tr>
+
+                                <td class="name"><code>xtrace_nodes</code></td>
+
+
+                                <td class="type">
+
+
+                                    <span class="param-type">Array.&lt;<a href="Node.html">Node</a>></span>
+
+
+                                </td>
+
+
+                                <td class="default">
+
+                                </td>
+
+
+                                <td class="description last"></td>
+                            </tr>
+
+
+                            <tr>
+
+                                <td class="name"><code>xtrace_values</code></td>
+
+
+                                <td class="type">
+
+
+                                    <span class="param-type">Array.&lt;number></span>
+
+
+                                </td>
+
+
+                                <td class="default">
+
+                                </td>
+
+
+                                <td class="description last"></td>
+                            </tr>
+
+
+                            <tr>
+
+                                <td class="name"><code>delta_weights</code></td>
+
+
+                                <td class="type">
+
+
+                                    <span class="param-type">Array.&lt;number></span>
+
+
+                                </td>
+
+
+                                <td class="default">
+
+                                </td>
+
+
+                                <td class="description last"></td>
+                            </tr>
+
+
+                            <tr>
+
+                                <td class="name"><code>delta_weights_previous</code></td>
+
+
+                                <td class="type">
+
+
+                                    <span class="param-type">number</span>
+
+
+                                </td>
+
+
+                                <td class="default">
+
+                                    <code>0</code>
+
+                                </td>
+
+
+                                <td class="description last"><p>Tracks <a
+                                        href="https://www.willamette.edu/~gorr/classes/cs449/momrate.html">momentum</a>
+                                </p></td>
+                            </tr>
+
+
+                            <tr>
+
+                                <td class="name"><code>delta_weights_total</code></td>
+
+
+                                <td class="type">
+
+
+                                    <span class="param-type">number</span>
+
+
+                                </td>
+
+
+                                <td class="default">
+
+                                    <code>0</code>
+
+                                </td>
+
+
+                                <td class="description last"><p>Tracks <a
+                                        href="https://www.willamette.edu/~gorr/classes/cs449/momrate.html">momentum</a>
+                                    - <em>for <a
+                                            href="https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes">batch
+                                        training</a></em></p></td>
+                            </tr>
+
+
+                            </tbody>
+                        </table>
 
 
                         <dl class="details">
@@ -345,10 +853,19 @@
                             <dd class="tag-source">
                                 <ul class="dummy">
                                     <li>
-                                        <a href="methods_connection.js.html">methods/connection.js</a>, <a
-                                            href="methods_connection.js.html#line1">line
-                                        1</a>
+                                        <a href="architecture_connection.js.html">architecture/connection.js</a>, <a
+                                            href="architecture_connection.js.html#line30">line 30</a>
                                     </li>
+                                </ul>
+                            </dd>
+
+
+                            <dt class="tag-see">See:</dt>
+                            <dd class="tag-see">
+                                <ul>
+                                    <li><a href="connection.html">Connection Methods</a></li>
+
+                                    <li><a href="Node.html">Node</a></li>
                                 </ul>
                             </dd>
 
@@ -356,100 +873,104 @@
                         </dl>
 
 
-                        <h3>Examples</h3>
-
-                        <p class="code-caption">Connection between two Groups</p>
-
-                        <pre class="prettyprint">
-      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
-
-let A = new Group(4);
-let B = new Group(5);
-
-A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional'>Copy</a>
-      <code data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
-
-let A = new Group(4);
-let B = new Group(5);
-
-A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional'>let { methods, Group } = require("@liquid-carrot/carrot");
-
-let A = new Group(4);
-let B = new Group(5);
-
-A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional</code>
-    </pre>
-
-                        <p class="code-caption">Group connection with itself</p>
-
-                        <pre class="prettyprint">
-      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
-
-let A = new Group(4);
-
-A.connect(A, methods.connection.ALL_TO_ALL);'>Copy</a>
-      <code data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
-
-let A = new Group(4);
-
-A.connect(A, methods.connection.ALL_TO_ALL);'>let { methods, Group } = require("@liquid-carrot/carrot");
-
-let A = new Group(4);
-
-A.connect(A, methods.connection.ALL_TO_ALL);</code>
-    </pre>
-
-
                     </div>
 
 
-                    <h3 class="main-subsection-title">Members</h3>
+                    <h3 class="main-subsection-title">Methods</h3>
 
 
-                    <h4 class="name" id=".ALL_TO_ALL"><span
-                            class="type-signature">(static, constant) </span>ALL_TO_ALL<span
-                            class="type-signature"> :object</span></h4>
+                    <h4 class="name" id=".innovationID"><span class="type-signature">(static) </span>innovationID
+
+                        <span class="signature mobile-break">(a, b)</span><span class="type-signature mobile-break"> &rarr; {number}</span>
+
+
+                        <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an
+                            issue</a>
+
+
+                    </h4>
 
 
                     <div class="description">
-                        <p>The default connection method between Groups</p>
+                        <p>Returns an innovation ID</p>
                     </div>
 
 
-                    <h5>Type:</h5>
-                    <ul>
-                        <li>
+                    <h5>Parameters:</h5>
 
-                            <span class="param-type">object</span>
+                    <div class="table-overflow">
+                        <table class="params">
+                            <thead>
+                            <tr>
+
+                                <th>Name</th>
 
 
-                        </li>
-                    </ul>
+                                <th>Type</th>
 
 
-                    <h5>Example</h5>
+                                <th class="last">Description</th>
+                            </tr>
+                            </thead>
 
-                    <p class="code-caption">Connection between two Groups</p>
+                            <tbody>
 
-                    <pre class="prettyprint">
-      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
 
-let A = new Group(4);
-let B = new Group(5);
+                            <tr>
 
-A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional'>Copy</a>
-      <code data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
+                                <td class="name"><code>a</code></td>
 
-let A = new Group(4);
-let B = new Group(5);
 
-A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional'>let { methods, Group } = require("@liquid-carrot/carrot");
+                                <td class="type">
 
-let A = new Group(4);
-let B = new Group(5);
 
-A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional</code>
-    </pre>
+                                    <span class="param-type">number</span>
+
+
+                                </td>
+
+
+                                <td class="description last"><p>A <a
+                                        href="https://en.wikipedia.org/wiki/Natural_number">natural number</a>, which is
+                                    an integer greater than or equal to zero</p></td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td class="name"><code>b</code></td>
+
+
+                                <td class="type">
+
+
+                                    <span class="param-type">number</span>
+
+
+                                </td>
+
+
+                                <td class="description last"><p>A <a
+                                        href="https://en.wikipedia.org/wiki/Natural_number">natural number</a>, which is
+                                    an integer greater than or equal to zero</p></td>
+
+                            </tr>
+
+
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                    <h5>Returns:</h5>
+
+
+                    <div class="param-desc">
+                        <ul>
+                            <li>An Integer that uniquely represents a pair of Integers</li>
+                        </ul>
+                    </div>
 
 
                     <dl class="details">
@@ -459,21 +980,19 @@ A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional<
                         <dd class="tag-source">
                             <ul class="dummy">
                                 <li>
-                                    <a href="methods_connection.js.html">methods/connection.js</a>, <a
-                                        href="methods_connection.js.html#line42">line
-                                    42</a>
+                                    <a href="architecture_connection.js.html">architecture/connection.js</a>, <a
+                                        href="architecture_connection.js.html#line80">line 80</a>
                                 </li>
                             </ul>
                         </dd>
 
 
-                        <dt class="tag-default">Default Value:</dt>
-                        <dd class="tag-default">
-                            <ul class="dummy">
-                                <li class="object-value"><pre class="prettyprint"><code>{
-  "name": "OUTPUT"
-}</code></pre>
-                                </li>
+                        <dt class="tag-see">See:</dt>
+                        <dd class="tag-see">
+                            <ul>
+                                <li>
+                                    <a href="https://en.wikipedia.org/wiki/Pairing_function%20(Cantor%20pairing%20function)">Pairing
+                                        function (Cantor pairing function)</a></li>
                             </ul>
                         </dd>
 
@@ -481,51 +1000,29 @@ A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional<
                     </dl>
 
 
-                    <h4 class="name" id=".ALL_TO_ELSE"><span class="type-signature">(static, constant) </span>ALL_TO_ELSE<span
-                            class="type-signature"> :object</span></h4>
+                    <h4 class="name" id=".toJSON"><span class="type-signature">(static) </span>toJSON
+
+                        <span class="signature mobile-break">()</span><span class="type-signature mobile-break"> &rarr; {object}</span>
+
+
+                        <a class="issue-button" href="https://github.com/liquidcarrot/carrot/issues/new">open an
+                            issue</a>
+
+
+                    </h4>
 
 
                     <div class="description">
-                        <p>Connects each node in <code>GroupX</code> to all nodes in <code>GroupY</code> except for the
-                            nodes also
-                            contained within itself</p>
+                        <p>Returns the connection as a JSON</p>
                     </div>
 
 
-                    <h5>Type:</h5>
-                    <ul>
-                        <li>
-
-                            <span class="param-type">object</span>
+                    <h5>Returns:</h5>
 
 
-                        </li>
-                    </ul>
-
-
-                    <h5>Example</h5>
-
-                    <p class="code-caption">Connection between two Groups</p>
-
-                    <pre class="prettyprint">
-      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
-
-let A = new Group(4);
-let B = new Group(5);
-
-A.connect(B, methods.connection.ALL_TO_ELSE); // specifying a method is optional'>Copy</a>
-      <code data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
-
-let A = new Group(4);
-let B = new Group(5);
-
-A.connect(B, methods.connection.ALL_TO_ELSE); // specifying a method is optional'>let { methods, Group } = require("@liquid-carrot/carrot");
-
-let A = new Group(4);
-let B = new Group(5);
-
-A.connect(B, methods.connection.ALL_TO_ELSE); // specifying a method is optional</code>
-    </pre>
+                    <div class="param-desc">
+                        <p>Returns connection as a JSON</p>
+                    </div>
 
 
                     <dl class="details">
@@ -535,94 +1032,8 @@ A.connect(B, methods.connection.ALL_TO_ELSE); // specifying a method is optional
                         <dd class="tag-source">
                             <ul class="dummy">
                                 <li>
-                                    <a href="methods_connection.js.html">methods/connection.js</a>, <a
-                                        href="methods_connection.js.html#line59">line 59</a>
-                                </li>
-                            </ul>
-                        </dd>
-
-
-                        <dt class="tag-default">Default Value:</dt>
-                        <dd class="tag-default">
-                            <ul class="dummy">
-                                <li class="object-value"><pre class="prettyprint"><code>{
-  "name": "INPUT"
-}</code></pre>
-                                </li>
-                            </ul>
-                        </dd>
-
-
-                    </dl>
-
-
-                    <h4 class="name" id=".ONE_TO_ONE"><span
-                            class="type-signature">(static, constant) </span>ONE_TO_ONE<span
-                            class="type-signature"> :object</span></h4>
-
-
-                    <div class="description">
-                        <p>The default connection method when connecting Groups to themselves</p>
-                    </div>
-
-
-                    <h5>Type:</h5>
-                    <ul>
-                        <li>
-
-                            <span class="param-type">object</span>
-
-
-                        </li>
-                    </ul>
-
-
-                    <h5>Example</h5>
-
-                    <p class="code-caption">Connection between two Groups</p>
-
-                    <pre class="prettyprint">
-      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
-
-let A = new Group(4);
-let B = new Group(5);
-
-A.connect(A, methods.connection.ONE_TO_ONE); // specifying a method is optional'>Copy</a>
-      <code data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
-
-let A = new Group(4);
-let B = new Group(5);
-
-A.connect(A, methods.connection.ONE_TO_ONE); // specifying a method is optional'>let { methods, Group } = require("@liquid-carrot/carrot");
-
-let A = new Group(4);
-let B = new Group(5);
-
-A.connect(A, methods.connection.ONE_TO_ONE); // specifying a method is optional</code>
-    </pre>
-
-
-                    <dl class="details">
-
-
-                        <dt class="tag-source">Source:</dt>
-                        <dd class="tag-source">
-                            <ul class="dummy">
-                                <li>
-                                    <a href="methods_connection.js.html">methods/connection.js</a>, <a
-                                        href="methods_connection.js.html#line77">line
-                                    77</a>
-                                </li>
-                            </ul>
-                        </dd>
-
-
-                        <dt class="tag-default">Default Value:</dt>
-                        <dd class="tag-default">
-                            <ul class="dummy">
-                                <li class="object-value"><pre class="prettyprint"><code>{
-  "name": "SELF"
-}</code></pre>
+                                    <a href="architecture_connection.js.html">architecture/connection.js</a>, <a
+                                        href="architecture_connection.js.html#line57">line 57</a>
                                 </li>
                             </ul>
                         </dd>
@@ -644,7 +1055,7 @@ A.connect(A, methods.connection.ONE_TO_ONE); // specifying a method is optional<
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a> on Thu Sep 05 2019 16:59:16
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a> on Tue Sep 10 2019 17:26:01
     GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 <script src="scripts/linenumber.js"></script>
@@ -713,7 +1124,7 @@ A.connect(A, methods.connection.ONE_TO_ONE); // specifying a method is optional<
   copy_buttons.forEach(function(btn) {
     btn.addEventListener('mouseout', function(e) {
       setTimeout(function() {
-        e.fromElement.innerText = "Copy"
+        e.fromElement.innerText = 'Copy';
       }, 200);
     });
   });
