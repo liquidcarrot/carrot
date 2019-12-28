@@ -11,6 +11,7 @@ const Utils = require('../../util/utils');
 function ReplayBuffer(maxSize, noiseRate) {
   this.buffer = [];
   this.maxSize = maxSize;
+  this.sumOfAbsLosses = 0; //used for PER
   this.noiseRate = noiseRate || 0;
 }
 
@@ -28,6 +29,7 @@ ReplayBuffer.prototype = {
     let json = {};
     json.buffer = this.buffer;
     json.maxSize = this.maxSize;
+    json.sumOfAbsLosses = this.sumOfAbsLosses;
     json.noiseRate = this.noiseRate;
     return json;
   },
@@ -39,9 +41,10 @@ ReplayBuffer.prototype = {
    */
   add: function(experience) {
     if (this.buffer.length >= this.maxSize) {
-      this.buffer.shift(); // Buffer is full --> remove first entry
+      this.sumOfAbsLosses -= this.buffer.shift().loss; // Buffer is full --> remove first entry
     }
     this.buffer.push(experience);
+    this.sumOfAbsLosses += Math.abs(experience.loss);
   },
 
   /**
@@ -84,20 +87,19 @@ ReplayBuffer.prototype = {
 
     let miniBatch = [];
     let bufferCopy = this.buffer.slice(0);
+    let sumOfAbsLossesCopy = this.sumOfAbsLosses;
 
-    let sumOfLosses = 0;
-    for (let i = 0; i < bufferCopy.length; i++) {
-      sumOfLosses += bufferCopy[i].loss;
-    }
-
-    for (let i = 0; i < batchSize; i++) {
+    for (let i = 0; miniBatch.length < batchSize; i++) {
       for (let j = 0; j < bufferCopy.length; j++) {
-        if (Math.random() * (1 + this.noiseRate) - this.noiseRate / 2 <= Math.abs(bufferCopy[j].loss) / sumOfLosses) {
-          miniBatch.push(bufferCopy.splice(j, 1)[0]);
+        if (Math.random() * (1 + this.noiseRate) - this.noiseRate / 2 <= Math.abs(bufferCopy[j].loss) / sumOfAbsLossesCopy) {
+          let exp = bufferCopy.splice(j, 1)[0];
+          miniBatch.push(exp);
+          sumOfAbsLossesCopy -= Math.abs(exp.loss);
           break;
         }
       }
     }
+
     return miniBatch;
   },
 };
@@ -115,6 +117,7 @@ ReplayBuffer.prototype = {
 ReplayBuffer.fromJSON = function(json) {
   let replayBuffer = new ReplayBuffer(json.maxSize, json.noiseRate);
   replayBuffer.buffer = json.buffer;
+  replayBuffer.sumOfAbsLosses = json.sumOfAbsLosses;
   return replayBuffer;
 };
 
