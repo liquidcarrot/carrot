@@ -115,9 +115,9 @@ describe('DDPG', function() {
       gamma: 0.3,
       explore: 0,
       isUsingPER: true,
-      noiseStandardDeviation: Utils.randomInt(1, 10) / 10,
-      noiseStandardDeviationDecay: Utils.randomInt(1, 10) / 10,
-      noiseStandardDeviationMin: Utils.randomInt(1, 10) / 10,
+      noiseStandardDeviation: 0.3,
+      noiseStandardDeviationDecay: 0.999,
+      noiseStandardDeviationMin: 0.01,
     });
     expect(testLearning(agent) >= 0.9).to.be.true;
     console.timeEnd('Learning: DDPG, PER');

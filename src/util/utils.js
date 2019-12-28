@@ -13,41 +13,34 @@ let randomInt = function(min, max) {
   return Math.floor(Math.random() * (max + 1 - min) + min);
 };
 
-let hasReturnValue = false;
-let returnValue = 0;
-/**
- * This method generates a gaussian random number between 0 and 1
- *
- * @returns {number} gaussian random number
- */
-let nextGaussian = function() {
-  if (hasReturnValue) {
-    hasReturnValue = false;
-    return returnValue;
-  }
-  let u = 2 * Math.random() - 1;
-  let v = 2 * Math.random() - 1;
-  let r = u * u + v * v;
-  if (r === 0 || r > 1) {
-    return nextGaussian();
-  }
-  let c = Math.sqrt(-2 * Math.log(r) / r);
-  returnValue = v * c;
-  hasReturnValue = true;
-  return u * c;
-};
+let y2, useLast = false;
 
-let sqrtOfTwoPi = Math.sqrt(2 * Math.PI);
 /**
  * This method puts gaussian noise onto a value
  *
- * @param {number} value the value with the highest probability
+ * @param {number} mean the value with the highest probability
  * @param {number} standardDeviation
  * @returns {number} noisy value
  */
-let gaussianNoise = function(value = 0.5, standardDeviation = 1) {
-  return Math.exp(-((nextGaussian() - value) ** 2) / (2 * standardDeviation * standardDeviation))
-    / (standardDeviation * sqrtOfTwoPi);
+let gaussianNoise = function(mean, standardDeviation) {
+  let y1;
+  if (useLast) {
+    y1 = y2;
+    useLast = false;
+  } else {
+    let x1, x2, w;
+    do {
+      x1 = 2.0 * Math.random() - 1.0;
+      x2 = 2.0 * Math.random() - 1.0;
+      w = x1 * x1 + x2 * x2;
+    } while (w >= 1.0);
+    w = Math.sqrt((-2.0 * Math.log(w)) / w);
+    y1 = x1 * w;
+    y2 = x2 * w;
+    useLast = true;
+  }
+
+  return mean + standardDeviation * y1;
 };
 
 /**
@@ -61,10 +54,10 @@ let gaussianNoise = function(value = 0.5, standardDeviation = 1) {
 let addGaussianNoiseToNetwork = function(network, standardDeviation = 0.2) {
   let copy = Network.fromJSON(network.toJSON());
   for (let i = 0; i < copy.nodes.length; i++) {
-    copy.nodes[i].weight = gaussianNoise(copy.nodes[i].weight, standardDeviation);
+    copy.nodes[i].bias = gaussianNoise(copy.nodes[i].bias, standardDeviation);
   }
   for (let i = 0; i < copy.gates.length; i++) {
-    copy.gates[i].weight = gaussianNoise(copy.gates[i].weight, standardDeviation);
+    copy.gates[i].bias = gaussianNoise(copy.gates[i].bias, standardDeviation);
   }
   for (let i = 0; i < copy.connections.length; i++) {
     copy.connections[i].weight = gaussianNoise(copy.connections[i].weight, standardDeviation);

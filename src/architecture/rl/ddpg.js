@@ -59,7 +59,7 @@ function DDPG(numStates, numActions, options) {
     ? new ReplayBuffer(experienceSize)
     : new ReplayBuffer(experienceSize, noisyPER));
   this.learningStepsPerIteration = Utils.RL.getOption(options, 'learningStepsPerIteration', 20);
-  this.startLearningThreshold = Utils.RL.getOption(options, 'startLearningThreshold', 100);
+  this.startLearningThreshold = Utils.RL.getOption(options, 'startLearningThreshold', 0);
 
   // Training specific variables
   this.isContinuousTask = Utils.RL.getOption(options, 'isContinuousTask', false);
@@ -202,15 +202,15 @@ DDPG.prototype = {
     if (prohibitedActions === undefined) {
       prohibitedActions = [];
     }
-    // let noiseFactor = Math.max(this.noiseStandardDeviationMin, Rate.EXP(this.noiseStandardDeviation, this.timeStep, {gamma: this.noiseStandardDeviationDecay}));
-//    let action = Utils.addGaussianNoiseToNetwork(this.actor, noiseFactor).activate(state);
-    let action = this.actor.activate(state);
+    let noiseFactor = Math.max(this.noiseStandardDeviationMin, Rate.EXP(this.noiseStandardDeviation, this.timeStep, {gamma: this.noiseStandardDeviationDecay}));
+    let action = Utils.addGaussianNoiseToNetwork(this.actor, noiseFactor).activate(state);
 
     if (this.startLearningThreshold > this.timeStep) {
       for (let i = 0; i < action.length; i++) {
         action[i] = Math.random();
       }
     }
+
     for (let i = 0; i < prohibitedActions.length; i++) {
       action[prohibitedActions[i]] = -1;
     }
@@ -236,7 +236,7 @@ DDPG.prototype = {
     const normalizedReward = (1 + newReward) / 2;
 
     this.timeStep++;
-    if (this.timeStep === 1 || !this.isTraining) {
+    if (this.timeStep === 1 || !this.isTraining || this.startLearningThreshold > this.timeStep) {
       return 1;
     }
     let experience = new Experience(this.lastState, this.actions, normalizedReward, this.state, 0, isFinalState);
@@ -247,7 +247,6 @@ DDPG.prototype = {
     let miniBatch = this.isUsingPER
       ? this.replayBuffer.getMiniBatchWithPER(this.learningStepsPerIteration)
       : this.replayBuffer.getRandomMiniBatch(this.learningStepsPerIteration);
-
     for (let i = 0; i < miniBatch.length; i++) {
       this.study(miniBatch[i]);
     }
@@ -302,6 +301,7 @@ DDPG.prototype = {
     for (let i = 0; i < criticParameters.length; i++) {
       criticTargetParameters[i] *= this.theta * criticParameters[i] + (1 - this.theta);
     }
+
 
     //Learning rate of 1 --> copy parameters
     this.actorTarget.propagate(1, 0, true, actorTargetParameters);
