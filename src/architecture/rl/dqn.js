@@ -230,7 +230,7 @@ DQN.prototype = {
     const normalizedReward = (1 + newReward) / 2;
 
     // Update Q function | temporal difference method currently hardcoded
-    let loss;
+    let loss = 1;
     if (this.reward != null && this.isTraining) {
       let experience = new Experience(this.state, this.action, normalizedReward, this.nextState, this.nextAction, isFinalState);
       // Learn from current estimated reward to understand how wrong agent is
@@ -247,8 +247,6 @@ DQN.prototype = {
       for (let i = 0; i < miniBatch.length; i++) {
         this.study(miniBatch[i]);
       }
-    } else {
-      loss = 1;
     }
     this.timeStep++;
     this.reward = newReward;
