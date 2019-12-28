@@ -195,8 +195,6 @@ DDPG.prototype = {
    * @param {number[]} state current state (float arr with values from [0,1])
    * @param {number[]} prohibitedActions all prohibited actions at this state
    * @return {int|number[]} The action which the DQN would take at this state; action ∈ [0, this.numActions-1] or the complete action array with the QValues for continuous tasks
-   *
-   * @todo bug in "addGaussianNoiseToNetwork"
    */
   act: function(state, prohibitedActions) {
     if (prohibitedActions === undefined) {
