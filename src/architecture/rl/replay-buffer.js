@@ -87,7 +87,7 @@ ReplayBuffer.prototype = {
 
     let sumOfLosses = 0;
     for (let i = 0; i < bufferCopy.length; i++) {
-      sumOfLosses += bufferCopy[i].loss;
+      sumOfLosses += Math.abs(bufferCopy[i].loss);
     }
 
     for (let i = 0; i < batchSize; i++) {

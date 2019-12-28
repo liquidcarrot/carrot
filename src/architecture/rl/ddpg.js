@@ -208,11 +208,7 @@ DDPG.prototype = {
     this.actions = action;
     this.lastState = this.state;
     this.state = state;
-    if (this.isContinuousTask) {
-      return action;
-    } else {
-      return Utils.getMaxValueIndex(action);
-    }
+    return this.isContinuousTask ? action : Utils.getMaxValueIndex(action);
   },
 
   /**
@@ -236,8 +232,7 @@ DDPG.prototype = {
     }
     let experience = new Experience(this.lastState, this.actions, normalizedReward, this.state, 0, isFinalState);
 
-    let loss = this.study(experience);
-    experience.loss = Math.abs(loss);
+    experience.loss = this.study(experience);
     this.replayBuffer.add(experience);
 
     let miniBatch = this.isUsingPER
@@ -247,7 +242,7 @@ DDPG.prototype = {
     for (let i = 0; i < miniBatch.length; i++) {
       this.study(miniBatch[i]);
     }
-    return loss;
+    return experience.loss;
   },
 
   /**
@@ -275,15 +270,16 @@ DDPG.prototype = {
     }
 
     // Learning the actor and critic networks
+    let criticGradiants = criticActivation;
     for (let i = 0; i < criticActivation.length; i++) {
-      criticActivation[i] += this.criticLoss(qPrime[i], criticActivation[i], this.criticLossOptions);
+      criticGradiants[i] *= this.criticLoss(qPrime[i], criticActivation[i], this.criticLossOptions);
     }
 
     let criticLearningRate = Math.max(this.learningRateCriticMin, Rate.EXP(this.learningRateCritic, this.timeStep, {gamma: this.learningRateCriticDecay}));
-    this.critic.propagate(criticLearningRate, 0, true, criticActivation);
+    this.critic.propagate(criticLearningRate, 0, true, criticGradiants);
 
     let policyLoss = -Utils.mean(this.critic.activate(experience.state.concat(actorActivation), {no_trace: true}));
-    actorActivation[Utils.getMaxValueIndex(experience.action)] += policyLoss;
+    actorActivation[Utils.getMaxValueIndex(experience.action)] *= policyLoss;
 
     let actorLearningRate = Math.max(this.learningRateActorMin, Rate.EXP(this.learningRateActor, this.timeStep, {gamma: this.learningRateActorDecay}));
     this.actor.propagate(actorLearningRate, 0, true, actorActivation);
@@ -303,7 +299,7 @@ DDPG.prototype = {
     //Learning rate of 1 --> copy parameters
     this.actorTarget.propagate(1, 0, true, actorTargetParameters);
     this.criticTarget.propagate(1, 0, true, criticTargetParameters);
-
+    console.log(policyLoss);
     return policyLoss;
   },
 };
