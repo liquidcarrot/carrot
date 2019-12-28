@@ -258,6 +258,8 @@ DDPG.prototype = {
    *
    * @param {Experience} experience the experience to learn from
    * @returns {number} Actor loss value; loss ∈ [-1,1]
+   *
+   * @todo bug at experience replay
    */
   study: function(experience) {
     let stateActionArr = experience.state.concat(experience.action);
