@@ -59,6 +59,7 @@ function DDPG(numStates, numActions, options) {
     ? new ReplayBuffer(experienceSize)
     : new ReplayBuffer(experienceSize, noisyPER));
   this.learningStepsPerIteration = Utils.RL.getOption(options, 'learningStepsPerIteration', 20);
+  this.startLearningThreshold = Utils.RL.getOption(options, 'startLearningThreshold', 100);
 
   // Training specific variables
   this.isContinuousTask = Utils.RL.getOption(options, 'isContinuousTask', false);
@@ -194,14 +195,22 @@ DDPG.prototype = {
    * @param {number[]} state current state (float arr with values from [0,1])
    * @param {number[]} prohibitedActions all prohibited actions at this state
    * @return {int|number[]} The action which the DQN would take at this state; action ∈ [0, this.numActions-1] or the complete action array with the QValues for continuous tasks
+   *
+   * @todo bug in "addGaussianNoiseToNetwork"
    */
   act: function(state, prohibitedActions) {
     if (prohibitedActions === undefined) {
       prohibitedActions = [];
     }
+    // let noiseFactor = Math.max(this.noiseStandardDeviationMin, Rate.EXP(this.noiseStandardDeviation, this.timeStep, {gamma: this.noiseStandardDeviationDecay}));
+//    let action = Utils.addGaussianNoiseToNetwork(this.actor, noiseFactor).activate(state);
+    let action = this.actor.activate(state);
 
-    let noiseFactor = Math.max(this.noiseStandardDeviationMin, Rate.EXP(this.noiseStandardDeviation, this.timeStep, {gamma: this.noiseStandardDeviationDecay}));
-    let action = Utils.addGaussianNoiseToNetwork(this.actor, noiseFactor).activate(state);
+    if (this.startLearningThreshold > this.timeStep) {
+      for (let i = 0; i < action.length; i++) {
+        action[i] = Math.random();
+      }
+    }
     for (let i = 0; i < prohibitedActions.length; i++) {
       action[prohibitedActions[i]] = -1;
     }
@@ -253,8 +262,6 @@ DDPG.prototype = {
    *
    * @param {Experience} experience the experience to learn from
    * @returns {number} Actor loss value; loss ∈ [-1,1]
-   *
-   * @todo bug at experience replay
    */
   study: function(experience) {
     let stateActionArr = experience.state.concat(experience.action);
@@ -299,7 +306,6 @@ DDPG.prototype = {
     //Learning rate of 1 --> copy parameters
     this.actorTarget.propagate(1, 0, true, actorTargetParameters);
     this.criticTarget.propagate(1, 0, true, criticTargetParameters);
-    console.log(policyLoss);
     return policyLoss;
   },
 };
