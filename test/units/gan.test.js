@@ -1,6 +1,6 @@
 let { assert, expect } = require('chai');
 let should = require('chai').should();
-let carrot = require('../../src/carrot');
+let carrot = require('../../src/index');
 
 /**
  *
@@ -13,4 +13,3 @@ let carrot = require('../../src/carrot');
  * How do you reproduce the failure?
  *
  */
- 

@@ -9,7 +9,7 @@ const {
   Node,
   Connection,
   Group
-} = require('../../../src/carrot')
+} = require('../../../src/index')
 
 
 const mutation = methods.mutation;

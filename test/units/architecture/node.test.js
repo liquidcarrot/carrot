@@ -2,7 +2,7 @@ const { assert, expect } = require('chai');
 const should = require('chai').should();
 const chalk = require('chalk');
 
-const { Group, Layer, Connection, Node, methods } = require('../../../src/carrot');
+const { Group, Layer, Connection, Node, methods } = require('../../../src/index');
 
 describe("Node", function() {
   const is = {

@@ -1,8 +1,8 @@
 const _ = require("lodash");
 const { assert, expect } = require('chai');
 const should = require('chai').should();
-const { activation } = require('../../../src/carrot');
- 
+const { activation } = require('../../../src/index');
+
 describe("activation", function() {
   describe("activation.LOGISTIC()", function() {
     it("activation.LOGISTIC() => {ReferenceError}", function(){
@@ -49,13 +49,13 @@ describe("activation", function() {
     it("activation.TANH(numbers, derivate=false) => {number[]}", function(){
       const x = Array.from({ length: _.random(1, 5) }, () => _.random(-50, 50,  true));
       const z = _.map(x, x => Math.tanh(x));
-      
+
       expect(activation.TANH(x, false)).to.eql(z);
     })
     it("activation.TANH(numbers, derivate=true) => {number[]}", function(){
       const x = Array.from({ length: _.random(1, 5) }, () => _.random(-50, 50,  true));
       const z = _.map(x, x => 1 - Math.pow(Math.tanh(x), 2));
-      
+
       expect(activation.TANH(x, true)).to.eql(z);
     })
   })
@@ -397,8 +397,3 @@ describe("activation", function() {
     })
   })
 })
-
-
-
-
-

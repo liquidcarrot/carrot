@@ -1,5 +1,5 @@
 const _ = require("lodash")
-const { methods } = require("../src/carrot")
+const { methods } = require("../src/index")
 
 // 50/50 chance of returning `thing`
 const maybe = (thing) => Math.round(Math.random()) ? thing : null;

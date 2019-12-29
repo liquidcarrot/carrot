@@ -2,7 +2,7 @@
 const _ = require('lodash');
 var chai = require('chai');
 const { expect, assert } = chai;
-let carrot = require('../../../src/carrot')
+let carrot = require('../../../src/index')
 
 /* Shorten var names */
 var { architect, Network, methods, config } = carrot;

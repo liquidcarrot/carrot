@@ -1,8 +1,7 @@
 let { assert, expect } = require('chai');
 let should = require('chai').should();
-let carrot = require('../../../src/carrot');
-
-const { Group, Layer, Connection, Node, methods } = require('../../../src/carrot');
+let carrot = require('../../../src/index');
+const { Group, Layer, Connection, Node, methods } = carrot;
 
 /**
  *

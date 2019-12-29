@@ -2,7 +2,7 @@ const { assert, expect } = require('chai');
 const should = require('chai').should();
 const chalk = require('chalk');
 
-const { Neat, Network, architect, methods } = require('../../src/carrot');
+const { Neat, Network, architect, methods } = require('../../src/index');
 
 describe("Logic Gates", function() {
   const data = {
@@ -59,13 +59,13 @@ describe("Logic Gates", function() {
   });
   it("[NOT] Network.evolve()", async function() {
     this.timeout(10000);
-    
+
     const network = new Network(1,1);
 
     const initial = network.test(data.NOT);
     await network.evolve(data.NOT)
     const final = network.test(data.NOT);
-    
+
     expect(final.error).to.be.at.most(initial.error);
   });
   it("[NOT] Neat.evolve()", async function() {

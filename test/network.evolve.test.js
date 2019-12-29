@@ -1,6 +1,6 @@
 const chai = require('chai')
 const assert = chai.assert
-let carrot = require('../src/carrot')
+let carrot = require('../src/index')
 
 /* Shorten const names */
 const { Network, methods, config } = carrot;

@@ -6,7 +6,7 @@
  */
 
 // be careful about circular dependencies here
-const {multi, methods} = require('../../../carrot');
+const {multi, methods} = require('../../../index');
 const F = multi.activations;
 let dataset = [];
 let cost_function;

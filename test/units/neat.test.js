@@ -6,7 +6,7 @@ const { expect, assert } = chai;
 const should = require('chai').should();
 
 const { has, is, data, random } = require('../../util');
-const { Network, Neat, methods, config, architect } = require('../../src/carrot');
+const { Network, Neat, methods, config, architect } = require('../../src/index');
 
 describe("Neat", function() {
   describe("new Neat()", function() {

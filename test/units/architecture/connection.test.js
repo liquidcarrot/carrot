@@ -1,5 +1,5 @@
 const { expect } = require('chai');
-const { Connection, Node } = require('../../../src/carrot');
+const { Connection, Node } = require('../../../src/index');
 
 const was = {
   connected: function(connection, from, to) {

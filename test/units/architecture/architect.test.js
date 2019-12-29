@@ -1,6 +1,6 @@
 let { assert, expect } = require('chai');
 let should = require('chai').should();
-let carrot = require('../../../src/carrot');
+let carrot = require('../../../src/index');
 
 /**
  *
@@ -14,9 +14,9 @@ let carrot = require('../../../src/carrot');
  *
  */
 it('should return true if valid user id', function(){
-  
+
 });
 
 it('should return false if invalid user id', function(){
-  
+
 });
