@@ -56,6 +56,7 @@ function DQN(numStates, numActions, options) {
   this.gamma = Utils.RL.getOption(options, 'gamma', 0.7); // future reward discount factor
   this.loss = Utils.RL.getOption(options, 'loss', Loss.ABS);
   this.lossOptions = Utils.RL.getOption(options, 'lossOptions', {});
+  this.startLearningThreshold = Utils.RL.getOption(options, 'startLearningThreshold', 0);
 
   // Network creation
   this.numActions = numActions;
@@ -188,7 +189,7 @@ DQN.prototype = {
     // epsilon greedy strategy | explore > random ? explore : exploit
     let currentExploreRate = Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay}));
     let action;
-    if (currentExploreRate > Math.random()) {
+    if (currentExploreRate > Math.random() || this.timeStep < this.startLearningThreshold) {
       // Explore
       action = Utils.randomInt(0, this.numActions - 1);
     } else if (this.isDoubleDQN) {
@@ -231,7 +232,7 @@ DQN.prototype = {
 
     // Update Q function | temporal difference method currently hardcoded
     let loss = 1;
-    if (this.reward != null && this.isTraining) {
+    if (this.reward != null && this.isTraining && this.timeStep >= this.startLearningThreshold) {
       let experience = new Experience(this.state, this.action, normalizedReward, this.nextState, this.nextAction, isFinalState);
       // Learn from current estimated reward to understand how wrong agent is
       experience.loss = this.study(experience);
