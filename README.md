@@ -269,9 +269,9 @@ And finally, a big thank you to all of you for supporting! 🤗
  <tbody>
   <tr>
    <td align="center">
-    <a href="https://github.com/D-Nice" alt="D-Nice on Github"><img src="https://avatars0.githubusercontent.com/u/2888248?s=460&v=4" alt="D-Nice Profile Pitcure" width="150px" /></a>
+    <a href="https://www.solinfra.io/" alt="Solinfra"><img src="https://avatars0.githubusercontent.com/u/53709700?s=400&u=5d4523af8b372ed3be43c23bb8ed1003f2f234a4&v=4" alt="D-Nice Profile Pitcure" width="150px" /></a>
     <br>
-    <strong>D-Nice</strong>
+    <strong>Solinfra</strong>
    </td>
   </tr>
  </tbody>
