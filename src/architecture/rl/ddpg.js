@@ -274,13 +274,13 @@ DDPG.prototype = {
     }
 
     // Learning the actor and critic networks
-    let criticGradiants = criticActivation;
     for (let i = 0; i < criticActivation.length; i++) {
-      criticGradiants[i] *= this.criticLoss(qPrime[i], criticActivation[i], this.criticLossOptions);
+      criticActivation[i] *= this.criticLoss(qPrime[i], criticActivation[i], this.criticLossOptions);
     }
 
     let criticLearningRate = Math.max(this.learningRateCriticMin, Rate.EXP(this.learningRateCritic, this.timeStep, {gamma: this.learningRateCriticDecay}));
-    this.critic.propagate(criticLearningRate, 0, true, criticGradiants);
+    this.critic.propagate(criticLearningRate, 0, true, qPrime);
+    //this.critic.propagate(criticLearningRate, 0, true, criticActivation);
 
     let policyLoss = -Utils.mean(this.critic.activate(experience.state.concat(actorActivation), {no_trace: true}));
     actorActivation[Utils.getMaxValueIndex(experience.action)] *= policyLoss;
