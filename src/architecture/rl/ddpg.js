@@ -1,4 +1,3 @@
-const architect = require('../architect');
 const Network = require('../network');
 const ReplayBuffer = require('./replay-buffer');
 const Experience = require('./experience');
