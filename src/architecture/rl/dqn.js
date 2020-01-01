@@ -10,8 +10,6 @@ const Loss = require('../../methods/cost');
  *
  * Used to do reinforcement learning with an DQN-Agent
  *
- * @beta
- *
  * @constructs DQN
  *
  * @param {int} numActions Maximum number of actions the agent can do,

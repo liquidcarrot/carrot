@@ -12,7 +12,7 @@ const Loss = require('../../methods/cost');
  *
  * Used to do reinforcement learning with an DDPG Agent
  *
- * @beta
+ * @alpha
  *
  * @constructs DDPG
  *
