@@ -268,7 +268,7 @@ DDPG.prototype = {
     }
 
     let criticLearningRate = Math.max(this.learningRateCriticMin, Rate.EXP(this.learningRateCritic, this.timeStep, {gamma: this.learningRateCriticDecay}));
-    this.critic.propagate(1, 0, true, qPrime);
+    this.critic.propagate(criticLearningRate, 0, true, qPrime);
 
     let policyLoss = -Utils.mean(this.critic.activate(experience.state.concat(actorActivation), {no_trace: true}));
     actorActivation[Utils.getMaxValueIndex(experience.action)] *= policyLoss;
