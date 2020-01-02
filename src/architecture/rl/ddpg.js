@@ -3,7 +3,6 @@ const ReplayBuffer = require('./replay-buffer');
 const Experience = require('./experience');
 const Utils = require('../../util/utils');
 const Rate = require('../../methods/rate');
-const Loss = require('../../methods/cost');
 
 /**
  *
@@ -57,30 +56,29 @@ function DDPG(numStates, numActions, options) {
   this.replayBuffer = Utils.RL.getOption(options, 'replayBuffer', noisyPER === null
     ? new ReplayBuffer(experienceSize, 0)
     : new ReplayBuffer(experienceSize, noisyPER));
-  this.learningStepsPerIteration = Utils.RL.getOption(options, 'learningStepsPerIteration', 20);
-  this.startLearningThreshold = Utils.RL.getOption(options, 'startLearningThreshold', 0);
+  this.learningStepsPerIteration = Utils.RL.getOption(options, 'learningStepsPerIteration', 50);
+  this.startLearningThreshold = Utils.RL.getOption(options, 'startLearningThreshold', 1000);
 
   // Training specific variables
   this.isContinuousTask = Utils.RL.getOption(options, 'isContinuousTask', false);
   this.gamma = Utils.RL.getOption(options, 'gamma', 0.7);
   this.theta = Utils.RL.getOption(options, 'theta', 0.01); // soft target update
-  this.criticLoss = Utils.RL.getOption(options, 'criticLoss', Loss.MSE);
   this.criticLossOptions = Utils.RL.getOption(options, 'criticLossOptions', {});
   this.isTraining = Utils.RL.getOption(options, 'isTraining', true);
   this.isUsingPER = Utils.RL.getOption(options, 'isUsingPER', true); // using prioritized experience replay
 
-  this.learningRateActor = Utils.RL.getOption(options, 'learningRateActor', 0.1); // AKA alpha value function learning rate
-  this.learningRateActorDecay = Utils.RL.getOption(options, 'learningRateActorDecay', 0.99); // AKA alpha value function learning rate
-  this.learningRateActorMin = Utils.RL.getOption(options, 'learningRateActorMin', 0.01); // AKA alpha value function learning rate
+  this.learningRateActor = Utils.RL.getOption(options, 'learningRateActor', 0.0001); // AKA alpha value function learning rate
+  this.learningRateActorDecay = Utils.RL.getOption(options, 'learningRateActorDecay', 1); // AKA alpha value function learning rate
+  this.learningRateActorMin = Utils.RL.getOption(options, 'learningRateActorMin', 0.0001); // AKA alpha value function learning rate
 
-  this.learningRateCritic = Utils.RL.getOption(options, 'learningRateCritic', this.learningRateActor); // AKA alpha value function learning rate
-  this.learningRateCriticDecay = Utils.RL.getOption(options, 'learningRateCriticDecay', this.learningRateActorDecay); // AKA alpha value function learning rate
-  this.learningRateCriticMin = Utils.RL.getOption(options, 'learningRateCriticMin', this.learningRateActorMin); // AKA alpha value function learning rate
+  this.learningRateCritic = Utils.RL.getOption(options, 'learningRateCritic', 0.001); // AKA alpha value function learning rate
+  this.learningRateCriticDecay = Utils.RL.getOption(options, 'learningRateCriticDecay', 1); // AKA alpha value function learning rate
+  this.learningRateCriticMin = Utils.RL.getOption(options, 'learningRateCriticMin', 0.001); // AKA alpha value function learning rate
 
   // Exploration / Exploitation management
-  this.noiseStandardDeviation = Utils.RL.getOption(options, 'noiseStandardDeviation', 0.3); // AKA epsilon for epsilon-greedy policy
-  this.noiseStandardDeviationDecay = Utils.RL.getOption(options, 'noiseStandardDeviationDecay', 0.9999); // AKA epsilon for epsilon-greedy policy
-  this.noiseStandardDeviationMin = Utils.RL.getOption(options, 'noiseStandardDeviationMin', 0.01); // AKA epsilon for epsilon-greedy policy
+  this.noiseStandardDeviation = Utils.RL.getOption(options, 'noiseStandardDeviation', 0.01); // AKA epsilon for epsilon-greedy policy
+  this.noiseStandardDeviationDecay = Utils.RL.getOption(options, 'noiseStandardDeviationDecay', 1); // AKA epsilon for epsilon-greedy policy
+  this.noiseStandardDeviationMin = Utils.RL.getOption(options, 'noiseStandardDeviationMin', 0); // AKA epsilon for epsilon-greedy policy
 
   this.timeStep = 0;
   this.actions = [];
@@ -200,10 +198,10 @@ DDPG.prototype = {
       prohibitedActions = [];
     }
     let noiseFactor = Math.max(this.noiseStandardDeviationMin, Rate.EXP(this.noiseStandardDeviation, this.timeStep, {gamma: this.noiseStandardDeviationDecay}));
-//    let action = Utils.addGaussianNoiseToNetwork(this.actor, noiseFactor).activate(state);
-    let action = this.actor.activate(state);
+    let action = Utils.addGaussianNoiseToNetwork(this.actor, noiseFactor).activate(state);
+    // let action = this.actor.activate(state);
 
-    if (this.startLearningThreshold > this.timeStep || Math.random() <= 0.1) {
+    if (this.startLearningThreshold > this.timeStep) {
       for (let i = 0; i < action.length; i++) {
         action[i] = Math.random();
       }
@@ -262,7 +260,7 @@ DDPG.prototype = {
    */
   study: function(experience) {
     let stateActionArr = experience.state.concat(experience.action);
-    let criticActivation = this.critic.activate(stateActionArr);
+    this.critic.activate(stateActionArr);
     let actorActivation = this.actor.activate(experience.state);
 
     let nextQ = this.criticTarget.activate(experience.nextState.concat(this.actorTarget.activate(experience.nextState, {no_trace: true})), {no_trace: true});
@@ -273,14 +271,8 @@ DDPG.prototype = {
         : experience.reward + this.gamma * nextQ[i]);
     }
 
-    // Learning the actor and critic networks
-    for (let i = 0; i < criticActivation.length; i++) {
-      criticActivation[i] *= this.criticLoss(qPrime[i], criticActivation[i], this.criticLossOptions);
-    }
-
     let criticLearningRate = Math.max(this.learningRateCriticMin, Rate.EXP(this.learningRateCritic, this.timeStep, {gamma: this.learningRateCriticDecay}));
     this.critic.propagate(criticLearningRate, 0, true, qPrime);
-    //this.critic.propagate(criticLearningRate, 0, true, criticActivation);
 
     let policyLoss = -Utils.mean(this.critic.activate(experience.state.concat(actorActivation), {no_trace: true}));
     actorActivation[Utils.getMaxValueIndex(experience.action)] *= policyLoss;

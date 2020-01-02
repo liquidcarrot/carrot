@@ -68,7 +68,7 @@ function testLearning(agent) {
 
   for (let i = 0; i < windowSize || rewardSum / windowSize < 0.9; i++) {
     let action = agent.act([currentState]);
-    currentState = action[1] < 0.5 ?
+    currentState = action === 1 ?
       Math.min(1, currentState + 0.5) :
       Math.max(0, currentState - 0.5);
 
@@ -109,11 +109,11 @@ describe('DDPG', function() {
       expect(agent.criticTarget.output_size).to.equal(numActions);
     }
   });
-  it.skip('test learning capabilities with PER', function() {
+  it('test learning capabilities with PER', function() {
     this.timeout(10000);
     console.time('Learning: DDPG, PER');
     let agent = new DDPG(1, 2, {
-      gamma: 0.3,
+      gamma: 0,
       isUsingPER: true,
     });
     expect(testLearning(agent) >= 0.9).to.be.true;
