@@ -113,7 +113,7 @@ describe('DDPG', function() {
     this.timeout(50000);
     console.time('Learning: DDPG, PER');
     let agent = new DDPG(1, 2, {
-      gamma: 0,
+      gamma: 0.2,
       isUsingPER: true,
     });
     expect(testLearning(agent) >= 0.9).to.be.true;
