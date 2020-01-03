@@ -387,8 +387,33 @@ function Node(options) {
   *
   * @returns {Node} Returns an identical node
   */
-  self.clone = function() {
+  self.clone = function(options={}) {
     return _.cloneDeep(self)
+  },
+
+  /**
+  * Returns a copy of the Node. Aimed at creating a new node with basic details copied over.
+  *
+  * Details copied over:
+  * - bias
+  * - squash (activation function)
+  * - type
+  * - id (used for NEAT tracking)
+  *
+  * @beta
+  *
+  * @function copy
+  * @memberof Node
+  *
+  * @returns {Node} Returns a node with a copy of essential information
+  */
+  self.copy = function(options={}) {
+    return new Node({
+      bias: self.bias,
+      squash: self.squash,
+      type: self.type,
+      id: self.id
+    });
   },
 
   /**

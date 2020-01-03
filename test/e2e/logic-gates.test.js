@@ -4,7 +4,7 @@ const chalk = require('chalk');
 
 const { Neat, Network, architect, methods } = require('../../src/carrot');
 
-describe("Logic Gates", function() {
+describe.skip("Logic Gates", async function() {
   const data = {
     NOT: [
       { input: [0], output: [1] },
@@ -58,14 +58,14 @@ describe("Logic Gates", function() {
     expect(final.error).to.be.at.most(initial.error);
   });
   it("[NOT] Network.evolve()", async function() {
-    this.timeout(10000);
-    
+
     const network = new Network(1,1);
 
     const initial = network.test(data.NOT);
-    await network.evolve(data.NOT)
+    await network.evolve(data.NOT, {
+    })
     const final = network.test(data.NOT);
-    
+
     expect(final.error).to.be.at.most(initial.error);
   });
   it("[NOT] Neat.evolve()", async function() {

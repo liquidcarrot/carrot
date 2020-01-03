@@ -1,6 +1,8 @@
-const _ = require('lodash')
-const { assert, expect } = require('chai')
-const should = require('chai').should()
+const _ = require('lodash');
+const chai = require('chai');
+const { assert, expect } = chai;
+const should = chai.should();
+chai.use(require('chai-things')); // support for array tests using should
 const {
   Network,
   methods,
@@ -49,40 +51,48 @@ describe('Network', function(){
     return network;
   }
 
-  describe('new Network()', function() {
-    it('new Network() => {TypeError}', function () {
+  describe('new Network()', async function() {
+    it('new Network() => {TypeError}', async function () {
       // missing input or output size
       expect(() => new Network()).to.throw(TypeError);
       expect(() => new Network(3461)).to.throw(TypeError);
     })
 
-    it('new Network(input_size, output_size) => {Network}', function () {
+    it('new Network(input_size, output_size) => {Network}', async function () {
       const network = new Network(10, 20);
       expect(network).to.be.an.instanceOf(Network);
       expect(network.nodes).to.be.of.length(30);
     })
 
-    it('new Network(input_size, output_size, { connectionIds }) | Network.connIds is reference of external connectionIds object', function () {
+    it('new Network(input_size, output_size) | connection ids are sequential, numbered 1 to input_size + output_size', async function () {
+      const network = new Network(2,2);
+
+      for(let i = 0; i < network.connections.length; i++) {
+        expect(network.connections[i].id).equal(i+1);
+      }
+    });
+
+    it('new Network(input_size, output_size, { connectionIds }) | Network.connIds is reference of external connectionIds object', async function () {
       const connectionIds = { last: 0 }; // initialize connection id object
       const network = new Network(2,2, { connIds: connectionIds }); // pass in connection id object to be mutated
 
       expect(connectionIds).equal(network.connIds); // refers to the same object
     });
 
-    it('new Network(input_size, output_size, { connectionIds }) | Mutates connection IDs', function () {
+    it('new Network(input_size, output_size, { connectionIds }) | Mutates connection IDs', async function () {
       const connectionIds = { last: 0 }; // initialize connection id object
       const network = new Network(2,2, { connIds: connectionIds }); // pass in connection id object to be mutated
 
       expect(connectionIds).not.eql({ last: 0 }); // should not be deeply equal initial object i.e. values should have changed
     });
 
-    it('new Network(2, 2, { connectionIds }) | mutates connectionIds, .last equals 4', function () {
+    it('new Network(2, 2, { connectionIds }) | mutates connectionIds, .last equals 4', async function () {
       const connectionIds = { last: 0 }; // initialize connection id object
       let network = new Network(2,2, { connIds: connectionIds }); // pass in connection id object to be mutated
       expect(connectionIds.last).equal(4); // Should be equal to the number of connections, 4
     })
 
-    it('new Network(2, 2, { connectionIds }) | connIds.last is equal to the latest value', function () {
+    it('new Network(2, 2, { connectionIds }) | connIds.last is equal to the latest value', async function () {
       const connectionIds = { last: 0 }; // initialize connection id object
       let network = new Network(2,2, { connIds: connectionIds }); // pass in connection id object to be mutated
 
@@ -90,14 +100,14 @@ describe('Network', function(){
       expect(Math.max.apply(null, values)).equal(connectionIds.last)
     })
 
-    it('new Network(2, 2, { connectionIds }) | connection IDs contains 4 entries plus .last entry', function () {
+    it('new Network(2, 2, { connectionIds }) | connection IDs contains 4 entries plus .last entry', async function () {
       const connectionIds = { last: 0 }; // initialize connection id object
       let network = new Network(2,2, { connIds: connectionIds }); // pass in connection id object to be mutated
 
       expect(Object.keys(connectionIds).length).equal(5); // Should be equal to the number of connections, 4 plus .last
     });
 
-    it('new Network(2, 2, { connectionIds }) | connection IDs has unique entries, except for .last', function () {
+    it('new Network(2, 2, { connectionIds }) | connection IDs has unique entries, except for .last', async function () {
       const connectionIds = { last: 0 }; // initialize connection id object
       let network = new Network(2,2, { connIds: connectionIds }); // pass in connection id object to be mutated
 
@@ -111,6 +121,35 @@ describe('Network', function(){
         seen[value] = keys[i]; // mark value as seen by storing corresponding key
       }
     })
+
+    it('new Network(2,2), new Network(2,2) | both networks have same connection ids', async function () {
+      const network = new Network(2,2);
+      const network2 = new Network(2,2);
+
+      const conns = network.connections.map(conn => conn.id);
+      const conns2 = network.connections.map(conn => conn.id);
+
+      expect(conns).eql(conns2)
+    });
+
+    it('new Network(2,2), new Network(2,2) | both networks have same connection ids and corresponding node ids', async function () {
+      const network = new Network(2,2);
+      const network2 = new Network(2,2);
+
+      const conns = network.connections.map(conn => ({
+        id: conn.id,
+        from: conn.from.id,
+        to: conn.to.id
+      }));
+
+      const conns2 = network.connections.map(conn => ({
+        id: conn.id,
+        from: conn.from.id,
+        to: conn.to.id
+      }));
+
+      expect(conns).eql(conns2)
+    });
   })
 
   describe('network.activate()', function() {
@@ -396,10 +435,36 @@ describe('Network', function(){
 
   describe('network.createOffspring()', function () {
     it('() => {Network}', function() {
-      const network = new Network(4,4);
-      const network1 = new Network(4,4);
+      const connIds = { last: 0 };
+      const nodeIds = { last: 0 };
+      const network = new Network(4,4,{ connIds, nodeIds });
+      const network1 = new Network(4,4,{ connIds, nodeIds });
 
       expect(network.createOffspring(network1)).instanceOf(Network);
+    })
+
+    it('createOffspring() => {Network} | input_nodes set contains nodes with .type of "input"', async function() {
+      const connIds = { last: 0 };
+      const nodeIds = { last: 0 };
+      const network = new Network(4,4,{ connIds, nodeIds });
+      const network1 = new Network(4,4,{ connIds, nodeIds });
+
+      const child = network.createOffspring(network1);
+
+      // Convert set to array using spread operator
+      [...child.input_nodes].should.all.have.property("type", "input");
+    })
+
+    it('createOffspring() => {Network} | output_nodes set contains nodes with .type of "output"', async function() {
+      const connIds = { last: 0 };
+      const nodeIds = { last: 0 };
+      const network = new Network(4,4,{ connIds, nodeIds });
+      const network1 = new Network(4,4,{ connIds, nodeIds });
+
+      const child = network.createOffspring(network1);
+
+      // Convert set to array using spread operator
+      expect([...child.output_nodes]).all.have.property("type", "output");
     })
 
     it('createOffspring(network) => {Network} | Network.connections.length > 0', function() {
@@ -408,21 +473,444 @@ describe('Network', function(){
 
       expect(network.createOffspring(network1).connections.length).not.equal(1);
     })
-  })
 
-  describe.skip('network.crossOver()', function () {
-    it('() => {Network}', function() {
-      const network = new Network(4,4);
-      const network1 = new Network(4,4);
+    it('createOffspring() => Offspring, Offspring.activate(), parents all matching genes | Offspring network can activate', async function() {
+      const connIds = { last: 0 };
+      const nodeIds = { last: 0 };
+      const network = new Network(4,4,{ connIds, nodeIds });
+      const network1 = new Network(4,4,{ connIds, nodeIds });
 
-      expect(network.crossOver(network1)).instanceOf(Network);
+      const parentOutput = network.activate([0,1,0,1])
+
+      const child = network.createOffspring(network1);
+
+      // Check child viability by activating
+      const output = child.activate([0, 1, 0, 1]);
+
+      // Check activation output properties
+      expect(output).an('array')
+      // expect(output).all.a('number') Fails due to .activate consistently returning string type values... Typescript would be useful
+      expect(output).all.closeTo(0.5, 0.5); // Assumes default squash is LOGISTIC
     })
 
-    it('crossOver(network) => {Network} | Network.connections.length > 0', function() {
+    it('createOffspring() => Offspring, Offspring.activate(), disjoint genes in fitter parent | Offspring network can activate', async function() {
+      const connIds = { last: 0 };
+      const nodeIds = { last: 0 };
+      const network = new Network(4,4,{ connIds, nodeIds });
+      const network1 = new Network(4,4,{ connIds, nodeIds });
+
+      // Indexes of genes (connections) that will not be in less fit parent
+      const indexes = [1,6,8,9,10,12]; // removed ids: 2, 7, 8, 9, 10, 11, 13 -- assuming that connection ids are sequential upon construction, which they should be.
+
+      // index offset, used to keep update indexes as connections are spliced
+      let offset = 0;
+
+      // Collect removed connection ids to test for origin later
+      const removed = new Set();
+
+      // Remove disjoint genes from less fit parent
+      for(const index of indexes) {
+        // network1 is the less fit parent
+        const deleted = network1.connections.splice(index - offset, 1)[0];
+
+        // Add the removed id to the removed connection ids
+        removed.add(deleted.id);
+
+        // Add one to the index offset
+        offset++;
+      }
+
+      const child = network.createOffspring(network1);
+
+      // Check child viability by activating
+      const output = child.activate([0, 1, 0, 1]);
+
+      // Check activation output properties
+      expect(output).an('array')
+      // expect(output).all.a('number') Fails due to .activate consistently returning string type values... Typescript would be useful
+      expect(output).all.closeTo(0.5, 0.5); // Assumes default squash is LOGISTIC
+    })
+
+    it('createOffspring() => Offspring, Offspring.activate() | Offspring network has activation values distinct from parents', async function() {
+      const connIds = { last: 0 };
+      const nodeIds = { last: 0 };
+      const network = new Network(4,4,{ connIds, nodeIds });
+      const network1 = new Network(4,4,{ connIds, nodeIds });
+
+      const parentOutput = network.activate([0,1,0,1])
+
+      const parentOutput1 = network.activate([0,1,0,1])
+
+      const child = network.createOffspring(network1);
+
+      // Check child viability by activating
+      const output = child.activate([0, 1, 0, 1]);
+
+      // Ensure childOutput is (deeply) distinct from parentOutput
+      expect(output).not.eql(parentOutput)
+      expect(output).not.eql(parentOutput1)
+    })
+
+    it.skip('createOffspring() => Offspring, Offspring.activate() | Each offspring node is conected to and from', async function() {
+      const connIds = { last: 0 };
+      const nodeIds = { last: 0 };
+      const network = new Network(4,4,{ connIds, nodeIds });
+      const network1 = new Network(4,4,{ connIds, nodeIds });
+
+      const child = network.createOffspring(network1);
+
+      // Check child viability by activating
+      const output = child.activate([0, 1, 0, 1]);
+
+      // Check activation output properties
+      expect(output).an('array')
+      expect(output).all.a('number')
+      expect(output).all.closeTo(0.5, 0.5); // Assumes default squash is LOGISTIC
+    })
+
+    it('createOffspring() => Offspring, Offspring.mutate(ADD_NODE) | external connIds reference is updated', async function() {
+      const connIds = { last: 0 };
+      const nodeIds = { last: 0 };
+      const network = new Network(4,4,{ connIds, nodeIds });
+      const network1 = new Network(4,4,{ connIds, nodeIds });
+
+      const beforeConnIds = _.cloneDeep(connIds);
+
+      let child = network.createOffspring(network1);
+
+      // Mutate the child network, should mutate connIds and nodeIds
+      child = child.mutate(methods.mutation.ADD_NODE);
+
+      const afterConnIds = _.cloneDeep(connIds);
+
+      // Check that connIds was mutated
+      expect(afterConnIds).not.eql(beforeConnIds)
+    })
+
+    it('createOffspring() => Offspring, Offspring.mutate(ADD_NODE) | external nodeIds reference is updated', async function() {
+      const connIds = { last: 0 };
+      const nodeIds = { last: 0 };
+      const network = new Network(4,4,{ connIds, nodeIds });
+      const network1 = new Network(4,4,{ connIds, nodeIds });
+
+      const beforeNodeIds = _.cloneDeep(nodeIds);
+
+      let child = network.createOffspring(network1);
+
+      // Mutate the child network, should mutate connIds and nodeIds
+      child = child.mutate(methods.mutation.ADD_NODE);
+
+      const afterNodeIds = _.cloneDeep(nodeIds);
+
+      // Check that connIds was mutated
+      expect(afterNodeIds).not.eql(beforeNodeIds)
+    })
+  })
+
+  describe('network.crossOver()', async function () {
+    it('network.crossOver(network1) | produces no duplicate ids', async function() {
       const network = new Network(4,4);
       const network1 = new Network(4,4);
 
-      expect(network.crossOver(network1).connections.length).not.equal(1);
+      // Track known ids
+      const known = new Set();
+
+      const genes = network.crossOver(network1)
+      for(let i = 0; i < genes.length; i++) {
+        const gene = genes[i];
+        expect(known.has(gene.id)).equal(false);
+        known.add(gene.id);
+      }
+    })
+
+    it('network.crossOver(network1) | returns 16 genes', async function() {
+      const network = new Network(4,4);
+      const network1 = new Network(4,4);
+
+      expect(network.crossOver(network1).length).equal(16);
+    });
+
+    it('network.crossOver(network1), where connections.length = 16 for both | returns 16 genes', async function() {
+      const network = new Network(4,4);
+      const network1 = new Network(4,4);
+
+      expect(network.crossOver(network1).length).equal(16);
+    })
+
+    it('network.crossOver(network1) => {connection_data}, disjoint genes in fitter parent | disjoint genes always inherited from fitter parent', async function() {
+      const network = new Network(4,4);
+      const network1 = new Network(4,4);
+
+      // Indexes of genes (connections) that will not be in less fit parent
+      const indexes = [1,6,8,9,10,12]; // removed ids: 2, 7, 8, 9, 10, 11, 13 -- assuming that connection ids are sequential upon construction, which they should be.
+
+      // index offset, used to keep update indexes as connections are spliced
+      let offset = 0;
+
+      // Collect removed connection ids to test for origin later
+      const removed = new Set();
+
+      // Remove disjoint genes from less fit parent
+      for(const index of indexes) {
+        // network1 is the less fit parent
+        const deleted = network1.connections.splice(index - offset, 1)[0];
+
+        // Add the removed id to the removed connection ids
+        removed.add(deleted.id);
+
+        // Add one to the index offset
+        offset++;
+      }
+
+      // Run crossover to the get the resulting connection data array
+      // Important note: network1 is the less fit network, calling network is always fitter, order matters
+      const newConns = network.crossOver(network1);
+
+      // Cycle through newConns and see if the id is within the removed set, if so expect it to be from the fitter network
+      newConns.forEach(conn => {
+        // Ensure each disjoint id was inherited from the fitter parent
+        if(removed.has(conn.id)) {
+          expect(conn).to.have.property('status', 'excess/disjoint');
+          expect(conn).to.have.property('fitter', true);
+        }
+      })
+    })
+
+    it('network.crossOver(network1) => {connection_data}, disjoint genes in fitter parent | returns sequentially ordered ids', async function() {
+      const network = new Network(4,4);
+      const network1 = new Network(4,4);
+
+      // Indexes of genes (connections) that will not be in less fit parent
+      const indexes = [1,6,8,9,10,12]; // removed ids: 2, 7, 8, 9, 10, 11, 13 -- assuming that connection ids are sequential upon construction, which they should be.
+
+      // index offset, used to keep update indexes as connections are spliced
+      let offset = 0;
+
+      // Collect removed connection ids to test for origin later
+      const removed = new Set();
+
+      // Remove disjoint genes from less fit parent
+      for(const index of indexes) {
+        // network1 is the less fit parent
+        const deleted = network1.connections.splice(index - offset, 1)[0];
+
+        // Add the removed id to the removed connection ids
+        removed.add(deleted.id);
+
+        // Add one to the index offset
+        offset++;
+      }
+
+      // Run crossover to the get the resulting connection data array
+      // Important note: network1 is the less fit network, calling network is always fitter, order matters
+      const newConns = network.crossOver(network1);
+
+      // Cycle through newConns and see if the id is within the removed set, if so expect it to be from the fitter network
+      newConns.forEach((conn, index) => {
+        // Ensure each id was inherited and is sequentially ordered
+        expect(conn.id).equal(index + 1);
+      })
+    })
+
+    it('network.crossOver(network1) => {connection_data}, network1 = less fit | excess genes always inherited from fitter parent', async function() {
+      const network = new Network(4,4);
+      const network1 = new Network(4,4);
+
+      // Nodes to recurrently connect
+      const n1 = network.nodes[5]; // Assumes input, hidden, output order in network.nodes
+      const n2 = network.nodes[6];
+      const n3 = network.nodes[7];
+
+      // Get last connection id
+      const lastId = network.connections[network.connections.length-1].id;
+
+      // Add two (excess) connection genes that are not in network1 to network
+      network.connections.push(new Connection(n2, n1, { id: lastId + 1 }));
+      network.connections.push(new Connection(n3, n2, { id: lastId + 2 }));
+
+      // Store added connections to test for origin later
+      const added = new Set([lastId + 1, lastId + 2]);
+
+      // Run crossover to the get the resulting connection data array
+      // Important note: network1 is the less fit network, calling network is always fitter, order matters
+      const newConns = network.crossOver(network1);
+
+      // Cycle through newConns and see if the id is within the added set, if so expect it to be from the fitter network
+      newConns.forEach(conn => {
+        // Ensure each excess id was inherited from the fitter parent
+        if(added.has(conn.id)) {
+          expect(conn).to.have.property('status', 'excess/disjoint');
+          expect(conn).to.have.property('fitter', true);
+        }
+      })
+    })
+
+    // TODO. Skipping now in the interest of time
+    it.skip('network.crossOver(network1) => {connection_data}, network1 = less fit, excess genes | returns sequentially ordered ids', async function() {
+      const network = new Network(4,4);
+      const network1 = new Network(4,4);
+
+      // Indexes of genes (connections) that will not be in less fit parent
+      const indexes = [1,6,8,9,10,12]; // removed ids: 2, 7, 8, 9, 10, 11, 13 -- assuming that connection ids are sequential upon construction, which they should be.
+
+      // index offset, used to keep update indexes as connections are spliced
+      let offset = 0;
+
+      // Collect removed connection ids to test for origin later
+      const removed = new Set();
+
+      // Remove disjoint genes from less fit parent
+      for(const index of indexes) {
+        // network1 is the less fit parent
+        const deleted = network1.connections.splice(index - offset, 1)[0];
+
+        // Add the removed id to the removed connection ids
+        removed.add(deleted.id);
+
+        // Add one to the index offset
+        offset++;
+      }
+
+      // Run crossover to the get the resulting connection data array
+      // Important note: network1 is the less fit network, calling network is always fitter, order matters
+      const newConns = network.crossOver(network1);
+
+      // Cycle through newConns and see if the id is within the removed set, if so expect it to be from the fitter network
+      newConns.forEach(conn, index => {
+        // Ensure each id was inherited and is sequentially ordered
+        expect(conn.id).equal(index + 1);
+      })
+    })
+
+    it('network.crossOver(network1) => {connection_data}, network1 = less fit | By default, excess genes not inherited from less fit parent', async function() {
+      const network = new Network(4,4);
+      const network1 = new Network(4,4);
+
+      // Nodes to recurrently connect
+      const n1 = network1.nodes[5]; // Assumes input, hidden, output order in network.nodes
+      const n2 = network1.nodes[6];
+      const n3 = network1.nodes[7];
+
+      // Get last connection id
+      const lastId = network1.connections[network1.connections.length-1].id;
+
+      // Add two (excess) connection genes that are not in network to network1
+      network1.connections.push(new Connection(n2, n1, { id: lastId + 1 }));
+      network1.connections.push(new Connection(n3, n2, { id: lastId + 2 }));
+
+      // Store added connections to test for origin later
+      const added = new Set([lastId + 1, lastId + 2]);
+
+      // Run crossover to the get the resulting connection data array
+      // Important note: network1 is the less fit network, calling network is always fitter, order matters
+      const newConns = network.crossOver(network1);
+
+      // Cycle through newConns chceck that there are no added excess ids from the less-fit network
+      newConns.forEach(conn => {
+        if(added.has(conn.id)) throw new Error('An excess gene was inherited from a less fit parent')
+      })
+    })
+
+    it('network.crossOver(network1), matching disabled genes in only fitter parent | sometimes re-enabled when inherited', async function() {
+      let network = new Network(1,1); // starts with one connection
+      const network1 = new Network(9,9); // has 81 connections
+
+      // Do 40 ADD_NODE mutations, each mutation adds 2 connections and disables the replaced connection.
+      for(let i = 0; i < 40; i++) {
+        network = network.mutate(methods.mutation.ADD_NODE);
+      }
+
+      // network is the fitter network, so it's excess / disjoint connections (basically all connections except maybe first) will be inherited
+      const conns = network.crossOver(network1);
+
+      let found = false;
+      conns.forEach(conn => {
+        // check: gene comes from fitter parent, is in both parents, was disabled originally but is now enabled, and, if so, satisfy assertion
+        if(conn.fitter && conn.status == "matching" && !conn.ancestorEnabled && conn.enabled) found = true;
+      })
+
+      // There were no enabled connections, unlikely to happen normally, but possible
+      if(!found) throw new Error("There are no re-enabled connections in crossover offspring network!");
+    })
+
+    it('network.crossOver(network1), matching disabled genes in only fitter parent | sometimes inherited as disabled', async function() {
+      let network = new Network(1,1); // starts with one connection
+      const network1 = new Network(9,9); // has 81 connections
+
+      // Do 40 ADD_NODE mutations, each mutation adds 2 connections and disables the replaced connection.
+      for(let i = 0; i < 40; i++) {
+        network = network.mutate(methods.mutation.ADD_NODE);
+      }
+
+      // network is the fitter network, so it's excess / disjoint connections (basically all connections except maybe first) will be inherited
+      const conns = network.crossOver(network1);
+
+      let found = false;
+      conns.forEach(conn => {
+        // check: gene comes from fitter parent, is in both parents, was disabled originally and is still disabled, and, if so, satisfy assertion
+        if(conn.fitter && conn.status == "matching" && !conn.ancestorEnabled && !conn.enabled) found = true;
+      })
+
+      // There were no enabled connections, unlikely to happen normally, but possible
+      if(!found) throw new Error("There are no preserved disabled connections in crossover offspring network!");
+    })
+
+    it('network.crossOver(network1), excess disabled genes in fitter parent | inherited as disabled', async function() {
+      let network = new Network(1,2); // starts with 1 excess connection, total 2
+      const network1 = new Network(1,1); // starts with 1 connection
+
+      // Disable the second connection
+      network.connections[1].enabled = false;
+
+      // network is the fitter network, so it's excess / disjoint connection will be inherited
+      const conns = network.crossOver(network1);
+
+      // expect the second, excess, connection to be disabled
+      expect(conns[1]).to.have.property('enabled', false);
+    })
+
+    it('network.crossOver(network1), excess enabled genes in fitter parent | inherited as enabled', async function() {
+      let network = new Network(1,2); // starts with 1 excess connection, total 2
+      const network1 = new Network(1,1); // starts with 1 connection
+
+      // Ensure second connection is enabled
+      network.connections[1].enabled = true;
+
+      // network is the fitter network, so it's excess / disjoint connection will be inherited
+      const conns = network.crossOver(network1);
+
+      // expect the second, excess, connection to be enabled
+      expect(conns[1]).to.have.property('enabled', true);
+    })
+
+    // Should be done for future-proofing, skipping now in interest of time
+    it.skip('network.crossOver(network1), disjoint disabled genes in fitter parent | inherited as disabled', async function() {
+      let network = new Network(1,2); // starts with 1 excess connection, total 2
+      const network1 = new Network(1,1); // starts with 1 connection
+
+      // Disable the second connection
+      network.connections[1].enabled = false;
+
+      // network is the fitter network, so it's excess / disjoint connection will be inherited
+      const conns = network.crossOver(network1);
+
+      // expect the second, excess, connection to be disabled
+      expect(conns[1]).to.have.property('enabled', false);
+    })
+
+    // Should be done for future-proofing, skipping now in interest of time
+    it.skip('network.crossOver(network1), disjoint enabled genes in fitter parent | inherited as enabled', async function() {
+      let network = new Network(1,2); // starts with 1 excess connection, total 2
+      const network1 = new Network(1,1); // starts with 1 connection
+
+      // Ensure second connection is enabled
+      network.connections[1].enabled = true;
+
+      // network is the fitter network, so it's excess / disjoint connection will be inherited
+      const conns = network.crossOver(network1);
+
+      // expect the second, excess, connection to be enabled
+      expect(conns[1]).to.have.property('enabled', true);
     })
   })
 

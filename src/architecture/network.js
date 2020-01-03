@@ -344,145 +344,63 @@ function Network(input_size, output_size, options) {
    * let network3 = network1.createOffspring(network2);
    *
    * @todo Add network construction flag to avoid having to over-write new Network properties
-   * @todo Preserve ideal node activation order in offspring network
+   * @todo Update node.activate to skip in cases of orphaned nodes
+   * @todo Handle node self-connections
+   * @todo Create a complete node.clone()
+   * @todo Add test to ensure that execution order is preserved
    * @todo Add test to ensure that offspring .connIds and .nodeIds is a reference to parent's
    * @todo Add tests checking for parent-consistent input, hidden, output neurons in offspring
-   * @todo Add tests ensuring that connections are enabled / disabled correctly
    * @todo Add more tests
    */
   self.createOffspring = function(other, options={}) {
-    if (self.input_size !== other.input_size || self.output_size !== other.output_size) {
+    if (self.input_nodes.size !== other.input_nodes.size || self.output_nodes.size !== other.output_nodes.size) {
       throw new Error("Networks don`t have the same input/output size!");
     }
 
-    // Initialize offspring with node and connection id tracking
-    const offspring = new Network(self.input_size, self.output_size, { nodeIds: self.nodeIds, connIds: self.connIds });
+    // Select genes (connections) that will be passed down to offspring
+    const connections = self.crossOver(other, options);
+
+    // Initialize offspring with node and connection id tracking objects of fitter parent since excess / disjoint genes are *default* inherited from fitter
+    // Inherited by reference
+    const offspring = new Network(self.input_nodes.size, self.output_nodes.size, { nodeIds: self.nodeIds, connIds: self.connIds });
+
+    // Reset offspring structure | Todo: Make this a constructor option
     offspring.connections = [];
     offspring.nodes = [];
     offspring.input_nodes = new Set();
     offspring.output_nodes = new Set();
 
-    // Rename some variables for easier reading
-    // both networks (should) have equal input/output size
-    const input_size = self.input_size;
-    const output_size = self.output_size;
+    // Add the nodes
+    // Excess / disjoint genes are inherited by fitter parent so just copy fitter nodes
+    for(let i = 0; i < self.nodes.length; i++) {
+      const node = self.nodes[i]; // Original reference
+      const copy = node.copy(); // Copy by "value", does not copy all properties, most notably, self_connection
 
-    // Determine offspring size, does not match neat spec
-    let size;
-    if(options.equal) {
-      const max = Math.max(self.nodes.length, other.nodes.length);
-      const min = Math.min(self.nodes.length, other.nodes.length);
-      size = Math.floor(Math.random() * (max - min + 1) + min);
-    } else {
-      size = self.nodes.length;
+      // Ensure that copy is pushed to new array
+      offspring.nodes.push(copy);
+
+      // Check for input status by reference
+      if(self.input_nodes.has(node)) offspring.input_nodes.add(copy)
+
+      // Check for output status by reference
+      else if(self.output_nodes.has(node)) offspring.output_nodes.add(copy)
     }
 
-    // Assign nodes from parents to offspring
-    // Needs refactoring ASAP, update to work by using selected connections first and then retrieving the appropriate nodes
-    for (let i = 0; i < size; i++) {
-      // TODO: First assign input and output nodes, then get hidden nodes
-      // SUPER WIP
-      let chosen_node;
-      let chosen_node_type = ''; // will be one of 'input', 'output', 'hidden'
+    // Add the connections
+    for(let i = 0; i < connections.length; i++) {
+      const conn = connections[i];
+      const from = conn.from.copy(); // Copy by value
+      const to = conn.to.copy(); // Copy by value
 
-      // first select input nodes
-      if (i < input_size) {
-        chosen_node_type = 'input';
-        // choose if the chosen input node will come from network 1 or 2
-        // then go to the i-th input node of the selected network and choose the node
-        const source_network = Math.random() >= 0.5 ? self : other;
-        // get the i-th input node
-        let input_number = -1;
-        let j = -1; // index to scroll through the source network's nodes
-        while (input_number < i) { // basically move forward until desired input number is found
-          j++;
-          if (j >= source_network.nodes.length) {
-            // something is wrong...
-            throw RangeError('something is wrong with the size of the input');
-          }
-          if (source_network.input_nodes.has(source_network.nodes[j])) {
-            input_number++;
-          }
-        }
-        // now j is the index of the i-th input in the source network
-        chosen_node = source_network.nodes[j];
-      } else if (i < input_size + output_size) { // now select output nodes
-        chosen_node_type = 'output';
-        // choose if the chosen output node will come from network 1 or 2
-        // then go to the i-th output node of the selected network and choose the node
-        const source_network = Math.random() >= 0.5 ? self : other;
-        // get the i-th output node
-        let output_number = -1;
-        let j = -1; // index to scroll through the source network's nodes
-        while (output_number < i - input_size) { // basically move forward until desired output number is found
-          j++;
-          if (j >= source_network.nodes.length) {
-            // something is wrong...
-            throw RangeError('something is wrong with the size of the output');
-          }
-          if (source_network.output_nodes.has(source_network.nodes[j])) {
-            output_number++;
-          }
-        }
-        // now j is the index of the i-th output in the source network
-        chosen_node = source_network.nodes[j];
+      if(conn.enabled) {
+        // .connect automatically adds a connection to offspring.connections
+        const connection = offspring.connect(from, to, conn.weight, { id: conn.id, enabled: true });
+
+        // Add gate if needed, conn.gater is an index of the gater node
+        if (conn.gater !== -1) offspring.gate(offspring.nodes[conn.gater], connection);
       } else {
-        chosen_node_type = 'hidden';
-        // now select hidden nodes
-        let source_network;
-        if (i >= self.nodes.length) {
-          source_network = other;
-        } else if (i >= other.nodes.length) {
-          source_network = self;
-        } else {
-          source_network = Math.random() >= 0.5 ? self : other;
-        }
-        // consider adding a hidden nodes array
-        const chosen_node_index = Math.floor(Math.random() * source_network.nodes.length);
-        chosen_node = source_network.nodes[chosen_node_index];
-      }
-
-      const new_node = new Node({
-        bias: chosen_node.bias,
-        squash: chosen_node.squash,
-        type: chosen_node.type,
-        id: chosen_node.id
-      });
-
-      // add to the corresponding set if input or output
-      if (chosen_node_type === 'input') {
-        offspring.input_nodes.add(new_node);
-      } else if (chosen_node_type === 'output') {
-        offspring.output_nodes.add(new_node);
-      }
-
-      offspring.nodes.push(new_node);
-    }
-
-    // Select connections that will be passed down to offspring
-    const connections = self.crossOver(other, options)
-
-    // Construct offspring by adding connections
-    for (i = 0; i < connections.length; i++) {
-      let conn = connections[i];
-      if (conn.toIndex < size && conn.fromIndex < size) {
-        const from = offspring.nodes[conn.fromIndex];
-        const to = offspring.nodes[conn.toIndex];
-
-        let connection;
-        if(conn.enabled) {
-          // Connects relevant nodes and adds to offspring.connections
-          connection = offspring.connect(from, to, conn.weight, { id: conn.id, enabled: true });
-        } else {
-          // Just adds new disabled connection to offspring.connections
-          connection = new Connection(from, to, conn.weight, { id: conn.id, enabled: false });
-          offspring.connections.push(connection);
-        }
-
-        // Manage weight if needed
-        if (conn.gater !== -1 && conn.gater < size) {
-          offspring.gate(offspring.nodes[conn.gater], connection);
-        }
+        // Create new connection to avoid storing a parent reference
+        offspring.connections.push(new Connection(from, to, conn.weight, { id: conn.id, enabled: false }));
       }
     }
 
@@ -490,7 +408,9 @@ function Network(input_size, output_size, options) {
   }
 
   /**
- * Mix genetic material from two parent networks. Used to select connections that will be passed down to offspring network
+ * Mix genetic material from two parent networks. Used to select connections that will be passed down to offspring network.
+ *
+ * Note: The calling network is always the fittest. `network1.crossOver(network2)` is not the same as `network2.crossOver(network1)`, where network1 is the fittest in the first example and network2 is fittest in the second example.
  *
  * @param {Network} network1 First parent network
  * @param {Network} network2 Second parent network
@@ -515,66 +435,70 @@ function Network(input_size, output_size, options) {
  * const selectedConnections = network1.crossOver(network2);
  *
  * @todo Add custom [crossover](crossover) method customization
- * @todo Consider swapping gene matching algorithm
- * @todo Ensure that nodes copied into new networks have same ids
- * @todo Add more tests
  */
   self.crossOver = function(other, options={}) {
-    // Set indexes so we don't need indexOf
-    // Used, presumably, to preserve activation order
+    // Set indexes so we don't need indexOf, used for gating and testing / analytics
     for (let i = 0; i < self.nodes.length; i++) { self.nodes[i].index = i; }
     for (let i = 0; i < other.nodes.length; i++) { other.nodes[i].index = i; }
 
     // Helper function to create connection gene objects
-    const buildConns = function(network) {
+    const buildConns = function(network, fitter) {
       const object = {};
       for (i = 0; i < network.connections.length; i++) {
         const conn = network.connections[i];
         const data = {
+          fitter: fitter, // for testing, true if connection came from fitter network
+          ancestorEnabled: conn.enabled, // for testing, a store of original enabled status
           from: conn.from,
           to: conn.to,
           fromIndex: conn.from.index,
           toIndex: conn.to.index,
+          connIndex: i,
           id: conn.id,
           weight: conn.weight,
           enabled: conn.enabled,
           gater: conn.gater != null ? conn.gater.index : -1,
         };
-        object[util.getCantorNumber(data.fromIndex, data.toIndex)] = data;
+        // use connection id to ensure unique entries
+        object[data.id] = data;
       }
       return object;
     }
-    const bestCs = buildConns(self) // Build fitter connections object
-    const otherCs = buildConns(other) // Build other connections object
+    const bestCs = buildConns(self, true) // Build fitter connections object
+    const otherCs = buildConns(other, false) // Build other connections object
 
     // Build connections object that will be used to construct new offspring network
     const connections = [];
     const bestKeys = Object.keys(bestCs);
     const otherKeys = Object.keys(otherCs);
-    for (i = bestKeys.length - 1; i >= 0; i--) {
+    for (i = 0; i < bestKeys.length; i++) {
+      // Get connection from fittest network using connection id
       const fittestConn = bestCs[bestKeys[i]];
+      // Try to get connection from less fit network using same connection id
       const otherConn = otherCs[bestKeys[i]];
+
+      // Connection is excess/disjoint to less fit network, prefer fittest connection
       if (util.isNil(otherConn)) {
+        fittestConn.status = "excess/disjoint"; // Record status for testing & analysis
         connections.push(fittestConn);
-      } else {
-        // Gene common to both networks, chance-based inheritance
+      }
+
+      // Connection matching in both networks, chance-based inheritance
+      else {
+        // Equal chance either gene gets inherited
         const connection = Math.random() >= 0.5 ? fittestConn : otherConn;
 
-        // According to Neat spec: 75% chance inherited gene is disabled if it's disabled in either parent
+        // Record status for testing & analysis
+        connection.status = "matching";
+
+        // Neat spec: 75% chance inherited gene is disabled if it's disabled in either parent
         connection.enabled = (!fittestConn.enabled || !otherConn.enabled) ? (Math.random() > .75) : true
+
+        // Add to connections
         connections.push(connection);
 
-        // Deleting is expensive. Reset connection entry
+        // Deleting is expensive. Reset less fit connection entry
         otherCs[bestKeys[i]] = undefined;
-      }
-    }
-
-    // Excess/disjoint genes in less-fit network, only inherit these if networks are equal
-    if (options.equal) {
-      for (i = 0; i < otherKeys.length; i++) {
-        // If undefined, connections already added
-        if(util.isNil(otherCs[otherKeys[i]])) continue;
-        connections.push(otherCs[otherKeys[i]]);
       }
     }
 
