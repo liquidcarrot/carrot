@@ -969,7 +969,7 @@ describe('Network', function(){
     it.skip("node.disconnect(Node2) | removes Node2 from node's .outgoing connection array")
   })
 
-  describe('network.evolve()', function () {
+  describe.skip('network.evolve()', function () {
     // similar to network.train, with the difference that this dataset requires
     // evolving the network to be solvable
     it('network.evolve(dataset) => {{error:{number},iterations:{number},time:{number}}}', async function () {
