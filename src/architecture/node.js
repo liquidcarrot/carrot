@@ -111,13 +111,14 @@ function Node(options) {
       ...options
     }
 
-    if(input != undefined && Number.isFinite(input)) {
-      return self.activation = input;
-    }
+    if(self.type === "input" && input == undefined) throw new Error("Detected an input node with no value provided to it...")
+    
+    // Handles forwarding node case, used for input nodes 
+    if(input != undefined && Number.isFinite(input)) return self.activation = input;
 
     // DRY abstraction
     const activate = function() {
-      // Activate (from self)
+      // Activate (from self) 
       self.state = self.connections_self.gain * self.connections_self.weight * self.state + self.bias;
 
       // Activate (from incoming connections)
@@ -177,6 +178,7 @@ function Node(options) {
 
       return self.activation;
     } else {
+      // Unreachable code, input case should have been handled above
       if(self.type === "input") return self.activation = 0
 
       self.state = activate()

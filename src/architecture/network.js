@@ -379,10 +379,10 @@ function Network(input_size, output_size, options) {
       // Ensure that copy is pushed to new array
       offspring.nodes.push(copy);
 
-      // Check for input status by reference
+      // Check for input status by reference, but push copy
       if(self.input_nodes.has(node)) offspring.input_nodes.add(copy)
 
-      // Check for output status by reference
+      // Check for output status by reference, but push copy
       else if(self.output_nodes.has(node)) offspring.output_nodes.add(copy)
     }
 
