@@ -705,6 +705,10 @@ function Network(input_size, output_size, options) {
    * const network = new architect.Perceptron(2,3,1)
    *
    * network.possible(mutation.SUB_NODE) // returns an array of nodes that can be removed
+   * 
+   * @todo Add tests for ADD_CONN
+   * @todo Add tests for ADD_BACK_CONN
+   * @todo Add tests for ADD_SELF_CONN
    */
   self.possible = function(method) {
     const self = this
@@ -725,6 +729,25 @@ function Network(input_size, output_size, options) {
 
         return candidates.length ? candidates : false
       }
+      case "ADD_BACK_CONN": {
+        for (let i = self.input_size; i < self.nodes.length; i++) {
+          const node1 = self.nodes[i]
+          for (let j = self.input_size; j < i; j++) {
+            const node2 = self.nodes[j]
+            if (!node1.isProjectingTo(node2)) candidates.push([node1, node2])
+          }
+        }
+
+        return candidates.length ? candidates : false
+      }
+      case "ADD_SELF_CONN": {
+        for (let i = self.input_size; i < self.nodes.length; i++) {
+          const node = self.nodes[i]
+          if (node.connections_self.weight === 0) candidates.push([node, node])
+        }
+
+        return candidates.length ? candidates : false
+      }
       case "REMOVE_CONN": // alias for sub_conn
       case "SUB_CONN": {
         _.each(self.connections, (conn) => {
@@ -737,14 +760,6 @@ function Network(input_size, output_size, options) {
       }
       case "MOD_ACTIVATION": {
         candidates = _.filter(self.nodes, method.mutateOutput ? (node) => node.type !== 'input' : (node) => node.type !== 'input' && node.type !== 'output')
-        return candidates.length ? candidates : false
-      }
-      case "ADD_SELF_CONN": {
-        for (let i = self.input_size; i < self.nodes.length; i++) {
-          const node = self.nodes[i]
-          if (node.connections_self.weight === 0) candidates.push([node, node])
-        }
-
         return candidates.length ? candidates : false
       }
       case "SUB_SELF_CONN": {
@@ -767,17 +782,6 @@ function Network(input_size, output_size, options) {
       }
       case "SUB_GATE": {
         return (self.gates.length > 0) ? [] : false
-      }
-      case "ADD_BACK_CONN": {
-        for (let i = self.input_size; i < self.nodes.length; i++) {
-          const node1 = self.nodes[i]
-          for (let j = self.input_size; j < i; j++) {
-            const node2 = self.nodes[j]
-            if (!node1.isProjectingTo(node2)) candidates.push([node1, node2])
-          }
-        }
-
-        return candidates.length ? candidates : false
       }
       case "SUB_BACK_CONN": {
         _.each(self.connections, (conn) => {
@@ -870,6 +874,7 @@ function Network(input_size, output_size, options) {
    * @todo Create a comprehensive logging system
    * @todo Make node management order agnostic by tracking input / outputs better
    * @todo Add standalone node id population synchronization capabilities
+   * @todo Add tests for ADD_SELF_CONN
    * @todo Add tests for ADD_BACK_CONN
    * @todo Add tests for ADD_CONN
    */
