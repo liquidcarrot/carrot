@@ -869,7 +869,9 @@ function Network(input_size, output_size, options) {
    *
    * @todo Create a comprehensive logging system
    * @todo Make node management order agnostic by tracking input / outputs better
-   * @todo Add standalone node id population synchronization capabilities, consider maintaing internal nodeIds when external isn't provided
+   * @todo Add standalone node id population synchronization capabilities
+   * @todo Add tests for ADD_BACK_CONN
+   * @todo Add tests for ADD_CONN
    */
   self.mutate = function(method, options) {
     if (typeof method === 'undefined') throw new Error('Mutate method is undefined!')
@@ -932,7 +934,7 @@ function Network(input_size, output_size, options) {
 
         return null
       }
-      case "ADD_BACK_CONN": // same code as ADD_CONN
+      case "ADD_BACK_CONN": // same code as ADD_CONN, differences dictated by self.possible
       case "ADD_CONN": {
         if(self.connections.length >= maxConns) return null // Check user constraint
 
