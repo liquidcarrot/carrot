@@ -443,6 +443,13 @@ describe('Network', function(){
       expect(network.createOffspring(network1)).instanceOf(Network);
     })
 
+    it('createOffspring(network) => {Network} | Network.connections.length > 0', function() {
+      const network = new Network(4,4);
+      const network1 = new Network(4,4);
+
+      expect(network.createOffspring(network1).connections.length).not.equal(1);
+    })
+
     it('createOffspring() => {Network} | input_nodes set contains nodes with .type of "input"', async function() {
       const connIds = { last: 0 };
       const nodeIds = { last: 0 };
@@ -467,11 +474,50 @@ describe('Network', function(){
       expect([...child.output_nodes]).all.have.property("type", "output");
     })
 
-    it('createOffspring(network) => {Network} | Network.connections.length > 0', function() {
-      const network = new Network(4,4);
-      const network1 = new Network(4,4);
+    it('createOffspring() => {Network} | Offspring network nodes are not references to parent nodes', async function() {
+      const connIds = { last: 0 };
+      const nodeIds = { last: 0 };
+      const network = new Network(4,4,{ connIds, nodeIds });
+      const network1 = new Network(4,4,{ connIds, nodeIds });
 
-      expect(network.createOffspring(network1).connections.length).not.equal(1);
+      const child = network.createOffspring(network1);
+
+      // Before checking node-level properties, ensure that nodes array length is equal to fitter parent's
+      expect(child.nodes.length).equal(network.nodes.length);
+
+      // By using the same index to check for equivalent properties we can (mostly) test to see if offspring has the same node execution order as its fitter parent
+      for(let i = 0; i < child.nodes.length; i++) {
+        const childNode = child.nodes[i];
+        const parentNode = network.nodes[i];
+
+        // Make sure new nodes are not just references. ".equal" checks for strict equality of objects by reference
+        expect(childNode).not.equal(parentNode) // Should fail
+      }
+    })
+
+    it('createOffspring() => {Network} | Offspring network nodes are in the same execution order as fitter parent', async function() {
+      const connIds = { last: 0 };
+      const nodeIds = { last: 0 };
+      const network = new Network(4,4,{ connIds, nodeIds });
+      const network1 = new Network(4,4,{ connIds, nodeIds });
+
+      const child = network.createOffspring(network1);
+
+      // Before checking node-level properties, ensure that nodes array length is equal to fitter parent's
+      expect(child.nodes.length).equal(network.nodes.length);
+
+      // By using the same index to check for equivalent properties we can (mostly) test to see if offspring has the same node execution order as its fitter parent
+      for(let i = 0; i < child.nodes.length; i++) {
+        const childNode = child.nodes[i];
+        const parentNode = network.nodes[i];
+
+        // Systematically test for relevant matching properties 
+        expect(childNode.id).equal(parentNode.id);
+        expect(childNode.type).equal(parentNode.type);
+        expect(childNode.bias).equal(parentNode.bias);
+        expect(childNode.weight).equal(parentNode.weight);
+        expect(childNode.squash).equal(parentNode.squash);
+      }
     })
 
     it('createOffspring() => Offspring, Offspring.activate(), parents all matching genes | Offspring network can activate', async function() {
