@@ -372,7 +372,7 @@ mutation.FFW = [
 
 /**
  *
- * Array of the two methods in canonical Neat
+ * Array of the methods in canonical Neat
  *
  * @constant
  * @type {array}
@@ -390,6 +390,8 @@ mutation.FFW = [
 mutation.NEATSTANDARD = [
   mutation.ADD_NODE,
   mutation.ADD_CONN,
+  mutation.ADD_SELF_CONN,
+  mutation.ADD_BACK_CONN,
   mutation.MOD_WEIGHT
 ];
 
