@@ -742,7 +742,7 @@ function Network(input_size, output_size, options) {
       case "ADD_SELF_CONN": {
         for (let i = self.input_size; i < self.nodes.length; i++) {
           const node = self.nodes[i]
-          if (node.connections_self.weight === 0) candidates.push(node)
+          if (node.connections_self.weight === 0) candidates.push([node, node])
         }
 
         return candidates.length ? candidates : false
@@ -934,6 +934,7 @@ function Network(input_size, output_size, options) {
 
         return null
       }
+      case "ADD_SELF_CONN": // same code as ADD_CONN, differences dictated by self.possible
       case "ADD_BACK_CONN": // same code as ADD_CONN, differences dictated by self.possible
       case "ADD_CONN": {
         if(self.connections.length >= maxConns) return null // Check user constraint
@@ -996,23 +997,6 @@ function Network(input_size, output_size, options) {
         const possible = self.possible(method)
         if (possible) {
           _.sample(possible).mutate(method) // Mutate a random node out of filtered collection, MOD_ACTIVATION is a neuron-level concern
-
-          // Add mutation to tracking array
-          trackMutation(method.name)
-
-          return self
-        }
-
-        // Add attempted mutation to tracking array
-        trackMutation(method.name + " (attempted)")
-
-        return null
-      }
-      case "ADD_SELF_CONN": {
-        const possible = self.possible(method)
-        if (possible) {
-          const node = possible[Math.floor(Math.random() * possible.length)]
-          self.connect(node, node, undefined, { connIds: self.connIds }) // Create the self-connection
 
           // Add mutation to tracking array
           trackMutation(method.name)
