@@ -932,6 +932,7 @@ function Network(input_size, output_size, options) {
 
         return null
       }
+      case "ADD_BACK_CONN": // same code as ADD_CONN
       case "ADD_CONN": {
         if(self.connections.length >= maxConns) return null // Check user constraint
 
@@ -1009,7 +1010,7 @@ function Network(input_size, output_size, options) {
         const possible = self.possible(method)
         if (possible) {
           const node = possible[Math.floor(Math.random() * possible.length)]
-          self.connect(node, node, { connIds: self.connIds }) // Create the self-connection
+          self.connect(node, node, undefined, { connIds: self.connIds }) // Create the self-connection
 
           // Add mutation to tracking array
           trackMutation(method.name)
@@ -1076,23 +1077,6 @@ function Network(input_size, output_size, options) {
         trackMutation(method.name + " (attempted)")
 
         return null;
-      }
-      case "ADD_BACK_CONN": {
-        const possible = self.possible(method)
-        if (possible) {
-          const pair = possible[Math.floor(Math.random() * possible.length)]
-          self.connect(pair[0], pair[1], { connIds: self.connIds })
-
-          // Add mutation to tracking array
-          trackMutation(method.name)
-
-          return self
-        }
-
-        // Add attempted mutation to tracking array
-        trackMutation(method.name + " (attempted)")
-
-        return null
       }
       case "SUB_BACK_CONN": {
         const possible = self.possible(method)
