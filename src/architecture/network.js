@@ -1081,7 +1081,7 @@ function Network(input_size, output_size, options) {
         const possible = self.possible(method)
         if (possible) {
           const pair = possible[Math.floor(Math.random() * possible.length)]
-          self.connect(pair[0], pair[1])
+          self.connect(pair[0], pair[1], { connIds: self.connIds })
 
           // Add mutation to tracking array
           trackMutation(method.name)
