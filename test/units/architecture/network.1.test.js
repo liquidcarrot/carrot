@@ -614,6 +614,21 @@ describe('Network', function(){
       expect(output).all.closeTo(0.5, 0.5); // Assumes default squash is LOGISTIC
     })
 
+    it('createOffspring() => Offspring, Offspring.mutate(ADD_NODE) | offspring connIds refers to fitter parent connIds', async function() {
+      const connIds = { last: 0 };
+      const nodeIds = { last: 0 };
+      const network = new Network(4,4,{ connIds, nodeIds });
+      const network1 = new Network(4,4,{ connIds, nodeIds });
+
+      let child = network.createOffspring(network1);
+
+      // Mutate the child network, should mutate connIds and nodeIds
+      child = child.mutate(methods.mutation.ADD_NODE);
+
+      // Check that child.connIds refers to connIds
+      expect(child.connIds).equal(network.connIds)
+    })
+
     it('createOffspring() => Offspring, Offspring.mutate(ADD_NODE) | external connIds reference is updated', async function() {
       const connIds = { last: 0 };
       const nodeIds = { last: 0 };
@@ -631,6 +646,21 @@ describe('Network', function(){
 
       // Check that connIds was mutated
       expect(afterConnIds).not.eql(beforeConnIds)
+    })
+
+    it('createOffspring() => Offspring, Offspring.mutate(ADD_NODE) | offspring nodeIds refers to fitter parent nodeIds', async function() {
+      const connIds = { last: 0 };
+      const nodeIds = { last: 0 };
+      const network = new Network(4,4,{ connIds, nodeIds });
+      const network1 = new Network(4,4,{ connIds, nodeIds });
+
+      let child = network.createOffspring(network1);
+
+      // Mutate the child network, should mutate connIds and nodeIds
+      child = child.mutate(methods.mutation.ADD_NODE);
+
+      // Check that child.connIds refers to connIds
+      expect(child.nodeIds).equal(network.nodeIds)
     })
 
     it('createOffspring() => Offspring, Offspring.mutate(ADD_NODE) | external nodeIds reference is updated', async function() {
