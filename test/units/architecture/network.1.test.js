@@ -1305,6 +1305,19 @@ describe('Network', function(){
 
     })
 
+    describe('ADD_SELF_CONN', function() {
+      it('originalNetwork != newNetwork | when mutation possible', function() {
+
+      })
+
+    })
+
+    describe('ADD_BACK_CONN', function() {
+      it('originalNetwork != newNetwork | when mutation possible', function() {
+
+      })
+    })
+
     describe('MOD_BIAS', function() {
       it('originalNetwork != newNetwork | when mutation possible', function() {
 
@@ -1383,21 +1396,7 @@ describe('Network', function(){
 
     })
 
-    describe('ADD_SELF_CONN', function() {
-      it('originalNetwork != newNetwork | when mutation possible', function() {
-
-      })
-
-    })
-
     describe('SUB_SELF_CONN', function() {
-      it('originalNetwork != newNetwork | when mutation possible', function() {
-
-      })
-
-    })
-
-    describe('ADD_BACK_CONN', function() {
       it('originalNetwork != newNetwork | when mutation possible', function() {
 
       })
