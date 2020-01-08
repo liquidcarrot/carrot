@@ -1552,7 +1552,49 @@ describe('Network', function(){
       })
     })
 
-    describe.skip('ADD_BACK_CONN', function() {})
+    describe('ADD_BACK_CONN', function() {
+      it("new Perceptron(3,3,2), returns 6 possible new connections to outputs when network untouched", function () {
+        const network = new Network.architecture.Perceptron(3,3,2);
+        
+        expect(network.possible(methods.mutation.ADD_CONN)).lengthOf(9);
+      })
+
+      it("() => [fromNode, toNode], toNode's index is above fromNode's index", function () {
+        const network = new Network.architecture.Perceptron(3,3,2);
+        
+        // Add indexes to nodes to test node (from, to) to
+        for(let i = 0; i < network.nodes.length; i++) {
+          network.nodes[i].index = i;
+        }
+        
+        const pairs = network.possible(methods.mutation.ADD_BACK_CONN)
+        for(pair of pairs) {
+          // "From" index > "To" index
+          expect(pair[0].index).above(pair[1].index)
+        }
+      })
+
+      it('() => [fromNode, toNode], toNodes are not inputs', function () {
+        const network = new Network.architecture.Perceptron(3,3,2);
+
+        const pairs = network.possible(methods.mutation.ADD_BACK_CONN)
+        for(pair of pairs) {
+          // Ensure that destination node is never input
+          expect(pair[1]).not.have.property("type", "input")
+        }
+      })
+
+      it('() => [{Node}, {Node}], returns no connections across outputs', function () {
+        const network = new Network.architecture.Perceptron(3,3,2);
+
+        const pairs = network.possible(methods.mutation.ADD_BACK_CONN)
+        for(pair of pairs) {
+          // Make sure there's no output, output pairs
+          if(pair[0] === "output" && pair[1] === "output")
+            throw new Error("Network.possible returned a connection across output neurons!")
+        }
+      })
+    })
 
     describe.skip('ADD_CONNECTION', function() {})
 
