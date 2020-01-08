@@ -1298,46 +1298,17 @@ describe('Network', function(){
       it.skip("(), existing node | doesn't increase network's internal", function () {})
     })
 
-    describe('ADD_CONNECTION', function() {
-      it('originalNetwork != newNetwork | when mutation possible', function() {
+    describe.skip('ADD_CONNECTION', function() {})
 
-      })
+    describe.skip('ADD_SELF_CONN', function() {})
 
-    })
+    describe.skip('ADD_BACK_CONN', function() {})
 
-    describe('ADD_SELF_CONN', function() {
-      it('originalNetwork != newNetwork | when mutation possible', function() {
+    describe.skip('MOD_BIAS', function() {})
 
-      })
+    describe.skip('MOD_WEIGHT', function() {})
 
-    })
-
-    describe('ADD_BACK_CONN', function() {
-      it('originalNetwork != newNetwork | when mutation possible', function() {
-
-      })
-    })
-
-    describe('MOD_BIAS', function() {
-      it('originalNetwork != newNetwork | when mutation possible', function() {
-
-      })
-
-    })
-
-    describe('MOD_WEIGHT', function() {
-      it('originalNetwork != newNetwork | when mutation possible', function() {
-
-      })
-
-    })
-
-    describe('SUB_CONN', function() {
-      it('originalNetwork != newNetwork | when mutation possible', function() {
-
-      })
-
-    })
+    describe.skip('SUB_CONN', function() {})
 
     describe('SUB_NODE', function() {
       it('given a network with 7 nodes, should produce a network with 6', function(){
@@ -1375,48 +1346,17 @@ describe('Network', function(){
       })
     })
 
-    describe('MOD_ACTIVATION', function() {
-      it('originalNetwork != newNetwork | when mutation possible', function() {
+    describe.skip('MOD_ACTIVATION', function() {})
 
-      })
+    describe.skip('ADD_GATE', function() {})
 
-    })
+    describe.skip('SUB_GATE', function() {})
 
-    describe('ADD_GATE', function() {
-      it('originalNetwork != newNetwork | when mutation possible', function() {
+    describe.skip('SUB_SELF_CONN', function() {})
 
-      })
+    describe.skip('SUB_BACK_CONN', function() {})
 
-    })
-
-    describe('SUB_GATE', function() {
-      it('originalNetwork != newNetwork | when mutation possible', function() {
-
-      })
-
-    })
-
-    describe('SUB_SELF_CONN', function() {
-      it('originalNetwork != newNetwork | when mutation possible', function() {
-
-      })
-
-    })
-
-    describe('SUB_BACK_CONN', function() {
-      it('originalNetwork != newNetwork | when mutation possible', function() {
-
-      })
-
-    })
-
-    describe('SWAP_NODES', function() {
-      it('originalNetwork != newNetwork | when mutation possible', function() {
-
-      })
-
-    })
-
+    describe.skip('SWAP_NODES', function() {})
   })
 
   describe('Network.mutateRandom()', function () {
@@ -1513,6 +1453,71 @@ describe('Network', function(){
       });
 
     })
+  })
+
+  describe('network.possible()', function () {
+    describe.skip('ADD_NODE', function() {})
+
+    describe.skip('ADD_CONNECTION', function() {})
+
+    describe('ADD_SELF_CONN', function() {
+      it('() => [{Node}, {Node}]', function () {
+        const network = new Network(2,2);
+
+        const pairs = network.possible(methods.mutation.ADD_SELF_CONN);
+        
+        for(pair of pairs) {
+          expect(pair[0]).instanceof(Node)
+          expect(pair[1]).instanceof(Node)
+        }
+      })
+
+      it('Returns only connections with "connections_self.weight = 0"', function () {
+        const network = new Network(2,2);
+
+        const pairs = network.possible(methods.mutation.ADD_SELF_CONN);
+        
+        for(pair of pairs) {
+          expect(pair[0].connections_self).have.property("weight", 0)
+          expect(pair[1].connections_self).have.property("weight", 0)
+        }
+      })
+
+      it('Network(2,2) i.e. no hidden nodes, Returns 2 output node pairs', function () {
+        const network = new Network(2,2);
+
+        const pairs = network.possible(methods.mutation.ADD_SELF_CONN);
+        
+        expect(pairs).lengthOf(2);
+
+        for(pair of pairs) {
+          expect(pair[0]).have.property("type", "output")
+          expect(pair[1]).have.property("type", "output")
+        }
+      })
+    })
+
+    describe.skip('ADD_BACK_CONN', function() {})
+
+    describe.skip('MOD_BIAS', function() {})
+
+    describe.skip('MOD_WEIGHT', function() {})
+
+    describe.skip('SUB_CONN', function() {})
+
+    describe.skip('SUB_NODE', function() {})
+
+    describe.skip('MOD_ACTIVATION', function() {})
+
+    describe.skip('ADD_GATE', function() {})
+
+    describe.skip('SUB_GATE', function() {})
+
+    describe.skip('SUB_SELF_CONN', function() {})
+
+    describe.skip('SUB_BACK_CONN', function() {})
+
+    describe.skip('SWAP_NODES', function() {})
   })
 
   describe('network.remove()', function () {
