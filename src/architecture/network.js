@@ -751,8 +751,8 @@ function Network(input_size, output_size, options) {
       case "REMOVE_CONN": // alias for sub_conn
       case "SUB_CONN": {
         _.each(self.connections, (conn) => {
-          // Check if it is not disabling a node
-          if (conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && self.nodes.indexOf(conn.to) > self.nodes.indexOf(conn.from))
+          // Check if it the connection is enabled and then that it's not disabling a node (not to Neat spec?)
+          if (conn.enabled && conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && self.nodes.indexOf(conn.to) > self.nodes.indexOf(conn.from))
             candidates.push(conn)
         })
 
@@ -767,7 +767,7 @@ function Network(input_size, output_size, options) {
         // TODO: Huge speed up by storing a Set is_self_connection<id -> node>
         for (let i = 0; i < self.connections.length; i++) {
           const conn = self.connections[i]
-          if (conn.from == conn.to) candidates.push(conn)
+          if (conn.enabled && conn.from == conn.to) candidates.push(conn)
         }
 
         return candidates.length ? candidates : false
@@ -785,7 +785,7 @@ function Network(input_size, output_size, options) {
       }
       case "SUB_BACK_CONN": {
         _.each(self.connections, (conn) => {
-          if (conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && self.nodes.indexOf(conn.from) > self.nodes.indexOf(conn.to))
+          if (conn.enabled && conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && self.nodes.indexOf(conn.from) > self.nodes.indexOf(conn.to))
             candidates.push(conn)
         })
 

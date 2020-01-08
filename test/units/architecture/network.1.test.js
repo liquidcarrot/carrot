@@ -1298,11 +1298,13 @@ describe('Network', function(){
       it.skip("(), existing node | doesn't increase network's internal", function () {})
     })
 
-    describe.skip('ADD_CONNECTION', function() {})
+    describe.skip('ADD_CONN', function() {})
 
     describe.skip('ADD_SELF_CONN', function() {})
 
     describe.skip('ADD_BACK_CONN', function() {})
+
+    describe.skip('ADD_CONNECTION', function() {})
 
     describe.skip('MOD_BIAS', function() {})
 
@@ -1458,7 +1460,60 @@ describe('Network', function(){
   describe('network.possible()', function () {
     describe.skip('ADD_NODE', function() {})
 
-    describe.skip('ADD_CONNECTION', function() {})
+    describe('ADD_CONN', function() {
+      it("new Perceptron(3,3,2), returns possible new connections to outputs when network untouched", function () {
+        const network = new Network.architecture.Perceptron(3,3,2);
+        
+        expect(network.possible(methods.mutation.ADD_CONN)).lengthOf.above(0);
+      })
+
+      it("() => [fromNode, toNode], toNode's index is below than fromNode's", function () {
+        const network = new Network.architecture.Perceptron(3,3,2);
+        
+        // Add indexes to nodes to test node (from, to) to
+        for(let i = 0; i < network.nodes.length; i++) {
+          network.nodes[i].index = i;
+        }
+        
+        const pairs = network.possible(methods.mutation.ADD_CONN)
+        for(pair of pairs) {
+          // "From" index < "To" index
+          expect(pair[0].index).below(pair[1].index)
+        }
+      })
+
+      it('() => [fromNode, toNode], toNodes are not inputs', function () {
+        const network = new Network.architecture.Perceptron(3,3,2);
+
+        network.mutate(methods.mutation.SUB_CONN)
+        network.mutate(methods.mutation.SUB_CONN)
+        network.mutate(methods.mutation.SUB_CONN)
+
+        const pairs = network.possible(methods.mutation.ADD_CONN)
+        for(pair of pairs) {
+          // Ensure that destination node is never input
+          expect(pair[1]).not.have.property("type", "input")
+        }
+      })
+
+      it('() => [{Node}, {Node}], returns no connections across outputs', function () {
+        const network = new Network.architecture.Perceptron(3,3,2);
+
+        // There should be 15 connections available to remove
+        expect(network.possible(methods.mutation.SUB_CONN)).lengthOf(15);
+
+        network.mutate(methods.mutation.SUB_CONN);
+        network.mutate(methods.mutation.SUB_CONN);
+        network.mutate(methods.mutation.SUB_CONN);
+
+        const pairs = network.possible(methods.mutation.ADD_CONN)
+        for(pair of pairs) {
+          // Make sure there's no output, output pairs
+          if(pair[0] === "output" && pair[1] === "output")
+            throw new Error("Network.possible returned a connection across output neurons!")
+        }
+      })
+    })
 
     describe('ADD_SELF_CONN', function() {
       it('() => [{Node}, {Node}]', function () {
@@ -1498,6 +1553,8 @@ describe('Network', function(){
     })
 
     describe.skip('ADD_BACK_CONN', function() {})
+
+    describe.skip('ADD_CONNECTION', function() {})
 
     describe.skip('MOD_BIAS', function() {})
 
