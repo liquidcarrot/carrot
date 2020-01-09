@@ -876,7 +876,6 @@ function Network(input_size, output_size, options) {
    * @todo Create a comprehensive logging system
    * @todo Create an ID tracking scheme for gating
    * @todo Make node management order agnostic by tracking input / outputs better
-   * @todo Merge MOD_BIAS, and MOD_ACTIVATION by standardizing adding their network.possible cases
    * @todo Modify network.possible to always return an array, empty if no candidates were found instead of false
    */
   self.mutate = function(method, options) {
