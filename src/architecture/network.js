@@ -698,14 +698,14 @@ function Network(input_size, output_size, options) {
    *
    * @param {mutation} method [Mutation method](mutation)
    *
-   * @returns {false | object[]} Candidates to use for a mutation. Entries may be arrays containing pairs / tuples when appropriate.
+   * @returns {object[]} Candidates to use for a mutation. Entries may be arrays containing pairs / tuples when appropriate.
    *
    * @example
    *
    * const network = new architect.Perceptron(2,3,1)
-   *
    * network.possible(mutation.SUB_NODE) // returns an array of nodes that can be removed
    * 
+   * network.possible(mutation.ADD_CONN) // returns an array of node pairs to form a connection from
    */
   self.possible = function(method) {
     const self = this
@@ -713,7 +713,7 @@ function Network(input_size, output_size, options) {
     switch (method.name) {
       case "SUB_NODE": {
         candidates = _.filter(self.nodes, function(node) { return (!self.input_nodes.has(node) && !self.output_nodes.has(node)) }) // assumes input & output node 'type' has been set
-        return candidates.length ? candidates : false
+        return candidates
       }
       case "ADD_CONN": {
         for (let i = 0; i < self.nodes.length - self.output_size; i++) {
@@ -724,7 +724,7 @@ function Network(input_size, output_size, options) {
           }
         }
 
-        return candidates.length ? candidates : false
+        return candidates
       }
       case "ADD_BACK_CONN": {
         // Used to ensure connections across output nodes aren't selected
@@ -739,7 +739,7 @@ function Network(input_size, output_size, options) {
           }
         }
 
-        return candidates.length ? candidates : false
+        return candidates
       }
       case "ADD_SELF_CONN": {
         for (let i = self.input_size; i < self.nodes.length; i++) {
@@ -747,7 +747,7 @@ function Network(input_size, output_size, options) {
           if (node.connections_self.weight === 0) candidates.push([node, node])
         }
 
-        return candidates.length ? candidates : false
+        return candidates
       }
       case "REMOVE_CONN": // SUB_CONN alias
       case "SUB_CONN": {
@@ -757,12 +757,12 @@ function Network(input_size, output_size, options) {
             candidates.push(conn)
         })
 
-        return candidates.length ? candidates : false
+        return candidates
       }
       case "MOD_BIAS": // Same as MOD_ACTIVATION, not applicable to inputs, toggleable on outputs
       case "MOD_ACTIVATION": {
         candidates = _.filter(self.nodes, method.mutateOutput ? (node) => node.type !== 'input' : (node) => node.type !== 'input' && node.type !== 'output')
-        return candidates.length ? candidates : false
+        return candidates
       }
       case "SUB_SELF_CONN": {
         // Very slow implementation.
@@ -772,7 +772,7 @@ function Network(input_size, output_size, options) {
           if (conn.enabled && conn.from == conn.to) candidates.push(conn)
         }
 
-        return candidates.length ? candidates : false
+        return candidates
       }
       case "ADD_GATE": {
         self.connections.forEach((conn) => {
@@ -780,10 +780,10 @@ function Network(input_size, output_size, options) {
             candidates.push(conn);
           }
         });
-        return candidates.length ? candidates : false
+        return candidates
       }
       case "SUB_GATE": {
-        return (self.gates.length > 0) ? self.gates : false
+        return self.gates
       }
       case "SUB_BACK_CONN": {
         _.each(self.connections, (conn) => {
@@ -791,18 +791,17 @@ function Network(input_size, output_size, options) {
             candidates.push(conn)
         })
 
-        return candidates.length ? candidates : false
+        return candidates
       }
       case "SWAP_NODES": {
         // break out early if there aren't enough nodes to swap
-        if((self.nodes.length - 1) - self.input_size - (method.mutateOutput ? 0 : self.output_size) < 2) return false;
+        if((self.nodes.length - 1) - self.input_size - (method.mutateOutput ? 0 : self.output_size) < 2) return candidates;
 
-        const filterFn = (method.mutateOutput) ? (node) => (node.type !== `input`) : (node) => (node.type !== `input` && node.type !== `output`)
+        // Select filter function before to avoid running ternary over and over
+        const filterFn = (method.mutateOutput) ? (node) => (node.type !== "input") : (node) => (node.type !== "input" && node.type !== "output")
 
-        candidates = _.filter(self.nodes, filterFn)
-
-        // Check there are at least two possible nodes
-        return (candidates.length >= 2) ? candidates : false
+        // return hidden nodes, and if mutateOuput is enabled, output nodes
+        return _.filter(self.nodes, filterFn)
       }
     }
   }
@@ -896,7 +895,7 @@ function Network(input_size, output_size, options) {
     // Test if mutation possible, get candidates for mutation, apply mutation, store mutation outcome
     const handleMutation = function(method, mutate) {
       const candidates = self.possible(method);
-      const possible = Array.isArray(candidates); // .possible only returns an array when it has candidates of length > 0, consider changing to always return an array
+      const possible = (candidates.length > 0); // .possible always returns an array, turn length into boolean
 
       // If mutation is possible, apply the mutation with the chosen candidate
       if (possible) {
@@ -1002,16 +1001,16 @@ function Network(input_size, output_size, options) {
         return handleMutation(method, gate => self.ungate(gate))
       }
       case "SWAP_NODES": {
-        const possible = self.possible(method)
-        if (possible) {
+        const candidates = self.candidates(method)
+        if (candidates.length >= 2) {
           // Return a random node out of the filtered collection
-          const node1 = _.sample(possible)
+          const node1 = _.sample(candidates)
 
           // Filter node1 from collection
-          const possible2 = _.filter(possible, (node, index) => node !== node1)
+          const candidates2 = _.filter(candidates, (node, index) => node !== node1)
 
           // Get random node from filtered collection (excludes node1)
-          const node2 = _.sample(possible2)
+          const node2 = _.sample(candidates2)
 
           const bias_temp = node1.bias
           const squash_temp = node1.squash
