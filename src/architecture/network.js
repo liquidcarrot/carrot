@@ -706,9 +706,6 @@ function Network(input_size, output_size, options) {
    *
    * network.possible(mutation.SUB_NODE) // returns an array of nodes that can be removed
    * 
-   * @todo Add tests for ADD_CONN
-   * @todo Add tests for ADD_BACK_CONN
-   * @todo Add tests for ADD_SELF_CONN
    */
   self.possible = function(method) {
     const self = this
@@ -752,7 +749,7 @@ function Network(input_size, output_size, options) {
 
         return candidates.length ? candidates : false
       }
-      case "REMOVE_CONN": // alias for sub_conn
+      case "REMOVE_CONN": // SUB_CONN alias
       case "SUB_CONN": {
         _.each(self.connections, (conn) => {
           // Check if it the connection is enabled and then that it's not disabling a node (not to Neat spec?)
@@ -762,6 +759,7 @@ function Network(input_size, output_size, options) {
 
         return candidates.length ? candidates : false
       }
+      case "MOD_BIAS": // Same as MOD_ACTIVATION, not applicable to inputs, toggleable on outputs
       case "MOD_ACTIVATION": {
         candidates = _.filter(self.nodes, method.mutateOutput ? (node) => node.type !== 'input' : (node) => node.type !== 'input' && node.type !== 'output')
         return candidates.length ? candidates : false
@@ -878,7 +876,7 @@ function Network(input_size, output_size, options) {
    * @todo Create a comprehensive logging system
    * @todo Create an ID tracking scheme for gating
    * @todo Make node management order agnostic by tracking input / outputs better
-   * @todo Merge MOD_WEIGHT, MOD_BIAS, and MOD_ACTIVATION by standardizing adding their network.possible cases
+   * @todo Merge MOD_BIAS, and MOD_ACTIVATION by standardizing adding their network.possible cases
    * @todo Modify network.possible to always return an array, empty if no candidates were found instead of false
    */
   self.mutate = function(method, options) {
@@ -955,8 +953,9 @@ function Network(input_size, output_size, options) {
       case "SUB_NODE": {
         return handleMutation(method, node => self.remove(node))
       }
-      case "ADD_SELF_CONN": // same code as ADD_CONN, differences dictated by self.possible
-      case "ADD_BACK_CONN": // same code as ADD_CONN, differences dictated by self.possible
+      // fall-through cases differences handled by self.possible
+      case "ADD_SELF_CONN":
+      case "ADD_BACK_CONN":
       case "ADD_CONN": {
         // Check user constraint
         if(self.connections.length >= maxConns) {
@@ -966,9 +965,10 @@ function Network(input_size, output_size, options) {
 
         return handleMutation(method, pair => self.connect(pair[0], pair[1], undefined, { connIds: self.connIds }))
       }
-      case "SUB_BACK_CONN": // same code as SUB_CONN, differences dictated by self.possible
-      case "SUB_SELF_CONN": // same code as SUB_CONN, differences dictated by self.possible
-      case "REMOVE_CONN": // alias for sub_conn
+      // fall-through cases differences handled by self.possible
+      case "SUB_BACK_CONN":
+      case "SUB_SELF_CONN":
+      case "REMOVE_CONN": // SUB_CONN alias
       case "SUB_CONN": {
         return handleMutation(method, conn => self.disconnect(conn.from, conn.to))
       }
@@ -980,17 +980,9 @@ function Network(input_size, output_size, options) {
         trackMutation(method.name, true)
         return self
       }
-      case "MOD_BIAS": {
-        // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
-        const node_to_mutate = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)]
-        node_to_mutate.mutate(method)
-
-        // Add succesful mutation to tracking array
-        trackMutation(method.name, true)
-        return self
-      }
+      // fall-through case differences handled by Node interface
+      case "MOD_BIAS":
       case "MOD_ACTIVATION": {
-        // Mutate random node's activation function, a neuron-level concern
         return handleMutation(method, node => node.mutate(method))
       }
       case "ADD_GATE": {

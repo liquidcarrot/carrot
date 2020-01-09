@@ -127,6 +127,7 @@ const mutation = {
    * @description Modifies the bias of a node
    * @default
    *
+   * @prop {boolean} mutateOutput=true Enable this to let network change its output node biases.
    * @prop {number} min=-1 lower bound for modification of a neuron's bias
    * @prop {number} max=1 higher bound for modification of a neuron's bias
    *
@@ -141,6 +142,7 @@ const mutation = {
    */
   MOD_BIAS: {
     name: 'MOD_BIAS',
+    mutateOutput: true,
     min: -1,
     max: 1,
   },
