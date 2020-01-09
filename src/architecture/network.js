@@ -730,10 +730,14 @@ function Network(input_size, output_size, options) {
         return candidates.length ? candidates : false
       }
       case "ADD_BACK_CONN": {
+        // Used to ensure connections across output nodes aren't selected
+        const outputIndex = self.nodes.length - self.output_size;
+
         for (let i = self.input_size; i < self.nodes.length; i++) {
-          const node1 = self.nodes[i]
-          for (let j = self.input_size; j < i; j++) {
-            const node2 = self.nodes[j]
+          const node1 = self.nodes[i];
+          const upperBound = Math.min(i, outputIndex);
+          for (let j = self.input_size; j < upperBound; j++) {
+            const node2 = self.nodes[j];
             if (!node1.isProjectingTo(node2)) candidates.push([node1, node2])
           }
         }
@@ -2102,6 +2106,8 @@ Network.architecture = {
   * let my_perceptron = new architect.Perceptron(2, 10, 10, 10, 10, 1);
   *
   * @returns {Network} Feed forward neural network
+  * 
+  * @todo Add connection id tracking
   */
   Perceptron: function () {
     // Convert arguments to Array

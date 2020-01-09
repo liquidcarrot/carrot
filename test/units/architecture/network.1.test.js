@@ -1298,11 +1298,166 @@ describe('Network', function(){
       it.skip("(), existing node | doesn't increase network's internal", function () {})
     })
 
-    describe.skip('ADD_CONN', function() {})
+    describe('ADD_CONN', function() {
+      it('() => {Network}, when new connection possible', function () {
+        let network = new Network.architecture.Perceptron(2,3,2);
 
-    describe.skip('ADD_SELF_CONN', function() {})
+        // Remove a connection so it's possible to add one later
+        network = network.mutate(methods.mutation.SUB_CONN)
 
-    describe.skip('ADD_BACK_CONN', function() {})
+        expect(network.mutate(methods.mutation.ADD_CONN)).instanceOf(Network)
+      })
+
+      it('network.mutations[{last index}].successful = false, when new connection impossible', function () {
+        const network = new Network(2,2);
+
+        // Impossible mutation, network is already fully connected
+        network.mutate(methods.mutation.ADD_CONN)
+
+        const lastMutation = network.mutations[network.mutations.length-1];
+        expect(lastMutation.successful).equal(false)
+      })
+
+      it('() => {Network}, when new connection impossible', function () {
+        const network = new Network(2,2);
+
+        // Should be impossible to add a connection since network is fully-connected
+        // Expect mutate to return an instance of the network anyway
+        expect(network.mutate(methods.mutation.ADD_CONN)).instanceOf(Network)
+      })
+
+      // Skipped for now, requires connection id tracking added to Network.architecture.Perceptron
+      it.skip("new net1({ connIds }), net2({ connIds }).mutate(ADD_CONN) | adds entry to net1's connIds", function () {
+        const nodeIds = { last: 0 }
+        const connIds = { last: 0 }
+
+        let network = new Network(1,1, { nodeIds, connIds });
+
+        // Currently does not work, need to redo Network.archiecture.* to accept options and track nodeIds and ConnIds
+        let network2 = new Network.architecture.Perceptron(1,1, { nodeIds, connIds });
+      })
+
+      it("Adds a new connection to network's .connections array", function () {
+        let network = new Network.architecture.Perceptron(2,3,2);
+
+        // Remove a connection so it's possible to add one later
+        network = network.mutate(methods.mutation.SUB_CONN)
+
+        const original = network.connections.length;
+
+        const updated = network.mutate(methods.mutation.ADD_CONN).connections.length
+
+        expect(updated).equal(original + 1)
+        expect(network.connections[network.connections.length-1]).instanceOf(Connection)
+      })
+    })
+
+    describe('ADD_SELF_CONN', function() {
+      it('() => {Network}, when new connection possible', function () {
+        let network = new Network(2,2);
+
+        expect(network.mutate(methods.mutation.ADD_SELF_CONN)).instanceOf(Network)
+      })
+
+      it('network.mutations[{last index}].successful = false, when new connection impossible', function () {
+        const network = new Network(2,2);
+
+        // Do two self-connections (on outputs)
+        network.mutate(methods.mutation.ADD_SELF_CONN)
+        network.mutate(methods.mutation.ADD_SELF_CONN)
+
+        // Attempt a final impossible mutation
+        network.mutate(methods.mutation.ADD_SELF_CONN)
+
+        // Expect network stored ADD_SELF_CONN mutation as impossible
+        const lastMutation = network.mutations[network.mutations.length-1];
+        expect(lastMutation.successful).equal(false)
+      })
+
+      it('() => {Network}, when new connection impossible', function () {
+        const network = new Network(2,2);
+
+        // Do two self-connections (on outputs)
+        network.mutate(methods.mutation.ADD_SELF_CONN)
+        network.mutate(methods.mutation.ADD_SELF_CONN)
+
+        // Final mutation impossible
+        expect(network.mutate(methods.mutation.ADD_SELF_CONN)).instanceOf(Network)
+      })
+
+      // Skipped for now, requires connection id tracking added to Network.architecture.Perceptron
+      it.skip("new net1({ connIds }), net2({ connIds }).mutate(ADD_SELF_CONN) | adds entry to net1's connIds", function () {
+        const nodeIds = { last: 0 }
+        const connIds = { last: 0 }
+        
+        let network = new Network(1,1, { nodeIds, connIds });
+
+        // Currently does not work, need to redo Network.archiecture.* to accept options and track nodeIds and ConnIds
+        let network2 = new Network.architecture.Perceptron(1,1, { nodeIds, connIds });
+      })
+
+      it("Adds a new connection to network's .connections array", function () {
+        let network = new Network(2,3,2);
+
+        const original = network.connections.length;
+
+        const updated = network.mutate(methods.mutation.ADD_SELF_CONN).connections.length
+
+        expect(updated).equal(original + 1)
+        expect(network.connections[network.connections.length-1]).instanceOf(Connection)
+      })
+    })
+
+    describe('ADD_BACK_CONN', function() {
+      it('() => {Network}, when new connection possible', function () {
+        let network = new Network.architecture.Perceptron(2,1,2);
+
+        expect(network.mutate(methods.mutation.ADD_BACK_CONN)).instanceOf(Network)
+      })
+
+      it('network.mutations[{last index}].successful = false, when new connection impossible', function () {
+        // No hidden nodes
+        let network = new Network(2,2);
+        
+        network.mutate(methods.mutation.ADD_BACK_CONN)
+
+        console.log(network.connections.map(conn => conn.from.type))
+
+        // Input nodes can't be destination of a connection
+        const lastMutation = network.mutations[network.mutations.length-1];
+        expect(lastMutation.successful).equal(false)
+      })
+
+      it('() => {Network}, when new connection impossible', function () {
+        // No hidden nodes
+        const network = new Network(2,2);
+
+        // Input nodes can't be destination of a connection
+        expect(network.mutate(methods.mutation.ADD_BACK_CONN)).instanceOf(Network)
+      })
+
+      // Skipped for now, requires connection id tracking added to Network.architecture.*
+      it.skip("new net1({ connIds }), net2({ connIds }).mutate(ADD_BACK_CONN) | adds entry to net1's connIds", function () {
+        const nodeIds = { last: 0 }
+        const connIds = { last: 0 }
+        
+        let network = new Network(1,1, { nodeIds, connIds });
+
+        // Currently does not work, need to redo Network.archiecture.* to accept options and track nodeIds and ConnIds
+        let network2 = new Network.architecture.Perceptron(1,1, { nodeIds, connIds });
+      })
+
+      it("Adds a new connection to network's .connections array", function () {
+        let network = new Network.architecture.Perceptron(2,3,2);
+
+        const original = network.connections.length;
+
+        const updated = network.mutate(methods.mutation.ADD_BACK_CONN).connections.length
+
+        expect(updated).equal(original + 1)
+        expect(network.connections[network.connections.length-1]).instanceOf(Connection)
+      })
+    })
 
     describe.skip('ADD_CONNECTION', function() {})
 
@@ -1509,7 +1664,7 @@ describe('Network', function(){
         const pairs = network.possible(methods.mutation.ADD_CONN)
         for(pair of pairs) {
           // Make sure there's no output, output pairs
-          if(pair[0] === "output" && pair[1] === "output")
+          if(pair[0].type === "output" && pair[1].type === "output")
             throw new Error("Network.possible returned a connection across output neurons!")
         }
       })
@@ -1553,7 +1708,7 @@ describe('Network', function(){
     })
 
     describe('ADD_BACK_CONN', function() {
-      it("new Perceptron(3,3,2), returns 6 possible new connections to outputs when network untouched", function () {
+      it("new Perceptron(3,3,2), returns 9 possible new connections to outputs when network untouched", function () {
         const network = new Network.architecture.Perceptron(3,3,2);
         
         expect(network.possible(methods.mutation.ADD_CONN)).lengthOf(9);
@@ -1590,7 +1745,7 @@ describe('Network', function(){
         const pairs = network.possible(methods.mutation.ADD_BACK_CONN)
         for(pair of pairs) {
           // Make sure there's no output, output pairs
-          if(pair[0] === "output" && pair[1] === "output")
+          if(pair[0].type === "output" && pair[1].type === "output")
             throw new Error("Network.possible returned a connection across output neurons!")
         }
       })
