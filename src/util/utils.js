@@ -6,6 +6,8 @@ const util = {
 
   isNil: value => (value == null),
 
+  isDefined: value => (value != null),
+
   /**
   * Returns a unique ID from two numbers
   *

@@ -785,7 +785,7 @@ function Network(input_size, output_size, options) {
         return candidates.length ? candidates : false
       }
       case "SUB_GATE": {
-        return (self.gates.length > 0) ? [] : false
+        return (self.gates.length > 0) ? self.gates : false
       }
       case "SUB_BACK_CONN": {
         _.each(self.connections, (conn) => {
@@ -878,10 +878,8 @@ function Network(input_size, output_size, options) {
    * @todo Create a comprehensive logging system
    * @todo Create an ID tracking scheme for gating
    * @todo Make node management order agnostic by tracking input / outputs better
-   * @todo Add standalone node id population synchronization capabilities
-   * @todo Add tests for ADD_SELF_CONN
-   * @todo Add tests for ADD_BACK_CONN
-   * @todo Add tests for ADD_CONN
+   * @todo Merge MOD_WEIGHT, MOD_BIAS, and MOD_ACTIVATION by standardizing adding their network.possible cases
+   * @todo Modify network.possible to always return an array, empty if no candidates were found instead of false
    */
   self.mutate = function(method, options) {
     if (typeof method === 'undefined') throw new Error('Mutate method is undefined!')
@@ -896,6 +894,24 @@ function Network(input_size, output_size, options) {
           name,
           successful
         })
+    }
+
+    // Test if mutation possible, get candidates for mutation, apply mutation, store mutation outcome
+    const handleMutation = function(method, mutate) {
+      const candidates = self.possible(method);
+      const possible = Array.isArray(candidates); // .possible only returns an array when it has candidates of length > 0, consider changing to always return an array
+
+      // If mutation is possible, apply the mutation with the chosen candidate
+      if (possible) {
+        const chosen = candidates[Math.floor(Math.random() * candidates.length)]
+        mutate(chosen)
+      }
+      
+      // Track the mutation and whether it was possible
+      trackMutation(method.name, possible)
+
+      // Return the network for assignment or chaining
+      return self
     }
 
     switch (method.name) {
@@ -937,18 +953,7 @@ function Network(input_size, output_size, options) {
         return self
       }
       case "SUB_NODE": {
-        const possible = self.possible(method)
-        if (possible) {
-          self.remove(_.sample(possible))
-
-          // Add successful mutation to tracking array
-          trackMutation(method.name, true)
-          return self
-        }
-
-        // Add failed mutation to tracking array
-        trackMutation(method.name, false)
-        return self
+        return handleMutation(method, node => self.remove(node))
       }
       case "ADD_SELF_CONN": // same code as ADD_CONN, differences dictated by self.possible
       case "ADD_BACK_CONN": // same code as ADD_CONN, differences dictated by self.possible
@@ -959,33 +964,13 @@ function Network(input_size, output_size, options) {
           return self
         }
 
-        const possible = self.possible(method)
-        if (possible) {
-          const pair = possible[Math.floor(Math.random() * possible.length)]
-          self.connect(pair[0], pair[1], undefined, { connIds: self.connIds })
-
-          // Add succesful mutation to tracking array
-          trackMutation(method.name, true)
-          return self
-        }
-
-        trackMutation(method.name, false) // Add failed mutation to tracking array
-        return self
+        return handleMutation(method, pair => self.connect(pair[0], pair[1], undefined, { connIds: self.connIds }))
       }
+      case "SUB_BACK_CONN": // same code as SUB_CONN, differences dictated by self.possible
+      case "SUB_SELF_CONN": // same code as SUB_CONN, differences dictated by self.possible
       case "REMOVE_CONN": // alias for sub_conn
       case "SUB_CONN": {
-        const possible = self.possible(method)
-        if (possible) {
-          const chosen = possible[Math.floor(Math.random() * possible.length)]
-          self.disconnect(chosen.from, chosen.to)
-
-          // Add succesful mutation to tracking array
-          trackMutation(method.name, true)
-          return self
-        }
-
-        trackMutation(method.name, false) // Add failed mutation to tracking array
-        return self
+        return handleMutation(method, conn => self.disconnect(conn.from, conn.to))
       }
       case "MOD_WEIGHT": {
         const chosen_connection = self.getRandomConnection() // get a random connection to modify weight
@@ -1005,31 +990,8 @@ function Network(input_size, output_size, options) {
         return self
       }
       case "MOD_ACTIVATION": {
-        const possible = self.possible(method)
-        if (possible) {
-          _.sample(possible).mutate(method) // Mutate a random node out of filtered collection, MOD_ACTIVATION is a neuron-level concern
-
-          // Add succesful mutation to tracking array
-          trackMutation(method.name, true)
-          return self
-        }
-
-        trackMutation(method.name, false) // Add failed mutation to tracking array
-        return self
-      }
-      case "SUB_SELF_CONN": {
-        const possible = self.possible(method)
-        if (possible) {
-          const chosen_connection = possible[Math.floor(Math.random() * possible.length)];
-          self.disconnect(chosen_connection.from, chosen_connection.to);
-
-          // Add succesful mutation to tracking array
-          trackMutation(method.name, true)
-          return self
-        }
-
-        trackMutation(method.name, false) // Add failed mutation to tracking array
-        return self
+        // Mutate random node's activation function, a neuron-level concern
+        return handleMutation(method, node => node.mutate(method))
       }
       case "ADD_GATE": {
         // Check user constraint
@@ -1038,47 +1000,15 @@ function Network(input_size, output_size, options) {
           return self
         }
 
-        const possible = self.possible(method)
-        if (possible) {
-          // Select a random gater node and connection, can't be gated by input | makes ["input", "hidden", "output"] assumption
+        return handleMutation(method, conn => {
+          // Select random node, can't gate with input nodes so special bounds added, relies on nodes order assumption: input, hidden, then output
           const node = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)]
-          const conn = possible[Math.floor(Math.random() * possible.length)]
 
           self.gate(node, conn) // Gate the connection with the node
-          
-          // Add succesful mutation to tracking array
-          trackMutation(method.name, true)
-          return self
-        }
-
-        trackMutation(method.name, false) // Add failed mutation to tracking array
-        return self
+        })
       }
       case "SUB_GATE": {
-        if (self.possible(method)) {
-          self.ungate(self.gates[Math.floor(Math.random() * self.gates.length)])
-
-          // Add succesful mutation to tracking array
-          trackMutation(method.name, true)
-          return self
-        }
-
-        trackMutation(method.name, false) // Add failed mutation to tracking array
-        return self
-      }
-      case "SUB_BACK_CONN": {
-        const possible = self.possible(method)
-        if (possible) {
-          const random_connection = possible[Math.floor(Math.random() * possible.length)]
-          self.disconnect(random_connection.from, random_connection.to)
-
-          // Add succesful mutation to tracking array
-          trackMutation(method.name, true)
-          return self
-        }
-
-        trackMutation(method.name, false) // Add failed mutation to tracking array
-        return self
+        return handleMutation(method, gate => self.ungate(gate))
       }
       case "SWAP_NODES": {
         const possible = self.possible(method)
