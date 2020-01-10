@@ -727,15 +727,12 @@ function Network(input_size, output_size, options) {
         return candidates
       }
       case "ADD_BACK_CONN": {
-        // Used to ensure connections across output nodes aren't selected
-        const outputIndex = self.nodes.length - self.output_size;
-
-        for (let i = self.input_size; i < self.nodes.length; i++) {
+        for (let i = self.input_size; i < self.nodes.length - self.output_size; i++) {
           const node1 = self.nodes[i];
-          const upperBound = Math.min(i, outputIndex);
-          for (let j = self.input_size; j < upperBound; j++) {
+
+          for (let j = i + 1; j < self.nodes.length; j++) {
             const node2 = self.nodes[j];
-            if (!node1.isProjectingTo(node2)) candidates.push([node1, node2])
+            if(!node2.isProjectingTo(node1)) candidates.push([node2, node1])
           }
         }
 
@@ -747,6 +744,34 @@ function Network(input_size, output_size, options) {
           if (node.connections_self.weight === 0) candidates.push([node, node])
         }
 
+        return candidates
+      }
+      // ADD_CONNECTION is ADD_CONN + BACK_CONN + SELF_CONN together
+      case "ADD_CONNECTION": {
+        // Store output node start index
+        const outputIndex = self.nodes.length - self.output_size;
+
+        for (let index1 = 0; index1 < self.nodes.length; index1++) {
+          const node1 = self.nodes[index1]
+          
+          const isInput = (index1 < self.input_size); // node1 is input
+          const isOutput = (index1 > outputIndex); // node1 is output
+
+          // SELF_CONN
+          if(!isInput && node1.connections_self.weight === 0) candidates.push([node1, node1])
+
+          // ADD_CONN & BACK_CONN, index 1 is before index 2 always
+          for (let index2 = Math.max(index1 + 1, self.input_size); index2 < self.nodes.length; index2++) {
+            const node2 = self.nodes[index2]
+
+            // ADD_CONN
+            if (!node1.isProjectingTo(node2)) candidates.push([node1, node2])
+
+            // BACK_CONN
+            if(!isInput && !isOutput && !node2.isProjectingTo(node1)) candidates.push([node2, node1])
+          }
+        }
+        
         return candidates
       }
       case "REMOVE_CONN": // SUB_CONN alias
@@ -1001,7 +1026,7 @@ function Network(input_size, output_size, options) {
         return handleMutation(method, gate => self.ungate(gate))
       }
       case "SWAP_NODES": {
-        const candidates = self.candidates(method)
+        const candidates = self.possible(method)
         if (candidates.length >= 2) {
           // Return a random node out of the filtered collection
           const node1 = _.sample(candidates)

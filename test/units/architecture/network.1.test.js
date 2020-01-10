@@ -1421,8 +1421,6 @@ describe('Network', function(){
         
         network.mutate(methods.mutation.ADD_BACK_CONN)
 
-        console.log(network.connections.map(conn => conn.from.type))
-
         // Input nodes can't be destination of a connection
         const lastMutation = network.mutations[network.mutations.length-1];
         expect(lastMutation.successful).equal(false)
@@ -1751,7 +1749,20 @@ describe('Network', function(){
       })
     })
 
-    describe.skip('ADD_CONNECTION', function() {})
+    // ToDo: Add complete tests
+    describe('ADD_CONNECTION', function() {
+      it('() => {[Node, Node]}', function () {
+        const network = Network.architecture.Perceptron(2,3,3);
+
+        const candidates = network.possible(methods.mutation.ADD_CONNECTION)
+        for (let i = 0; i < candidates.length; i++) {
+          const candidate = candidates[i];
+
+          expect(candidate[0]).instanceOf(Node)
+          expect(candidate[1]).instanceOf(Node)
+        }
+      })
+    })
 
     describe.skip('MOD_BIAS', function() {})
 

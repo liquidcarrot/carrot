@@ -87,6 +87,22 @@ const mutation = {
   /**
    * @constant
    * @type {object}
+   * @description Adds a any kind of connection to a network. A super-set of ADD_CONN, ADD_BACK_CONN, and ADD_SELF_CONN
+   * @default
+   *
+   * @example
+   * let { methods, Network } = require("@liquid-carrot/carrot");
+   *
+   * let myNetwork = new Network(5, 10, 5);
+   *
+   * myNetwork.mutate(methods.mutation.ADD_CONNECTION);
+   */
+  ADD_CONNECTION: {
+    name: 'ADD_CONNECTION',
+  },
+  /**
+   * @constant
+   * @type {object}
    * @description Removes a connection between two nodes
    * @default
    *
