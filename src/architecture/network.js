@@ -706,6 +706,8 @@ function Network(input_size, output_size, options) {
    * network.possible(mutation.SUB_NODE) // returns an array of nodes that can be removed
    * 
    * network.possible(mutation.ADD_CONN) // returns an array of node pairs to form a connection from
+   * 
+   * @todo Add more ADD_CONNECTION tests
    */
   self.possible = function(method) {
     const self = this
@@ -771,7 +773,7 @@ function Network(input_size, output_size, options) {
             if(!isInput && !isOutput && !node2.isProjectingTo(node1)) candidates.push([node2, node1])
           }
         }
-        
+
         return candidates
       }
       case "REMOVE_CONN": // SUB_CONN alias
