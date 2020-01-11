@@ -4,40 +4,34 @@ const methods = require('../methods/methods');
 const config = require('../config');
 
 /**
-* Runs the NEAT algorithm on group of neural networks.
+* Runs an evolutionary algorithm (currently NEAT) on a group of neural networks.
 *
 * @constructs Population
 *
 * @alpha
 *
 * @param {Object} options **Configuration Options**
-* @param {number} [options.inputs=1] Size of input layer of the networks in the population. Used only when network template is not passed
-* @param {number} [options.outputs=1] Size of output layer of the networks in the population. Used only when network template is not passed
-* @param {Network} [options.template] A template network used to create a population of identical copies from. Warning: may slow improvement due to starting from a single "search location".
+* @param {number} [options.inputs=1] Input layer size of population networks. Only when network template is not passed
+* @param {number} [options.outputs=1] Output layer size of population networks. Only when network template is not passed
+* @param {Network} [options.template] Template network to create a population of identical copies from. Warning: may slow improvement due to starting from a single copied set of weights.
 * @param {Network[]} [options.members] An array of networks to start this population with.
-* @param {Array<{inputs:number[],outputs:number[]}>} [options.dataset] Dataset used to train networks in the population at first - _other sets of data can be passed to `population.evolve()` after constuction_
-* @param {number} [options.size=50] Population size of each generation.
-* @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algortihtms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
-* @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
-* @param {number} [options.mutation_rate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.4.
-* @param {number} [options.mutation_amount=1] If mutation occurs (randomNumber < mutation_rate), sets amount of times a mutation method will be applied to the network.
-* @param {cost} [options.cost=cost.MSE]  Specify the cost function for the evolution, this tells a genome in the population how well it's performing. Default: methods.cost.MSE (recommended).
-* @param {boolean} [options.equal=false] When true [crossover](Network.crossOver) parent genomes are assumed to be equally fit and offspring are built with a random amount of neurons within the range of parents' number of neurons. Set to false to select the "fittest" parent as the neuron amount template.
-* @param {number} [options.clear=false] Clear the context of the population's nodes, basically reverting them to 'new' neurons. Useful for predicting timeseries with LSTM's.
-* @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connectoins.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
-* @param {number} [options.amount=1] Set the amount of times to test the trainingset on a genome each generation. Useful for timeseries. Do not use for regular feedfoward problems.
-* @param {boolean} [options.fitnessPopulation=false] Flag to return the fitness of a population of genomes. Set this to false to evaluate each genome inidividually.
-* @param {Function} [options.fitness] - A fitness function to evaluate the networks. Takes a `dataset` and a `genome` i.e. a [network](Network) or a `population` i.e. an array of networks and sets the genome `.score` property
+* @param {number} [options.size=50] Amount of networks to initialize population with.
+* ------ EVO-SUPERVISED LEARNING SETTINGS ----
+* @param {Array<{inputs:number[],outputs:number[]}>} [options.dataset] Population dataset, used to do "supervised learning" when not setting fitnesses manually - _datasets passed to `population.evolve()` after constuction will take precedence_
+* @param {cost} [options.cost=cost.MSE]  Only if dataset present. Used in conjuction with a dataset to calculate error and set fitnesses for networks automatically.
+* @param {number} [options.clear=false] Only if dataset present. Clear context of networks' nodes, reverting them to 'new' neurons each generation. Useful for predicting timeseries with LSTM's.
+* @param {number} [options.amount=1] Only if dataset present. Set amount of times to test trainingset on a genome each generation. Useful for timeseries. Do not use for regular feedfoward problems.
+* @param {Function} [options.fitnessFn] Only if dataset present. Fitness function to evaluate networks. Takes (`dataset`, `genomes`) as arguments, genomes: a [network](Network) array. fitnessFn needs to set each network's `.fitness` property with a number.
+* @param {boolean} [options.fitnessPopulation=false] Only if dataset present. A flag to indicate that fitnessFn is a population-level score. Set this to false to evaluate each genome inidividually.
+* ------ EVOLVE SETTINGS ----
+* @param {mutation[]} [options.mutation] A set of allowed [mutation methods](mutation) for evolution. If unset a random mutation method from all possible mutation methods will be chosen when mutation occurs.
 * @param {string} [options.selection=FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
-* @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
-* @param {Network} [options.network=false] Network to start evolution from
 * @param {number} [options.maxNodes=Infinity] Maximum nodes for a potential network
 * @param {number} [options.maxConns=Infinity] Maximum connections for a potential network
 * @param {number} [options.maxGates=Infinity] Maximum gates for a potential network
-* @param {mutation[]} [options.mutation] A set of allowed [mutation methods](mutation) for evolution. If unset a random mutation method from all possible mutation methods will be chosen when mutation occurs.
 *
 * @prop {number} generation A count of the generations
-* @prop {Network[]} population The current population for the population instance. Accessible through `population.members`
+* @prop {Network[]} members The current population for the population instance. Accessible through `population.members`
 *
 * @todo Remove very slow defaultsDeep
 *
