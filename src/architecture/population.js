@@ -11,10 +11,8 @@ const config = require('../config');
 * @alpha
 *
 * @param {Object} options **Configuration Options**
-* @param {number} [options.inputs=1] Input layer size of population networks. Only when network template is not passed
-* @param {number} [options.outputs=1] Output layer size of population networks. Only when network template is not passed
-* @param {Network} [options.template] Template network to create a population of identical copies from. Warning: may slow improvement due to starting from a single copied set of weights.
-* @param {Network[]} [options.members] An array of networks to start this population with.
+* @param {number} [options.inputs=1] Input layer size of population networks.
+* @param {number} [options.outputs=1] Output layer size of population networks.
 * @param {number} [options.size=50] Amount of networks to initialize population with.
 * ------ EVO-SUPERVISED LEARNING SETTINGS ----
 * @param {Array<{inputs:number[],outputs:number[]}>} [options.dataset] Population dataset, used to do "supervised learning" when not setting fitnesses manually - _datasets passed to `population.evolve()` after constuction will take precedence_
@@ -38,11 +36,8 @@ const config = require('../config');
 * @example
 * const { Population } = require("@liquid-carrot/carrot");
 *
-* // new Population()
-* let population = new Population()
-*
-* // new Population(options)
-* let population = new Population({ size: 100 })
+* // Creates a new population, generating networks automatically and handling ID management automatically
+* let population = new Population({ inputs: 1, outputs: 1 }) // each network has one input and one output
 */
 const Population = function(options) {
   const self = this;
@@ -52,40 +47,30 @@ const Population = function(options) {
   Object.assign(self, options);
 
   /**
-   * Creates a new population and returns it.
+   * Creates an array of networks, each network with a different set of weights, then returns it.
    *
    * @function getPopulation
    *
    * @alpha
+   * 
+   * @private
    *
    * @memberof Population
    *
-   * @param {Network} [options.network=options.template] Template network used to create population - _other networks will be "identical twins"_ - _will use `options.template`, if `network` is not defined_
-   * @param {number} [options.size=50] - Number of networks in created population - _how many identical twins created in new population_
-   *
-   * @return {Network[]} Returns an array of networks each a member of the population
+   * @return {Network[]} Returns an array of networks. Must be assigned to Population.members if replacing current population.
    */
   self.getPopulation = function create_networks(options={}) {
-    size = options.size || self.size
-
-    // Prioritize options.network, otherwise use template network, otherwise use "new network"
-    copyNetwork = options.network
-      ? () => options.network.clone()
-      : self.template
-      ? () => self.template.clone()
-      : () => new Network(self.inputs, self.outputs, { connIds: self.connIds, nodeIds: self.nodeIds })
 
     const population = []
     for (let i = 0; i < size; i++) {
-      const network = copyNetwork();
-      population.push(network);
+      population.push(new Network(self.inputs, self.outputs, { connIds: self.connIds, nodeIds: self.nodeIds }));
     }
 
     return population
   };
 
-  // Initialise the genomes
-  self.members = self.members || self.getPopulation();
+  // Initialize the genomes on population construction
+  self.members = self.getPopulation(self.size);
 
   /**
   * Resizes the population and adjusts the `size`
