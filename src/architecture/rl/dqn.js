@@ -185,6 +185,9 @@ DQN.prototype = {
    * @todo Add Thompson Sampling strategy
    */
   act: function(state, prohibitedActions) {
+    if (!Array.isArray(prohibitedActions)) {
+      prohibitedActions = [];
+    }
     // epsilon greedy strategy | explore > random ? explore : exploit
     let currentExploreRate = Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay}));
     let action;
