@@ -111,8 +111,8 @@ const Population = function(options) {
 
     // Helper function, mutates connection weights
     const mutateConn = function(conn) {
-      // 90% chance slight change | 10% chance new random value
-      conn.weight = (random < .9) ? conn.weight + Math.random() : Math.random()
+      // 90% chance slight change | 10% chance new random value, between -1 and 1
+      conn.weight = (random < .9) ? conn.weight + Math.random() : Math.random() * (Math.floor(Math.random()*2) == 1) ? 1 : -1;
 
       return conn
     }
