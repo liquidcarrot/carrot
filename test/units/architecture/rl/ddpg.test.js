@@ -109,7 +109,7 @@ describe('DDPG', function() {
       expect(agent.criticTarget.output_size).to.equal(numActions);
     }
   });
-  it('test learning capabilities with PER', function() {
+  it.skip('test learning capabilities with PER', function() {
     this.timeout(50000);
     console.time('Learning: DDPG, PER');
     let agent = new DDPG(1, 2, {

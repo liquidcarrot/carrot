@@ -195,7 +195,7 @@ DQN.prototype = {
       // Explore
       do {
         action = Utils.randomInt(0, this.numActions - 1);
-      } while (prohibitedActions.indexOf(action) === -1);
+      } while (prohibitedActions.indexOf(action) !== -1);
     } else if (this.isDoubleDQN) {
       // Exploit with Double-DQN
       // Take action which is maximum of both networks by summing them up
@@ -203,8 +203,8 @@ DQN.prototype = {
       let activationB = this.networkB.activate(state, {no_trace: true});
 
       for (let i = 0; i < prohibitedActions.length; i++) {
-        activation[i] = -1;
-        activationB[i] = -1;
+        activation[prohibitedActions[i]] = -1;
+        activationB[prohibitedActions[i]] = -1;
       }
 
       let sum = activation.map((elem, index) => elem + activationB[index]);
@@ -213,7 +213,7 @@ DQN.prototype = {
       // Exploit
       let actions = this.network.activate(state, {no_trace: true});
       for (let i = 0; i < prohibitedActions.length; i++) {
-        actions[i] = -1;
+        actions[prohibitedActions[i]] = -1;
       }
       action = Utils.getMaxValueIndex(actions);
     }
