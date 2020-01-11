@@ -54,6 +54,7 @@ const Population = function(options) {
     ...options, // options goes first so that any duplicate properties are overwritten by internal defaults
     species: [],
     stagnation: 0,
+    generation: 0,
   });
 
   /**
@@ -299,8 +300,7 @@ Population.default = {
     maxNodes: Infinity,
     maxConns: Infinity,
     maxGates: Infinity,
-    generation: 0,
-    // internal id management variables
+    // internal id management variables, leaving here in case user would like to override these
     nodeIds: { last: 0 },
     connIds: { last: 0 },
   }
