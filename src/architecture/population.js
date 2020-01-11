@@ -23,15 +23,16 @@ const config = require('../config');
 * @param {boolean} [options.fitnessPopulation=false] Only if dataset present. A flag to indicate that fitnessFn is a population-level score. Set this to false to evaluate each genome inidividually.
 * ------ EVOLVE SETTINGS ----
 * @param {mutation[]} [options.mutation] A set of allowed [mutation methods](mutation) for evolution. If unset a random mutation method from all possible mutation methods will be chosen when mutation occurs.
-* @param {string} [options.selection=FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
+* @param {string} [options.selection=POWER] [Selection method](selection) for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
 * @param {number} [options.maxNodes=Infinity] Maximum nodes for a potential network
 * @param {number} [options.maxConns=Infinity] Maximum connections for a potential network
 * @param {number} [options.maxGates=Infinity] Maximum gates for a potential network
 *
-* @prop {number} generation A count of the generations
+* @prop {number} generation A count of the generations, can be overwritten if desired
 * @prop {Network[]} members The current population for the population instance. Accessible through `population.members`
 *
 * @todo Remove very slow defaultsDeep
+* @todo Add method to import networks that were evolved without id management, should work by initially setting ids of input & output nodes then traversing nodes array assigning node ids and corresponding connection ids sequentially while updating connIds and nodeIds.
 *
 * @example
 * const { Population } = require("@liquid-carrot/carrot");
@@ -69,7 +70,7 @@ const Population = function(options) {
     return population
   };
 
-  // Initialize the genomes on population construction
+  // Fill the members array on population construction
   self.members = self.getPopulation(self.size);
 
   /**
@@ -514,22 +515,14 @@ const Population = function(options) {
 
 Population.default = {
   options: {
-    generation: 0, // internal variable
     inputs: 1,
     outputs: 1,
-    dataset: [],
-    equal: false,
-    clean: false,
     size: 50,
-    growth: 0.0001,
+    dataset: [],
     cost: methods.cost.MSE,
+    clear: false,
     amount: 1,
-    elitism: 1,
-    provenance: 0,
-    mutation_rate: 0.4,
-    mutation_amount: 1,
-    fitnessPopulation: false,
-    fitness: function(set = dataset, genome, amount = 1, cost = methods.cost.MSE, growth = 0.0001) {
+    fitnessFn: function(set = dataset, genome, amount = 1, cost = methods.cost.MSE, growth = 0.0001) {
       let score = 0;
       for (let i = 0; i < amount; i++) score -= genome.test(set, cost).error;
 
@@ -538,23 +531,16 @@ Population.default = {
 
       return score / amount;
     },
-    selection: methods.selection.POWER,
-    crossover: [
-      methods.crossover.SINGLE_POINT,
-      methods.crossover.TWO_POINT,
-      methods.crossover.UNIFORM,
-      methods.crossover.AVERAGE
-    ],
-    nodeIds: {
-      last: 0
-    },
-    connIds: {
-      last: 0
-    },
+    fitnessPopulation: false,
     mutation: methods.mutation.ALL,
+    selection: methods.selection.POWER,
     maxNodes: Infinity,
     maxConns: Infinity,
-    maxGates: Infinity
+    maxGates: Infinity,
+    generation: 0,
+    // internal id management variables
+    nodeIds: { last: 0 },
+    connIds: { last: 0 },
   }
 }
 
