@@ -178,28 +178,41 @@ DQN.prototype = {
    * @memberof DQN
    *
    * @param {number[]} state current state (float arr with values from [0,1])
+   * @param {number[]} prohibitedActions
    * @return {int} The action which the DQN would take at this state; action ∈ [0, this.numActions-1]
    *
    * @todo Add ability to select strategies
    * @todo Add Thompson Sampling strategy
    */
-  act: function (state) {
+  act: function(state, prohibitedActions) {
     // epsilon greedy strategy | explore > random ? explore : exploit
     let currentExploreRate = Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay}));
     let action;
     if (currentExploreRate > Math.random() || this.timeStep < this.startLearningThreshold) {
       // Explore
-      action = Utils.randomInt(0, this.numActions - 1);
+      do {
+        action = Utils.randomInt(0, this.numActions - 1);
+      } while (prohibitedActions.indexOf(action) === -1);
     } else if (this.isDoubleDQN) {
       // Exploit with Double-DQN
       // Take action which is maximum of both networks by summing them up
       let activation = this.network.activate(state, {no_trace: true});
       let activationB = this.networkB.activate(state, {no_trace: true});
+
+      for (let i = 0; i < prohibitedActions.length; i++) {
+        activation[i] = -1;
+        activationB[i] = -1;
+      }
+
       let sum = activation.map((elem, index) => elem + activationB[index]);
       action = Utils.getMaxValueIndex(sum);
     } else {
       // Exploit
-      action = Utils.getMaxValueIndex(this.network.activate(state, {no_trace: true}));
+      let actions = this.network.activate(state, {no_trace: true});
+      for (let i = 0; i < prohibitedActions.length; i++) {
+        actions[i] = -1;
+      }
+      action = Utils.getMaxValueIndex(actions);
     }
 
     // keep this in memory for learning
