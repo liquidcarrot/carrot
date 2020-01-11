@@ -53,6 +53,7 @@ const Population = function(options) {
   Object.assign(self, { 
     ...options, // options goes first so that any duplicate properties are overwritten by internal defaults
     species: [],
+    stagnation: 0,
   });
 
   /**
