@@ -2,7 +2,7 @@ const _ = require('lodash');
 const chai = require('chai');
 const { assert, expect } = chai;
 const should = chai.should();
-chai.use(require('chai-things')); // support for array tests using should
+chai.use(require('chai-things')); // support for array-based assertions
 const {
   Network,
   methods,

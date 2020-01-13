@@ -11,6 +11,7 @@ const Carrot = {
   Node: require('./architecture/node'),
   Neat: require('./neat'),
   Population: require('./architecture/population'),
+  Species: require('./architecture/species'),
   GAN: require('./gan'),
   multi: require('./multithreading/multi'),
 };

@@ -1,7 +1,7 @@
-const Network = require('./architecture/network');
-const methods = require('./methods/methods');
-const config = require('./config');
-const _ = require('../util/util')
+const Network = require('./network');
+const methods = require('../methods/methods');
+const config = require('../config');
+const _ = require('../util/utils')
 
 /**
 * Creates a new Species
@@ -10,9 +10,7 @@ const _ = require('../util/util')
 *
 * @param { Network } genome The first network to add to the species' members array
 * @param {object} options
-* @param {number} options.excessCoeff
-* @param {number} options.disjointCoeff
-* @param {number} options.weightsCoeff
+* @param {number[]} options.weights An array of weights for calculating compatability (distance) with the species. From NEAT paper.
 *
 * @prop { Network[] } members An array of species member networks / genomes
 * @prop { Network } bestGenome The best network, by fitness, in the species
@@ -34,7 +32,7 @@ const _ = require('../util/util')
 *
 * console.log(mySpecies.members) // [ myNetwork ]
 */
-const Species = function(genome, options) {
+const Species = function(genome, options={}) {
   const self = this;
 
   // NEAT designated props
@@ -45,7 +43,7 @@ const Species = function(genome, options) {
   self.stagnation = 0; // Generation count without improvement
 
   // Adjustable props - compatibility
-  self.coefficient = options.coefficient || [1,1,0.4];
+  self.weights = options.weights || [1,1,0.4];
   self.threshold = 3; // Threshold for determining whether or not a genome is compatible with the species
 
   // Species metadata

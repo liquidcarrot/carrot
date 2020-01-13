@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const Network = require('./network');
+const Species = require('./species')
 const methods = require('../methods/methods');
 const config = require('../config');
 
@@ -69,14 +70,17 @@ const Population = function(options) {
    * @function getPopulation
    * @memberof Population
    *
+   * @param {Object} config A configuration object to control function behavior
+   * @param {number} size The number of networks to place in the returned array
+   * 
    * @return {Network[]} Returns an array of networks. Must be assigned to Population.members if replacing current population.
    * 
    * @todo Add template network functionality
    * @todo Add option to have identical population networks
    */
-  self.getPopulation = function create_networks(options={}) {
+  self.getPopulation = function create_networks(config={}) {
     const population = []
-    for (let i = 0; i < size; i++) {
+    for (let i = 0; i < config.size; i++) {
       population.push(new Network(self.inputs, self.outputs, { connIds: self.connIds, nodeIds: self.nodeIds }));
     }
 
@@ -84,7 +88,7 @@ const Population = function(options) {
   };
 
   // Fill the members array on population construction
-  self.members = self.getPopulation(self.size);
+  self.members = self.getPopulation({ size: self.size });
 
   /**
    * Applies the mutation-scheme dictated by Neat to the provided network.
