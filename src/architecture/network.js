@@ -66,6 +66,7 @@ function Network(input_size, output_size, options) {
 
   // Debugging meta-information
   self.mutations = [];
+  self.id = options.id || -1; // ids begin counting at 1 so zero would also default to -1
 
   // Neat ID Management | Shared mutable state
   self.nodeIds = options.nodeIds || { last: 0 }; // fallback avoids reference errors
@@ -314,6 +315,23 @@ function Network(input_size, output_size, options) {
    */
   self.clone = function() {
     return _.cloneDeep(self)
+  }
+
+  /**
+   * Returns a loose copy of Network with overrideable parameters.
+   * @alpha
+   *
+   * @function copy
+   * @memberof Network
+   *
+   * @param {Object} [changes={}] An object of parameters to override copied network with
+   * 
+   * @returns {Network} Returns an identical network
+   */
+  self.copy = function(changes={}) {
+    const copy = _.cloneDeep(self)
+
+    return Object.assign(copy, changes)
   }
 
   /**

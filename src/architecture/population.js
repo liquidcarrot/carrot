@@ -56,6 +56,7 @@ const Population = function(options) {
     species: [],
     stagnation: 0,
     generation: 0,
+    lastNetId: 0,
   });
 
   /**
@@ -81,14 +82,20 @@ const Population = function(options) {
   self.getPopulation = function create_networks(config={}) {
     const population = []
     for (let i = 0; i < config.size; i++) {
-      population.push(new Network(self.inputs, self.outputs, { connIds: self.connIds, nodeIds: self.nodeIds }));
+      population.push(new Network(self.inputs, self.outputs, { connIds: self.connIds, nodeIds: self.nodeIds, id: i + 1 }));
     }
+
+    // Update id variable
+    self.lastNetId = config.size;
 
     return population
   };
 
   // Fill the members array on population construction
   self.members = self.getPopulation({ size: self.size });
+
+  // Create first species with first member, don't add other members since .speciate just clears them anyway
+  self.species.push(new Species(self.members[0]))
 
   /**
    * Applies the mutation-scheme dictated by Neat to the provided network.
@@ -163,7 +170,6 @@ const Population = function(options) {
    * @todo Add createOffspring code
    */
   self.evolve = async function(options={}) {
-
     // Break population members into their respective species
     self.species = self.speciate(self.members, self.species);
     
@@ -211,8 +217,7 @@ const Population = function(options) {
    * @todo Consider making this an async function
    * @todo Benchmark
    */
-  self.speciate = function (members, speciesArray) {
-    
+  self.speciate = function (members, speciesArray) {    
     // First clear the members of each species
     speciesArray = speciesArray.map(species => {
       species.members = [];
@@ -223,18 +228,15 @@ const Population = function(options) {
     outer:
     for (let i = 0; i < members.length; i++) {
       const genome = members[i];
-
-      for(let j = 0; i < speciesArray.length; j++) {
-        const species = speciesArray[i];
+      for(let j = 0; j < speciesArray.length; j++) {
+        const species = speciesArray[j];
 
         // Determine if genome belongs in species
         if(species.isCompatible([species.representative, genome])) {
-          // Add genome to species
           species.addMember(genome); continue outer; // <- Use "outer" to skip to next genome.
         }
-
       }
-
+     
       // Only runs if genome was not placed in species
       speciesArray.push(new Species(genome));
     }

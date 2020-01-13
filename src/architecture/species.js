@@ -8,16 +8,16 @@ const _ = require('../util/utils')
 *
 * @constructs Species
 *
-* @param { Network } genome The first network to add to the species' members array
+* @param { Network } founder The first network to add to the species' members array
 * @param {object} options
 * @param {number[]} options.weights An array of weights for calculating compatability (distance) with the species. From NEAT paper.
 *
-* @prop { Network[] } members An array of species member networks / genomes
-* @prop { Network } bestGenome The best network, by fitness, in the species
+* @prop { Network[] } members An array of species member networks / founders
+* @prop { Network } bestfounder The best network, by fitness, in the species
 * @prop { number } bestFitness The fitness of the best network in the species
 * @prop { number } averageFitness The average fitness of the networks in the species
 * @prop { number } stagnation The amount of generations since last improved, used to kill species
-* @prop { Network } representative The network / genome that best represents the species
+* @prop { Network } representative The network / founder that best represents the species
 *
 * @todo Add staleness management
 *
@@ -32,14 +32,17 @@ const _ = require('../util/utils')
 *
 * console.log(mySpecies.members) // [ myNetwork ]
 */
-const Species = function(genome, options={}) {
+const Species = function(founder, options={}) {
   const self = this;
+
+  // Avoid copying over original founder repeatedly
+  self.founder = founder.clone()
 
   // NEAT designated props
   self.members = [];
-  self.members.push(genome.clone()); // Genome required at creation
-  self.representative = genome.clone(); // Genome is "representative" by default
-  self.fittest = genome.clone(); // Genome is fittest. AKA "champion" in NEAT literature.
+  self.members.push(self.founder);
+  self.representative = self.founder; // founder is "representative" by default
+  self.fittest = self.founder; // founder is fittest. AKA "champion" in NEAT literature.
   self.stagnation = 0; // Generation count without improvement
 
   // Adjustable props - compatibility
@@ -71,7 +74,7 @@ const Species = function(genome, options={}) {
    * 
    * @todo Consider simplifying by treating excess and disjoint genes equivalently
    */
-  self.getDistance = function (genomes, options) {
+  self.getDistance = function (genomes, options={}) {
     const weights = options.weights || [1,1,0.4];
     const threshold = options.threshold || 20;
 
@@ -150,9 +153,9 @@ const Species = function(genome, options={}) {
   * @param {Network[]} An array of genomes to determine compatibility with (currently assumes two)
   * @return {boolean} Whether a genome is compatible with the species
   */
-  self.isCompatible = function determine_compatability_with_species (genomes, options) {
+  self.isCompatible = function determine_compatability_with_species (genomes, options={}) {
     const threshold = options.threshold || self.threshold; // fallback to constructor args
-    return (self.getDistance(genomes[0], genomes[1]) < threshold)
+    return (self.getDistance([genomes[0], genomes[1]]) < threshold)
   }
 
   /**
