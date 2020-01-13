@@ -128,11 +128,14 @@ const util = {
    * 
    * @returns {number[]} An array of numbers sorted in ascending order
    *  
-   * @todo Make order configurable
+   * @todo Remove repeated if check by composing this function with an abstraction
    */
-   sort: function (unsorted) {
+   sort: function (unsorted, ascending = true) {
+      const comparator = function (a, b, ascending) {
 
-      const comparator = function (a, b) {
+        // Swap the variables for descending values
+        if(!ascending) { const temp = a; a = b; b = temp; } 
+
         if (a < b) return -1;
         if (a > b) return 1;
 
@@ -150,7 +153,7 @@ const util = {
            const pivotValue = sorted[end];
            let splitIndex = start;
            for (let i = start; i < end; i++) {
-               const spread = comparator(sorted[i], pivotValue);
+               const spread = comparator(sorted[i], pivotValue, ascending);
 
                // This value is less than the pivot value.
                if (spread === -1) {

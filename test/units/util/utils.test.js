@@ -107,4 +107,25 @@ describe("src/util/utils.js", function () {
       expect(connIds.last).equal(23); // should be one plus the last known, for clarity this matches the 0 key's value plus one
     });
   })
+  describe('util.sort', function () {
+    it('(unsorted) | returns a sorted array in ascending order', function() {
+      const unsorted = [4,6,5,3,2,7,89,3,1,5,9,3,6,4,7,9,2,4,3,5,7,33,1,5,9,3,5,6,0,3,8,0]; // random-ish array
+
+      const sorted = util.sort(unsorted);
+      
+      for(let i = 1; i < sorted.length; i++) {
+        expect(sorted[i]).at.least(sorted[i-1])
+      }
+    })
+
+    it('(unsorted, false) | returns a sorted array in descending order', function() {
+      const unsorted = [5,9,2,4,3,5,7,3,4,6,5,34,2,7,8,3,1,5,9,3,63,4,7,5,6,0,3,8,0,6,9,3,8,5,6,0,9,2,8,3]; // random-ish array
+
+      const sorted = util.sort(unsorted, false);
+      
+      for(let i = 1; i < sorted.length; i++) {
+        expect(sorted[i]).at.most(sorted[i-1])
+      }
+    })
+  })
 })
