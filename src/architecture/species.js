@@ -18,7 +18,7 @@ const _ = require('../util/util')
 * @prop { Network } bestGenome The best network, by fitness, in the species
 * @prop { number } bestFitness The fitness of the best network in the species
 * @prop { number } averageFitness The average fitness of the networks in the species
-* @prop { number } staleCount The amount of generations since last improved, used to kill species
+* @prop { number } stagnation The amount of generations since last improved, used to kill species
 * @prop { Network } representative The network / genome that best represents the species
 *
 * @todo Add staleness management
@@ -57,70 +57,82 @@ const Species = function(genome, options) {
    *
    * Used to calculate whether a genome is compatibile with the species.
    *
+   * @alpha
+   * 
+   * @expects Genomes to have connections in ascending order by their .id properties (as dictated by NEAT)
+   * 
    * @function getDistance
    * @memberof Species
    *
    * @param {Network[]} genomes Array containing two genomes
    * @param {object} options
-   * @param {number[]} options.coefficient An array of coefficients for excess, disjoint, and matching gene weight distance sum
+   * @param {number[]} options.weights An array of weights for excess, disjoint, and matching gene connection weight distance sum
    * @param {number} options.threshold The minimum node size required to use a normalization factor in genomic distance
    *
    * @return {number} A genomic disntance between genomes
+   * 
+   * @todo Consider simplifying by treating excess and disjoint genes equivalently
    */
   self.getDistance = function (genomes, options) {
-    // Distance formula coefficients | original NEAT Paper species distance expression
-    // Weights for: excess, disjoint, and average matching gene weight distance | original NEAT paper
-    const coefficient = options.coefficient || [1,1,0.4];
+    const weights = options.weights || [1,1,0.4];
     const threshold = options.threshold || 20;
 
-    // Checks latest innovation number in each genome to determine which is the larger genome
-    // Assumes genes / connection innovation numbers are sequential | as specified in original NEAT paper
+    // Checks last innovation number in each genome to determine which is largest
     let small, big;
     const genome = genomes[0].connections;
     const genome1 = genomes[1].connections;
     if (genome[genome.length - 1].id > genome1[genome1.length - 1].id) {
-      big = genome;
-      small = genome1;
+      big = genome; small = genome1;
     } else {
-      big = genome1;
-      small = genome;
+      big = genome1; small = genome;
     }
-
     let smallIndex = small.length - 1;
     let bigIndex = big.length - 1;
 
-    // Track genomic/network/graph/topology distance formula variables
-    let excess = disjointed = matching = deltaWeight = 0;
-    let finishedExcess = false;
+    // Track distance formula variables
+    let excess = disjoint = matching = deltaWeight = 0;
+
+    // Normalizing factor for networks larger than the threshold size, used to avoid crazy values
     const nodes = (big.length > threshold) ? big.length : 1;
+
+    let finishedExcess = false;
 
     // Walk genes backwards to determine excess & disjoint genes
     while (bigIndex > -1 && smallIndex > -1) {
+      // Rename selected connection / gene for legitbility 
+      const littleID = small[smallIndex].id;
+      const bigID = big[bigIndex].id;
+
       // Matching genes
-      if (small[smallIndex].id === big[bigIndex].id) {
+      if (littleID === bigID) {
         if(!finishedExcess) finishedExcess = true; // If we have matching genes, then we're done with excess
 
-        deltaWeight += Math.abs(big[bigIndex].weight - small[smallIndex].weight); // Only calculates deltaWeights on mathching genes | original NEAT paper
-
+        // Calculate weight differences of matching genes | NEAT spec
+        deltaWeight += Math.abs(big[bigIndex].weight - small[smallIndex].weight);
         matching++ // increase matching count
 
         smallIndex--; bigIndex--; continue;
       }
-      // Larger's latest gene is older than smaller's
-      if (big[bigIndex].id > small[smallIndex].id) {
-        if(!finishedExcess) excess = ++excess; // if we haven't finished the excess genes, it's an excess gene
-        else disjointed = ++disjointed; // otherwise it's a disjoint gene
+
+      // Excess or disjoint gene in bigger network
+      if (bigID > littleID) {
+
+        // if not done with excess, it's excess
+        if(!finishedExcess) excess = ++excess;
+        else disjoint = ++disjoint; // otherwise, disjoint
 
         bigIndex--; continue;
       }
-      // Smaller's latest gene is older than larger
-      else if (small[smallIndex].id > big[bigIndex].id) {
+
+      // Disjoint gene in smaller network
+      else if (littleID > bigID) {
         if(!finishedExcess) finishedExcess = true; // Smaller can't be excess, hence we're done with excess
 
-        disjointed = ++disjointed; // by default, later gene in smaller is disjoint
+        disjoint = ++disjoint; // by default, later gene in smaller is disjoint
 
         smallIndex--; continue;
       }
+
       // We're done, although, maybe unreachable
       else break;
     }
@@ -129,7 +141,7 @@ const Species = function(genome, options) {
 
     // D(N1,N2) = (c1 * E / N) + (c2 * D / N) * (c3 * ΔW)
     // Genomic distance < compatibility threshold
-    return (coefficient[0] * excess / nodes) + (coefficient[1] * disjointed / nodes) + (coefficient[2] * deltaWeight);
+    return (weights[0] * excess / nodes) + (weights[1] * disjoint / nodes) + (weights[2] * deltaWeight);
   };
 
   /**
@@ -168,54 +180,9 @@ const Species = function(genome, options) {
   * @feature Amorphous network crossover - i.e. can crossover/merge/stitch networks with wierd/awkward shapes
   * @feature Non-matching networking crossover - i.e. can create a child network from source networks with different shapes
   *
-  * @todo Consider making crossover a Network concern
   * @todo Consider crossover for more than 2 parents
-  * @todo Construct a new network using the created connection array
   */
-  self.crossover = function crossover(genomes) {
-    // Tracks the parent/source network with the latest genomic changes (i.e. connections)
-    let small, big, child = [];
-    const genome = genomes[0].connections;
-    const genome1 = genomes[1].connections;
-
-    // Checks latest innovation number in each genome to determine which is the larger genome
-    // Assumes genes / connection innovation numbers are sequential | as specified in original NEAT paper
-    if (genome[genome.length - 1].id > genome1[genome1.length - 1].id) {
-      big = genome;
-      small = genome1;
-    } else {
-      big = genome1;
-      small = genome;
-    }
-
-    let smallIndex = small.length - 1;
-    let bigIndex = big.length - 1;
-
-    // Walk genes backwards to determine excess & disjoint genes
-    while (bigIndex > -1 && smallIndex > -1) {
-      // Matching, sample a gene
-      if (small[smallIndex].id === big[bigIndex].id) {
-        child.unshift(_.sample([small[smallIndex], big[bigIndex]])); // Add winning gene to child
-
-        smallIndex--; bigIndex--; continue;
-      }
-      // Disjoint, Big Parent's gene selected
-      if (big[bigIndex].id > small[smallIndex].id) {
-        child.unshift(big[bigIndex]);
-
-        bigIndex--; continue;
-      }
-      // Disjoint, Small Parent's gene selected
-      else if (small[smallIndex].id > big[bigIndex].id) {
-        child.unshift(small[smallIndex]);
-
-        smallIndex--; continue;
-      }
-      else break;
-    }
-
-    return child;
-  }
+  self.crossover = function crossover(genomes) {}
 
   /**
   * Selects a parent for crossover
