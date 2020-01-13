@@ -94,6 +94,96 @@ const util = {
      if (res.id > reference.last) reference.last = res.id;
      return res.id;
   },
+
+  /** 
+   * 
+   * MIT License
+   * 
+   * Copyright (c) 2018 Charles Stover
+   * 
+   * Permission is hereby granted, free of charge, to any person obtaining a copy
+   * of this software and associated documentation files (the "Software"), to deal
+   * in the Software without restriction, including without limitation the rights
+   * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+   * copies of the Software, and to permit persons to whom the Software is
+   * furnished to do so, subject to the following conditions:
+   * 
+   * The above copyright notice and this permission notice shall be included in all
+   * copies or substantial portions of the Software.
+   * 
+   * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+   * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+   * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+   * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+   * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+   * SOFTWARE.
+   * 
+   */
+
+  /**
+   * Quicksort, currently hard-coded to ascending order
+   * 
+   * @param {number[]} unsorted An array of unsorted numbers
+   * 
+   * @returns {number[]} An array of numbers sorted in ascending order
+   *  
+   * @todo Make order configurable
+   */
+   sort: function (unsorted) {
+
+      const comparator = function (a, b) {
+        if (a < b) return -1;
+        if (a > b) return 1;
+
+        return 0;
+      };
+       
+       // Create a sortable array to return.
+       const sorted = [...unsorted];
+
+       // Recursively sort sub-arrays.
+       const recursiveSort = function (start, end) {
+           // If this sub-array is empty, it's sorted.
+           if (end - start < 1) return;
+
+           const pivotValue = sorted[end];
+           let splitIndex = start;
+           for (let i = start; i < end; i++) {
+               const spread = comparator(sorted[i], pivotValue);
+
+               // This value is less than the pivot value.
+               if (spread === -1) {
+                   // If the element just to the right of the split index,
+                   // isn't this element, swap them.
+                   if (splitIndex !== i) {
+                       const temp = sorted[splitIndex];
+                       sorted[splitIndex] = sorted[i];
+                       sorted[i] = temp;
+                   }
+
+                   // Move the split index to the right by one,
+                   //   denoting an increase in the less-than sub-array size.
+                   splitIndex++;
+               }
+
+               // Leave values that are greater than or equal to
+               //   the pivot value where they are.
+           }
+
+           // Move the pivot value to between the split.
+           sorted[end] = sorted[splitIndex];
+           sorted[splitIndex] = pivotValue;
+
+           // Recursively sort the less-than and greater-than arrays.
+           recursiveSort(start, splitIndex - 1);
+           recursiveSort(splitIndex + 1, end);
+       };
+
+       // Sort the entire array.
+       recursiveSort(0, sorted.length - 1);
+       return sorted;
+   },
 }
 
 module.exports = util;
