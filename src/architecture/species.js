@@ -40,15 +40,15 @@ const Species = function(genome, options) {
   // NEAT designated props
   self.members = [];
   self.members.push(genome.clone()); // Genome required at creation
-  self.representative = genome.clone(); // Genome is representative by default
+  self.representative = genome.clone(); // Genome is "representative" by default
+  self.fittest = genome.clone(); // Genome is fittest. AKA "champion" in NEAT literature.
   self.stagnation = 0; // Generation count without improvement
 
   // Adjustable props - compatibility
   self.coefficient = options.coefficient || [1,1,0.4];
-  self.threshold = 3;
+  self.threshold = 3; // Threshold for determining whether or not a genome is compatible with the species
 
   // Species metadata
-  self.fittest = genome.clone();
   self.bestFitness = 0;
   self.averageFitness = 0;
 
@@ -59,14 +59,14 @@ const Species = function(genome, options) {
    *
    * @alpha
    * 
-   * @expects Genomes to have connections in ascending order by their .id properties (as dictated by NEAT)
+   * @expects Genomes connection ids to be in ascending order i.e. genome.connections = [{ ..., id: 1 }, { ..., id: 2 }, { ..., id: 3 }]
    * 
    * @function getDistance
    * @memberof Species
    *
    * @param {Network[]} genomes Array containing two genomes
    * @param {object} options
-   * @param {number[]} options.weights An array of weights for excess, disjoint, and matching gene connection weight distance sum
+   * @param {number[]} options.weights An array of weights for excess, disjoint, and matching gene connection-weight distance sum
    * @param {number} options.threshold The minimum node size required to use a normalization factor in genomic distance
    *
    * @return {number} A genomic disntance between genomes

@@ -60,15 +60,19 @@ const Population = function(options) {
   /**
    * Creates an array of networks, each network with a different set of weights, then returns it.
    *
-   * @function getPopulation
-   *
+   * Note: neat spec technically dictates that each network be exactly equivalent.
+   * 
    * @alpha
    * 
    * @private
-   *
+   * 
+   * @function getPopulation
    * @memberof Population
    *
    * @return {Network[]} Returns an array of networks. Must be assigned to Population.members if replacing current population.
+   * 
+   * @todo Add template network functionality
+   * @todo Add option to have identical population networks
    */
   self.getPopulation = function create_networks(options={}) {
     const population = []
@@ -122,7 +126,7 @@ const Population = function(options) {
         if(large) return 1;
         if(small) return -1;
         else return number;
-      } 
+      }
 
       // 90% chance slight change, +-0.5 at most | 10% chance new random value, between -1 and 1
       conn.weight = (random < .9) ? clamp(conn.weight + number() / 2) : number();
@@ -151,17 +155,13 @@ const Population = function(options) {
    * @return {network[]} An evolved population
    * 
    * @todo Reintroduce mutation flexibility
-   * @todo Add speciation code
-   * @todo Add compatabilityDistance method, part of speciation section
+   * @todo Add stagnation-driven population removal 
    * @todo Add createOffspring code
    */
   self.evolve = async function(options={}) {
 
-    /**
-     * ToDo Section
-     * // Break population members into their respective species
-     * self.species = self.speciate(self.species);
-     */ 
+    // Break population members into their respective species
+    self.species = self.speciate(self.members, self.species);
     
     // Mutates ".members" directly. Expected behavior
     self.members = self.members.map(network => self.mutate(network))
@@ -192,12 +192,51 @@ const Population = function(options) {
    * 
    * @alpha
    * 
+   * @expects speciesArray to be stored by fittest Species to least fit
+   * 
    * @function speciate
    * @memberof Population
    * 
-   * @return {void}
+   * @param {Network[]} members An array of population members to be placed in species
+   * @param {Species[]} speciesArray The previous set of population species
+   * 
+   * @return {Species[]} The new set of population species with corresponding members of the population inside
+   * 
+   * @todo Implement Duff's device to reduce iterations
+   * @todo Figure out a way to get rid of nested foor loop
+   * @todo Consider making this an async function
+   * @todo Benchmark
    */
-  self.speciate = function (speciesArray) {}
+  self.speciate = function (members, speciesArray) {
+    
+    // First clear the members of each species
+    speciesArray = speciesArray.map(species => {
+      species.members = [];
+      return species;
+    })
+
+    // "outer" is a loop label. Avoids checking whether genome was placed in species inside inner-loop.
+    outer:
+    for (let i = 0; i < members.length; i++) {
+      const genome = members[i];
+
+      for(let j = 0; i < speciesArray.length; j++) {
+        const species = speciesArray[i];
+
+        // Determine if genome belongs in species
+        if(species.isCompatible([species.representative, genome])) {
+          // Add genome to species
+          species.addMember(genome); continue outer; // <- Use "outer" to skip to next genome.
+        }
+
+      }
+
+      // Only runs if genome was not placed in species
+      speciesArray.push(new Species(genome));
+    }
+
+    return speciesArray;
+  }
 
   /**
    * Selects two genomes from the population with `getParent()`, and returns the offspring from those parents.
@@ -265,7 +304,6 @@ const Population = function(options) {
 
     return members[0];
   };
-
 
   /**
    * Returns the average fitness of the current population.
