@@ -122,13 +122,14 @@ const util = {
    */
 
   /**
-   * Quicksort, currently hard-coded to ascending order
+   * Quicksort function
    * 
    * @param {number[]} unsorted An array of unsorted numbers
    * 
    * @returns {number[]} An array of numbers sorted in ascending order
    *  
    * @todo Remove repeated if check by composing this function with an abstraction
+   * @todo Implement / replace with pattern-defeating quicksort
    */
    sort: function (unsorted, ascending = true) {
       const comparator = function (a, b, ascending) {
