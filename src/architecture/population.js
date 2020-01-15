@@ -2,6 +2,7 @@ const _ = require('lodash');
 const Network = require('./network');
 const Species = require('./species')
 const methods = require('../methods/methods');
+const util = require('../util/utils');
 const config = require('../config');
 
 /**
@@ -14,14 +15,12 @@ const config = require('../config');
 * @param {Object} options **Configuration Options**
 * @param {number} [options.inputs=1] Input layer size of population networks.
 * @param {number} [options.outputs=1] Output layer size of population networks.
-* @param {number} [options.size=50] Amount of networks to initialize population with.
+* @param {number} [options.size=150] Amount of networks to initialize population with.
 * ------ EVO-SUPERVISED LEARNING SETTINGS ----
 * @param {Array<{inputs:number[],outputs:number[]}>} [options.dataset] Population dataset, used to do "supervised learning" when not setting fitnesses manually - _datasets passed to `population.evolve()` after constuction will take precedence_
+* @param {Function} [options.fitnessFn] Only if dataset present. Fitness function to evaluate networks. Takes (`dataset`, `genomes`) as arguments, genomes: a [network](Network) array. fitnessFn needs to set each network's `.fitness` property with a number.
 * @param {cost} [options.cost=cost.MSE]  Only if dataset present. Used in conjuction with a dataset to calculate error and set fitnesses for networks automatically.
 * @param {number} [options.clear=false] Only if dataset present. Clear context of networks' nodes, reverting them to 'new' neurons each generation. Useful for predicting timeseries with LSTM's.
-* @param {number} [options.amount=1] Only if dataset present. Set amount of times to test trainingset on a genome each generation. Useful for timeseries. Do not use for regular feedfoward problems.
-* @param {Function} [options.fitnessFn] Only if dataset present. Fitness function to evaluate networks. Takes (`dataset`, `genomes`) as arguments, genomes: a [network](Network) array. fitnessFn needs to set each network's `.fitness` property with a number.
-* @param {boolean} [options.fitnessPopulation=false] Only if dataset present. A flag to indicate that fitnessFn is a population-level score. Set this to false to evaluate each genome inidividually.
 * ------ EVOLUTIONARY MUTATION SETTINGS ----
 * @param {mutation[]} [options.mutation] A set of allowed [mutation methods](mutation) for evolution. If unset a random mutation method from all possible mutation methods will be chosen when mutation occurs.
 * @param {string} [options.selection=POWER] [Selection method](selection) for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
@@ -29,8 +28,8 @@ const config = require('../config');
 * @param {number} [options.maxConns=Infinity] Maximum connections for a mutated network
 * @param {number} [options.maxGates=Infinity] Maximum gates for a mutated network
 * ------ POPULATION MANAGEMENT SETTINGS ----
-* @param {number} [options.stagnationLimit=20] Maximum amount of generations population can go without improving before it is replaced entirely with children from top two species.
-* @param {number} [options.speciesStagnationLimit=15] Maximum amount of generations species can go without improving before its members are not allowed to reproduce.
+* @param {number} [options.stagnantLimit=20] Maximum amount of generations population can go without improving before it is replaced entirely with children from top two species.
+* @param {number} [options.speciesStagnantLimit=15] Maximum amount of generations species can go without improving before its members are not allowed to reproduce.
 *
 * @prop {number} generation A count of the generations, can be overwritten if desired
 * @prop {Network[]} members The current population for the population instance. Accessible through `population.members`
@@ -54,7 +53,7 @@ const Population = function(options) {
   Object.assign(self, { 
     ...options, // options goes first so that any duplicate properties are overwritten by internal defaults
     species: [],
-    stagnation: 0,
+    stagnant: 0,
     generation: 0,
     lastNetId: 0,
   });
@@ -152,10 +151,115 @@ const Population = function(options) {
   }
 
   /**
+   * Removes stagnant species first.
+   * 
+   * Then removes worst performers from surviving species, updates fitness for species' members, average species fitness, and population fitness.
+   * 
+   * Warning! Mutates argument and its descendants directly.
+   * @alpha
+   * 
+   * @expects Sorted species members by descending fitness
+   * 
+   * @function removeMembers
+   * @memberof Population
+   * 
+   * @param {Species[]} speciesArray An array of population Species objects
+   * @param {Object} config A configuration object
+   * @param {number} config.threshold A threshold that determines how much of the population inside each species survives. Higher numbers means more survive.
+   * 
+   * @returns {Species[]} A new species array with its species members pruned and its descendants fitness properties updated.
+   * 
+   * @todo Add tests
+   */
+  self.removeMembers = function (speciesArray, config={ threshold: 0.5 }) {
+
+    // Code is deliberately monolithic, avoids repeated traversals of various arrays
+    const populationTotal = 0;
+    for(let i = 0; i < speciesArray.length; i++) {
+      const s = speciesArray[i];
+      
+      // If species is stagnant, remove it immediately
+      if(s.stagnation > 15) {
+        speciesArray.splice(i,1);
+        i--; continue; // Go to the next species
+      } 
+
+      // Otherwise just remove worst performers
+      s.members = s.sift(s.members, config.threshold);
+      
+      // Update member fitnesses, sum species fitness
+      let total = 0;
+      const memberCount = s.members.length;
+      for(let i = 0; i < memberCount; i++) {
+        member = s.members[i];
+  
+        // Neat spec: adjust fitness to species members length
+        member.sharedFitness = member.fitness / memberCount;
+        total += member.sharedFitness;
+      }
+  
+      // Store species fitness, sum population fitness
+      s.averageFitness = total / memberCount;
+      populationalTotal += s.averageFitness;
+    }
+
+    // Adjust population, non-obvious side-effect added for performance reasons 
+    population.averageSpeciesFitness = populationTotal / speciesArray.length;
+
+    return speciesArray;
+  }
+
+  /**
+   * Replaces missing population after culling. INCOMPLETE
+   * 
+   * Warning! Mutates argument directly.
+   * @alpha
+   * 
+   * @function resplaceMembers
+   * @memberof Population
+   * 
+   * @param {Species[]} speciesArray An array of population Species objects
+   * 
+   * @returns {Species[]} A new species array with its species members replaced.
+   * 
+   * @todo Add tests
+   */
+  self.replaceMembers = function (speciesArray, totalMembers) {
+     
+    const kids = [];
+    for (let i = speciesArray.length; i > 2; i--) {
+      const s = speciesArray[i];
+
+      // Calculate how many kids a species gets
+      const alloted = Math.floor(s.averageFitness / self.averageSpeciesFitness * totalMembers) - 1; // minus one for NEAT elitism
+
+      // If species gets no kids, remove it and go to next
+      if(alloted <= 0) { self.species.splice(j,1); continue; }
+
+      // Add best without any mutation
+      kids.push(s.best.clone());
+
+      // Get offspring and mutate
+      for (let i = 0; i < alloted; i++) {
+        kids.push(self.mutate(s.getChild()));
+      }
+    }
+
+    // Take care of the two best species which are always protected
+    // CODE FOR TAKING CARE OF TOP TWO SPECIES GOES HERE
+
+    // If missing members due to rounding, get more from best species
+    while (kids.length < totalMembers) {
+      kids.push(self.species[0].getChild());
+    }
+
+    return kids;
+  }
+
+  /**
    * Evaluates, selects, breeds and mutates population.
    * 
    * Warning! Replaces `.members` directly and increases `.generation` by 1.
-   *
    * @alpha
    * 
    * @function evolve
@@ -166,43 +270,46 @@ const Population = function(options) {
    * @return {network[]} An evolved population
    * 
    * @todo Reintroduce mutation flexibility
-   * @todo Add stagnation-driven population removal 
+   * @todo Rename some commonly used self.* variable names 
+   * @todo Spin-off managePopulation into its own function
    * @todo Add createOffspring code
    */
   self.evolve = async function(options={}) {
-    // Break population members into their respective species
+
+    // Calculate poulation members fitness
+    self.members = self.evaluate(self.members, self.dataset, self.cost);
+
+    // Sort member networks by fitness, in descending order
+    self.members = util.sortObjects(members, "fitness", false); // sorting now means species members will also be sorted, saves 1 nested loop + a repeat loop
+
+    // Break population members into their respective species, update fitness records
     self.species = self.speciate(self.members, self.species);
-    
-    // Mutates ".members" directly. Expected behavior
-    self.members = self.members.map(network => self.mutate(network))
 
-    // Increase the generation count, again expected behavior
-    self.generation++
+    // Giant helper function
+    const managePopulation = function (species, members) {
+      // Remove worst niche members
+      self.species = self.removeMembers(species, { threshold: 0.5 });
 
-    return self.members
+      // Replace population with mutated offspring.
+      members = self.replaceMembers(species, members.length);
+
+      self.generation += 1;
+
+      return members;
+    }
+
+    // If population fitness is constant for too long, only top 2 species reproduce
+    return (self.stagnant > self.stagnantLimit) ? managePopulation([self.species[0], self.species[1]], self.members) : managePopulation(self.species, self.members); 
   };
 
   /**
-   * Gets a genome for crossover.
-   *
-   * @alpha
+   * Places population members into their corresponding species, adjusts species performance & stagnation records.
    * 
-   * @function getParent
-   * @memberof Population
-   *
-   * @return {Network} Selected genome for offspring generation
-   */
-  self.getParent = function get_genome_using_selection_method() {
-    // Return a random genome
-    return self.members[Math.random() * self.members.length];
-  };
-
-  /**
-   * Places population members into their corresponding species.
+   * Warning! Mutates population & species members directly!
    * 
    * @alpha
    * 
-   * @expects speciesArray to be stored by fittest Species to least fit
+   * @expects Sorted population members by descending fitness
    * 
    * @function speciate
    * @memberof Population
@@ -210,11 +317,10 @@ const Population = function(options) {
    * @param {Network[]} members An array of population members to be placed in species
    * @param {Species[]} speciesArray The previous set of population species
    * 
-   * @return {Species[]} The new set of population species with corresponding members of the population inside
+   * @return {Species[]} Descendingly sorted species array with corresponding members of the population inside, also descendingly sorted
    * 
-   * @todo Implement Duff's device to reduce iterations
-   * @todo Figure out a way to get rid of nested foor loop
-   * @todo Consider making this an async function
+   * @todo Consider making this a Rust + WASM function
+   * @todo Add tests for species performance management
    * @todo Benchmark
    */
   self.speciate = function (members, speciesArray) {    
@@ -233,7 +339,22 @@ const Population = function(options) {
 
         // Determine if genome belongs in species
         if(species.isCompatible([species.representative, genome])) {
-          species.addMember(genome); continue outer; // <- Use "outer" to skip to next genome.
+
+          // If first genome in species, adjust species metrics
+          if(!species.members.length) {
+
+            species.adjustBests(genome); // NOT IMPLEMENTED YET
+
+            // If all-time best, reset stagnation
+            if(genome.fitness > species.allTimeBest) species.resetStagnation(genome); // NOT IMPLEMENTED YET
+            
+            // else, species is stagnant
+            else species.increaseStagnation()
+          }
+          
+          species.addMember(genome);
+
+          continue outer; // <- Use "outer" to skip to next genome.
         }
       }
      
@@ -245,111 +366,44 @@ const Population = function(options) {
   }
 
   /**
-   * Selects two genomes from the population with `getParent()`, and returns the offspring from those parents.
+   * Tests population members against a dataset, setting their `.fitness` property
    *
-   * @alpha
-   * 
-   * @function getOffspring
-   * @memberof Population
+   * @function evaluate
    *
-   * @return {Network} Child network
+   * @memberof Neat
+   *  
+   * @param {Network[]} members Population members to evaluate
+   * @param {Object[]} dataset Dataset to use for evaluation. Each entry is an object with sample inputs and outputs for the networks to be scored on.
+   * @param {Object[]} [config] Configuration object
    * 
-   * @todo Ensure parent1 & parent2 aren't exactly the same parent
-   * @todo Consider decoupling parent selection from getOffspring
+   * @return {Network[]} Population with .fitness properties set
+   * 
+   * @todo Make this an async function
+   * @todo Make the default fitness function an async function
+   * @todo Consider porting cost function to Rust + WASM
+   * @todo Add tests to verify accuracy
    */
-  self.getOffspring = function() {
-    const parent1 = self.getParent();
-    const parent2 = self.getParent();
+  self.evaluate = function (members, dataset, cost) {
 
-    // Note: in (unlikely) scenario parents are equally fit, parent2 is "fitter" by default.
-    return parent1.score > parent2.score ? parent1.createOffspring(parent2) : parent2.createOffspring(parent1)
-  };
-
-
-  /**
-   * Sorts the population by score.
-   * 
-   * Warning! Mutates argument directly.
-   *
-   * @alpha
-   * 
-   * @function sort
-   * @memberof Population
-   * 
-   * @param {network[]} A population to sort
-   *
-   * @return {void}
-   */
-  self.sort = function sort_population_by_fitness(networks) {
-    return networks.sort(function (a, b) { return b.score - a.score; });
-  };
-
-  /**
-   * Returns the fittest genome of the provided population.
-   * 
-   * Warning! Mutates argument directly.
-   *
-   * @alpha
-   * 
-   * @expects Members to be an array of networks.
-   * @expects Networks in members array to have `.fitness` numbers set.
-   * 
-   * @function getFittest
-   * @memberof Population
-   *
-   * @return {Network} Current population's fittest genome
-   * 
-   * @example
-   * // Returns fittest member
-   * population.getFittest(population.members);
-  */
-  self.getFittest = function get_fittest_population_genome(members) {
-    if (members[0].fitness < members[1].fitness) { 
-      members = self.sort(members); // in-place mutation, not ideal
+    for(let i = 0; i < members.length; i++) {
+      const network = members[i];
+      network.fitness = self.fitnessFn(network, dataset, cost);
     }
 
-    return members[0];
-  };
+    return members;
+  } 
 
-  /**
-   * Returns the average fitness of the current population.
-   *
-   * @alpha
-   * 
-   * @expects Networks in population.members to have `.fitness` numbers set.
-   * 
-   * @function getAverage
-   * @memberof Population
-   * 
-   * @return {number} Average fitness of the current population
-   */
-  self.getAverage = function get_average_population_fitness() {
-    let average = 0;
-    for (let i = 0; i < self.members.length; i++) {
-      average += self.members[i].fitness;
-    }
-
-    return average / self.members.length;
-  };
 }
 
 Population.default = {
   options: {
     inputs: 1,
     outputs: 1,
-    size: 50,
+    size: 150,
     dataset: [],
     cost: methods.cost.MSE,
-    clear: false,
-    amount: 1,
-    fitnessFn: function(set = dataset, genome, amount = 1, cost = methods.cost.MSE, growth = 0.0001) {
-      let score = 0;
-      for (let i = 0; i < amount; i++) score -= genome.test(set, cost).error;
-
-      score -= (genome.nodes.length - genome.input - genome.output + genome.connections.length + genome.gates.length) * growth;
-      score = isNaN(score) ? -Infinity : score; // this can cause problems with fitness proportionate selection
-
-      return score / amount;
+    fitnessFn: function(network, set, cost) {
+      return network.test(set, cost).error
     },
     fitnessPopulation: false,
     mutation: methods.mutation.NEATSTANDARD,

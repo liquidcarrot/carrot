@@ -9,8 +9,8 @@ const _ = require('../util/utils')
 * @constructs Species
 *
 * @param { Network } founder The first network to add to the species' members array
-* @param {object} options
-* @param {number[]} options.weights An array of weights for calculating compatability (distance) with the species. From NEAT paper.
+* @param {object} config
+* @param {number[]} config.weights An array of weights for calculating compatability (distance) with the species. From NEAT paper.
 *
 * @prop { Network[] } members An array of species member networks / founders
 * @prop { Network } bestfounder The best network, by fitness, in the species
@@ -32,7 +32,7 @@ const _ = require('../util/utils')
 *
 * console.log(mySpecies.members) // [ myNetwork ]
 */
-const Species = function(founder, options={}) {
+const Species = function(founder, config={}) {
   const self = this;
 
   // Avoid copying over original founder repeatedly
@@ -42,22 +42,23 @@ const Species = function(founder, options={}) {
   self.members = [];
   self.members.push(self.founder);
   self.representative = self.founder; // founder is "representative" by default
-  self.fittest = self.founder; // founder is fittest. AKA "champion" in NEAT literature.
+  self.bestGenome = self.founder; // founder is the best genome. AKA "champion" in NEAT literature.
   self.stagnation = 0; // Generation count without improvement
 
   // Adjustable props - compatibility
-  self.weights = options.weights || [1,1,0.4];
-  self.threshold = 3; // Threshold for determining whether or not a genome is compatible with the species
+  self.weights = config.weights || [1,1,0.4];
+  self.threshold = config.threshold || 3; // Threshold for determining whether or not a genome is compatible with the species
 
   // Species metadata
-  self.bestFitness = 0;
-  self.averageFitness = 0;
+  const first = util.isDefined(founder.fitness) ? founder.fitness : 0; // on construction these values all depend on founder's fitness
+  self.bestFitness = first;
+  self.genBestFitness = first; // best fitness for the generation
+  self.averageFitness = first;
 
   /**
    * Calculates genomic distance.
    *
    * Used to calculate whether a genome is compatibile with the species.
-   *
    * @alpha
    * 
    * @expects Genomes connection ids to be in ascending order i.e. genome.connections = [{ ..., id: 1 }, { ..., id: 2 }, { ..., id: 3 }]
@@ -66,17 +67,18 @@ const Species = function(founder, options={}) {
    * @memberof Species
    *
    * @param {Network[]} genomes Array containing two genomes
-   * @param {object} options
-   * @param {number[]} options.weights An array of weights for excess, disjoint, and matching gene connection-weight distance sum
-   * @param {number} options.threshold The minimum node size required to use a normalization factor in genomic distance
+   * @param {object} config
+   * @param {number[]} config.weights An array of weights for excess, disjoint, and matching gene connection-weight distance sum
+   * @param {number} config.threshold The minimum node size required to use a normalization factor in genomic distance
    *
    * @return {number} A genomic disntance between genomes
    * 
    * @todo Consider simplifying by treating excess and disjoint genes equivalently
+   * @todo Consider porting this to Rust + WASM
    */
-  self.getDistance = function (genomes, options={}) {
-    const weights = options.weights || [1,1,0.4];
-    const threshold = options.threshold || 20;
+  self.getDistance = function (genomes, config={}) {
+    const weights = config.weights || [1,1,0.4];
+    const threshold = config.threshold || 20;
 
     // Checks last innovation number in each genome to determine which is largest
     let small, big;
@@ -153,8 +155,8 @@ const Species = function(founder, options={}) {
   * @param {Network[]} An array of genomes to determine compatibility with (currently assumes two)
   * @return {boolean} Whether a genome is compatible with the species
   */
-  self.isCompatible = function determine_compatability_with_species (genomes, options={}) {
-    const threshold = options.threshold || self.threshold; // fallback to constructor args
+  self.isCompatible = function determine_compatability_with_species (genomes, config={}) {
+    const threshold = config.threshold || self.threshold; // fallback to constructor args
     return (self.getDistance([genomes[0], genomes[1]]) < threshold)
   }
 
@@ -166,24 +168,9 @@ const Species = function(founder, options={}) {
   * @param {Network} genome Network requesting to be added to the species
   * @return {null}
   */
-  self.addMember = function (genome, options) {
+  self.addMember = function (genome, config={}) {
     this.members.push(genome);
   }
-
-  /**
-  * Creates child from a pair of parent/source networks
-  *
-  * @expects Genomes ordered in ascending order from earliest to latest connections - i.e. `genome[0]` (earliest); `genome[genome.length - 1]` (latest)
-  *
-  * @param {Network[]} genomes An array of genomes to create a child from (currently limited to 2)
-  * @return {Connection[]} An array of child genes to create a child from
-  *
-  * @feature Amorphous network crossover - i.e. can crossover/merge/stitch networks with wierd/awkward shapes
-  * @feature Non-matching networking crossover - i.e. can create a child network from source networks with different shapes
-  *
-  * @todo Consider crossover for more than 2 parents
-  */
-  self.crossover = function crossover(genomes) {}
 
   /**
   * Selects a parent for crossover
@@ -195,131 +182,61 @@ const Species = function(founder, options={}) {
   }
 
   /**
-   * Selects two genomes from the population with `getParent()`, and returns the offspring from those parents. NOTE: Population MUST be sorted
+   * Selects two genomes from the population with `getParent()`, and returns the offspring from those parents.
    *
    * @function getChild
    * @memberof Species
    *
    * @return {Network} Child network
-   *
-   * @todo Consider making this a Network concern again
    */
   self.getChild = function () {
-    const parent1 = self.getParent();
-    const parent2 = self.getParent();
+    const net1 = self.getParent();
+    const net2 = self.getParent();
 
-    // return Network.crossOver(parent1, parent2, self.equal); // Network concern crossOver
-    return self.crossover([parent1, parent2])
-  };
-
-  /**
-   * Sorts the population by score. Warning! Mutates the population directly
-   *
-   * @function sort
-   * @memberof Species
-   *
-   * @param {network[]} A population to sort
-   * @return {undefined}
-   */
-  self.sort = function sort_species_by_fitness (population) {
-    population = Array.isArray(population) && population.length ? population : self.population
-
-    population.sort(function (a, b) {
-      return b.score - a.score;
-    });
+    // Note: in (unlikely) scenario parents are equally fit, net2 is "fitter" by default.
+    return net1.score > net2.score ? net1.createOffspring(net2) : net2.createOffspring(net1)
   };
 
   /**
   * Returns members with lower fitness genomes removed
-  * Note: Assumes members are sorted by fitness
+  * 
+  * @expects Members sorted in descending fitness
   *
   * @function sift
   * @memberof Species
   *
-  * @param {number} threshold Integer between [0,1] that determines what percentage of members are removed
+  * @param {Network[]} members An array of species members to remove lower half of 
+  * @param {number} threshold Number between [0,1] that determines what percentage of members survive. Higher numbers mean more survive.
+  * 
   * @return {Network[]} A members array without lower fitness genomes
   */
-  self.sift = function remove_worst_members (threshold) {
-    return self.members.slice(0, Math.ceil(self.members.length * threshold))
+  self.sift = function remove_worst_members (members, threshold) {
+    return members.slice(0, Math.ceil(members.length * threshold));
   }
-
-  /**
-  * Async function. Updates the shared fitness for individuals in the species.
-  *
-  * Note: Takes the following comment in the Neat paper literally --
-  * "Thus, (the divisor in shared fitness) reduces to the
-  * number of organisms in the same species as organism i.
-  * This reduction is natural since species are already clustered
-  * by compatibility using the threshold δt"
-  *
-  * @expects Species members to have a .fitness property
-  *
-  * @return {null}
-  */
-  self.updateSharedFitness = async function () {};
-
-  /**
-  * Sync function. Updates the shared fitness for individuals in the species.
-  *
-  * Note: Takes the following comment in the Neat paper literally --
-  * "Thus, (the divisor in shared fitness) reduces to the
-  * number of organisms in the same species as organism i.
-  * This reduction is natural since species are already clustered
-  * by compatibility using the threshold δt"
-  *
-  * @expects Species members to have a .fitness property
-  *
-  * @return {null}
-  */
-  self.updateSharedFitnessSync = function () {
-    for (let i = 0; i < this.members.length; i++) {
-      this.members[i].adjustedFitness = this.members[i].fitness / this.members.length;
-    }
-  };
 
   /**
    * Returns the fittest genome of the current population
    *
-   * @function getFittest
+   * @function getBest
    * @memberof Species
    *
    * @return {Network} Species' current fittest genome
   */
-  self.getFittest = function get_fittest_species_genome  () {
-    return self.fittest
+  self.getBest = function get_fittest_species_genome  () {
+    return self.best;
   };
 
   /**
-   * Returns the average fitness of the current population
+   * Increase species stagnation count
    *
-   * @function getAverage
+   * @function increaseStagnation
    * @memberof Species
    *
-   * @return {number} Average fitness of the current population
-   */
-  self.getAverage = function get_average_population_fitness () {};
-
-  /**
-   * Export the current population to a JSON object
-   *
-   * Can be used later with `fromJSON(json)` to reload the population
-   *
-   * @function toJSON
-   * @memberof Species
-   *
-   * @return {object[]} A set of genomes (a population) represented as JSON objects.
-   */
-  self.toJSON = function export_to_json () {};
-
-  /**
-   * Imports population from a json. Must be an array of networks converted to JSON objects.
-   *
-   * @function fromJSON
-   * @memberof Species
-   *
-   * @param {object[]} json set of genomes (a population) represented as JSON objects.
+   * @return {number} Species stagnation count
   */
-  self.fromJSON = function import_from_json (json) {};
+  self.increaseStagnation = function() {
+    return self.stagnation += 1;
+  }
 };
 
 module.exports = Species;

@@ -1365,6 +1365,7 @@ function Network(input_size, output_size, options) {
    *
    * @returns {{error:{number},time:{number}}} A summary object of the network's performance
    *
+   * @todo Make this an async function
    */
   self.test = function(set, cost = methods.cost.MSE) {
     let error = 0;

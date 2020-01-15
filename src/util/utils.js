@@ -122,72 +122,87 @@ const util = {
    */
 
   /**
-   * Quicksort function
+   * Quicksort function, default comparator function sorts ascending
    * 
    * @param {number[]} unsorted An array of unsorted numbers
+   * @param {function} comparator A function to compare numbers
    * 
    * @returns {number[]} An array of numbers sorted in ascending order
    *  
    * @todo Remove repeated if check by composing this function with an abstraction
    * @todo Implement / replace with pattern-defeating quicksort
    */
-   sort: function (unsorted, ascending = true) {
-      const comparator = function (a, b, ascending) {
-
-        // Swap the variables for descending values
-        if(!ascending) { const temp = a; a = b; b = temp; } 
-
-        if (a < b) return -1;
-        if (a > b) return 1;
-
-        return 0;
-      };
+   sort: function (unsorted, comparator = () => (a, b) => a < b ? -1 : 1) {       
+     // Create a sortable array to return.
+     const sorted = [...unsorted];
+     
+     // Recursively sort sub-arrays.
+     const recursiveSort = function (start, end) {
+       // If this sub-array is empty, it's sorted.
+       if (end - start < 1) return;
        
-       // Create a sortable array to return.
-       const sorted = [...unsorted];
+       const pivotValue = sorted[end];
+       let splitIndex = start;
+       for (let i = start; i < end; i++) {
+         const spread = comparator(sorted[i], pivotValue);
+          
+         // This value is less than the pivot value.
+         if (spread === -1) {
+           // If the element just to the right of the split index,
+           // isn't this element, swap them.
+           
+           if (splitIndex !== i) {
+             const temp = sorted[splitIndex];
+             sorted[splitIndex] = sorted[i];
+             sorted[i] = temp;
+            }
+            
+            // Move the split index to the right by one,
+            // denoting an increase in the less-than sub-array size.
+            splitIndex++;
+          }
 
-       // Recursively sort sub-arrays.
-       const recursiveSort = function (start, end) {
-           // If this sub-array is empty, it's sorted.
-           if (end - start < 1) return;
+          // Leave values that are greater than or equal to
+          // the pivot value where they are.
+        }
 
-           const pivotValue = sorted[end];
-           let splitIndex = start;
-           for (let i = start; i < end; i++) {
-               const spread = comparator(sorted[i], pivotValue, ascending);
+        // Move the pivot value to between the split.
+        sorted[end] = sorted[splitIndex];
+        sorted[splitIndex] = pivotValue;
 
-               // This value is less than the pivot value.
-               if (spread === -1) {
-                   // If the element just to the right of the split index,
-                   // isn't this element, swap them.
-                   if (splitIndex !== i) {
-                       const temp = sorted[splitIndex];
-                       sorted[splitIndex] = sorted[i];
-                       sorted[i] = temp;
-                   }
+        // Recursively sort the less-than and greater-than arrays.
+        recursiveSort(start, splitIndex - 1);
+        recursiveSort(splitIndex + 1, end);
+     };
 
-                   // Move the split index to the right by one,
-                   //   denoting an increase in the less-than sub-array size.
-                   splitIndex++;
-               }
-
-               // Leave values that are greater than or equal to
-               //   the pivot value where they are.
-           }
-
-           // Move the pivot value to between the split.
-           sorted[end] = sorted[splitIndex];
-           sorted[splitIndex] = pivotValue;
-
-           // Recursively sort the less-than and greater-than arrays.
-           recursiveSort(start, splitIndex - 1);
-           recursiveSort(splitIndex + 1, end);
-       };
-
-       // Sort the entire array.
-       recursiveSort(0, sorted.length - 1);
-       return sorted;
+    // Sort the entire array.
+    recursiveSort(0, sorted.length - 1);
+    return sorted;
    },
+
+  /**
+   * Quicksort function, for objects.
+   * 
+   * @param {Object[]} unsorted Array of unsorted objects
+   * @param {string} property String to use for computed property lookups
+   * @param {boolean} ascending Flag to toggle ascending or descending order
+   * 
+   * @returns {Object[]} An array of sorted objects
+   * 
+   * @todo Add tests
+   */
+  sortObjects: function (objects, prop, ascending = true) {
+    
+    const left = ascending ? -1 : 1; // If -1 returned by a < b it means left hand side of the array is less (ascending) 
+    const right = !ascending ? 1 : -1; // If anything but -1 returned by a < b it means right hand side of the array is less (descending)
+
+    const comparator = (a, b) => a[prop] < b[prop] ? left : right;
+  
+    this.sort(objects, comparator);
+
+    return sorted;
+ },
+
 }
 
 module.exports = util;
