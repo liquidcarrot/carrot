@@ -53,9 +53,10 @@ const Population = function(options) {
   Object.assign(self, { 
     ...options, // options goes first so that any duplicate properties are overwritten by internal defaults
     species: [],
-    stagnant: 0,
+    stagnation: 0,
     generation: 0,
     lastNetId: 0,
+    allTimeBest: null,
   });
 
   /**
@@ -93,8 +94,15 @@ const Population = function(options) {
   // Fill the members array on population construction
   self.members = self.getPopulation({ size: self.size });
 
+  // Set founder fitness
+  const founder = self.members[0];
+  founder.fitness = 0;
+
   // Create first species with first member, don't add other members since .speciate just clears them anyway
-  self.species.push(new Species(self.members[0]))
+  self.species.push(new Species(founder))
+
+  // Set a same network as all-time-best
+  self.allTimeBest = founder;
 
   /**
    * Applies the mutation-scheme dictated by Neat to the provided network.
@@ -223,6 +231,7 @@ const Population = function(options) {
    * @returns {Species[]} A new species array with its species members replaced.
    * 
    * @todo Add tests
+   * @todo Abstract child creation into a helper function
    */
   self.replaceMembers = function (speciesArray, totalMembers) {
      
@@ -237,10 +246,10 @@ const Population = function(options) {
       if(alloted <= 0) { self.species.splice(j,1); continue; }
 
       // Add best without any mutation
-      kids.push(s.best.clone());
+      kids.push(s.bestGenome.clone());
 
       // Get offspring and mutate
-      for (let i = 0; i < alloted; i++) {
+      for (let j = 0; j < alloted; j++) {
         kids.push(self.mutate(s.getChild()));
       }
     }
@@ -276,11 +285,24 @@ const Population = function(options) {
    */
   self.evolve = async function(options={}) {
 
-    // Calculate poulation members fitness
-    self.members = self.evaluate(self.members, self.dataset, self.cost);
+    // Check if fitnesses need to be set
+    if(util.isNil(self.members[0].fitness)) {
+      // Calculate poulation members fitness
+      self.members = self.evaluate(self.members, self.dataset, self.cost);
+    }
 
     // Sort member networks by fitness, in descending order
     self.members = util.sortObjects(members, "fitness", false); // sorting now means species members will also be sorted, saves 1 nested loop + a repeat loop
+
+    // Reset population stagnation if fitness improvement
+    if(self.members[0].fitness > self.allTimeBest) {
+      self.allTimeBest = self.members[0].fitness;
+      self.stagnation = 0;
+    }
+    // otherwise increase the stagnation
+    else {
+      self.stagnation += 1;
+    }
 
     // Break population members into their respective species, update fitness records
     self.species = self.speciate(self.members, self.species);

@@ -50,9 +50,8 @@ const Species = function(founder, config={}) {
   self.threshold = config.threshold || 3; // Threshold for determining whether or not a genome is compatible with the species
 
   // Species metadata
-  const first = util.isDefined(founder.fitness) ? founder.fitness : 0; // on construction these values all depend on founder's fitness
+  const first = founder.fitness || 0; // on construction these values all depend on founder's fitness
   self.allTimeBest = first;
-  self.genBestFitness = first; // best fitness for the generation
   self.averageFitness = first;
 
   /**
@@ -225,7 +224,7 @@ const Species = function(founder, config={}) {
    * @return {Network} Species' current fittest genome
   */
   self.setBest = function update_species_best (genome) {
-    return self.best = genome;
+    return self.bestGenome = genome;
   }
 
   /**
@@ -237,7 +236,7 @@ const Species = function(founder, config={}) {
    * @return {Network} Species' current fittest genome
   */
   self.getBest = function get_fittest_species_genome  () {
-    return self.best;
+    return self.bestGenome;
   };
 
   /**
