@@ -240,13 +240,19 @@ const Population = function(options) {
       const s = speciesArray[i];
 
       // Calculate how many kids a species gets
-      const alloted = Math.floor(s.averageFitness / self.averageSpeciesFitness * totalMembers) - 1; // minus one for NEAT elitism
+      let alloted = Math.floor(s.averageFitness / self.averageSpeciesFitness * totalMembers);
 
       // If species gets no kids, remove it and go to next
       if(alloted <= 0) { self.species.splice(j,1); continue; }
 
-      // Add best without any mutation
-      kids.push(s.bestGenome.clone());
+      // Species has more than 5 networks
+      if(species.members.length > 5) {
+        // Add best without any mutation
+        kids.push(s.bestGenome.clone());
+
+        // Then reduce alloted offspring by one
+        alloted -= 1;
+      }
 
       // Get offspring and mutate
       for (let j = 0; j < alloted; j++) {
