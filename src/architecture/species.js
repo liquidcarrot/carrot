@@ -1,7 +1,7 @@
 const Network = require('./network');
 const methods = require('../methods/methods');
 const config = require('../config');
-const _ = require('../util/utils')
+const util = require('../util/utils')
 
 /**
 * Creates a new Species
@@ -14,7 +14,7 @@ const _ = require('../util/utils')
 *
 * @prop { Network[] } members An array of species member networks / founders
 * @prop { Network } bestfounder The best network, by fitness, in the species
-* @prop { number } bestFitness The fitness of the best network in the species
+* @prop { number } allTimeBest The best fitness ever in the species
 * @prop { number } averageFitness The average fitness of the networks in the species
 * @prop { number } stagnation The amount of generations since last improved, used to kill species
 * @prop { Network } representative The network / founder that best represents the species
@@ -51,7 +51,7 @@ const Species = function(founder, config={}) {
 
   // Species metadata
   const first = util.isDefined(founder.fitness) ? founder.fitness : 0; // on construction these values all depend on founder's fitness
-  self.bestFitness = first;
+  self.allTimeBest = first;
   self.genBestFitness = first; // best fitness for the generation
   self.averageFitness = first;
 
@@ -178,7 +178,7 @@ const Species = function(founder, config={}) {
   * @return {Network} Selected parent for crossover
   */
   self.getParent = function select_parent_for_crossover () {
-    return _.sample(self.members)
+    return util.sample(self.members)
   }
 
   /**
@@ -220,6 +220,20 @@ const Species = function(founder, config={}) {
    * @function getBest
    * @memberof Species
    *
+   * @param {Network} best Best species member of the current generation
+   * 
+   * @return {Network} Species' current fittest genome
+  */
+  self.setBest = function update_species_best (genome) {
+    return self.best = genome;
+  }
+
+  /**
+   * Returns the fittest genome of the current population
+   *
+   * @function getBest
+   * @memberof Species
+   *
    * @return {Network} Species' current fittest genome
   */
   self.getBest = function get_fittest_species_genome  () {
@@ -227,15 +241,42 @@ const Species = function(founder, config={}) {
   };
 
   /**
-   * Increase species stagnation count
+   * Sets the best fitness of all time
+   * 
+   * @expects Best fitness to be validated externally
+   * 
+   * @param {Network} genome Genome with best fitness of all time
+   * 
+   * @return {Network} Best genome of all time in species
+   */
+  self.setGOAT = function set_best_of_all_time (genome) {
+    return self.allTimeBest = genome;
+  }
+
+  /**
+   * Increment species stagnation count
+   *
+   * @function incrementStagnation
+   * @memberof Species
+   *
+   * @param {number} amount Amount to increment stagnation count by
+   * 
+   * @return {number} Species stagnation count
+  */
+  self.incrementStagnation = function(amount = 1) {
+    return self.stagnation += amount;
+  }
+
+   /**
+   * Reset species stagnation count
    *
    * @function increaseStagnation
    * @memberof Species
    *
-   * @return {number} Species stagnation count
+   * @return {number} Reset species stagnation count
   */
-  self.increaseStagnation = function() {
-    return self.stagnation += 1;
+  self.resetStagnation = function() {
+    return self.stagnation = 0;
   }
 };
 

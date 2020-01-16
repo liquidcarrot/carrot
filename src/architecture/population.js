@@ -340,16 +340,20 @@ const Population = function(options) {
         // Determine if genome belongs in species
         if(species.isCompatible([species.representative, genome])) {
 
-          // If first genome in species, adjust species metrics
+          // If first genome in species, adjust species records
           if(!species.members.length) {
 
-            species.adjustBests(genome); // NOT IMPLEMENTED YET
+            // Update the current best
+            species.setBest(genome);
 
-            // If all-time best, reset stagnation
-            if(genome.fitness > species.allTimeBest) species.resetStagnation(genome); // NOT IMPLEMENTED YET
+            // If all-time best, reset stagnation & update best of all time
+            if(genome.fitness > species.allTimeBest) {
+              species.resetStagnation();
+              species.setGOAT(genome);
+            }
             
             // else, species is stagnant
-            else species.increaseStagnation()
+            else species.incrementStagnation()
           }
           
           species.addMember(genome);

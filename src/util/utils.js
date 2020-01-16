@@ -122,7 +122,7 @@ const util = {
    */
 
   /**
-   * Quicksort function, default comparator function sorts ascending
+   * Quicksort function
    * 
    * @param {number[]} unsorted An array of unsorted numbers
    * @param {function} comparator A function to compare numbers
@@ -132,7 +132,7 @@ const util = {
    * @todo Remove repeated if check by composing this function with an abstraction
    * @todo Implement / replace with pattern-defeating quicksort
    */
-   sort: function (unsorted, comparator = () => (a, b) => a < b ? -1 : 1) {       
+   sort: function (unsorted, comparator) {
      // Create a sortable array to return.
      const sorted = [...unsorted];
      
@@ -180,6 +180,24 @@ const util = {
     return sorted;
    },
 
+   /**
+   * Quiksort function, with default comparator function
+   *
+   * @param {number[]} unsorted Array of unsorted numbers
+   * @param {boolean} [ascending=true] Flag whether to sort in ascending or descending order
+   * 
+   * @returns {number[]} Sorted array of numbers
+   */
+   sortDefault: function(unsorted, ascending=true) {
+     
+    // Switch comparator function depending on ascending toggle
+     const comparator = (ascending)
+      ? (a, b) => a < b ? -1 : 1
+      : (a, b) => b < a ? -1 : 1
+
+     return this.sort(unsorted, comparator)
+   },
+
   /**
    * Quicksort function, for objects.
    * 
@@ -192,15 +210,13 @@ const util = {
    * @todo Add tests
    */
   sortObjects: function (objects, prop, ascending = true) {
-    
-    const left = ascending ? -1 : 1; // If -1 returned by a < b it means left hand side of the array is less (ascending) 
-    const right = !ascending ? 1 : -1; // If anything but -1 returned by a < b it means right hand side of the array is less (descending)
-
-    const comparator = (a, b) => a[prop] < b[prop] ? left : right;
   
-    this.sort(objects, comparator);
+    // Switch comparator function depending on ascending toggle
+    const comparator = (ascending)
+    ? (a, b) => a[prop] < b[prop] ? -1 : 1
+    : (a, b) => b[prop] < a[prop] ? -1 : 1
 
-    return sorted;
+    return this.sort(objects, comparator);;
  },
 
 }

@@ -21,6 +21,7 @@ describe("src/util/utils.js", function () {
       expect(util.getCantorNumber(-1, -1)).equal(-1);
     })
   })
+
   describe('util.cantorLookup', function() {
     it("() => TypeError", function() {
       expect(() => util.cantorLookup()).to.throw(TypeError);
@@ -46,6 +47,7 @@ describe("src/util/utils.js", function () {
       expect(response.id).equal(undefined)
     })
   })
+
   describe('util.getCantorId', function() {
     it("should return the correspoding id when it exists in the reference object", function() {
       const response = util.getCantorId({ id: 0 }, { id: 0 }, { 0: 22 }, 0) // cantor pair for 0,0 is zero, use as key to retrieve value
@@ -68,6 +70,7 @@ describe("src/util/utils.js", function () {
       expect(response.id).equal(22)
     })
   })
+
   describe('util.manageNeatId', function() {
     it("({ id: 0 }, { id: 0 }, { 0: 22, last: x }) => 22 | returns known id when same pair is given", function() {
       let response = util.manageNeatId({ id: 0 }, { id: 0 }, { 0: 22, last: 0 }) // cantor pair for 0,0 is zero, use as key to retrieve value
@@ -107,11 +110,12 @@ describe("src/util/utils.js", function () {
       expect(connIds.last).equal(23); // should be one plus the last known, for clarity this matches the 0 key's value plus one
     });
   })
-  describe('util.sort', function () {
+
+  describe('util.sortDefault', function () {
     it('(unsorted) | returns a sorted array in ascending order', function() {
       const unsorted = [4,6,5,3,2,7,89,3,1,5,9,3,6,4,7,9,2,4,3,5,7,33,1,5,9,3,5,6,0,3,8,0]; // random-ish array
 
-      const sorted = util.sort(unsorted);
+      const sorted = util.sortDefault(unsorted);
       
       for(let i = 1; i < sorted.length; i++) {
         expect(sorted[i]).at.least(sorted[i-1])
@@ -121,10 +125,32 @@ describe("src/util/utils.js", function () {
     it('(unsorted, false) | returns a sorted array in descending order', function() {
       const unsorted = [5,9,2,4,3,5,7,3,4,6,5,34,2,7,8,3,1,5,9,3,63,4,7,5,6,0,3,8,0,6,9,3,8,5,6,0,9,2,8,3]; // random-ish array
 
-      const sorted = util.sort(unsorted, false);
-      
+      const sorted = util.sortDefault(unsorted, false);
+
       for(let i = 1; i < sorted.length; i++) {
         expect(sorted[i]).at.most(sorted[i-1])
+      }
+    })
+  })
+
+  describe('util.sortObjects', function () {
+    it('(unsorted, propertyString) | returns a sorted array in ascending order', function() {
+      const unsorted = [{ id: 4 }, { id: 6 }, { id: 5 }, { id: 3 }, { id: 2 }, { id: 7 }]; // random-ish array
+
+      const sorted = util.sortObjects(unsorted, "id");
+      
+      for(let i = 1; i < sorted.length; i++) {
+        expect(sorted[i]["id"]).at.least(sorted[i-1]["id"])
+      }
+    })
+
+    it('(unsorted, propertyString, false) | returns a sorted array in descending order', function() {
+      const unsorted = [{ id: 4 }, { id: 6 }, { id: 5 }, { id: 3 }, { id: 2 }, { id: 7 }]; // random-ish array
+
+      const sorted = util.sortObjects(unsorted, "id", false);
+      
+      for(let i = 1; i < sorted.length; i++) {
+        expect(sorted[i]["id"]).at.most(sorted[i-1]["id"])
       }
     })
   })
