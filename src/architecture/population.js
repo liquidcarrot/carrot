@@ -381,7 +381,7 @@ const Population = function(options) {
             }
             
             // else, species is stagnant
-            else species.incrementStagnation()
+            else species.increaseStagnation()
           }
           
           species.addMember(genome);

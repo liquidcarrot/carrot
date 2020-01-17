@@ -262,7 +262,7 @@ const Species = function(founder, config={}) {
    * 
    * @return {number} Species stagnation count
   */
-  self.incrementStagnation = function(amount = 1) {
+  self.increaseStagnation = function(amount = 1) {
     return self.stagnation += amount;
   }
 
