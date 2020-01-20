@@ -405,6 +405,30 @@ const activation = {
     return Array.isArray(x) ? x.map(clamp(f)) : clamp(f(x));
   },
   /**
+  * [(Neat) modified sigmoidal transfer function.](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf#page=15&zoom=page-width,-7,768)
+  *
+  * Used mainly for evolving neural-networks with NEAT. Does not currently have derivative.
+  * 
+  * Does not support arrays of numbers. 
+  * 
+  * @member
+  * @function
+  * @param {number}  x Input value(s) to activation function
+  * @param {boolean} [derivate] Flag to select derivative function
+  *
+  * @example
+  * let { methods, Node } = require("@liquid-carrot/carrot");
+  *
+  * // Changing a neuron's activation function
+  * let A = new Node();
+  * A.squash = methods.activation.NEAT_SIGMOID;
+  */
+  NEAT_SIGMOID: function(x, derivate) {
+    if (x == undefined) throw new ReferenceError('Parameter \'x\' is required, but it was not defined');
+    const f = (x) => 1.0 / (1.0 + Math.exp(-4.9 * x));
+    return Array.isArray(x) ? x.map(f) : f(x); // unsafe mode
+  },
+  /**
   * [Hard tanh function.](https://wagenaartje.github.io/neataptic/docs/methods/activation/)
   *
   * @member

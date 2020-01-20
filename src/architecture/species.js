@@ -41,23 +41,25 @@ const Species = function(founder, config={}) {
   // NEAT designated props
   self.members = [];
   self.members.push(self.founder);
-  self.representative = self.founder; // founder is "representative" by default
-  self.bestGenome = self.founder; // founder is the best genome. AKA "champion" in NEAT literature.
+  self.champion = self.founder; // founder is the best genome. AKA "champion" in NEAT literature.
   self.stagnation = 0; // Generation count without improvement
+  self.representative = self.founder; // founder is "representative" by default
+
+  // Species metadata
+  self.greatest = founder; // Greatest of all time, distinct from best / champion, used for species stagnation management
+  self.generation = config.gen || -1; // Generation that this species was created
+  self.bestFitness = founder.fitness;
+  self.averageFitness = founder.fitness; // average fitness at first is just founder fitness
 
   // Adjustable props - compatibility
   self.weights = config.weights || [1,1,0.4];
   self.threshold = config.threshold || 3; // Threshold for determining whether or not a genome is compatible with the species
 
-  // Species metadata
-  const first = founder.fitness || 0; // on construction these values all depend on founder's fitness
-  self.allTimeBest = first;
-  self.averageFitness = first;
 
   /**
    * Calculates genomic distance.
    *
-   * Used to calculate whether a genome is compatibile with the species.
+   * Used to calculate whether a genome is compatibile with the species. Sorts genome connection ids in ascending order.
    * @alpha
    * 
    * @expects Genomes connection ids to be in ascending order i.e. genome.connections = [{ ..., id: 1 }, { ..., id: 2 }, { ..., id: 3 }]
@@ -68,7 +70,7 @@ const Species = function(founder, config={}) {
    * @param {Network[]} genomes Array containing two genomes
    * @param {object} config
    * @param {number[]} config.weights An array of weights for excess, disjoint, and matching gene connection-weight distance sum
-   * @param {number} config.threshold The minimum node size required to use a normalization factor in genomic distance
+   * @param {number} config.normalizer The minimum node size required to use a normalization factor in genomic distance
    *
    * @return {number} A genomic disntance between genomes
    * 
@@ -76,17 +78,52 @@ const Species = function(founder, config={}) {
    * @todo Consider porting this to Rust + WASM
    */
   self.getDistance = function (genomes, config={}) {
+    console.log("NEW GET DISTANCE")
+    // Rename for increased legibility
+    let conns = genomes[0].connections;
+    let conns1 = genomes[1].connections;
+
+    // Sort connection ids
+    conns = util.sortObjects(conns, "id", true); // worst time-complexity O(n log n)
+    conns1 = util.sortObjects(conns1, "id", true);
+
+    const log = function (conns) {
+      const seen = new Set();
+      const references = new Set();
+      for(let i = 0; i < conns.length; i++) {
+        const conn = conns[i];
+        
+        // duplicate connection id
+        if(seen.has(conn.id)) {
+          console.log(`
+            Previous from id: ${conns[i-1].from.id}
+            Previous to id: ${conns[i-1].to.id}
+            From node id: ${conn.from.id}
+            To node id: ${conn.to.id}
+            Connection enabled: ${conn.enabled}
+            Connection reference already exists? ${references.has(conn)}
+            From nodes same reference? ${conn.from === conns[i-1].from}
+            From nodes same reference? ${conn.to === conns[i-1].to}
+          `)
+        }
+
+        seen.add(conn.id)
+        references.add(conn)
+      }
+    }
+
+    log(conns);
+    log(conns1);
+
     const weights = config.weights || [1,1,0.4];
-    const threshold = config.threshold || 20;
+    const normalizer = config.normalizer || 20;
 
     // Checks last innovation number in each genome to determine which is largest
     let small, big;
-    const genome = genomes[0].connections;
-    const genome1 = genomes[1].connections;
-    if (genome[genome.length - 1].id > genome1[genome1.length - 1].id) {
-      big = genome; small = genome1;
+    if (conns[conns.length - 1].id > conns1[conns1.length - 1].id) {
+      big = conns; small = conns1;
     } else {
-      big = genome1; small = genome;
+      big = conns1; small = conns;
     }
     let smallIndex = small.length - 1;
     let bigIndex = big.length - 1;
@@ -94,8 +131,8 @@ const Species = function(founder, config={}) {
     // Track distance formula variables
     let excess = disjoint = matching = deltaWeight = 0;
 
-    // Normalizing factor for networks larger than the threshold size, used to avoid crazy values
-    const nodes = (big.length > threshold) ? big.length : 1;
+    // Normalizing factor for networks larger than the normalizer size, used to avoid crazy values
+    const nodes = (big.length > normalizer) ? big.length : 1;
 
     let finishedExcess = false;
 
@@ -142,7 +179,6 @@ const Species = function(founder, config={}) {
     deltaWeight /= matching;
 
     // D(N1,N2) = (c1 * E / N) + (c2 * D / N) * (c3 * ΔW)
-    // Genomic distance < compatibility threshold
     return (weights[0] * excess / nodes) + (weights[1] * disjoint / nodes) + (weights[2] * deltaWeight);
   };
 
@@ -156,6 +192,7 @@ const Species = function(founder, config={}) {
   */
   self.isCompatible = function determine_compatability_with_species (genomes, config={}) {
     const threshold = config.threshold || self.threshold; // fallback to constructor args
+     // Genomic distance < compatibility threshold
     return (self.getDistance([genomes[0], genomes[1]]) < threshold)
   }
 
@@ -193,11 +230,11 @@ const Species = function(founder, config={}) {
     const net2 = self.getParent();
 
     // Note: in (unlikely) scenario parents are equally fit, net2 is "fitter" by default.
-    return net1.score > net2.score ? net1.createOffspring(net2) : net2.createOffspring(net1)
+    return net1.fitness > net2.fitness ? net1.createOffspring(net2) : net2.createOffspring(net1)
   };
 
   /**
-  * Returns members with lower fitness genomes removed
+  * Returns members with lower fitness genomes removed. If there are less than 2 genomes, just returns the members as-is
   * 
   * @expects Members sorted in descending fitness
   *
@@ -208,13 +245,15 @@ const Species = function(founder, config={}) {
   * @param {number} threshold Number between [0,1] that determines what percentage of members survive. Higher numbers mean more survive.
   * 
   * @return {Network[]} A members array without lower fitness genomes
+  * 
+  * @todo Add test for edge case with 1 member
   */
   self.sift = function remove_worst_members (members, threshold) {
-    return members.slice(0, Math.ceil(members.length * threshold));
+    return (members.length > 2) ? members.slice(0, Math.ceil(members.length * threshold)) : members;
   }
 
   /**
-   * Returns the fittest genome of the current population
+   * Sets fittest genome of the current population and the species-level bestFitness property
    *
    * @function getBest
    * @memberof Species
@@ -224,7 +263,8 @@ const Species = function(founder, config={}) {
    * @return {Network} Species' current fittest genome
   */
   self.setBest = function update_species_best (genome) {
-    return self.bestGenome = genome;
+    self.bestFitness = genome.fitness;
+    return self.best = genome;
   }
 
   /**
@@ -236,11 +276,11 @@ const Species = function(founder, config={}) {
    * @return {Network} Species' current fittest genome
   */
   self.getBest = function get_fittest_species_genome  () {
-    return self.bestGenome;
+    return self.best;
   };
 
   /**
-   * Sets the best fitness of all time
+   * Sets the best fitness of all time and stores the genome that got it in species.greatest
    * 
    * @expects Best fitness to be validated externally
    * 
@@ -249,7 +289,8 @@ const Species = function(founder, config={}) {
    * @return {Network} Best genome of all time in species
    */
   self.setGOAT = function set_best_of_all_time (genome) {
-    return self.allTimeBest = genome;
+    self.bestAllTimeFitness = genome.fitness;
+    return self.greatest = genome;
   }
 
   /**

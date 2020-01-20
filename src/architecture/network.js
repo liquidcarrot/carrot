@@ -921,6 +921,7 @@ function Network(input_size, output_size, options) {
    * @todo Create an ID tracking scheme for gating
    * @todo Make node management order agnostic by tracking input / outputs better
    * @todo Modify network.possible to always return an array, empty if no candidates were found instead of false
+   * @todo Add tests for ADD_CONNECTION
    */
   self.mutate = function(method, options) {
     if (typeof method === 'undefined') throw new Error('Mutate method is undefined!')
@@ -997,6 +998,7 @@ function Network(input_size, output_size, options) {
         return handleMutation(method, node => self.remove(node))
       }
       // fall-through cases differences handled by self.possible
+      case "ADD_CONNECTION":
       case "ADD_SELF_CONN":
       case "ADD_BACK_CONN":
       case "ADD_CONN": {
@@ -1074,6 +1076,8 @@ function Network(input_size, output_size, options) {
         return self
       }
     }
+
+    throw new Error("Unsupported mutation method selected!")
   }
 
   /**

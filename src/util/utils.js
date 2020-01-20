@@ -214,7 +214,7 @@ const util = {
     // Switch comparator function depending on ascending toggle
     const comparator = (ascending)
     ? (a, b) => a[prop] < b[prop] ? -1 : 1
-    : (a, b) => b[prop] < a[prop] ? -1 : 1
+    : (a, b) => a[prop] < b[prop] ? 1 : -1
 
     return this.sort(objects, comparator);;
  },

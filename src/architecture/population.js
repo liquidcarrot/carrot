@@ -99,10 +99,10 @@ const Population = function(options) {
   founder.fitness = 0;
 
   // Create first species with first member, don't add other members since .speciate just clears them anyway
-  self.species.push(new Species(founder))
+  self.species.push(new Species(founder, { gen: 0 }))
 
-  // Set a same network as all-time-best
-  self.allTimeBest = founder;
+  // Set same network as all-time-best
+  self.best = founder;
 
   /**
    * Applies the mutation-scheme dictated by Neat to the provided network.
@@ -118,7 +118,7 @@ const Population = function(options) {
    * 
    * @return {Network} A network mutated by the Neat mutation spec.
    * 
-   * @todo Remove hard-coded chance thresholds
+   * @todo Remove hard-coded chance cutoffs
    * @todo Consider making this a specialized mutate function: `neatMutate`
    */
   self.mutate = function (network, options={ neat: true }) {
@@ -173,46 +173,49 @@ const Population = function(options) {
    * 
    * @param {Species[]} speciesArray An array of population Species objects
    * @param {Object} config A configuration object
-   * @param {number} config.threshold A threshold that determines how much of the population inside each species survives. Higher numbers means more survive.
+   * @param {number} config.cutoff A cutoff that determines how much of the population inside each species survives. Higher numbers means more survive.
    * 
    * @returns {Species[]} A new species array with its species members pruned and its descendants fitness properties updated.
    * 
    * @todo Add tests
    */
-  self.removeMembers = function (speciesArray, config={ threshold: 0.5 }) {
+  self.removeMembers = function (speciesArray, config={ cutoff: 0.5, stagnationLimit: 15 }) {
 
     // Code is deliberately monolithic, avoids repeated traversals of various arrays
-    const populationTotal = 0;
+    let populationTotal = 0;
     for(let i = 0; i < speciesArray.length; i++) {
       const s = speciesArray[i];
       
       // If species is stagnant, remove it immediately
-      if(s.stagnation > 15) {
+      if(s.stagnation > config.stagnationLimit) {
+        console.log("Removing stagnant species: ", i)
         speciesArray.splice(i,1);
         i--; continue; // Go to the next species
-      } 
-
-      // Otherwise just remove worst performers
-      s.members = s.sift(s.members, config.threshold);
+      }
       
+      // Otherwise just remove worst performers
+      s.members = s.sift(s.members, config.cutoff);
+
       // Update member fitnesses, sum species fitness
       let total = 0;
       const memberCount = s.members.length;
-      for(let i = 0; i < memberCount; i++) {
-        member = s.members[i];
-  
+      for(let j = 0; j < memberCount; j++) {
+        member = s.members[j];
+
         // Neat spec: adjust fitness to species members length
         member.sharedFitness = member.fitness / memberCount;
+
         total += member.sharedFitness;
       }
-  
+
       // Store species fitness, sum population fitness
       s.averageFitness = total / memberCount;
-      populationalTotal += s.averageFitness;
+
+      populationTotal += s.averageFitness;
     }
 
     // Adjust population, non-obvious side-effect added for performance reasons 
-    population.averageSpeciesFitness = populationTotal / speciesArray.length;
+    self.totalFitness = populationTotal;
 
     return speciesArray;
   }
@@ -234,25 +237,26 @@ const Population = function(options) {
    * @todo Abstract child creation into a helper function
    */
   self.replaceMembers = function (speciesArray, totalMembers) {
-     
     const kids = [];
-    for (let i = speciesArray.length; i > 2; i--) {
+    for (let i = 0; i < speciesArray.length; i++) {
       const s = speciesArray[i];
 
       // Calculate how many kids a species gets
-      let alloted = Math.floor(s.averageFitness / self.averageSpeciesFitness * totalMembers);
+      let alloted = Math.floor(s.averageFitness / self.totalFitness * totalMembers);
 
-      // If species gets no kids, remove it and go to next
-      if(alloted <= 0) { self.species.splice(j,1); continue; }
+      // console.log(`Generation: ${self.generation}
+      //   Species average fitness: ${s.averageFitness}
+      //   Population totalFitness: ${self.totalFitness}
+      //   Children alloted: ${alloted}`)
 
-      // Species has more than 5 networks
-      if(species.members.length > 5) {
-        // Add best without any mutation
-        kids.push(s.bestGenome.clone());
+      // If species gets no kids, remove it and go to next, top species is always protected from this
+      if(i > 0 && alloted <= 0) { self.species.splice(i,1); i--; continue; }
 
-        // Then reduce alloted offspring by one
-        alloted -= 1;
-      }
+      // Add species best of all time without any mutation
+      kids.push(s.greatest.clone());
+
+      // Then reduce alloted offspring by one
+      alloted -= 1;
 
       // Get offspring and mutate
       for (let j = 0; j < alloted; j++) {
@@ -260,12 +264,15 @@ const Population = function(options) {
       }
     }
 
-    // Take care of the two best species which are always protected
-    // CODE FOR TAKING CARE OF TOP TWO SPECIES GOES HERE
+    // We're below target population-size due to rounding errors
+    if(kids.length < totalMembers) {
+      // Copy population's best (elitism)
+      kids.push(self.best.clone())
 
-    // If missing members due to rounding, get more from best species
-    while (kids.length < totalMembers) {
-      kids.push(self.species[0].getChild());
+      // Fill rest with top species children
+      while (kids.length < totalMembers) {
+        kids.push(self.species[0].getChild());
+      }
     }
 
     return kids;
@@ -289,45 +296,67 @@ const Population = function(options) {
    * @todo Spin-off managePopulation into its own function
    * @todo Add createOffspring code
    */
-  self.evolve = async function(options={}) {
+  self.evolve = function(options={}) {
 
     // Check if fitnesses need to be set
-    if(util.isNil(self.members[0].fitness)) {
-      // Calculate poulation members fitness
-      self.members = self.evaluate(self.members, self.dataset, self.cost);
+    for(let i = 0; i < self.members.length; i++) {
+      if(util.isNil(self.members[i].fitness)) {
+        // Calculate poulation members fitness
+        self.members = self.evaluate(self.members, self.dataset, self.cost);
+        break; // done
+      }
     }
 
-    // Sort member networks by fitness, in descending order
-    self.members = util.sortObjects(members, "fitness", false); // sorting now means species members will also be sorted, saves 1 nested loop + a repeat loop
+    // Sorting member networks now means species members will also be sorted, saves 1 nested loop
+    self.members = self.sort(self.members, "fitness", false);
+
+    // console.log("Entire population's fitness", self.members.map(m => m.fitness.toFixed(4)))
 
     // Reset population stagnation if fitness improvement
-    if(self.members[0].fitness > self.allTimeBest) {
-      self.allTimeBest = self.members[0].fitness;
+    if(self.members[0].fitness > self.best.fitness) {
+      self.best = self.members[0];
       self.stagnation = 0;
+      console.log("New population best, fitness:", self.best.fitness)
     }
     // otherwise increase the stagnation
     else {
+      console.log("Increasing population stagnation")
       self.stagnation += 1;
     }
 
     // Break population members into their respective species, update fitness records
     self.species = self.speciate(self.members, self.species);
 
+    // console.log("Before sorting", self.species.map(s => s.members.map(m => m.fitness.toFixed(4))))
+
+    // Sort the species themselves in descending order of current top-fitness
+    self.species = self.sort(self.species, "bestFitness", false);
+
+    // console.log("After sorting", self.species.map(s => s.members.map(m => m.fitness.toFixed(4))))
+
     // Giant helper function
     const managePopulation = function (species, members) {
+
       // Remove worst niche members
-      self.species = self.removeMembers(species, { threshold: 0.5 });
+      self.species = self.removeMembers(species, { cutoff: 0.5, stagnationLimit: self.speciesStagnantLimit });
 
       // Replace population with mutated offspring.
-      members = self.replaceMembers(species, members.length);
+      members = self.replaceMembers(self.species, members.length);
 
       self.generation += 1;
-
       return members;
     }
+    if((self.stagnation > self.stagnantLimit)) {
+      console.log("RESTARTING SEARCH FROM TOP 2 SPECIES")
 
-    // If population fitness is constant for too long, only top 2 species reproduce
-    return (self.stagnant > self.stagnantLimit) ? managePopulation([self.species[0], self.species[1]], self.members) : managePopulation(self.species, self.members); 
+      // Reset stagnation
+      self.stagnation = 0;
+
+      return managePopulation([self.species[0], self.species[1]], self.members)
+    }
+
+    // Return all species normally
+    return managePopulation(self.species, self.members); 
   };
 
   /**
@@ -348,7 +377,6 @@ const Population = function(options) {
    * @return {Species[]} Descendingly sorted species array with corresponding members of the population inside, also descendingly sorted
    * 
    * @todo Consider making this a Rust + WASM function
-   * @todo Add tests for species performance management
    * @todo Benchmark
    */
   self.speciate = function (members, speciesArray) {    
@@ -374,10 +402,12 @@ const Population = function(options) {
             // Update the current best
             species.setBest(genome);
 
-            // If all-time best, reset stagnation & update best of all time
-            if(genome.fitness > species.allTimeBest) {
-              species.resetStagnation();
+            // If all-time best, update absolute best & reset stagnation
+            if(genome.fitness > species.greatest.fitness) {
+              console.log("New species best")
+              species.representative = genome; // update the species rep to be the GOAT
               species.setGOAT(genome);
+              species.resetStagnation();
             }
             
             // else, species is stagnant
@@ -389,9 +419,14 @@ const Population = function(options) {
           continue outer; // <- Use "outer" to skip to next genome.
         }
       }
-     
+
       // Only runs if genome was not placed in species
       speciesArray.push(new Species(genome));
+    }
+
+    // Check for any species that became deserted
+    for(let i = 0; i < speciesArray.length; i++) {
+      if(speciesArray[i].members.length < 1) { speciesArray.splice(i, 1); i--; console.log("Removing deserted species")}
     }
 
     return speciesArray;
@@ -423,8 +458,20 @@ const Population = function(options) {
     }
 
     return members;
-  } 
+  }
 
+  /**
+   * Sorts population members.
+   * 
+   * @param {Network[]} members Array of networks to sort
+   * @param {string} property Property to sort network objects by
+   * @param {boolean} ascending Flag to trigger whether or not to sort in ascending order
+   * 
+   * @return {Network[]} Sorted networks
+   */
+  self.sort = function (members, prop, ascending) {
+    return util.sortObjects(members, prop, ascending);
+  }
 }
 
 Population.default = {
@@ -437,12 +484,13 @@ Population.default = {
     fitnessFn: function(network, set, cost) {
       return network.test(set, cost).error
     },
-    fitnessPopulation: false,
     mutation: methods.mutation.NEATSTANDARD,
-    selection: methods.selection.POWER,
+    selection: methods.selection.TOURNAMENT,
     maxNodes: Infinity,
     maxConns: Infinity,
     maxGates: Infinity,
+    stagnantLimit: 20,
+    speciesStagnantLimit: 15,
     // internal id management variables, leaving here in case user would like to override these
     nodeIds: { last: 0 },
     connIds: { last: 0 },

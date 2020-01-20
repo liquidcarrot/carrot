@@ -1131,6 +1131,12 @@ describe('Network', function(){
 
   describe('network.mutate()', function() {
 
+    it('({}) => {Error}', function () {
+      const network = new Network(2,2);
+
+      expect(() => network.mutate({ name: "CHEESE"}).throw(Error)
+    })
+
     describe('ADD_NODE', function() {
       it('originalNetwork != newNetwork | when mutation possible', function() {
         let network = new Network(1,1)

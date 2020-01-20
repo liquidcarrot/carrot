@@ -53,7 +53,7 @@ function Node(options) {
     id: -1, // Indicates bogus id, id's must be zero or larger
     type: "hidden",
     bias: Math.random() * 2 - 1,
-    squash: methods.activation.LOGISTIC,
+    squash: methods.activation.NEAT_SIGMOID,
     activation: 0,
     state: 0,
     old: 0,
