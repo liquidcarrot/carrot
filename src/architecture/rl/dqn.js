@@ -199,8 +199,8 @@ DQN.prototype = {
     } else if (this.isDoubleDQN) {
       // Exploit with Double-DQN
       // Take action which is maximum of both networks by summing them up
-      let activation = this.network.activate(state, {no_trace: true});
-      let activationB = this.networkB.activate(state, {no_trace: true});
+      let activation = this.network.activate(state, {trace: false});
+      let activationB = this.networkB.activate(state, {trace: false});
 
       for (let i = 0; i < prohibitedActions.length; i++) {
         activation[prohibitedActions[i]] = -1;
@@ -211,7 +211,7 @@ DQN.prototype = {
       action = Utils.getMaxValueIndex(sum);
     } else {
       // Exploit
-      let actions = this.network.activate(state, {no_trace: true});
+      let actions = this.network.activate(state, {trace: false});
       for (let i = 0; i < prohibitedActions.length; i++) {
         actions[prohibitedActions[i]] = -1;
       }
@@ -287,8 +287,8 @@ DQN.prototype = {
 
     // Compute target Q value, called without traces so it won't affect backpropagation later
     let nextActions = !this.isDoubleDQN || chooseNetwork === 'A'
-      ? this.network.activate(experience.nextState, {no_trace: true})
-      : this.networkB.activate(experience.nextState, {no_trace: true});
+      ? this.network.activate(experience.nextState, {trace: false})
+      : this.networkB.activate(experience.nextState, {trace: false});
     let actionIndex = this.isUsingSARSA
       ? experience.nextAction
       : Utils.getMaxValueIndex(nextActions);
@@ -301,11 +301,11 @@ DQN.prototype = {
       // See here: https:// bit.ly/2rjp1gS
       targetQValue = experience.reward + this.gamma *
         (chooseNetwork === 'A'
-          ? this.networkB.activate(experience.nextState, {no_trace: true})[actionIndex]
-          : this.network.activate(experience.nextState, {no_trace: true})[actionIndex]) -
+          ? this.networkB.activate(experience.nextState, {trace: false})[actionIndex]
+          : this.network.activate(experience.nextState, {trace: false})[actionIndex]) -
         (chooseNetwork === 'A'
-          ? this.network.activate(experience.state, {no_trace: true})[experience.action]
-          : this.networkB.activate(experience.state, {no_trace: true})[experience.action]);
+          ? this.network.activate(experience.state, {trace: false})[experience.action]
+          : this.networkB.activate(experience.state, {trace: false})[experience.action]);
     } else if (this.isUsingSARSA) {
       // SARSA
       targetQValue = experience.reward

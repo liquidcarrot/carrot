@@ -259,7 +259,7 @@ DDPG.prototype = {
     this.critic.activate(stateActionArr);
     let actorActivation = this.actor.activate(experience.state);
 
-    let nextQ = this.criticTarget.activate(experience.nextState.concat(this.actorTarget.activate(experience.nextState, {no_trace: true})), {no_trace: true});
+    let nextQ = this.criticTarget.activate(experience.nextState.concat(this.actorTarget.activate(experience.nextState, {trace: false})), {trace: false});
     let qPrime = [];
     for (let i = 0; i < nextQ.length; i++) {
       qPrime.push(experience.isFinalState
@@ -270,15 +270,15 @@ DDPG.prototype = {
     let criticLearningRate = Math.max(this.learningRateCriticMin, Rate.EXP(this.learningRateCritic, this.timeStep, {gamma: this.learningRateCriticDecay}));
     this.critic.propagate(criticLearningRate, 0, true, qPrime);
 
-    let policyLoss = -Utils.mean(this.critic.activate(experience.state.concat(actorActivation), {no_trace: true}));
+    let policyLoss = -Utils.mean(this.critic.activate(experience.state.concat(actorActivation), {trace: false}));
     actorActivation[Utils.getMaxValueIndex(experience.action)] *= policyLoss;
     let actorLearningRate = Math.max(this.learningRateActorMin, Rate.EXP(this.learningRateActor, this.timeStep, {gamma: this.learningRateActorDecay}));
     this.actor.propagate(actorLearningRate, 0, true, actorActivation);
 
     // Learning the actorTarget and criticTarget networks
-    let actorParameters = this.actor.activate(experience.state, {no_trace: true});
+    let actorParameters = this.actor.activate(experience.state, {trace: false});
     let actorTargetParameters = this.actorTarget.activate(experience.state);
-    let criticParameters = this.critic.activate(stateActionArr, {no_trace: true});
+    let criticParameters = this.critic.activate(stateActionArr, {trace: false});
     let criticTargetParameters = this.criticTarget.activate(stateActionArr);
     for (let i = 0; i < actorParameters.length; i++) {
       actorTargetParameters[i] = this.theta * actorParameters[i] + (1 - this.theta) * actorTargetParameters[i];
