@@ -191,7 +191,7 @@ DQN.prototype = {
     // epsilon greedy strategy | explore > random ? explore : exploit
     let currentExploreRate = Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay}));
     let action;
-    if (currentExploreRate > Math.random() || this.timeStep < this.startLearningThreshold) {
+    if (this.isTraining && (currentExploreRate > Math.random() || this.timeStep < this.startLearningThreshold)) {
       // Explore
       do {
         action = Utils.randomInt(0, this.numActions - 1);
