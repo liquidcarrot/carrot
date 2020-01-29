@@ -29,6 +29,19 @@
     </a>
 </p>
 
+<h4>Top Sponsors</h4>
+
+<table>
+ <thead>
+  <tr>
+   <th>
+    <p align="center">Solinfra</p> 
+    <a href="https://www.solinfra.io/" alt="Solinfra"><img src="https://avatars0.githubusercontent.com/u/53709700?s=400&u=5d4523af8b372ed3be43c23bb8ed1003f2f234a4&v=4" alt="D-Nice Profile Pitcure" width="50px" /></a>
+   </th>
+  </tr>
+ </thead>
+</table>
+
 <p>
   Carrot is an architecture-free neural network library built around neuroevolution
 </p>
