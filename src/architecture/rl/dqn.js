@@ -43,7 +43,7 @@ const Loss = require('../../methods/cost');
  * @todo Maybe automatically suggest default values for the num of states and actions
  * @todo Allow Liquid networks trained with NEAT
  * @todo consider default value of isDoubleDQN to be true
-*/
+ */
 function DQN(numStates, numActions, options) {
   // Training specific variables
   this.tdErrorClamp = Utils.RL.getOption(options, 'tdErrorClamp', 1); // td error clamp for training stability
@@ -54,8 +54,7 @@ function DQN(numStates, numActions, options) {
   this.gamma = Utils.RL.getOption(options, 'gamma', 0.7); // future reward discount factor
   this.loss = Utils.RL.getOption(options, 'loss', Loss.ABS);
   this.lossOptions = Utils.RL.getOption(options, 'lossOptions', {});
-  this.startLearningThreshold = Utils.RL.getOption(options, 'startLearningThreshold', 0);
-
+  this.startLearningThreshold = Utils.RL.getOption(options, 'startLearningThreshold', 10);
   // Network creation
   this.numActions = numActions;
   this.hiddenNeurons = Utils.RL.getOption(options, 'hiddenNeurons', [10]);
@@ -67,7 +66,7 @@ function DQN(numStates, numActions, options) {
 
   // Learning rate
   this.learningRate = Utils.RL.getOption(options, 'learningRate', 0.1); // AKA alpha value function learning rate
-  this.learningRateDecay = Utils.RL.getOption(options, 'learningRateDecay', 0.99); // AKA alpha value function learning rate
+  this.learningRateDecay = Utils.RL.getOption(options, 'learningRateDecay', 0.999); // AKA alpha value function learning rate
   this.learningRateMin = Utils.RL.getOption(options, 'learningRateMin', 0.01); // AKA alpha value function learning rate
   if (this.isDoubleDQN) {
     this.learningRateB = Utils.RL.getOption(options, 'learningRateB', this.learningRate); // AKA alpha value function learning rate
@@ -76,12 +75,12 @@ function DQN(numStates, numActions, options) {
   }
 
   // Experience ("Memory")
-  let experienceSize = Utils.RL.getOption(options, 'experienceSize', 50000); // size of experience replay
+  let experienceSize = Utils.RL.getOption(options, 'experienceSize', 10000); // size of experience replay
   let noisyPER = Utils.RL.getOption(options, 'noisyPER', null);
   this.replayBuffer = Utils.RL.getOption(options, 'experience', noisyPER === null
     ? new ReplayBuffer(experienceSize, 0)
     : new ReplayBuffer(experienceSize, noisyPER)); // experience
-  this.learningStepsPerIteration = Utils.RL.getOption(options, 'learningStepsPerIteration', 20); // number of time steps before we add another experience to replay memory
+  this.learningStepsPerIteration = Utils.RL.getOption(options, 'learningStepsPerIteration', 10); // number of time steps before we add another experience to replay memory
 
   // Exploration / Exploitation management
   this.explore = Utils.RL.getOption(options, 'explore', 0.3); // AKA epsilon for epsilon-greedy policy

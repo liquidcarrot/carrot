@@ -66,6 +66,10 @@ ReplayBuffer.prototype = {
     return miniBatch;
   },
 
+  getAllExperiences: function() {
+    return this.buffer;
+  },
+
   /**
    * This method creates a mini batch of buffered experiences.
    * Higher loss values --> higher probability
