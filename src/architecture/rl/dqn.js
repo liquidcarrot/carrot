@@ -245,21 +245,20 @@ DQN.prototype = {
 
     // Update Q function | temporal difference method currently hardcoded
     let loss = 1;
-    if (this.reward != null && this.isTraining && this.timeStep >= this.startLearningThreshold) {
+    if (this.reward != null && this.isTraining) {
       let experience = new Experience(this.state, this.action, normalizedReward, this.nextState, this.nextAction, isFinalState);
-      // Learn from current estimated reward to understand how wrong agent is
-      experience.loss = this.study(experience);
-      loss = experience.loss;
-
       this.replayBuffer.add(experience);
+      if (this.timeStep >= this.startLearningThreshold) {
+        experience.loss = this.study(experience);
+        loss = experience.loss;
+        let miniBatch = this.isUsingPER
+          ? this.replayBuffer.getMiniBatchWithPER(this.learningStepsPerIteration)
+          : this.replayBuffer.getRandomMiniBatch(this.learningStepsPerIteration);
 
-      let miniBatch = this.isUsingPER
-        ? this.replayBuffer.getMiniBatchWithPER(this.learningStepsPerIteration)
-        : this.replayBuffer.getRandomMiniBatch(this.learningStepsPerIteration);
-
-      // Sample the mini batch
-      for (let i = 0; i < miniBatch.length; i++) {
-        this.study(miniBatch[i]);
+        // Sample the mini batch
+        for (let i = 0; i < miniBatch.length; i++) {
+          this.study(miniBatch[i]);
+        }
       }
     }
     this.timeStep++;
