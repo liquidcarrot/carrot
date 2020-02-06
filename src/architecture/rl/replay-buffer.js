@@ -38,6 +38,11 @@ ReplayBuffer.prototype = {
    * @param {Experience} experience the experience to add
    */
   add: function(experience) {
+    if (experience.state === undefined || experience.state === null
+      || experience.action === undefined || experience.action === null
+      || experience.reward === undefined || experience.reward === null) {
+      return;
+    }
     if (this.buffer.length >= this.maxSize) {
       this.buffer.shift(); // Buffer is full --> remove first entry
     }
