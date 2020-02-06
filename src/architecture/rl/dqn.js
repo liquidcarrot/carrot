@@ -320,7 +320,7 @@ DQN.prototype = {
       ? this.network.activate(experience.state)
       : this.networkB.activate(experience.state);
 
-    let temp = predictedReward;
+    let temp = [...predictedReward];
     predictedReward[experience.action] = targetQValue;
     let tdError = this.loss(predictedReward, temp, this.lossOptions);
 
