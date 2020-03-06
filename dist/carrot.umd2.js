@@ -143,14 +143,14 @@ return /******/ (function(modules) { // webpackBootstrap
 * @prop rate
 */
 const methods = {
-  activation: __webpack_require__(7),
+  activation: __webpack_require__(8),
   mutation: __webpack_require__(18),
   selection: __webpack_require__(19),
   crossover: __webpack_require__(20),
   cost: __webpack_require__(5),
   gating: __webpack_require__(21),
   connection: __webpack_require__(22),
-  rate: __webpack_require__(8)
+  rate: __webpack_require__(9)
 };
 
 module.exports = methods;
@@ -17272,11 +17272,11 @@ module.exports = methods;
 /***/ (function(module, exports, __webpack_require__) {
 
 const config = __webpack_require__(3)
-const multi = __webpack_require__(10)
+const multi = __webpack_require__(11)
 const methods = __webpack_require__(0)
 const Group = __webpack_require__(6)
-const Layer = __webpack_require__(12)
-const Connection = __webpack_require__(9)
+const Layer = __webpack_require__(13)
+const Connection = __webpack_require__(10)
 const Node = __webpack_require__(4)
 const _ = __webpack_require__(1)
 
@@ -20322,7 +20322,7 @@ module.exports = config;
 
 const _ = __webpack_require__(1);
 const methods = __webpack_require__(0);
-const Connection = __webpack_require__(9);
+const Connection = __webpack_require__(10);
 const config = __webpack_require__(3);
 // const Group = require("./group");
 // const Layer = require("./layer");
@@ -21983,6 +21983,172 @@ module.exports = Group;
 
 /***/ }),
 /* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Network = __webpack_require__(2);
+
+/**
+ * Generates a random integer between min and max.
+ *
+ * @function randomInt
+ *
+ * @param {number} min lower bound
+ * @param {number} max upper bound
+ * @returns {int} random integer between min and max
+ */
+let randomInt = function(min, max) {
+  return Math.floor(Math.random() * (max + 1 - min) + min);
+};
+
+let y2, useLast = false;
+
+/**
+ * This method puts gaussian noise onto a value
+ *
+ * @param {number} mean the value with the highest probability
+ * @param {number} standardDeviation
+ * @returns {number} noisy value
+ */
+let gaussianNoise = function(mean, standardDeviation) {
+  let y1;
+  if (useLast) {
+    y1 = y2;
+    useLast = false;
+  } else {
+    let x1, x2, w;
+    do {
+      x1 = 2.0 * Math.random() - 1.0;
+      x2 = 2.0 * Math.random() - 1.0;
+      w = x1 * x1 + x2 * x2;
+    } while (w >= 1.0);
+    w = Math.sqrt((-2.0 * Math.log(w)) / w);
+    y1 = x1 * w;
+    y2 = x2 * w;
+    useLast = true;
+  }
+
+  return mean + standardDeviation * y1;
+};
+
+/**
+ * This method adds noise to a whole network.
+ * So every node, connection and gate needs to be noised .
+ *
+ * @param {Network} network input network
+ * @param {number} standardDeviation
+ * @returns {Network} noisy network
+ */
+let addGaussianNoiseToNetwork = function(network, standardDeviation = 0.2) {
+  let copy = Network.fromJSON(network.toJSON());
+  for (let i = 0; i < copy.nodes.length; i++) {
+    copy.nodes[i].bias = Math.min(1, Math.max(-1, gaussianNoise(copy.nodes[i].bias, standardDeviation)));
+  }
+  for (let i = 0; i < copy.gates.length; i++) {
+    copy.gates[i].bias = Math.min(1, Math.max(-1, gaussianNoise(copy.gates[i].bias, standardDeviation)));
+  }
+  for (let i = 0; i < copy.connections.length; i++) {
+    copy.connections[i].weight = Math.min(1, Math.max(-1, gaussianNoise(copy.connections[i].weight, standardDeviation)));
+  }
+  return copy;
+};
+
+/**
+ * This method returns the index of the element with the highest value
+ *
+ * @function getMaxValueIndex
+ *
+ * @param {number[]} arr the input array
+ * @returns {int} the index which the highest value
+ */
+let getMaxValueIndex = function(arr) {
+  let index = 0;
+  let maxValue = arr[0];
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] > maxValue) {
+      maxValue = arr[i];
+      index = i;
+    }
+  }
+  return index;
+};
+
+/**
+ * This method shuffles an array.
+ *
+ * @function shuffle
+ *
+ * @param {T[]} arr input array
+ * @returns {T[]} shuffled array
+ *
+ * Source: https://stackoverflow.com/a/2450976
+ */
+let shuffle = function(arr) {
+  let j, x, i;
+  for (i = arr.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    x = arr[i];
+    arr[i] = arr[j];
+    arr[j] = x;
+  }
+  return arr;
+};
+
+/**
+ * This method picks a random element from an given array.
+ *
+ * @function pickRandom
+ *
+ * @param {T[]} arr input array
+ * @returns {T} the randomly chosen element
+ */
+let pickRandom = function(arr) {
+  return arr[randomInt(0, arr.length - 1)];
+};
+
+
+/**
+ * This method returns the mean value from an array.
+ *
+ * @param {number[]} arr input array
+ * @returns {number} mean value
+ */
+let mean = function(arr) {
+  let sum = 0;
+  for (let i = 0; i < arr.length; i++) {
+    sum += arr[i];
+  }
+  return sum / arr.length;
+};
+
+// Reinforcement learning specific functions
+RL = {
+  /**
+   * This function will get the value from the fieldName, if present, otherwise returns the defaultValue
+   *
+   * @param {*} opt JSON object which contains all custom options
+   * @param {String} fieldName
+   * @param {*} defaultValue
+   * @return {*} the value of the fieldName if present, otherwise the defaultValue
+   */
+  getOption: function(opt, fieldName, defaultValue) {
+    return typeof opt === 'undefined' || typeof opt[fieldName] === 'undefined'
+      ? defaultValue
+      : opt[fieldName];
+  },
+};
+
+module.exports.getMaxValueIndex = getMaxValueIndex;
+module.exports.shuffle = shuffle;
+module.exports.randomInt = randomInt;
+module.exports.pickRandom = pickRandom;
+module.exports.mean = mean;
+module.exports.gaussianNoise = gaussianNoise;
+module.exports.addGaussianNoiseToNetwork = addGaussianNoiseToNetwork;
+module.exports.RL = RL;
+
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports) {
 
 /**
@@ -22557,7 +22723,7 @@ module.exports = activation;
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports) {
 
 /**
@@ -22711,7 +22877,7 @@ module.exports = rate;
 
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const _ = __webpack_require__(1);
@@ -22806,7 +22972,7 @@ module.exports = Connection;
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -22966,7 +23132,7 @@ for(var i in multi) { module.exports[i] = multi[i]; }
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -23156,7 +23322,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const _ = __webpack_require__(1);
@@ -23449,7 +23615,7 @@ module.exports = Layer;
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 /**
@@ -23474,172 +23640,6 @@ function Experience(state, action, reward, nextState, nextAction, isFinalState) 
 }
 
 module.exports = Experience;
-
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const Network = __webpack_require__(2);
-
-/**
- * Generates a random integer between min and max.
- *
- * @function randomInt
- *
- * @param {number} min lower bound
- * @param {number} max upper bound
- * @returns {int} random integer between min and max
- */
-let randomInt = function(min, max) {
-  return Math.floor(Math.random() * (max + 1 - min) + min);
-};
-
-let y2, useLast = false;
-
-/**
- * This method puts gaussian noise onto a value
- *
- * @param {number} mean the value with the highest probability
- * @param {number} standardDeviation
- * @returns {number} noisy value
- */
-let gaussianNoise = function(mean, standardDeviation) {
-  let y1;
-  if (useLast) {
-    y1 = y2;
-    useLast = false;
-  } else {
-    let x1, x2, w;
-    do {
-      x1 = 2.0 * Math.random() - 1.0;
-      x2 = 2.0 * Math.random() - 1.0;
-      w = x1 * x1 + x2 * x2;
-    } while (w >= 1.0);
-    w = Math.sqrt((-2.0 * Math.log(w)) / w);
-    y1 = x1 * w;
-    y2 = x2 * w;
-    useLast = true;
-  }
-
-  return mean + standardDeviation * y1;
-};
-
-/**
- * This method adds noise to a whole network.
- * So every node, connection and gate needs to be noised .
- *
- * @param {Network} network input network
- * @param {number} standardDeviation
- * @returns {Network} noisy network
- */
-let addGaussianNoiseToNetwork = function(network, standardDeviation = 0.2) {
-  let copy = Network.fromJSON(network.toJSON());
-  for (let i = 0; i < copy.nodes.length; i++) {
-    copy.nodes[i].bias = gaussianNoise(copy.nodes[i].bias, standardDeviation);
-  }
-  for (let i = 0; i < copy.gates.length; i++) {
-    copy.gates[i].bias = gaussianNoise(copy.gates[i].bias, standardDeviation);
-  }
-  for (let i = 0; i < copy.connections.length; i++) {
-    copy.connections[i].weight = gaussianNoise(copy.connections[i].weight, standardDeviation);
-  }
-  return copy;
-};
-
-/**
- * This method returns the index of the element with the highest value
- *
- * @function getMaxValueIndex
- *
- * @param {number[]} arr the input array
- * @returns {int} the index which the highest value
- */
-let getMaxValueIndex = function(arr) {
-  let index = 0;
-  let maxValue = arr[0];
-  for (let i = 1; i < arr.length; i++) {
-    if (arr[i] > maxValue) {
-      maxValue = arr[i];
-      index = i;
-    }
-  }
-  return index;
-};
-
-/**
- * This method shuffles an array.
- *
- * @function shuffle
- *
- * @param {T[]} arr input array
- * @returns {T[]} shuffled array
- *
- * Source: https://stackoverflow.com/a/2450976
- */
-let shuffle = function(arr) {
-  let j, x, i;
-  for (i = arr.length - 1; i > 0; i--) {
-    j = Math.floor(Math.random() * (i + 1));
-    x = arr[i];
-    arr[i] = arr[j];
-    arr[j] = x;
-  }
-  return arr;
-};
-
-/**
- * This method picks a random element from an given array.
- *
- * @function pickRandom
- *
- * @param {T[]} arr input array
- * @returns {T} the randomly chosen element
- */
-let pickRandom = function(arr) {
-  return arr[randomInt(0, arr.length - 1)];
-};
-
-
-/**
- * This method returns the mean value from an array.
- *
- * @param {number[]} arr input array
- * @returns {number} mean value
- */
-let mean = function(arr) {
-  let sum = 0;
-  for (let i = 0; i < arr.length; i++) {
-    sum += arr[i];
-  }
-  return sum / arr.length;
-};
-
-// Reinforcement learning specific functions
-RL = {
-  /**
-   * This function will get the value from the fieldName, if present, otherwise returns the defaultValue
-   *
-   * @param {*} opt JSON object which contains all custom options
-   * @param {String} fieldName
-   * @param {*} defaultValue
-   * @return {*} the value of the fieldName if present, otherwise the defaultValue
-   */
-  getOption: function(opt, fieldName, defaultValue) {
-    return typeof opt === 'undefined' || typeof opt[fieldName] === 'undefined'
-      ? defaultValue
-      : opt[fieldName];
-  },
-};
-
-module.exports.getMaxValueIndex = getMaxValueIndex;
-module.exports.shuffle = shuffle;
-module.exports.randomInt = randomInt;
-module.exports.pickRandom = pickRandom;
-module.exports.mean = mean;
-module.exports.gaussianNoise = gaussianNoise;
-module.exports.addGaussianNoiseToNetwork = addGaussianNoiseToNetwork;
-module.exports.RL = RL;
 
 
 /***/ }),
@@ -23672,8 +23672,8 @@ module.exports = g;
 /* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const Experience = __webpack_require__(13);
-const Utils = __webpack_require__(14);
+const Experience = __webpack_require__(14);
+const Utils = __webpack_require__(7);
 
 /**
  * Creates a replay buffer with a maximum size of experience entries.
@@ -23809,22 +23809,23 @@ module.exports = ReplayBuffer;
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;const Carrot = {
-  activation: __webpack_require__(7),
+  activation: __webpack_require__(8),
   cost: __webpack_require__(5),
   methods: __webpack_require__(0),
-  Connection: __webpack_require__(9),
+  Connection: __webpack_require__(10),
   architect: __webpack_require__(24),
   Network: __webpack_require__(2),
   config: __webpack_require__(3),
   Group: __webpack_require__(6),
-  Layer: __webpack_require__(12),
+  Layer: __webpack_require__(13),
   Node: __webpack_require__(4),
   Neat: __webpack_require__(36),
   Population: __webpack_require__(37),
   GAN: __webpack_require__(38),
-  multi: __webpack_require__(10),
+  multi: __webpack_require__(11),
   DQN: __webpack_require__(39),
   DDPG: __webpack_require__(40),
+  utils: __webpack_require__(7),
 };
 
 // CommonJS & AMD
@@ -23856,7 +23857,7 @@ if (typeof window === 'object') {
 /* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const activation = __webpack_require__(7);
+const activation = __webpack_require__(8);
 
 /**
  *
@@ -24588,7 +24589,7 @@ module.exports = function(module) {
 const methods = __webpack_require__(0);
 const Network = __webpack_require__(2);
 const Group = __webpack_require__(6);
-const Layer = __webpack_require__(12);
+const Layer = __webpack_require__(13);
 const Node = __webpack_require__(4);
 const _ = __webpack_require__(1);
 const assert = __webpack_require__(31)
@@ -25301,7 +25302,7 @@ TestWorker.prototype = {
   }
 };
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(11), "/"))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(12), "/"))
 
 /***/ }),
 /* 27 */
@@ -25616,7 +25617,7 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(11)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(12)))
 
 /***/ }),
 /* 29 */
@@ -25624,7 +25625,7 @@ var substr = 'ab'.substr(-1) === 'b'
 
 module.exports = TestWorker;
 
-var multi = __webpack_require__(10);
+var multi = __webpack_require__(11);
 
 /**
 * Creates a web worker process for running tests
@@ -27103,7 +27104,7 @@ function callbackify(original) {
 }
 exports.callbackify = callbackify;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(11)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(12)))
 
 /***/ }),
 /* 34 */
@@ -28604,9 +28605,9 @@ GAN.prototype = {
 
 const Network = __webpack_require__(2);
 const ReplayBuffer = __webpack_require__(16);
-const Experience = __webpack_require__(13);
-const Utils = __webpack_require__(14);
-const Rate = __webpack_require__(8);
+const Experience = __webpack_require__(14);
+const Utils = __webpack_require__(7);
+const Rate = __webpack_require__(9);
 const Loss = __webpack_require__(5);
 
 /**
@@ -28852,7 +28853,7 @@ DQN.prototype = {
     if (this.reward != null && this.isTraining) {
       let experience = new Experience(this.state, this.action, normalizedReward, this.nextState, this.nextAction, isFinalState);
       this.replayBuffer.add(experience);
-      if (this.timeStep >= this.startLearningThreshold) {
+      if (this.timeStep > this.startLearningThreshold) {
         experience.loss = this.study(experience);
         loss = experience.loss;
         let miniBatch = this.isUsingPER
@@ -28861,7 +28862,11 @@ DQN.prototype = {
 
         // Sample the mini batch
         for (let i = 0; i < miniBatch.length; i++) {
-          this.study(miniBatch[i]);
+          miniBatch[i].loss = this.study(miniBatch[i]);
+        }
+      } else if (this.timeStep === this.startLearningThreshold) {
+        for (let i = 0; i < this.replayBuffer.buffer.length; i++) {
+          this.replayBuffer.buffer[i].loss = this.study(this.replayBuffer.buffer[i]);
         }
       }
     }
@@ -28891,23 +28896,21 @@ DQN.prototype = {
     let nextActions = !this.isDoubleDQN || chooseNetwork === 'A'
       ? this.network.activate(experience.nextState, {trace: false})
       : this.networkB.activate(experience.nextState, {trace: false});
-    let actionIndex = this.isUsingSARSA
-      ? experience.nextAction
-      : Utils.getMaxValueIndex(nextActions);
+    let actionIndex = Utils.getMaxValueIndex(nextActions);
 
     let targetQValue;
     if (experience.isFinalState) {
       // For final state reward needs no discount factor
       targetQValue = experience.reward;
     } else if (this.isDoubleDQN) {
-      // See here: https:// bit.ly/2rjp1gS
+      // See here: https://miro.medium.com/max/534/1*NvvRn59pz-D1iSkBWpuIxA.png
       targetQValue = experience.reward + this.gamma *
         (chooseNetwork === 'A'
           ? this.networkB.activate(experience.nextState, {trace: false})[actionIndex]
           : this.network.activate(experience.nextState, {trace: false})[actionIndex]) -
-        (chooseNetwork === 'A'
-          ? this.network.activate(experience.state, {trace: false})[experience.action]
-          : this.networkB.activate(experience.state, {trace: false})[experience.action]);
+        (chooseNetwork !== 'A' ?
+          this.networkB.activate(experience.state, {trace: false})[experience.action]
+          : this.network.activate(experience.state, {trace: false})[experience.action]);
     } else if (this.isUsingSARSA) {
       // SARSA
       targetQValue = experience.reward
@@ -28915,18 +28918,16 @@ DQN.prototype = {
         - this.network.activate(experience.state)[actionIndex];
     } else {
       // Q-LEARNING
-      targetQValue = experience.reward
-        + this.gamma * nextActions[actionIndex];
+      targetQValue = experience.reward + this.gamma * nextActions[actionIndex];
     }
 
     // Predicted current reward | called with traces for backpropagation later
     let predictedReward = !this.isDoubleDQN || chooseNetwork === 'A'
       ? this.network.activate(experience.state)
       : this.networkB.activate(experience.state);
-
-    let temp = [...predictedReward];
+    //Loss
+    let tdError = Math.abs(targetQValue - predictedReward[experience.action]);
     predictedReward[experience.action] = targetQValue;
-    let tdError = this.loss(predictedReward, temp, this.lossOptions);
 
     // Clamp error for robustness
     if (Math.abs(tdError) > this.tdErrorClamp) {
@@ -29009,9 +29010,9 @@ module.exports = DQN;
 
 const Network = __webpack_require__(2);
 const ReplayBuffer = __webpack_require__(16);
-const Experience = __webpack_require__(13);
-const Utils = __webpack_require__(14);
-const Rate = __webpack_require__(8);
+const Experience = __webpack_require__(14);
+const Utils = __webpack_require__(7);
+const Rate = __webpack_require__(9);
 
 /**
  *
@@ -29054,8 +29055,8 @@ function DDPG(numStates, numActions, options) {
   let hiddenNeuronsActor = Utils.RL.getOption(options, 'hiddenNeuronsActor', [10]);
   let hiddenNeuronsCritic = Utils.RL.getOption(options, 'hiddenNeuronsCritic', hiddenNeuronsActor);
 
-  this.actor = Utils.RL.getOption(options, 'actor', new Network.architecture.Perceptron(numStates, hiddenNeuronsActor, numActions));
-  this.critic = Utils.RL.getOption(options, 'critic', new Network.architecture.Perceptron(numStates + numActions, hiddenNeuronsCritic, numActions));
+  this.actor = Utils.RL.getOption(options, 'actor', new Network.architecture.Perceptron(numStates, ...hiddenNeuronsActor, numActions));
+  this.critic = Utils.RL.getOption(options, 'critic', new Network.architecture.Perceptron(numStates + numActions, ...hiddenNeuronsCritic, numActions));
   this.actorTarget = Utils.RL.getOption(options, 'actorTarget', Network.fromJSON(this.actor.toJSON()));
   this.criticTarget = Utils.RL.getOption(options, 'criticTarget', Network.fromJSON(this.critic.toJSON()));
 
@@ -29072,22 +29073,21 @@ function DDPG(numStates, numActions, options) {
   this.isContinuousTask = Utils.RL.getOption(options, 'isContinuousTask', false);
   this.gamma = Utils.RL.getOption(options, 'gamma', 0.7);
   this.theta = Utils.RL.getOption(options, 'theta', 0.01); // soft target update
-  this.criticLossOptions = Utils.RL.getOption(options, 'criticLossOptions', {});
   this.isTraining = Utils.RL.getOption(options, 'isTraining', true);
   this.isUsingPER = Utils.RL.getOption(options, 'isUsingPER', true); // using prioritized experience replay
 
-  this.learningRateActor = Utils.RL.getOption(options, 'learningRateActor', 0.2); // AKA alpha value function learning rate
-  this.learningRateActorDecay = Utils.RL.getOption(options, 'learningRateActorDecay', 0.9); // AKA alpha value function learning rate
+  this.learningRateActor = Utils.RL.getOption(options, 'learningRateActor', 0.1); // AKA alpha value function learning rate
+  this.learningRateActorDecay = Utils.RL.getOption(options, 'learningRateActorDecay', 0.99); // AKA alpha value function learning rate
   this.learningRateActorMin = Utils.RL.getOption(options, 'learningRateActorMin', 0.005); // AKA alpha value function learning rate
 
-  this.learningRateCritic = Utils.RL.getOption(options, 'learningRateCritic', 0.2); // AKA alpha value function learning rate
-  this.learningRateCriticDecay = Utils.RL.getOption(options, 'learningRateCriticDecay', 0.9); // AKA alpha value function learning rate
+  this.learningRateCritic = Utils.RL.getOption(options, 'learningRateCritic', 0.1); // AKA alpha value function learning rate
+  this.learningRateCriticDecay = Utils.RL.getOption(options, 'learningRateCriticDecay', 0.99); // AKA alpha value function learning rate
   this.learningRateCriticMin = Utils.RL.getOption(options, 'learningRateCriticMin', 0.05); // AKA alpha value function learning rate
 
   // Exploration / Exploitation management
   this.noiseStandardDeviation = Utils.RL.getOption(options, 'noiseStandardDeviation', 0.1); // AKA epsilon for epsilon-greedy policy
   this.noiseStandardDeviationDecay = Utils.RL.getOption(options, 'noiseStandardDeviationDecay', 0.99); // AKA epsilon for epsilon-greedy policy
-  this.noiseStandardDeviationMin = Utils.RL.getOption(options, 'noiseStandardDeviationMin', 0.001); // AKA epsilon for epsilon-greedy policy
+  this.noiseStandardDeviationMin = Utils.RL.getOption(options, 'noiseStandardDeviationMin', 0.05); // AKA epsilon for epsilon-greedy policy
 
   this.timeStep = 0;
   this.actions = [];
@@ -29264,11 +29264,16 @@ DDPG.prototype = {
    * @returns {number} Actor loss value; loss ∈ [-1,1]
    */
   study: function(experience) {
+    if (experience.state === undefined || experience.state === null ||
+      experience.action === undefined || experience.action === null) {
+      return 0;
+    }
     let stateActionArr = experience.state.concat(experience.action);
     this.critic.activate(stateActionArr);
     let actorActivation = this.actor.activate(experience.state);
+    let actorTargetActivation = this.actorTarget.activate(experience.nextState, {trace: false});
 
-    let nextQ = this.criticTarget.activate(experience.nextState.concat(this.actorTarget.activate(experience.nextState, {trace: false})), {trace: false});
+    let nextQ = this.criticTarget.activate(experience.nextState.concat(actorTargetActivation), {trace: false});
     let qPrime = [];
     for (let i = 0; i < nextQ.length; i++) {
       qPrime.push(experience.isFinalState
@@ -29281,22 +29286,24 @@ DDPG.prototype = {
 
     let policyLoss = -Utils.mean(this.critic.activate(experience.state.concat(actorActivation), {trace: false}));
     actorActivation[Utils.getMaxValueIndex(experience.action)] *= policyLoss;
+
     let actorLearningRate = Math.max(this.learningRateActorMin, Rate.EXP(this.learningRateActor, this.timeStep, {gamma: this.learningRateActorDecay}));
     this.actor.propagate(actorLearningRate, 0, true, actorActivation);
 
     // Learning the actorTarget and criticTarget networks
     let actorParameters = this.actor.activate(experience.state, {trace: false});
-    let actorTargetParameters = this.actorTarget.activate(experience.state);
     let criticParameters = this.critic.activate(stateActionArr, {trace: false});
+    let actorTargetParameters = this.actorTarget.activate(experience.state);
     let criticTargetParameters = this.criticTarget.activate(stateActionArr);
-    for (let i = 0; i < actorParameters.length; i++) {
+
+    for (let i = 0; i < actorTargetParameters.length; i++) {
       actorTargetParameters[i] = this.theta * actorParameters[i] + (1 - this.theta) * actorTargetParameters[i];
     }
-    for (let i = 0; i < criticParameters.length; i++) {
+    for (let i = 0; i < criticTargetParameters.length; i++) {
       criticTargetParameters[i] = this.theta * criticParameters[i] + (1 - this.theta) * criticTargetParameters[i];
     }
 
-    //Learning rate of 1 --> copy parameters
+    //Learning rate of 1 --> copy parameter
     this.actorTarget.propagate(1, 0, true, actorTargetParameters);
     this.criticTarget.propagate(1, 0, true, criticTargetParameters);
     return policyLoss;

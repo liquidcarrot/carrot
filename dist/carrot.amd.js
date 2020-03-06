@@ -1,11 +1,13 @@
 /*!
  * The MIT License
  * 
- * Copyright (c) 2018-present Liquid Carrot Corporation <people@liquidcarrot.io> https://liquidcarrot.io. 
+ * Copyright (c) 2018-present Liquid Carrot Corporation <people@liquidcarrot.io> https://liquidcarrot.io.
  * 
  * Copyright for portions of Carrot are held by the following parties as a part of project Carrot:
  * - Copyright 2017 Thomas Wagenaar <wagenaartje@protonmail.com>
  * - Copyright 2017 Juan Cazala - cazala.com
+ * - Copyright 2015 Andrej Karpathy <andrej.karpathy@gmail.com>
+ * - Copyright 2018 Menno van Rahden - https://github.com/mvrahden
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -108,7 +110,7 @@ define("Carrot", [], function() { return /******/ (function(modules) { // webpac
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 13);
+/******/ 	return __webpack_require__(__webpack_require__.s = 17);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -131,14 +133,14 @@ define("Carrot", [], function() { return /******/ (function(modules) { // webpac
 * @prop rate
 */
 const methods = {
-  activation: __webpack_require__(6),
-  mutation: __webpack_require__(14),
-  selection: __webpack_require__(15),
-  crossover: __webpack_require__(16),
-  cost: __webpack_require__(7),
-  gating: __webpack_require__(17),
-  connection: __webpack_require__(18),
-  rate: __webpack_require__(19)
+  activation: __webpack_require__(8),
+  mutation: __webpack_require__(18),
+  selection: __webpack_require__(19),
+  crossover: __webpack_require__(20),
+  cost: __webpack_require__(5),
+  gating: __webpack_require__(21),
+  connection: __webpack_require__(22),
+  rate: __webpack_require__(9)
 };
 
 module.exports = methods;
@@ -17253,947 +17255,19 @@ module.exports = methods;
   else {}
 }.call(this));
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(12), __webpack_require__(20)(module)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(15), __webpack_require__(23)(module)))
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports) {
-
-/**
-* @global
-* @name config
-* @prop {boolean} warnings=false
-*/
-var config = {
-  warnings: false
-};
-
-module.exports = config;
-
-
-/***/ }),
-/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const _ = __webpack_require__(1);
-const methods = __webpack_require__(0);
-const Connection = __webpack_require__(8);
-const config = __webpack_require__(2);
-// const Group = require("./group");
-// const Layer = require("./layer");
-
-/**
-* Creates a new neuron/node
-*
-* Neurons are the basic unit of the neural network. They can be connected together, or used to gate connections between other neurons. A Neuron can perform basically 4 operations: form connections, gate connections, activate and [propagate](https://www.youtube.com/watch?v=Ilg3gGewQ5U).
-*
-* For more information check:
-* - [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
-* - [here](https://en.wikipedia.org/wiki/Artificial_neuron)
-* - [here](https://wagenaartje.github.io/neataptic/docs/architecture/node/)
-* - [here](https://github.com/cazala/synaptic/wiki/Neural-Networks-101)
-* - [here](https://keras.io/backend/#bias_add)
-*
-* @constructs Node
-*
-* @param {Object|Node} [options] Options Object or template `Node`
-* @param {number} [options.bias] Neuron's bias [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
-*
-* @prop {number} bias Neuron's bias [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
-* @prop {activation} squash [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0)
-* @prop {string} type
-* @prop {number} activation Output value
-* @prop {number} state
-* @prop {number} old
-* @prop {number} mask=1 Used for dropout. This is either 0 (ignored) or 1 (included) during training and is used to avoid [overfit](https://www.kdnuggets.com/2015/04/preventing-overfitting-neural-networks.html).
-* @prop {number} previousDeltaBias
-* @prop {number} totalDeltaBias
-* @prop {Array<Connection>} connections_incoming Incoming connections to this node
-* @prop {Array<Connection>} connections_outgoing connections from this node
-* @prop {Array<Connection>} connections_gated Connections this node gates
-* @prop {Connection} connections_self A self-connection
-* @prop {number} error.responsibility
-* @prop {number} error.projected
-* @prop {number} error.gated
-*
-* @example
-* let { Node } = require("@liquid-carrot/carrot");
-*
-* let node = new Node();
-*/
-function Node(options) {
-  let self = this;
-
-  // type = type || 'hidden';
-
-  Object.assign(self, {
-    bias: Math.random() * 2 - 1,
-    squash: methods.activation.LOGISTIC,
-    activation: 0,
-    state: 0,
-    old: 0,
-    mask: 1,
-    delta_bias_previous: 0,
-    delta_bias_total: 0,
-    delta_bias: [],
-    connections_incoming: [],
-    connections_outgoing: [],
-    connections_gated: [],
-    connections_self: new Connection(self, self, 0),
-    error_responsibility: 0,
-    error_projected: 0,
-    error_gated: 0,
-    ...options
-  })
-
-  /**
-  * Actives the node.
-  *
-  * When a neuron activates, it computes its state from all its input connections and 'squashes' it using its activation function, and returns the output (activation).
-  *
-  * You can also provide the activation (a float between 0 and 1) as a parameter, which is useful for neurons in the input layer.
-  *
-  * @function activate
-  * @memberof Node
-  *
-  * @todo Support vector/tensor/array activation
-  *
-  * @param {number} [input] Environment signal (i.e. optional numerical value passed to the network as input)  - _should only be passed in input neurons_
-  * @param {Object} [options]
-  * @param {boolean} [options.trace] Controls whether traces are created when activation happens (a trace is meta information left behind for different uses, e.g. backpropagation).
-  *
-  * @returns {number} A neuron's ['Squashed'](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) output value
-  *
-  * @example
-  * let { Node } = require("@liquid-carrot/carrot");
-  *
-  * let A = new Node();
-  * let B = new Node();
-  *
-  * A.connect(B);
-  * A.activate(0.5); // 0.5
-  * B.activate(); // 0.3244554645
-  */
-  self.activate = function(input, options) {
-    if(options == undefined && typeof input === "object") {
-      options = input;
-      input = undefined;
-    }
-
-    options = options || {}
-    options = {
-      trace: true,
-      ...options
-    }
-
-    if(input != undefined && Number.isFinite(input)) {
-      return self.activation = input;
-    }
-
-    // DRY abstraction
-    const activate = function() {
-      // Activate (from self)
-      self.state = self.connections_self.gain * self.connections_self.weight * self.state + self.bias;
-
-      // Activate (from incoming connections)
-      for (let i = 0; i < self.connections_incoming.length; i++) {
-        const conn = self.connections_incoming[i];
-        self.state += conn.from.activation * conn.weight * conn.gain;
-      }
-
-      return self.state
-    }
-
-    if(options.trace) {
-      self.old = self.state;
-
-      self.state = activate()
-      self.activation = self.squash(self.state) * self.mask // Squash Activation
-      self.derivative = self.squash(self.state, true)
-
-      // Stores traces
-      const nodes = [];
-      const influences = [];
-
-      // Adjust 'gain' (to gated connections) & Build traces
-      for (let i = 0; i < self.connections_gated.length; i++) {
-        const connection = self.connections_gated[i];
-        connection.gain = self.activation
-
-        // Build traces
-        const index = nodes.indexOf(connection.to);
-        if(index > -1) { // Node & influence exist
-          influences[index] += connection.weight * connection.from.activation;
-        } else { // Add node & corresponding influence
-          nodes.push(connection.to);
-          influences.push(connection.weight * connection.from.activation + (connection.to.connections_self.gater === self ? connection.to.old : 0));
-        }
-      }
-
-      // Forwarding 'xtrace' (to incoming connections)
-      for (let i = 0; i < self.connections_incoming.length; i++) {
-        const connection = self.connections_incoming[i];
-
-        // Trace Elegibility
-        connection.elegibility = self.connections_self.gain * self.connections_self.weight * connection.elegibility + connection.from.activation * connection.gain;
-
-        for(let j = 0; j < nodes.length; j++) {
-          const [ node, influence ]  = [nodes[j], influences[j]];
-
-          const index = connection.xtrace_nodes.indexOf(node);
-
-          if(index > -1) connection.xtrace_values[index] = node.connections_self.gain * node.connections_self.weight * connection.xtrace_values[index] + self.derivative * connection.elegibility * influence;
-          else {
-            connection.xtrace_nodes.push(node);
-            connection.xtrace_values.push(self.derivative * connection.elegibility * influence);
-          }
-        }
-      }
-
-      return self.activation;
-    } else {
-      if(self.type === "input") return self.activation = 0
-
-      self.state = activate()
-      self.activation = self.squash(self.state) // Squash Activation
-
-      // Adjust 'gain' (to gated connections)
-      for (let i = 0; i < self.connections_gated.length; i++) {
-        self.connections_gated[i].gain = self.activation
-      }
-
-      return self.activation;
-    }
-  },
-
-  /**
-  * Activates the node without calculating elegibility traces and such.
-  *
-  * Calculates the state from all the input connections, adds the bias, and 'squashes' it. Does not calculate traces, so this can't be used to backpropagate afterwards. That's also why it's quite a bit faster than regular `activate`.
-  *
-  * @function noTraceActivate
-  * @memberof Node
-  *
-  * @deprecated
-  *
-  * @param {number} [input] Optional value to be used for an input (or forwarding) neuron - _should only be passed in input neurons_
-  *
-  * @returns {number} A neuron's ['Squashed'](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) output value
-  *
-  * @example
-  * let { Node } = require("@liquid-carrot/carrot");
-  *
-  * let node = new Node();
-  *
-  * node.noTraceActivate(); // 0.4923128591923
-  */
-  self.noTraceActivate = function(input) {
-    return self.activate(input, { trace: false })
-  },
-
-  /**
-  * Backpropagate the error (a.k.a. learn).
-  *
-  * After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating. [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
-  *
-  * If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
-  *
-  * @function propagate
-  * @memberof Node
-  *
-  * @param {number} target The target value (i.e. "the value the network SHOULD have given")
-  * @param {Object} options
-  * @param {number} [options.rate=0.3] [Learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
-  * @param {number} [options.momentum=0] [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one.
-  * @param {boolean} [options.update=true] When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
-  *
-  * @example
-  * let { Node } = require("@liquid-carrot/carrot");
-  *
-  * let A = new Node();
-  * let B = new Node('output');
-  * A.connect(B);
-  *
-  * let learningRate = .3;
-  * let momentum = 0;
-  *
-  * for(let i = 0; i < 20000; i++)
-  * {
-  *   // when A activates 1
-  *   A.activate(1);
-  *
-  *   // train B to activate 0
-  *   B.activate();
-  *   B.propagate(learningRate, momentum, true, 0);
-  * }
-  *
-  * // test it
-  * A.activate(1);
-  * B.activate(); // 0.006540565760853365
-  *
-  * @see [Regularization Neataptic](https://wagenaartje.github.io/neataptic/docs/methods/regularization/)
-  * @see [What is backpropagation | YouTube](https://www.youtube.com/watch?v=Ilg3gGewQ5U)
-  */
-  self.propagate = function(target, options) {
-    if (options == undefined && typeof target === "object") {
-      options = target;
-      target = undefined;
-    }
-
-    options = options || {}
-    options = {
-      momentum: 0,
-      rate: 0.3,
-      update: true,
-      ...options
-    }
-
-    // Output Node Error (from environment)
-    if (target != undefined && Number.isFinite(target)) {
-      self.error_responsibility = self.error_projected = target - self.activation;
-    }
-    // Hidden/Input Node Error (from backpropagation)
-    else {
-      // Projected Error Responsibility (from outgoing connections)
-      self.error_projected = 0;
-      for (let i = 0; i < self.connections_outgoing.length; i++) {
-        const connection = self.connections_outgoing[i];
-
-        self.error_projected += connection.to.error_responsibility * connection.weight * connection.gain;
-      }
-      self.error_projected *= self.derivative || 1;
-
-      // Gated Error Responsibility (from gated connections)
-      self.error_gated = 0;
-      for (let i = 0; i < self.connections_gated.length; i++) {
-        const connection = self.connections_gated[i];
-        const node = connection.to;
-        const influence = (node.connections_self.gater === self ? node.old : 0) + connection.weight * connection.from.activation;
-
-        self.error_gated += node.error_reponsibility * influence;
-      }
-      self.error_gated *= self.derivative || 1;
-
-      // Error Responsibility
-      self.error_responsibility = self.error_projected + self.error_gated;
-    }
-
-    // Adjust Incoming Connections
-    for (let i = 0; i < self.connections_incoming.length; i++) {
-      const connection = self.connections_incoming[i];
-      let gradient = self.error_projected * connection.elegibility;
-      for (let j = 0; j < connection.xtrace_nodes.length; j++) {
-        const node = connection.xtrace_nodes[j];
-        gradient += node.error_responsibility * connection.xtrace_values[j];
-      }
-
-      // Adjust Weight ()
-      connection.delta_weights_total += options.rate * gradient * self.mask;
-      if (options.update) {
-        connection.delta_weights_total += options.momentum * connection.delta_weights_previous;
-        connection.weight += connection.delta_weights_total;
-        connection.delta_weights_previous = connection.delta_weights_total;
-        connection.delta_weights_total = 0;
-      }
-    }
-
-    // Adjust Bias
-    self.delta_bias_total += options.rate * self.error_responsibility;
-    if (options.update) {
-      self.delta_bias_total += options.momentum * self.delta_bias_previous;
-      self.bias += self.delta_bias_total;
-      self.delta_bias_previous = self.delta_bias_total;
-      self.delta_bias_total = 0;
-    }
-
-    return {
-      responsibility: self.error_responsibility,
-      projected: self.error_projected,
-      gated: self.error_gated,
-    }
-  },
-
-  /**
-  * Connects this node to the given node(s)
-  *
-  * @param {Node|Node[]} nodes Node(s) to project connection(s) to
-  * @param {number} [weight] Initial connection(s) [weight](https://en.wikipedia.org/wiki/Synaptic_weight)
-  * @param {Object} [options={}]
-  * @param {boolean} [twosided] If `true` connect nodes to each other
-  *
-  * @function connect
-  * @memberof Node
-  *
-  * @returns {Connection[]|Connection}
-  *
-  * @example <caption>Connecting node (neuron) to another node (neuron)</caption>
-  * const { Node } = require("@liquid-carrot/carrot");
-  *
-  * let node = new Node();
-  * let other_node = new Node();
-  *
-  * let connection = node.connect(other_node); // Both nodes now share a connection
-  *
-  * console.log(connection); // Connection { from: [Object object], to: [Object object], ...}
-  *
-  * @example <caption>Connecting node (neuron) to many nodes (neurons)</caption>
-  * const { Node } = require("@liquid-carrot/carrot");
-  *
-  * let node = new Node();
-  * let other_nodes = [new Node(), new Node(), new Node()];
-  *
-  * let connections = node.connect(other_nodes); // Node is connected to all other nodes
-  *
-  * console.log(connections); // [{ from: [Object object], to: [Object object], ...}, ...]
-  *
-  *
-  * @example <caption>Connecting a node (neuron) to itself</caption>
-  * const { Node } = require("@liquid-carrot/carrot");
-  *
-  * let node = new Node();
-  *
-  * let connection = node.connect(node); // Node is connected to itself.
-  *
-  * console.log(connection); // Connection { from: [Object object], to: [Object object], ...}
-  */
-  self.connect = function(nodes, weight, options) {
-    if (nodes == undefined) throw new ReferenceError("Missing required parameter 'nodes'");
-
-    if(options == undefined && typeof weight === "object") {
-      options = weight;
-      weight = undefined;
-    }
-
-    options = options || {};
-
-    if (nodes instanceof Node) {
-      if (nodes === self) {
-        self.connections_self.weight = weight || 1;
-        return self.connections_self;
-      } else if (self.isProjectingTo(nodes)) throw new ReferenceError("Node is already projecting to 'target'");
-      else {
-        const connection = new Connection(self, nodes, weight, options);
-
-        self.connections_outgoing.push(connection);
-        nodes.connections_incoming.push(connection);
-
-        if(options.twosided) nodes.connect(self);
-
-        return connection;
-      }
-    }
-    else if (Array.isArray(nodes)) {
-      const connections = [];
-
-      for (let index = 0; index < nodes.length; index++) {
-        const connection = new Connection(self, nodes[index], weight, options);
-
-        self.connections_outgoing.push(connection);
-        nodes[index].connections_incoming.push(connection);
-        connections.push(connection);
-
-        if(options.twosided) nodes[index].connect(self);
-      }
-
-      return connections;
-    }
-    else throw new TypeError(`Parameter 'target': Expected 'Node' or 'Node[]' - but recieved, ${nodes}`);
-  },
-
-  /**
-  * Disconnects this node from the given node(s)
-  *
-  * @function disconnect
-  * @memberof Node
-  *
-  * @param {Node|Node[]} node Node(s) to remove connection(s) to
-  * @param {Object} options
-  * @param {boolean} [options.twosided=false] If `true` disconnects nodes from each other (i.e. both sides)
-  *
-  * @example <caption>Disconnect from one <code>node</code></caption>
-  * const { Node } = require("@liquid-carrot/carrot");
-  *
-  * let node = new Node();
-  * let other = new Node();
-  *
-  * node.connect(other); // `node` now connected to `other`
-  *
-  * console.log(node.connections_incoming.length); // 0
-  * console.log(node.connections_outgoing.length); // 1
-  *
-  * node.disconnect(other); // `node` is now disconnected from `other`
-  *
-  * console.log(node.connections_incoming.length); // 0
-  * console.log(node.connections_outgoing.length); // 0
-  *
-  * @example <caption>Connect to one <code>node</code> - <em>two-sided</em></caption>
-  * const { Node } = require("@liquid-carrot/carrot");
-  *
-  * let node = new Node();
-  * let other = new Node();
-  *
-  * // `node` & `other` are now connected to each other
-  * node.connect(other, {
-  *   twosided: true
-  * });
-  *
-  * console.log(node.connections_incoming.length); // 1
-  * console.log(node.connections_outgoing.length); // 1
-  *
-  * // `node` & `other` are now disconnected from each other
-  * node.disconnect(other, {
-  *   twosided: true
-  * });
-  *
-  * console.log(node.connections_incoming.length); // 0
-  * console.log(node.connections_outgoing.length); // 0
-  */
-  self.disconnect = function(nodes, options) {
-    if (nodes == undefined) throw new ReferenceError("Missing required parameter 'target'");
-
-    options = options || {};
-
-    if (nodes instanceof Node) {
-      if (nodes === self) {
-        self.connections_self.weight = 0;
-        return self.connections_self;
-      } else {
-        for (let index = 0; index < self.connections_outgoing.length; index++) {
-          const connection = self.connections_outgoing[index];
-
-          if (connection.to === nodes) {
-            self.connections_outgoing.splice(index, 1);
-
-            connection.to.connections_incoming.splice(connection.to.connections_incoming.indexOf(connection), 1);
-
-            if(connection.gater != undefined) connection.gater.ungate(connection);
-            if(options.twosided) nodes.disconnect(self);
-
-            return connection;
-          }
-        }
-      }
-    } else if (Array.isArray(nodes)) {
-      const connections = [];
-
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = 0; j < self.connections_outgoing.length; j++) {
-          const connection = self.connections_outgoing[j];
-
-          if(connection.to === nodes[i]) {
-            self.connections_outgoing.splice(j, 1);
-            connection.to.connections_incoming.splice(connection.to.connections_incoming.indexOf(connection), 1);
-
-            if(connection.gater != undefined) connection.gater.ungate(connection);
-            if(options.twosided) nodes[i].disconnect(self);
-
-            connections.push(connection);
-
-            break;
-          }
-        }
-      }
-
-      return connections;
-    }
-    else throw new TypeError(`Parameter 'target': Expected 'Node' or 'Node[]' - but recieved, ${nodes}`);
-  },
-
-  /**
-  * This node gates (influences) the given connection(s)
-  *
-  * @function gate
-  * @memberof Node
-  *
-  * @param {Connection|Connection[]} connections Connections to be gated (influenced) by a neuron
-  *
-  * @example <caption>Gate one <code>connection</code></caption>
-  * const { Node } = require("@liquid-carrot/carrot");
-  *
-  * let input = new Node();
-  * let output = new Node();
-  * let connection = input.connect(output);
-  *
-  * let node = new Node();
-  *
-  * console.log(connection.gater === node); // false
-  *
-  * node.gate(connection); // Node now gates (manipulates) `connection`
-  *
-  * console.log(connection.gater === node); // true
-  */
-  self.gate = function(connections) {
-    if (connections == undefined) throw new ReferenceError("Missing required parameter 'connections'");
-
-
-    if (!Array.isArray(connections)) {
-      self.connections_gated.push(connections);
-      connections.gater = self;
-    } else {
-      for (let index = 0; index < connections.length; index++) {
-        const connection = connections[index];
-
-        self.connections_gated.push(connection);
-        connection.gater = self;
-      }
-    }
-
-    return connections;
-  },
-
-  /**
-  * Stops this node from gating (manipulating) the given connection(s)
-  *
-  * @function ungate
-  * @memberof Node
-  *
-  * @param {Connection|Connection[]} connections Connections to ungate - _i.e. remove this node from_
-  *
-  * @returns {Connection|Connection[]} Returns connection(s) that were ungated
-  *
-  * @example <caption>Ungate one <code>connection</code></caption>
-  * const { Node } = require("@liquid-carrot/carrot");
-  *
-  * let input = new Node();
-  * let output = new Node();
-  * let connection = input.connect(output);
-  *
-  * let node = new Node();
-  *
-  * console.log(connection.gater === node); // false
-  *
-  * node.gate(connection); // Node now gates (manipulates) `connection`
-  *
-  * console.log(connection.gater === node); // true
-  *
-  * node.ungate(connection); // Node is removed from `connection`
-  *
-  * console.log(connection.gater === node); // false
-  */
-  self.ungate = function(connections) {
-    if (connections == undefined) throw new ReferenceError("Missing required parameter 'connections'");
-
-    if (!Array.isArray(connections)) {
-      self.connections_gated.splice(self.connections_gated.indexOf(connections), 1);
-      connections.gater = null;
-      connections.gain = 1;
-    } else {
-      for (let i = 0; i < connections.length; i++) {
-      // for (let index = connections.length - 1; index >= 0; index--) {
-        const connection = connections[i];
-
-        self.connections_gated.splice(self.connections_gated.indexOf(connection), 1);
-        connection.gater = null;
-        connection.gain = 1;
-      }
-    }
-
-    return connections;
-  },
-
-  /**
-  * Clears this node's state information - _i.e. resets node and its connections to "factory settings"_
-  *
-  * `node.clear()` is useful for predicting timeseries with LSTMs.
-  *
-  * @function clear
-  * @memberof Node
-  *
-  * @example
-  * const { Node } = require("@liquid-carrot/carrot");
-  *
-  * let node = new Node();
-  *
-  * node.activate([1, 0]);
-  * node.propagate([1]);
-  *
-  * console.log(node); // Node has state information (e.g. `node.derivative`)
-  *
-  * node.clear(); // Factory resets node
-  *
-  * console.log(node); // Node has no state information
-  */
-  self.clear = function() {
-    for (let index = 0; index < self.connections_incoming.length; index++) {
-      const connection = self.connections_incoming[index];
-
-      connection.elegibility = 0;
-      connection.xtrace_nodes = []
-      connection.xtrace_values = [];
-    }
-
-    for (let index = 0; index < self.connections_gated.length; index++) {
-      const connection = self.connections_gated[index];
-      connection.gain = 0;
-    }
-
-    self.error_responsibility = self.error_projected = self.error_gated = 0;
-    self.old = self.state = self.activation = 0;
-  },
-
-  /**
-  * Mutates the node - _i.e. changes node's squash function or bias_
-  *
-  * @function mutate
-  * @memberof Node
-  *
-  * @param {Object} [options]
-  * @param {string} [options.method] A [mutation method](mutation) - _a random method will chosen if none is passed_
-  * @param {activation[]} [options.allowed] Allowed/possible squash (activation) functions for node (neuron)
-  *
-  * @example
-  * const { Node } = require("@liquid-carrot/carrot");
-  *
-  * let node = new Node();
-  *
-  * console.log(node);
-  *
-  * node.mutate(); // Changes node's squash function or bias
-  */
-  self.mutate = function(options) {
-    options = {
-      method: Math.random() < 0.5 ? methods.mutation.MOD_ACTIVATION : methods.mutation.MOD_BIAS,
-      ...options
-    }
-
-    // options = options || {};
-    // options.method = options.method != undefined ? options.method : Math.random() < 0.5 ? methods.mutation.MOD_ACTIVATION : methods.mutation.MOD_BIAS;
-
-    // if(method == undefined) throw new Error('No mutate method given!');
-
-    // // CHECK: https://scotch.io/bar-talk/5-tips-to-write-better-conditionals-in-javascript
-    // else if(!(method.name in methods.mutation)) throw new Error('This method does not exist!');
-
-    // Return a random index - not including `exclude`;
-    function random_index(max, exclude) {
-      return (exclude + Math.floor(Math.random() * (max - 1)) + 1) % max;
-    }
-
-    // Return a random key - not including `exclude`;
-    function random_key(keys, exclude) {
-      return keys[(keys.indexOf(exclude) + Math.floor(Math.random() * (keys.length - 1)) + 1) % keys.length];
-    }
-
-    switch(options.method) {
-      case methods.mutation.MOD_ACTIVATION:
-        if(options.allowed) self.squash = options.allowed[random_index(options.allowed.length, options.allowed.indexOf(self.squash))];
-        else self.squash = methods.activation[random_key(Object.keys(methods.activation), self.squash.name)]
-        break;
-      case methods.mutation.MOD_BIAS:
-        self.bias += Math.random() * (options.method.max - options.method.min) + options.method.min;
-        break;
-    }
-  },
-
-  /**
-  * Checks if this node has an outgoing connection(s) into the given node(s)
-  *
-  * @function isProjectingTo
-  * @memberof Node
-  *
-  * @param {Node|Node[]} nodes Checks if this node has outgoing connection(s) into `node(s)`
-  *
-  * @returns {boolean} Returns true, iff this node has an outgoing connection into every node(s)
-  *
-  * @example <caption>Check one <code>node</code></caption>
-  * const { Node } = require("@liquid-carrot/carrot");
-  *
-  * let other_node = new Node();
-  * let node = new Node();
-  * node.connect(other_node);
-  *
-  * console.log(node.isProjectingTo(other_node)); // true
-  *
-  * @example <caption>Check many <code>nodes</code></caption>
-  * const { Node } = require("@liquid-carrot/carrot");
-  *
-  * let other_nodes = Array.from({ length: 5 }, () => new Node());
-  * let node = new Node();
-  *
-  * other_nodes.forEach(other_node => node.connect(other_node));
-  *
-  * console.log(node.isProjectingTo(other_nodes)); // true
-  */
-  self.isProjectingTo = function(nodes) {
-    if (nodes == undefined) throw new ReferenceError("Missing required parameter 'nodes'");
-
-    if (nodes === self) return self.connections_self.weight !== 0;
-    else if (!Array.isArray(nodes)) {
-      for (let i = 0; i < self.connections_outgoing.length; i++) {
-        if (self.connections_outgoing[i].to === nodes) return true;
-      }
-      return false;
-    } else {
-      // START: nodes.every()
-      let projecting_to = 0;
-      for (let i = 0; i < nodes.length; i++) {
-        const node = nodes[i];
-
-        for (let j = 0; j < self.connections_outgoing.length; j++) {
-
-          if (self.connections_outgoing[j].to === node) {
-            projecting_to++;
-            break;
-          }
-        }
-      }
-      // END: nodes.every()
-
-      return nodes.length === projecting_to ? true : false;
-    }
-  },
-
-  /**
-  * Checks if the given node(s) are have outgoing connections to this node
-  *
-  * @function isProjectedBy
-  * @memberof Node
-  *
-  * @param {Node|Node[]} nodes Checks if `node(s)` have outgoing connections into this node
-  *
-  * @returns {boolean} Returns true, iff every node(s) has an outgoing connection into this node
-  *
-  * @example <caption>Check one <code>node</code></caption>
-  * const { Node } = require("@liquid-carrot/carrot");
-  *
-  * let other_node = new Node();
-  * let node = new Node();
-  * other_node.connect(node);
-  *
-  * console.log(node.isProjectedBy(other_node)); // true
-  *
-  * @example <caption>Check many <code>nodes</code></caption>
-  * const { Node } = require("@liquid-carrot/carrot");
-  *
-  * let other_nodes = Array.from({ length: 5 }, () => new Node());
-  * let node = new Node();
-  *
-  * other_nodes.forEach(other_node => other_node.connect(node));
-  *
-  * console.log(node.isProjectedBy(other_nodes)); // true
-  */
-  self.isProjectedBy = function(nodes) {
-    if (nodes == undefined) throw new ReferenceError("Missing required parameter 'nodes'");
-
-    if (nodes === self) return self.connections_self.weight !== 0;
-    else if (!Array.isArray(nodes)) {
-      for (let i = 0; i < self.connections_incoming.length; i++) {
-        if (self.connections_incoming[i].from === nodes) return true;
-      }
-      return false;
-    } else {
-      // START: nodes.every()
-      let projected_by = 0;
-      for (let i = 0; i < nodes.length; i++) {
-        const node = nodes[i];
-
-        for (let j = 0; j < self.connections_incoming.length; j++) {
-
-          if (self.connections_incoming[j].from === node) {
-            projected_by++;
-            break;
-          }
-        }
-      }
-      // END: nodes.every()
-
-      return nodes.length === projected_by ? true : false;
-    }
-
-    // for(let i = 0; i < self.connections_incoming.length; i++) {
-    //   if(self.connections_incoming[i].from === node) return true;
-    // }
-
-    // return false;
-  },
-
-  /**
-  * Converts the node to a json object that can later be converted back
-  *
-  * @function toJSON
-  * @memberof Node
-  *
-  * @returns {object}
-  *
-  * @example
-  * const { Node } = require("@liquid-carrot/carrot");
-  *
-  * let node = new Node();
-  *
-  * console.log(node.toJSON());
-  */
-  self.toJSON = function () {
-    return {
-      bias: self.bias,
-      type: self.type,
-      squash: self.squash.name,
-      mask: self.mask
-    };
-  }
-}
-
-/**
-* Convert a json object to a node
-*
-* @param {object} json A node represented as a JSON object
-*
-* @returns {Node} A reconstructed node
-*
-* @example <caption>From Object</caption>
-* const { Node } = require("@liquid-carrot/carrot");
-*
-* let json = { bias: 0.35 };
-* let node = Node.fromJSON(json);
-*
-* console.log(node);
-*
-* @example <caption>From Node.toJSON()</caption>
-* const { Node } = require("@liquid-carrot/carrot");
-*
-* let other_node = new Node();
-* let json = other_node.toJSON();
-* let node = Node.fromJSON(json);
-*
-* console.log(node);
-*
-* @example <caption>From JSON string</caption>
-* const { Node } = require("@liquid-carrot/carrot");
-*
-* let other = new Node();
-* let json = other_node.toJSON();
-* let string = JSON.stringify(json);
-* let node = Node.fromJSON(string);
-*
-* console.log(node);
-*/
-Node.fromJSON = function (json) {
-  if (json == undefined) throw new ReferenceError("Missing required parameter 'json'");
-
-  if(typeof json === "string") json = JSON.parse(json);
-
-  const node = new Node();
-
-  Object.assign(node, { ...json }, {
-    squash: methods.activation[json.squash]
-  });
-
-  return node;
-};
-
-module.exports = Node;
-
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-const config = __webpack_require__(2)
-const multi = __webpack_require__(9)
+const config = __webpack_require__(3)
+const multi = __webpack_require__(11)
 const methods = __webpack_require__(0)
-const Group = __webpack_require__(5)
-const Layer = __webpack_require__(11)
-const Connection = __webpack_require__(8)
-const Node = __webpack_require__(3)
+const Group = __webpack_require__(6)
+const Layer = __webpack_require__(13)
+const Connection = __webpack_require__(10)
+const Node = __webpack_require__(4)
 const _ = __webpack_require__(1)
 
 // Easier variable naming
@@ -18602,7 +17676,7 @@ function Network(input_size, output_size) {
     // Get all its inputting nodes
     const inputs = [];
     // unsure why not regular forEach
-    _.forEachRight(node.connections_incoming, (connection) => {
+    _.forEachRight(node.incoming, (connection) => {
       if (mutation.SUB_NODE.keep_gates && connection.gater !== null && connection.gater !== node) {
         // the condition mutation.SUB_NODE.keep_gates seems
         // useless - probably it should be an option
@@ -18616,7 +17690,7 @@ function Network(input_size, output_size) {
     // Get all its outputing nodes
     const outputs = [];
     // unsure why not regular forEach
-    _.forEachRight(node.connections_outgoing, (connection) => {
+    _.forEachRight(node.outgoing, (connection) => {
       if (mutation.SUB_NODE.keep_gates && connection.gater !== null && connection.gater !== node) {
         gates.push(connection.gater);
       }
@@ -18646,8 +17720,8 @@ function Network(input_size, output_size) {
     }
 
     // Remove gated connections gated by this node
-    for (i = node.connections_gated.length - 1; i >= 0; i--) {
-      const connection = node.connections_gated[i];
+    for (i = node.gated.length - 1; i >= 0; i--) {
+      const connection = node.gated[i];
       self.ungate(connection);
     }
 
@@ -18681,72 +17755,94 @@ function Network(input_size, output_size) {
       }
       case "ADD_CONN": {
         for (let i = 0; i < self.nodes.length - self.output_size; i++) {
-          const node1 = self.nodes[i]
+          const node1 = self.nodes[i];
           for (let j = Math.max(i + 1, self.input_size); j < self.nodes.length; j++) {
-            const node2 = self.nodes[j]
-            if (!node1.isProjectingTo(node2)) candidates.push([node1, node2])
+            const node2 = self.nodes[j];
+            if (!node1.isProjectingTo(node2)) candidates.push([node1, node2]);
           }
         }
 
-        return candidates.length ? candidates : false
+        return candidates.length ? candidates : false;
       }
-      case "REMOVE_CONN": // alias for sub_conn
-      case "SUB_CONN": {
+      case 'REMOVE_CONN': // alias for sub_conn
+      case 'SUB_CONN': {
         _.each(self.connections, (conn) => {
           // Check if it is not disabling a node
-          if (conn.from.connections_outgoing.length > 1 && conn.to.connections_incoming.length > 1 && self.nodes.indexOf(conn.to) > self.nodes.indexOf(conn.from))
-            candidates.push(conn)
-        })
+          if (conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && self.nodes.indexOf(conn.to) > self.nodes.indexOf(conn.from)) {
+            candidates.push(conn);
+          }
+        });
 
-        return candidates.length ? candidates : false
+        return candidates.length ? candidates : false;
       }
-      case "MOD_ACTIVATION": {
-        candidates = _.filter(self.nodes, method.mutateOutput ? (node) => node.type !== 'input' : (node) => node.type !== 'input' && node.type !== 'output')
-        return candidates.length ? candidates : false
+      case 'MOD_ACTIVATION': {
+        candidates = _.filter(self.nodes, method.mutateOutput ? (node) => node.type !== 'input' : (node) => node.type !== 'input' && node.type !== 'output');
+        return candidates.length ? candidates : false;
       }
-      case "ADD_SELF_CONN": {
+      case 'ADD_SELF_CONN': {
         for (let i = self.input_size; i < self.nodes.length; i++) {
-          const node = self.nodes[i]
-          if (node.connections_self.weight === 0) candidates.push(node)
+          const node = self.nodes[i];
+          if (node.connections_self.weight === 0) candidates.push(node);
         }
 
-        return candidates.length ? candidates : false
+        return candidates.length ? candidates : false;
       }
-      case "SUB_SELF_CONN": {
+      case 'SUB_SELF_CONN': {
         // Very slow implementation.
         // TODO: Huge speed up by storing a Set is_self_connection<id -> node>
         for (let i = 0; i < self.connections.length; i++) {
-          const conn = self.connections[i]
-          if (conn.from == conn.to) candidates.push(conn)
+          const conn = self.connections[i];
+          if (conn.from == conn.to) candidates.push(conn);
         }
 
-        return candidates.length ? candidates : false
+        return candidates.length ? candidates : false;
       }
-      case "ADD_GATE": {
+      case 'ADD_GATE': {
         self.connections.forEach((conn) => {
           if (conn.gater === null) {
             candidates.push(conn);
           }
         });
-        return candidates.length ? candidates : false
+        return candidates.length ? candidates : false;
       }
-      case "SUB_GATE": {
-        return (self.gates.length > 0) ? [] : false
+      case 'SUB_GATE': {
+        return (self.gates.length > 0) ? [] : false;
       }
-      case "ADD_BACK_CONN": {
+      case 'ADD_SHARED_BIAS': {
+        candidates = _.filter(self.nodes, function (node) {
+          return !self.input_nodes.has(node) && !self.output_nodes.has(node);
+        }); // assumes input & output node 'type' has been set
+        return candidates.length > 0 ? candidates : false;
+      }
+      case 'SUB_SHARED_BIAS': {
+        candidates = _.filter(self.nodes, function (node) {
+          return node.sharedIncoming !== null;
+        });
+        return candidates.length > 0 ? candidates : false;
+      }
+      case 'ADD_SHARED_WEIGHT': {
+        return self.connections.length > 0 ? self.connections : false;
+      }
+      case 'SUB_SHARED_WEIGHT': {
+        candidates = _.filter(self.connections, function (conn) {
+          return conn.sharedIncoming !== null;
+        });
+        return candidates.length > 0 ? candidates : false;
+      }
+      case 'ADD_BACK_CONN': {
         for (let i = self.input_size; i < self.nodes.length; i++) {
-          const node1 = self.nodes[i]
+          const node1 = self.nodes[i];
           for (let j = self.input_size; j < i; j++) {
-            const node2 = self.nodes[j]
-            if (!node1.isProjectingTo(node2)) candidates.push([node1, node2])
+            const node2 = self.nodes[j];
+            if (!node1.isProjectingTo(node2)) candidates.push([node1, node2]);
           }
         }
 
-        return candidates.length ? candidates : false
+        return candidates.length ? candidates : false;
       }
       case "SUB_BACK_CONN": {
         _.each(self.connections, (conn) => {
-          if (conn.from.connections_outgoing.length > 1 && conn.to.connections_incoming.length > 1 && self.nodes.indexOf(conn.from) > self.nodes.indexOf(conn.to))
+          if (conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && self.nodes.indexOf(conn.from) > self.nodes.indexOf(conn.to))
             candidates.push(conn)
         })
 
@@ -18756,7 +17852,7 @@ function Network(input_size, output_size) {
         // break out early if there aren't enough nodes to swap
         if((self.nodes.length - 1) - self.input_size - (method.mutateOutput ? 0 : self.output_size) < 2) return false;
 
-        const filterFn = (method.mutateOutput) ? (node) => (node.type !== `input`) : (node) => (node.type !== `input` && node.type !== `output`)
+        const filterFn = (method.mutateOutput) ? node => node.type !== `input` : (node) => (node.type !== `input` && node.type !== `output`);
 
         candidates = _.filter(self.nodes, filterFn)
 
@@ -18794,19 +17890,21 @@ function Network(input_size, output_size) {
 
     // Helper function
     const getRandomConnection = () => {
-      if(self.nodes.length <= self.input_nodes.size) // use dynamic self.input_nodes.size instead
+      if (self.nodes.length <= self.input_nodes.size) // use dynamic self.input_nodes.size instead
         throw new Error("Something went wrong. Total nodes is length is somehow less than size of inputs")
-
-      return _.sample(self.connections)
+      let candidates = _.filter(self.connections, function (conn) {
+        return conn.sharedIncoming === null;
+      });
+      return _.sample(candidates)
     }
 
     switch (method.name) {
       // Looks for an existing connection and places a node in between
       case "ADD_NODE": {
-        if(self.nodes.length >= maxNodes) return null
+        if (self.nodes.length >= maxNodes) return null;
 
-        const node = new Node({ type: 'hidden' })
-        if (mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION) // this should be an option passed into the Node constructor
+        const node = new Node({type: 'hidden'});
+        if (mutation.ADD_NODE.randomActivation) node.mutate(mutation.MOD_ACTIVATION); // this should be an option passed into the Node constructor
 
         // Note for the future: this makes the assumption that nodes can only be placed
         // between existing connections, but what this means is that connections will never
@@ -18814,110 +17912,160 @@ function Network(input_size, output_size) {
         // This means connections across inputs / outputs will not be formed
         // And it also means that "peripheral" connections between output neurons and neurons that connect
         // back into the network will also not be formed.
-        const connection = getRandomConnection()
-        const from = connection.from
-        const to = connection.to
-        self.disconnect(from, to) // break the existing connection
+        const connection = getRandomConnection();
+        const from = connection.from;
+        const to = connection.to;
+        self.disconnect(from, to); // break the existing connection
 
         // Make sure new node is between from & to
         // Accomodates assumption that: nodes array is ordered: ["inputs", "hidden", "outputs"]
         // Should be agnostic by setting a node .type value and updating the way ".activate" works
-        let min_bound = self.nodes.indexOf(from) // Shouldn't use expensive ".indexOf", we should track neuron index numbers in the "to" & "from" of connections instead and access nodes later if needed
-        min_bound = (min_bound >= self.input_nodes.size - 1) ? min_bound : self.input_nodes.size - 1 // make sure after to insert after all input neurons
-        self.nodes.splice(min_bound + 1, 0, node) // assumes there is at least one output neuron
+        let min_bound = self.nodes.indexOf(from); // Shouldn't use expensive ".indexOf", we should track neuron index numbers in the "to" & "from" of connections instead and access nodes later if needed
+        min_bound = (min_bound >= self.input_nodes.size - 1) ? min_bound : self.input_nodes.size - 1; // make sure after to insert after all input neurons
+        self.nodes.splice(min_bound + 1, 0, node); // assumes there is at least one output neuron
 
         // Now create two new connections
-        const new_connection1 = self.connect(from, node)[0]
-        const new_connection2 = self.connect(node, to)[0]
+        const new_connection1 = self.connect(from, node)[0];
+        const new_connection2 = self.connect(node, to)[0];
 
-        const gater = connection.gater
-        if (gater != null) self.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2) // Check if the original connection was gated
+        const gater = connection.gater;
+        if (gater != null) self.gate(gater, Math.random() >= 0.5 ? new_connection1 : new_connection2); // Check if the original connection was gated
 
-        return self
+        return self;
       }
-      case "SUB_NODE": {
-        const possible = self.possible(method)
+      case 'SUB_NODE': {
+        const possible = self.possible(method);
         if (possible) {
-          self.remove(_.sample(possible))
-          return self
-        }
-        return null
-      }
-      case "ADD_CONN": {
-        if(self.connections.length >= maxConns) return null // Check user constraint
-
-        const possible = self.possible(method)
-        if (possible) {
-          const pair = possible[Math.floor(Math.random() * possible.length)]
-          self.connect(pair[0], pair[1])
-          return self
-        }
-
-        return null
-      }
-      case "REMOVE_CONN": // alias for sub_conn
-      case "SUB_CONN": {
-        const possible = self.possible(method)
-        if (possible) {
-          const random_connection = possible[Math.floor(Math.random() * possible.length)]
-          self.disconnect(random_connection.from, random_connection.to)
-          return self
-        }
-
-        return null
-      }
-      case "MOD_WEIGHT": {
-        const chosen_connection = getRandomConnection() // get a random connection to modify weight
-        chosen_connection.weight += Math.random() * (method.max - method.min) + method.min
-
-        return self
-      }
-      case "MOD_BIAS": {
-        if (self.nodes.length <= self.input_size) return null;
-        // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
-        const node_to_mutate = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)]
-        node_to_mutate.mutate(method)
-
-        return self
-      }
-      case "MOD_ACTIVATION": {
-        const possible = self.possible(method)
-        if (possible) {
-          _.sample(possible).mutate(method) // Mutate a random node out of filtered collection, MOD_ACTIVATION is a neuron-level concern
-          return self
-        }
-        return null
-      }
-      case "ADD_SELF_CONN": {
-        const possible = self.possible(method)
-        if (possible) {
-          const node = possible[Math.floor(Math.random() * possible.length)]
-          self.connect(node, node) // Create the self-connection
-          return self
-        }
-        return null
-      }
-      case "SUB_SELF_CONN": {
-        const possible = self.possible(method)
-        if (possible) {
-          const chosen_connection = possible[Math.floor(Math.random() * possible.length)];
-          self.disconnect(chosen_connection.from, chosen_connection.to);
-          return self
+          self.remove(_.sample(possible));
+          return self;
         }
         return null;
       }
-      case "ADD_GATE": {
-        // Check user constraint
-        if(self.gates.length >= maxGates) return null
+      case 'ADD_SHARED_BIAS': {
+        const possible = self.possible(method);
+        if (possible.length >= 2) {
+          // Return a random node out of the filtered collection
+          const node1 = _.sample(possible);
+          // Filter node1 from collection
+          const possible2 = _.filter(possible, (node) => node !== node1);
+          if (!possible2) return null;
+          // Get random node from filtered collection (excludes node1)
+          const node2 = _.sample(possible2);
+          node2.sharedIncoming = node1;
+          node2.bias = node1.bias;
+          return self;
+        }
 
-        const possible = self.possible(method)
+        return null;
+      }
+      case 'SUB_SHARED_BIAS': {
+        const possible = self.possible(method);
+        if (possible) {
+          _.sample(possible).sharedIncoming = null;
+          return self;
+        }
+
+        return null;
+      }
+      case 'ADD_SHARED_WEIGHT': {
+        const possible = self.possible(method);
+        if (possible.length >= 2) {
+          // Return a random connection out of the filtered collection
+          const conn1 = _.sample(possible);
+          // Filter conn1 from collection
+          const possible2 = _.filter(possible, (conn) => conn !== conn1);
+          if (!possible2) return null;
+          // Get random connection from filtered collection (excludes conn1)
+          const conn2 = _.sample(possible2);
+          conn2.sharedIncoming = conn1;
+          conn2.weight = conn1.weight;
+          return self;
+        }
+
+        return null;
+      }
+      case 'SUB_SHARED_WEIGHT': {
+        const possible = self.possible(method);
+        if (possible) {
+          _.sample(possible).sharedIncoming = null;
+          return self;
+        }
+
+        return null;
+      }
+      case 'ADD_CONN': {
+        if (self.connections.length >= maxConns) return null; // Check user constraint
+
+        const possible = self.possible(method);
+        if (possible) {
+          const pair = possible[Math.floor(Math.random() * possible.length)];
+          self.connect(pair[0], pair[1]);
+          return self;
+        }
+
+        return null;
+      }
+      case 'REMOVE_CONN': // alias for sub_conn
+      case 'SUB_CONN': {
+        const possible = self.possible(method);
+        if (possible) {
+          const chosen = _.sample(possible);
+          self.disconnect(chosen.from, chosen.to);
+          return self;
+        }
+
+        return null;
+      }
+      case 'MOD_WEIGHT': {
+        const chosen_connection = getRandomConnection(); // get a random connection to modify weight
+        chosen_connection.weight += Math.random() * (method.max - method.min) + method.min;
+        return self;
+      }
+      case 'MOD_BIAS': {
+        if (self.nodes.length <= self.input_size) return null;
+        // Has no effect on input nodes, so they (should be) excluded, TODO -- remove this ordered array of: input, output, hidden nodes assumption...
+        const node_to_mutate = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)];
+        node_to_mutate.mutate(method);
+        return self;
+      }
+      case 'MOD_ACTIVATION': {
+        const possible = self.possible(method);
+        if (possible) {
+          _.sample(possible).mutate(method); // Mutate a random node out of filtered collection, MOD_ACTIVATION is a neuron-level concern
+          return self;
+        }
+        return null;
+      }
+      case 'ADD_SELF_CONN': {
+        const possible = self.possible(method);
+        if (possible) {
+          const node = possible[Math.floor(Math.random() * possible.length)];
+          self.connect(node, node); // Create the self-connection
+          return self;
+        }
+        return null;
+      }
+      case 'SUB_SELF_CONN': {
+        const possible = self.possible(method);
+        if (possible) {
+          const chosen_connection = possible[Math.floor(Math.random() * possible.length)];
+          self.disconnect(chosen_connection.from, chosen_connection.to);
+          return self;
+        }
+        return null;
+      }
+      case 'ADD_GATE': {
+        // Check user constraint
+        if (self.gates.length >= maxGates) return null;
+
+        const possible = self.possible(method);
         if (possible) {
           // Select a random gater node and connection, can't be gated by input | makes ["input", "hidden", "output"] assumption
-          const node = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)]
-          const conn = possible[Math.floor(Math.random() * possible.length)]
+          const node = self.nodes[Math.floor(Math.random() * (self.nodes.length - self.input_size) + self.input_size)];
+          const conn = possible[Math.floor(Math.random() * possible.length)];
 
-          self.gate(node, conn) // Gate the connection with the node
-          return self
+          self.gate(node, conn); // Gate the connection with the node
+          return self;
         }
         return null
       }
@@ -19496,7 +18644,7 @@ function Network(input_size, output_size) {
 
     // set default values
     options = _.defaults(options, {
-      threads: (typeof window === `undefined`) ? __webpack_require__(27).cpus().length : navigator.hardwareConcurrency,
+      threads: (typeof window === `undefined`) ? __webpack_require__(30).cpus().length : navigator.hardwareConcurrency,
       growth: (typeof options.growth !== `undefined`) ? options.growth : 0.0001,
       cost: methods.cost.MSE,
       amount: 1,
@@ -19662,8 +18810,8 @@ function Network(input_size, output_size) {
       }
 
       const incoming = [];
-      for (var j = 0; j < node.connections_incoming.length; j++) {
-        const connection = node.connections_incoming[j];
+      for (var j = 0; j < node.incoming.length; j++) {
+        const connection = node.incoming[j];
         if (connection.from.index === undefined) debugger;
         let computation = `A[${connection.from.index}] * ${connection.weight}`;
 
@@ -19744,8 +18892,8 @@ function Network(input_size, output_size) {
       connections.push(node.connections_self.weight);
       connections.push(node.connections_self.gater == null ? -1 : node.connections_self.gater.index);
 
-      _.times(node.connections_incoming.length, (incoming_connections_index) => {
-        const connection = node.connections_incoming[incoming_connections_index];
+      _.times(node.incoming.length, (incoming_connections_index) => {
+        const connection = node.incoming[incoming_connections_index];
 
         connections.push(connection.from.index);
         connections.push(connection.weight);
@@ -19770,8 +18918,8 @@ function Network(input_size, output_size) {
     for (let i = 0; i < nodes.length; i++) {
       // not required to push connections incoming. by pushing every outgoing connection,
       // every incoming connection will be pushed as well. pushing both causes duplicates
-      self.connections.push(...nodes[i].connections_outgoing)
-      self.gates.push(...nodes[i].connections_gated)
+      self.connections.push(...nodes[i].outgoing)
+      self.gates.push(...nodes[i].gated)
       if(nodes[i].connections_self.weight) self.connections.push(nodes[i].connections_self)
     }
   }
@@ -20098,60 +19246,59 @@ Network.crossOver = function(network1, network2, equal) {
 
   return offspring;
 }
-
-/**
+ /**
  *
  * Preconfigured neural networks!
  *
  * Ready to be built with simple one line functions.
  *
  * @namespace
-*/
+ */
 Network.architecture = {
   /**
-  * Constructs a network from a given array of connected nodes
-  *
-  * Behind the scenes, Construct expects nodes to have connections and gates already made which it uses to infer the structure of the network and assemble it.
-  *
-  * It's useful because it's a generic function to produce a network from custom architectures
-  *
-  * @param {Group[]|Layer[]|Node[]} list A list of Groups, Layers, and Nodes to combine into a Network
-  *
-  * @example <caption>A Network built with Nodes</caption>
-  * let { architect } = require("@liquid-carrot/carrot");
-  *
-  * var A = new Node();
-  * var B = new Node();
-  * var C = new Node();
-  * var D = new Node();
-  *
-  * // Create connections
-  * A.connect(B);
-  * A.connect(C);
-  * B.connect(D);
-  * C.connect(D);
-  *
-  * // Construct a network
-  * var network = architect.Construct([A, B, C, D]);
-  *
-  * @example <caption>A Network built with Groups</caption>
-  * let { architect } = require("@liquid-carrot/carrot");
-  *
-  * var A = new Group(4);
-  * var B = new Group(2);
-  * var C = new Group(6);
-  *
-  * // Create connections between the groups
-  * A.connect(B);
-  * A.connect(C);
-  * B.connect(C);
-  *
-  * // Construct a square-looking network
-  * var network = architect.Construct([A, B, C, D]);
-  *
-  * @returns {Network}
-  */
-  Construct: function (list) {
+   * Constructs a network from a given array of connected nodes
+   *
+   * Behind the scenes, Construct expects nodes to have connections and gates already made which it uses to infer the structure of the network and assemble it.
+   *
+   * It's useful because it's a generic function to produce a network from custom architectures
+   *
+   * @param {Group[]|Layer[]|Node[]} list A list of Groups, Layers, and Nodes to combine into a Network
+   *
+   * @example <caption>A Network built with Nodes</caption>
+   * let { architect } = require("@liquid-carrot/carrot");
+   *
+   * var A = new Node();
+   * var B = new Node();
+   * var C = new Node();
+   * var D = new Node();
+   *
+   * // Create connections
+   * A.connect(B);
+   * A.connect(C);
+   * B.connect(D);
+   * C.connect(D);
+   *
+   * // Construct a network
+   * var network = architect.Construct([A, B, C, D]);
+   *
+   * @example <caption>A Network built with Groups</caption>
+   * let { architect } = require("@liquid-carrot/carrot");
+   *
+   * var A = new Group(4);
+   * var B = new Group(2);
+   * var C = new Group(6);
+   *
+   * // Create connections between the groups
+   * A.connect(B);
+   * A.connect(C);
+   * B.connect(C);
+   *
+   * // Construct a square-looking network
+   * var network = architect.Construct([A, B, C, D]);
+   *
+   * @returns {Network}
+   */
+  Construct: function(list) {
     // Create a network
     const network = new Network(0, 0);
 
@@ -20185,12 +19332,12 @@ Network.architecture = {
     const inputs = [];
     const outputs = [];
     for (i = nodes.length - 1; i >= 0; i--) {
-      if (nodes[i].type === 'output' || (!found_output_nodes && nodes[i].connections_outgoing.length + nodes[i].connections_gated.length === 0)) {
+      if (nodes[i].type === 'output' || (!found_output_nodes && nodes[i].outgoing.length + nodes[i].gated.length === 0)) {
         nodes[i].type = 'output';
         network.output_size++;
         outputs.push(nodes[i]);
         nodes.splice(i, 1);
-      } else if (nodes[i].type === 'input' || (!found_input_nodes && !nodes[i].connections_incoming.length)) {
+      } else if (nodes[i].type === 'input' || (!found_input_nodes && !nodes[i].incoming.length)) {
         nodes[i].type = 'input';
         network.input_size++;
         inputs.push(nodes[i]);
@@ -20198,37 +19345,37 @@ Network.architecture = {
       }
     }
     // backward compatibility
-    network.input = network.input_size
-    network.output = network.output_size
+    network.input = network.input_size;
+    network.output = network.output_size;
 
     // Input nodes are always first, output nodes are always last
     nodes = inputs.concat(nodes).concat(outputs);
 
-    if (network.input_size === 0 || network.output_size === 0) throw new Error('Given nodes have no clear input/output node!')
+    if (network.input_size === 0 || network.output_size === 0) throw new Error('Given nodes have no clear input/output node!');
 
     // Adds nodes, connections, and gates
-    network.addNodes(nodes)
+    network.addNodes(nodes);
 
-    return network
+    return network;
   },
 
   /**
-  * Creates a multilayer perceptron (MLP)
-  *
-  * @param {...number} layer_neurons Number of neurons in input layer, hidden layer(s), and output layer as a series of numbers (min 3 arguments)
-  *
-  * @example
-  * let { architect } = require("@liquid-carrot/carrot");
-  *
-  * // Input 2 neurons, Hidden layer: 3 neurons, Output: 1 neuron
-  * let my_perceptron = new architect.Perceptron(2,3,1);
-  *
-  * // Input: 2 neurons, 4 Hidden layers: 10 neurons, Output: 1 neuron
-  * let my_perceptron = new architect.Perceptron(2, 10, 10, 10, 10, 1);
-  *
-  * @returns {Network} Feed forward neural network
-  */
-  Perceptron: function () {
+   * Creates a multilayer perceptron (MLP)
+   *
+   * @param {...number} layer_neurons Number of neurons in input layer, hidden layer(s), and output layer as a series of numbers (min 3 arguments)
+   *
+   * @example
+   * let { architect } = require("@liquid-carrot/carrot");
+   *
+   * // Input 2 neurons, Hidden layer: 3 neurons, Output: 1 neuron
+   * let my_perceptron = new architect.Perceptron(2,3,1);
+   *
+   * // Input: 2 neurons, 4 Hidden layers: 10 neurons, Output: 1 neuron
+   * let my_perceptron = new architect.Perceptron(2, 10, 10, 10, 10, 1);
+   *
+   * @returns {Network} Feed forward neural network
+   */
+  Perceptron: function() {
     // Convert arguments to Array
     const layers = Array.from(arguments);
 
@@ -20249,39 +19396,39 @@ Network.architecture = {
   },
 
   /**
-  * Creates a randomly connected network
-  *
-  * @param {number} input Number of input nodes
-  * @param {number} [hidden] Number of nodes inbetween input and output
-  * @param {number} output Number of output nodes
-  * @param {object} [options] Configuration options
-  * @param {number} [options.connections=hidden*2] Number of connections (Larger than hidden)
-  * @param {number} [options.backconnections=0] Number of recurrent connections
-  * @param {number} [options.selfconnections=0] Number of self connections
-  * @param {number} [options.gates=0] Number of gates
-  *
-  * @example
-  * let { architect } = require("@liquid-carrot/carrot");
-  *
-  * let network = architect.Random(1, 20, 2, {
-  *   connections: 40,
-  *   gates: 4,
-  *   selfconnections: 4
-  * });
-  *
-  * @returns {Network}
-  */
-  Random: function (input, hidden, output, options) {
+   * Creates a randomly connected network
+   *
+   * @param {number} input Number of input nodes
+   * @param {number} [hidden] Number of nodes inbetween input and output
+   * @param {number} output Number of output nodes
+   * @param {object} [options] Configuration options
+   * @param {number} [options.connections=hidden*2] Number of connections (Larger than hidden)
+   * @param {number} [options.backconnections=0] Number of recurrent connections
+   * @param {number} [options.selfconnections=0] Number of self connections
+   * @param {number} [options.gates=0] Number of gates
+   *
+   * @example
+   * let { architect } = require("@liquid-carrot/carrot");
+   *
+   * let network = architect.Random(1, 20, 2, {
+   *   connections: 40,
+   *   gates: 4,
+   *   selfconnections: 4
+   * });
+   *
+   * @returns {Network}
+   */
+  Random: function(input, hidden, output, options) {
     // Random(input, output)
-    if(!(output, options)) {
+    if (!(output, options)) {
       output = hidden;
       hidden = undefined;
     }
     // Random(input, output, options)
-    else if(!options && _.isPlainObject(output)) {
-        options = output;
-        output = hidden;
-        hidden = undefined;
+    else if (!options && _.isPlainObject(output)) {
+      options = output;
+      output = hidden;
+      hidden = undefined;
     }
 
     hidden = hidden || 0;
@@ -20289,7 +19436,7 @@ Network.architecture = {
       connections: hidden * 2,
       backconnections: 0,
       selfconnections: 0,
-      gates: 0
+      gates: 0,
     });
 
     const network = new Network(input, output);
@@ -20304,48 +19451,48 @@ Network.architecture = {
   },
 
   /**
-  * Creates a long short-term memory network
-  *
-  * @see {@link https://en.wikipedia.org/wiki/Long_short-term_memory|LSTM on Wikipedia}
-  *
-  * @param {number} input Number of input nodes
-  * @param {...number} memory Number of memory block_size assemblies (input gate, memory cell, forget gate, and output gate) per layer
-  * @param {number} output Number of output nodes
-  * @param {object} [options] Configuration options
-  * @param {boolean} [options.memory_to_memory=false] Form internal connections between memory blocks
-  * @param {boolean} [options.output_to_memory=false] Form output to memory layer connections and gate them
-  * @param {boolean} [options.output_to_gates=false] Form output to gate connections (connects to all gates)
-  * @param {boolean} [options.input_to_output=true] Form direct input to output connections
-  * @param {boolean} [options.input_to_deep=true] Form input to memory layer conections and gate them
-  *
-  * @example <caption>While training sequences or timeseries prediction, set the clear option to true in training</caption>
-  * let { architect } = require("@liquid-carrot/carrot");
-  *
-  * // Input, memory block_size layer, output
-  * let my_LSTM = new architect.LSTM(2,6,1);
-  *
-  * // with multiple memory block_size layer_sizes
-  * let my_LSTM = new architect.LSTM(2, 4, 4, 4, 1);
-  *
-  * // with options
-  * var options = {
-  *   memory_to_memory: false,    // default
-  *   output_to_memory: false,    // default
-  *   output_to_gates: false,     // default
-  *   input_to_output: true,      // default
-  *   input_to_deep: true         // default
-  * };
-  *
-  * let my_LSTM = new architect.LSTM(2, 4, 4, 4, 1, options);
-  *
-  * @returns {Network}
-  */
-  LSTM: function () {
+   * Creates a long short-term memory network
+   *
+   * @see {@link https://en.wikipedia.org/wiki/Long_short-term_memory|LSTM on Wikipedia}
+   *
+   * @param {number} input Number of input nodes
+   * @param {...number} memory Number of memory block_size assemblies (input gate, memory cell, forget gate, and output gate) per layer
+   * @param {number} output Number of output nodes
+   * @param {object} [options] Configuration options
+   * @param {boolean} [options.memory_to_memory=false] Form internal connections between memory blocks
+   * @param {boolean} [options.output_to_memory=false] Form output to memory layer connections and gate them
+   * @param {boolean} [options.output_to_gates=false] Form output to gate connections (connects to all gates)
+   * @param {boolean} [options.input_to_output=true] Form direct input to output connections
+   * @param {boolean} [options.input_to_deep=true] Form input to memory layer conections and gate them
+   *
+   * @example <caption>While training sequences or timeseries prediction, set the clear option to true in training</caption>
+   * let { architect } = require("@liquid-carrot/carrot");
+   *
+   * // Input, memory block_size layer, output
+   * let my_LSTM = new architect.LSTM(2,6,1);
+   *
+   * // with multiple memory block_size layer_sizes
+   * let my_LSTM = new architect.LSTM(2, 4, 4, 4, 1);
+   *
+   * // with options
+   * var options = {
+   *   memory_to_memory: false,    // default
+   *   output_to_memory: false,    // default
+   *   output_to_gates: false,     // default
+   *   input_to_output: true,      // default
+   *   input_to_deep: true         // default
+   * };
+   *
+   * let my_LSTM = new architect.LSTM(2, 4, 4, 4, 1, options);
+   *
+   * @returns {Network}
+   */
+  LSTM: function() {
     const layer_sizes_and_options = Array.from(arguments);
 
     const output_size_or_options = layer_sizes_and_options.slice(-1)[0];
 
-    let layer_sizes, options
+    let layer_sizes, options;
 
     // find out if options were passed
     if (typeof output_size_or_options === 'number') {
@@ -20365,18 +19512,18 @@ Network.architecture = {
       output_to_memory: false,
       output_to_gates: false,
       input_to_output: true,
-      input_to_deep: true
+      input_to_deep: true,
     });
 
 
     const input_layer = new Group(layer_sizes.shift()); // first argument
     input_layer.set({
-      type: 'input'
+      type: 'input',
     });
 
     const output_layer = new Group(layer_sizes.pop());
     output_layer.set({
-      type: 'output'
+      type: 'output',
     });
 
     // check if input to output direct connection
@@ -20399,13 +19546,13 @@ Network.architecture = {
       const block_output = index === block_sizes.length - 1 ? output_layer : new Group(block_size);
 
       input_gate.set({
-        bias: 1
+        bias: 1,
       });
       forget_gate.set({
-        bias: 1
+        bias: 1,
       });
       output_gate.set({
-        bias: 1
+        bias: 1,
       });
 
       // Connect the input with all the nodes
@@ -20476,46 +19623,46 @@ Network.architecture = {
   },
 
   /**
-  * Creates a gated recurrent unit network
-  *
-  * @param {number} input Number of input nodes
-  * @param {...number} units Number of gated recurrent units per layer
-  * @param {number} output Number of output nodes
-  *
-  * @example <caption>GRU is being tested, and may not always work for your dataset.</caption>
-  * let { architect } = require("@liquid-carrot/carrot");
-  *
-  * // Input, gated recurrent unit layer, output
-  * let my_LSTM = new architect.GRU(2,6,1);
-  *
-  * // with multiple layers of gated recurrent units
-  * let my_LSTM = new architect.GRU(2, 4, 4, 4, 1);
-  *
-  * @example <caption>Training XOR gate</caption>
-  * let { architect } = require("@liquid-carrot/carrot");
-  *
-  * var training_set = [
-  *   { input: [0], output: [0]},
-  *   { input: [1], output: [1]},
-  *   { input: [1], output: [0]},
-  *   { input: [0], output: [1]},
-  *   { input: [0], output: [0]}
-  * ];
-  *
-  * var network = new architect.GRU(1,1,1);
-  *
-  * // Train a sequence: 00100100..
-  * network.train(training_set, {
-  *   log: 1,
-  *   rate: 0.1, // lower rates work best
-  *   error: 0.005,
-  *   iterations: 3000,
-  *   clear: true // set to true while training
-  * });
-  *
-  * @returns {Network}
-  */
-  GRU: function () {
+   * Creates a gated recurrent unit network
+   *
+   * @param {number} input Number of input nodes
+   * @param {...number} units Number of gated recurrent units per layer
+   * @param {number} output Number of output nodes
+   *
+   * @example <caption>GRU is being tested, and may not always work for your dataset.</caption>
+   * let { architect } = require("@liquid-carrot/carrot");
+   *
+   * // Input, gated recurrent unit layer, output
+   * let my_LSTM = new architect.GRU(2,6,1);
+   *
+   * // with multiple layers of gated recurrent units
+   * let my_LSTM = new architect.GRU(2, 4, 4, 4, 1);
+   *
+   * @example <caption>Training XOR gate</caption>
+   * let { architect } = require("@liquid-carrot/carrot");
+   *
+   * var training_set = [
+   *   { input: [0], output: [0]},
+   *   { input: [1], output: [1]},
+   *   { input: [1], output: [0]},
+   *   { input: [0], output: [1]},
+   *   { input: [0], output: [0]}
+   * ];
+   *
+   * var network = new architect.GRU(1,1,1);
+   *
+   * // Train a sequence: 00100100..
+   * network.train(training_set, {
+   *   log: 1,
+   *   rate: 0.1, // lower rates work best
+   *   error: 0.005,
+   *   iterations: 3000,
+   *   clear: true // set to true while training
+   * });
+   *
+   * @returns {Network}
+   */
+  GRU: function() {
     const layer_sizes = Array.from(arguments);
     if (layer_sizes.length < 3) throw new Error('You have to specify at least 3 layer sizes');
 
@@ -20528,7 +19675,7 @@ Network.architecture = {
 
     let previous = input_layer;
     for (var i = 0; i < block_sizes.length; i++) {
-      const layer = Layer.GRU(block_sizes[i])
+      const layer = Layer.GRU(block_sizes[i]);
       previous.connect(layer);
       previous = layer;
 
@@ -20542,74 +19689,74 @@ Network.architecture = {
   },
 
   /**
-  * Creates a hopfield network of the given size
-  *
-  * @param {number} size Number of inputs and outputs (which is the same number)
-  *
-  * @example <caption>Output will always be binary due to `Activation.STEP` function.</caption>
-  * let { architect } = require("@liquid-carrot/carrot");
-  *
-  * var network = architect.Hopfield(10);
-  * var training_set = [
-  *   { input: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1], output: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1] },
-  *   { input: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0], output: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0] }
-  * ];
-  *
-  * network.train(training_set);
-  *
-  * network.activate([0,1,0,1,0,1,0,1,1,1]); // [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
-  * network.activate([1,1,1,1,1,0,0,1,0,0]); // [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]
-  *
-  * @returns {Network}
-  */
-  Hopfield: function (size) {
-    const input = new Group(size, "input")
-    const output = new Group(size, "output")
+   * Creates a hopfield network of the given size
+   *
+   * @param {number} size Number of inputs and outputs (which is the same number)
+   *
+   * @example <caption>Output will always be binary due to `Activation.STEP` function.</caption>
+   * let { architect } = require("@liquid-carrot/carrot");
+   *
+   * var network = architect.Hopfield(10);
+   * var training_set = [
+   *   { input: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1], output: [0, 1, 0, 1, 0, 1, 0, 1, 0, 1] },
+   *   { input: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0], output: [1, 1, 1, 1, 1, 0, 0, 0, 0, 0] }
+   * ];
+   *
+   * network.train(training_set);
+   *
+   * network.activate([0,1,0,1,0,1,0,1,1,1]); // [0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+   * network.activate([1,1,1,1,1,0,0,1,0,0]); // [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]
+   *
+   * @returns {Network}
+   */
+  Hopfield: function(size) {
+    const input = new Group(size, 'input');
+    const output = new Group(size, 'output');
 
-    input.connect(output, methods.connection.ALL_TO_ALL)
+    input.connect(output, methods.connection.ALL_TO_ALL);
 
     output.set({
-      squash: methods.activation.STEP
-    })
+      squash: methods.activation.STEP,
+    });
 
-    return Network.architecture.Construct([input, output])
+    return Network.architecture.Construct([input, output]);
   },
 
   /**
-  * Creates a NARX network (remember previous inputs/outputs)
-  * @alpha cannot make standalone network. TODO: be able to make standalone network
-  *
-  * @param {number} input Number of input nodes
-  * @param {number[]|number} hidden Array of hidden layer sizes, e.g. [10,20,10] If only one hidden layer, can be a number (of nodes)
-  * @param {number} output Number of output nodes
-  * @param {number} input_memory Number of previous inputs to remember
-  * @param {number} output_memory Number of previous outputs to remember
-  *
-  * @example
-  * let { architect } = require("@liquid-carrot/carrot");
-  *
-  * let narx = new architect.NARX(1, 5, 1, 3, 3);
-  *
-  * // Training a sequence
-  * let training_data = [
-  *   { input: [0], output: [0] },
-  *   { input: [0], output: [0] },
-  *   { input: [0], output: [1] },
-  *   { input: [1], output: [0] },
-  *   { input: [0], output: [0] },
-  *   { input: [0], output: [0] },
-  *   { input: [0], output: [1] },
-  * ];
-  * narx.train(training_data, {
-  *   log: 1,
-  *   iterations: 3000,
-  *   error: 0.03,
-  *   rate: 0.05
-  * });
-  *
-  * @returns {Network}
-  */
-  NARX: function (input_size, hidden_sizes, output_size, input_memory_size, output_memory_size) {
+   * Creates a NARX network (remember previous inputs/outputs)
+   * @alpha cannot make standalone network. TODO: be able to make standalone network
+   *
+   * @param {number} input Number of input nodes
+   * @param {number[]|number} hidden Array of hidden layer sizes, e.g. [10,20,10] If only one hidden layer, can be a number (of nodes)
+   * @param {number} output Number of output nodes
+   * @param {number} input_memory Number of previous inputs to remember
+   * @param {number} output_memory Number of previous outputs to remember
+   *
+   * @example
+   * let { architect } = require("@liquid-carrot/carrot");
+   *
+   * let narx = new architect.NARX(1, 5, 1, 3, 3);
+   *
+   * // Training a sequence
+   * let training_data = [
+   *   { input: [0], output: [0] },
+   *   { input: [0], output: [0] },
+   *   { input: [0], output: [1] },
+   *   { input: [1], output: [0] },
+   *   { input: [0], output: [0] },
+   *   { input: [0], output: [0] },
+   *   { input: [0], output: [1] },
+   * ];
+   * narx.train(training_data, {
+   *   log: 1,
+   *   iterations: 3000,
+   *   error: 0.03,
+   *   rate: 0.05
+   * });
+   *
+   * @returns {Network}
+   */
+  NARX: function(input_size, hidden_sizes, output_size, input_memory_size, output_memory_size) {
     if (!Array.isArray(hidden_sizes)) {
       hidden_sizes = [hidden_sizes];
     }
@@ -20656,10 +19803,10 @@ Network.architecture = {
 
 
     input_layer.set({
-      type: 'input'
+      type: 'input',
     });
     output_layer.set({
-      type: 'output'
+      type: 'output',
     });
 
     return Network.architecture.Construct(nodes);
@@ -20670,7 +19817,7 @@ Network.architecture = {
    */
   Liquid: function() {
     // Code here....
-  }
+  },
 }
 
 module.exports = Network;
@@ -21144,13 +20291,1309 @@ const Neat = function(dataset, {
 
 
 /***/ }),
-/* 5 */
+/* 3 */
+/***/ (function(module, exports) {
+
+/**
+* @global
+* @name config
+* @prop {boolean} warnings=false
+*/
+var config = {
+  warnings: false
+};
+
+module.exports = config;
+
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const _ = __webpack_require__(1);
 const methods = __webpack_require__(0);
-const config = __webpack_require__(2);
-const Node = __webpack_require__(3);
+const Connection = __webpack_require__(10);
+const config = __webpack_require__(3);
+// const Group = require("./group");
+// const Layer = require("./layer");
+
+/**
+* Creates a new neuron/node
+*
+* Neurons are the basic unit of the neural network. They can be connected together, or used to gate connections between other neurons. A Neuron can perform basically 4 operations: form connections, gate connections, activate and [propagate](https://www.youtube.com/watch?v=Ilg3gGewQ5U).
+*
+* For more information check:
+* - [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
+* - [here](https://en.wikipedia.org/wiki/Artificial_neuron)
+* - [here](https://wagenaartje.github.io/neataptic/docs/architecture/node/)
+* - [here](https://github.com/cazala/synaptic/wiki/Neural-Networks-101)
+* - [here](https://keras.io/backend/#bias_add)
+*
+* @constructs Node
+*
+* @param {Object|Node} [options] Options Object or template `Node`
+* @param {number} [options.bias] Neuron's bias [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
+*
+* @prop {number} bias Neuron's bias [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
+* @prop {activation} squash [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0)
+* @prop {string} type
+* @prop {number} activation Output value
+* @prop {number} state
+* @prop {number} old
+* @prop {number} mask=1 Used for dropout. This is either 0 (ignored) or 1 (included) during training and is used to avoid [overfit](https://www.kdnuggets.com/2015/04/preventing-overfitting-neural-networks.html).
+* @prop {number} previousDeltaBias
+* @prop {number} totalDeltaBias
+* @prop {Array<Connection>} incoming Incoming connections to this node
+* @prop {Array<Connection>} outgoing Outgoing connections from this node
+* @prop {Array<Connection>} gated Connections this node gates
+* @prop {Connection} connections_self A self-connection
+* @prop {number} error.responsibility
+* @prop {number} error.projected
+* @prop {number} error.gated
+*
+* @example
+* let { Node } = require("@liquid-carrot/carrot");
+*
+* let node = new Node();
+*/
+function Node(options) {
+  let self = this;
+
+  // type = type || 'hidden';
+
+  Object.assign(self, {
+    bias: Math.random() * 2 - 1,
+    squash: methods.activation.LOGISTIC,
+    activation: 0,
+    state: 0,
+    old: 0,
+    mask: 1,
+    delta_bias_previous: 0,
+    delta_bias_total: 0,
+    delta_bias: [],
+    incoming: [],
+    outgoing: [],
+    gated: [],
+    sharedIncoming: null,
+    connections_self: new Connection(self, self, 0),
+    error_responsibility: 0,
+    error_projected: 0,
+    error_gated: 0,
+    ...options,
+  })
+
+  /**
+  * Actives the node.
+  *
+  * When a neuron activates, it computes its state from all its input connections and 'squashes' it using its activation function, and returns the output (activation).
+  *
+  * You can also provide the activation (a float between 0 and 1) as a parameter, which is useful for neurons in the input layer.
+  *
+  * @function activate
+  * @memberof Node
+  *
+  * @todo Support vector/tensor/array activation
+  *
+  * @param {number} [input] Environment signal (i.e. optional numerical value passed to the network as input)  - _should only be passed in input neurons_
+  * @param {Object} [options]
+  * @param {boolean} [options.trace] Controls whether traces are created when activation happens (a trace is meta information left behind for different uses, e.g. backpropagation).
+  *
+  * @returns {number} A neuron's ['Squashed'](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) output value
+  *
+  * @example
+  * let { Node } = require("@liquid-carrot/carrot");
+  *
+  * let A = new Node();
+  * let B = new Node();
+  *
+  * A.connect(B);
+  * A.activate(0.5); // 0.5
+  * B.activate(); // 0.3244554645
+  */
+  self.activate = function(input, options) {
+    if(options == undefined && typeof input === "object") {
+      options = input;
+      input = undefined;
+    }
+
+    options = options || {}
+    options = {
+      trace: true,
+      ...options
+    }
+
+    if(input != undefined && Number.isFinite(input)) {
+      return self.activation = input;
+    }
+
+    // DRY abstraction
+    const activate = function() {
+      // Activate (from self)
+      if (self.sharedIncoming !== null) {
+        self.bias = self.sharedIncoming.bias;
+      }
+      self.state = self.connections_self.gain * self.connections_self.weight * self.state + self.bias;
+
+      // Activate (from incoming connections)
+      for (let i = 0; i < self.incoming.length; i++) {
+        const conn = self.incoming[i];
+        self.state += conn.from.activation * conn.weight * conn.gain;
+      }
+
+      return self.state;
+    }
+
+    if(options.trace) {
+      self.old = self.state;
+
+      self.state = activate()
+      self.activation = self.squash(self.state) * self.mask // Squash Activation
+      self.derivative = self.squash(self.state, true)
+
+      // Stores traces
+      const nodes = [];
+      const influences = [];
+
+      // Adjust 'gain' (to gated connections) & Build traces
+      for (let i = 0; i < self.gated.length; i++) {
+        const connection = self.gated[i];
+        connection.gain = self.activation
+
+        // Build traces
+        const index = nodes.indexOf(connection.to);
+        if(index > -1) { // Node & influence exist
+          influences[index] += connection.weight * connection.from.activation;
+        } else { // Add node & corresponding influence
+          nodes.push(connection.to);
+          influences.push(connection.weight * connection.from.activation + (connection.to.connections_self.gater === self ? connection.to.old : 0));
+        }
+      }
+
+      // Forwarding 'xtrace' (to incoming connections)
+      for (let i = 0; i < self.incoming.length; i++) {
+        const connection = self.incoming[i];
+
+        // Trace Elegibility
+        connection.elegibility = self.connections_self.gain * self.connections_self.weight * connection.elegibility + connection.from.activation * connection.gain;
+
+        for(let j = 0; j < nodes.length; j++) {
+          const [ node, influence ]  = [nodes[j], influences[j]];
+
+          const index = connection.xtrace_nodes.indexOf(node);
+
+          if(index > -1) connection.xtrace_values[index] = node.connections_self.gain * node.connections_self.weight * connection.xtrace_values[index] + self.derivative * connection.elegibility * influence;
+          else {
+            connection.xtrace_nodes.push(node);
+            connection.xtrace_values.push(self.derivative * connection.elegibility * influence);
+          }
+        }
+      }
+
+      return self.activation;
+    } else {
+      if(self.type === "input") return self.activation = 0
+
+      self.state = activate()
+      self.activation = self.squash(self.state) // Squash Activation
+
+      // Adjust 'gain' (to gated connections)
+      for (let i = 0; i < self.gated.length; i++) {
+        self.gated[i].gain = self.activation
+      }
+
+      return self.activation;
+    }
+  },
+
+  /**
+  * Activates the node without calculating elegibility traces and such.
+  *
+  * Calculates the state from all the input connections, adds the bias, and 'squashes' it. Does not calculate traces, so this can't be used to backpropagate afterwards. That's also why it's quite a bit faster than regular `activate`.
+  *
+  * @function noTraceActivate
+  * @memberof Node
+  *
+  * @deprecated
+  *
+  * @param {number} [input] Optional value to be used for an input (or forwarding) neuron - _should only be passed in input neurons_
+  *
+  * @returns {number} A neuron's ['Squashed'](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) output value
+  *
+  * @example
+  * let { Node } = require("@liquid-carrot/carrot");
+  *
+  * let node = new Node();
+  *
+  * node.noTraceActivate(); // 0.4923128591923
+  */
+  self.noTraceActivate = function(input) {
+    return self.activate(input, { trace: false })
+  },
+
+  /**
+  * Backpropagate the error (a.k.a. learn).
+  *
+  * After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating. [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
+  *
+  * If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
+  *
+  * @function propagate
+  * @memberof Node
+  *
+  * @param {number} target The target value (i.e. "the value the network SHOULD have given")
+  * @param {Object} options
+  * @param {number} [options.rate=0.3] [Learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
+  * @param {number} [options.momentum=0] [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one.
+  * @param {boolean} [options.update=true] When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
+  *
+  * @example
+  * let { Node } = require("@liquid-carrot/carrot");
+  *
+  * let A = new Node();
+  * let B = new Node('output');
+  * A.connect(B);
+  *
+  * let learningRate = .3;
+  * let momentum = 0;
+  *
+  * for(let i = 0; i < 20000; i++)
+  * {
+  *   // when A activates 1
+  *   A.activate(1);
+  *
+  *   // train B to activate 0
+  *   B.activate();
+  *   B.propagate(learningRate, momentum, true, 0);
+  * }
+  *
+  * // test it
+  * A.activate(1);
+  * B.activate(); // 0.006540565760853365
+  *
+  * @see [Regularization Neataptic](https://wagenaartje.github.io/neataptic/docs/methods/regularization/)
+  * @see [What is backpropagation | YouTube](https://www.youtube.com/watch?v=Ilg3gGewQ5U)
+  */
+  self.propagate = function(target, options) {
+    if (options == undefined && typeof target === "object") {
+      options = target;
+      target = undefined;
+    }
+
+    options = options || {}
+    options = {
+      momentum: 0,
+      rate: 0.3,
+      update: true,
+      ...options
+    }
+
+    // Output Node Error (from environment)
+    if (target != undefined && Number.isFinite(target)) {
+      self.error_responsibility = self.error_projected = target - self.activation;
+    }
+    // Hidden/Input Node Error (from backpropagation)
+    else {
+      // Projected Error Responsibility (from outgoing connections)
+      self.error_projected = 0;
+      for (let i = 0; i < self.outgoing.length; i++) {
+        const connection = self.outgoing[i];
+        self.error_projected += connection.to.error_responsibility * connection.weight * connection.gain;
+      }
+      self.error_projected *= self.derivative || 1;
+
+      // Gated Error Responsibility (from gated connections)
+      self.error_gated = 0;
+      for (let i = 0; i < self.gated.length; i++) {
+        const connection = self.gated[i];
+        const node = connection.to;
+        const influence = (node.connections_self.gater === self ? node.old : 0) + connection.weight * connection.from.activation;
+
+        self.error_gated += node.error_responsibility * influence;
+      }
+      self.error_gated *= self.derivative || 1;
+
+      // Error Responsibility
+      self.error_responsibility = self.error_projected + self.error_gated;
+    }
+
+    // Adjust Incoming Connections
+    for (let i = 0; i < self.incoming.length; i++) {
+      const connection = self.incoming[i];
+      let gradient = self.error_projected * connection.elegibility;
+      for (let j = 0; j < connection.xtrace_nodes.length; j++) {
+        const node = connection.xtrace_nodes[j];
+        gradient += node.error_responsibility * connection.xtrace_values[j];
+      }
+
+      // Adjust Weight ()
+      connection.delta_weights_total += options.rate * gradient * self.mask;
+      if (options.update) {
+        connection.delta_weights_total += options.momentum * connection.delta_weights_previous;
+        if (connection.sharedIncoming === null) {
+          connection.weight += connection.delta_weights_total;
+        }
+        connection.delta_weights_previous = connection.delta_weights_total;
+        connection.delta_weights_total = 0;
+      }
+    }
+
+    // Adjust Bias
+    self.delta_bias_total += options.rate * self.error_responsibility;
+    if (options.update) {
+      self.delta_bias_total += options.momentum * self.delta_bias_previous;
+      if (self.sharedIncoming === null) {
+        self.bias += self.delta_bias_total;
+      }
+      self.delta_bias_previous = self.delta_bias_total;
+      self.delta_bias_total = 0;
+    }
+
+    return {
+      responsibility: self.error_responsibility,
+      projected: self.error_projected,
+      gated: self.error_gated,
+    }
+  },
+
+  /**
+  * Connects this node to the given node(s)
+  *
+  * @param {Node|Node[]} nodes Node(s) to project connection(s) to
+  * @param {number} [weight] Initial connection(s) [weight](https://en.wikipedia.org/wiki/Synaptic_weight)
+  * @param {Object} [options={}]
+  * @param {boolean} [twosided] If `true` connect nodes to each other
+  *
+  * @function connect
+  * @memberof Node
+  *
+  * @returns {Connection[]|Connection}
+  *
+  * @example <caption>Connecting node (neuron) to another node (neuron)</caption>
+  * const { Node } = require("@liquid-carrot/carrot");
+  *
+  * let node = new Node();
+  * let other_node = new Node();
+  *
+  * let connection = node.connect(other_node); // Both nodes now share a connection
+  *
+  * console.log(connection); // Connection { from: [Object object], to: [Object object], ...}
+  *
+  * @example <caption>Connecting node (neuron) to many nodes (neurons)</caption>
+  * const { Node } = require("@liquid-carrot/carrot");
+  *
+  * let node = new Node();
+  * let other_nodes = [new Node(), new Node(), new Node()];
+  *
+  * let connections = node.connect(other_nodes); // Node is connected to all other nodes
+  *
+  * console.log(connections); // [{ from: [Object object], to: [Object object], ...}, ...]
+  *
+  *
+  * @example <caption>Connecting a node (neuron) to itself</caption>
+  * const { Node } = require("@liquid-carrot/carrot");
+  *
+  * let node = new Node();
+  *
+  * let connection = node.connect(node); // Node is connected to itself.
+  *
+  * console.log(connection); // Connection { from: [Object object], to: [Object object], ...}
+  */
+  self.connect = function(nodes, weight, options) {
+    if (nodes == undefined) throw new ReferenceError("Missing required parameter 'nodes'");
+
+    if(options == undefined && typeof weight === "object") {
+      options = weight;
+      weight = undefined;
+    }
+
+    options = options || {};
+
+    if (nodes instanceof Node) {
+      if (nodes === self) {
+        self.connections_self.weight = weight || 1;
+        return self.connections_self;
+      } else if (self.isProjectingTo(nodes)) throw new ReferenceError("Node is already projecting to 'target'");
+      else {
+        const connection = new Connection(self, nodes, weight, options);
+
+        self.outgoing.push(connection);
+        nodes.incoming.push(connection);
+
+        if(options.twosided) nodes.connect(self);
+
+        return connection;
+      }
+    }
+    else if (Array.isArray(nodes)) {
+      const connections = [];
+
+      for (let index = 0; index < nodes.length; index++) {
+        const connection = new Connection(self, nodes[index], weight, options);
+
+        self.outgoing.push(connection);
+        nodes[index].incoming.push(connection);
+        connections.push(connection);
+
+        if(options.twosided) nodes[index].connect(self);
+      }
+
+      return connections;
+    }
+    else throw new TypeError(`Parameter 'target': Expected 'Node' or 'Node[]' - but recieved, ${nodes}`);
+  },
+
+  /**
+  * Disconnects this node from the given node(s)
+  *
+  * @function disconnect
+  * @memberof Node
+  *
+  * @param {Node|Node[]} node Node(s) to remove connection(s) to
+  * @param {Object} options
+  * @param {boolean} [options.twosided=false] If `true` disconnects nodes from each other (i.e. both sides)
+  *
+  * @example <caption>Disconnect from one <code>node</code></caption>
+  * const { Node } = require("@liquid-carrot/carrot");
+  *
+  * let node = new Node();
+  * let other = new Node();
+  *
+  * node.connect(other); // `node` now connected to `other`
+  *
+  * console.log(node.incoming.length); // 0
+  * console.log(node.outgoing.length); // 1
+  *
+  * node.disconnect(other); // `node` is now disconnected from `other`
+  *
+  * console.log(node.incoming.length); // 0
+  * console.log(node.outgoing.length); // 0
+  *
+  * @example <caption>Connect to one <code>node</code> - <em>two-sided</em></caption>
+  * const { Node } = require("@liquid-carrot/carrot");
+  *
+  * let node = new Node();
+  * let other = new Node();
+  *
+  * // `node` & `other` are now connected to each other
+  * node.connect(other, {
+  *   twosided: true
+  * });
+  *
+  * console.log(node.incoming.length); // 1
+  * console.log(node.outgoing.length); // 1
+  *
+  * // `node` & `other` are now disconnected from each other
+  * node.disconnect(other, {
+  *   twosided: true
+  * });
+  *
+  * console.log(node.incoming.length); // 0
+  * console.log(node.outgoing.length); // 0
+  */
+  self.disconnect = function(nodes, options) {
+    if (nodes == undefined) throw new ReferenceError("Missing required parameter 'target'");
+
+    options = options || {};
+
+    if (nodes instanceof Node) {
+      if (nodes === self) {
+        self.connections_self.weight = 0;
+        return self.connections_self;
+      } else {
+        for (let index = 0; index < self.outgoing.length; index++) {
+          const connection = self.outgoing[index];
+
+          if (connection.to === nodes) {
+            self.outgoing.splice(index, 1);
+
+            connection.to.incoming.splice(connection.to.incoming.indexOf(connection), 1);
+
+            if(connection.gater != undefined) connection.gater.ungate(connection);
+            if(options.twosided) nodes.disconnect(self);
+
+            return connection;
+          }
+        }
+      }
+    } else if (Array.isArray(nodes)) {
+      const connections = [];
+
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = 0; j < self.outgoing.length; j++) {
+          const connection = self.outgoing[j];
+
+          if(connection.to === nodes[i]) {
+            self.outgoing.splice(j, 1);
+            connection.to.incoming.splice(connection.to.incoming.indexOf(connection), 1);
+
+            if(connection.gater != undefined) connection.gater.ungate(connection);
+            if(options.twosided) nodes[i].disconnect(self);
+
+            connections.push(connection);
+
+            break;
+          }
+        }
+      }
+
+      return connections;
+    }
+    else throw new TypeError(`Parameter 'target': Expected 'Node' or 'Node[]' - but recieved, ${nodes}`);
+  },
+
+  /**
+  * This node gates (influences) the given connection(s)
+  *
+  * @function gate
+  * @memberof Node
+  *
+  * @param {Connection|Connection[]} connections Connections to be gated (influenced) by a neuron
+  *
+  * @example <caption>Gate one <code>connection</code></caption>
+  * const { Node } = require("@liquid-carrot/carrot");
+  *
+  * let input = new Node();
+  * let output = new Node();
+  * let connection = input.connect(output);
+  *
+  * let node = new Node();
+  *
+  * console.log(connection.gater === node); // false
+  *
+  * node.gate(connection); // Node now gates (manipulates) `connection`
+  *
+  * console.log(connection.gater === node); // true
+  */
+  self.gate = function(connections) {
+    if (connections == undefined) throw new ReferenceError("Missing required parameter 'connections'");
+
+
+    if (!Array.isArray(connections)) {
+      self.gated.push(connections);
+      connections.gater = self;
+    } else {
+      for (let index = 0; index < connections.length; index++) {
+        const connection = connections[index];
+
+        self.gated.push(connection);
+        connection.gater = self;
+      }
+    }
+
+    return connections;
+  },
+
+  /**
+  * Stops this node from gating (manipulating) the given connection(s)
+  *
+  * @function ungate
+  * @memberof Node
+  *
+  * @param {Connection|Connection[]} connections Connections to ungate - _i.e. remove this node from_
+  *
+  * @returns {Connection|Connection[]} Returns connection(s) that were ungated
+  *
+  * @example <caption>Ungate one <code>connection</code></caption>
+  * const { Node } = require("@liquid-carrot/carrot");
+  *
+  * let input = new Node();
+  * let output = new Node();
+  * let connection = input.connect(output);
+  *
+  * let node = new Node();
+  *
+  * console.log(connection.gater === node); // false
+  *
+  * node.gate(connection); // Node now gates (manipulates) `connection`
+  *
+  * console.log(connection.gater === node); // true
+  *
+  * node.ungate(connection); // Node is removed from `connection`
+  *
+  * console.log(connection.gater === node); // false
+  */
+  self.ungate = function(connections) {
+    if (connections == undefined) throw new ReferenceError("Missing required parameter 'connections'");
+
+    if (!Array.isArray(connections)) {
+      self.gated.splice(self.gated.indexOf(connections), 1);
+      connections.gater = null;
+      connections.gain = 1;
+    } else {
+      for (let i = 0; i < connections.length; i++) {
+      // for (let index = connections.length - 1; index >= 0; index--) {
+        const connection = connections[i];
+
+        self.gated.splice(self.gated.indexOf(connection), 1);
+        connection.gater = null;
+        connection.gain = 1;
+      }
+    }
+
+    return connections;
+  },
+
+  /**
+  * Clears this node's state information - _i.e. resets node and its connections to "factory settings"_
+  *
+  * `node.clear()` is useful for predicting timeseries with LSTMs.
+  *
+  * @function clear
+  * @memberof Node
+  *
+  * @example
+  * const { Node } = require("@liquid-carrot/carrot");
+  *
+  * let node = new Node();
+  *
+  * node.activate([1, 0]);
+  * node.propagate([1]);
+  *
+  * console.log(node); // Node has state information (e.g. `node.derivative`)
+  *
+  * node.clear(); // Factory resets node
+  *
+  * console.log(node); // Node has no state information
+  */
+  self.clear = function() {
+    for (let index = 0; index < self.incoming.length; index++) {
+      const connection = self.incoming[index];
+
+      connection.elegibility = 0;
+      connection.xtrace_nodes = []
+      connection.xtrace_values = [];
+    }
+
+    for (let index = 0; index < self.gated.length; index++) {
+      const connection = self.gated[index];
+      connection.gain = 0;
+    }
+
+    self.error_responsibility = self.error_projected = self.error_gated = 0;
+    self.old = self.state = self.activation = 0;
+  },
+
+  /**
+  * Mutates the node - _i.e. changes node's squash function or bias_
+  *
+  * @function mutate
+  * @memberof Node
+  *
+  * @param {Object} [options]
+  * @param {string} [options.method] A [mutation method](mutation) - _a random method will chosen if none is passed_
+  * @param {activation[]} [options.allowed] Allowed/possible squash (activation) functions for node (neuron)
+  *
+  * @example
+  * const { Node } = require("@liquid-carrot/carrot");
+  *
+  * let node = new Node();
+  *
+  * console.log(node);
+  *
+  * node.mutate(); // Changes node's squash function or bias
+  */
+  self.mutate = function(options) {
+    options = {
+      method: Math.random() < 0.5 ? methods.mutation.MOD_ACTIVATION : methods.mutation.MOD_BIAS,
+      ...options
+    }
+
+    // options = options || {};
+    // options.method = options.method != undefined ? options.method : Math.random() < 0.5 ? methods.mutation.MOD_ACTIVATION : methods.mutation.MOD_BIAS;
+
+    // if(method == undefined) throw new Error('No mutate method given!');
+
+    // // CHECK: https://scotch.io/bar-talk/5-tips-to-write-better-conditionals-in-javascript
+    // else if(!(method.name in methods.mutation)) throw new Error('This method does not exist!');
+
+    // Return a random index - not including `exclude`;
+    function random_index(max, exclude) {
+      return (exclude + Math.floor(Math.random() * (max - 1)) + 1) % max;
+    }
+
+    // Return a random key - not including `exclude`;
+    function random_key(keys, exclude) {
+      return keys[(keys.indexOf(exclude) + Math.floor(Math.random() * (keys.length - 1)) + 1) % keys.length];
+    }
+
+    switch(options.method) {
+      case methods.mutation.MOD_ACTIVATION:
+        if (options.allowed) {
+          self.squash = options.allowed[random_index(options.allowed.length, options.allowed.indexOf(self.squash))];
+        } else {
+          self.squash = methods.activation[random_key(Object.keys(methods.activation), self.squash.name)];
+        }
+        break;
+      case methods.mutation.MOD_BIAS:
+        if (self.sharedIncoming === null) {
+          self.bias += Math.random() * (options.method.max - options.method.min) + options.method.min;
+        }
+        break;
+    }
+  },
+
+  /**
+  * Checks if this node has an outgoing connection(s) into the given node(s)
+  *
+  * @function isProjectingTo
+  * @memberof Node
+  *
+  * @param {Node|Node[]} nodes Checks if this node has outgoing connection(s) into `node(s)`
+  *
+  * @returns {boolean} Returns true, iff this node has an outgoing connection into every node(s)
+  *
+  * @example <caption>Check one <code>node</code></caption>
+  * const { Node } = require("@liquid-carrot/carrot");
+  *
+  * let other_node = new Node();
+  * let node = new Node();
+  * node.connect(other_node);
+  *
+  * console.log(node.isProjectingTo(other_node)); // true
+  *
+  * @example <caption>Check many <code>nodes</code></caption>
+  * const { Node } = require("@liquid-carrot/carrot");
+  *
+  * let other_nodes = Array.from({ length: 5 }, () => new Node());
+  * let node = new Node();
+  *
+  * other_nodes.forEach(other_node => node.connect(other_node));
+  *
+  * console.log(node.isProjectingTo(other_nodes)); // true
+  */
+  self.isProjectingTo = function(nodes) {
+    if (nodes == undefined) throw new ReferenceError("Missing required parameter 'nodes'");
+
+    if (nodes === self) return self.connections_self.weight !== 0;
+    else if (!Array.isArray(nodes)) {
+      for (let i = 0; i < self.outgoing.length; i++) {
+        if (self.outgoing[i].to === nodes) return true;
+      }
+      return false;
+    } else {
+      // START: nodes.every()
+      let projecting_to = 0;
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+
+        for (let j = 0; j < self.outgoing.length; j++) {
+
+          if (self.outgoing[j].to === node) {
+            projecting_to++;
+            break;
+          }
+        }
+      }
+      // END: nodes.every()
+
+      return nodes.length === projecting_to ? true : false;
+    }
+  },
+
+  /**
+  * Checks if the given node(s) are have outgoing connections to this node
+  *
+  * @function isProjectedBy
+  * @memberof Node
+  *
+  * @param {Node|Node[]} nodes Checks if `node(s)` have outgoing connections into this node
+  *
+  * @returns {boolean} Returns true, iff every node(s) has an outgoing connection into this node
+  *
+  * @example <caption>Check one <code>node</code></caption>
+  * const { Node } = require("@liquid-carrot/carrot");
+  *
+  * let other_node = new Node();
+  * let node = new Node();
+  * other_node.connect(node);
+  *
+  * console.log(node.isProjectedBy(other_node)); // true
+  *
+  * @example <caption>Check many <code>nodes</code></caption>
+  * const { Node } = require("@liquid-carrot/carrot");
+  *
+  * let other_nodes = Array.from({ length: 5 }, () => new Node());
+  * let node = new Node();
+  *
+  * other_nodes.forEach(other_node => other_node.connect(node));
+  *
+  * console.log(node.isProjectedBy(other_nodes)); // true
+  */
+  self.isProjectedBy = function(nodes) {
+    if (nodes == undefined) throw new ReferenceError("Missing required parameter 'nodes'");
+
+    if (nodes === self) return self.connections_self.weight !== 0;
+    else if (!Array.isArray(nodes)) {
+      for (let i = 0; i < self.incoming.length; i++) {
+        if (self.incoming[i].from === nodes) return true;
+      }
+      return false;
+    } else {
+      // START: nodes.every()
+      let projected_by = 0;
+      for (let i = 0; i < nodes.length; i++) {
+        const node = nodes[i];
+
+        for (let j = 0; j < self.incoming.length; j++) {
+
+          if (self.incoming[j].from === node) {
+            projected_by++;
+            break;
+          }
+        }
+      }
+      // END: nodes.every()
+
+      return nodes.length === projected_by ? true : false;
+    }
+
+    // for(let i = 0; i < self.incoming.length; i++) {
+    //   if(self.incoming[i].from === node) return true;
+    // }
+
+    // return false;
+  },
+
+  /**
+  * Converts the node to a json object that can later be converted back
+  *
+  * @function toJSON
+  * @memberof Node
+  *
+  * @returns {object}
+  *
+  * @example
+  * const { Node } = require("@liquid-carrot/carrot");
+  *
+  * let node = new Node();
+  *
+  * console.log(node.toJSON());
+  */
+  self.toJSON = function () {
+    return {
+      bias: self.bias,
+      type: self.type,
+      squash: self.squash.name,
+      mask: self.mask,
+      shared: self.shared,
+    };
+  }
+}
+
+/**
+* Convert a json object to a node
+*
+* @param {object} json A node represented as a JSON object
+*
+* @returns {Node} A reconstructed node
+*
+* @example <caption>From Object</caption>
+* const { Node } = require("@liquid-carrot/carrot");
+*
+* let json = { bias: 0.35 };
+* let node = Node.fromJSON(json);
+*
+* console.log(node);
+*
+* @example <caption>From Node.toJSON()</caption>
+* const { Node } = require("@liquid-carrot/carrot");
+*
+* let other_node = new Node();
+* let json = other_node.toJSON();
+* let node = Node.fromJSON(json);
+*
+* console.log(node);
+*
+* @example <caption>From JSON string</caption>
+* const { Node } = require("@liquid-carrot/carrot");
+*
+* let other = new Node();
+* let json = other_node.toJSON();
+* let string = JSON.stringify(json);
+* let node = Node.fromJSON(string);
+*
+* console.log(node);
+*/
+Node.fromJSON = function (json) {
+  if (json == undefined) throw new ReferenceError("Missing required parameter 'json'");
+
+  if(typeof json === "string") json = JSON.parse(json);
+
+  const node = new Node();
+
+  Object.assign(node, { ...json }, {
+    squash: methods.activation[json.squash]
+  });
+
+  return node;
+};
+
+module.exports = Node;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports) {
+
+function validate(targets, outputs) {
+  if(targets == undefined || outputs == undefined) throw new ReferenceError("Missing at least one required parameters: `targets`, `outputs`");
+
+  targets = Array.isArray(targets) ? targets : [targets];
+  outputs = Array.isArray(outputs) ? outputs : [outputs];
+
+  if(targets.length !== outputs.length) throw new RangeError(`Required "targets.length === outputs.length"; Received "targets.length=${targets.length}" & "outputs.length=${outputs.length}`);
+
+  return [targets, outputs];
+}
+
+/**
+ * Cost functions play an important role in neural networks. They give neural networks an indication of 'how wrong' they are; a.k.a. how far they are from the desired outputs. Also in fitness functions, cost functions play an important role.
+ *
+ * @namespace cost
+ *
+ * @see [Loss Function on Wikipedia](https://en.wikipedia.org/wiki/Loss_function)
+ */
+const cost = {
+
+  /**
+  * Cross entropy error
+  *
+  * @see {@link http://bit.ly/2p5W29A|Cross-entropy Error Function}
+  * @param {number[]|number} targets Ideal value
+  * @param {number[]|number} outputs Actual values
+  *
+  * @returns {number} [Cross entropy error](https://ml-cheatsheet.readthedocs.io/en/latest/loss_functions.html)
+  *
+  * @example
+  * let { methods, Network } = require("@liquid-carrot/carrot");
+  *
+  * let myNetwork = new Network(5, 10, 5);
+  * myNetwork.train(trainingData, { cost: methods.cost.CROSS_ENTROPY });
+  */
+  CROSS_ENTROPY: function(targets, outputs) {
+    [targets, outputs] = validate(targets, outputs);
+
+    const error = outputs.reduce(function(total, value, index) {
+      return total -= targets[index] * Math.log(Math.max(outputs[index], 1e-15)) + (1 - targets[index]) * Math.log(1 - Math.max(outputs[index], 1e-15));
+    }, 0);
+
+    return error / outputs.length;
+  },
+
+  /**
+  * Mean Squared Error
+  *
+  * @param {number[]|number} targets Ideal value
+  * @param {number[]|number} outputs Actual values
+  *
+  * @returns {number} [Mean squared error](https://medium.freecodecamp.org/machine-learning-mean-squared-error-regression-line-c7dde9a26b93)
+  *
+  * @example
+  * let { methods, Network } = require("@liquid-carrot/carrot");
+  *
+  * let myNetwork = new Network(5, 10, 5);
+  * myNetwork.train(trainingData, { cost: methods.cost.MSE });
+  */
+  MSE: function(targets, outputs) {
+    [targets, outputs] = validate(targets, outputs);
+
+    const error = outputs.reduce(function(total, value, index) {
+      return total += Math.pow(targets[index] - outputs[index], 2);
+    }, 0);
+
+    return error / outputs.length;
+  },
+
+  /**
+  * Binary Error
+  *
+  * @param {number[]|number} targets Ideal value
+  * @param {number[]|number} outputs Actual values
+  *
+  * @returns {number} misses The amount of times targets value was missed
+  *
+  * @see [Hinge loss on Wikipedia](https://en.wikipedia.org/wiki/Hinge_loss)
+  *
+  * @example
+  * let { methods, Network } = require("@liquid-carrot/carrot");
+  *
+  * let myNetwork = new Network(5, 10, 5);
+  * myNetwork.train(trainingData, {
+  *   log: 1,
+  *   iterations: 500,
+  *   error: 0.03,
+  *   rate: 0.05,
+  *   cost: methods.cost.BINARY
+  * });
+  */
+  BINARY: function(targets, outputs) {
+    [targets, outputs] = validate(targets, outputs);
+
+    const error = outputs.reduce(function(total, value, index) {
+      return total += Math.round(targets[index] * 2) !== Math.round(outputs[index] * 2);
+    }, 0);
+
+    return error;
+  },
+
+  /**
+  * Mean Absolute Error
+  *
+  * @param {number[]|number} targets Ideal value
+  * @param {number[]|number} outputs Actual values
+  *
+  * @returns {number} [Mean absoulte error](https://en.wikipedia.org/wiki/Mean_absolute_error)
+  *
+  * @example
+  * let { methods, Network } = require("@liquid-carrot/carrot");
+  *
+  * let myNetwork = new Network(5, 10, 5);
+  * myNetwork.train(trainingData, {
+  *   log: 1,
+  *   iterations: 500,
+  *   error: 0.03,
+  *   rate: 0.05,
+  *   cost: methods.cost.MAE
+  * });
+  */
+  MAE: function(targets, outputs) {
+    [targets, outputs] = validate(targets, outputs);
+
+    const error = outputs.reduce(function(total, value, index) {
+      return total += Math.abs(targets[index] - outputs[index]);
+    }, 0);
+
+    return error / outputs.length;
+  },
+
+  /**
+  * Mean Absolute Percentage Error
+  *
+  * @param {number[]|number} targets Ideal value
+  * @param {number[]|number} outputs Actual values
+  *
+  * @returns {number} [Mean absolute percentage error](https://en.wikipedia.org/wiki/Mean_absolute_percentage_error)
+  *
+  * @example
+  * let { methods, Network } = require("@liquid-carrot/carrot");
+  *
+  * let myNetwork = new Network(5, 10, 5);
+  * myNetwork.train(trainingData, {
+  *   log: 1,
+  *   iterations: 500,
+  *   error: 0.03,
+  *   rate: 0.05,
+  *   cost: methods.cost.MAPE
+  * });
+  */
+  MAPE: function(targets, outputs) {
+    [targets, outputs] = validate(targets, outputs);
+
+    const error = outputs.reduce(function(total, value, index) {
+      return total += Math.abs((outputs[index] - targets[index]) / Math.max(targets[index], 1e-15));
+    }, 0);
+
+    return error / outputs.length;
+  },
+
+  /**
+  * Weighted Absolute Percentage Error (WAPE)
+  *
+  * @param {number[]|number} targets Ideal value
+  * @param {number[]|number} outputs Actual values
+  *
+  * @returns {number} - [Weighted absolute percentage error](https://help.sap.com/doc/saphelp_nw70/7.0.31/en-US/76/487053bbe77c1ee10000000a174cb4/content.htm?no_cache=true)
+  *
+  * @example
+  * let { methods, Network } = require("@liquid-carrot/carrot");
+  *
+  * let myNetwork = new Network(5, 10, 5);
+  * myNetwork.train(trainingData, {
+  *   cost: methods.cost.WAPE
+  * });
+  */
+  WAPE: function(targets, outputs) {
+    [targets, outputs] = validate(targets, outputs);
+
+    let error = 0;
+    let sum = 0;
+
+    for (let index = 0; index < outputs.length; index++) {
+      error += Math.abs(targets[index] - outputs[index]);
+      sum += targets[index];
+    }
+
+    return error / sum;
+  },
+
+  /**
+  * Mean Squared Logarithmic Error
+  *
+  * @param {number[]|number} targets Ideal value
+  * @param {number[]|number} outputs Actual values
+  *
+  * @returns {number} - [Mean squared logarithmic error](https://peltarion.com/knowledge-center/documentation/modeling-view/build-an-ai-model/loss-functions/mean-squared-logarithmic-error)
+  *
+  * @example
+  * let { methods, Network } = require("@liquid-carrot/carrot");
+  *
+  * let myNetwork = new Network(5, 10, 5);
+  * myNetwork.train(trainingData, {
+  *   log: 1,
+  *   iterations: 500,
+  *   error: 0.03,
+  *   rate: 0.05,
+  *   cost: methods.cost.MSLE
+  * });
+  */
+  MSLE: function(targets, outputs) {
+    [targets, outputs] = validate(targets, outputs);
+
+    const error = outputs.reduce(function(total, value, index) {
+      return total += Math.log(Math.max(targets[index], 1e-15)) - Math.log(Math.max(outputs[index], 1e-15));
+    }, 0);
+
+    return error;
+  },
+
+  /**
+   * Hinge loss, for classifiers
+   *
+   * @param {number[]|number} targets Ideal value
+   * @param {number[]|number} outputs Actual values
+   *
+   * @returns {number} - [Hinge loss](https://towardsdatascience.com/support-vector-machines-intuitive-understanding-part-1-3fb049df4ba1)
+   *
+   * @example
+   * let { methods, Network } = require("@liquid-carrot/carrot");
+   *
+   * let myNetwork = new Network(5, 10, 5);
+   * myNetwork.train(trainingData, {
+   *   log: 1,
+   *   iterations: 500,
+   *   error: 0.03,
+   *   rate: 0.05,
+   *   cost: methods.cost.HINGE
+   * });
+   */
+  HINGE: function(targets, outputs) {
+    [targets, outputs] = validate(targets, outputs);
+
+    const error = outputs.reduce(function(total, value, index) {
+      return total += Math.max(0, 1 - targets[index] * outputs[index]);
+    }, 0);
+
+    return error;
+  },
+
+  /**
+   * @param {number[]|number} targets Ideal value
+   * @param {number[]|number} outputs Actual values
+   *
+   * @returns {number}
+   */
+  ABS: function(targets, outputs) {
+    [targets, outputs] = validate(targets, outputs);
+
+    let error = 0;
+    for (let i = 0; i < targets.length; i++) {
+      error += Math.abs(targets[i] - outputs[i]);
+    }
+    return error;
+  },
+
+  /**
+   * @param {number[]|number} targets Ideal value
+   * @param {number[]|number} outputs Actual values
+   *
+   * @returns {number}
+   */
+  DIFF: function(targets, outputs) {
+    [targets, outputs] = validate(targets, outputs);
+
+    let error = 0;
+    for (let i = 0; i < targets.length; i++) {
+      error += targets[i] - outputs[i];
+    }
+    return error;
+  },
+
+  /**
+   * @param {number[]|number} targets Ideal value
+   * @param {number[]|number} outputs Actual values
+   * @param {{delta:number}|{}} options
+   *
+   * @returns {number}
+   */
+  HuberLoss: function(targets, outputs, options) {
+    [targets, outputs] = validate(targets, outputs);
+    if (options === undefined) {
+      options = {};
+    }
+    if (options.delta === undefined || isNaN(options.delta)) {
+      options.delta = 5;
+    }
+
+    let abs = this.ABS(targets, outputs);
+    return abs <= options.delta
+      ? 0.5 * this.MSE(targets, outputs) * targets.length
+      : options.delta * abs - 0.5 * options.delta;
+  },
+
+  /**
+   * @param {number[]|number} targets Ideal value
+   * @param {number[]|number} outputs Actual values
+   * @param {{delta:number}|{}} options delta -> required quantile value between 0 and 1
+   *
+   * @return {number}
+   */
+  QuantileLoss: function(targets, outputs, options) {
+    [targets, outputs] = validate(targets, outputs);
+    if (options === undefined) {
+      options = {};
+    }
+    if (options.delta === undefined || isNaN(options.delta)) {
+      options.delta = 0.5;
+    }
+    options.delta = Math.min(1, Math.max(0, options.delta));
+
+    let error = 0;
+    for (let i = 0; i < targets.length; i++) {
+      error += outputs[i] < targets[i]
+        ? (options.delta - 1) * Math.abs(targets[i] - outputs[i])
+        : options.delta * Math.abs(targets[i] - outputs[i]);
+    }
+    return error;
+  },
+
+  /**
+   * @param {number[]|number} targets Ideal value
+   * @param {number[]|number} outputs Actual values
+   *
+   * @returns {number}
+   */
+  LogCoshLoss: function(targets, outputs) {
+    [targets, outputs] = validate(targets, outputs);
+
+    let error = 0;
+    for (let i = 0; i < targets.length; i++) {
+      error += Math.log(Math.cosh(targets[i] - outputs[i]));
+    }
+    return error;
+  }
+};
+
+module.exports = cost;
+
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const _ = __webpack_require__(1);
+const methods = __webpack_require__(0);
+const config = __webpack_require__(3);
+const Node = __webpack_require__(4);
 
 /**
 * A group instance denotes a group of nodes. Beware: once a group has been used to construct a network, the groups will fall apart into individual nodes. They are purely for the creation and development of networks.
@@ -21160,8 +21603,8 @@ const Node = __webpack_require__(3);
 * @param {number} [size=0] Amount of nodes to build group with
 *
 * @prop {Nodes[]} [nodes=[]] All nodes within the group
-* @prop {Connection[]} [connections_incoming=[]] Incoming connections
-* @prop {Connection[]} [connections_outgoing=[]] Outgoing connections
+* @prop {Connection[]} [incoming=[]] Incoming connections
+* @prop {Connection[]} [outgoing=[]] Outgoing connections
 * @prop {Connection[]} [connections_self=[]] Self connections
 *
 * @example
@@ -21177,8 +21620,8 @@ function Group(size) {
   // The order of the nodes dictates the ideal order of activation
   self.nodes = [];
   self.connections_self = [];
-  self.connections_incoming = [];
-  self.connections_outgoing = [];
+  self.incoming = [];
+  self.outgoing = [];
 
   for (let index = 0; index < size; index++) {
     self.nodes.push(new Node());
@@ -21359,8 +21802,8 @@ function Group(size) {
         self.connections_self.push(connection);
       }
       else {
-        self.connections_outgoing.push(connection);
-        target.connections_incoming.push(connection);
+        self.outgoing.push(connection);
+        target.incoming.push(connection);
       }
     }
 
@@ -21398,8 +21841,8 @@ function Group(size) {
           const node = nodes_to[i];
           const gater = self.nodes[i % self.nodes.length];
 
-          for (j = 0; j < node.connections_incoming.length; j++) {
-            const connection = node.connections_incoming[j];
+          for (j = 0; j < node.incoming.length; j++) {
+            const connection = node.incoming[j];
             if (connections.includes(connection)) {
               gater.gate(connection);
             }
@@ -21411,8 +21854,8 @@ function Group(size) {
           const node = nodes_from[i];
           const gater = self.nodes[i % this.nodes.length];
 
-          for (j = 0; j < node.connections_outgoing.length; j++) {
-            const connection = node.connections_outgoing[j];
+          for (j = 0; j < node.outgoing.length; j++) {
+            const connection = node.outgoing[j];
             if (connections.includes(connection)) {
               gater.gate(connection);
             }
@@ -21474,13 +21917,13 @@ function Group(size) {
           self.nodes[i].disconnect(target.nodes[j], { twosided });
 
           if (twosided) {
-            self.connections_incoming = self.connections_incoming.filter(connection => {
+            self.incoming = self.incoming.filter(connection => {
               // this is a quick patch, there shouldnt be undefines here
               if (!connection) return false;
               return !(connection.from === target.nodes[j] && connection.to === this.nodes[i])
             });
           }
-          self.connections_outgoing = self.connections_outgoing.filter(connection => {
+          self.outgoing = self.outgoing.filter(connection => {
             // this is a quick patch, there shouldnt be undefines here
             if (!connection) return false;
             return !(connection.from === self.nodes[i] && connection.to === target.nodes[j]);
@@ -21492,8 +21935,8 @@ function Group(size) {
       for (let index = 0; index < self.nodes.length; index++) {
         self.nodes[index].disconnect(target, { twosided });
 
-        if (twosided) self.connections_incoming = self.connections_incoming.filter(connection => !(connection.from === target && connection.to === self.nodes[index]));
-        self.connections_outgoing = self.connections_outgoing.filter(connection => !(connection.from === self.nodes[index] && connection.to === target));
+        if (twosided) self.incoming = self.incoming.filter(connection => !(connection.from === target && connection.to === self.nodes[index]));
+        self.outgoing = self.outgoing.filter(connection => !(connection.from === self.nodes[index] && connection.to === target));
       }
     }
   },
@@ -21529,7 +21972,173 @@ module.exports = Group;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Network = __webpack_require__(2);
+
+/**
+ * Generates a random integer between min and max.
+ *
+ * @function randomInt
+ *
+ * @param {number} min lower bound
+ * @param {number} max upper bound
+ * @returns {int} random integer between min and max
+ */
+let randomInt = function(min, max) {
+  return Math.floor(Math.random() * (max + 1 - min) + min);
+};
+
+let y2, useLast = false;
+
+/**
+ * This method puts gaussian noise onto a value
+ *
+ * @param {number} mean the value with the highest probability
+ * @param {number} standardDeviation
+ * @returns {number} noisy value
+ */
+let gaussianNoise = function(mean, standardDeviation) {
+  let y1;
+  if (useLast) {
+    y1 = y2;
+    useLast = false;
+  } else {
+    let x1, x2, w;
+    do {
+      x1 = 2.0 * Math.random() - 1.0;
+      x2 = 2.0 * Math.random() - 1.0;
+      w = x1 * x1 + x2 * x2;
+    } while (w >= 1.0);
+    w = Math.sqrt((-2.0 * Math.log(w)) / w);
+    y1 = x1 * w;
+    y2 = x2 * w;
+    useLast = true;
+  }
+
+  return mean + standardDeviation * y1;
+};
+
+/**
+ * This method adds noise to a whole network.
+ * So every node, connection and gate needs to be noised .
+ *
+ * @param {Network} network input network
+ * @param {number} standardDeviation
+ * @returns {Network} noisy network
+ */
+let addGaussianNoiseToNetwork = function(network, standardDeviation = 0.2) {
+  let copy = Network.fromJSON(network.toJSON());
+  for (let i = 0; i < copy.nodes.length; i++) {
+    copy.nodes[i].bias = Math.min(1, Math.max(-1, gaussianNoise(copy.nodes[i].bias, standardDeviation)));
+  }
+  for (let i = 0; i < copy.gates.length; i++) {
+    copy.gates[i].bias = Math.min(1, Math.max(-1, gaussianNoise(copy.gates[i].bias, standardDeviation)));
+  }
+  for (let i = 0; i < copy.connections.length; i++) {
+    copy.connections[i].weight = Math.min(1, Math.max(-1, gaussianNoise(copy.connections[i].weight, standardDeviation)));
+  }
+  return copy;
+};
+
+/**
+ * This method returns the index of the element with the highest value
+ *
+ * @function getMaxValueIndex
+ *
+ * @param {number[]} arr the input array
+ * @returns {int} the index which the highest value
+ */
+let getMaxValueIndex = function(arr) {
+  let index = 0;
+  let maxValue = arr[0];
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] > maxValue) {
+      maxValue = arr[i];
+      index = i;
+    }
+  }
+  return index;
+};
+
+/**
+ * This method shuffles an array.
+ *
+ * @function shuffle
+ *
+ * @param {T[]} arr input array
+ * @returns {T[]} shuffled array
+ *
+ * Source: https://stackoverflow.com/a/2450976
+ */
+let shuffle = function(arr) {
+  let j, x, i;
+  for (i = arr.length - 1; i > 0; i--) {
+    j = Math.floor(Math.random() * (i + 1));
+    x = arr[i];
+    arr[i] = arr[j];
+    arr[j] = x;
+  }
+  return arr;
+};
+
+/**
+ * This method picks a random element from an given array.
+ *
+ * @function pickRandom
+ *
+ * @param {T[]} arr input array
+ * @returns {T} the randomly chosen element
+ */
+let pickRandom = function(arr) {
+  return arr[randomInt(0, arr.length - 1)];
+};
+
+
+/**
+ * This method returns the mean value from an array.
+ *
+ * @param {number[]} arr input array
+ * @returns {number} mean value
+ */
+let mean = function(arr) {
+  let sum = 0;
+  for (let i = 0; i < arr.length; i++) {
+    sum += arr[i];
+  }
+  return sum / arr.length;
+};
+
+// Reinforcement learning specific functions
+RL = {
+  /**
+   * This function will get the value from the fieldName, if present, otherwise returns the defaultValue
+   *
+   * @param {*} opt JSON object which contains all custom options
+   * @param {String} fieldName
+   * @param {*} defaultValue
+   * @return {*} the value of the fieldName if present, otherwise the defaultValue
+   */
+  getOption: function(opt, fieldName, defaultValue) {
+    return typeof opt === 'undefined' || typeof opt[fieldName] === 'undefined'
+      ? defaultValue
+      : opt[fieldName];
+  },
+};
+
+module.exports.getMaxValueIndex = getMaxValueIndex;
+module.exports.shuffle = shuffle;
+module.exports.randomInt = randomInt;
+module.exports.pickRandom = pickRandom;
+module.exports.mean = mean;
+module.exports.gaussianNoise = gaussianNoise;
+module.exports.addGaussianNoiseToNetwork = addGaussianNoiseToNetwork;
+module.exports.RL = RL;
+
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports) {
 
 /**
@@ -22104,265 +22713,161 @@ module.exports = activation;
 
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, exports) {
 
-function validate(targets, outputs) {
-  if(targets == undefined || outputs == undefined) throw new ReferenceError("Missing at least one required parameters: `targets`, `outputs`");
-  
-  targets = Array.isArray(targets) ? targets : [targets];
-  outputs = Array.isArray(outputs) ? outputs : [outputs];
-  
-  if(targets.length !== outputs.length) throw new RangeError(`Required "targets.length === outputs.length"; Received "targets.length=${targets.length}" & "outputs.length=${outputs.length}`);
-  
-  return [targets, outputs];
-}
-
 /**
- * Cost functions play an important role in neural networks. They give neural networks an indication of 'how wrong' they are; a.k.a. how far they are from the desired outputs. Also in fitness functions, cost functions play an important role.
- *
- * @namespace cost
- *
- * @see [Loss Function on Wikipedia](https://en.wikipedia.org/wiki/Loss_function)
- */
-const cost = {
+* Built-in learning rate policies, which allow for a dynamic learning rate during neural network training.
+*
+* @namespace
+*
+* @see [Learning rates and how-to improve performance](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
+* @see [Learning rate policy](https://stackoverflow.com/questions/30033096/what-is-lr-policy-in-caffe/30045244)
+*
+* @example
+* let { methods, Network } = require("@liquid-carrot/carrot");
+*
+* let network = new Network(5, 10, 5);
+*
+* // OPTION #1: methods.rate.FIXED
+* network.train(dataset, { rate_policy: methods.rate.FIXED });
+*
+* // OPTION #2: methods.rate.STEP
+* network.train(dataset, { rate_policy: methods.rate.STEP });
+*
+* // OPTION #3: methods.rate.EXP
+* network.train(dataset, { rate_policy: methods.rate.EXP });
+*
+* // OPTION #4: methods.rate.INV
+* network.train(dataset, { rate_policy: methods.rate.INV });
+*
+* // more coming soon...
+*/
+const rate = {
   
   /**
-  * Cross entropy error
+  * Fixed Learning Rate
   *
-  * @see {@link http://bit.ly/2p5W29A|Cross-entropy Error Function}
-  * @param {number[]|number} targets Ideal value
-  * @param {number[]|number} outputs Actual values
+  * Default rate policy. Using this will make learning rate static (no change). Useful as a way to update a previous rate policy.
   *
-  * @returns {number} [Cross entropy error](https://ml-cheatsheet.readthedocs.io/en/latest/loss_functions.html)
+  * @param {number} base_rate A base learning rate - _0 < `base_rate` < 1_
+  *
+  * @returns {function}
   *
   * @example
-  * let { methods, Network } = require("@liquid-carrot/carrot");
+  * let { Network, methods } = require("@liquid-carrot/carrot");
   *
-  * let myNetwork = new Network(5, 10, 5);
-  * myNetwork.train(trainingData, { cost: methods.cost.CROSS_ENTROPY });
+  * let network = new Network(10, 1);
+  *
+  * network.train(dataset, { rate_policy: methods.rate.FIXED });
   */
-  CROSS_ENTROPY: function(targets, outputs) {
-    [targets, outputs] = validate(targets, outputs);
+  FIXED: function(base_rate) {
+    if(base_rate == undefined) throw new ReferenceError("Missing required parameter 'base_rate'")
     
-    const error = outputs.reduce(function(total, value, index) {
-      return total -= targets[index] * Math.log(Math.max(outputs[index], 1e-15)) + (1 - targets[index]) * Math.log(1 - Math.max(outputs[index], 1e-15));
-    }, 0);
-    
-    return error / outputs.length;
+    return base_rate;
   },
   
   /**
-  * Mean Squared Error
+  * Step Learning Rate
   *
-  * @param {number[]|number} targets Ideal value
-  * @param {number[]|number} outputs Actual values
+  * The learning rate will decrease (i.e. 'step down') every `options.step_size` iterations.
   *
-  * @returns {number} [Mean squared error](https://medium.freecodecamp.org/machine-learning-mean-squared-error-regression-line-c7dde9a26b93)
+  * @param {number} base_rate A base learning rate - _0 < `base_rate` < 1_
+  * @param {number} iteration A number - _`iteration` > 0_
+  * @param {Object} [options]
+  * @param {number} [options.gamma=0.9] Learning rate retention per step; - _0 < `options.gamma` < 1_ - _large `options.gamma` CAN cause networks to never converge, low `options.gamma` CAN cause networks to converge too quickly_
+  * @param {number} [options.step_size=100] Learning rate is updated every `options.step_size` iterations
+  *
+  * @returns {function}
   *
   * @example
-  * let { methods, Network } = require("@liquid-carrot/carrot");
+  * let { Network, methods } = require("@liquid-carrot/carrot");
   *
-  * let myNetwork = new Network(5, 10, 5);
-  * myNetwork.train(trainingData, { cost: methods.cost.MSE });
+  * let network = new Network(10, 1);
+  *
+  * network.train(dataset, { rate_policy: methods.rate.STEP });
   */
-  MSE: function(targets, outputs) {
-    [targets, outputs] = validate(targets, outputs);
+  STEP: function(base_rate, iteration, options) {
+    if(base_rate == undefined || iteration == undefined) throw new ReferenceError("Missing required parameter 'base_rate' or 'iteration'");
     
-    const error = outputs.reduce(function(total, value, index) {
-      return total += Math.pow(targets[index] - outputs[index], 2);
-    }, 0);
+    options = Object.assign({
+      gamma: 0.9,
+      step_size: 100
+    }, options);
     
-    return error / outputs.length;
+    return base_rate * Math.pow(options.gamma, Math.floor(iteration / options.step_size));
   },
   
   /**
-  * Binary Error
+  * Exponential Learning Rate
   *
-  * @param {number[]|number} targets Ideal value
-  * @param {number[]|number} outputs Actual values
+  * The learning rate will exponentially decrease.
   *
-  * @returns {number} misses The amount of times targets value was missed
+  * The rate at `iteration` is calculated as: `rate = base_rate * Math.pow(options.gamma, iteration)`
   *
-  * @see [Hinge loss on Wikipedia](https://en.wikipedia.org/wiki/Hinge_loss)
+  * @param {number} base_rate A base learning rate - _0 < `base_rate` < 1_
+  * @param {number} iteration A number - _`iteration` > 0_
+  * @param {Object} [options]
+  * @param {number} [options.gamma=0.999] Learning rate retention per iteration; - _0 < `options.gamma` < 1_ - _large `options.gamma` CAN cause networks to never converge, low `options.gamma` CAN cause networks to converge too quickly_
+  *
+  * @returns {function}
   *
   * @example
-  * let { methods, Network } = require("@liquid-carrot/carrot");
+  * let { Network, methods } = require("@liquid-carrot/carrot");
   *
-  * let myNetwork = new Network(5, 10, 5);
-  * myNetwork.train(trainingData, {
-  *   log: 1,
-  *   iterations: 500,
-  *   error: 0.03,
-  *   rate: 0.05,
-  *   cost: methods.cost.BINARY
-  * });
+  * let network = new Network(10, 1);
+  *
+  * network.train(dataset, { rate_policy: methods.rate.EXP });
   */
-  BINARY: function(targets, outputs) {
-    [targets, outputs] = validate(targets, outputs);
+  EXP: function(base_rate, iteration, options) {
+    if(base_rate == undefined || iteration == undefined) throw new ReferenceError("Missing required parameter 'base_rate' or 'iteration'");
     
-    const error = outputs.reduce(function(total, value, index) {
-      return total += Math.round(targets[index] * 2) !== Math.round(outputs[index] * 2);
-    }, 0);
+    options = Object.assign({
+      gamma: 0.999
+    }, options);
     
-    return error;
+    return base_rate * Math.pow(options.gamma, iteration);
   },
   
   /**
-  * Mean Absolute Error
+  * Inverse Exponential Learning Rate
   *
-  * @param {number[]|number} targets Ideal value
-  * @param {number[]|number} outputs Actual values
+  * The learning rate will exponentially decrease.
   *
-  * @returns {number} [Mean absoulte error](https://en.wikipedia.org/wiki/Mean_absolute_error)
+  * The rate at `iteration` is calculated as: `rate = baseRate * Math.pow(1 + options.gamma * iteration, -options.power)`
+  *
+  * @param {number} base_rate A base learning rate - _0 < `base_rate` < 1_
+  * @param {number} iteration A number - _`iteration` > 0_
+  * @param {Object} [options]
+  * @param {number} [options.gamma=0.001] Learning rate decay per iteration; - _0 < `options.gamma` < 1_ - _large `options.gamma` CAN cause networks to converge too quickly and stop learning, low `options.gamma` CAN cause networks to converge to learn VERY slowly_
+  * @param {number} [options.power=2] Decay rate per iteration - _0 < `options.power`_ - _large `options.power` CAN cause networks to stop learning quickly, low `options.power` CAN cause networks to learn VERY slowly_
+  *
+  * @returns {function}
   *
   * @example
-  * let { methods, Network } = require("@liquid-carrot/carrot");
+  * let { Network, methods } = require("@liquid-carrot/carrot");
   *
-  * let myNetwork = new Network(5, 10, 5);
-  * myNetwork.train(trainingData, {
-  *   log: 1,
-  *   iterations: 500,
-  *   error: 0.03,
-  *   rate: 0.05,
-  *   cost: methods.cost.MAE
-  * });
+  * let network = new Network(10, 1);
+  *
+  * network.train(dataset, { rate_policy: methods.rate.INV });
   */
-  MAE: function(targets, outputs) {
-    [targets, outputs] = validate(targets, outputs);
+  INV: function(base_rate, iteration, options) {
+    if(base_rate == undefined || iteration == undefined) throw new ReferenceError("Missing required parameter 'base_rate' or 'iteration'");
     
-    const error = outputs.reduce(function(total, value, index) {
-      return total += Math.abs(targets[index] - outputs[index]);
-    }, 0);
+    options = Object.assign({
+      gamma: 0.001,
+      power: 2
+    }, options);
     
-    return error / outputs.length;
+    return base_rate * Math.pow(1 + options.gamma * iteration, -options.power);
   },
-  
-  /**
-  * Mean Absolute Percentage Error
-  *
-  * @param {number[]|number} targets Ideal value
-  * @param {number[]|number} outputs Actual values
-  *
-  * @returns {number} [Mean absolute percentage error](https://en.wikipedia.org/wiki/Mean_absolute_percentage_error)
-  *
-  * @example
-  * let { methods, Network } = require("@liquid-carrot/carrot");
-  *
-  * let myNetwork = new Network(5, 10, 5);
-  * myNetwork.train(trainingData, {
-  *   log: 1,
-  *   iterations: 500,
-  *   error: 0.03,
-  *   rate: 0.05,
-  *   cost: methods.cost.MAPE
-  * });
-  */
-  MAPE: function(targets, outputs) {
-    [targets, outputs] = validate(targets, outputs);
-    
-    const error = outputs.reduce(function(total, value, index) {
-      return total += Math.abs((outputs[index] - targets[index]) / Math.max(targets[index], 1e-15));
-    }, 0);
-    
-    return error / outputs.length;
-  },
-  
-  /**
-  * Weighted Absolute Percentage Error (WAPE)
-  *
-  * @param {number[]|number} targets Ideal value
-  * @param {number[]|number} outputs Actual values
-  *
-  * @returns {number} - [Weighted absolute percentage error](https://help.sap.com/doc/saphelp_nw70/7.0.31/en-US/76/487053bbe77c1ee10000000a174cb4/content.htm?no_cache=true)
-  *
-  * @example
-  * let { methods, Network } = require("@liquid-carrot/carrot");
-  *
-  * let myNetwork = new Network(5, 10, 5);
-  * myNetwork.train(trainingData, {
-  *   cost: methods.cost.WAPE
-  * });
-  */
-  WAPE: function(targets, outputs) {
-    [targets, outputs] = validate(targets, outputs);
-    
-    let error = 0;
-    let sum = 0;
-    
-    for (let index = 0; index < outputs.length; index++) {
-      error += Math.abs(targets[index] - outputs[index]);
-      sum += targets[index];
-    }
-    
-    return error / sum;
-  },
-  
-  /**
-  * Mean Squared Logarithmic Error
-  *
-  * @param {number[]|number} targets Ideal value
-  * @param {number[]|number} outputs Actual values
-  *
-  * @returns {number} - [Mean squared logarithmic error](https://peltarion.com/knowledge-center/documentation/modeling-view/build-an-ai-model/loss-functions/mean-squared-logarithmic-error)
-  *
-  * @example
-  * let { methods, Network } = require("@liquid-carrot/carrot");
-  *
-  * let myNetwork = new Network(5, 10, 5);
-  * myNetwork.train(trainingData, {
-  *   log: 1,
-  *   iterations: 500,
-  *   error: 0.03,
-  *   rate: 0.05,
-  *   cost: methods.cost.MSLE
-  * });
-  */
-  MSLE: function(targets, outputs) {
-    [targets, outputs] = validate(targets, outputs);
-    
-    const error = outputs.reduce(function(total, value, index) {
-      return total += Math.log(Math.max(targets[index], 1e-15)) - Math.log(Math.max(outputs[index], 1e-15));
-    }, 0);
-    
-    return error;
-  },
-  
-  /**
-  * Hinge loss, for classifiers
-  *
-  * @param {number[]|number} targets Ideal value
-  * @param {number[]|number} outputs Actual values
-  *
-  * @returns {number} - [Hinge loss](https://towardsdatascience.com/support-vector-machines-intuitive-understanding-part-1-3fb049df4ba1)
-  *
-  * @example
-  * let { methods, Network } = require("@liquid-carrot/carrot");
-  *
-  * let myNetwork = new Network(5, 10, 5);
-  * myNetwork.train(trainingData, {
-  *   log: 1,
-  *   iterations: 500,
-  *   error: 0.03,
-  *   rate: 0.05,
-  *   cost: methods.cost.HINGE
-  * });
-  */
-  HINGE: function(targets, outputs) {
-    [targets, outputs] = validate(targets, outputs);
-    
-    const error = outputs.reduce(function(total, value, index) {
-      return total += Math.max(0, 1 - targets[index] * outputs[index]);
-    }, 0);
-    
-    return error;
-  }
 };
 
-module.exports = cost;
+module.exports = rate;
+
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const _ = __webpack_require__(1);
@@ -22416,6 +22921,7 @@ function Connection (from, to, weight, options) {
     delta_weights_total: 0,
     delta_weights: [],
     xtrace_nodes: [],
+    sharedIncoming: null,
     xtrace_values: []
   }, options, { from, to, weight});
 
@@ -22456,7 +22962,7 @@ module.exports = Connection;
 
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -22468,7 +22974,7 @@ module.exports = Connection;
 */
 var multi = {
   // Workers
-  workers: __webpack_require__(22),
+  workers: __webpack_require__(25),
 
   /**
   * Serializes a dataset
@@ -22616,7 +23122,7 @@ for(var i in multi) { module.exports[i] = multi[i]; }
 
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -22806,13 +23312,13 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const _ = __webpack_require__(1);
 const methods = __webpack_require__(0);
-const Node = __webpack_require__(3);
-const Group = __webpack_require__(5); // will be imported later for circular dependency issues
+const Node = __webpack_require__(4);
+const Group = __webpack_require__(6); // will be imported later for circular dependency issues
 
 
 /**
@@ -22825,8 +23331,8 @@ const Group = __webpack_require__(5); // will be imported later for circular dep
 *
 * @prop {Node[]} output Output nodes
 * @prop {Node[]} nodes Nodes within the layer
-* @prop {Group[]|Node[]} connections_incoming Incoming connections
-* @prop {Group[]|Node[]} connections_outgoing Outgoing connections
+* @prop {Group[]|Node[]} incoming Incoming connections
+* @prop {Group[]|Node[]} outgoing Outgoing connections
 * @prop {Group[]|Node[]} connections_self Self connections
 *
 * @example <caption>Custom architecture built with layers</caption>
@@ -23099,7 +23605,35 @@ module.exports = Layer;
 
 
 /***/ }),
-/* 12 */
+/* 14 */
+/***/ (function(module, exports) {
+
+/**
+ * Creates an experience object
+ *
+ * @param {number[]} state the current state
+ * @param {int|number[]} action the current action
+ * @param {number} reward the reward for the current action in the current state
+ * @param {number[]} nextState the state following by the current action in the current state
+ * @param {int|number[]} nextAction the action taken in the next state
+ * @param {boolean} isFinalState Does the game ends at this state?
+ * @constructor
+ */
+function Experience(state, action, reward, nextState, nextAction, isFinalState) {
+  this.state = Array.isArray(state) ? state.slice(0) : state;
+  this.action = Array.isArray(action) ? action.slice(0) : action;
+  this.reward = reward;
+  this.nextState = Array.isArray(nextState) ? nextState.slice(0) : nextState;
+  this.nextAction = Array.isArray(nextAction) ? nextAction.slice(0) : nextAction;
+  this.isFinalState = isFinalState;
+  this.loss = 0;
+}
+
+module.exports = Experience;
+
+
+/***/ }),
+/* 15 */
 /***/ (function(module, exports) {
 
 var g;
@@ -23125,24 +23659,163 @@ module.exports = g;
 
 
 /***/ }),
-/* 13 */
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Experience = __webpack_require__(14);
+const Utils = __webpack_require__(7);
+
+/**
+ * Creates a replay buffer with a maximum size of experience entries.
+ *
+ * @param {int} maxSize maximum number of experiences
+ * @param {number} noiseRate this variable will add a noise to the PER, so there is more randomness
+ * @constructor
+ */
+function ReplayBuffer(maxSize, noiseRate) {
+  this.buffer = [];
+  this.maxSize = maxSize;
+  this.noiseRate = noiseRate || 0;
+}
+
+ReplayBuffer.prototype = {
+  /**
+   * Save function
+   * @return {{
+   *   buffer: Experience[],
+   *   maxSize: int,
+   *   sumOfAbsLosses: number,
+   *   noiseRate: number
+   * }}
+   */
+  toJSON: function() {
+    let json = {};
+    json.buffer = this.buffer;
+    json.maxSize = this.maxSize;
+    json.noiseRate = this.noiseRate;
+    return json;
+  },
+
+  /**
+   * Adds an experience entry to the buffer.
+   *
+   * @param {Experience} experience the experience to add
+   */
+  add: function(experience) {
+    if (experience.state === undefined || experience.state === null
+      || experience.action === undefined || experience.action === null
+      || experience.reward === undefined || experience.reward === null) {
+      return;
+    }
+    if (this.buffer.length >= this.maxSize) {
+      this.buffer.shift(); // Buffer is full --> remove first entry
+    }
+    this.buffer.push(experience);
+  },
+
+  /**
+   * Get a random mini batch of given size.
+   *
+   * @param {int} size the size of the MiniBatch.
+   * @returns {Experience[]} a batch of Experiences to train from.
+   */
+  getRandomMiniBatch: function(size) {
+    if (size >= this.buffer.length) {
+      //If MiniBatch size is bigger than this.buffer, then we return the full buffer
+      return this.buffer;
+    }
+
+    let bufferCopy = this.buffer.slice(0);
+    let miniBatch = [];
+
+    for (let i = 0; i < size; i++) {
+      //Add an random experience to the batch and remove it from the bufferCopy
+      miniBatch.push(bufferCopy.splice(Utils.randomInt(0, bufferCopy.length - 1), 1)[0]);
+    }
+    return miniBatch;
+  },
+
+  getAllExperiences: function() {
+    return this.buffer;
+  },
+
+  /**
+   * This method creates a mini batch of buffered experiences.
+   * Higher loss values --> higher probability
+   *
+   * @param {int} batchSize the size of the MiniBatch.
+   * @returns {Experience[]} mini batch chosen with PER
+   *
+   * @todo Create unit test
+   * @todo there is a bug in minibatch creation
+   */
+  getMiniBatchWithPER(batchSize) {
+    if (batchSize >= this.buffer.length) {
+      //If MiniBatch batchSize is bigger than this.buffer, then we return the full buffer
+      return this.buffer;
+    }
+
+    let miniBatch = [];
+    let bufferCopy = this.buffer.slice(0);
+
+    let sumOfLosses = 0;
+    for (let i = 0; i < bufferCopy.length; i++) {
+      sumOfLosses += Math.abs(bufferCopy[i].loss);
+    }
+
+    for (let i = 0; i < batchSize; i++) {
+      for (let j = 0; j < bufferCopy.length; j++) {
+        if (Math.random() * (1 + this.noiseRate) - this.noiseRate / 2 <= Math.abs(bufferCopy[j].loss) / sumOfLosses) {
+          miniBatch.push(bufferCopy.splice(j, 1)[0]);
+          break;
+        }
+      }
+    }
+    return miniBatch;
+  },
+};
+
+/**
+ * Load function
+ *
+ * @param {{
+ *   buffer: Experience[],
+ *   maxSize: int,
+ *   sumOfAbsLosses: number,
+ *   noiseRate: number
+ * }} json
+ */
+ReplayBuffer.fromJSON = function(json) {
+  let replayBuffer = new ReplayBuffer(json.maxSize, json.noiseRate);
+  replayBuffer.buffer = json.buffer;
+  return replayBuffer;
+};
+
+module.exports = ReplayBuffer;
+
+
+/***/ }),
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;const Carrot = {
-  activation: __webpack_require__(6),
-  cost: __webpack_require__(7),
+  activation: __webpack_require__(8),
+  cost: __webpack_require__(5),
   methods: __webpack_require__(0),
-  Connection: __webpack_require__(8),
-  architect: __webpack_require__(21),
-  Network: __webpack_require__(4),
-  config: __webpack_require__(2),
-  Group: __webpack_require__(5),
-  Layer: __webpack_require__(11),
-  Node: __webpack_require__(3),
-  Neat: __webpack_require__(33),
-  Population: __webpack_require__(34),
-  GAN: __webpack_require__(35),
-  multi: __webpack_require__(9)
+  Connection: __webpack_require__(10),
+  architect: __webpack_require__(24),
+  Network: __webpack_require__(2),
+  config: __webpack_require__(3),
+  Group: __webpack_require__(6),
+  Layer: __webpack_require__(13),
+  Node: __webpack_require__(4),
+  Neat: __webpack_require__(36),
+  Population: __webpack_require__(37),
+  GAN: __webpack_require__(38),
+  multi: __webpack_require__(11),
+  DQN: __webpack_require__(39),
+  DDPG: __webpack_require__(40),
+  utils: __webpack_require__(7),
 };
 
 // CommonJS & AMD
@@ -23171,10 +23844,10 @@ if (typeof window === 'object') {
 
 
 /***/ }),
-/* 14 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const activation = __webpack_require__(6);
+const activation = __webpack_require__(8);
 
 /**
  *
@@ -23480,8 +24153,20 @@ const mutation = {
    */
   SWAP_NODES: {
     name: 'SWAP_NODES',
-    mutateOutput: false
-  }
+    mutateOutput: false,
+  },
+  ADD_SHARED_BIAS: {
+    name: 'ADD_SHARED_BIAS',
+  },
+  SUB_SHARED_BIAS: {
+    name: 'SUB_SHARED_BIAS',
+  },
+  ADD_SHARED_WEIGHT: {
+    name: 'ADD_SHARED_WEIGHT',
+  },
+  SUB_SHARED_WEIGHT: {
+    name: 'SUB_SHARED_WEIGHT',
+  },
 };
 
 /**
@@ -23515,7 +24200,11 @@ mutation.ALL = [
   mutation.SUB_SELF_CONN,
   mutation.ADD_BACK_CONN,
   mutation.SUB_BACK_CONN,
-  mutation.SWAP_NODES
+  mutation.SWAP_NODES,
+  mutation.ADD_SHARED_BIAS,
+  mutation.SUB_SHARED_BIAS,
+  mutation.ADD_SHARED_WEIGHT,
+  mutation.SUB_SHARED_WEIGHT,
 ];
 
 /**
@@ -23543,14 +24232,16 @@ mutation.FFW = [
   mutation.MOD_WEIGHT,
   mutation.MOD_BIAS,
   mutation.MOD_ACTIVATION,
-  mutation.SWAP_NODES
+  mutation.SWAP_NODES,
+  mutation.ADD_SHARED_BIAS,
+  mutation.SUB_SHARED_BIAS,
 ];
 
 module.exports = mutation;
 
 
 /***/ }),
-/* 15 */
+/* 19 */
 /***/ (function(module, exports) {
 
 /**
@@ -23641,7 +24332,7 @@ module.exports = selection;
 
 
 /***/ }),
-/* 16 */
+/* 20 */
 /***/ (function(module, exports) {
 
 /**
@@ -23712,7 +24403,7 @@ module.exports = crossover;
 
 
 /***/ }),
-/* 17 */
+/* 21 */
 /***/ (function(module, exports) {
 
 /**
@@ -23766,7 +24457,7 @@ module.exports = gating;
 
 
 /***/ }),
-/* 18 */
+/* 22 */
 /***/ (function(module, exports) {
 
 /**
@@ -23854,161 +24545,7 @@ module.exports = connection;
 
 
 /***/ }),
-/* 19 */
-/***/ (function(module, exports) {
-
-/**
-* Built-in learning rate policies, which allow for a dynamic learning rate during neural network training.
-*
-* @namespace
-*
-* @see [Learning rates and how-to improve performance](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
-* @see [Learning rate policy](https://stackoverflow.com/questions/30033096/what-is-lr-policy-in-caffe/30045244)
-*
-* @example
-* let { methods, Network } = require("@liquid-carrot/carrot");
-*
-* let network = new Network(5, 10, 5);
-*
-* // OPTION #1: methods.rate.FIXED
-* network.train(dataset, { rate_policy: methods.rate.FIXED });
-*
-* // OPTION #2: methods.rate.STEP
-* network.train(dataset, { rate_policy: methods.rate.STEP });
-*
-* // OPTION #3: methods.rate.EXP
-* network.train(dataset, { rate_policy: methods.rate.EXP });
-*
-* // OPTION #4: methods.rate.INV
-* network.train(dataset, { rate_policy: methods.rate.INV });
-*
-* // more coming soon...
-*/
-const rate = {
-  
-  /**
-  * Fixed Learning Rate
-  *
-  * Default rate policy. Using this will make learning rate static (no change). Useful as a way to update a previous rate policy.
-  *
-  * @param {number} base_rate A base learning rate - _0 < `base_rate` < 1_
-  *
-  * @returns {function}
-  *
-  * @example
-  * let { Network, methods } = require("@liquid-carrot/carrot");
-  *
-  * let network = new Network(10, 1);
-  *
-  * network.train(dataset, { rate_policy: methods.rate.FIXED });
-  */
-  FIXED: function(base_rate) {
-    if(base_rate == undefined) throw new ReferenceError("Missing required parameter 'base_rate'")
-    
-    return base_rate;
-  },
-  
-  /**
-  * Step Learning Rate
-  *
-  * The learning rate will decrease (i.e. 'step down') every `options.step_size` iterations.
-  *
-  * @param {number} base_rate A base learning rate - _0 < `base_rate` < 1_
-  * @param {number} iteration A number - _`iteration` > 0_
-  * @param {Object} [options]
-  * @param {number} [options.gamma=0.9] Learning rate retention per step; - _0 < `options.gamma` < 1_ - _large `options.gamma` CAN cause networks to never converge, low `options.gamma` CAN cause networks to converge too quickly_
-  * @param {number} [options.step_size=100] Learning rate is updated every `options.step_size` iterations
-  *
-  * @returns {function}
-  *
-  * @example
-  * let { Network, methods } = require("@liquid-carrot/carrot");
-  *
-  * let network = new Network(10, 1);
-  *
-  * network.train(dataset, { rate_policy: methods.rate.STEP });
-  */
-  STEP: function(base_rate, iteration, options) {
-    if(base_rate == undefined || iteration == undefined) throw new ReferenceError("Missing required parameter 'base_rate' or 'iteration'");
-    
-    options = Object.assign({
-      gamma: 0.9,
-      step_size: 100
-    }, options);
-    
-    return base_rate * Math.pow(options.gamma, Math.floor(iteration / options.step_size));
-  },
-  
-  /**
-  * Exponential Learning Rate
-  *
-  * The learning rate will exponentially decrease.
-  *
-  * The rate at `iteration` is calculated as: `rate = base_rate * Math.pow(options.gamma, iteration)`
-  *
-  * @param {number} base_rate A base learning rate - _0 < `base_rate` < 1_
-  * @param {number} iteration A number - _`iteration` > 0_
-  * @param {Object} [options]
-  * @param {number} [options.gamma=0.999] Learning rate retention per iteration; - _0 < `options.gamma` < 1_ - _large `options.gamma` CAN cause networks to never converge, low `options.gamma` CAN cause networks to converge too quickly_
-  *
-  * @returns {function}
-  *
-  * @example
-  * let { Network, methods } = require("@liquid-carrot/carrot");
-  *
-  * let network = new Network(10, 1);
-  *
-  * network.train(dataset, { rate_policy: methods.rate.EXP });
-  */
-  EXP: function(base_rate, iteration, options) {
-    if(base_rate == undefined || iteration == undefined) throw new ReferenceError("Missing required parameter 'base_rate' or 'iteration'");
-    
-    options = Object.assign({
-      gamma: 0.999
-    }, options);
-    
-    return base_rate * Math.pow(options.gamma, iteration);
-  },
-  
-  /**
-  * Inverse Exponential Learning Rate
-  *
-  * The learning rate will exponentially decrease.
-  *
-  * The rate at `iteration` is calculated as: `rate = baseRate * Math.pow(1 + options.gamma * iteration, -options.power)`
-  *
-  * @param {number} base_rate A base learning rate - _0 < `base_rate` < 1_
-  * @param {number} iteration A number - _`iteration` > 0_
-  * @param {Object} [options]
-  * @param {number} [options.gamma=0.001] Learning rate decay per iteration; - _0 < `options.gamma` < 1_ - _large `options.gamma` CAN cause networks to converge too quickly and stop learning, low `options.gamma` CAN cause networks to converge to learn VERY slowly_
-  * @param {number} [options.power=2] Decay rate per iteration - _0 < `options.power`_ - _large `options.power` CAN cause networks to stop learning quickly, low `options.power` CAN cause networks to learn VERY slowly_
-  *
-  * @returns {function}
-  *
-  * @example
-  * let { Network, methods } = require("@liquid-carrot/carrot");
-  *
-  * let network = new Network(10, 1);
-  *
-  * network.train(dataset, { rate_policy: methods.rate.INV });
-  */
-  INV: function(base_rate, iteration, options) {
-    if(base_rate == undefined || iteration == undefined) throw new ReferenceError("Missing required parameter 'base_rate' or 'iteration'");
-    
-    options = Object.assign({
-      gamma: 0.001,
-      power: 2
-    }, options);
-    
-    return base_rate * Math.pow(1 + options.gamma * iteration, -options.power);
-  },
-};
-
-module.exports = rate;
-
-
-/***/ }),
-/* 20 */
+/* 23 */
 /***/ (function(module, exports) {
 
 module.exports = function(module) {
@@ -24036,16 +24573,16 @@ module.exports = function(module) {
 
 
 /***/ }),
-/* 21 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const methods = __webpack_require__(0);
-const Network = __webpack_require__(4);
-const Group = __webpack_require__(5);
-const Layer = __webpack_require__(11);
-const Node = __webpack_require__(3);
+const Network = __webpack_require__(2);
+const Group = __webpack_require__(6);
+const Layer = __webpack_require__(13);
+const Node = __webpack_require__(4);
 const _ = __webpack_require__(1);
-const assert = __webpack_require__(28)
+const assert = __webpack_require__(31)
 
 /**
  *
@@ -24133,12 +24670,12 @@ const architect = {
     const inputs = [];
     const outputs = [];
     for (i = nodes.length - 1; i >= 0; i--) {
-      if (nodes[i].type === 'output' || (!found_output_nodes && nodes[i].connections_outgoing.length + nodes[i].connections_gated.length === 0)) {
+      if (nodes[i].type === 'output' || (!found_output_nodes && nodes[i].outgoing.length + nodes[i].gated.length === 0)) {
         nodes[i].type = 'output';
         network.output_size++;
         outputs.push(nodes[i]);
         nodes.splice(i, 1);
-      } else if (nodes[i].type === 'input' || (!found_input_nodes && !nodes[i].connections_incoming.length)) {
+      } else if (nodes[i].type === 'input' || (!found_input_nodes && !nodes[i].incoming.length)) {
         nodes[i].type = 'input';
         network.input_size++;
         inputs.push(nodes[i]);
@@ -24159,11 +24696,11 @@ const architect = {
     // TODO: network.addNodes should do all of these automatically, not only add connections
     for (i = 0; i < nodes.length; i++) {
       // this commented for is added automatically by network.addNodes
-      // for (j = 0; j < nodes[i].connections_outgoing.length; j++) {
-      //   network.connections.push(nodes[i].connections_outgoing[j]);
+      // for (j = 0; j < nodes[i].outgoing.length; j++) {
+      //   network.connections.push(nodes[i].outgoing[j]);
       // }
-      for (j = 0; j < nodes[i].connections_gated.length; j++) {
-        network.gates.push(nodes[i].connections_gated[j]);
+      for (j = 0; j < nodes[i].gated.length; j++) {
+        network.gates.push(nodes[i].gated[j]);
       }
       if (nodes[i].connections_self.weight !== 0) {
         network.connections.push(nodes[i].connections_self);
@@ -24636,11 +25173,11 @@ const architect = {
   }
 };
 
-module.exports = architect;
+module.exports = architect
 
 
 /***/ }),
-/* 22 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -24654,10 +25191,10 @@ module.exports = architect;
 */
 var workers = {
   node: {
-    TestWorker: __webpack_require__(23)
+    TestWorker: __webpack_require__(26)
   },
   browser: {
-    TestWorker: __webpack_require__(26)
+    TestWorker: __webpack_require__(29)
   }
 };
 
@@ -24665,15 +25202,15 @@ module.exports = workers;
 
 
 /***/ }),
-/* 23 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process, __dirname) {module.exports = TestWorker;
 
-const cp = __webpack_require__(24);
-const path = __webpack_require__(25);
+const cp = __webpack_require__(27);
+const path = __webpack_require__(28);
 
-const standard_cost_functions = __webpack_require__(7);
+const standard_cost_functions = __webpack_require__(5);
 
 let fork_port = 9230;
 
@@ -24755,16 +25292,16 @@ TestWorker.prototype = {
   }
 };
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(10), "/"))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(12), "/"))
 
 /***/ }),
-/* 24 */
+/* 27 */
 /***/ (function(module, exports) {
 
 /* (ignored) */
 
 /***/ }),
-/* 25 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {// .dirname, .basename, and .extname methods are extracted from Node.js v8.11.1,
@@ -25070,15 +25607,15 @@ var substr = 'ab'.substr(-1) === 'b'
     }
 ;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(10)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(12)))
 
 /***/ }),
-/* 26 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = TestWorker;
 
-var multi = __webpack_require__(9);
+var multi = __webpack_require__(11);
 
 /**
 * Creates a web worker process for running tests
@@ -25184,7 +25721,7 @@ TestWorker.prototype = {
 
 
 /***/ }),
-/* 27 */
+/* 30 */
 /***/ (function(module, exports) {
 
 exports.endianness = function () { return 'LE' };
@@ -25239,13 +25776,13 @@ exports.homedir = function () {
 
 
 /***/ }),
-/* 28 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-var objectAssign = __webpack_require__(29);
+var objectAssign = __webpack_require__(32);
 
 // compare and isBuffer taken from https://github.com/feross/buffer/blob/680e9e5e488f22aac27599a57dc844a6315928dd/index.js
 // original notice:
@@ -25315,7 +25852,7 @@ function isBuffer(b) {
 // ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-var util = __webpack_require__(30);
+var util = __webpack_require__(33);
 var hasOwn = Object.prototype.hasOwnProperty;
 var pSlice = Array.prototype.slice;
 var functionsHaveNames = (function () {
@@ -25750,10 +26287,10 @@ var objectKeys = Object.keys || function (obj) {
   return keys;
 };
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(12)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(15)))
 
 /***/ }),
-/* 29 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -25850,7 +26387,7 @@ module.exports = shouldUseNative() ? Object.assign : function (target, source) {
 
 
 /***/ }),
-/* 30 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -26388,7 +26925,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-exports.isBuffer = __webpack_require__(31);
+exports.isBuffer = __webpack_require__(34);
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -26432,7 +26969,7 @@ exports.log = function() {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-exports.inherits = __webpack_require__(32);
+exports.inherits = __webpack_require__(35);
 
 exports._extend = function(origin, add) {
   // Don't do anything if add isn't an object
@@ -26557,10 +27094,10 @@ function callbackify(original) {
 }
 exports.callbackify = callbackify;
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(10)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(12)))
 
 /***/ }),
-/* 31 */
+/* 34 */
 /***/ (function(module, exports) {
 
 module.exports = function isBuffer(arg) {
@@ -26571,7 +27108,7 @@ module.exports = function isBuffer(arg) {
 }
 
 /***/ }),
-/* 32 */
+/* 35 */
 /***/ (function(module, exports) {
 
 if (typeof Object.create === 'function') {
@@ -26600,14 +27137,14 @@ if (typeof Object.create === 'function') {
 
 
 /***/ }),
-/* 33 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 const _ = __webpack_require__(1);
 // const parameter = require(`./util/parameter`);
-const Network = __webpack_require__(4);
+const Network = __webpack_require__(2);
 const methods = __webpack_require__(0);
-const config = __webpack_require__(2);
+const config = __webpack_require__(3);
 
 /**
 * Runs the NEAT algorithm on group of neural networks.
@@ -27374,7 +27911,7 @@ module.exports = Neat;
 
 
 /***/ }),
-/* 34 */
+/* 37 */
 /***/ (function(module, exports) {
 
 // const _ = require(`lodash`);
@@ -28029,10 +28566,10 @@ module.exports = Neat;
 
 
 /***/ }),
-/* 35 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
-let Network = __webpack_require__(4)
+let Network = __webpack_require__(2)
 
 /**
  *
@@ -28051,6 +28588,800 @@ GAN.prototype = {
     
   },
 }
+
+/***/ }),
+/* 39 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Network = __webpack_require__(2);
+const ReplayBuffer = __webpack_require__(16);
+const Experience = __webpack_require__(14);
+const Utils = __webpack_require__(7);
+const Rate = __webpack_require__(9);
+const Loss = __webpack_require__(5);
+
+/**
+ * Creates a DQN-Agent
+ *
+ * Used to do reinforcement learning with an DQN-Agent
+ *
+ * @constructs DQN
+ *
+ * @param {int} numActions Maximum number of actions the agent can do,
+ * @param {int} numStates Length of the state array
+ * @param {{
+ *   hiddenNeurons: int[],
+ *   hiddenNeuronsB: int[],
+ *   network: Network,
+ *   networkB: Network,
+ *   learningRate: number,
+ *   learningRateDecay: number,
+ *   learningRateMin: number,
+ *   learningRateB: number,
+ *   learningRateBDecay: number,
+ *   learningRateBMin: number,
+ *   explore: number,
+ *   exploreDecay: number,
+ *   exploreMin: number,
+ *   tdErrorClamp: number,
+ *   isTraining: boolean,
+ *   isDoubleDQN: boolean,
+ *   isUsingPER: boolean,
+ *   isUsingSARSA: boolean,
+ *   experienceSize: int,
+ *   learningStepsPerIteration: int,
+ *   gamma: number
+ * }|*} options JSON object which contains all custom options
+ *
+ * @todo Allow underlying Network to have arbitrary layer structure
+ * @todo Add test & custom network input / output size validation
+ * @todo Maybe automatically suggest default values for the num of states and actions
+ * @todo Allow Liquid networks trained with NEAT
+ * @todo consider default value of isDoubleDQN to be true
+ */
+function DQN(numStates, numActions, options) {
+  // Training specific variables
+  this.tdErrorClamp = Utils.RL.getOption(options, 'tdErrorClamp', 1); // td error clamp for training stability
+  this.isTraining = Utils.RL.getOption(options, 'isTraining', true); // set training mode on and off
+  this.isDoubleDQN = Utils.RL.getOption(options, 'isDoubleDQN', false); // using Double-DQN
+  this.isUsingPER = Utils.RL.getOption(options, 'isUsingPER', true); // using prioritized experience replay
+  this.isUsingSARSA = Utils.RL.getOption(options, 'isUsingSARSA', false);
+  this.gamma = Utils.RL.getOption(options, 'gamma', 0.7); // future reward discount factor
+  this.loss = Utils.RL.getOption(options, 'loss', Loss.ABS);
+  this.lossOptions = Utils.RL.getOption(options, 'lossOptions', {});
+  this.startLearningThreshold = Utils.RL.getOption(options, 'startLearningThreshold', 10);
+  // Network creation
+  this.numActions = numActions;
+  this.hiddenNeurons = Utils.RL.getOption(options, 'hiddenNeurons', [10]);
+  this.hiddenNeuronsB = Utils.RL.getOption(options, 'hiddenNeuronsB', this.hiddenNeurons);
+  this.network = Utils.RL.getOption(options, 'network', new Network.architecture.Perceptron(numStates, ...this.hiddenNeurons, numActions));
+  this.networkB = this.isDoubleDQN
+    ? Utils.RL.getOption(options, 'networkB', new Network.architecture.Perceptron(numStates, ...this.hiddenNeuronsB, numActions))
+    : null;
+
+  // Learning rate
+  this.learningRate = Utils.RL.getOption(options, 'learningRate', 0.1); // AKA alpha value function learning rate
+  this.learningRateDecay = Utils.RL.getOption(options, 'learningRateDecay', 0.999); // AKA alpha value function learning rate
+  this.learningRateMin = Utils.RL.getOption(options, 'learningRateMin', 0.01); // AKA alpha value function learning rate
+  if (this.isDoubleDQN) {
+    this.learningRateB = Utils.RL.getOption(options, 'learningRateB', this.learningRate); // AKA alpha value function learning rate
+    this.learningRateBDecay = Utils.RL.getOption(options, 'learningRateBDecay', this.learningRateDecay); // AKA alpha value function learning rate
+    this.learningRateBMin = Utils.RL.getOption(options, 'learningRateBMin', this.learningRateMin); // AKA alpha value function learning rate
+  }
+
+  // Experience ("Memory")
+  let experienceSize = Utils.RL.getOption(options, 'experienceSize', 10000); // size of experience replay
+  let noisyPER = Utils.RL.getOption(options, 'noisyPER', null);
+  this.replayBuffer = Utils.RL.getOption(options, 'experience', noisyPER === null
+    ? new ReplayBuffer(experienceSize, 0)
+    : new ReplayBuffer(experienceSize, noisyPER)); // experience
+  this.learningStepsPerIteration = Utils.RL.getOption(options, 'learningStepsPerIteration', 10); // number of time steps before we add another experience to replay memory
+
+  // Exploration / Exploitation management
+  this.explore = Utils.RL.getOption(options, 'explore', 0.3); // AKA epsilon for epsilon-greedy policy
+  this.exploreDecay = Utils.RL.getOption(options, 'exploreDecay', 0.9999); // AKA epsilon for epsilon-greedy policy
+  this.exploreMin = Utils.RL.getOption(options, 'exploreMin', 0.01); // AKA epsilon for epsilon-greedy policy
+
+  // Set variables to null | 0
+  this.timeStep = 0;
+  this.reward = null;
+  this.state = null;
+  this.nextState = null;
+  this.action = null;
+}
+
+DQN.prototype = {
+  /**
+   * Save function
+   *
+   * @function toJSON
+   * @memberof DQN
+   *
+   * @return {{
+   *   network:{
+   *     input:number,
+   *     output:number,
+   *     dropout:number,
+   *     nodes:Array<object>,
+   *     connections:Array<object>
+   *   },
+   *   networkB:{
+   *     input:number,
+   *     output:number,
+   *     dropout:number,
+   *     nodes:Array<object>,
+   *     connections:Array<object>
+   *   },
+   *   gamma:number,
+   *   explore:number,
+   *   exploreDecay:number,
+   *   exploreMin:number,
+   *   learningRate:number,
+   *   learningRateDecay:number,
+   *   learningRateMin:number,
+   *   learningRateB:number,
+   *   learningRateBDecay:number,
+   *   learningRateBMin:number,
+   *   learningStepsPerIteration: int,
+   *   isTraining:boolean,
+   *   isUsingPER:boolean,
+   *   isUsingSARSA: boolean,
+   *   isDoubleDQN:boolean,
+   *   tdErrorClamp: number,
+   *   timeStep: int,
+   *   experience:ReplayBuffer
+   * }} json JSON String JSON String which represents this DQN agent
+   */
+  toJSON: function () {
+    let json = {};
+    json.network = this.network.toJSON();
+    json.networkB = this.isDoubleDQN ? this.networkB.toJSON() : null;
+    json.gamma = this.gamma;
+    json.explore = this.explore;
+    json.exploreDecay = this.exploreDecay;
+    json.exploreMin = this.exploreMin;
+    json.learningRate = this.learningRate;
+    json.learningRateDecay = this.learningRateDecay;
+    json.learningRateMin = this.learningRateMin;
+    json.learningRateB = this.learningRateB;
+    json.learningRateBDecay = this.learningRateBDecay;
+    json.learningRateBMin = this.learningRateBMin;
+    json.learningStepsPerIteration = this.learningStepsPerIteration;
+    json.isTraining = this.isTraining;
+    json.isUsingPER = this.isUsingPER;
+    json.isUsingSARSA = this.isUsingSARSA;
+    json.isDoubleDQN = this.isDoubleDQN;
+    json.tdErrorClamp = this.tdErrorClamp;
+    json.timeStep = this.timeStep;
+    json.experience = this.replayBuffer;
+    return json;
+  },
+
+  /**
+   * This method gets the current state as input, and decides which action should be taken.
+   *
+   * Decision based on exploration rate set by `.explore`.
+   *
+   * explore ∈ [0,1]
+   * explore == 1 --> Network always explores states randomly.
+   * explore == 0 --> Network always picks the action it thinks best from known states.
+   *
+   * Best strategy: High explore at first then less explore as network is more experienced.
+   *
+   * @function act
+   * @memberof DQN
+   *
+   * @param {number[]} state current state (float arr with values from [0,1])
+   * @param {number[]} prohibitedActions
+   * @return {int} The action which the DQN would take at this state; action ∈ [0, this.numActions-1]
+   *
+   * @todo Add ability to select strategies
+   * @todo Add Thompson Sampling strategy
+   */
+  act: function(state, prohibitedActions) {
+    if (!Array.isArray(prohibitedActions)) {
+      prohibitedActions = [];
+    }
+    // epsilon greedy strategy | explore > random ? explore : exploit
+    let currentExploreRate = Math.max(this.exploreMin, Rate.EXP(this.explore, this.timeStep, {gamma: this.exploreDecay}));
+    let action;
+    if (this.isTraining && (currentExploreRate > Math.random() || this.timeStep < this.startLearningThreshold)) {
+      // Explore
+      do {
+        action = Utils.randomInt(0, this.numActions - 1);
+      } while (prohibitedActions.indexOf(action) !== -1);
+    } else if (this.isDoubleDQN) {
+      // Exploit with Double-DQN
+      // Take action which is maximum of both networks by summing them up
+      let activation = this.network.activate(state, {trace: false});
+      let activationB = this.networkB.activate(state, {trace: false});
+
+      for (let i = 0; i < prohibitedActions.length; i++) {
+        activation[prohibitedActions[i]] = -1;
+        activationB[prohibitedActions[i]] = -1;
+      }
+
+      let sum = activation.map((elem, index) => elem + activationB[index]);
+      action = Utils.getMaxValueIndex(sum);
+    } else {
+      // Exploit
+      let actions = this.network.activate(state, {trace: false});
+      for (let i = 0; i < prohibitedActions.length; i++) {
+        actions[prohibitedActions[i]] = -1;
+      }
+      action = Utils.getMaxValueIndex(actions);
+    }
+
+    // keep this in memory for learning
+    this.state = this.nextState;
+    this.action = this.nextAction;
+    this.nextState = state;
+    this.nextAction = action;
+
+    return action;
+  },
+
+  /**
+   * This method trains the Q-Network.
+   *
+   * @function learn
+   * @memberof DQN
+   *
+   * @param {number} newReward the current reward, the agent receives from the environment; newReward ∈ [-1,1]
+   * @param {boolean} isFinalState Does the game ends at this state?
+   * @returns {number} the loss value; loss ∈ [-1,1]
+   *
+   * @todo Add hindsight experience replay
+   */
+  learn: function(newReward, isFinalState = false) {
+    // Normalizing reward:
+    // newReward ∈ [-1,1] --> normalizedReward ∈ [0,1]
+    const normalizedReward = (1 + newReward) / 2;
+
+    // Update Q function | temporal difference method currently hardcoded
+    let loss = 1;
+    if (this.reward != null && this.isTraining) {
+      let experience = new Experience(this.state, this.action, normalizedReward, this.nextState, this.nextAction, isFinalState);
+      this.replayBuffer.add(experience);
+      if (this.timeStep > this.startLearningThreshold) {
+        experience.loss = this.study(experience);
+        loss = experience.loss;
+        let miniBatch = this.isUsingPER
+          ? this.replayBuffer.getMiniBatchWithPER(this.learningStepsPerIteration)
+          : this.replayBuffer.getRandomMiniBatch(this.learningStepsPerIteration);
+
+        // Sample the mini batch
+        for (let i = 0; i < miniBatch.length; i++) {
+          miniBatch[i].loss = this.study(miniBatch[i]);
+        }
+      } else if (this.timeStep === this.startLearningThreshold) {
+        for (let i = 0; i < this.replayBuffer.buffer.length; i++) {
+          this.replayBuffer.buffer[i].loss = this.study(this.replayBuffer.buffer[i]);
+        }
+      }
+    }
+    this.timeStep++;
+    this.reward = newReward;
+    return loss;
+  },
+
+  /**
+   * This method learns from an specified experience / action-state transition.
+   *
+   * @function study
+   * @memberof DQN
+   *
+   * @param {Experience} experience the experience to learn from
+   * @returns {number} TDError Roughly, an experiential measure of surprise / insight for the network at this state-action; tdError ∈ [-1,1]
+   *
+   * @todo Add dynamic loss functions & clamps, including Huber Loss
+   * @todo Add target network to increase reliability
+   * @todo Consider not using a target network: https:// www.ijcai.org/proceedings/2019/0379.pdf
+   * @todo Consider renaming to sample(experience)
+   */
+  study: function(experience) {
+    let chooseNetwork = !this.isDoubleDQN || Math.random() < 0.5 ? 'A' : 'B';
+
+    // Compute target Q value, called without traces so it won't affect backpropagation later
+    let nextActions = !this.isDoubleDQN || chooseNetwork === 'A'
+      ? this.network.activate(experience.nextState, {trace: false})
+      : this.networkB.activate(experience.nextState, {trace: false});
+    let actionIndex = Utils.getMaxValueIndex(nextActions);
+
+    let targetQValue;
+    if (experience.isFinalState) {
+      // For final state reward needs no discount factor
+      targetQValue = experience.reward;
+    } else if (this.isDoubleDQN) {
+      // See here: https://miro.medium.com/max/534/1*NvvRn59pz-D1iSkBWpuIxA.png
+      targetQValue = experience.reward + this.gamma *
+        (chooseNetwork === 'A'
+          ? this.networkB.activate(experience.nextState, {trace: false})[actionIndex]
+          : this.network.activate(experience.nextState, {trace: false})[actionIndex]) -
+        (chooseNetwork !== 'A' ?
+          this.networkB.activate(experience.state, {trace: false})[experience.action]
+          : this.network.activate(experience.state, {trace: false})[experience.action]);
+    } else if (this.isUsingSARSA) {
+      // SARSA
+      targetQValue = experience.reward
+        + this.gamma * nextActions[actionIndex]
+        - this.network.activate(experience.state)[actionIndex];
+    } else {
+      // Q-LEARNING
+      targetQValue = experience.reward + this.gamma * nextActions[actionIndex];
+    }
+
+    // Predicted current reward | called with traces for backpropagation later
+    let predictedReward = !this.isDoubleDQN || chooseNetwork === 'A'
+      ? this.network.activate(experience.state)
+      : this.networkB.activate(experience.state);
+    //Loss
+    let tdError = Math.abs(targetQValue - predictedReward[experience.action]);
+    predictedReward[experience.action] = targetQValue;
+
+    // Clamp error for robustness
+    if (Math.abs(tdError) > this.tdErrorClamp) {
+      tdError = tdError > this.tdErrorClamp ? this.tdErrorClamp : -this.tdErrorClamp;
+    }
+
+    // Backpropagation using temporal difference error
+    if (!this.isDoubleDQN || chooseNetwork === 'A') {
+      let currentLearningRate = Math.max(this.learningRateMin, Rate.EXP(this.learningRate, this.timeStep, {gamma: this.learningRateDecay}));
+      this.network.propagate(currentLearningRate, 0, true, predictedReward);
+    } else {
+      let currentLearningRate = Math.max(this.learningRateBMin, Rate.EXP(this.learningRateB, this.timeStep, {gamma: this.learningRateBDecay}));
+      this.networkB.propagate(currentLearningRate, 0, true, predictedReward);
+    }
+    return tdError;
+  },
+};
+
+/**
+ * Load function
+ *
+ * @function fromJSON
+ * @memberof DQN
+ *
+ * @param {{
+ *   network:{
+ *     input:number,
+ *     output:number,
+ *     dropout:number,
+ *     nodes:Array<object>,
+ *     connections:Array<object>
+ *   },
+ *   networkB:{
+ *     input:number,
+ *     output:number,
+ *     dropout:number,
+ *     nodes:Array<object>,
+ *     connections:Array<object>
+ *   },
+ *   gamma:number,
+ *   explore:number,
+ *   exploreDecay:number,
+ *   exploreMin:number,
+ *   learningRate:number,
+ *   learningRateDecay:number,
+ *   learningRateMin:number,
+ *   learningRateB:number,
+ *   learningRateBDecay:number,
+ *   learningRateBMin:number,
+ *   learningStepsPerIteration: int,
+ *   isTraining:boolean,
+ *   isUsingPER:boolean,
+ *   isUsingSARSA:boolean,
+ *   isDoubleDQN:boolean,
+ *   timeStep: int,
+ *   tdErrorClamp: number,
+ *   experience:ReplayBuffer
+ * }} json  JSON String
+ * @return {DQN} Agent with the specs from the json
+ */
+DQN.fromJSON = function (json) {
+  json.network = json.network instanceof Network ? json.network.toJSON() : Network.fromJSON(json.network);
+  if (json.isDoubleDQN) {
+    json.networkB = json.networkB instanceof Network ? json.networkB.toJSON() : Network.fromJSON(json.networkB);
+  } else {
+    json.networkB = undefined;
+  }
+
+  let agent = new DQN(json.network.input_size, json.network.output_size, json);
+  agent.timeStep = json.timeStep;
+  return agent;
+};
+
+module.exports = DQN;
+
+
+/***/ }),
+/* 40 */
+/***/ (function(module, exports, __webpack_require__) {
+
+const Network = __webpack_require__(2);
+const ReplayBuffer = __webpack_require__(16);
+const Experience = __webpack_require__(14);
+const Utils = __webpack_require__(7);
+const Rate = __webpack_require__(9);
+
+/**
+ *
+ * Creates a DDPG-Agent
+ *
+ * Used to do reinforcement learning with an DDPG Agent
+ *
+ * @alpha
+ *
+ * @constructs DDPG
+ *
+ * @param {int} numStates
+ * @param {int} numActions
+ * @param {{
+ *   hiddenNeuronsActor: int[],
+ *   hiddenNeuronsCritic: int[],
+ *   actor: Network,
+ *   critic: Network,
+ *   actorTarget: Network,
+ *   criticTarget: Network,
+ *   learningRateActor: number,
+ *   learningRateActorDecay: number,
+ *   learningRateActorMin: number,
+ *   learningRateCritic: number,
+ *   learningRateCriticDecay: number,
+ *   learningRateCriticMin: number,
+ *   noiseStandardDeviation: number,
+ *   noiseStandardDeviationDecay: number,
+ *   noiseStandardDeviationMin: number,
+ *   isTraining: boolean,
+ *   isUsingPER: boolean,
+ *   experienceSize: int,
+ *   learningStepsPerIteration: int,
+ *   gamma: number,
+ *   theta: number
+ * }} options JSON object which contains all custom options
+ */
+function DDPG(numStates, numActions, options) {
+  // Network creation
+  let hiddenNeuronsActor = Utils.RL.getOption(options, 'hiddenNeuronsActor', [10]);
+  let hiddenNeuronsCritic = Utils.RL.getOption(options, 'hiddenNeuronsCritic', hiddenNeuronsActor);
+
+  this.actor = Utils.RL.getOption(options, 'actor', new Network.architecture.Perceptron(numStates, ...hiddenNeuronsActor, numActions));
+  this.critic = Utils.RL.getOption(options, 'critic', new Network.architecture.Perceptron(numStates + numActions, ...hiddenNeuronsCritic, numActions));
+  this.actorTarget = Utils.RL.getOption(options, 'actorTarget', Network.fromJSON(this.actor.toJSON()));
+  this.criticTarget = Utils.RL.getOption(options, 'criticTarget', Network.fromJSON(this.critic.toJSON()));
+
+  // Experience ("Memory")
+  let experienceSize = Utils.RL.getOption(options, 'experienceSize', 50000);
+  let noisyPER = Utils.RL.getOption(options, 'noisyPER', null);
+  this.replayBuffer = Utils.RL.getOption(options, 'replayBuffer', noisyPER === null
+    ? new ReplayBuffer(experienceSize, 0)
+    : new ReplayBuffer(experienceSize, noisyPER));
+  this.learningStepsPerIteration = Utils.RL.getOption(options, 'learningStepsPerIteration', 100);
+  this.startLearningThreshold = Utils.RL.getOption(options, 'startLearningThreshold', 0);
+
+  // Training specific variables
+  this.isContinuousTask = Utils.RL.getOption(options, 'isContinuousTask', false);
+  this.gamma = Utils.RL.getOption(options, 'gamma', 0.7);
+  this.theta = Utils.RL.getOption(options, 'theta', 0.01); // soft target update
+  this.isTraining = Utils.RL.getOption(options, 'isTraining', true);
+  this.isUsingPER = Utils.RL.getOption(options, 'isUsingPER', true); // using prioritized experience replay
+
+  this.learningRateActor = Utils.RL.getOption(options, 'learningRateActor', 0.1); // AKA alpha value function learning rate
+  this.learningRateActorDecay = Utils.RL.getOption(options, 'learningRateActorDecay', 0.99); // AKA alpha value function learning rate
+  this.learningRateActorMin = Utils.RL.getOption(options, 'learningRateActorMin', 0.005); // AKA alpha value function learning rate
+
+  this.learningRateCritic = Utils.RL.getOption(options, 'learningRateCritic', 0.1); // AKA alpha value function learning rate
+  this.learningRateCriticDecay = Utils.RL.getOption(options, 'learningRateCriticDecay', 0.99); // AKA alpha value function learning rate
+  this.learningRateCriticMin = Utils.RL.getOption(options, 'learningRateCriticMin', 0.05); // AKA alpha value function learning rate
+
+  // Exploration / Exploitation management
+  this.noiseStandardDeviation = Utils.RL.getOption(options, 'noiseStandardDeviation', 0.1); // AKA epsilon for epsilon-greedy policy
+  this.noiseStandardDeviationDecay = Utils.RL.getOption(options, 'noiseStandardDeviationDecay', 0.99); // AKA epsilon for epsilon-greedy policy
+  this.noiseStandardDeviationMin = Utils.RL.getOption(options, 'noiseStandardDeviationMin', 0.05); // AKA epsilon for epsilon-greedy policy
+
+  this.timeStep = 0;
+  this.actions = [];
+  this.state = null;
+  this.lastState = null;
+}
+
+DDPG.prototype = {
+  /**
+   * Save function
+   *
+   * @function toJSON
+   * @memberof DDPG
+   *
+   * @return {{
+   *   actor: {
+   *     input:number,
+   *     output:number,
+   *     dropout:number,
+   *     nodes:Array<object>,
+   *     connections:Array<object>
+   *   },
+   *   critic: {
+   *     input:number,
+   *     output:number,
+   *     dropout:number,
+   *     nodes:Array<object>,
+   *     connections:Array<object>
+   *   },
+   *   actorTarget: {
+   *     input:number,
+   *     output:number,
+   *     dropout:number,
+   *     nodes:Array<object>,
+   *     connections:Array<object>
+   *   },
+   *   criticTarget: {
+   *     input:number,
+   *     output:number,
+   *     dropout:number,
+   *     nodes:Array<object>,
+   *     connections:Array<object>
+   *   },
+   *   gamma: number,
+   *   theta: number,
+   *   noiseStandardDeviation: number,
+   *   noiseStandardDeviationDecay: number,
+   *   noiseStandardDeviationMin: number,
+   *   learningRateActor: number,
+   *   learningRateActorDecay: number,
+   *   learningRateActorMin: number,
+   *   learningRateCritic: number,
+   *   learningRateCriticDecay: number,
+   *   learningRateCriticMin: number,
+   *   isTraining: boolean,
+   *   isUsingPER: boolean,
+   *   timeStep: int,
+   *   replayBuffer:
+   *   ReplayBuffer|{
+   *     buffer: Experience[],
+   *     maxSize: int,
+   *     sumOfAbsLosses: number,
+   *     noiseRate: number
+   *    }
+   * }} json JSON String JSON String which represents this DDPG agent
+   */
+  toJSON: function() {
+    let json = {};
+    json.actor = this.actor.toJSON();
+    json.critic = this.critic.toJSON();
+    json.actorTarget = this.actorTarget.toJSON();
+    json.criticTarget = this.criticTarget.toJSON();
+
+    json.gamma = this.gamma;
+    json.theta = this.theta;
+
+    json.noiseStandardDeviation = this.noiseStandardDeviation;
+    json.noiseStandardDeviationDecay = this.noiseStandardDeviationDecay;
+    json.noiseStandardDeviationMin = this.noiseStandardDeviationMin;
+
+    json.learningRateActor = this.learningRateActor;
+    json.learningRateActorDecay = this.learningRateActorDecay;
+    json.learningRateActorMin = this.learningRateActorMin;
+
+    json.learningRateCritic = this.learningRateCritic;
+    json.learningRateCriticDecay = this.learningRateCriticDecay;
+    json.learningRateCriticMin = this.learningRateCriticMin;
+
+    json.isTraining = this.isTraining;
+    json.isUsingPER = this.isUsingPER;
+    json.timeStep = this.timeStep;
+    json.learningStepsPerIteration = this.learningStepsPerIteration;
+    json.replayBuffer = this.replayBuffer.toJSON();
+    return json;
+  },
+
+  /**
+   * This method decides which action should be taken.
+   *
+   * Decision based on exploration rate set by `.explore`.
+   *
+   * explore ∈ [0,1]
+   * explore == 1 --> Network always explores states randomly.
+   * explore == 0 --> Network always picks the action it thinks best from known states.
+   *
+   * Best strategy: High explore at first then less explore as network is more experienced.
+   *
+   * @function act
+   * @memberof DDPG
+   *
+   * @param {number[]} state current state (float arr with values from [0,1])
+   * @param {number[]} prohibitedActions all prohibited actions at this state
+   * @return {int|number[]} The action which the DQN would take at this state; action ∈ [0, this.numActions-1] or the complete action array with the QValues for continuous tasks
+   */
+  act: function(state, prohibitedActions) {
+    if (prohibitedActions === undefined) {
+      prohibitedActions = [];
+    }
+    let noiseFactor = Math.max(this.noiseStandardDeviationMin, Rate.EXP(this.noiseStandardDeviation, this.timeStep, {gamma: this.noiseStandardDeviationDecay}));
+    let action = Utils.addGaussianNoiseToNetwork(this.actor, noiseFactor).activate(state);
+
+    if (this.startLearningThreshold > this.timeStep) {
+      for (let i = 0; i < action.length; i++) {
+        action[i] = Math.random();
+      }
+    }
+
+    for (let i = 0; i < prohibitedActions.length; i++) {
+      action[prohibitedActions[i]] = -1;
+    }
+    this.actions = action;
+    this.lastState = this.state;
+    this.state = state;
+    return this.isContinuousTask ? action : Utils.getMaxValueIndex(action);
+  },
+
+  /**
+   * This method trains the Q-Network.
+   *
+   * @function learn
+   * @memberof DDPG
+   *
+   * @param {number} newReward the current reward, the agent receives from the environment; newReward ∈ [-1,1]
+   * @param {boolean} isFinalState Does the game ends at this state?
+   * @returns {number} the loss value; loss ∈ [-1,1]
+   */
+  learn: function(newReward, isFinalState = false) {
+    this.timeStep++;
+    if (this.timeStep === 1 || !this.isTraining || this.startLearningThreshold > this.timeStep) {
+      this.lastReward = newReward;
+      return 1;
+    }
+    let experience = new Experience(this.lastState, this.actions, this.lastReward, this.state, 0, isFinalState);
+    experience.loss = this.study(experience);
+    this.replayBuffer.add(experience);
+
+    let miniBatch = this.isUsingPER
+      ? this.replayBuffer.getMiniBatchWithPER(this.learningStepsPerIteration)
+      : this.replayBuffer.getRandomMiniBatch(this.learningStepsPerIteration);
+    for (let i = 0; i < miniBatch.length; i++) {
+      this.study(miniBatch[i]);
+    }
+    this.lastReward = newReward;
+    return experience.loss;
+  },
+
+  /**
+   * This method learns from an specified experience / action-state transition.
+   *
+   * @function study
+   * @memberof DDPG
+   *
+   * @param {Experience} experience the experience to learn from
+   * @returns {number} Actor loss value; loss ∈ [-1,1]
+   */
+  study: function(experience) {
+    if (experience.state === undefined || experience.state === null ||
+      experience.action === undefined || experience.action === null) {
+      return 0;
+    }
+    let stateActionArr = experience.state.concat(experience.action);
+    this.critic.activate(stateActionArr);
+    let actorActivation = this.actor.activate(experience.state);
+    let actorTargetActivation = this.actorTarget.activate(experience.nextState, {trace: false});
+
+    let nextQ = this.criticTarget.activate(experience.nextState.concat(actorTargetActivation), {trace: false});
+    let qPrime = [];
+    for (let i = 0; i < nextQ.length; i++) {
+      qPrime.push(experience.isFinalState
+        ? experience.reward
+        : experience.reward + this.gamma * nextQ[i]);
+    }
+
+    let criticLearningRate = Math.max(this.learningRateCriticMin, Rate.EXP(this.learningRateCritic, this.timeStep, {gamma: this.learningRateCriticDecay}));
+    this.critic.propagate(criticLearningRate, 0, true, qPrime);
+
+    let policyLoss = -Utils.mean(this.critic.activate(experience.state.concat(actorActivation), {trace: false}));
+    actorActivation[Utils.getMaxValueIndex(experience.action)] *= policyLoss;
+
+    let actorLearningRate = Math.max(this.learningRateActorMin, Rate.EXP(this.learningRateActor, this.timeStep, {gamma: this.learningRateActorDecay}));
+    this.actor.propagate(actorLearningRate, 0, true, actorActivation);
+
+    // Learning the actorTarget and criticTarget networks
+    let actorParameters = this.actor.activate(experience.state, {trace: false});
+    let criticParameters = this.critic.activate(stateActionArr, {trace: false});
+    let actorTargetParameters = this.actorTarget.activate(experience.state);
+    let criticTargetParameters = this.criticTarget.activate(stateActionArr);
+
+    for (let i = 0; i < actorTargetParameters.length; i++) {
+      actorTargetParameters[i] = this.theta * actorParameters[i] + (1 - this.theta) * actorTargetParameters[i];
+    }
+    for (let i = 0; i < criticTargetParameters.length; i++) {
+      criticTargetParameters[i] = this.theta * criticParameters[i] + (1 - this.theta) * criticTargetParameters[i];
+    }
+
+    //Learning rate of 1 --> copy parameter
+    this.actorTarget.propagate(1, 0, true, actorTargetParameters);
+    this.criticTarget.propagate(1, 0, true, criticTargetParameters);
+    return policyLoss;
+  },
+};
+
+/**
+ * @param {{
+ *   actor: {
+ *     input:number,
+ *     output:number,
+ *     dropout:number,
+ *     nodes:Array<object>,
+ *     connections:Array<object>
+ *   },
+ *   critic: {
+ *     input:number,
+ *     output:number,
+ *     dropout:number,
+ *     nodes:Array<object>,
+ *     connections:Array<object>
+ *   },
+ *   actorTarget: {
+ *     input:number,
+ *     output:number,
+ *     dropout:number,
+ *     nodes:Array<object>,
+ *     connections:Array<object>
+ *   },
+ *   criticTarget: {
+ *     input:number,
+ *     output:number,
+ *     dropout:number,
+ *     nodes:Array<object>,
+ *     connections:Array<object>
+ *   },
+ *   gamma: number,
+ *   theta: number,
+ *   noiseStandardDeviation: number,
+ *   noiseStandardDeviationDecay: number,
+ *   noiseStandardDeviationMin: number,
+ *   learningRateActor: number,
+ *   learningRateActorDecay: number,
+ *   learningRateActorMin: number,
+ *   learningRateCritic: number,
+ *   learningRateCriticDecay: number,
+ *   learningRateCriticMin: number,
+ *   isTraining: boolean,
+ *   isUsingPER: boolean,
+ *   timeStep: int,
+ *   replayBuffer:
+ *   ReplayBuffer|{
+ *     buffer: Experience[],
+ *     maxSize: int,
+ *     sumOfAbsLosses: number,
+ *     noiseRate: number
+ *    }
+ * }} json JSON String JSON String which represents this DDPG agent
+ *
+ * @return {DDPG} the agent with specs from json
+ *
+ * @param json
+ */
+DDPG.fromJSON = function(json) {
+  json.actor = json.actor instanceof Network
+    ? json.actor
+    : Network.fromJSON(json.actor);
+  json.critic = json.critic instanceof Network
+    ? json.critic
+    : Network.fromJSON(json.critic);
+  json.actorTarget = json.actorTarget instanceof Network
+    ? json.actorTarget
+    : Network.fromJSON(json.actorTarget);
+  json.criticTarget = json.criticTarget instanceof Network
+    ? json.criticTarget
+    : Network.fromJSON(json.criticTarget);
+
+  json.replayBuffer = json.replayBuffer instanceof ReplayBuffer
+    ? json.replayBuffer
+    : ReplayBuffer.fromJSON(json.replayBuffer);
+
+  let agent = new DDPG(json.actor.input_size, json.actor.output_size, json);
+  agent.timeStep = json.timeStep;
+  return agent;
+};
+
+module.exports = DDPG;
+
 
 /***/ })
 /******/ ])});;
