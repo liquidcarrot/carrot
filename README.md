@@ -29,6 +29,19 @@
     </a>
 </p>
 
+<h4>Top Sponsors</h4>
+
+<table>
+ <thead>
+  <tr>
+   <th>
+    <p align="center">Solinfra</p> 
+    <a href="https://www.solinfra.io/" alt="Solinfra"><img src="https://avatars0.githubusercontent.com/u/53709700?s=400&u=5d4523af8b372ed3be43c23bb8ed1003f2f234a4&v=4" alt="D-Nice Profile Pitcure" width="50px" /></a>
+   </th>
+  </tr>
+ </thead>
+</table>
+
 <p>
   Carrot is an architecture-free neural network library built around neuroevolution
 </p>
@@ -205,18 +218,22 @@ This project exists thanks to all the people who contribute. We can't do it with
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://liquidcarrot.io/"><img src="https://avatars3.githubusercontent.com/u/21148993?v=4" width="100px;" alt="Luis Carbonell"/><br /><sub><b>Luis Carbonell</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=luiscarbonell" title="Code">💻</a> <a href="#ideas-luiscarbonell" title="Ideas, Planning, & Feedback">🤔</a> <a href="#review-luiscarbonell" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/liquidcarrot/carrot/commits?author=luiscarbonell" title="Documentation">📖</a></td>
-    <td align="center"><a href="http://liquidcarrot.io"><img src="https://avatars2.githubusercontent.com/u/23618650?v=4" width="100px;" alt="Christian Echevarria"/><br /><sub><b>Christian Echevarria</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=christianechevarria" title="Code">💻</a> <a href="https://github.com/liquidcarrot/carrot/commits?author=christianechevarria" title="Documentation">📖</a> <a href="#infra-christianechevarria" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
-    <td align="center"><a href="https://github.com/dan-ryan"><img src="https://avatars1.githubusercontent.com/u/775672?v=4" width="100px;" alt="Daniel Ryan"/><br /><sub><b>Daniel Ryan</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/issues?q=author%3Adan-ryan" title="Bug reports">🐛</a> <a href="#review-dan-ryan" title="Reviewed Pull Requests">👀</a></td>
-    <td align="center"><a href="https://github.com/IviieMtz"><img src="https://avatars0.githubusercontent.com/u/50965172?v=4" width="100px;" alt="IviieMtz"/><br /><sub><b>IviieMtz</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=IviieMtz" title="Tests">⚠️</a></td>
-    <td align="center"><a href="https://github.com/nicszerman"><img src="https://avatars3.githubusercontent.com/u/14032356?v=4" width="100px;" alt="Nicholas Szerman"/><br /><sub><b>Nicholas Szerman</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=nicszerman" title="Code">💻</a></td>
-    <td align="center"><a href="http://www.threeceemedia.com"><img src="https://avatars3.githubusercontent.com/u/1046501?v=4" width="100px;" alt="tracy collins"/><br /><sub><b>tracy collins</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=tracycollins" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://liquidcarrot.io/"><img src="https://avatars3.githubusercontent.com/u/21148993?v=4" width="100px;" alt=""/><br /><sub><b>Luis Carbonell</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=luiscarbonell" title="Code">💻</a> <a href="#ideas-luiscarbonell" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/liquidcarrot/carrot/pulls?q=is%3Apr+reviewed-by%3Aluiscarbonell" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/liquidcarrot/carrot/commits?author=luiscarbonell" title="Documentation">📖</a></td>
+    <td align="center"><a href="http://liquidcarrot.io"><img src="https://avatars2.githubusercontent.com/u/23618650?v=4" width="100px;" alt=""/><br /><sub><b>Christian Echevarria</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=christianechevarria" title="Code">💻</a> <a href="https://github.com/liquidcarrot/carrot/commits?author=christianechevarria" title="Documentation">📖</a> <a href="#infra-christianechevarria" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
+    <td align="center"><a href="https://github.com/dan-ryan"><img src="https://avatars1.githubusercontent.com/u/775672?v=4" width="100px;" alt=""/><br /><sub><b>Daniel Ryan</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/issues?q=author%3Adan-ryan" title="Bug reports">🐛</a> <a href="https://github.com/liquidcarrot/carrot/pulls?q=is%3Apr+reviewed-by%3Adan-ryan" title="Reviewed Pull Requests">👀</a></td>
+    <td align="center"><a href="https://github.com/IviieMtz"><img src="https://avatars0.githubusercontent.com/u/50965172?v=4" width="100px;" alt=""/><br /><sub><b>IviieMtz</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=IviieMtz" title="Tests">⚠️</a></td>
+    <td align="center"><a href="https://github.com/nicszerman"><img src="https://avatars3.githubusercontent.com/u/14032356?v=4" width="100px;" alt=""/><br /><sub><b>Nicholas Szerman</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=nicszerman" title="Code">💻</a></td>
+    <td align="center"><a href="http://www.threeceemedia.com"><img src="https://avatars3.githubusercontent.com/u/1046501?v=4" width="100px;" alt=""/><br /><sub><b>tracy collins</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/issues?q=author%3Atracycollins" title="Bug reports">🐛</a></td>
+    <td align="center"><a href="https://github.com/raimannma"><img src="https://avatars3.githubusercontent.com/u/26171511?v=4" width="100px;" alt=""/><br /><sub><b>Manuel Raimann</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/issues?q=author%3Araimannma" title="Bug reports">🐛</a> <a href="https://github.com/liquidcarrot/carrot/commits?author=raimannma" title="Code">💻</a> <a href="#ideas-raimannma" title="Ideas, Planning, & Feedback">🤔</a></td>
   </tr>
 </table>
 
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
@@ -265,9 +282,9 @@ And finally, a big thank you to all of you for supporting! 🤗
  <tbody>
   <tr>
    <td align="center">
-    <a href="https://github.com/D-Nice" alt="D-Nice on Github"><img src="https://avatars0.githubusercontent.com/u/2888248?s=460&v=4" alt="D-Nice Profile Pitcure" width="150px" /></a>
+    <a href="https://www.solinfra.io/" alt="Solinfra"><img src="https://avatars0.githubusercontent.com/u/53709700?s=400&u=5d4523af8b372ed3be43c23bb8ed1003f2f234a4&v=4" alt="D-Nice Profile Pitcure" width="150px" /></a>
     <br>
-    <strong>D-Nice</strong>
+    <strong>Solinfra</strong>
    </td>
   </tr>
  </tbody>
