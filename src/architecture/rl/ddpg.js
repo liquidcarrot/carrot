@@ -45,8 +45,8 @@ function DDPG(numStates, numActions, options) {
   let hiddenNeuronsActor = Utils.RL.getOption(options, 'hiddenNeuronsActor', [10]);
   let hiddenNeuronsCritic = Utils.RL.getOption(options, 'hiddenNeuronsCritic', hiddenNeuronsActor);
 
-  this.actor = Utils.RL.getOption(options, 'actor', new Network.architecture.Perceptron(numStates, hiddenNeuronsActor, numActions));
-  this.critic = Utils.RL.getOption(options, 'critic', new Network.architecture.Perceptron(numStates + numActions, hiddenNeuronsCritic, numActions));
+  this.actor = Utils.RL.getOption(options, 'actor', new Network.architecture.Perceptron(numStates, ...hiddenNeuronsActor, numActions));
+  this.critic = Utils.RL.getOption(options, 'critic', new Network.architecture.Perceptron(numStates + numActions, ...hiddenNeuronsCritic, numActions));
   this.actorTarget = Utils.RL.getOption(options, 'actorTarget', Network.fromJSON(this.actor.toJSON()));
   this.criticTarget = Utils.RL.getOption(options, 'criticTarget', Network.fromJSON(this.critic.toJSON()));
 
@@ -66,18 +66,18 @@ function DDPG(numStates, numActions, options) {
   this.isTraining = Utils.RL.getOption(options, 'isTraining', true);
   this.isUsingPER = Utils.RL.getOption(options, 'isUsingPER', true); // using prioritized experience replay
 
-  this.learningRateActor = Utils.RL.getOption(options, 'learningRateActor', 0.2); // AKA alpha value function learning rate
-  this.learningRateActorDecay = Utils.RL.getOption(options, 'learningRateActorDecay', 0.9); // AKA alpha value function learning rate
+  this.learningRateActor = Utils.RL.getOption(options, 'learningRateActor', 0.1); // AKA alpha value function learning rate
+  this.learningRateActorDecay = Utils.RL.getOption(options, 'learningRateActorDecay', 0.99); // AKA alpha value function learning rate
   this.learningRateActorMin = Utils.RL.getOption(options, 'learningRateActorMin', 0.005); // AKA alpha value function learning rate
 
-  this.learningRateCritic = Utils.RL.getOption(options, 'learningRateCritic', 0.2); // AKA alpha value function learning rate
-  this.learningRateCriticDecay = Utils.RL.getOption(options, 'learningRateCriticDecay', 0.9); // AKA alpha value function learning rate
+  this.learningRateCritic = Utils.RL.getOption(options, 'learningRateCritic', 0.1); // AKA alpha value function learning rate
+  this.learningRateCriticDecay = Utils.RL.getOption(options, 'learningRateCriticDecay', 0.99); // AKA alpha value function learning rate
   this.learningRateCriticMin = Utils.RL.getOption(options, 'learningRateCriticMin', 0.05); // AKA alpha value function learning rate
 
   // Exploration / Exploitation management
   this.noiseStandardDeviation = Utils.RL.getOption(options, 'noiseStandardDeviation', 0.1); // AKA epsilon for epsilon-greedy policy
   this.noiseStandardDeviationDecay = Utils.RL.getOption(options, 'noiseStandardDeviationDecay', 0.99); // AKA epsilon for epsilon-greedy policy
-  this.noiseStandardDeviationMin = Utils.RL.getOption(options, 'noiseStandardDeviationMin', 0.001); // AKA epsilon for epsilon-greedy policy
+  this.noiseStandardDeviationMin = Utils.RL.getOption(options, 'noiseStandardDeviationMin', 0.05); // AKA epsilon for epsilon-greedy policy
 
   this.timeStep = 0;
   this.actions = [];
@@ -261,8 +261,9 @@ DDPG.prototype = {
     let stateActionArr = experience.state.concat(experience.action);
     this.critic.activate(stateActionArr);
     let actorActivation = this.actor.activate(experience.state);
+    let actorTargetActivation = this.actorTarget.activate(experience.nextState, {trace: false});
 
-    let nextQ = this.criticTarget.activate(experience.nextState.concat(this.actorTarget.activate(experience.nextState, {trace: false})), {trace: false});
+    let nextQ = this.criticTarget.activate(experience.nextState.concat(actorTargetActivation), {trace: false});
     let qPrime = [];
     for (let i = 0; i < nextQ.length; i++) {
       qPrime.push(experience.isFinalState
@@ -275,22 +276,24 @@ DDPG.prototype = {
 
     let policyLoss = -Utils.mean(this.critic.activate(experience.state.concat(actorActivation), {trace: false}));
     actorActivation[Utils.getMaxValueIndex(experience.action)] *= policyLoss;
+
     let actorLearningRate = Math.max(this.learningRateActorMin, Rate.EXP(this.learningRateActor, this.timeStep, {gamma: this.learningRateActorDecay}));
     this.actor.propagate(actorLearningRate, 0, true, actorActivation);
 
     // Learning the actorTarget and criticTarget networks
     let actorParameters = this.actor.activate(experience.state, {trace: false});
-    let actorTargetParameters = this.actorTarget.activate(experience.state);
     let criticParameters = this.critic.activate(stateActionArr, {trace: false});
+    let actorTargetParameters = this.actorTarget.activate(experience.state);
     let criticTargetParameters = this.criticTarget.activate(stateActionArr);
-    for (let i = 0; i < actorParameters.length; i++) {
+
+    for (let i = 0; i < actorTargetParameters.length; i++) {
       actorTargetParameters[i] = this.theta * actorParameters[i] + (1 - this.theta) * actorTargetParameters[i];
     }
-    for (let i = 0; i < criticParameters.length; i++) {
+    for (let i = 0; i < criticTargetParameters.length; i++) {
       criticTargetParameters[i] = this.theta * criticParameters[i] + (1 - this.theta) * criticTargetParameters[i];
     }
 
-    //Learning rate of 1 --> copy parameters
+    //Learning rate of 1 --> copy parameter
     this.actorTarget.propagate(1, 0, true, actorTargetParameters);
     this.criticTarget.propagate(1, 0, true, criticTargetParameters);
     return policyLoss;

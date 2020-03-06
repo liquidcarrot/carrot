@@ -248,7 +248,7 @@ DQN.prototype = {
     if (this.reward != null && this.isTraining) {
       let experience = new Experience(this.state, this.action, normalizedReward, this.nextState, this.nextAction, isFinalState);
       this.replayBuffer.add(experience);
-      if (this.timeStep >= this.startLearningThreshold) {
+      if (this.timeStep > this.startLearningThreshold) {
         experience.loss = this.study(experience);
         loss = experience.loss;
         let miniBatch = this.isUsingPER
@@ -257,7 +257,11 @@ DQN.prototype = {
 
         // Sample the mini batch
         for (let i = 0; i < miniBatch.length; i++) {
-          this.study(miniBatch[i]);
+          miniBatch[i].loss = this.study(miniBatch[i]);
+        }
+      } else if (this.timeStep === this.startLearningThreshold) {
+        for (let i = 0; i < this.replayBuffer.buffer.length; i++) {
+          this.replayBuffer.buffer[i].loss = this.study(this.replayBuffer.buffer[i]);
         }
       }
     }
@@ -319,10 +323,9 @@ DQN.prototype = {
     let predictedReward = !this.isDoubleDQN || chooseNetwork === 'A'
       ? this.network.activate(experience.state)
       : this.networkB.activate(experience.state);
-
-    let temp = [...predictedReward];
+    //Loss
+    let tdError = Math.abs(targetQValue - predictedReward[experience.action]);
     predictedReward[experience.action] = targetQValue;
-    let tdError = this.loss(predictedReward, temp, this.lossOptions);
 
     // Clamp error for robustness
     if (Math.abs(tdError) > this.tdErrorClamp) {

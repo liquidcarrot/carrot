@@ -62,7 +62,7 @@ function testLearning(agent) {
   let currentState = 0.5;
   let lastState = currentState;
   let currentLoss;
-  let windowSize = 100;
+  let windowSize = 10;
   let rewardWindow = [];
   let rewardSum = 0;
 
@@ -109,15 +109,17 @@ describe('DDPG', function() {
       expect(agent.criticTarget.output_size).to.equal(numActions);
     }
   });
-  it.skip('test learning capabilities with PER', function() {
+  it('test learning capabilities', function() {
     this.timeout(50000);
-    console.time('Learning: DDPG, PER');
+    console.time('Learning: DDPG');
     let agent = new DDPG(1, 2, {
-      gamma: 0,
-      isUsingPER: true,
+      learningStepsPerIteration: 20,
+      hiddenNeuronsActor: [10, 10],
+      noiseStandardDeviation: 0.3,
+      isUsingPER: false,
     });
     expect(testLearning(agent) >= 0.9).to.be.true;
-    console.timeEnd('Learning: DDPG, PER');
+    console.timeEnd('Learning: DDPG');
   });
 
   it('toJSON - fromJSON', function() {

@@ -54,13 +54,13 @@ let gaussianNoise = function(mean, standardDeviation) {
 let addGaussianNoiseToNetwork = function(network, standardDeviation = 0.2) {
   let copy = Network.fromJSON(network.toJSON());
   for (let i = 0; i < copy.nodes.length; i++) {
-    copy.nodes[i].bias = gaussianNoise(copy.nodes[i].bias, standardDeviation);
+    copy.nodes[i].bias = Math.min(1, Math.max(-1, gaussianNoise(copy.nodes[i].bias, standardDeviation)));
   }
   for (let i = 0; i < copy.gates.length; i++) {
-    copy.gates[i].bias = gaussianNoise(copy.gates[i].bias, standardDeviation);
+    copy.gates[i].bias = Math.min(1, Math.max(-1, gaussianNoise(copy.gates[i].bias, standardDeviation)));
   }
   for (let i = 0; i < copy.connections.length; i++) {
-    copy.connections[i].weight = gaussianNoise(copy.connections[i].weight, standardDeviation);
+    copy.connections[i].weight = Math.min(1, Math.max(-1, gaussianNoise(copy.connections[i].weight, standardDeviation)));
   }
   return copy;
 };

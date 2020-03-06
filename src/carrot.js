@@ -15,6 +15,7 @@ const Carrot = {
   multi: require('./multithreading/multi'),
   DQN: require('./architecture/rl/dqn'),
   DDPG: require('./architecture/rl/ddpg'),
+  utils: require('./util/utils'),
 };
 
 // CommonJS & AMD
