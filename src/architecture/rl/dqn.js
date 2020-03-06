@@ -300,7 +300,7 @@ DQN.prototype = {
       // For final state reward needs no discount factor
       targetQValue = experience.reward;
     } else if (this.isDoubleDQN) {
-      // See here: https:// bit.ly/2rjp1gS
+      // See here: https://miro.medium.com/max/534/1*NvvRn59pz-D1iSkBWpuIxA.png
       targetQValue = experience.reward + this.gamma *
         (chooseNetwork === 'A'
           ? this.networkB.activate(experience.nextState, {trace: false})[actionIndex]
@@ -315,8 +315,7 @@ DQN.prototype = {
         - this.network.activate(experience.state)[actionIndex];
     } else {
       // Q-LEARNING
-      targetQValue = experience.reward
-        + this.gamma * nextActions[actionIndex];
+      targetQValue = experience.reward + this.gamma * nextActions[actionIndex];
     }
 
     // Predicted current reward | called with traces for backpropagation later
