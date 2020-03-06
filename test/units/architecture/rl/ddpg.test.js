@@ -113,8 +113,7 @@ describe('DDPG', function() {
     this.timeout(50000);
     console.time('Learning: DDPG');
     let agent = new DDPG(1, 2, {
-      learningStepsPerIteration: 20,
-      hiddenNeuronsActor: [5],
+      hiddenNeuronsActor: [5, 5],
       noiseStandardDeviation: 0.05,
       isUsingPER: false,
     });
