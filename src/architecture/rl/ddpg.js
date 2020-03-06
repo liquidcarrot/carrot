@@ -63,7 +63,6 @@ function DDPG(numStates, numActions, options) {
   this.isContinuousTask = Utils.RL.getOption(options, 'isContinuousTask', false);
   this.gamma = Utils.RL.getOption(options, 'gamma', 0.7);
   this.theta = Utils.RL.getOption(options, 'theta', 0.01); // soft target update
-  this.criticLossOptions = Utils.RL.getOption(options, 'criticLossOptions', {});
   this.isTraining = Utils.RL.getOption(options, 'isTraining', true);
   this.isUsingPER = Utils.RL.getOption(options, 'isUsingPER', true); // using prioritized experience replay
 
@@ -255,6 +254,10 @@ DDPG.prototype = {
    * @returns {number} Actor loss value; loss ∈ [-1,1]
    */
   study: function(experience) {
+    if (experience.state === undefined || experience.state === null ||
+      experience.action === undefined || experience.action === null) {
+      return 0;
+    }
     let stateActionArr = experience.state.concat(experience.action);
     this.critic.activate(stateActionArr);
     let actorActivation = this.actor.activate(experience.state);
