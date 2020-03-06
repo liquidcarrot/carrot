@@ -51,7 +51,7 @@ let gaussianNoise = function(mean, standardDeviation) {
  * @param {number} standardDeviation
  * @returns {Network} noisy network
  */
-let addGaussianNoiseToNetwork = function(network, standardDeviation = 0.2) {
+let addGaussianNoiseToNetwork = function(network, standardDeviation = 0.1) {
   let copy = Network.fromJSON(network.toJSON());
   for (let i = 0; i < copy.nodes.length; i++) {
     copy.nodes[i].bias = Math.min(1, Math.max(-1, gaussianNoise(copy.nodes[i].bias, standardDeviation)));

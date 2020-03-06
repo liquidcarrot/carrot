@@ -114,8 +114,8 @@ describe('DDPG', function() {
     console.time('Learning: DDPG');
     let agent = new DDPG(1, 2, {
       learningStepsPerIteration: 20,
-      hiddenNeuronsActor: [10, 10],
-      noiseStandardDeviation: 0.3,
+      hiddenNeuronsActor: [5],
+      noiseStandardDeviation: 0.05,
       isUsingPER: false,
     });
     expect(testLearning(agent) >= 0.9).to.be.true;
