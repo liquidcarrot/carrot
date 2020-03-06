@@ -291,9 +291,7 @@ DQN.prototype = {
     let nextActions = !this.isDoubleDQN || chooseNetwork === 'A'
       ? this.network.activate(experience.nextState, {trace: false})
       : this.networkB.activate(experience.nextState, {trace: false});
-    let actionIndex = this.isUsingSARSA
-      ? experience.nextAction
-      : Utils.getMaxValueIndex(nextActions);
+    let actionIndex = Utils.getMaxValueIndex(nextActions);
 
     let targetQValue;
     if (experience.isFinalState) {
@@ -305,9 +303,9 @@ DQN.prototype = {
         (chooseNetwork === 'A'
           ? this.networkB.activate(experience.nextState, {trace: false})[actionIndex]
           : this.network.activate(experience.nextState, {trace: false})[actionIndex]) -
-        (chooseNetwork === 'A'
-          ? this.network.activate(experience.state, {trace: false})[experience.action]
-          : this.networkB.activate(experience.state, {trace: false})[experience.action]);
+        (chooseNetwork !== 'A' ?
+          this.networkB.activate(experience.state, {trace: false})[experience.action]
+          : this.network.activate(experience.state, {trace: false})[experience.action]);
     } else if (this.isUsingSARSA) {
       // SARSA
       targetQValue = experience.reward
