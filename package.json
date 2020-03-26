@@ -73,6 +73,7 @@
     "riteway": "^6.1.1"
   },
   "devDependencies": {
+    "@types/node": "^12.12.31",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chalk": "^2.4.2",
@@ -86,6 +87,7 @@
     "nyc": "^14.1.1",
     "parallel-webpack": "^2.4.0",
     "parcel-bundler": "^1.12.4",
+    "typescript": "^3.8.3",
     "webpack": "^4.41.0"
   },
   "nyc": {
