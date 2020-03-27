@@ -33,6 +33,6 @@ export function remove<T>(arr: T[], elem: T): boolean {
     }
 }
 
-export function getOrDefault<T>(value: T | undefined | null, defaultValue: T) {
+export function getOrDefault<T>(value: T | undefined | null, defaultValue: T): T {
     return value !== undefined && value !== null ? value : defaultValue;
 }
