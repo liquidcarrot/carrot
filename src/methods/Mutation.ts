@@ -5,18 +5,18 @@ export abstract class Mutation {
 }
 
 export class ADD_NODE extends Mutation {
-    private randomActivation: Boolean;
+    randomActivation: boolean;
 
-    constructor(randomActivation: Boolean = true) {
+    constructor(randomActivation: boolean = true) {
         super();
         this.randomActivation = randomActivation;
     }
 }
 
 export class SUB_NODE extends Mutation {
-    keepGates: Boolean;
+    keepGates: boolean;
 
-    constructor(keepGates: Boolean = true) {
+    constructor(keepGates: boolean = true) {
         super();
         this.keepGates = keepGates;
     }
@@ -29,8 +29,8 @@ export class SUB_CONN extends Mutation {
 }
 
 export class MOD_WEIGHT extends Mutation {
-    private min: number;
-    private max: number;
+    min: number;
+    max: number;
 
     constructor(min: number = -1, max: number = 1) {
         super();
@@ -51,10 +51,10 @@ export class MOD_BIAS extends Mutation {
 }
 
 export class MOD_ACTIVATION extends Mutation {
-    mutateOutput: Boolean;
+    mutateOutput: boolean;
     private allowed: Activation[];
 
-    constructor(allowed: Activation[] = ALL_ACTIVATIONS, mutateOutput: Boolean = false) {
+    constructor(allowed: Activation[] = ALL_ACTIVATIONS, mutateOutput: boolean = false) {
         super();
         this.allowed = allowed;
         this.mutateOutput = mutateOutput;
@@ -80,9 +80,9 @@ export class SUB_BACK_CONN extends Mutation {
 }
 
 export class SWAP_NODES extends Mutation {
-    mutateOutput: Boolean;
+    mutateOutput: boolean;
 
-    constructor(mutateOutput: Boolean = false) {
+    constructor(mutateOutput: boolean = false) {
         super();
         this.mutateOutput = mutateOutput;
     }
