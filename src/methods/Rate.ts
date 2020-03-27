@@ -1,7 +1,7 @@
 export abstract class Rate {
     protected baseRate: number;
 
-    protected constructor(baseRate: number) {
+    constructor(baseRate: number) {
         this.baseRate = baseRate;
     }
 
