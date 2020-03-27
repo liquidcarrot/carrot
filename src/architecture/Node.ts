@@ -14,8 +14,9 @@ export class Node {
     outgoing: Connection[];
     gated: Connection[];
     selfConnection: Connection;
-    private bias: number;
-    private squash: Activation;
+    bias: number;
+    squash: Activation;
+    index: number;
     private activation: number;
     private state: number;
     private old: number;
@@ -46,14 +47,16 @@ export class Node {
         this.errorProjected = 0;
         this.errorGated = 0;
         this.derivative = 0;
+        this.index = NaN;
     }
 
-    static fromJSON(json: JSON) {
+    static fromJSON(json: NodeJSON) {
         const node: Node = new Node();
-
-        Object.assign(node, {...json}, {
-            squash: Activation.getActivation(json.squash)
-        });
+        node.bias = json.bias;
+        node.type = <NodeType>json.type;
+        node.squash = Activation.getActivation(json.squash);
+        node.mask = json.mask;
+        node.index = json.index;
 
         return node;
     }
@@ -85,7 +88,7 @@ export class Node {
         }
     }
 
-    isProjectedBy(node: Node): Boolean {
+    isProjectedBy(node: Node): boolean {
         if (node === this) {
 
             return this.selfConnection.weight !== 0;
@@ -95,7 +98,7 @@ export class Node {
         }
     }
 
-    isProjectingTo(node: Node): Boolean {
+    isProjectingTo(node: Node): boolean {
         if (node === this) {
 
             return this.selfConnection.weight !== 0;
@@ -116,7 +119,7 @@ export class Node {
         connection.gain = 1;
     }
 
-    connect(node: Node, weight: number = 0, twoSided: Boolean = false): Connection {
+    connect(node: Node, weight: number = 0, twoSided: boolean = false): Connection {
         if (node === this) {
             this.selfConnection.weight = weight || 1;
             return this.selfConnection;
@@ -135,7 +138,7 @@ export class Node {
         }
     }
 
-    disconnect(node: Node, twoSided: Boolean = false): Connection {
+    disconnect(node: Node, twoSided: boolean = false): Connection {
         if (node === this) {
             this.selfConnection.weight = 0;
             return this.selfConnection;
@@ -159,7 +162,7 @@ export class Node {
         throw new Error("No connection found!");
     }
 
-    propagate(target: number | undefined, momentum: number, rate: number, update: Boolean): Object {
+    propagate(target: number | undefined, momentum: number, rate: number, update: boolean): Object {
         if (target != undefined && Number.isFinite(target)) {
             this.errorResponsibility = this.errorProjected = target - this.activation;
         } else {
@@ -226,7 +229,7 @@ export class Node {
         }
     }
 
-    activate(input: number | undefined, trace: Boolean | true): number {
+    activate(input: number | undefined, trace: boolean | true): number {
         if (input != undefined && Number.isFinite(input)) {
             return this.activation = input;
         }
@@ -309,12 +312,21 @@ export class Node {
         }
     }
 
-    toJSON(): Object {
+    toJSON(): NodeJSON {
         return {
             bias: this.bias,
             type: this.type,
             squash: this.squash.constructor.name,
-            mask: this.mask
+            mask: this.mask,
+            index: this.index
         };
     }
+}
+
+export interface NodeJSON {
+    bias: number;
+    type: number;
+    squash: string;
+    mask: number;
+    index: number;
 }
