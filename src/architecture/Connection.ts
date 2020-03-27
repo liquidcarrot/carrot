@@ -38,7 +38,19 @@ export class Connection {
         return 1 / 2 * (a + b) * (a + b + 1) + b;
     };
 
-    toJSON(): Object {
-        return {weight: this.weight};
+    toJSON(): ConnectionJSON {
+        return {
+            fromIndex: this.from.index,
+            toIndex: this.to.index,
+            gateNodeIndex: this.gateNode === null ? null : this.gateNode.index,
+            weight: this.weight
+        };
     }
+}
+
+export interface ConnectionJSON {
+    weight: number;
+    fromIndex: number;
+    toIndex: number;
+    gateNodeIndex: number | null;
 }
