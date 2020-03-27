@@ -1,5 +1,5 @@
 export abstract class Activation {
-    static getActivation(name: String): Activation {
+    static getActivation(name: string): Activation {
         switch (name) {
             case "LOGISTIC":
                 return new LOGISTIC();
@@ -35,11 +35,11 @@ export abstract class Activation {
         throw new ReferenceError(name + " is not the name of any available activations! These are all available activations: " + ALL_ACTIVATIONS);
     }
 
-    abstract calc(x: number, derivate: Boolean): number;
+    abstract calc(x: number, derivate: boolean): number;
 }
 
 export class LOGISTIC implements Activation {
-    calc(x: number, derivate: Boolean = false): number {
+    calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return 1 / (1 + Math.exp(-x));
         } else {
@@ -49,7 +49,7 @@ export class LOGISTIC implements Activation {
 }
 
 export class TANH implements Activation {
-    calc(x: number, derivate: Boolean = false): number {
+    calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return Math.tanh(x);
         } else {
@@ -59,7 +59,7 @@ export class TANH implements Activation {
 }
 
 export class IDENTITY implements Activation {
-    calc(x: number, derivate: Boolean = false): number {
+    calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return x;
         } else {
@@ -69,7 +69,7 @@ export class IDENTITY implements Activation {
 }
 
 export class STEP implements Activation {
-    calc(x: number, derivate: Boolean = false): number {
+    calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return x < 0 ? 0 : 1;
         } else {
@@ -79,7 +79,7 @@ export class STEP implements Activation {
 }
 
 export class RELU implements Activation {
-    calc(x: number, derivate: Boolean = false): number {
+    calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return x <= 0 ? 0 : x;
         } else {
@@ -89,7 +89,7 @@ export class RELU implements Activation {
 }
 
 export class SOFTSIGN implements Activation {
-    calc(x: number, derivate: Boolean = false): number {
+    calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return x / (1 + Math.abs(x));
         } else {
@@ -99,7 +99,7 @@ export class SOFTSIGN implements Activation {
 }
 
 export class SINUSOID implements Activation {
-    calc(x: number, derivate: Boolean = false): number {
+    calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return Math.sin(x);
         } else {
@@ -109,7 +109,7 @@ export class SINUSOID implements Activation {
 }
 
 export class GAUSSIAN implements Activation {
-    calc(x: number, derivate: Boolean = false): number {
+    calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return Math.exp(-x * x);
         } else {
@@ -119,7 +119,7 @@ export class GAUSSIAN implements Activation {
 }
 
 export class BENT_IDENTITY implements Activation {
-    calc(x: number, derivate: Boolean = false): number {
+    calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return (Math.sqrt(x * x + 1) - 1) / 2 + x;
         } else {
@@ -129,7 +129,7 @@ export class BENT_IDENTITY implements Activation {
 }
 
 export class BIPOLAR implements Activation {
-    calc(x: number, derivate: Boolean = false): number {
+    calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return x > 0 ? 1 : -1;
         } else {
@@ -139,7 +139,7 @@ export class BIPOLAR implements Activation {
 }
 
 export class BIPOLAR_SIGMOID implements Activation {
-    calc(x: number, derivate: Boolean = false): number {
+    calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return 2 / (1 + Math.exp(-x)) - 1;
         } else {
@@ -149,7 +149,7 @@ export class BIPOLAR_SIGMOID implements Activation {
 }
 
 export class HARD_TANH implements Activation {
-    calc(x: number, derivate: Boolean = false): number {
+    calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return Math.max(-1, Math.min(1, x));
         } else {
@@ -159,7 +159,7 @@ export class HARD_TANH implements Activation {
 }
 
 export class ABSOLUTE implements Activation {
-    calc(x: number, derivate: Boolean = false): number {
+    calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return Math.abs(x);
         } else {
@@ -169,7 +169,7 @@ export class ABSOLUTE implements Activation {
 }
 
 export class INVERSE implements Activation {
-    calc(x: number, derivate: Boolean = false): number {
+    calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return 1 - x;
         } else {
@@ -179,7 +179,7 @@ export class INVERSE implements Activation {
 }
 
 export class SELU implements Activation {
-    calc(x: number, derivate: Boolean = false): number {
+    calc(x: number, derivate: boolean = false): number {
         const alpha = 1.6732632423543772848170429916717;
         const scale = 1.0507009873554804934193349852946;
 
