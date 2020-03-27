@@ -660,10 +660,10 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    * @returns {Network} Current population's fittest genome
   */
-  self.getFittest = function get_fittest_population_genome() {
+  self.getFittest = async function get_fittest_population_genome() {
     // Check if evaluated. self.evaluate is an async function
     if (typeof self.population[self.population.length - 1].score === `undefined`) {
-      self.evaluate();
+      await self.evaluate();
     }
 
     if (self.population[0].score < self.population[1].score) self.sort();
@@ -680,9 +680,9 @@ const Neat = function(inputs, outputs, dataset, options) {
    *
    * @returns {number} Average fitness of the current population
    */
-  self.getAverage = function get_average_population_fitness() {
+  self.getAverage = async function get_average_population_fitness() {
     if (typeof self.population[self.population.length - 1].score === `undefined`)
-      self.evaluate(); // self.evaluate is an async function
+      await self.evaluate(); // self.evaluate is an async function
 
     let score = 0;
     for (let i = 0; i < self.population.length; i++)
