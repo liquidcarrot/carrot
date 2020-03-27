@@ -14,7 +14,7 @@ export class ADD_NODE extends Mutation {
 }
 
 export class SUB_NODE extends Mutation {
-    private keepGates: Boolean;
+    keepGates: Boolean;
 
     constructor(keepGates: Boolean = true) {
         super();
@@ -40,8 +40,8 @@ export class MOD_WEIGHT extends Mutation {
 }
 
 export class MOD_BIAS extends Mutation {
-    private min: number;
-    private max: number;
+    min: number;
+    max: number;
 
     constructor(min: number = -1, max: number = 1) {
         super();
@@ -51,8 +51,8 @@ export class MOD_BIAS extends Mutation {
 }
 
 export class MOD_ACTIVATION extends Mutation {
+    mutateOutput: Boolean;
     private allowed: Activation[];
-    private mutateOutput: Boolean;
 
     constructor(allowed: Activation[] = ALL_ACTIVATIONS, mutateOutput: Boolean = false) {
         super();
@@ -80,7 +80,7 @@ export class SUB_BACK_CONN extends Mutation {
 }
 
 export class SWAP_NODES extends Mutation {
-    private mutateOutput: Boolean;
+    mutateOutput: Boolean;
 
     constructor(mutateOutput: Boolean = false) {
         super();

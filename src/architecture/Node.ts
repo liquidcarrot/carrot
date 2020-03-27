@@ -1,31 +1,31 @@
+import {MOD_BIAS, Mutation} from "../methods/Mutation";
+import {Activation, ALL_ACTIVATIONS, LOGISTIC} from "../methods/Activation";
+import {Connection} from "./Connection";
 import {anyMatch, pickRandom, randDouble, remove} from "../methods/Utils";
-import {Activation, ALL_ACTIVATIONS, LOGISTIC} from "../methods/activation";
-import {Connection} from "./connection";
 
 export enum NodeType {
     INPUT, HIDDEN, OUTPUT
 }
 
 export class Node {
+    type: NodeType;
+    mask: number;
+    incoming: Connection[];
+    outgoing: Connection[];
+    gated: Connection[];
+    selfConnection: Connection;
     private bias: number;
     private squash: Activation;
     private activation: number;
     private state: number;
     private old: number;
-    private mask: number;
     private deltaBiasPrevious: number;
     private deltaBiasTotal: number;
     private deltaBias: number[];
     private errorResponsibility: number;
     private errorProjected: number;
     private errorGated: number;
-    private incoming: Connection[];
-    private outgoing: Connection[];
-    private gated: Connection[];
-    private selfConnection: Connection;
     private derivative: number;
-    private type: NodeType;
-
 
     constructor(type: NodeType = NodeType.HIDDEN) {
         this.type = type;
@@ -77,32 +77,30 @@ export class Node {
     }
 
     mutate(method: Mutation): void {
-        switch (method) {
-            case methods.mutation.MOD_ACTIVATION:
-                this.squash = pickRandom(ALL_ACTIVATIONS);
-                break;
-            case methods.mutation.MOD_BIAS:
-                this.bias += randDouble(method.min, method.max);
-                break;
+
+        if (method.constructor.name === "MOD_ACTIVATION") {
+            this.squash = pickRandom(ALL_ACTIVATIONS);
+        } else if (method.constructor.name === "MOD_BIAS") {
+            this.bias += randDouble((<MOD_BIAS>method).min, (<MOD_BIAS>method).max);
         }
     }
 
     isProjectedBy(node: Node): Boolean {
         if (node === this) {
-            // self connection
+
             return this.selfConnection.weight !== 0;
         } else {
-            // check if any incoming connection has node as from node
+
             return anyMatch(this.incoming.map(conn => conn.from), node);
         }
     }
 
     isProjectingTo(node: Node): Boolean {
         if (node === this) {
-            // self connection
+
             return this.selfConnection.weight !== 0;
         } else {
-            // check if any outgoing connection has node as to node
+
             return anyMatch(this.outgoing.map(conn => conn.to), node);
         }
     }
@@ -123,7 +121,7 @@ export class Node {
             this.selfConnection.weight = weight || 1;
             return this.selfConnection;
         } else if (this.isProjectingTo(node)) {
-            throw new ReferenceError("Node is already projecting to 'target'");
+            throw new ReferenceError();
         } else {
             const connection: Connection = new Connection(this, node, weight);
 
@@ -137,14 +135,12 @@ export class Node {
         }
     }
 
-    disconnect(node: Node, twoSided: Boolean = false) {
-        // Return early if this-connection, will need to update this to return previous value of this connection for NEAT
+    disconnect(node: Node, twoSided: Boolean = false): Connection {
         if (node === this) {
-            this.selfConnection.weight = 0 // zero should not be the default this-connection negation, potential for confusion
-            return this.selfConnection     // What value are we deriving from having the this-connection on the prototype-chain?
+            this.selfConnection.weight = 0;
+            return this.selfConnection;
         }
 
-        // Could this be more efficient by maintaining a set and reducing lookup complexity to O(1)?
         this.outgoing
             .filter(conn => conn.to === node)
             .forEach(connection => {
@@ -160,13 +156,14 @@ export class Node {
 
                 return connection;
             });
+        throw new Error("No connection found!");
     }
 
-    propagate(target: number, momentum: number, rate: number, update: Boolean): Object {
-        if (target != null && Number.isFinite(target)) {
+    propagate(target: number | undefined, momentum: number, rate: number, update: Boolean): Object {
+        if (target != undefined && Number.isFinite(target)) {
             this.errorResponsibility = this.errorProjected = target - this.activation;
         } else {
-            // Projected Error Responsibility (from outgoing connections)
+
             this.errorProjected = 0;
             for (let i = 0; i < this.outgoing.length; i++) {
                 const connection: Connection = this.outgoing[i];
@@ -174,7 +171,7 @@ export class Node {
             }
             this.errorProjected *= this.derivative || 1;
 
-            // Gated Error Responsibility (from gated connections)
+
             this.errorGated = 0;
             for (let i = 0; i < this.gated.length; i++) {
                 const connection: Connection = this.gated[i];
@@ -190,11 +187,11 @@ export class Node {
             }
             this.errorGated *= this.derivative || 1;
 
-            // Error Responsibility
+
             this.errorResponsibility = this.errorProjected + this.errorGated;
         }
 
-        // Adjust Incoming Connections
+
         for (let i = 0; i < this.incoming.length; i++) {
             const connection: Connection = this.incoming[i];
             let gradient: number = this.errorProjected * connection.elegibility;
@@ -203,7 +200,7 @@ export class Node {
                 gradient += node.errorResponsibility * connection.xtraceValues[j];
             }
 
-            // Adjust Weight ()
+
             connection.deltaWeightsTotal += rate * gradient * this.mask;
             if (update) {
                 connection.deltaWeightsTotal += momentum * connection.deltaWeightsPrevious;
@@ -213,7 +210,7 @@ export class Node {
             }
         }
 
-        // Adjust Bias
+
         this.deltaBiasTotal += rate * this.errorResponsibility;
         if (update) {
             this.deltaBiasTotal += momentum * this.deltaBiasPrevious;
@@ -229,7 +226,7 @@ export class Node {
         }
     }
 
-    activate(input: number, trace: Boolean): number {
+    activate(input: number | undefined, trace: Boolean | true): number {
         if (input != undefined && Number.isFinite(input)) {
             return this.activation = input;
         }
@@ -239,27 +236,27 @@ export class Node {
 
             this.state = this.selfConnection.gain * this.selfConnection.weight * this.state + this.bias;
 
-            // Activate (from incoming connections)
+
             this.incoming.forEach(conn => {
                 this.state += conn.from.activation * conn.weight * conn.gain;
             });
 
-            this.activation = this.squash.calc(this.state, false) * this.mask // Squash Activation
+            this.activation = this.squash.calc(this.state, false) * this.mask
             this.derivative = this.squash.calc(this.state, true)
 
-            // Stores traces
+
             const nodes: Node[] = [];
             const influences: number[] = [];
 
-            // Adjust 'gain' (to gated connections) & Build traces
+
             this.gated.forEach(connection => {
                 connection.gain = this.activation
 
-                // Build traces
+
                 const index: number = nodes.indexOf(connection.to);
-                if (index > -1) { // Node & influence exist
+                if (index > -1) {
                     influences[index] += connection.weight * connection.from.activation;
-                } else { // Add node & corresponding influence
+                } else {
                     nodes.push(connection.to);
                     if (connection.to.selfConnection.gateNode === this) {
                         influences.push(connection.weight * connection.from.activation + connection.to.old);
@@ -269,11 +266,11 @@ export class Node {
                 }
             });
 
-            // Forwarding 'xtrace' (to incoming connections)
+
             for (let i = 0; i < this.incoming.length; i++) {
                 const connection = this.incoming[i];
 
-                // Trace Elegibility
+
                 connection.elegibility = this.selfConnection.gain * this.selfConnection.weight * connection.elegibility + connection.from.activation * connection.gain;
 
                 for (let j = 0; j < nodes.length; j++) {
@@ -295,15 +292,15 @@ export class Node {
 
             this.state = this.selfConnection.gain * this.selfConnection.weight * this.state + this.bias;
 
-            // Activate (from incoming connections)
+
             for (let i = 0; i < this.incoming.length; i++) {
                 const conn = this.incoming[i];
                 this.state += conn.from.activation * conn.weight * conn.gain;
             }
 
-            this.activation = this.squash.calc(this.state, false) // Squash Activation
+            this.activation = this.squash.calc(this.state, false)
 
-            // Adjust 'gain' (to gated connections)
+
             for (let i = 0; i < this.gated.length; i++) {
                 this.gated[i].gain = this.activation
             }
