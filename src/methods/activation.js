@@ -223,7 +223,7 @@ const activation = {
 
     if (x == undefined) throw new ReferenceError('Parameter \'x\' is required, but it was not defined');
 
-    const f = derivate ? (x) => x / ((1 + Math.abs(x)) * (1 + Math.abs(x))) : (x) => x / 1 + Math.abs(x);
+    const f = derivate ? (x) => x / ((1 + Math.abs(x)) * (1 + Math.abs(x))) : (x) => x / (1 + Math.abs(x));
 
     // return Array.isArray(x) ? x.map(f) : f(x); unsafe mode
     return Array.isArray(x) ? x.map(clamp(f)) : clamp(f(x));
