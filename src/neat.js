@@ -513,7 +513,7 @@ const Neat = function(inputs, outputs, dataset, options) {
   self.getParent = function get_genome_using_selection_method() {
     switch (self.selection.name) {
       case `POWER`: {
-        if (self.population[0].score < self.population[1].score) self.sort();
+        self.sort();
 
         const index = Math.floor(Math.pow(Math.random(), self.selection.power) * self.population.length);
         return self.population[index];
@@ -666,7 +666,7 @@ const Neat = function(inputs, outputs, dataset, options) {
       self.evaluate();
     }
 
-    if (self.population[0].score < self.population[1].score) self.sort();
+    self.sort();
 
     return self.population[0];
   };
