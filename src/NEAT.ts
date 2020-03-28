@@ -1,34 +1,34 @@
 import {EvolveOptions, Network} from "./architecture/Network";
 import {getOrDefault, pickRandom} from "./methods/Utils";
 import {Loss, MSE} from "./methods/Loss";
-import {POWER, Selection, TOURNAMENT} from "./methods/Selection";
+import {PowerSelection, Selection, TournamentSelection} from "./methods/Selection";
 import {ADD_CONN, ADD_GATE, ADD_NODE, FFW, Mutation} from "./methods/Mutation";
 
 export class NEAT {
-    generation: number;
-    private input: number;
-    private output: number;
-    private equal: boolean;
-    private clear: boolean;
-    private populationSize: number;
+    public generation: number;
+    private readonly input: number;
+    private readonly output: number;
+    private readonly equal: boolean;
+    private readonly clear: boolean;
+    private readonly populationSize: number;
     private growth: number;
     private loss: Loss;
     private amount: number;
-    private elitism: number;
-    private provenance: number;
+    private readonly elitism: number;
+    private readonly provenance: number;
     private mutationRate: number;
-    private mutationAmount: number;
-    private fitnessPopulation: boolean;
-    private fitnessFunction: (inputs: number[][], outputs: number[][], population: Network[] | Network) => Promise<void>;
+    private readonly mutationAmount: number;
+    private readonly fitnessPopulation: boolean;
+    private readonly fitnessFunction: (inputs: number[][], outputs: number[][], population: Network[] | Network) => Promise<void>;
     private selection: Selection;
-    private mutations: Mutation[];
-    private template: Network;
-    private maxNodes: number;
-    private maxConnections: number;
-    private maxGates: number;
+    private readonly mutations: Mutation[];
+    private readonly template: Network;
+    private readonly maxNodes: number;
+    private readonly maxConnections: number;
+    private readonly maxGates: number;
     private population: Network[];
-    private inputs: number[][];
-    private outputs: number[][];
+    private readonly inputs: number[][];
+    private readonly outputs: number[][];
 
     constructor(inputs: number[][], outputs: number[][], options: EvolveOptions) {
         this.inputs = inputs;
@@ -49,7 +49,7 @@ export class NEAT {
         this.mutationAmount = getOrDefault(options.mutationAmount, 1);
         this.fitnessPopulation = getOrDefault(options.fitnessPopulation, false);
         this.fitnessFunction = options.fitnessFunction;
-        this.selection = getOrDefault(options.selection, new POWER());
+        this.selection = getOrDefault(options.selection, new PowerSelection());
         this.mutations = getOrDefault(options.mutations, FFW);
         this.template = getOrDefault(options.template, new Network(this.input, this.output));
         this.maxNodes = getOrDefault(options.maxNodes, Infinity);
@@ -60,8 +60,8 @@ export class NEAT {
         this.createInitialPopulation();
     }
 
-    filterGenome(population: Network[], template: Network, pickGenome: (genome: Network) => boolean, adjustGenome: ((genome: Network) => Network) | undefined): Network[] {
-        let filtered = [...population]; // avoid mutations
+    public filterGenome(population: Network[], template: Network, pickGenome: (genome: Network) => boolean, adjustGenome: ((genome: Network) => Network) | undefined): Network[] {
+        const filtered = [...population]; // avoid mutations
 
         if (adjustGenome) {
             filtered
@@ -74,24 +74,24 @@ export class NEAT {
         }
 
         return filtered;
-    };
+    }
 
-    mutateRandom(genome: Network, possible: Mutation[] = this.mutations) {
-        let maxNodes: number = this.maxNodes;
-        let maxConnections: number = this.maxConnections;
-        let maxGates: number = this.maxGates;
+    public mutateRandom(genome: Network, possible: Mutation[] = this.mutations) {
+        const maxNodes: number = this.maxNodes;
+        const maxConnections: number = this.maxConnections;
+        const maxGates: number = this.maxGates;
         possible = possible.filter(function (method) {
             return (
                 method.constructor.name !== ADD_NODE.constructor.name || genome.nodes.length < maxNodes ||
                 method.constructor.name !== ADD_CONN.constructor.name || genome.connections.length < maxConnections ||
                 method.constructor.name !== ADD_GATE.constructor.name || genome.gates.length < maxGates
-            )
-        })
+            );
+        });
 
         genome.mutate(pickRandom(possible));
     }
 
-    async evolve(pickGenome: ((genome: Network) => boolean) | undefined, adjustGenome: ((genome: Network) => Network) | undefined): Promise<Network> {
+    public async evolve(pickGenome: ((genome: Network) => boolean) | undefined, adjustGenome: ((genome: Network) => Network) | undefined): Promise<Network> {
         // Check if evolve is possible
         if (this.elitism + this.provenance > this.populationSize) {
             throw new Error("Can`t evolve! Elitism + provenance exceeds population size!");
@@ -137,11 +137,11 @@ export class NEAT {
 
         // Check & adjust genomes as needed
         if (pickGenome) {
-            this.population = this.filterGenome(this.population, this.template, pickGenome, adjustGenome)
+            this.population = this.filterGenome(this.population, this.template, pickGenome, adjustGenome);
         }
 
         // Sort in order of fitness (fittest first)
-        this.sort()
+        this.sort();
 
         const fittest: Network = this.population[0].copy();
         fittest.score = this.population[0].score;
@@ -154,14 +154,14 @@ export class NEAT {
         return fittest;
     }
 
-    getParent(): Network | null {
-        //TODO: Move to Selection.ts
+    public getParent(): Network | null {
+        // TODO: Move to Selection.ts
         if (this.selection.constructor.name === `POWER`) {
             if (this.population[0].score !== undefined && this.population[1].score !== undefined && this.population[0].score < this.population[1].score) {
                 this.sort();
             }
 
-            return this.population[Math.floor(Math.pow(Math.random(), (<POWER>this.selection).power) * this.population.length)];
+            return this.population[Math.floor(Math.pow(Math.random(), (this.selection as PowerSelection).power) * this.population.length)];
         } else if (this.selection.constructor.name === `FITNESS_PROPORTIONATE`) {
             let totalFitness = 0;
             let minimalFitness = 0;
@@ -175,11 +175,10 @@ export class NEAT {
             minimalFitness = Math.abs(minimalFitness);
             totalFitness += minimalFitness * this.population.length;
 
-            let random = Math.random() * totalFitness;
+            const random = Math.random() * totalFitness;
             let value = 0;
 
-            for (let i = 0; i < this.population.length; i++) {
-                let genome = this.population[i];
+            for (const genome of this.population) {
                 value += (genome.score ?? 0) + minimalFitness;
                 if (random < value) {
                     return genome;
@@ -188,14 +187,14 @@ export class NEAT {
 
             return pickRandom(this.population);
         } else if (this.selection.constructor.name === `TOURNAMENT`) {
-            if ((<TOURNAMENT>this.selection).size > this.populationSize) {
+            if ((this.selection as TournamentSelection).size > this.populationSize) {
                 throw new Error(`Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size`);
             }
 
             // Create a tournament
-            let individuals = [];
-            for (let i = 0; i < (<TOURNAMENT>this.selection).size; i++) {
-                let random = this.population[Math.floor(Math.random() * this.population.length)];
+            const individuals = [];
+            for (let i = 0; i < (this.selection as TournamentSelection).size; i++) {
+                const random = this.population[Math.floor(Math.random() * this.population.length)];
                 individuals.push(random);
             }
 
@@ -205,29 +204,29 @@ export class NEAT {
             });
 
             // Select an individual
-            for (let i = 0; i < (<TOURNAMENT>this.selection).size; i++) {
-                if (Math.random() < (<TOURNAMENT>this.selection).probability || i === (<TOURNAMENT>this.selection).size - 1) {
+            for (let i = 0; i < (this.selection as TournamentSelection).size; i++) {
+                if (Math.random() < (this.selection as TournamentSelection).probability || i === (this.selection as TournamentSelection).size - 1) {
                     return individuals[i];
                 }
             }
         } else {
-            new TypeError(this.selection.constructor.name + " is no valid selection method !");
+            throw new TypeError(this.selection.constructor.name + " is no valid selection method !");
         }
         return null;
     }
 
-    getOffspring(): Network {
-        let parent1 = this.getParent();
-        let parent2 = this.getParent();
+    public getOffspring(): Network {
+        const parent1 = this.getParent();
+        const parent2 = this.getParent();
 
         if (parent1 === null || parent2 === null) {
             throw new Error("Should not be null!");
         }
 
         return Network.crossOver(parent1, parent2, this.equal);
-    };
+    }
 
-    mutate(method: Mutation | undefined): void {
+    public mutate(method: Mutation | undefined): void {
         if (method) {
             // Elitist genomes should not be included
             this.population
@@ -249,15 +248,14 @@ export class NEAT {
         }
     }
 
-    async evaluate(inputs: number[][], outputs: number[][]) {
+    public async evaluate(inputs: number[][], outputs: number[][]) {
         if (this.fitnessPopulation) {
             if (this.clear) {
                 this.population.forEach(genome => genome.clear());
             }
             await this.fitnessFunction(inputs, outputs, this.population);
         } else {
-            for (let i = 0; i < this.population.length; i++) {
-                const genome: Network = this.population[i];
+            for (const genome of this.population) {
                 if (this.clear) {
                     genome.clear();
                 }
@@ -266,18 +264,18 @@ export class NEAT {
         }
 
         // Sort the population in order of fitness
-        this.sort()
+        this.sort();
 
-        return this.population[0]
+        return this.population[0];
     }
 
-    sort(): void {
+    public sort(): void {
         this.population.sort(function (a: Network, b: Network) {
             return a.score === undefined || b.score === undefined ? 0 : b.score - a.score;
         });
     }
 
-    getFittest(): Network {
+    public getFittest(): Network {
         if (this.population[this.population.length - 1].score === undefined) {
             this.evaluate(this.inputs, this.outputs);
         }
@@ -286,7 +284,7 @@ export class NEAT {
         return this.population[0];
     }
 
-    getAverage(): number {
+    public getAverage(): number {
         if (this.population[this.population.length - 1].score === undefined) {
             this.evaluate(this.inputs, this.outputs);
         }
