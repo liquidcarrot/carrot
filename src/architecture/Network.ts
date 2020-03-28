@@ -45,7 +45,10 @@ export class Network {
         network.nodes = [];
         network.connections = [];
 
-        json.nodes.forEach(nodeJSON => network.nodes.push(Node.fromJSON(nodeJSON)));
+        json.nodes.forEach(nodeJSON => {
+            const node: Node = Node.fromJSON(nodeJSON);
+            network.nodes[node.index] = node;
+        });
 
         json.connections.forEach((jsonConnection) => {
             const connection: Connection = network.connect(
