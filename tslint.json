@@ -14,7 +14,11 @@
     "typedef": true,
     "no-unused-variable": true,
     "semicolon": true,
-    "max-classes-per-file": false
+    "max-classes-per-file": false,
+    "radix": false,
+    "no-console": false,
+    "only-arrow-functions": false,
+    "no-shadowed-variable": false
   },
   "rulesDirectory": []
 }
