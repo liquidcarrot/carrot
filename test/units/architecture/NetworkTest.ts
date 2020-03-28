@@ -1,8 +1,14 @@
-import {Network} from "../../../src/architecture/Network";
+import {EvolveOptions, Network} from "../../../src/architecture/Network";
 import {Node} from "../../../src/architecture/Node";
-import {anyMatch, randInt} from "../../../src/methods/Utils";
-import {AddConnectionMutation, AddGateMutation, AddNodeMutation, SubGateMutation} from "../../../src/methods/Mutation";
-import {expect} from "chai";
+import {anyMatch, randDouble, randInt} from "../../../src/methods/Utils";
+import {
+    AddConnectionMutation,
+    AddGateMutation,
+    AddNodeMutation,
+    ALL_MUTATIONS,
+    SubGateMutation
+} from "../../../src/methods/Mutation";
+import {assert, expect} from "chai";
 import {Connection} from "../../../src/architecture/Connection";
 
 describe('Network', () => {
@@ -92,104 +98,104 @@ describe('Network', () => {
                 expect(copy).to.eql(network); // eql: check for content equality (instead of for the same point in memory)
             });
         });
+    });
 
-        describe('network.copy()', () => {
-            it('network.copy() => {Network}', () => {
-                const original: Network = new Network(10, 10);
+    describe('network.copy()', () => {
+        it('network.copy() => {Network}', () => {
+            const original: Network = new Network(10, 10);
 
-                const copy: Network = original.copy();
+            const copy: Network = original.copy();
 
-                expect(copy).eql(original);
-            });
-
-            it("network.copy() | Shouldn't return a shallow copy", () => {
-                const original: Network = new Network(10, 5);
-
-                const copy: Network = original.copy();
-
-                expect(copy).not.equal(original);
-            });
+            expect(copy).eql(original);
         });
 
-        describe('network.propagate()', () => {
-            it('network.propagate(rate, momentum, update, target_output) => {undefined}', () => {
-                const upperTestEpochLimit: number = 2000; // will attempt to propagate this many times
+        it("network.copy() | Shouldn't return a shallow copy", () => {
+            const original: Network = new Network(10, 5);
 
-                const testNetwork: Network = createTestNetwork();
+            const copy: Network = original.copy();
 
-                // train the network to output all 1s.
-                const inputSize: number = testNetwork.inputSize;
-                const outputSize: number = testNetwork.outputSize;
-                const idealOutput: number[] = Array(outputSize).fill(1);
+            expect(copy).not.equal(original);
+        });
+    });
 
-                for (let i: number = 0; i < upperTestEpochLimit; i++) {
-                    const randomInput: number[] = Array(inputSize).fill(0).map(() => Math.random());
-                    testNetwork.activate(randomInput);
-                    testNetwork.propagate(0.25, 0.01, true, idealOutput);
-                }
+    describe('network.propagate()', () => {
+        it('network.propagate(rate, momentum, update, target_output) => {undefined}', () => {
+            const upperTestEpochLimit: number = 2000; // will attempt to propagate this many times
 
+            const testNetwork: Network = createTestNetwork();
+
+            // train the network to output all 1s.
+            const inputSize: number = testNetwork.inputSize;
+            const outputSize: number = testNetwork.outputSize;
+            const idealOutput: number[] = Array(outputSize).fill(1);
+
+            for (let i: number = 0; i < upperTestEpochLimit; i++) {
                 const randomInput: number[] = Array(inputSize).fill(0).map(() => Math.random());
-                const testOutput: number[] = testNetwork.activate(randomInput);
+                testNetwork.activate(randomInput);
+                testNetwork.propagate(0.25, 0.01, true, idealOutput);
+            }
 
-                const epsilon: number = 0.08;
-                testOutput.forEach((value, index) => {
-                    expect(value).to.be.closeTo(idealOutput[index], epsilon);
-                });
+            const randomInput: number[] = Array(inputSize).fill(0).map(() => Math.random());
+            const testOutput: number[] = testNetwork.activate(randomInput);
 
+            const epsilon: number = 0.08;
+            testOutput.forEach((value, index) => {
+                expect(value).to.be.closeTo(idealOutput[index], epsilon);
             });
+
         });
+    });
 
-        describe('network.gate()', () => {
-            it('network.gate(node_not_in_network, Connection) => {ReferenceError}', () => {
-                const testNetwork: Network = createTestNetwork();
-                const node: Node = new Node();
-                const connection: Connection = node.connect(testNetwork.nodes[20]);
+    describe('network.gate()', () => {
+        it('network.gate(node_not_in_network, Connection) => {ReferenceError}', () => {
+            const testNetwork: Network = createTestNetwork();
+            const node: Node = new Node();
+            const connection: Connection = node.connect(testNetwork.nodes[20]);
 
-                expect(() => {
-                    testNetwork.addGate(node, connection);
-                }).to.throw(ReferenceError);
-            });
-            it('network.gate(Node, Connection) => {undefined}', () => {
-                const testNetwork: Network = createTestNetwork();
-                const nodesBefore: Node[] = testNetwork.nodes.slice();
-                testNetwork.mutate(new AddNodeMutation());
-                const node: Node = testNetwork.nodes.filter(node => !anyMatch(nodesBefore, node))[0];
-                const connection: Connection = node.connect(testNetwork.nodes[20]);
-
-                const beforeNumberOfGates: number = testNetwork.gates.length;
+            expect(() => {
                 testNetwork.addGate(node, connection);
-                expect(testNetwork.gates).to.be.of.length(beforeNumberOfGates + 1);
-                expect(connection.gateNode).to.eql(node);
-                expect(node.gated).to.have.lengthOf(1);
-            });
+            }).to.throw(ReferenceError);
         });
+        it('network.gate(Node, Connection) => {undefined}', () => {
+            const testNetwork: Network = createTestNetwork();
+            const nodesBefore: Node[] = testNetwork.nodes.slice();
+            testNetwork.mutate(new AddNodeMutation());
+            const node: Node = testNetwork.nodes.filter(node => !anyMatch(nodesBefore, node))[0];
+            const connection: Connection = node.connect(testNetwork.nodes[20]);
 
-        describe('network.ungate()', () => {
-            it('network.ungate(connection_not_in_network) => {ReferenceError}', () => {
-                const testNetwork: Network = createTestNetwork();
-                const node: Node = new Node();
-                const connection: Connection = node.connect(testNetwork.nodes[20]);
-                node.addGate(connection);
+            const beforeNumberOfGates: number = testNetwork.gates.length;
+            testNetwork.addGate(node, connection);
+            expect(testNetwork.gates).to.be.of.length(beforeNumberOfGates + 1);
+            expect(connection.gateNode).to.eql(node);
+            expect(node.gated).to.have.lengthOf(1);
+        });
+    });
 
-                expect(() => {
-                    testNetwork.removeGate(connection);
-                }).to.throw(Error);
-            });
-            it('network.ungate(Connection) => {undefined}', () => {
-                const testNetwork: Network = createTestNetwork();
+    describe('network.ungate()', () => {
+        it('network.ungate(connection_not_in_network) => {ReferenceError}', () => {
+            const testNetwork: Network = createTestNetwork();
+            const node: Node = new Node();
+            const connection: Connection = node.connect(testNetwork.nodes[20]);
+            node.addGate(connection);
 
-                for (let i: number = 0; i < 20; i++) {
-                    testNetwork.mutate(new AddNodeMutation());
-                    testNetwork.mutate(new AddConnectionMutation());
-                    testNetwork.mutate(new AddGateMutation());
-                }
+            expect(() => {
+                testNetwork.removeGate(connection);
+            }).to.throw(Error);
+        });
+        it('network.ungate(Connection) => {undefined}', () => {
+            const testNetwork: Network = createTestNetwork();
 
-                const gatesBefore: number = testNetwork.gates.length;
+            for (let i: number = 0; i < 20; i++) {
+                testNetwork.mutate(new AddNodeMutation());
+                testNetwork.mutate(new AddConnectionMutation());
+                testNetwork.mutate(new AddGateMutation());
+            }
 
-                testNetwork.mutate(new SubGateMutation());
+            const gatesBefore: number = testNetwork.gates.length;
 
-                expect(testNetwork.gates.length).to.be.equal(gatesBefore - 1);
-            });
+            testNetwork.mutate(new SubGateMutation());
+
+            expect(testNetwork.gates.length).to.be.equal(gatesBefore - 1);
         });
     });
 
@@ -256,6 +262,117 @@ describe('Network', () => {
             expect(evolveReturn.iterations).to.be.a('number');
             expect(evolveReturn.time).to.be.a('number');
             expect(final).to.be.below(initial);
+        });
+    });
+
+    describe("Evolving capabilities", () => {
+        async function evolveSet(set: { input: number[], output: number[] }[], iterations: number, error: number): Promise<void> {
+            const network: Network = new Network(set[0].input.length, set[0].output.length);
+
+            const options: EvolveOptions = {
+                error,
+                mutations: ALL_MUTATIONS,
+                populationSize: 100
+            };
+
+            const results: { error: number; iterations: number; time: number } = await network.evolve(set, options);
+
+            assert.isBelow(results.error, error);
+        }
+
+        it('AND gate', function (): void {
+            evolveSet([
+                {input: [0, 0], output: [0]},
+                {input: [0, 1], output: [0]},
+                {input: [1, 0], output: [0]},
+                {input: [1, 1], output: [1]}
+            ], 1000, 0.002);
+        });
+        it.skip('XOR gate', () => {
+            evolveSet([
+                {input: [0, 0], output: [0]},
+                {input: [0, 1], output: [1]},
+                {input: [1, 0], output: [1]},
+                {input: [1, 1], output: [0]}
+            ], 3000, 0.002);
+        });
+        it('NOT gate', () => {
+            evolveSet([
+                {input: [0], output: [1]},
+                {input: [1], output: [0]}
+            ], 1000, 0.002);
+        });
+        it('XNOR gate', () => {
+            evolveSet([
+                {input: [0, 0], output: [1]},
+                {input: [0, 1], output: [0]},
+                {input: [1, 0], output: [0]},
+                {input: [1, 1], output: [1]}
+            ], 3000, 0.002);
+        });
+        it('OR gate', () => {
+            evolveSet([
+                {input: [0, 0], output: [0]},
+                {input: [0, 1], output: [1]},
+                {input: [1, 0], output: [1]},
+                {input: [1, 1], output: [1]}
+            ], 1000, 0.002);
+        });
+        it('SIN function', function (): void {
+            const set: { input: number[], output: number[] }[] = [];
+
+            while (set.length < 100) {
+                const inputValue: number = randDouble(0, Math.PI * 2);
+                set.push({
+                    input: [inputValue / (Math.PI * 2)],
+                    output: [(Math.sin(inputValue) + 1) / 2]
+                });
+            }
+
+            evolveSet(set, 1000, 0.05);
+        });
+        it('Bigger than', () => {
+            const set: { input: number[], output: number[] }[] = [];
+
+            for (let i: number = 0; i < 100; i++) {
+                const x: number = Math.random();
+                const y: number = Math.random();
+                const z: number = x > y ? 1 : 0;
+
+                set.push({input: [x, y], output: [z]});
+            }
+
+            evolveSet(set, 500, 0.05);
+        });
+        it.skip('SIN + COS', () => {
+            const set: { input: number[], output: number[] }[] = [];
+
+            while (set.length < 100) {
+                const inputValue: number = randDouble(0, Math.PI * 2);
+                set.push({
+                    input: [inputValue / (Math.PI * 2)],
+                    output: [
+                        (Math.sin(inputValue) + 1) / 2,
+                        (Math.cos(inputValue) + 1) / 2
+                    ]
+                });
+            }
+
+            evolveSet(set, 1000, 0.05);
+        });
+
+        it.skip('SHIFT', () => {
+            const set: { input: number[], output: number[] }[] = [];
+
+            for (let i: number = 0; i < 1000; i++) {
+                const x: number = Math.random();
+                const y: number = Math.random();
+                const z: number = Math.random();
+
+                set.push({input: [x, y, z], output: [z, x, y]});
+            }
+
+            evolveSet(set, 500, 0.03);
         });
     });
 });
