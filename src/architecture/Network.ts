@@ -390,13 +390,12 @@ export class Network {
         method.mutate(this, maxNodes ?? maxConnections ?? maxGates);
     }
 
-    public mutateRandom(allowedMethods: Mutation[]): void;
 
-    public mutateRandom(allowedMethods: Mutation[] = ALL_MUTATIONS, maxNodes: number = Infinity, maxConnections: number = Infinity, maxGates: number = Infinity): void {
+    public mutateRandom(allowedMethods: Mutation[] = ALL_MUTATIONS, maxNodes: number | void = Infinity, maxConnections: number | void = Infinity, maxGates: number | void = Infinity): void {
         if (allowedMethods.length === 0) {
             return;
         }
-        this.mutate(pickRandom(allowedMethods), maxNodes, maxConnections, maxGates);
+        this.mutate(pickRandom(allowedMethods), maxNodes || Infinity, maxConnections || Infinity, maxGates || Infinity);
     }
 
     public train(inputs: number[][], outputs: number[][], options: TrainOptions): { error: number, iterations: number, time: number } {
