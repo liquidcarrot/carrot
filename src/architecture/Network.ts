@@ -393,72 +393,6 @@ export class Network {
         remove(this.nodes, node);
     }
 
-    // tslint:disable-next-line:no-any
-    public possible(method: Mutation): any {
-        // TODO: Move to Mutation.ts
-        // tslint:disable-next-line:no-any
-        const candidates: any = [];
-        switch (method.constructor.name) {
-            case "SUB_NODE":
-                return this.nodes.filter(node => node.type === NodeType.HIDDEN);
-            case "ADD_CONN":
-                for (let i = 0; i < this.nodes.length - this.outputSize; i++) {
-                    const from: Node = this.nodes[i];
-                    for (let j = Math.max(i + 1, this.inputSize); j < this.nodes.length; j++) {
-                        const to: Node = this.nodes[j];
-                        if (!from.isProjectingTo(to)) {
-                            candidates.push([from, to]);
-                        }
-                    }
-                }
-                return candidates;
-            case "SUB_CONN":
-                return this.connections.filter(conn => conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && this.nodes.indexOf(conn.to) > this.nodes.indexOf(conn.from));
-            case "MOD_ACTIVATION":
-                if ((method as ModActivationMutation).mutateOutput) {
-                    return this.nodes.filter(node => node.type !== NodeType.INPUT);
-                } else {
-                    return this.nodes.filter(node => node.type === NodeType.HIDDEN);
-                }
-            case "ADD_this_CONN":
-                return this.nodes
-                    .filter(node => node.type !== NodeType.INPUT)
-                    .filter(node => node.selfConnection.weight === 0);
-            case "SUB_this_CONN":
-                return this.connections.filter(conn => conn.from === conn.to);
-            case "ADD_GATE":
-                return this.connections.filter(conn => conn.gateNode === null);
-            case "SUB_GATE":
-                return [];
-            case "ADD_BACK_CONN":
-                for (let i = this.inputSize; i < this.nodes.length; i++) {
-                    const from = this.nodes[i];
-                    for (let j = this.inputSize; j < i; j++) {
-                        const to = this.nodes[j];
-                        if (!from.isProjectingTo(to)) {
-                            candidates.push([from, to]);
-                        }
-                    }
-                }
-                return candidates;
-            case "SUB_BACK_CONN":
-                return this.connections.filter(conn => conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && this.nodes.indexOf(conn.from) > this.nodes.indexOf(conn.to));
-            case "SWAP_NODES": {
-                // break out early if there aren't enough nodes to swap
-                if ((method as SwapNodesMutation).mutateOutput && this.nodes.length - this.inputSize < 3
-                    || this.nodes.length - this.inputSize - this.outputSize < 3) {
-                    return [];
-                }
-
-                if ((method as SwapNodesMutation).mutateOutput) {
-                    return this.nodes.filter(node => node.type !== NodeType.INPUT);
-                } else {
-                    return this.nodes.filter(node => node.type === NodeType.HIDDEN);
-                }
-            }
-        }
-    }
-
     public mutate(method: Mutation, maxNodes: number | undefined = Infinity, maxConnections: number | undefined = Infinity, maxGates: number | undefined = Infinity): void {
         // TODO: Move to Mutation.ts
         switch (method.constructor.name) {
@@ -493,7 +427,7 @@ export class Network {
                 break;
             }
             case "SUB_NODE": {
-                const possible: Node[] = this.possible(method) as Node[];
+                const possible: Node[] = this.nodes.filter(node => node.type === NodeType.HIDDEN);
                 if (possible.length > 0) {
                     this.removeNode(pickRandom(possible));
                 }
@@ -503,8 +437,18 @@ export class Network {
                 if (maxConnections !== undefined && maxConnections <= this.connections.length) {
                     break;
                 }
+                const possible: Node[][] = [];
 
-                const possible: Node[][] = this.possible(method) as Node[][];
+                for (let i = 0; i < this.nodes.length - this.outputSize; i++) {
+                    const from: Node = this.nodes[i];
+                    for (let j = Math.max(i + 1, this.inputSize); j < this.nodes.length; j++) {
+                        const to: Node = this.nodes[j];
+                        if (!from.isProjectingTo(to)) {
+                            possible.push([from, to]);
+                        }
+                    }
+                }
+
                 if (possible.length > 0) {
                     const pair = pickRandom(possible);
                     this.connect(pair[0], pair[1]);
@@ -512,7 +456,7 @@ export class Network {
                 break;
             }
             case "SUB_CONN": {
-                const possible = (this.possible(method) as Connection[]);
+                const possible = this.connections.filter(conn => conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && this.nodes.indexOf(conn.to) > this.nodes.indexOf(conn.from));
                 if (possible) {
                     const randomConnection: Connection = pickRandom(possible);
                     this.disconnect(randomConnection.from, randomConnection.to);
@@ -534,14 +478,16 @@ export class Network {
                 break;
             }
             case "MOD_ACTIVATION": {
-                const possible: Node[] = this.possible(method) as Node[];
+                const possible: Node[] = (method as ModActivationMutation).mutateOutput
+                    ? this.nodes.filter(node => node.type !== NodeType.INPUT)
+                    : this.nodes.filter(node => node.type === NodeType.HIDDEN);
                 if (possible.length > 0) {
                     pickRandom(possible).mutate(method);
                 }
                 break;
             }
             case "ADD_SELF_CONN": {
-                const possible: Node[] = this.possible(method) as Node[];
+                const possible: Node[] = this.nodes.filter(node => node.type !== NodeType.INPUT).filter(node => node.selfConnection.weight === 0);
                 if (possible) {
                     const node: Node = pickRandom(possible);
                     this.connect(node, node);
@@ -549,7 +495,7 @@ export class Network {
                 break;
             }
             case "SUB_SELF_CONN": {
-                const possible = this.possible(method) as Connection[];
+                const possible = this.connections.filter(conn => conn.from === conn.to);
                 if (possible.length > 0) {
                     const randomConnection: Connection = pickRandom(possible);
                     this.disconnect(randomConnection.from, randomConnection.to);
@@ -557,12 +503,11 @@ export class Network {
                 break;
             }
             case "ADD_GATE": {
-                // Check user constraint
                 if (maxGates !== undefined && maxGates <= this.gates.length) {
                     break;
                 }
 
-                const possible: Connection[] = this.possible(method) as Connection[];
+                const possible: Connection[] = this.connections.filter(conn => conn.gateNode === null);
                 if (possible.length > 0) {
                     const node: Node = pickRandom(this.nodes.filter(noInputNode => noInputNode.type !== NodeType.INPUT));
                     const connection: Connection = pickRandom(possible);
@@ -578,7 +523,16 @@ export class Network {
                 break;
             }
             case "ADD_BACK_CONN": {
-                const possible: Node[][] = this.possible(method) as Node[][];
+                const possible: Node[][] = [];
+                for (let i = this.inputSize; i < this.nodes.length; i++) {
+                    const from = this.nodes[i];
+                    for (let j = this.inputSize; j < i; j++) {
+                        const to = this.nodes[j];
+                        if (!from.isProjectingTo(to)) {
+                            possible.push([from, to]);
+                        }
+                    }
+                }
                 if (possible.length > 0) {
                     const pair: Node[] = pickRandom(possible);
                     this.connect(pair[0], pair[1]);
@@ -586,7 +540,7 @@ export class Network {
                 break;
             }
             case "SUB_BACK_CONN": {
-                const possible: Connection[] = this.possible(method) as Connection[];
+                const possible: Connection[] = this.connections.filter(conn => conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && this.nodes.indexOf(conn.from) > this.nodes.indexOf(conn.to));
                 if (possible.length > 0) {
                     const randomConnection: Connection = pickRandom(possible);
                     this.disconnect(randomConnection.from, randomConnection.to);
@@ -594,8 +548,16 @@ export class Network {
                 break;
             }
             case "SWAP_NODES": {
-                const possible: Node[] = this.possible(method) as Node[];
-                if (possible) {
+                let possible: Node[];
+                if ((method as SwapNodesMutation).mutateOutput && this.nodes.length - this.inputSize < 3
+                    || this.nodes.length - this.inputSize - this.outputSize < 3) {
+                    possible = [];
+                } else if ((method as SwapNodesMutation).mutateOutput) {
+                    possible = this.nodes.filter(node => node.type !== NodeType.INPUT);
+                } else {
+                    possible = this.nodes.filter(node => node.type === NodeType.HIDDEN);
+                }
+                if (possible.length > 0) {
                     const node1: Node = pickRandom(possible);
                     const node2: Node = pickRandom(possible.filter(node => node !== node1));
 
