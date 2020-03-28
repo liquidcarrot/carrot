@@ -1,4 +1,4 @@
-import {ModBiasMutation, Mutation} from "../methods/Mutation";
+import {ModBiasMutation} from "../methods/Mutation";
 import {Activation, ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
 import {Connection} from "./Connection";
 import {anyMatch, pickRandom, randDouble, remove} from "../methods/Utils";
@@ -74,13 +74,12 @@ export class Node {
         this.old = this.state = this.activation = 0;
     }
 
-    public mutate(method: Mutation): void {
+    public mutateBias(method: ModBiasMutation): void {
+        this.bias += randDouble(method.min, method.max);
+    }
 
-        if (method.constructor.name === "MOD_ACTIVATION") {
-            this.squash = pickRandom(ALL_ACTIVATIONS);
-        } else if (method.constructor.name === "MOD_BIAS") {
-            this.bias += randDouble((method as ModBiasMutation).min, (method as ModBiasMutation).max);
-        }
+    public mutateActivation(): void {
+        this.squash = pickRandom(ALL_ACTIVATIONS);
     }
 
     public isProjectedBy(node: Node): boolean {
