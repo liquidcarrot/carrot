@@ -351,7 +351,7 @@ export class Network {
         }
 
         for (let i: number = node.outgoing.length - 1; i >= 0; i--) {
-            const connection: Connection = node.incoming[i];
+            const connection: Connection = node.outgoing[i];
             if (keepGates && connection.gateNode !== null && connection.gateNode !== node) {
                 gates.push(connection.gateNode);
             }
