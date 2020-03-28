@@ -1,6 +1,6 @@
 import {Connection, ConnectionJSON} from "./Connection";
 import {Node, NodeJSON, NodeType} from "./Node";
-import {anyMatch, getOrDefault, pickRandom, randBoolean, randInt, remove} from "../methods/Utils";
+import {anyMatch, getOrDefault, pickRandom, randBoolean, randInt, remove, shuffle} from "../methods/Utils";
 import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
 import {Loss, MSELoss} from "../methods/Loss";
 import {FixedRate, Rate} from "../methods/Rate";
@@ -438,7 +438,7 @@ export class Network {
         let iterationCount: number = 0;
         let error: number = 1;
 
-        while (error > targetError && (options.iterations !== 0 || iterationCount < options.iterations)) {
+        while (error > targetError && (options.iterations <= 0 || iterationCount < options.iterations)) {
             iterationCount++;
 
             currentTrainingRate = (options.ratePolicy as Rate).calc(iterationCount);
@@ -463,6 +463,10 @@ export class Network {
                 }
             } else {
                 error = trainError;
+            }
+
+            if (options.shuffle ?? false) {
+                shuffle(dataset);
             }
 
             if (options.log > 0 && iterationCount % options.log === 0) {
@@ -669,19 +673,20 @@ export interface EvolveOptions {
     iterations?: number;
 }
 
-interface NetworkJSON {
+export interface NetworkJSON {
     nodes: NodeJSON[];
     connections: ConnectionJSON[];
     inputSize: number;
     outputSize: number;
 }
 
-interface TrainOptions {
+export interface TrainOptions {
     ratePolicy?: Rate;
     rate?: number;
     loss?: Loss;
     iterations?: number;
     error?: number;
+    shuffle?: boolean;
     momentum?: number;
     dropout?: number;
     clear?: boolean;
