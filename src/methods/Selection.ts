@@ -2,11 +2,11 @@ export abstract class Selection {
 
 }
 
-export class FITNESS_PROPORTIONATE extends Selection {
+export class FitnessProportionateSelection extends Selection {
 }
 
-export class POWER extends Selection {
-    private power: number;
+export class PowerSelection extends Selection {
+    public power: number;
 
     constructor(power: number = 4) {
         super();
@@ -14,9 +14,9 @@ export class POWER extends Selection {
     }
 }
 
-export class TOURNAMENT extends Selection {
-    private size: number;
-    private probability: number;
+export class TournamentSelection extends Selection {
+    public size: number;
+    public probability: number;
 
     constructor(size: number = 5, probability: number = 0.5) {
         super();

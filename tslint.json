@@ -13,7 +13,8 @@
     "no-var-requires": true,
     "typedef": true,
     "no-unused-variable": true,
-    "semicolon": true
+    "semicolon": true,
+    "max-classes-per-file": false
   },
   "rulesDirectory": []
 }
