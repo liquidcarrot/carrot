@@ -15,7 +15,7 @@
     "build:src": "concurrently 'node scripts/src.build.node.js' 'node scripts/src.build.browser.js'",
     "build:src:webpack": "./node_modules/.bin/webpack",
     "deploy:docs": "node theme/deploy-docs.js",
-    "test": "./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha --recursive test/ --exclude test/unit.js",
+    "test": "./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha build/test/units/architecture/NodeTest.js --exclude test/unit.js",
     "lint": "./node_modules/.bin/eslint --ignore-path .eslintignore .",
     "test:debug": "./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha inspect --recursive test/ --exclude test/unit.js",
     "test:forever": "./node_modules/.bin/nodemon ./node_modules/.bin/mocha --reporter spec test/"
@@ -61,6 +61,7 @@
   ],
   "files": [
     "/src",
+    "/test",
     "/dist"
   ],
   "license": "MIT",
@@ -73,6 +74,8 @@
     "riteway": "^6.1.1"
   },
   "devDependencies": {
+    "@types/chai": "^4.2.11",
+    "@types/mocha": "^7.0.2",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chalk": "^2.4.2",
