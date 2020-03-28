@@ -13,10 +13,10 @@ export class Connection {
     public deltaWeightsTotal: number;
     public deltaWeightsPrevious: number;
 
-    constructor(from: Node, to: Node, weight: number = randDouble(-1, 1), gateNode: Node | void | null) {
+    constructor(from: Node, to: Node, weight: number | void, gateNode: Node | void | null) {
         this.from = from;
         this.to = to;
-        this.weight = weight;
+        this.weight = weight || randDouble(-1, 1);
         this.gain = 1;
         this.eligibility = 0;
         this.deltaWeightsPrevious = 0;
