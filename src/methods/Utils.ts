@@ -14,9 +14,9 @@ export function randBoolean(): boolean {
     return Math.random() >= 0.5;
 }
 
-export function anyMatch<T>(arr: T[], elem: T): boolean {
-    for (let i = 0; i < arr.length; i++) {
-        if (arr[i] === elem) {
+export function anyMatch<T>(arr: T[], target: T): boolean {
+    for (const elem of arr) {
+        if (elem === target) {
             return true;
         }
     }
@@ -24,8 +24,8 @@ export function anyMatch<T>(arr: T[], elem: T): boolean {
 }
 
 export function remove<T>(arr: T[], elem: T): boolean {
-    let index: number = arr.indexOf(elem);
-    if (index == -1) {
+    const index: number = arr.indexOf(elem);
+    if (index === -1) {
         return false;
     } else {
         arr.splice(index, 1);
