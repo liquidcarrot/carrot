@@ -56,7 +56,7 @@ export class WAPELoss extends Loss {
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         let sum: number = 0;
-        for (let i = 0; i < outputs.length; i++) {
+        for (let i: number = 0; i < outputs.length; i++) {
             error += Math.abs(targets[i] - outputs[i]);
             sum += targets[i];
         }

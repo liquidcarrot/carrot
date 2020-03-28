@@ -212,8 +212,8 @@ export class SELUActivation implements Activation {
     public readonly type: ActivationType = ActivationType.SELUActivation;
 
     public calc(x: number, derivative: boolean = false): number {
-        const alpha = 1.6732632423543772848170429916717;
-        const scale = 1.0507009873554804934193349852946;
+        const alpha: number = 1.6732632423543772848170429916717;
+        const scale: number = 1.0507009873554804934193349852946;
 
         if (!derivative) {
             if (x > 0) {

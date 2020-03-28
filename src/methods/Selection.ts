@@ -19,8 +19,8 @@ export class FitnessProportionateSelection extends Selection {
         minimalFitness = Math.abs(minimalFitness);
         totalFitness += minimalFitness * population.length;
 
-        const random = randDouble(0, totalFitness);
-        let value = 0;
+        const random: number = randDouble(0, totalFitness);
+        let value: number = 0;
 
         for (const genome of population) {
             value += (genome.score ?? 0) + minimalFitness;
@@ -62,18 +62,18 @@ export class TournamentSelection extends Selection {
         }
 
         // Create a tournament
-        const individuals = [];
-        for (let i = 0; i < this.size; i++) {
+        const individuals: Network[] = [];
+        for (let i: number = 0; i < this.size; i++) {
             individuals.push(pickRandom(population));
         }
 
         // Sort the tournament individuals by score
-        individuals.sort(function (a, b) {
+        individuals.sort((a: Network, b: Network) => {
             return b.score === undefined || a.score === undefined ? 0 : b.score - a.score;
         });
 
         // Select an individual
-        for (let i = 0; i < this.size; i++) {
+        for (let i: number = 0; i < this.size; i++) {
             if (Math.random() < this.probability || i === this.size - 1) {
                 return individuals[i];
             }

@@ -69,9 +69,9 @@ export class AddConnectionMutation extends Mutation {
         }
         const possible: Node[][] = [];
 
-        for (let i = 0; i < genome.nodes.length - genome.outputSize; i++) {
+        for (let i: number = 0; i < genome.nodes.length - genome.outputSize; i++) {
             const from: Node = genome.nodes[i];
-            for (let j = Math.max(i + 1, genome.inputSize); j < genome.nodes.length; j++) {
+            for (let j: number = Math.max(i + 1, genome.inputSize); j < genome.nodes.length; j++) {
                 const to: Node = genome.nodes[j];
                 if (!from.isProjectingTo(to)) {
                     possible.push([from, to]);
@@ -80,7 +80,7 @@ export class AddConnectionMutation extends Mutation {
         }
 
         if (possible.length > 0) {
-            const pair = pickRandom(possible);
+            const pair: Node[] = pickRandom(possible);
             genome.connect(pair[0], pair[1]);
         }
     }
@@ -88,7 +88,7 @@ export class AddConnectionMutation extends Mutation {
 
 export class SubConnectionMutation extends Mutation {
     public mutate(genome: Network): void {
-        const possible = genome.connections.filter(conn => conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && genome.nodes.indexOf(conn.to) > genome.nodes.indexOf(conn.from));
+        const possible: Connection[] = genome.connections.filter(conn => conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && genome.nodes.indexOf(conn.to) > genome.nodes.indexOf(conn.from));
         if (possible) {
             const randomConnection: Connection = pickRandom(possible);
             genome.disconnect(randomConnection.from, randomConnection.to);
@@ -159,7 +159,7 @@ export class AddSelfConnectionMutation extends Mutation {
 
 export class SubSelfConnectionMutation extends Mutation {
     public mutate(genome: Network): void {
-        const possible = genome.connections.filter(conn => conn.from === conn.to);
+        const possible: Connection[] = genome.connections.filter(conn => conn.from === conn.to);
         if (possible.length > 0) {
             const randomConnection: Connection = pickRandom(possible);
             genome.disconnect(randomConnection.from, randomConnection.to);
@@ -194,10 +194,10 @@ export class SubGateMutation extends Mutation {
 export class AddBackConnectionMutation extends Mutation {
     public mutate(genome: Network): void {
         const possible: Node[][] = [];
-        for (let i = genome.inputSize; i < genome.nodes.length; i++) {
-            const from = genome.nodes[i];
-            for (let j = genome.inputSize; j < i; j++) {
-                const to = genome.nodes[j];
+        for (let i: number = genome.inputSize; i < genome.nodes.length; i++) {
+            const from: Node = genome.nodes[i];
+            for (let j: number = genome.inputSize; j < i; j++) {
+                const to: Node = genome.nodes[j];
                 if (!from.isProjectingTo(to)) {
                     possible.push([from, to]);
                 }

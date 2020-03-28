@@ -67,7 +67,7 @@ export class NEAT {
     }
 
     public filterGenome(population: Network[], template: Network, pickGenome: (genome: Network) => boolean, adjustGenome: ((genome: Network) => Network) | undefined): Network[] {
-        const filtered = [...population]; // avoid mutations
+        const filtered: Network[] = [...population]; // avoid mutations
 
         if (adjustGenome) {
             filtered
@@ -82,11 +82,11 @@ export class NEAT {
         return filtered;
     }
 
-    public mutateRandom(genome: Network, possible: Mutation[] = this.mutations) {
+    public mutateRandom(genome: Network, possible: Mutation[] = this.mutations): void {
         const maxNodes: number = this.maxNodes;
         const maxConnections: number = this.maxConnections;
         const maxGates: number = this.maxGates;
-        possible = possible.filter(function (method) {
+        possible = possible.filter(method => {
             return (
                 method.constructor.name !== AddNodeMutation.constructor.name || genome.nodes.length < maxNodes ||
                 method.constructor.name !== AddConnectionMutation.constructor.name || genome.connections.length < maxConnections ||
@@ -122,10 +122,10 @@ export class NEAT {
         }
 
         // Provenance
-        const newPopulation = Array(this.provenance).fill(this.template.copy());
+        const newPopulation: Network[] = Array(this.provenance).fill(this.template.copy());
 
         // Breed the next individuals
-        for (let i = 0; i < this.populationSize - this.elitism - this.provenance; i++) {
+        for (let i: number = 0; i < this.populationSize - this.elitism - this.provenance; i++) {
             newPopulation.push(this.getOffspring());
         }
 
@@ -161,7 +161,6 @@ export class NEAT {
     }
 
     public getParent(): Network | null {
-        // TODO: Move to Selection.ts
         if (this.population[0].score !== undefined && this.population[1].score !== undefined && this.population[0].score < this.population[1].score) {
             this.sort();
         }
@@ -169,8 +168,8 @@ export class NEAT {
     }
 
     public getOffspring(): Network {
-        const parent1 = this.getParent();
-        const parent2 = this.getParent();
+        const parent1: Network | null = this.getParent();
+        const parent2: Network | null = this.getParent();
 
         if (parent1 === null || parent2 === null) {
             throw new Error("Should not be null!");
@@ -201,7 +200,7 @@ export class NEAT {
         }
     }
 
-    public async evaluate(inputs: number[][], outputs: number[][]) {
+    public async evaluate(inputs: number[][], outputs: number[][]): Promise<Network> {
         if (this.fitnessPopulation) {
             if (this.clear) {
                 this.population.forEach(genome => genome.clear());
@@ -223,14 +222,14 @@ export class NEAT {
     }
 
     public sort(): void {
-        this.population.sort(function (a: Network, b: Network) {
+        this.population.sort((a: Network, b: Network) => {
             return a.score === undefined || b.score === undefined ? 0 : b.score - a.score;
         });
     }
 
-    public getFittest(): Network {
+    public async getFittest(): Promise<Network> {
         if (this.population[this.population.length - 1].score === undefined) {
-            this.evaluate(this.inputs, this.outputs);
+            await this.evaluate(this.inputs, this.outputs);
         }
         this.sort();
 
@@ -241,7 +240,7 @@ export class NEAT {
         if (this.population[this.population.length - 1].score === undefined) {
             this.evaluate(this.inputs, this.outputs);
         }
-        let score = 0;
+        let score: number = 0;
         this.population
             .map(genome => genome.score)
             .forEach(val => score += val ?? 0);
