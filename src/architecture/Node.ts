@@ -113,20 +113,20 @@ export class Node {
         connection.gain = 1;
     }
 
-    public connect(node: Node, weight: number = 0, twoSided: boolean = false): Connection {
-        if (node === this) {
+    public connect(target: Node, weight: number = 0, twoSided: boolean = false): Connection {
+        if (target === this) {
             this.selfConnection.weight = weight || 1;
             return this.selfConnection;
-        } else if (this.isProjectingTo(node)) {
+        } else if (this.isProjectingTo(target)) {
             throw new ReferenceError();
         } else {
-            const connection: Connection = new Connection(this, node, weight);
+            const connection: Connection = new Connection(this, target, weight);
 
             this.outgoing.push(connection);
-            node.incoming.push(connection);
+            target.incoming.push(connection);
 
             if (twoSided) {
-                node.connect(this);
+                target.connect(this);
             }
             return connection;
         }
