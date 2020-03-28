@@ -398,11 +398,9 @@ export class Network {
         this.mutate(pickRandom(allowedMethods), maxNodes || Infinity, maxConnections || Infinity, maxGates || Infinity);
     }
 
-    public train(inputs: number[][], outputs: number[][], options: TrainOptions): { error: number, iterations: number, time: number } {
-        if (inputs[0].length !== this.inputSize || outputs[0].length !== this.outputSize) {
+    public train(dataset: { input: number[], output: number[] }[], options: TrainOptions = {}): { error: number, iterations: number, time: number } {
+        if (dataset[0].input.length !== this.inputSize || dataset[0].output.length !== this.outputSize) {
             throw new Error(`Dataset input/output size should be same as network input/output size!`);
-        } else if (inputs.length !== outputs.length) {
-            throw new RangeError("Num inputs should be equal to num outputs!");
         }
 
         options.iterations = getOrDefault(options.iterations, 100);
@@ -411,7 +409,7 @@ export class Network {
         const baseRate: number = getOrDefault(options.rate, 0.3);
         options.dropout = getOrDefault(options.dropout, 0);
         options.momentum = getOrDefault(options.momentum, 0);
-        options.batchSize = Math.min(inputs.length, getOrDefault(options.batchSize, 1));
+        options.batchSize = Math.min(dataset.length, getOrDefault(options.batchSize, 1));
         options.ratePolicy = getOrDefault(options.ratePolicy, new FixedRate(baseRate));
         options.log = getOrDefault(options.log, NaN);
 
@@ -424,22 +422,16 @@ export class Network {
         }
 
         let trainingSetSize: number;
-        let trainingSetInputs: number[][];
-        let trainingSetOutputs: number[][];
-        let testSetInputs: number[][];
-        let testSetOutputs: number[][];
-        if (options.crossValidate) {
-            trainingSetSize = Math.ceil((1 - options.crossValidate.testSize) * inputs.length);
+        let trainingSet: { input: number[]; output: number[] }[];
+        let testSet: { input: number[]; output: number[] }[];
+        if (options.crossValidateTestSize && options.crossValidateTestSize > 0) {
+            trainingSetSize = Math.ceil((1 - options.crossValidateTestSize) * dataset.length);
 
-            trainingSetInputs = inputs.slice(0, trainingSetSize);
-            trainingSetOutputs = outputs.slice(0, trainingSetSize);
-            testSetInputs = inputs.slice(trainingSetSize);
-            testSetOutputs = outputs.slice(trainingSetSize);
+            trainingSet = dataset.slice(0, trainingSetSize);
+            testSet = dataset.slice(trainingSetSize);
         } else {
-            trainingSetInputs = inputs;
-            trainingSetOutputs = outputs;
-            testSetInputs = [];
-            testSetOutputs = [];
+            trainingSet = dataset;
+            testSet = [];
         }
 
         let currentTrainingRate: number;
@@ -452,8 +444,7 @@ export class Network {
             currentTrainingRate = (options.ratePolicy as Rate).calc(iterationCount);
 
             const trainError: number = this.trainEpoch(
-                trainingSetInputs,
-                trainingSetOutputs,
+                trainingSet,
                 options.batchSize,
                 currentTrainingRate,
                 options.momentum,
@@ -465,8 +456,8 @@ export class Network {
                 this.clear();
             }
             // Checks if cross validation is enabled
-            if (options.crossValidate) {
-                error = this.test(testSetInputs, testSetOutputs, options.loss);
+            if (options.crossValidateTestSize) {
+                error = this.test(testSet, options.loss);
                 if (options.clear) {
                     this.clear();
                 }
@@ -494,33 +485,33 @@ export class Network {
         };
     }
 
-    public trainEpoch(inputs: number[][], outputs: number[][], batchSize: number, trainingRate: number, momentum: number, loss: Loss, dropoutRate: number = 0.5): number {
+    public trainEpoch(dataset: { input: number[], output: number[] }[], batchSize: number, trainingRate: number, momentum: number, loss: Loss, dropoutRate: number = 0.5): number {
         let errorSum: number = 0;
-        for (let i: number = 0; i < inputs.length; i++) {
-            const input: number[] = inputs[i];
-            const correctOutput: number[] = outputs[i];
+        for (let i: number = 0; i < dataset.length; i++) {
+            const input: number[] = dataset[i].input;
+            const correctOutput: number[] = dataset[i].output;
 
-            const update: boolean = (i + 1) % batchSize === 0 || i + 1 === inputs.length;
+            const update: boolean = (i + 1) % batchSize === 0 || i + 1 === dataset.length;
 
             const output: number[] = this.activate(input, dropoutRate);
             this.propagate(trainingRate, momentum, update, correctOutput);
 
             errorSum += loss.calc(correctOutput, output);
         }
-        return errorSum / inputs.length;
+        return errorSum / dataset.length;
     }
 
-    public test(inputs: number[][], outputs: number[][], loss: Loss = new MSELoss()): number {
+    public test(dataset: { input: number[], output: number[] }[], loss: Loss = new MSELoss()): number {
         let error: number = 0;
 
-        for (let i: number = 0; i < inputs.length; i++) {
-            const input: number[] = inputs[i];
-            const target: number[] = outputs[i];
+        for (const entry of dataset) {
+            const input: number[] = entry.input;
+            const target: number[] = entry.output;
             const output: number[] = this.activate(input, undefined, false);
             error += loss.calc(target, output);
         }
 
-        return error / inputs.length;
+        return error / dataset.length;
     }
 
     public toJSON(): NetworkJSON {
@@ -548,8 +539,8 @@ export class Network {
         return json;
     }
 
-    public async evolve(inputs: number[][], outputs: number[][], options: EvolveOptions): Promise<{ error: number, iterations: number, time: number }> {
-        if (inputs[0].length !== this.inputSize || outputs[0].length !== this.outputSize) {
+    public async evolve(dataset: { input: number[], output: number[] }[], options: EvolveOptions): Promise<{ error: number, iterations: number, time: number }> {
+        if (dataset[0].input.length !== this.inputSize || dataset[0].output.length !== this.outputSize) {
             throw new Error(`Dataset input/output size should be same as network input/output size!`);
         }
 
@@ -564,7 +555,7 @@ export class Network {
             options.iterations = 0;
         }
 
-        options.growth = getOrDefault(options.growth, 0.0001);
+        options.growth = getOrDefault<number>(options.growth, 0.0001);
         options.loss = getOrDefault(options.loss, new MSELoss());
         options.amount = getOrDefault(options.amount, 1);
         options.fitnessPopulation = getOrDefault(options.fitnessPopulation, false);
@@ -574,17 +565,17 @@ export class Network {
 
         const start: number = Date.now();
 
-        options.fitnessFunction = async function (inputs: number[][], outputs: number[][], population: Network[] | Network): Promise<void> {
+        options.fitnessFunction = async function (dataset: { input: number[], output: number[] }[], population: Network[] | Network): Promise<void> {
             if (!Array.isArray(population)) {
                 population = [population];
             }
             await Promise.all(population.map(async genome => {
                 let score: number = 0;
-                for (let i: number = 0; i < options.amount; i++) {
-                    score -= genome.test(inputs, outputs, options.loss);
+                for (let i: number = 0; i < (options.amount ?? 1); i++) {
+                    score -= genome.test(dataset, options.loss);
                 }
 
-                score -= options.growth * (
+                score -= options.growth ?? 0.0001 * (
                     genome.nodes.length
                     - genome.inputSize
                     - genome.outputSize
@@ -592,7 +583,7 @@ export class Network {
                     + genome.gates.length
                 );
 
-                genome.score = score / options.amount;
+                genome.score = score / (options.amount ?? 1);
             }));
         };
 
@@ -601,13 +592,13 @@ export class Network {
         options.template = this;
         options.input = this.inputSize;
         options.output = this.outputSize;
-        const neat: NEAT = new NEAT(inputs, outputs, options);
+        const neat: NEAT = new NEAT(dataset, options);
 
         let error: number = -Infinity;
         let bestFitness: number = -Infinity;
         let bestGenome: Network | undefined;
 
-        while (error < -targetError && (options.iterations === 0 || neat.generation < options.iterations)) {
+        while (error < -targetError && (options.iterations === 0 || neat.generation < (options.iterations ?? 0))) {
             const fittest: Network = await neat.evolve(undefined, undefined);
             const fitness: number = fittest.score === undefined ? -Infinity : fittest.score;
             error = fitness + options.growth * (
@@ -623,7 +614,7 @@ export class Network {
                 bestGenome = fittest;
             }
 
-            if (options.log > 0 && neat.generation % options.log === 0) {
+            if ((options.log ?? 0) > 0 && neat.generation % (options.log ?? 0) === 0) {
                 console.log(`iteration`, neat.generation, `fitness`, fitness, `error`, -error);
             }
 
@@ -651,32 +642,31 @@ export class Network {
 }
 
 export interface EvolveOptions {
-    generation: number;
-    template: Network;
-    mutations: Mutation[];
-    selection: Selection;
-    mutationRate: number;
-    mutationAmount: number;
-    provenance: number;
-    elitism: number;
-    populationSize: number;
-    fitnessFunction: (inputs: number[][], outputs: number[][], population: Network[] | Network) => Promise<void>;
-    growth: number;
-    loss: Loss;
-    amount: number;
-    maxNodes: number;
-    maxConnections: number;
-    maxGates: number;
-    threads: number;
-    input: number;
-    output: number;
-    equal: boolean;
-    fitnessPopulation: boolean;
-    log: number;
-    schedule: { iterations: number, function: (fitness: number, error: number, iteration: number) => void };
-    clear: boolean;
-    error: number;
-    iterations: number;
+    generation?: number;
+    template?: Network;
+    mutations?: Mutation[];
+    selection?: Selection;
+    mutationRate?: number;
+    mutationAmount?: number;
+    provenance?: number;
+    elitism?: number;
+    populationSize?: number;
+    fitnessFunction?: (dataset: { input: number[], output: number[] }[], population: Network[] | Network) => Promise<void>;
+    growth?: number;
+    loss?: Loss;
+    amount?: number;
+    maxNodes?: number;
+    maxConnections?: number;
+    maxGates?: number;
+    input?: number;
+    output?: number;
+    equal?: boolean;
+    fitnessPopulation?: boolean;
+    log?: number;
+    schedule?: { iterations: number, function: (fitness: number, error: number, iteration: number) => void };
+    clear?: boolean;
+    error?: number;
+    iterations?: number;
 }
 
 interface NetworkJSON {
@@ -687,16 +677,16 @@ interface NetworkJSON {
 }
 
 interface TrainOptions {
-    ratePolicy: Rate;
-    rate: number;
-    loss: Loss;
-    iterations: number;
-    error: number;
-    momentum: number;
-    dropout: number;
-    clear: boolean;
-    schedule: { iterations: number, function: (error: number, iteration: number) => void };
-    crossValidate: { testSize: number };
-    log: number;
-    batchSize: number;
+    ratePolicy?: Rate;
+    rate?: number;
+    loss?: Loss;
+    iterations?: number;
+    error?: number;
+    momentum?: number;
+    dropout?: number;
+    clear?: boolean;
+    schedule?: { iterations: number, function: (error: number, iteration: number) => undefined };
+    crossValidateTestSize?: number;
+    log?: number;
+    batchSize?: number;
 }
