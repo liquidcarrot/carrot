@@ -1,7 +1,7 @@
 import {EvolveOptions, Network} from "./architecture/Network";
 import {getOrDefault, pickRandom} from "./methods/Utils";
 import {Loss, MSELoss} from "./methods/Loss";
-import {PowerSelection, Selection, TournamentSelection} from "./methods/Selection";
+import {PowerSelection, Selection} from "./methods/Selection";
 import {
     AddConnectionMutation,
     AddGateMutation,
@@ -162,63 +162,10 @@ export class NEAT {
 
     public getParent(): Network | null {
         // TODO: Move to Selection.ts
-        if (this.selection.constructor.name === `POWER`) {
-            if (this.population[0].score !== undefined && this.population[1].score !== undefined && this.population[0].score < this.population[1].score) {
-                this.sort();
-            }
-
-            return this.population[Math.floor(Math.pow(Math.random(), (this.selection as PowerSelection).power) * this.population.length)];
-        } else if (this.selection.constructor.name === `FITNESS_PROPORTIONATE`) {
-            let totalFitness = 0;
-            let minimalFitness = 0;
-            this.population
-                .map(genome => genome.score)
-                .forEach(score => {
-                    minimalFitness = score !== undefined && score < minimalFitness ? score : minimalFitness;
-                    totalFitness += score ?? 0;
-                });
-
-            minimalFitness = Math.abs(minimalFitness);
-            totalFitness += minimalFitness * this.population.length;
-
-            const random = Math.random() * totalFitness;
-            let value = 0;
-
-            for (const genome of this.population) {
-                value += (genome.score ?? 0) + minimalFitness;
-                if (random < value) {
-                    return genome;
-                }
-            }
-
-            return pickRandom(this.population);
-        } else if (this.selection.constructor.name === `TOURNAMENT`) {
-            if ((this.selection as TournamentSelection).size > this.populationSize) {
-                throw new Error(`Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size`);
-            }
-
-            // Create a tournament
-            const individuals = [];
-            for (let i = 0; i < (this.selection as TournamentSelection).size; i++) {
-                const random = this.population[Math.floor(Math.random() * this.population.length)];
-                individuals.push(random);
-            }
-
-            // Sort the tournament individuals by score
-            individuals.sort(function (a, b) {
-                return b.score === undefined || a.score === undefined ? 0 : b.score - a.score;
-            });
-
-            // Select an individual
-            for (let i = 0; i < (this.selection as TournamentSelection).size; i++) {
-                if (Math.random() < (this.selection as TournamentSelection).probability || i === (this.selection as TournamentSelection).size - 1) {
-                    return individuals[i];
-                }
-            }
-        } else {
-            throw new TypeError(this.selection.constructor.name + " is no valid selection method !");
+        if (this.population[0].score !== undefined && this.population[1].score !== undefined && this.population[0].score < this.population[1].score) {
+            this.sort();
         }
-        return null;
+        return this.selection.select(this.population);
     }
 
     public getOffspring(): Network {
