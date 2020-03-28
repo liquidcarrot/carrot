@@ -1,7 +1,3 @@
-let { assert, expect } = require('chai');
-let should = require('chai').should();
-let carrot = require('../../../src/index');
-
 /**
  *
  * There are 5 questions every unit test must answer.
@@ -13,10 +9,5 @@ let carrot = require('../../../src/index');
  * How do you reproduce the failure?
  *
  */
-it('should return true if valid user id', function(){
-
-});
-
-it('should return false if invalid user id', function(){
-
-});
+// it('test method', ()=>{
+// });
