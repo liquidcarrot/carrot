@@ -47,7 +47,7 @@ export class Node {
         this.index = NaN;
     }
 
-    public static fromJSON(json: NodeJSON) {
+    public static fromJSON(json: NodeJSON): Node {
         const node: Node = new Node();
         node.bias = json.bias;
         node.type = (json.type as NodeType);
@@ -185,7 +185,7 @@ export class Node {
 
         for (const connection of this.incoming) {
             let gradient: number = this.errorProjected * connection.eligibility;
-            for (let j = 0; j < connection.xTraceNodes.length; j++) {
+            for (let j: number = 0; j < connection.xTraceNodes.length; j++) {
                 const node: Node = connection.xTraceNodes[j];
                 gradient += node.errorResponsibility * connection.xTraceValues[j];
             }
@@ -260,10 +260,11 @@ export class Node {
             for (const connection of this.incoming) {
                 connection.eligibility = this.selfConnection.gain * this.selfConnection.weight * connection.eligibility + connection.from.activation * connection.gain;
 
-                for (let j = 0; j < nodes.length; j++) {
-                    const [node, influence] = [nodes[j], influences[j]];
+                for (let i: number = 0; i < nodes.length; i++) {
+                    const node: Node = nodes[i];
+                    const influence: number = influences[i];
 
-                    const index = connection.xTraceNodes.indexOf(node);
+                    const index: number = connection.xTraceNodes.indexOf(node);
 
                     if (index > -1) connection.xTraceValues[index] = node.selfConnection.gain * node.selfConnection.weight * connection.xTraceValues[index] + this.derivative * connection.eligibility * influence;
                     else {
