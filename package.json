@@ -73,7 +73,6 @@
     "riteway": "^6.1.1"
   },
   "devDependencies": {
-    "@types/node": "^12.12.31",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chalk": "^2.4.2",
