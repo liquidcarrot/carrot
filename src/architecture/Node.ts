@@ -1,4 +1,4 @@
-import {MOD_BIAS, Mutation} from "../methods/Mutation";
+import {ModBiasMutation, Mutation} from "../methods/Mutation";
 import {Activation, ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
 import {Connection} from "./Connection";
 import {anyMatch, pickRandom, randDouble, remove} from "../methods/Utils";
@@ -79,7 +79,7 @@ export class Node {
         if (method.constructor.name === "MOD_ACTIVATION") {
             this.squash = pickRandom(ALL_ACTIVATIONS);
         } else if (method.constructor.name === "MOD_BIAS") {
-            this.bias += randDouble((method as MOD_BIAS).min, (method as MOD_BIAS).max);
+            this.bias += randDouble((method as ModBiasMutation).min, (method as ModBiasMutation).max);
         }
     }
 

@@ -1,7 +1,15 @@
 import {Connection, ConnectionJSON} from "./Connection";
 import {Node, NodeJSON, NodeType} from "./Node";
 import {anyMatch, getOrDefault, pickRandom, randBoolean, randDouble, randInt, remove} from "../methods/Utils";
-import {ADD_NODE, ALL_MUTATIONS, MOD_ACTIVATION, MOD_WEIGHT, Mutation, SUB_NODE, SWAP_NODES} from "../methods/Mutation";
+import {
+    AddNodeMutation,
+    ALL_MUTATIONS,
+    ModActivationMutation,
+    ModWeightMutation,
+    Mutation,
+    SubNodeMutation,
+    SwapNodesMutation
+} from "../methods/Mutation";
 import {Activation} from "../methods/Activation";
 import {Loss, MSELoss} from "../methods/Loss";
 import {FIXED, Rate} from "../methods/Rate";
@@ -329,7 +337,7 @@ export class Network {
         }
     }
 
-    public removeNode(node: Node, keepGates: boolean = new SUB_NODE().keepGates): void {
+    public removeNode(node: Node, keepGates: boolean = new SubNodeMutation().keepGates): void {
         if (!anyMatch(this.nodes, node)) {
             throw new ReferenceError(`This node does not exist in the network!`);
         }
@@ -407,7 +415,7 @@ export class Network {
             case "SUB_CONN":
                 return this.connections.filter(conn => conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && this.nodes.indexOf(conn.to) > this.nodes.indexOf(conn.from));
             case "MOD_ACTIVATION":
-                if ((method as MOD_ACTIVATION).mutateOutput) {
+                if ((method as ModActivationMutation).mutateOutput) {
                     return this.nodes.filter(node => node.type !== NodeType.INPUT);
                 } else {
                     return this.nodes.filter(node => node.type === NodeType.HIDDEN);
@@ -437,12 +445,12 @@ export class Network {
                 return this.connections.filter(conn => conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && this.nodes.indexOf(conn.from) > this.nodes.indexOf(conn.to));
             case "SWAP_NODES": {
                 // break out early if there aren't enough nodes to swap
-                if ((method as SWAP_NODES).mutateOutput && this.nodes.length - this.inputSize < 3
+                if ((method as SwapNodesMutation).mutateOutput && this.nodes.length - this.inputSize < 3
                     || this.nodes.length - this.inputSize - this.outputSize < 3) {
                     return [];
                 }
 
-                if ((method as SWAP_NODES).mutateOutput) {
+                if ((method as SwapNodesMutation).mutateOutput) {
                     return this.nodes.filter(node => node.type !== NodeType.INPUT);
                 } else {
                     return this.nodes.filter(node => node.type === NodeType.HIDDEN);
@@ -460,8 +468,8 @@ export class Network {
                 }
 
                 const node: Node = new Node(NodeType.HIDDEN); // Unless we have connections across inputs / outputs this is always a hidden
-                if ((method as ADD_NODE).randomActivation) {
-                    node.mutate(new MOD_ACTIVATION()); // this should be an option passed into the Node constructor
+                if ((method as AddNodeMutation).randomActivation) {
+                    node.mutate(new ModActivationMutation()); // this should be an option passed into the Node constructor
                 }
                 const connection: Connection = pickRandom(this.connections);
                 const from: Node = connection.from;
@@ -514,7 +522,7 @@ export class Network {
             }
             case "MOD_WEIGHT": {
                 const randomConnection: Connection = pickRandom(this.connections);
-                randomConnection.weight += randDouble((method as MOD_WEIGHT).min, (method as MOD_WEIGHT).max);
+                randomConnection.weight += randDouble((method as ModWeightMutation).min, (method as ModWeightMutation).max);
                 break;
             }
             case "MOD_BIAS": {

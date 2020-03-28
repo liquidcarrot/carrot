@@ -2,7 +2,13 @@ import {EvolveOptions, Network} from "./architecture/Network";
 import {getOrDefault, pickRandom} from "./methods/Utils";
 import {Loss, MSELoss} from "./methods/Loss";
 import {PowerSelection, Selection, TournamentSelection} from "./methods/Selection";
-import {ADD_CONN, ADD_GATE, ADD_NODE, FFW, Mutation} from "./methods/Mutation";
+import {
+    AddConnectionMutation,
+    AddGateMutation,
+    AddNodeMutation,
+    FEEDFORWARD_MUTATIONS,
+    Mutation
+} from "./methods/Mutation";
 
 export class NEAT {
     public generation: number;
@@ -50,7 +56,7 @@ export class NEAT {
         this.fitnessPopulation = getOrDefault(options.fitnessPopulation, false);
         this.fitnessFunction = options.fitnessFunction;
         this.selection = getOrDefault(options.selection, new PowerSelection());
-        this.mutations = getOrDefault(options.mutations, FFW);
+        this.mutations = getOrDefault(options.mutations, FEEDFORWARD_MUTATIONS);
         this.template = getOrDefault(options.template, new Network(this.input, this.output));
         this.maxNodes = getOrDefault(options.maxNodes, Infinity);
         this.maxConnections = getOrDefault(options.maxConnections, Infinity);
@@ -82,9 +88,9 @@ export class NEAT {
         const maxGates: number = this.maxGates;
         possible = possible.filter(function (method) {
             return (
-                method.constructor.name !== ADD_NODE.constructor.name || genome.nodes.length < maxNodes ||
-                method.constructor.name !== ADD_CONN.constructor.name || genome.connections.length < maxConnections ||
-                method.constructor.name !== ADD_GATE.constructor.name || genome.gates.length < maxGates
+                method.constructor.name !== AddNodeMutation.constructor.name || genome.nodes.length < maxNodes ||
+                method.constructor.name !== AddConnectionMutation.constructor.name || genome.connections.length < maxConnections ||
+                method.constructor.name !== AddGateMutation.constructor.name || genome.gates.length < maxGates
             );
         });
 

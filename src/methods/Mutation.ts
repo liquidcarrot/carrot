@@ -1,11 +1,9 @@
-import {Activation, ALL_ACTIVATIONS} from "./Activation";
-
 export abstract class Mutation {
 
 }
 
-export class ADD_NODE extends Mutation {
-    randomActivation: boolean;
+export class AddNodeMutation extends Mutation {
+    public randomActivation: boolean;
 
     constructor(randomActivation: boolean = true) {
         super();
@@ -13,8 +11,8 @@ export class ADD_NODE extends Mutation {
     }
 }
 
-export class SUB_NODE extends Mutation {
-    keepGates: boolean;
+export class SubNodeMutation extends Mutation {
+    public keepGates: boolean;
 
     constructor(keepGates: boolean = true) {
         super();
@@ -22,15 +20,15 @@ export class SUB_NODE extends Mutation {
     }
 }
 
-export class ADD_CONN extends Mutation {
+export class AddConnectionMutation extends Mutation {
 }
 
-export class SUB_CONN extends Mutation {
+export class SubConnectionMutation extends Mutation {
 }
 
-export class MOD_WEIGHT extends Mutation {
-    min: number;
-    max: number;
+export class ModWeightMutation extends Mutation {
+    public min: number;
+    public max: number;
 
     constructor(min: number = -1, max: number = 1) {
         super();
@@ -39,9 +37,9 @@ export class MOD_WEIGHT extends Mutation {
     }
 }
 
-export class MOD_BIAS extends Mutation {
-    min: number;
-    max: number;
+export class ModBiasMutation extends Mutation {
+    public min: number;
+    public max: number;
 
     constructor(min: number = -1, max: number = 1) {
         super();
@@ -50,37 +48,35 @@ export class MOD_BIAS extends Mutation {
     }
 }
 
-export class MOD_ACTIVATION extends Mutation {
-    mutateOutput: boolean;
-    private allowed: Activation[];
+export class ModActivationMutation extends Mutation {
+    public mutateOutput: boolean;
 
-    constructor(allowed: Activation[] = ALL_ACTIVATIONS, mutateOutput: boolean = false) {
+    constructor(mutateOutput: boolean = false) {
         super();
-        this.allowed = allowed;
         this.mutateOutput = mutateOutput;
     }
 }
 
-export class ADD_SELF_CONN extends Mutation {
+export class AddSelfConnectionMutation extends Mutation {
 }
 
-export class SUB_SELF_CONN extends Mutation {
+export class SubSelfConnectionMutation extends Mutation {
 }
 
-export class ADD_GATE extends Mutation {
+export class AddGateMutation extends Mutation {
 }
 
-export class SUB_GATE extends Mutation {
+export class SubGateMutation extends Mutation {
 }
 
-export class ADD_BACK_CONN extends Mutation {
+export class AddBackConnectionMutation extends Mutation {
 }
 
-export class SUB_BACK_CONN extends Mutation {
+export class SubBackConnectionMutation extends Mutation {
 }
 
-export class SWAP_NODES extends Mutation {
-    mutateOutput: boolean;
+export class SwapNodesMutation extends Mutation {
+    public mutateOutput: boolean;
 
     constructor(mutateOutput: boolean = false) {
         super();
@@ -89,29 +85,29 @@ export class SWAP_NODES extends Mutation {
 }
 
 export const ALL_MUTATIONS: Mutation[] = [
-    new ADD_NODE(),
-    new SUB_NODE(),
-    new ADD_CONN(),
-    new SUB_CONN(),
-    new MOD_WEIGHT(),
-    new MOD_BIAS(),
-    new MOD_ACTIVATION(),
-    new ADD_GATE(),
-    new SUB_GATE(),
-    new ADD_SELF_CONN(),
-    new SUB_SELF_CONN(),
-    new ADD_BACK_CONN(),
-    new SUB_BACK_CONN(),
-    new SWAP_NODES(),
+    new AddNodeMutation(),
+    new SubNodeMutation(),
+    new AddConnectionMutation(),
+    new SubConnectionMutation(),
+    new ModWeightMutation(),
+    new ModBiasMutation(),
+    new ModActivationMutation(),
+    new AddGateMutation(),
+    new SubGateMutation(),
+    new AddSelfConnectionMutation(),
+    new SubSelfConnectionMutation(),
+    new AddBackConnectionMutation(),
+    new SubBackConnectionMutation(),
+    new SwapNodesMutation(),
 ];
 
-export const FFW: Mutation[] = [
-    new ADD_NODE(),
-    new SUB_NODE(),
-    new ADD_CONN(),
-    new SUB_CONN(),
-    new MOD_WEIGHT(),
-    new MOD_BIAS(),
-    new MOD_ACTIVATION(),
-    new SWAP_NODES(),
+export const FEEDFORWARD_MUTATIONS: Mutation[] = [
+    new AddNodeMutation(),
+    new SubNodeMutation(),
+    new AddConnectionMutation(),
+    new SubConnectionMutation(),
+    new ModWeightMutation(),
+    new ModBiasMutation(),
+    new ModActivationMutation(),
+    new SwapNodesMutation(),
 ];
