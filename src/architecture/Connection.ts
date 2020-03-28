@@ -1,5 +1,4 @@
 import {Node} from "./node";
-import {randDouble} from "../methods/Utils";
 
 export class Connection {
     public eligibility: number;
@@ -16,7 +15,7 @@ export class Connection {
     constructor(from: Node, to: Node, weight: number | void, gateNode: Node | void | null) {
         this.from = from;
         this.to = to;
-        this.weight = weight || randDouble(-1, 1);
+        this.weight = weight || 0;
         this.gain = 1;
         this.eligibility = 0;
         this.deltaWeightsPrevious = 0;

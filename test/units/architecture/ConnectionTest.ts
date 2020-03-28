@@ -43,7 +43,7 @@ describe("Connection", function (): void {
 
             expect(connection).to.be.an.instanceOf(Connection);
             expect(connection.gateNode).to.be.eql(gateNode);
-            expect(connection.gain).to.be.an.instanceOf(gain);
+            expect(connection.gain).to.be.equal(gain);
             was.connected(connection, from, to);
         });
         it(`new Connection(from=${from}, to=${to}, weight=${weight}, gateNode=${gateNode}, gain=${gain}) => {Connection}`, () => {
@@ -54,7 +54,7 @@ describe("Connection", function (): void {
             expect(connection).to.be.an.instanceOf(Connection);
             expect(connection.weight).to.equal(weight);
             expect(connection.gateNode).to.be.eql(gateNode);
-            expect(connection.gain).to.be.an.instanceOf(gain);
+            expect(connection.gain).to.be.equal(gain);
             was.connected(connection, from, to);
         });
     });
