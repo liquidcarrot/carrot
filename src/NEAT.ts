@@ -158,16 +158,10 @@ export class NEAT {
         return fittest;
     }
 
-    public getParent(): Network | null {
-        if (this.population[0].score !== undefined && this.population[1].score !== undefined && this.population[0].score < this.population[1].score) {
-            this.sort();
-        }
-        return this.selection.select(this.population);
-    }
-
     public getOffspring(): Network {
-        const parent1: Network | null = this.getParent();
-        const parent2: Network | null = this.getParent();
+        this.sort();
+        const parent1: Network | null = this.selection.select(this.population);
+        const parent2: Network | null = this.selection.select(this.population);
 
         if (parent1 === null || parent2 === null) {
             throw new Error("Should not be null!");
@@ -238,9 +232,9 @@ export class NEAT {
         return this.population[0];
     }
 
-    public getAverage(): number {
+    public async getAverage(): Promise<number> {
         if (this.population[this.population.length - 1].score === undefined) {
-            this.evaluate(this.dataset);
+            await this.evaluate(this.dataset);
         }
         let score: number = 0;
         this.population
