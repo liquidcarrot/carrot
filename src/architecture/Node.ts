@@ -1,5 +1,5 @@
 import {MOD_BIAS, Mutation} from "../methods/Mutation";
-import {Activation, ALL_ACTIVATIONS, LOGISTIC} from "../methods/Activation";
+import {Activation, ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
 import {Connection} from "./Connection";
 import {anyMatch, pickRandom, randDouble, remove} from "../methods/Utils";
 
@@ -8,21 +8,20 @@ export enum NodeType {
 }
 
 export class Node {
-    type: NodeType;
-    mask: number;
-    incoming: Connection[];
-    outgoing: Connection[];
-    gated: Connection[];
-    selfConnection: Connection;
-    bias: number;
-    squash: Activation;
-    index: number;
+    public type: NodeType;
+    public mask: number;
+    public incoming: Connection[];
+    public outgoing: Connection[];
+    public gated: Connection[];
+    public selfConnection: Connection;
+    public bias: number;
+    public squash: Activation;
+    public index: number;
     private activation: number;
     private state: number;
     private old: number;
     private deltaBiasPrevious: number;
     private deltaBiasTotal: number;
-    private deltaBias: number[];
     private errorResponsibility: number;
     private errorProjected: number;
     private errorGated: number;
@@ -31,14 +30,13 @@ export class Node {
     constructor(type: NodeType = NodeType.HIDDEN) {
         this.type = type;
         this.bias = randDouble(-1, 1);
-        this.squash = new LOGISTIC();
+        this.squash = new LogisticActivation();
         this.activation = 0;
         this.state = 0;
         this.old = 0;
         this.mask = 1;
         this.deltaBiasPrevious = 0;
         this.deltaBiasTotal = 0;
-        this.deltaBias = [];
         this.incoming = [];
         this.outgoing = [];
         this.gated = [];
@@ -50,10 +48,10 @@ export class Node {
         this.index = NaN;
     }
 
-    static fromJSON(json: NodeJSON) {
+    public static fromJSON(json: NodeJSON) {
         const node: Node = new Node();
         node.bias = json.bias;
-        node.type = <NodeType>json.type;
+        node.type = (json.type as NodeType);
         node.squash = Activation.getActivation(json.squash);
         node.mask = json.mask;
         node.index = json.index;
@@ -61,17 +59,14 @@ export class Node {
         return node;
     }
 
-    clear(): void {
-        for (let index: number = 0; index < this.incoming.length; index++) {
-            const connection: Connection = this.incoming[index];
-
+    public clear(): void {
+        for (const connection of this.incoming) {
             connection.elegibility = 0;
-            connection.xtraceNodes = []
+            connection.xtraceNodes = [];
             connection.xtraceValues = [];
         }
 
-        for (let index: number = 0; index < this.gated.length; index++) {
-            const connection: Connection = this.gated[index];
+        for (const connection of this.gated) {
             connection.gain = 0;
         }
 
@@ -79,16 +74,16 @@ export class Node {
         this.old = this.state = this.activation = 0;
     }
 
-    mutate(method: Mutation): void {
+    public mutate(method: Mutation): void {
 
         if (method.constructor.name === "MOD_ACTIVATION") {
             this.squash = pickRandom(ALL_ACTIVATIONS);
         } else if (method.constructor.name === "MOD_BIAS") {
-            this.bias += randDouble((<MOD_BIAS>method).min, (<MOD_BIAS>method).max);
+            this.bias += randDouble((method as MOD_BIAS).min, (method as MOD_BIAS).max);
         }
     }
 
-    isProjectedBy(node: Node): boolean {
+    public isProjectedBy(node: Node): boolean {
         if (node === this) {
 
             return this.selfConnection.weight !== 0;
@@ -98,7 +93,7 @@ export class Node {
         }
     }
 
-    isProjectingTo(node: Node): boolean {
+    public isProjectingTo(node: Node): boolean {
         if (node === this) {
 
             return this.selfConnection.weight !== 0;
@@ -108,18 +103,18 @@ export class Node {
         }
     }
 
-    addGate(connection: Connection): void {
+    public addGate(connection: Connection): void {
         this.gated.push(connection);
         connection.gateNode = this;
     }
 
-    removeGate(connection: Connection): void {
+    public removeGate(connection: Connection): void {
         remove(this.gated, connection);
         connection.gateNode = null;
         connection.gain = 1;
     }
 
-    connect(node: Node, weight: number = 0, twoSided: boolean = false): Connection {
+    public connect(node: Node, weight: number = 0, twoSided: boolean = false): Connection {
         if (node === this) {
             this.selfConnection.weight = weight || 1;
             return this.selfConnection;
@@ -138,7 +133,7 @@ export class Node {
         }
     }
 
-    disconnect(node: Node, twoSided: boolean = false): Connection {
+    public disconnect(node: Node, twoSided: boolean = false): Connection {
         if (node === this) {
             this.selfConnection.weight = 0;
             return this.selfConnection;
@@ -150,7 +145,7 @@ export class Node {
                 remove(this.outgoing, connection);
                 remove(connection.to.incoming, connection);
 
-                if (connection.gateNode != undefined) {
+                if (connection.gateNode !== undefined && connection.gateNode != null) {
                     connection.gateNode.removeGate(connection);
                 }
                 if (twoSided) {
@@ -162,22 +157,20 @@ export class Node {
         throw new Error("No connection found!");
     }
 
-    propagate(target: number | undefined, momentum: number, rate: number, update: boolean): Object {
-        if (target != undefined && Number.isFinite(target)) {
+    public propagate(target: number | undefined, momentum: number, rate: number, update: boolean): { responsibility: number, projected: number, gated: number } {
+        if (target !== undefined && Number.isFinite(target)) {
             this.errorResponsibility = this.errorProjected = target - this.activation;
         } else {
 
             this.errorProjected = 0;
-            for (let i = 0; i < this.outgoing.length; i++) {
-                const connection: Connection = this.outgoing[i];
+            for (const connection of this.outgoing) {
                 this.errorProjected += connection.to.errorResponsibility * connection.weight * connection.gain;
             }
             this.errorProjected *= this.derivative || 1;
 
 
             this.errorGated = 0;
-            for (let i = 0; i < this.gated.length; i++) {
-                const connection: Connection = this.gated[i];
+            for (const connection of this.gated) {
                 const node: Node = connection.to;
                 let influence: number;
                 if (node.selfConnection.gateNode === this) {
@@ -195,8 +188,7 @@ export class Node {
         }
 
 
-        for (let i = 0; i < this.incoming.length; i++) {
-            const connection: Connection = this.incoming[i];
+        for (const connection of this.incoming) {
             let gradient: number = this.errorProjected * connection.elegibility;
             for (let j = 0; j < connection.xtraceNodes.length; j++) {
                 const node: Node = connection.xtraceNodes[j];
@@ -226,11 +218,11 @@ export class Node {
             responsibility: this.errorResponsibility,
             projected: this.errorProjected,
             gated: this.errorGated,
-        }
+        };
     }
 
-    activate(input: number | undefined, trace: boolean | true): number {
-        if (input != undefined && Number.isFinite(input)) {
+    public activate(input: number | undefined, trace: boolean | true): number {
+        if (input !== undefined && Number.isFinite(input)) {
             return this.activation = input;
         }
 
@@ -244,8 +236,8 @@ export class Node {
                 this.state += conn.from.activation * conn.weight * conn.gain;
             });
 
-            this.activation = this.squash.calc(this.state, false) * this.mask
-            this.derivative = this.squash.calc(this.state, true)
+            this.activation = this.squash.calc(this.state, false) * this.mask;
+            this.derivative = this.squash.calc(this.state, true);
 
 
             const nodes: Node[] = [];
@@ -253,7 +245,7 @@ export class Node {
 
 
             this.gated.forEach(connection => {
-                connection.gain = this.activation
+                connection.gain = this.activation;
 
 
                 const index: number = nodes.indexOf(connection.to);
@@ -270,10 +262,7 @@ export class Node {
             });
 
 
-            for (let i = 0; i < this.incoming.length; i++) {
-                const connection = this.incoming[i];
-
-
+            for (const connection of this.incoming) {
                 connection.elegibility = this.selfConnection.gain * this.selfConnection.weight * connection.elegibility + connection.from.activation * connection.gain;
 
                 for (let j = 0; j < nodes.length; j++) {
@@ -291,28 +280,27 @@ export class Node {
 
             return this.activation;
         } else {
-            if (this.type === NodeType.INPUT) return this.activation = 0
+            if (this.type === NodeType.INPUT) return this.activation = 0;
 
             this.state = this.selfConnection.gain * this.selfConnection.weight * this.state + this.bias;
 
 
-            for (let i = 0; i < this.incoming.length; i++) {
-                const conn = this.incoming[i];
-                this.state += conn.from.activation * conn.weight * conn.gain;
+            for (const connection of this.incoming) {
+                this.state += connection.from.activation * connection.weight * connection.gain;
             }
 
-            this.activation = this.squash.calc(this.state, false)
+            this.activation = this.squash.calc(this.state, false);
 
 
-            for (let i = 0; i < this.gated.length; i++) {
-                this.gated[i].gain = this.activation
+            for (const connection of this.gated) {
+                connection.gain = this.activation;
             }
 
             return this.activation;
         }
     }
 
-    toJSON(): NodeJSON {
+    public toJSON(): NodeJSON {
         return {
             bias: this.bias,
             type: this.type,
