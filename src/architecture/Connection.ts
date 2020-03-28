@@ -2,17 +2,16 @@ import {Node} from "./node";
 import {randDouble} from "../methods/Utils";
 
 export class Connection {
-    elegibility: number;
-    gain: number;
-    weight: number;
-    from: Node;
-    to: Node;
-    xtraceNodes: Node[];
-    xtraceValues: number[];
-    gateNode: Node | null;
-    deltaWeightsTotal: number;
-    deltaWeightsPrevious: number;
-    private deltaWeights: number[];
+    public elegibility: number;
+    public gain: number;
+    public weight: number;
+    public from: Node;
+    public to: Node;
+    public xtraceNodes: Node[];
+    public xtraceValues: number[];
+    public gateNode: Node | null;
+    public deltaWeightsTotal: number;
+    public deltaWeightsPrevious: number;
 
     constructor(from: Node, to: Node, weight: number = randDouble(-1, 1), gateNode: Node | void | null) {
         this.from = from;
@@ -22,7 +21,6 @@ export class Connection {
         this.elegibility = 0;
         this.deltaWeightsPrevious = 0;
         this.deltaWeightsTotal = 0;
-        this.deltaWeights = [];
         this.xtraceNodes = [];
         this.xtraceValues = [];
 
@@ -34,11 +32,11 @@ export class Connection {
         }
     }
 
-    static innovationID(a: number, b: number) {
+    public static innovationID(a: number, b: number): number {
         return 1 / 2 * (a + b) * (a + b + 1) + b;
-    };
+    }
 
-    toJSON(): ConnectionJSON {
+    public toJSON(): ConnectionJSON {
         return {
             fromIndex: this.from.index,
             toIndex: this.to.index,
