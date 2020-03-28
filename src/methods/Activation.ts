@@ -1,45 +1,45 @@
 export abstract class Activation {
-    static getActivation(name: string): Activation {
+    public static getActivation(name: string): Activation {
         switch (name) {
             case "LOGISTIC":
-                return new LOGISTIC();
+                return new LogisticActivation();
             case "TANH":
-                return new TANH();
+                return new TanhActivation();
             case "IDENTITY":
-                return new IDENTITY();
+                return new IdentityActivation();
             case "STEP":
-                return new STEP();
+                return new STEPActivation();
             case "RELU":
-                return new RELU();
+                return new RELUActivation();
             case "SOFTSIGN":
-                return new SOFTSIGN();
+                return new SoftsignActivation();
             case "SINUSOID":
-                return new LOGISTIC();
+                return new LogisticActivation();
             case "GAUSSIAN":
-                return new GAUSSIAN();
+                return new GaussianActivation();
             case "BENT_IDENTITY":
-                return new BENT_IDENTITY();
+                return new BentIdentityActivation();
             case "BIPOLAR":
-                return new BIPOLAR();
+                return new BipolarActivation();
             case "BIPOLAR_SIGMOID":
-                return new BIPOLAR_SIGMOID();
+                return new BipolarSigmoidActivation();
             case "HARD_TANH":
-                return new HARD_TANH();
+                return new HardTanhActivation();
             case "ABSOLUTE":
-                return new ABSOLUTE();
+                return new AbsoluteActivation();
             case "INVERSE":
-                return new INVERSE();
+                return new InverseActivation();
             case "SELU":
-                return new SELU();
+                return new SELUActivation();
         }
         throw new ReferenceError(name + " is not the name of any available activations! These are all available activations: " + ALL_ACTIVATIONS);
     }
 
-    abstract calc(x: number, derivate: boolean): number;
+    public abstract calc(x: number, derivate: boolean): number;
 }
 
-export class LOGISTIC implements Activation {
-    calc(x: number, derivate: boolean = false): number {
+export class LogisticActivation implements Activation {
+    public calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return 1 / (1 + Math.exp(-x));
         } else {
@@ -48,8 +48,8 @@ export class LOGISTIC implements Activation {
     }
 }
 
-export class TANH implements Activation {
-    calc(x: number, derivate: boolean = false): number {
+export class TanhActivation implements Activation {
+    public calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return Math.tanh(x);
         } else {
@@ -58,8 +58,8 @@ export class TANH implements Activation {
     }
 }
 
-export class IDENTITY implements Activation {
-    calc(x: number, derivate: boolean = false): number {
+export class IdentityActivation implements Activation {
+    public calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return x;
         } else {
@@ -68,8 +68,8 @@ export class IDENTITY implements Activation {
     }
 }
 
-export class STEP implements Activation {
-    calc(x: number, derivate: boolean = false): number {
+export class STEPActivation implements Activation {
+    public calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return x < 0 ? 0 : 1;
         } else {
@@ -78,8 +78,8 @@ export class STEP implements Activation {
     }
 }
 
-export class RELU implements Activation {
-    calc(x: number, derivate: boolean = false): number {
+export class RELUActivation implements Activation {
+    public calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return x <= 0 ? 0 : x;
         } else {
@@ -88,8 +88,8 @@ export class RELU implements Activation {
     }
 }
 
-export class SOFTSIGN implements Activation {
-    calc(x: number, derivate: boolean = false): number {
+export class SoftsignActivation implements Activation {
+    public calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return x / (1 + Math.abs(x));
         } else {
@@ -98,8 +98,8 @@ export class SOFTSIGN implements Activation {
     }
 }
 
-export class SINUSOID implements Activation {
-    calc(x: number, derivate: boolean = false): number {
+export class SinusoidActivation implements Activation {
+    public calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return Math.sin(x);
         } else {
@@ -108,8 +108,8 @@ export class SINUSOID implements Activation {
     }
 }
 
-export class GAUSSIAN implements Activation {
-    calc(x: number, derivate: boolean = false): number {
+export class GaussianActivation implements Activation {
+    public calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return Math.exp(-x * x);
         } else {
@@ -118,8 +118,8 @@ export class GAUSSIAN implements Activation {
     }
 }
 
-export class BENT_IDENTITY implements Activation {
-    calc(x: number, derivate: boolean = false): number {
+export class BentIdentityActivation implements Activation {
+    public calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return (Math.sqrt(x * x + 1) - 1) / 2 + x;
         } else {
@@ -128,8 +128,8 @@ export class BENT_IDENTITY implements Activation {
     }
 }
 
-export class BIPOLAR implements Activation {
-    calc(x: number, derivate: boolean = false): number {
+export class BipolarActivation implements Activation {
+    public calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return x > 0 ? 1 : -1;
         } else {
@@ -138,8 +138,8 @@ export class BIPOLAR implements Activation {
     }
 }
 
-export class BIPOLAR_SIGMOID implements Activation {
-    calc(x: number, derivate: boolean = false): number {
+export class BipolarSigmoidActivation implements Activation {
+    public calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return 2 / (1 + Math.exp(-x)) - 1;
         } else {
@@ -148,8 +148,8 @@ export class BIPOLAR_SIGMOID implements Activation {
     }
 }
 
-export class HARD_TANH implements Activation {
-    calc(x: number, derivate: boolean = false): number {
+export class HardTanhActivation implements Activation {
+    public calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return Math.max(-1, Math.min(1, x));
         } else {
@@ -158,8 +158,8 @@ export class HARD_TANH implements Activation {
     }
 }
 
-export class ABSOLUTE implements Activation {
-    calc(x: number, derivate: boolean = false): number {
+export class AbsoluteActivation implements Activation {
+    public calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return Math.abs(x);
         } else {
@@ -168,8 +168,8 @@ export class ABSOLUTE implements Activation {
     }
 }
 
-export class INVERSE implements Activation {
-    calc(x: number, derivate: boolean = false): number {
+export class InverseActivation implements Activation {
+    public calc(x: number, derivate: boolean = false): number {
         if (!derivate) {
             return 1 - x;
         } else {
@@ -178,8 +178,8 @@ export class INVERSE implements Activation {
     }
 }
 
-export class SELU implements Activation {
-    calc(x: number, derivate: boolean = false): number {
+export class SELUActivation implements Activation {
+    public calc(x: number, derivate: boolean = false): number {
         const alpha = 1.6732632423543772848170429916717;
         const scale = 1.0507009873554804934193349852946;
 
@@ -198,19 +198,19 @@ export class SELU implements Activation {
 }
 
 export const ALL_ACTIVATIONS: Activation[] = [
-    new LOGISTIC(),
-    new TANH(),
-    new IDENTITY(),
-    new STEP(),
-    new RELU(),
-    new SOFTSIGN(),
-    new SINUSOID(),
-    new GAUSSIAN(),
-    new BENT_IDENTITY(),
-    new BIPOLAR(),
-    new BIPOLAR_SIGMOID(),
-    new HARD_TANH(),
-    new ABSOLUTE(),
-    new INVERSE(),
-    new SELU()
+    new LogisticActivation(),
+    new TanhActivation(),
+    new IdentityActivation(),
+    new STEPActivation(),
+    new RELUActivation(),
+    new SoftsignActivation(),
+    new SinusoidActivation(),
+    new GaussianActivation(),
+    new BentIdentityActivation(),
+    new BipolarActivation(),
+    new BipolarSigmoidActivation(),
+    new HardTanhActivation(),
+    new AbsoluteActivation(),
+    new InverseActivation(),
+    new SELUActivation()
 ];
