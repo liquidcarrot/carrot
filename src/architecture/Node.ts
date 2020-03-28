@@ -79,7 +79,7 @@ export class Node {
     }
 
     public mutateActivation(): void {
-        this.squash = pickRandom(ALL_ACTIVATIONS);
+        this.squash = Activation.getActivation(pickRandom(ALL_ACTIVATIONS));
     }
 
     public isProjectedBy(node: Node): boolean {

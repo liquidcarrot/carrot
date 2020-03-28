@@ -1,6 +1,8 @@
 export abstract class Activation {
-    public static getActivation(name: ActivationType): Activation {
-        switch (name) {
+    public readonly type: ActivationType = ActivationType.NO_ACTIVATION;
+
+    public static getActivation(activationType: ActivationType): Activation {
+        switch (activationType) {
             case ActivationType.LogisticActivation:
                 return new LogisticActivation();
             case ActivationType.TanhActivation:
@@ -32,7 +34,7 @@ export abstract class Activation {
             case ActivationType.SELUActivation:
                 return new SELUActivation();
         }
-        throw new ReferenceError(name + " is not the name of any available activations! These are all available activations: " + ALL_ACTIVATIONS);
+        throw new ReferenceError(activationType + " is not the name of any available activations! These are all available activations: " + ALL_ACTIVATIONS);
     }
 
     public abstract calc(x: number, derivative: boolean): number;
@@ -228,6 +230,7 @@ export class SELUActivation implements Activation {
 }
 
 export enum ActivationType {
+    NO_ACTIVATION,
     LogisticActivation,
     TanhActivation,
     IdentityActivation,
