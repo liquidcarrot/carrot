@@ -24,15 +24,15 @@ export class Network {
         this.gates = [];
         this.score = undefined;
 
-        for (let i = 0; i < inputSize; i++) {
+        for (let i: number = 0; i < inputSize; i++) {
             this.nodes.push(new Node(NodeType.INPUT));
         }
-        for (let i = 0; i < outputSize; i++) {
+        for (let i: number = 0; i < outputSize; i++) {
             this.nodes.push(new Node(NodeType.OUTPUT));
         }
 
-        for (let i = 0; i < this.inputSize; i++) {
-            for (let j = this.inputSize; j < this.outputSize + this.inputSize; j++) {
+        for (let i: number = 0; i < this.inputSize; i++) {
+            for (let j: number = this.inputSize; j < this.outputSize + this.inputSize; j++) {
                 const weight: number = (Math.random() - 0.5) * this.inputSize * Math.sqrt(2 / this.inputSize);
                 this.connect(this.nodes[i], this.nodes[j], weight);
             }
@@ -48,7 +48,7 @@ export class Network {
         json.nodes.forEach(nodeJSON => network.nodes.push(Node.fromJSON(nodeJSON)));
 
         json.connections.forEach((jsonConnection) => {
-            const connection = network.connect(
+            const connection: Connection = network.connect(
                 network.nodes[jsonConnection.fromIndex],
                 network.nodes[jsonConnection.toIndex],
                 jsonConnection.weight
@@ -78,8 +78,8 @@ export class Network {
         // Determine offspring node size
         let offspringSize: number;
         if (equal || score1 === score2) {
-            const max = Math.max(network1.nodes.length, network2.nodes.length);
-            const min = Math.min(network1.nodes.length, network2.nodes.length);
+            const max: number = Math.max(network1.nodes.length, network2.nodes.length);
+            const min: number = Math.min(network1.nodes.length, network2.nodes.length);
             offspringSize = randInt(min, max + 1);
         } else if (score1 > score2) {
             offspringSize = network1.nodes.length;
@@ -87,8 +87,8 @@ export class Network {
             offspringSize = network2.nodes.length;
         }
 
-        const inputSize = network1.inputSize;
-        const outputSize = network1.outputSize;
+        const inputSize: number = network1.inputSize;
+        const outputSize: number = network1.outputSize;
 
         for (let i: number = 0; i < network1.nodes.length; i++) {
             network1.nodes[i].index = i;
@@ -105,9 +105,9 @@ export class Network {
 
             if (i < inputSize) {
                 chosenNodeType = NodeType.INPUT;
-                const sourceNetwork = randBoolean() ? network1 : network2;
-                let inputNumber = -1;
-                let j = -1;
+                const sourceNetwork: Network = randBoolean() ? network1 : network2;
+                let inputNumber: number = -1;
+                let j: number = -1;
                 while (inputNumber < i) {
                     j++;
                     if (j >= sourceNetwork.nodes.length) {
@@ -121,9 +121,9 @@ export class Network {
                 chosenNode = sourceNetwork.nodes[j];
             } else if (i < inputSize + outputSize) { // now select output nodes
                 chosenNodeType = NodeType.OUTPUT;
-                const sourceNetwork = randBoolean() ? network1 : network2;
-                let outputNumber = -1;
-                let j = -1;
+                const sourceNetwork: Network = randBoolean() ? network1 : network2;
+                let outputNumber: number = -1;
+                let j: number = -1;
                 while (outputNumber < i - inputSize) {
                     j++;
                     if (j >= sourceNetwork.nodes.length) {
@@ -136,7 +136,7 @@ export class Network {
                 chosenNode = sourceNetwork.nodes[j];
             } else {
                 chosenNodeType = NodeType.HIDDEN;
-                let sourceNetwork;
+                let sourceNetwork: Network;
                 if (i >= network1.nodes.length) {
                     sourceNetwork = network2;
                 } else if (i >= network2.nodes.length) {
@@ -147,7 +147,7 @@ export class Network {
                 chosenNode = pickRandom(sourceNetwork.nodes);
             }
 
-            const newNode = new Node(chosenNode.type);
+            const newNode: Node = new Node(chosenNode.type);
             newNode.bias = chosenNode.bias;
             newNode.squash = chosenNode.squash;
             offspring.nodes.push(newNode);
@@ -172,8 +172,7 @@ export class Network {
         const keys2: string[] = Object.keys(n2connections);
         for (let i: number = keys1.length - 1; i >= 0; i--) {
             if (n2connections[parseInt(keys1[i])] !== undefined) {
-                const connection = randBoolean() ? n1connections[parseInt(keys1[i])] : n2connections[parseInt(keys1[i])];
-                connections.push(connection);
+                connections.push(randBoolean() ? n1connections[parseInt(keys1[i])] : n2connections[parseInt(keys1[i])]);
 
                 n2connections[parseInt(keys1[i])] = undefined;
             } else if (score1 >= score2 || equal) {
@@ -217,7 +216,7 @@ export class Network {
         return connection;
     }
 
-    public activate(input: number[], dropoutRate: number | undefined = 0, trace: boolean | undefined = true) {
+    public activate(input: number[], dropoutRate: number | undefined = 0, trace: boolean | undefined = true): number[] {
         let inputNodeIndex: number = 0;
 
         for (const node of this.nodes) {
@@ -271,13 +270,13 @@ export class Network {
 
         let targetIndex: number = 0;
 
-        for (let i = 0; targetIndex < this.outputSize; i++) {
+        for (let i: number = 0; targetIndex < this.outputSize; i++) {
             if (this.nodes[i].type === NodeType.OUTPUT) {
                 this.nodes[i].propagate(target[targetIndex++], momentum, rate, update);
             }
         }
 
-        for (let i = this.nodes.length - 1; i >= 0; i--) {
+        for (let i: number = this.nodes.length - 1; i >= 0; i--) {
             if (this.nodes[i].type === NodeType.HIDDEN) {
                 this.nodes[i].propagate(undefined, rate, momentum, update);
             }
@@ -397,7 +396,7 @@ export class Network {
         this.mutate(pickRandom(allowedMethods), maxNodes, maxConnections, maxGates);
     }
 
-    public train(inputs: number[][], outputs: number[][], options: TrainOptions) {
+    public train(inputs: number[][], outputs: number[][], options: TrainOptions): { error: number, iterations: number, time: number } {
         if (inputs[0].length !== this.inputSize || outputs[0].length !== this.outputSize) {
             throw new Error(`Dataset input/output size should be same as network input/output size!`);
         } else if (inputs.length !== outputs.length) {
@@ -494,14 +493,14 @@ export class Network {
     }
 
     public trainEpoch(inputs: number[][], outputs: number[][], batchSize: number, trainingRate: number, momentum: number, loss: Loss, dropoutRate: number = 0.5): number {
-        let errorSum = 0;
-        for (let i = 0; i < inputs.length; i++) {
+        let errorSum: number = 0;
+        for (let i: number = 0; i < inputs.length; i++) {
             const input: number[] = inputs[i];
             const correctOutput: number[] = outputs[i];
 
             const update: boolean = (i + 1) % batchSize === 0 || i + 1 === inputs.length;
 
-            const output = this.activate(input, dropoutRate);
+            const output: number[] = this.activate(input, dropoutRate);
             this.propagate(trainingRate, momentum, update, correctOutput);
 
             errorSum += loss.calc(correctOutput, output);
@@ -513,9 +512,9 @@ export class Network {
         let error: number = 0;
 
         for (let i: number = 0; i < inputs.length; i++) {
-            const input = inputs[i];
-            const target = outputs[i];
-            const output = this.activate(input, undefined, false);
+            const input: number[] = inputs[i];
+            const target: number[] = outputs[i];
+            const output: number[] = this.activate(input, undefined, false);
             error += loss.calc(target, output);
         }
 
@@ -547,7 +546,7 @@ export class Network {
         return json;
     }
 
-    public async evolve(inputs: number[][], outputs: number[][], options: EvolveOptions) {
+    public async evolve(inputs: number[][], outputs: number[][], options: EvolveOptions): Promise<{ error: number, iterations: number, time: number }> {
         if (inputs[0].length !== this.inputSize || outputs[0].length !== this.outputSize) {
             throw new Error(`Dataset input/output size should be same as network input/output size!`);
         }
@@ -578,8 +577,8 @@ export class Network {
                 population = [population];
             }
             await Promise.all(population.map(async genome => {
-                let score = 0;
-                for (let i = 0; i < options.amount; i++) {
+                let score: number = 0;
+                for (let i: number = 0; i < options.amount; i++) {
                     score -= genome.test(inputs, outputs, options.loss);
                 }
 
