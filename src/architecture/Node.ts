@@ -17,15 +17,15 @@ export class Node {
     public bias: number;
     public squash: Activation;
     public index: number;
-    private activation: number;
-    private state: number;
-    private old: number;
-    private deltaBiasPrevious: number;
-    private deltaBiasTotal: number;
-    private errorResponsibility: number;
-    private errorProjected: number;
-    private errorGated: number;
-    private derivative: number;
+    public derivative: number | undefined;
+    public deltaBiasPrevious: number;
+    public deltaBiasTotal: number;
+    public activation: number;
+    public state: number;
+    public old: number;
+    public errorResponsibility: number;
+    public errorProjected: number;
+    public errorGated: number;
 
     constructor(type: NodeType = NodeType.HIDDEN) {
         this.type = type;
@@ -44,7 +44,6 @@ export class Node {
         this.errorResponsibility = 0;
         this.errorProjected = 0;
         this.errorGated = 0;
-        this.derivative = 0;
         this.index = NaN;
     }
 
@@ -84,20 +83,16 @@ export class Node {
 
     public isProjectedBy(node: Node): boolean {
         if (node === this) {
-
             return this.selfConnection.weight !== 0;
         } else {
-
             return anyMatch(this.incoming.map(conn => conn.from), node);
         }
     }
 
     public isProjectingTo(node: Node): boolean {
         if (node === this) {
-
             return this.selfConnection.weight !== 0;
         } else {
-
             return anyMatch(this.outgoing.map(conn => conn.to), node);
         }
     }
@@ -138,21 +133,22 @@ export class Node {
             return this.selfConnection;
         }
 
-        this.outgoing
-            .filter(conn => conn.to === node)
-            .forEach(connection => {
-                remove(this.outgoing, connection);
-                remove(connection.to.incoming, connection);
+        for (const connection of this.outgoing) {
+            if (connection.to !== node) {
+                continue;
+            }
+            remove(this.outgoing, connection);
+            remove(connection.to.incoming, connection);
 
-                if (connection.gateNode !== undefined && connection.gateNode != null) {
-                    connection.gateNode.removeGate(connection);
-                }
-                if (twoSided) {
-                    node.disconnect(this);
-                }
+            if (connection.gateNode !== undefined && connection.gateNode != null) {
+                connection.gateNode.removeGate(connection);
+            }
+            if (twoSided) {
+                node.disconnect(this);
+            }
 
-                return connection;
-            });
+            return connection;
+        }
         throw new Error("No connection found!");
     }
 
@@ -220,8 +216,8 @@ export class Node {
         };
     }
 
-    public activate(input: number | undefined, trace: boolean | true): number {
-        if (input !== undefined && Number.isFinite(input)) {
+    public activate(input: number | null = null, trace: boolean = true): number {
+        if (input !== null && Number.isFinite(input)) {
             return this.activation = input;
         }
 
