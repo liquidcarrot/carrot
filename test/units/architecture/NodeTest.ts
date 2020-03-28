@@ -264,7 +264,6 @@ describe("Node", function (): void {
             node.mutateActivation();
 
             expect(node.squash).to.not.equal(squash);
-            expect(node.squash).to.not.eql(squash);
             expect(node.bias).to.equal(bias);
             expect(node.bias).to.eql(bias);
         });
@@ -276,7 +275,6 @@ describe("Node", function (): void {
             node.mutateBias(new ModBiasMutation(-1, 1));
 
             expect(node.squash).to.equal(squash);
-            expect(node.squash).to.eql(squash);
             expect(node.bias).to.not.equal(bias);
             expect(node.bias).to.not.eql(bias);
         });
