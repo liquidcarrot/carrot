@@ -1,0 +1,19 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended"
+  ],
+  "jsRules": {},
+  "rules": {
+    "no-for-in-array": true,
+    "no-any": true,
+    "member-access": true,
+    "ban-ts-ignore": true,
+    "no-unnecessary-type-assertion": true,
+    "no-var-requires": true,
+    "typedef": true,
+    "no-unused-variable": true,
+    "semicolon": true
+  },
+  "rulesDirectory": []
+}
