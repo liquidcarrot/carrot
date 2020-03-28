@@ -11,7 +11,16 @@
     "ban-ts-ignore": true,
     "no-unnecessary-type-assertion": true,
     "no-var-requires": false,
-    "typedef": true,
+    "typedef": [
+      true,
+      "call-signature",
+      "parameter",
+      "property-declaration",
+      "variable-declaration",
+      "member-variable-declaration",
+      "object-destructuring",
+      "array-destructuring"
+    ],
     "no-unused-variable": true,
     "semicolon": true,
     "max-classes-per-file": false,
