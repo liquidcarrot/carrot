@@ -10,7 +10,7 @@
     "member-access": true,
     "ban-ts-ignore": true,
     "no-unnecessary-type-assertion": true,
-    "no-var-requires": true,
+    "no-var-requires": false,
     "typedef": true,
     "no-unused-variable": true,
     "semicolon": true,
@@ -19,7 +19,8 @@
     "no-console": false,
     "only-arrow-functions": false,
     "no-shadowed-variable": false,
-    "prefer-readonly": true
+    "prefer-readonly": true,
+    "no-unused-expression": false
   },
   "rulesDirectory": []
 }
