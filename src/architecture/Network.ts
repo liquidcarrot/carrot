@@ -12,7 +12,7 @@ import {
 } from "../methods/Mutation";
 import {Activation} from "../methods/Activation";
 import {Loss, MSELoss} from "../methods/Loss";
-import {FIXED, Rate} from "../methods/Rate";
+import {FixedRate, Rate} from "../methods/Rate";
 import {NEAT} from "../NEAT";
 import {Selection} from "../methods/Selection";
 
@@ -635,7 +635,7 @@ export class Network {
         options.dropout = getOrDefault(options.dropout, 0);
         options.momentum = getOrDefault(options.momentum, 0);
         options.batchSize = Math.min(inputs.length, getOrDefault(options.batchSize, 1));
-        options.ratePolicy = getOrDefault(options.ratePolicy, new FIXED(baseRate));
+        options.ratePolicy = getOrDefault(options.ratePolicy, new FixedRate(baseRate));
         options.log = getOrDefault(options.log, NaN);
 
         const targetError: number = options.error <= 0 ? -1 : options.error;

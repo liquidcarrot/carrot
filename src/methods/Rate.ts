@@ -5,19 +5,18 @@ export abstract class Rate {
         this.baseRate = baseRate;
     }
 
-
-    abstract calc(iteration: number): number;
+    public abstract calc(iteration: number): number;
 }
 
-export class FIXED extends Rate {
-    calc(iteration: number): number {
+export class FixedRate extends Rate {
+    public calc(iteration: number): number {
         return this.baseRate;
     }
 }
 
-export class STEP extends Rate {
-    private gamma: number;
-    private stepSize: number;
+export class StepRate extends Rate {
+    private readonly gamma: number;
+    private readonly stepSize: number;
 
     constructor(baseRate: number, gamma: number = 0.9, stepSize: number = 100) {
         super(baseRate);
@@ -25,27 +24,27 @@ export class STEP extends Rate {
         this.stepSize = stepSize;
     }
 
-    calc(iteration: number): number {
+    public calc(iteration: number): number {
         return this.baseRate * Math.pow(this.gamma, Math.floor(iteration / this.stepSize));
     }
 }
 
-export class EXP extends Rate {
-    private gamma: number;
+export class ExponentialRate extends Rate {
+    private readonly gamma: number;
 
     constructor(baseRate: number, gamma: number = 0.999) {
         super(baseRate);
         this.gamma = gamma;
     }
 
-    calc(iteration: number): number {
+    public calc(iteration: number): number {
         return this.baseRate * Math.pow(this.gamma, iteration);
     }
 }
 
-export class INV extends Rate {
-    private gamma: number;
-    private power: number;
+export class InverseRate extends Rate {
+    private readonly gamma: number;
+    private readonly power: number;
 
     constructor(baseRate: number, gamma: number = 0.001, power: number = 2) {
         super(baseRate);
@@ -53,7 +52,7 @@ export class INV extends Rate {
         this.power = power;
     }
 
-    calc(iteration: number): number {
+    public calc(iteration: number): number {
         return this.baseRate * Math.pow(1 + this.gamma * iteration, -this.power);
     }
 }
