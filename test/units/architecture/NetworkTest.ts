@@ -222,14 +222,15 @@ describe('Network', () => {
             expect(trainReturn.error).to.be.a('number');
             expect(trainReturn.iterations).to.be.a('number');
             expect(trainReturn.time).to.be.a('number');
-            expect(final).to.be.at.most(initial / 4);
+            expect(final).to.be.at.most(initial / 3);
         });
     });
 
     describe('network.evolve()', () => {
         // similar to network.train, with the difference that this dataset requires
         // evolving the network to be solvable
-        it('network.evolve(dataset) => {{error:{number},iterations:{number},time:{number}}}', async () => {
+        it('network.evolve(dataset) => {{error:{number},iterations:{number},time:{number}}}', async function (): Promise<void> {
+            this.timeout(30000);
             const network: Network = new Network(2, 1);
             for (let i: number = 0; i < 10; i++) {
                 network.mutate(new AddNodeMutation());
