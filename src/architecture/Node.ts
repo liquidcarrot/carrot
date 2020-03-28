@@ -1,5 +1,5 @@
 import {ModBiasMutation} from "../methods/Mutation";
-import {Activation, ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
+import {Activation, ActivationType, ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
 import {Connection} from "./Connection";
 import {anyMatch, pickRandom, randDouble, remove} from "../methods/Utils";
 
@@ -303,7 +303,7 @@ export class Node {
         return {
             bias: this.bias,
             type: this.type,
-            squash: this.squash.constructor.name,
+            squash: this.squash.type,
             mask: this.mask,
             index: this.index
         };
@@ -313,7 +313,7 @@ export class Node {
 export interface NodeJSON {
     bias: number;
     type: number;
-    squash: string;
+    squash: ActivationType;
     mask: number;
     index: number;
 }
