@@ -6,10 +6,10 @@ export class DenseLayer extends Layer {
         super(inputSize, outputSize);
 
 
-        for (let i = 0; i < inputSize; i++) {
+        for (let i: number = 0; i < inputSize; i++) {
             this.nodes.push(new Node(NodeType.INPUT));
         }
-        for (let i = 0; i < outputSize; i++) {
+        for (let i: number = 0; i < outputSize; i++) {
             this.nodes.push(new Node(NodeType.INPUT));
         }
 
