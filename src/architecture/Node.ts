@@ -78,7 +78,11 @@ export class Node {
     }
 
     public mutateActivation(): void {
-        this.squash = Activation.getActivation(pickRandom(ALL_ACTIVATIONS));
+        let newActivationType: ActivationType;
+        do {
+            newActivationType = pickRandom(ALL_ACTIVATIONS);
+        } while (newActivationType === this.squash.type);
+        this.squash = Activation.getActivation(newActivationType);
     }
 
     public isProjectedBy(node: Node): boolean {
