@@ -9,7 +9,7 @@
  *
  * @namespace
  */
-const crossover = {
+export enum CrossoverType {
   /**
    * @constant
    * @type {object}
@@ -19,10 +19,7 @@ const crossover = {
    * @example
    * let example = "TODO"
    */
-  SINGLE_POINT: {
-    name: 'SINGLE_POINT',
-    config: [0.4],
-  },
+  SINGLE_POINT,
   /**
    * @constant
    * @type {object}
@@ -32,10 +29,7 @@ const crossover = {
    * @example
    * let example = "TODO"
    */
-  TWO_POINT: {
-    name: 'TWO_POINT',
-    config: [0.4, 0.9],
-  },
+  TWO_POINT,
   /**
    * @constant
    * @type {object}
@@ -45,9 +39,7 @@ const crossover = {
    * @example
    * let example = "TODO"
    */
-  UNIFORM: {
-    name: 'UNIFORM',
-  },
+  UNIFORM,
   /**
    * @constant
    * @type {object}
@@ -57,9 +49,5 @@ const crossover = {
    * @example
    * let example = "TODO"
    */
-  AVERAGE: {
-    name: 'AVERAGE',
-  },
-};
-
-module.exports = crossover;
+  AVERAGE
+}
