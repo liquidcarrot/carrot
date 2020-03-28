@@ -233,15 +233,11 @@ export class SwapNodesMutation extends Mutation {
     }
 
     public mutate(genome: Network): void {
-        if (this.mutateOutput && genome.nodes.length - genome.inputSize < 3
-            || genome.nodes.length - genome.inputSize - genome.outputSize < 3) {
-            return;
-        }
-
         const possible: Node[] = this.mutateOutput
-            ? genome.nodes.filter(node => node.type !== NodeType.INPUT)
-            : genome.nodes.filter(node => node.type === NodeType.HIDDEN);
-        if (possible.length > 0) {
+            ? genome.nodes.filter(node => node !== undefined && node.type !== NodeType.INPUT)
+            : genome.nodes.filter(node => node !== undefined && node.type === NodeType.HIDDEN);
+
+        if (possible.length >= 2) {
             const node1: Node = pickRandom(possible);
             const node2: Node = pickRandom(possible.filter(node => node !== node1));
 
