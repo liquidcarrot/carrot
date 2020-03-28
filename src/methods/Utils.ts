@@ -36,3 +36,23 @@ export function remove<T>(arr: T[], elem: T): boolean {
 export function getOrDefault<T>(value: T | undefined | null, defaultValue: T): T {
     return value !== undefined && value !== null ? value : defaultValue;
 }
+
+export function shuffle<T>(array: T[]): T[] {
+    let counter: number = array.length;
+
+    // While there are elements in the array
+    while (counter > 0) {
+        // Pick a random index
+        const index: number = randInt(0, counter);
+
+        // Decrease counter by 1
+        counter--;
+
+        // And swap the last element with it
+        const temp: T = array[counter];
+        array[counter] = array[index];
+        array[index] = temp;
+    }
+
+    return array;
+}
