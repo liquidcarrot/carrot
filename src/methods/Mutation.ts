@@ -55,9 +55,10 @@ export class SubNodeMutation extends Mutation {
     }
 
     public mutate(genome: Network): void {
-        const possible: Node[] = genome.nodes.filter(node => node.type === NodeType.HIDDEN);
+        const possible: Node[] = genome.nodes.filter(node => node !== undefined && node.type === NodeType.HIDDEN);
         if (possible.length > 0) {
-            genome.removeNode(pickRandom(possible));
+            const node: Node = pickRandom(possible);
+            genome.removeNode(node);
         }
     }
 }
@@ -89,7 +90,7 @@ export class AddConnectionMutation extends Mutation {
 export class SubConnectionMutation extends Mutation {
     public mutate(genome: Network): void {
         const possible: Connection[] = genome.connections.filter(conn => conn.from.outgoing.length > 1 && conn.to.incoming.length > 1 && genome.nodes.indexOf(conn.to) > genome.nodes.indexOf(conn.from));
-        if (possible) {
+        if (possible.length > 0) {
             const randomConnection: Connection = pickRandom(possible);
             genome.disconnect(randomConnection.from, randomConnection.to);
         }
