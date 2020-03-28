@@ -2,13 +2,13 @@ import {Node} from "./node";
 import {randDouble} from "../methods/Utils";
 
 export class Connection {
-    public elegibility: number;
+    public eligibility: number;
     public gain: number;
     public weight: number;
     public from: Node;
     public to: Node;
-    public xtraceNodes: Node[];
-    public xtraceValues: number[];
+    public xTraceNodes: Node[];
+    public xTraceValues: number[];
     public gateNode: Node | null;
     public deltaWeightsTotal: number;
     public deltaWeightsPrevious: number;
@@ -18,11 +18,11 @@ export class Connection {
         this.to = to;
         this.weight = weight;
         this.gain = 1;
-        this.elegibility = 0;
+        this.eligibility = 0;
         this.deltaWeightsPrevious = 0;
         this.deltaWeightsTotal = 0;
-        this.xtraceNodes = [];
-        this.xtraceValues = [];
+        this.xTraceNodes = [];
+        this.xTraceValues = [];
 
         if (gateNode) {
             this.gateNode = gateNode;

@@ -61,9 +61,9 @@ export class Node {
 
     public clear(): void {
         for (const connection of this.incoming) {
-            connection.elegibility = 0;
-            connection.xtraceNodes = [];
-            connection.xtraceValues = [];
+            connection.eligibility = 0;
+            connection.xTraceNodes = [];
+            connection.xTraceValues = [];
         }
 
         for (const connection of this.gated) {
@@ -189,10 +189,10 @@ export class Node {
 
 
         for (const connection of this.incoming) {
-            let gradient: number = this.errorProjected * connection.elegibility;
-            for (let j = 0; j < connection.xtraceNodes.length; j++) {
-                const node: Node = connection.xtraceNodes[j];
-                gradient += node.errorResponsibility * connection.xtraceValues[j];
+            let gradient: number = this.errorProjected * connection.eligibility;
+            for (let j = 0; j < connection.xTraceNodes.length; j++) {
+                const node: Node = connection.xTraceNodes[j];
+                gradient += node.errorResponsibility * connection.xTraceValues[j];
             }
 
 
@@ -263,17 +263,17 @@ export class Node {
 
 
             for (const connection of this.incoming) {
-                connection.elegibility = this.selfConnection.gain * this.selfConnection.weight * connection.elegibility + connection.from.activation * connection.gain;
+                connection.eligibility = this.selfConnection.gain * this.selfConnection.weight * connection.eligibility + connection.from.activation * connection.gain;
 
                 for (let j = 0; j < nodes.length; j++) {
                     const [node, influence] = [nodes[j], influences[j]];
 
-                    const index = connection.xtraceNodes.indexOf(node);
+                    const index = connection.xTraceNodes.indexOf(node);
 
-                    if (index > -1) connection.xtraceValues[index] = node.selfConnection.gain * node.selfConnection.weight * connection.xtraceValues[index] + this.derivative * connection.elegibility * influence;
+                    if (index > -1) connection.xTraceValues[index] = node.selfConnection.gain * node.selfConnection.weight * connection.xTraceValues[index] + this.derivative * connection.eligibility * influence;
                     else {
-                        connection.xtraceNodes.push(node);
-                        connection.xtraceValues.push(this.derivative * connection.elegibility * influence);
+                        connection.xTraceNodes.push(node);
+                        connection.xTraceValues.push(this.derivative * connection.eligibility * influence);
                     }
                 }
             }
