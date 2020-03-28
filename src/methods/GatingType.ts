@@ -5,7 +5,7 @@
  * NOT YET IMPLEMENTED
  * @namespace
  */
-export enum Gating {
+export enum GatingType {
     /**
      * @constant
      * @type {object}
