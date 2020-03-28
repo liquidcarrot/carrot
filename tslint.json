@@ -18,7 +18,8 @@
     "radix": false,
     "no-console": false,
     "only-arrow-functions": false,
-    "no-shadowed-variable": false
+    "no-shadowed-variable": false,
+    "prefer-readonly": true
   },
   "rulesDirectory": []
 }

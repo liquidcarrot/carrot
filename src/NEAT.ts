@@ -1,6 +1,6 @@
 import {EvolveOptions, Network} from "./architecture/Network";
 import {getOrDefault, pickRandom} from "./methods/Utils";
-import {Loss, MSE} from "./methods/Loss";
+import {Loss, MSELoss} from "./methods/Loss";
 import {PowerSelection, Selection, TournamentSelection} from "./methods/Selection";
 import {ADD_CONN, ADD_GATE, ADD_NODE, FFW, Mutation} from "./methods/Mutation";
 
@@ -41,7 +41,7 @@ export class NEAT {
         this.clear = getOrDefault(options.clear, false);
         this.populationSize = getOrDefault(options.populationSize, 50);
         this.growth = getOrDefault(options.growth, 0.0001);
-        this.loss = getOrDefault(options.loss, new MSE());
+        this.loss = getOrDefault(options.loss, new MSELoss());
         this.amount = getOrDefault(options.amount, 1);
         this.elitism = getOrDefault(options.elitism, 1);
         this.provenance = getOrDefault(options.provenance, 0);

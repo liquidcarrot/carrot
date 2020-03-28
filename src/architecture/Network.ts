@@ -3,7 +3,7 @@ import {Node, NodeJSON, NodeType} from "./Node";
 import {anyMatch, getOrDefault, pickRandom, randBoolean, randDouble, randInt, remove} from "../methods/Utils";
 import {ADD_NODE, ALL_MUTATIONS, MOD_ACTIVATION, MOD_WEIGHT, Mutation, SUB_NODE, SWAP_NODES} from "../methods/Mutation";
 import {Activation} from "../methods/Activation";
-import {Loss, MSE} from "../methods/Loss";
+import {Loss, MSELoss} from "../methods/Loss";
 import {FIXED, Rate} from "../methods/Rate";
 import {NEAT} from "../NEAT";
 import {Selection} from "../methods/Selection";
@@ -622,7 +622,7 @@ export class Network {
 
         options.iterations = getOrDefault(options.iterations, 100);
         options.error = getOrDefault(options.error, 0.05);
-        options.loss = getOrDefault(options.loss, new MSE());
+        options.loss = getOrDefault(options.loss, new MSELoss());
         const baseRate: number = getOrDefault(options.rate, 0.3);
         options.dropout = getOrDefault(options.dropout, 0);
         options.momentum = getOrDefault(options.momentum, 0);
@@ -725,7 +725,7 @@ export class Network {
         return errorSum / inputs.length;
     }
 
-    public test(inputs: number[][], outputs: number[][], loss: Loss = new MSE()): number {
+    public test(inputs: number[][], outputs: number[][], loss: Loss = new MSELoss()): number {
         let error: number = 0;
 
         for (let i: number = 0; i < inputs.length; i++) {
@@ -780,7 +780,7 @@ export class Network {
         }
 
         options.growth = getOrDefault(options.growth, 0.0001);
-        options.loss = getOrDefault(options.loss, new MSE());
+        options.loss = getOrDefault(options.loss, new MSELoss());
         options.amount = getOrDefault(options.amount, 1);
         options.fitnessPopulation = getOrDefault(options.fitnessPopulation, false);
         options.maxNodes = getOrDefault(options.maxNodes, Infinity);
