@@ -29,7 +29,8 @@
     "only-arrow-functions": false,
     "no-shadowed-variable": false,
     "prefer-readonly": true,
-    "no-unused-expression": false
+    "no-unused-expression": false,
+    "no-trailing-whitespace": false
   },
   "rulesDirectory": []
 }
