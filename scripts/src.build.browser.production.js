@@ -6,9 +6,9 @@ const entry = path.resolve(__dirname, '../build/src/index.js');
 
 // Parcel.js - Browser Production Options
 const options = {
-    outDir: path.resolve(__dirname, '../dist/dev'),
-    outFile: path.resolve(__dirname, '../dist/dev/index.browser.min.js'),
-    minify: false,
+    outDir: path.resolve(__dirname, '../dist/production'),
+    outFile: path.resolve(__dirname, '../dist/production/index.browser.min.js'),
+    minify: true,
     target: 'browser',
     bundleNodeModules: true,
     global: 'carrot',
