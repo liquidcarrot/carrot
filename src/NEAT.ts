@@ -164,7 +164,7 @@ export class NEAT {
         const parent2: Network | null = this.selection.select(this.population);
 
         if (parent1 === null || parent2 === null) {
-            throw new Error("Should not be null!");
+            throw new ReferenceError("Should not be null!");
         }
 
         return Network.crossOver(parent1, parent2, this.equal);
