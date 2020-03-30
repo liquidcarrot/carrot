@@ -13,7 +13,6 @@
   "scripts": {
     "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | coveralls && rm -rf ./src-cov",
     "build:src": "node scripts/src.build.node.js && node scripts/src.build.browser.js && node scripts/src.build.browser.production.js && node scripts/src.build.node.production.js",
-    "build:src:webpack": "./node_modules/.bin/webpack",
     "deploy:docs": "node theme/deploy-docs.js",
     "test": "./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha build/test/units/architecture/NodeTest.js --exclude test/unit.js",
     "lint": "./node_modules/.bin/eslint --ignore-path .eslintignore .",
@@ -79,28 +78,24 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chalk": "^2.4.2",
-    "concurrently": "^5.0.0",
-    "copy-webpack-plugin": "^5.0.4",
     "coveralls": "^3.0.6",
     "eslint": "^6.6.0",
     "eslint-config-google": "^0.14.0",
     "mocha": "^6.2.0",
     "nodemon": "^1.19.2",
     "nyc": "^14.1.1",
-    "parallel-webpack": "^2.4.0",
     "parcel-bundler": "^1.12.4",
     "tslint": "^6.1.0",
-    "typescript": "^3.8.3",
-    "webpack": "^4.41.0"
+    "typescript": "^3.8.3"
   },
   "nyc": {
     "include": [
-      "src/architecture/*.js",
-      "src/neat.js"
+      "build/src/architecture/*.js",
+      "build/src/methods/*.js",
+      "build/src/NEAT.js"
     ],
     "exclude": [
-      "test",
-      "util"
+      "test"
     ]
   }
 }
