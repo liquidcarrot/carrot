@@ -150,7 +150,7 @@ export class Network {
                 chosenNode = pickRandom(sourceNetwork.nodes);
             }
 
-            const newNode: Node = new Node(chosenNode.type);
+            const newNode: Node = new Node(chosenNodeType);
             newNode.bias = chosenNode.bias;
             newNode.squash = chosenNode.squash;
             offspring.nodes.push(newNode);
@@ -441,7 +441,7 @@ export class Network {
         while (error > targetError && (options.iterations <= 0 || iterationCount < options.iterations)) {
             iterationCount++;
 
-            currentTrainingRate = (options.ratePolicy as Rate).calc(iterationCount);
+            currentTrainingRate = options.ratePolicy.calc(iterationCount);
 
             const trainError: number = this.trainEpoch(
                 trainingSet,

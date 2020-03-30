@@ -1,7 +1,7 @@
 import {Layer} from "./layer/Layer";
 
 export class Architect {
-    private layers: Layer[];
+    private readonly layers: Layer[];
 
     constructor() {
         this.layers = [];

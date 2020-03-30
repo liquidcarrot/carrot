@@ -1,6 +1,5 @@
 import {EvolveOptions, Network} from "./architecture/Network";
 import {getOrDefault, pickRandom} from "./methods/Utils";
-import {Loss, MSELoss} from "./methods/Loss";
 import {PowerSelection, Selection} from "./methods/Selection";
 import {
     AddConnectionMutation,
@@ -17,16 +16,13 @@ export class NEAT {
     private readonly equal: boolean;
     private readonly clear: boolean;
     private readonly populationSize: number;
-    private growth: number;
-    private loss: Loss;
-    private amount: number;
     private readonly elitism: number;
     private readonly provenance: number;
-    private mutationRate: number;
+    private readonly mutationRate: number;
     private readonly mutationAmount: number;
     private readonly fitnessPopulation: boolean;
     private readonly fitnessFunction: ((dataset: { input: number[]; output: number[] }[], population: (Network[] | Network)) => Promise<void>) | undefined;
-    private selection: Selection;
+    private readonly selection: Selection;
     private readonly mutations: Mutation[];
     private readonly template: Network;
     private readonly maxNodes: number;
@@ -44,9 +40,6 @@ export class NEAT {
         this.equal = getOrDefault(options.equal, true);
         this.clear = getOrDefault(options.clear, false);
         this.populationSize = getOrDefault(options.populationSize, 50);
-        this.growth = getOrDefault(options.growth, 0.0001);
-        this.loss = getOrDefault(options.loss, new MSELoss());
-        this.amount = getOrDefault(options.amount, 1);
         this.elitism = getOrDefault(options.elitism, 1);
         this.provenance = getOrDefault(options.provenance, 0);
         this.mutationRate = getOrDefault(options.mutationRate, 0.4);
