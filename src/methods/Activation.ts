@@ -1,4 +1,4 @@
-export abstract class Activation {
+abstract class Activation {
     public readonly type: ActivationType = ActivationType.NO_ACTIVATION;
 
     public static getActivation(activationType: ActivationType): Activation {

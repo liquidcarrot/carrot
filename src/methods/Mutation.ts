@@ -3,7 +3,7 @@ import {Node, NodeType} from "../architecture/Node";
 import {pickRandom, randBoolean, randDouble} from "./Utils";
 import {Activation} from "./Activation";
 
-export abstract class Mutation {
+abstract class Mutation {
     public abstract mutate(genome: Network, max: number | undefined): void;
 }
 

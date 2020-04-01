@@ -1,4 +1,4 @@
-export abstract class Loss {
+abstract class Loss {
     public abstract calc(targets: number[], outputs: number[]): number;
 }
 
