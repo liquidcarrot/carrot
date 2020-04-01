@@ -5,7 +5,7 @@ import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
 import {Loss, MSELoss} from "../methods/Loss";
 import {FixedRate, Rate} from "../methods/Rate";
 import {NEAT} from "../NEAT";
-import {Selection} from "..";
+import {Selection} from "../methods/Selection";
 
 export class Network {
     public inputSize: number;
