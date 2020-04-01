@@ -10,11 +10,11 @@ import {Architect} from "./architecture/Architect";
 import {Connection} from "./architecture/Connection";
 import {Network} from "./architecture/Network";
 import {Node} from "./architecture/node";
-import {Activation} from "./methods/Activation";
-import {Loss} from "./methods/Loss";
-import {Mutation} from "./methods/Mutation";
-import {Rate} from "./methods/Rate";
-import {Selection} from "./methods/Selection";
+import * as Activation from "./methods/Activation";
+import * as Loss from "./methods/Loss";
+import * as Mutation from "./methods/Mutation";
+import * as Rate from "./methods/Rate";
+import * as Selection from "./methods/Selection";
 import {NEAT} from "./NEAT";
 
 export {
