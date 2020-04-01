@@ -276,6 +276,7 @@ describe('Network', () => {
 
             const results: { error: number; iterations: number; time: number } = await network.evolve(set, options);
 
+            expect(isNaN(results.error)).to.be.false;
             expect(results.error).to.be.below(error);
         }
 
