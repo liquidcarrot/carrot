@@ -83,3 +83,14 @@ export class HINGELoss extends Loss {
         return error / outputs.length;
     }
 }
+
+export const ALL_LOSSES: Loss[] = [
+    new CrossEntropyLoss(),
+    new MSELoss(),
+    new BinaryLoss(),
+    new MAELoss(),
+    new MAPELoss(),
+    new WAPELoss(),
+    new MSLELoss(),
+    new HINGELoss()
+];
