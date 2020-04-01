@@ -1,7 +1,7 @@
 import {Network} from "..";
 import {pickRandom, randDouble} from "./Utils";
 
-abstract class Selection {
+export abstract class Selection {
     public abstract select(population: Network[]): Network;
 }
 

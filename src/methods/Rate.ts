@@ -1,4 +1,4 @@
-abstract class Rate {
+export abstract class Rate {
     protected baseRate: number;
 
     constructor(baseRate: number) {
