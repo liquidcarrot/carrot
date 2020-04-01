@@ -3,10 +3,6 @@ import {Activation, ActivationType, ALL_ACTIVATIONS, LogisticActivation} from ".
 import {Connection} from "./Connection";
 import {anyMatch, pickRandom, randDouble, remove} from "../methods/Utils";
 
-export enum NodeType {
-    INPUT, HIDDEN, OUTPUT
-}
-
 export class Node {
     public type: NodeType;
     public mask: number;
@@ -282,7 +278,7 @@ export class Node {
 
             return this.activation;
         } else {
-            if (this.type === NodeType.INPUT) return this.activation = 0;
+            if (this.isInputNode()) return this.activation = 0;
 
             this.state = this.selfConnection.gain * this.selfConnection.weight * this.state + this.bias;
 
@@ -311,6 +307,18 @@ export class Node {
             index: this.index
         };
     }
+
+    public isInputNode() {
+        return this.type === NodeType.INPUT;
+    }
+
+    public isHiddenNode() {
+        return this.type === NodeType.HIDDEN;
+    }
+
+    public isOutputNode() {
+        return this.type === NodeType.OUTPUT;
+    }
 }
 
 export interface NodeJSON {
@@ -319,4 +327,8 @@ export interface NodeJSON {
     squash: ActivationType;
     mask: number;
     index: number;
+}
+
+export enum NodeType {
+    INPUT, HIDDEN, OUTPUT
 }

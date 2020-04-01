@@ -45,10 +45,7 @@ export class Network {
         network.nodes = [];
         network.connections = [];
 
-        json.nodes.forEach(nodeJSON => {
-            const node: Node = Node.fromJSON(nodeJSON);
-            network.nodes[node.index] = node;
-        });
+        json.nodes.map(nodeJSON => Node.fromJSON(nodeJSON)).forEach(node => network.nodes[node.index] = node);
 
         json.connections.forEach((jsonConnection) => {
             const connection: Connection = network.connect(
@@ -117,7 +114,7 @@ export class Network {
                         // something is wrong...
                         throw RangeError('something is wrong with the size of the input');
                     }
-                    if (sourceNetwork.nodes[j].type === NodeType.INPUT) {
+                    if (sourceNetwork.nodes[j].isInputNode()) {
                         inputNumber++;
                     }
                 }
@@ -132,7 +129,7 @@ export class Network {
                     if (j >= sourceNetwork.nodes.length) {
                         throw RangeError('something is wrong with the size of the output');
                     }
-                    if (sourceNetwork.nodes[j].type === NodeType.OUTPUT) {
+                    if (sourceNetwork.nodes[j].isOutputNode()) {
                         outputNumber++;
                     }
                 }
@@ -226,7 +223,7 @@ export class Network {
             if (inputNodeIndex === this.inputSize) {
                 break;
             }
-            if (node.type !== NodeType.INPUT) {
+            if (!node.isInputNode()) {
                 continue;
             }
 
@@ -238,7 +235,7 @@ export class Network {
 
 
         this.nodes
-            .filter(node => node.type === NodeType.HIDDEN)
+            .filter(node => node.isHiddenNode())
             .forEach(node => {
                 if (dropoutRate) {
                     node.mask = Math.random() >= dropoutRate ? 1 : 0;
@@ -252,7 +249,7 @@ export class Network {
             if (output.length === this.outputSize) {
                 break;
             }
-            if (node.type !== NodeType.OUTPUT) {
+            if (!node.isOutputNode()) {
                 continue;
             }
 
@@ -274,19 +271,19 @@ export class Network {
         let targetIndex: number = 0;
 
         for (let i: number = 0; targetIndex < this.outputSize; i++) {
-            if (this.nodes[i].type === NodeType.OUTPUT) {
+            if (this.nodes[i].isOutputNode()) {
                 this.nodes[i].propagate(target[targetIndex++], momentum, rate, update);
             }
         }
 
         for (let i: number = this.nodes.length - 1; i >= 0; i--) {
-            if (this.nodes[i].type === NodeType.HIDDEN) {
+            if (this.nodes[i].isHiddenNode()) {
                 this.nodes[i].propagate(undefined, rate, momentum, update);
             }
         }
 
         this.nodes
-            .filter(node => node.type === NodeType.INPUT)
+            .filter(node => node.isInputNode())
             .forEach(node => {
                 node.propagate(undefined, rate, momentum, update);
             });

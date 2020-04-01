@@ -1,7 +1,6 @@
-import {Network} from "../architecture/Network";
+import {Connection, Network} from "..";
 import {Node, NodeType} from "../architecture/Node";
 import {pickRandom, randBoolean, randDouble} from "./Utils";
-import {Connection} from "../architecture/Connection";
 import {Activation} from "./Activation";
 
 export abstract class Mutation {
@@ -55,7 +54,7 @@ export class SubNodeMutation extends Mutation {
     }
 
     public mutate(genome: Network): void {
-        const possible: Node[] = genome.nodes.filter(node => node !== undefined && node.type === NodeType.HIDDEN);
+        const possible: Node[] = genome.nodes.filter(node => node !== undefined && node.isHiddenNode());
         if (possible.length > 0) {
             const node: Node = pickRandom(possible);
             genome.removeNode(node);
@@ -123,7 +122,7 @@ export class ModBiasMutation extends Mutation {
     }
 
     public mutate(genome: Network): void {
-        pickRandom(genome.nodes.filter(node => node.type !== NodeType.INPUT))
+        pickRandom(genome.nodes.filter(node => !node.isInputNode()))
             .mutateBias(this);
     }
 }
@@ -138,8 +137,8 @@ export class ModActivationMutation extends Mutation {
 
     public mutate(genome: Network, max: number | undefined): void {
         const possible: Node[] = this.mutateOutput
-            ? genome.nodes.filter(node => node.type !== NodeType.INPUT)
-            : genome.nodes.filter(node => node.type === NodeType.HIDDEN);
+            ? genome.nodes.filter(node => !node.isInputNode())
+            : genome.nodes.filter(node => node.isHiddenNode());
         if (possible.length > 0) {
             pickRandom(possible).mutateActivation();
         }
@@ -149,7 +148,7 @@ export class ModActivationMutation extends Mutation {
 export class AddSelfConnectionMutation extends Mutation {
     public mutate(genome: Network): void {
         const possible: Node[] = genome.nodes
-            .filter(node => node.type !== NodeType.INPUT)
+            .filter(node => !node.isInputNode())
             .filter(node => node.selfConnection.weight === 0);
         if (possible) {
             const node: Node = pickRandom(possible);
@@ -176,7 +175,7 @@ export class AddGateMutation extends Mutation {
 
         const possible: Connection[] = genome.connections.filter(conn => conn.gateNode === null);
         if (possible.length > 0) {
-            const node: Node = pickRandom(genome.nodes.filter(node => node.type !== NodeType.INPUT));
+            const node: Node = pickRandom(genome.nodes.filter(node => !node.isInputNode()));
             const connection: Connection = pickRandom(possible);
 
             genome.addGate(node, connection);
@@ -234,8 +233,8 @@ export class SwapNodesMutation extends Mutation {
 
     public mutate(genome: Network): void {
         const possible: Node[] = this.mutateOutput
-            ? genome.nodes.filter(node => node !== undefined && node.type !== NodeType.INPUT)
-            : genome.nodes.filter(node => node !== undefined && node.type === NodeType.HIDDEN);
+            ? genome.nodes.filter(node => node !== undefined && !node.isInputNode())
+            : genome.nodes.filter(node => node !== undefined && node.isHiddenNode());
 
         if (possible.length >= 2) {
             const node1: Node = pickRandom(possible);

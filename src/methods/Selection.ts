@@ -1,4 +1,4 @@
-import {Network} from "../architecture/Network";
+import {Network} from "..";
 import {pickRandom, randDouble} from "./Utils";
 
 export abstract class Selection {
@@ -9,12 +9,11 @@ export class FitnessProportionateSelection extends Selection {
     public select(population: Network[]): Network {
         let totalFitness: number = 0;
         let minimalFitness: number = 0;
-        population
-            .map(genome => genome.score)
-            .forEach(score => {
-                minimalFitness = score !== undefined && score < minimalFitness ? score : minimalFitness;
-                totalFitness += score ?? 0;
-            });
+        for (const genome of population) {
+            const score = genome.score;
+            minimalFitness = score !== undefined && score < minimalFitness ? score : minimalFitness;
+            totalFitness += score ?? 0;
+        }
 
         minimalFitness = Math.abs(minimalFitness);
         totalFitness += minimalFitness * population.length;

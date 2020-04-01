@@ -14,10 +14,10 @@ export class DenseLayer extends Layer {
         }
 
         this.nodes
-            .filter(node => node.type === NodeType.INPUT)
+            .filter(node => node.isInputNode())
             .forEach(inputNode => {
                 this.nodes
-                    .filter(node => node.type === NodeType.OUTPUT)
+                    .filter(node => node.isOutputNode())
                     .forEach(outputNode => {
                         this.connections.push(inputNode.connect(outputNode, 1));
                     });
