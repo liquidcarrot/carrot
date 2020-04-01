@@ -10,7 +10,7 @@ export class FitnessProportionateSelection extends Selection {
         let totalFitness: number = 0;
         let minimalFitness: number = 0;
         for (const genome of population) {
-            const score = genome.score;
+            const score: number | undefined = genome.score;
             minimalFitness = score !== undefined && score < minimalFitness ? score : minimalFitness;
             totalFitness += score ?? 0;
         }
