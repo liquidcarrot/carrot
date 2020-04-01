@@ -150,7 +150,7 @@ export class AddSelfConnectionMutation extends Mutation {
         const possible: Node[] = genome.nodes
             .filter(node => !node.isInputNode())
             .filter(node => node.selfConnection.weight === 0);
-        if (possible) {
+        if (possible.length > 0) {
             const node: Node = pickRandom(possible);
             genome.connect(node, node);
         }
