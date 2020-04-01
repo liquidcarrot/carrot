@@ -1,5 +1,5 @@
 import {EvolveOptions, Network} from "../../../src/architecture/Network";
-import {Node} from "../../../src/architecture/Node";
+import {Connection, Node} from "../../../src";
 import {anyMatch, randDouble, randInt} from "../../../src/methods/Utils";
 import {
     AddConnectionMutation,
@@ -8,8 +8,7 @@ import {
     ALL_MUTATIONS,
     SubGateMutation
 } from "../../../src/methods/Mutation";
-import {assert, expect} from "chai";
-import {Connection} from "../../../src/architecture/Connection";
+import {expect} from "chai";
 
 describe('Network', () => {
     function createTestNetwork(): Network {
@@ -277,7 +276,7 @@ describe('Network', () => {
 
             const results: { error: number; iterations: number; time: number } = await network.evolve(set, options);
 
-            assert.isBelow(results.error, error);
+            expect(results.error).to.be.below(error);
         }
 
         it('AND gate', function (): void {
@@ -288,7 +287,7 @@ describe('Network', () => {
                 {input: [1, 1], output: [1]}
             ], 1000, 0.002);
         });
-        it.skip('XOR gate', () => {
+        it('XOR gate', () => {
             evolveSet([
                 {input: [0, 0], output: [0]},
                 {input: [0, 1], output: [1]},
@@ -321,7 +320,7 @@ describe('Network', () => {
         it('SIN function', function (): void {
             const set: { input: number[], output: number[] }[] = [];
 
-            while (set.length < 100) {
+            for (let i: number = 0; i < 100; i++) {
                 const inputValue: number = randDouble(0, Math.PI * 2);
                 set.push({
                     input: [inputValue / (Math.PI * 2)],
@@ -344,10 +343,10 @@ describe('Network', () => {
 
             evolveSet(set, 500, 0.05);
         });
-        it.skip('SIN + COS', () => {
+        it('SIN + COS', () => {
             const set: { input: number[], output: number[] }[] = [];
 
-            while (set.length < 100) {
+            for (let i: number = 0; i < 100; i++) {
                 const inputValue: number = randDouble(0, Math.PI * 2);
                 set.push({
                     input: [inputValue / (Math.PI * 2)],
@@ -361,7 +360,7 @@ describe('Network', () => {
             evolveSet(set, 1000, 0.05);
         });
 
-        it.skip('SHIFT', () => {
+        it('SHIFT', () => {
             const set: { input: number[], output: number[] }[] = [];
 
             for (let i: number = 0; i < 1000; i++) {
