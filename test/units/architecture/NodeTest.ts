@@ -1,5 +1,5 @@
 import {Node, NodeJSON, NodeType} from "../../../src/architecture/Node";
-import {Connection} from "../../../src/architecture/Connection";
+import {Connection} from "../../../src";
 import {randDouble, randInt} from "../../../src/methods/Utils";
 import {ModBiasMutation} from "../../../src/methods/Mutation";
 import {expect} from "chai";
