@@ -26,7 +26,7 @@ describe("Activation", () => {
         });
         it("activation.LOGISTIC(number, derivate=true) => {number}", () => {
             const x: number = randDouble(-50, 50);
-            expect(new LogisticActivation().calc(x, true)).to.equal((Math.exp(-x) / Math.pow(1 + Math.exp(-x), 2)));
+            expect(new LogisticActivation().calc(x, true)).to.equal(new LogisticActivation().calc(x, false) * (1 - new LogisticActivation().calc(x, false)));
         });
     });
     describe("activation.TANH()", () => {
@@ -171,12 +171,12 @@ describe("Activation", () => {
         it("activation.SELU(number, derivate=false) => {number}", () => {
             const x: number = randDouble(-50, 50);
             const z: number = (x > 0 ? x : alpha * Math.exp(x) - alpha) * scale;
-            expect(new SELUActivation().calc(x, false)).to.equal(z);
+            expect(new SELUActivation().calc(x, false)).to.be.closeTo(z, 0.001);
         });
         it("activation.SELU(number, derivate=true) => {number}", () => {
             const x: number = randDouble(-50, 50);
             const z: number = x > 0 ? scale : ((x > 0 ? x : alpha * Math.exp(x) - alpha) + alpha) * scale;
-            expect(new SELUActivation().calc(x, true)).to.equal(z);
+            expect(new SELUActivation().calc(x, true)).to.be.closeTo(z, 0.001);
         });
     });
 });
