@@ -12,7 +12,7 @@
   },
   "scripts": {
     "build:src": "tsc && node build/scripts/build.js",
-    "deploy:docs": "tsc && node theme/deploy-docs.js",
+    "deploy:docs": "tsc && jsdoc -c jsdoc.json -d ./theme/static/versions/${npm_package_version}/",
     "test": "tsc && nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha --recursive build/test/",
     "lint": "tslint --project ./",
     "coverage": "nyc npm test && nyc report --reporter=text-lcov | coveralls build/src"
@@ -74,6 +74,7 @@
     "@types/mocha": "^7.0.2",
     "chai": "^4.2.0",
     "coveralls": "^3.0.11",
+    "jsdoc": "^3.6.3",
     "mocha": "^7.1.1",
     "nyc": "^15.0.0",
     "parcel-bundler": "^1.12.4",
