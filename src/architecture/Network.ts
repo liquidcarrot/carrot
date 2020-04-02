@@ -540,7 +540,7 @@ export class Network {
         return json;
     }
 
-    public async evolve(dataset: { input: number[], output: number[] }[], options: EvolveOptions): Promise<{ error: number, iterations: number, time: number }> {
+    public async evolve(dataset: { input: number[], output: number[] }[], options: EvolveOptions = {}): Promise<{ error: number, iterations: number, time: number }> {
         if (dataset[0].input.length !== this.inputSize || dataset[0].output.length !== this.outputSize) {
             throw new Error(`Dataset input/output size should be same as network input/output size!`);
         }
