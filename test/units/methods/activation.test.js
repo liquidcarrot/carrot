@@ -145,7 +145,7 @@ describe("activation", function() {
       })
     it("activation.SOFTSIGN(number, derivate=false) => {number}", function(){
       const x = _.random(-50, 50, true);
-      expect(activation.SOFTSIGN(x, false)).to.equal(x / 1 + Math.abs(x));
+      expect(activation.SOFTSIGN(x, false)).to.equal(x / (1 + Math.abs(x)));
     })
     it("activation.SOFTSIGN(number, derivate=true) => {number}", function(){
       const x = _.random(-50, 50, true)
@@ -156,7 +156,7 @@ describe("activation", function() {
       })
     it("activation.SOFTSIGN(numbers, derivate=false) => {number[]}", function(){
       const x = Array.from({ length: _.random(1, 5) }, () => _.random(-50, 50,  true));
-      const z = _.map(x, x => x / 1 + Math.abs(x));
+      const z = _.map(x, x => x / (1 + Math.abs(x)));
       expect(activation.SOFTSIGN(x, false)).to.eql(z);
     })
     it("activation.SOFTSIGN(numbers, derivate=true) => {number[]}", function(){
