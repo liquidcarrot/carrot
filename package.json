@@ -3,6 +3,7 @@
   "version": "0.3.18",
   "description": "A Simple Node.js AI Library for Neural Network",
   "main": "dist/production/index.min.js",
+  "types": "build/src/index.d.ts",
   "module": "dist/production/index.min.js",
   "unpkg": "dist/production/index.browser.min.js",
   "jsdelivr": "dist/production/index.browser.min.js",
@@ -11,9 +12,9 @@
     "child_process": false
   },
   "scripts": {
-    "build:src": "tsc && node build/scripts/build.js",
-    "deploy:docs": "tsc && jsdoc -c jsdoc.json -d ./theme/static/versions/${npm_package_version}/",
-    "test": "tsc && nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha --recursive build/test/",
+    "build:src": "tsc --declaration && node build/scripts/build.js",
+    "deploy:docs": "tsc --declaration && jsdoc -c jsdoc.json -d ./theme/static/versions/${npm_package_version}/",
+    "test": "tsc --declaration && nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha --recursive build/test/",
     "lint": "tslint --project ./",
     "coverage": "nyc npm test && nyc report --reporter=text-lcov | coveralls build/src"
   },
