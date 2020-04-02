@@ -1,6 +1,7 @@
 import {Layer} from "./Layer";
 import {Node, NodeType} from "../Node";
 
+// TODO: actually implement it
 export class DenseLayer extends Layer {
     constructor(inputSize: number, outputSize: number) {
         super(inputSize, outputSize);

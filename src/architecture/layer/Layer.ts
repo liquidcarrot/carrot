@@ -1,6 +1,7 @@
 import {Connection} from "../Connection";
 import {Node} from "../Node";
 
+// TODO: actually implement it
 export abstract class Layer {
     public inputSize: number;
     public outputSize: number;
