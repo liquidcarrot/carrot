@@ -1,13 +1,7 @@
-import {EvolveOptions, Network} from "../../../src/architecture/Network";
+import {Network} from "../../../src/architecture/Network";
 import {Connection, Node} from "../../../src";
-import {anyMatch, randDouble, randInt} from "../../../src/methods/Utils";
-import {
-    AddConnectionMutation,
-    AddGateMutation,
-    AddNodeMutation,
-    ALL_MUTATIONS,
-    SubGateMutation
-} from "../../../src/methods/Mutation";
+import {anyMatch, randInt} from "../../../src/methods/Utils";
+import {AddConnectionMutation, AddGateMutation, AddNodeMutation, SubGateMutation} from "../../../src/methods/Mutation";
 import {expect} from "chai";
 
 describe('Network', () => {
@@ -261,118 +255,6 @@ describe('Network', () => {
             expect(evolveReturn.iterations).to.be.a('number');
             expect(evolveReturn.time).to.be.a('number');
             expect(final).to.be.below(initial);
-        });
-    });
-
-    describe("Evolving capabilities", () => {
-        async function evolveSet(set: { input: number[], output: number[] }[], iterations: number, error: number): Promise<void> {
-            const network: Network = new Network(set[0].input.length, set[0].output.length);
-
-            const options: EvolveOptions = {
-                error,
-                mutations: ALL_MUTATIONS,
-                populationSize: 100
-            };
-
-            const results: { error: number; iterations: number; time: number } = await network.evolve(set, options);
-
-            expect(isNaN(results.error)).to.be.false;
-            expect(results.error).to.be.below(error);
-        }
-
-        it('AND gate', function (): void {
-            evolveSet([
-                {input: [0, 0], output: [0]},
-                {input: [0, 1], output: [0]},
-                {input: [1, 0], output: [0]},
-                {input: [1, 1], output: [1]}
-            ], 1000, 0.002);
-        });
-        it('XOR gate', () => {
-            evolveSet([
-                {input: [0, 0], output: [0]},
-                {input: [0, 1], output: [1]},
-                {input: [1, 0], output: [1]},
-                {input: [1, 1], output: [0]}
-            ], 3000, 0.002);
-        });
-        it('NOT gate', () => {
-            evolveSet([
-                {input: [0], output: [1]},
-                {input: [1], output: [0]}
-            ], 1000, 0.002);
-        });
-        it('XNOR gate', () => {
-            evolveSet([
-                {input: [0, 0], output: [1]},
-                {input: [0, 1], output: [0]},
-                {input: [1, 0], output: [0]},
-                {input: [1, 1], output: [1]}
-            ], 3000, 0.002);
-        });
-        it('OR gate', () => {
-            evolveSet([
-                {input: [0, 0], output: [0]},
-                {input: [0, 1], output: [1]},
-                {input: [1, 0], output: [1]},
-                {input: [1, 1], output: [1]}
-            ], 1000, 0.002);
-        });
-        it('SIN function', function (): void {
-            const set: { input: number[], output: number[] }[] = [];
-
-            for (let i: number = 0; i < 100; i++) {
-                const inputValue: number = randDouble(0, Math.PI * 2);
-                set.push({
-                    input: [inputValue / (Math.PI * 2)],
-                    output: [(Math.sin(inputValue) + 1) / 2]
-                });
-            }
-
-            evolveSet(set, 1000, 0.05);
-        });
-        it('Bigger than', () => {
-            const set: { input: number[], output: number[] }[] = [];
-
-            for (let i: number = 0; i < 100; i++) {
-                const x: number = Math.random();
-                const y: number = Math.random();
-                const z: number = x > y ? 1 : 0;
-
-                set.push({input: [x, y], output: [z]});
-            }
-
-            evolveSet(set, 500, 0.05);
-        });
-        it('SIN + COS', () => {
-            const set: { input: number[], output: number[] }[] = [];
-
-            for (let i: number = 0; i < 100; i++) {
-                const inputValue: number = randDouble(0, Math.PI * 2);
-                set.push({
-                    input: [inputValue / (Math.PI * 2)],
-                    output: [
-                        (Math.sin(inputValue) + 1) / 2,
-                        (Math.cos(inputValue) + 1) / 2
-                    ]
-                });
-            }
-
-            evolveSet(set, 1000, 0.05);
-        });
-
-        it('SHIFT', () => {
-            const set: { input: number[], output: number[] }[] = [];
-
-            for (let i: number = 0; i < 1000; i++) {
-                const x: number = Math.random();
-                const y: number = Math.random();
-                const z: number = Math.random();
-
-                set.push({input: [x, y, z], output: [z, x, y]});
-            }
-
-            evolveSet(set, 500, 0.03);
         });
     });
 });
