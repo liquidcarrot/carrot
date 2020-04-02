@@ -11,7 +11,7 @@
     "child_process": false
   },
   "scripts": {
-    "build:src": "tsc && node scripts/src.build.node.js && node scripts/src.build.browser.js && node scripts/src.build.browser.production.js && node scripts/src.build.node.production.js",
+    "build:src": "tsc && node build/scripts/build.js",
     "deploy:docs": "tsc && node theme/deploy-docs.js",
     "test": "./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha --recursive build/test/",
     "lint": "tslint --project ./",
