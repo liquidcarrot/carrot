@@ -62,7 +62,9 @@ describe('Logic Gates', () => {
 
         expect(final).to.be.at.most(initial);
     });
-    it('[NOT] Network.evolve()', async () => {
+    it('[NOT] Network.evolve()', async function (): Promise<void> {
+        this.timeout(30000);
+
         const network: Network = new Network(1, 1);
 
         const initial: number = network.test(data.NOT);
@@ -81,7 +83,9 @@ describe('Logic Gates', () => {
 
         expect(final).to.be.at.most(initial);
     });
-    it('[AND] Network.evolve()', async () => {
+    it('[AND] Network.evolve()', async function (): Promise<void> {
+        this.timeout(30000);
+
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.AND);
@@ -100,7 +104,9 @@ describe('Logic Gates', () => {
 
         expect(final).to.be.at.most(initial);
     });
-    it('[OR] Network.evolve()', async () => {
+    it('[OR] Network.evolve()', async function (): Promise<void> {
+        this.timeout(30000);
+
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.OR);
@@ -119,7 +125,9 @@ describe('Logic Gates', () => {
 
         expect(final).to.be.at.most(initial);
     });
-    it('[NAND] Network.evolve()', async () => {
+    it('[NAND] Network.evolve()', async function (): Promise<void> {
+        this.timeout(30000);
+
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.NAND);
@@ -138,7 +146,9 @@ describe('Logic Gates', () => {
 
         expect(final).to.be.at.most(initial);
     });
-    it('[NOR] Network.evolve()', async () => {
+    it('[NOR] Network.evolve()', async function (): Promise<void> {
+        this.timeout(30000);
+
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.NOR);
