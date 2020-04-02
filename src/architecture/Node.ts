@@ -153,7 +153,6 @@ export class Node {
     }
 
     public propagate(target: number | undefined, momentum: number, rate: number, update: boolean): { responsibility: number, projected: number, gated: number } {
-        // TODO: check for errors
         if (target !== undefined && Number.isFinite(target)) {
             this.errorResponsibility = this.errorProjected = target - this.activation;
         } else {
