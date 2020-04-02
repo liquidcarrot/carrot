@@ -21,7 +21,6 @@
       "object-destructuring",
       "array-destructuring"
     ],
-    "no-unused-variable": true,
     "semicolon": true,
     "max-classes-per-file": false,
     "radix": false,
