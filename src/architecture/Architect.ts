@@ -1,5 +1,6 @@
 import {Layer} from "./layer/Layer";
 
+// TODO: actually implement it
 export class Architect {
     private readonly layers: Layer[];
 
