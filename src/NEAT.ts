@@ -88,7 +88,7 @@ export class NEAT {
         genome.mutate(pickRandom(possible));
     }
 
-    public async evolve(pickGenome: ((genome: Network) => boolean) | undefined = undefined, adjustGenome: ((genome: Network) => Network) | undefined = undefined): Promise<Network> {
+    public async evolve(pickGenome?: ((genome: Network) => boolean) | undefined, adjustGenome?: ((genome: Network) => Network) | undefined): Promise<Network> {
         // Check if evolve is possible
         if (this.elitism + this.provenance > this.populationSize) {
             throw new Error("Can`t evolve! Elitism + provenance exceeds population size!");
