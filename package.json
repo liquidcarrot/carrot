@@ -13,8 +13,9 @@
   "scripts": {
     "build:src": "tsc && node build/scripts/build.js",
     "deploy:docs": "tsc && node theme/deploy-docs.js",
-    "test": "tsc && ./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha --recursive build/test/",
-    "lint": "tslint --project ./"
+    "test": "tsc && nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha --recursive build/test/",
+    "lint": "tslint --project ./",
+    "coverage": "nyc npm test && nyc report --reporter=text-lcov | coveralls build/src"
   },
   "repository": {
     "type": "git",
