@@ -308,15 +308,15 @@ export class Node {
         };
     }
 
-    public isInputNode() {
+    public isInputNode(): boolean {
         return this.type === NodeType.INPUT;
     }
 
-    public isHiddenNode() {
+    public isHiddenNode(): boolean {
         return this.type === NodeType.HIDDEN;
     }
 
-    public isOutputNode() {
+    public isOutputNode(): boolean {
         return this.type === NodeType.OUTPUT;
     }
 }
