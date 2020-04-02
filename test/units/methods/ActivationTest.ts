@@ -171,12 +171,12 @@ describe("Activation", () => {
         it("activation.SELU(number, derivate=false) => {number}", () => {
             const x: number = randDouble(-50, 50);
             const z: number = (x > 0 ? x : alpha * Math.exp(x) - alpha) * scale;
-            expect(new SELUActivation().calc(x, false)).to.be.closeTo(z, 0.001);
+            expect(new SELUActivation().calc(x, false)).to.be.closeTo(z, 0.01);
         });
         it("activation.SELU(number, derivate=true) => {number}", () => {
             const x: number = randDouble(-50, 50);
             const z: number = x > 0 ? scale : ((x > 0 ? x : alpha * Math.exp(x) - alpha) + alpha) * scale;
-            expect(new SELUActivation().calc(x, true)).to.be.closeTo(z, 0.001);
+            expect(new SELUActivation().calc(x, true)).to.be.closeTo(z, 0.01);
         });
     });
 });
