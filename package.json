@@ -13,8 +13,8 @@
   "scripts": {
     "build:src": "tsc && node scripts/src.build.node.js && node scripts/src.build.browser.js && node scripts/src.build.browser.production.js && node scripts/src.build.node.production.js",
     "deploy:docs": "tsc && node theme/deploy-docs.js",
-    "test": "tsc && ./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha build/test/units/architecture/NodeTest.js --exclude test/unit.js",
-    "lint": "./node_modules/.bin/eslint --ignore-path .eslintignore .",
+    "test": "./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha --recursive build/test/",
+    "lint": "tslint --project ./",
     "test:debug": "./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha inspect --recursive test/ --exclude test/unit.js",
     "test:forever": "./node_modules/.bin/nodemon ./node_modules/.bin/mocha --reporter spec test/"
   },
