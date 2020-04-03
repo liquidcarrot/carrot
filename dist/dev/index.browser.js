@@ -3148,8 +3148,6 @@ var Rate_1 = require("../methods/Rate");
 
 var NEAT_1 = require("../NEAT");
 
-var Activation_1 = require("../methods/Activation");
-
 var threads_1 = require("threads");
 
 require("threads/register");
@@ -3796,9 +3794,11 @@ function () {
             options.maxConnections = Utils_1.getOrDefault(options.maxConnections, Infinity);
             options.maxGates = Utils_1.getOrDefault(options.maxGates, Infinity);
             start = Date.now();
-            serializedDataSet = serializeDataSet(dataset);
+            serializedDataSet = JSON.stringify(dataset);
             workerPath = "../multithreading/Worker";
-            pool = threads_1.Pool(function () {
+            pool = options.threads ? threads_1.Pool(function () {
+              return threads_1.spawn(new threads_1.Worker(workerPath));
+            }, options.threads) : threads_1.Pool(function () {
               return threads_1.spawn(new threads_1.Worker(workerPath));
             });
 
@@ -3830,14 +3830,16 @@ function () {
                                   _a = genome;
                                   return [4
                                   /*yield*/
-                                  , test(serializedDataSet, genome.serialize(), Loss_1.ALL_LOSSES.indexOf((_b = options.loss) !== null && _b !== void 0 ? _b : new Loss_1.MSELoss()))];
+                                  , test(serializedDataSet, JSON.stringify(genome.toJSON()), Loss_1.ALL_LOSSES.indexOf((_b = options.loss) !== null && _b !== void 0 ? _b : new Loss_1.MSELoss()))];
 
                                 case 1:
                                   _a.score = -_d.sent();
 
                                   if (genome.score === undefined) {
                                     genome.score = -Infinity;
-                                    console.log("ERROR");
+                                    return [2
+                                    /*return*/
+                                    ];
                                   }
 
                                   genome.score -= ((_c = options.growth) !== null && _c !== void 0 ? _c : 0.0001) * (genome.nodes.length - genome.inputSize - genome.outputSize + genome.connections.length + genome.gates.length);
@@ -3881,7 +3883,7 @@ function () {
             _d.label = 1;
 
           case 1:
-            if (!(error < -targetError || options.iterations === 0 || neat.generation < ((_a = options.iterations) !== null && _a !== void 0 ? _a : 0))) return [3
+            if (!(error < -targetError && (options.iterations === 0 || neat.generation < ((_a = options.iterations) !== null && _a !== void 0 ? _a : 0)))) return [3
             /*break*/
             , 3];
             return [4
@@ -3921,6 +3923,13 @@ function () {
               }
             }
 
+            return [4
+            /*yield*/
+            , pool.terminate()];
+
+          case 4:
+            _d.sent();
+
             return [2
             /*return*/
             , {
@@ -3933,63 +3942,11 @@ function () {
     });
   };
 
-  Network.prototype.serialize = function () {
-    var activations = [];
-    var states = [];
-    var connections = [];
-    connections.push(this.inputSize);
-    connections.push(this.outputSize);
-    var nodeIndexCount = 0;
-    this.nodes.forEach(function (node) {
-      node.index = nodeIndexCount++;
-      activations.push(node.activation);
-      states.push(node.state);
-    });
-    this.nodes.filter(function (node) {
-      return !node.isInputNode();
-    }).forEach(function (node) {
-      var _a, _b;
-
-      connections.push(node.index);
-      connections.push(node.bias);
-      connections.push(Activation_1.ALL_ACTIVATIONS.indexOf(node.squash.type));
-      connections.push(node.selfConnection.weight);
-      connections.push((_b = (_a = node.selfConnection.gateNode) === null || _a === void 0 ? void 0 : _a.index) !== null && _b !== void 0 ? _b : -1);
-      node.incoming.forEach(function (connection) {
-        var _a, _b;
-
-        connections.push(connection.from.index);
-        connections.push(connection.weight);
-        connections.push((_b = (_a = connection.gateNode) === null || _a === void 0 ? void 0 : _a.index) !== null && _b !== void 0 ? _b : -1);
-      });
-      connections.push(-2); // stop token -> next node
-    });
-    return [activations, states, connections];
-  };
-
   return Network;
 }();
 
 exports.Network = Network;
-
-function serializeDataSet(dataSet) {
-  var serialized = [dataSet[0].input.length, dataSet[0].output.length];
-
-  for (var _i = 0, dataSet_1 = dataSet; _i < dataSet_1.length; _i++) {
-    var entry = dataSet_1[_i];
-
-    for (var j = 0; j < serialized[0]; j++) {
-      serialized.push(entry.input[j]);
-    }
-
-    for (var j = 0; j < serialized[1]; j++) {
-      serialized.push(entry.output[j]);
-    }
-  }
-
-  return serialized;
-}
-},{"./Connection":"architecture/Connection.js","./Node":"architecture/Node.js","../methods/Utils":"methods/Utils.js","../methods/Mutation":"methods/Mutation.js","../methods/Loss":"methods/Loss.js","../methods/Rate":"methods/Rate.js","../NEAT":"NEAT.js","../methods/Activation":"methods/Activation.js"}],"architecture/node.js":[function(require,module,exports) {
+},{"./Connection":"architecture/Connection.js","./Node":"architecture/Node.js","../methods/Utils":"methods/Utils.js","../methods/Mutation":"methods/Mutation.js","../methods/Loss":"methods/Loss.js","../methods/Rate":"methods/Rate.js","../NEAT":"NEAT.js"}],"architecture/node.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4428,6 +4385,207 @@ var NEAT_1 = require("./NEAT");
 
 exports.NEAT = NEAT_1.NEAT;
 },{"./architecture/layer/Layer":"architecture/layer/Layer.js","./architecture/layer/ConvolutionLayer":"architecture/layer/ConvolutionLayer.js","./architecture/layer/DenseLayer":"architecture/layer/DenseLayer.js","./architecture/layer/GaussianNoiseLayer":"architecture/layer/GaussianNoiseLayer.js","./architecture/layer/InputLayer":"architecture/layer/InputLayer.js","./architecture/layer/LSTMLayer":"architecture/layer/LSTMLayer.js","./architecture/layer/PoolLayer":"architecture/layer/PoolLayer.js","./architecture/layer/RNNLayer":"architecture/layer/RNNLayer.js","./architecture/Architect":"architecture/Architect.js","./architecture/Connection":"architecture/Connection.js","./architecture/Network":"architecture/Network.js","./architecture/node":"architecture/node.js","./methods/Activation":"methods/Activation.js","./methods/Loss":"methods/Loss.js","./methods/Mutation":"methods/Mutation.js","./methods/Rate":"methods/Rate.js","./methods/Selection":"methods/Selection.js","./NEAT":"NEAT.js"}],"../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
-var e,o,t="__parcel__error__overlay__",a=module.bundle.Module;function r(e){a.call(this,e),this.hot={data:module.bundle.hotData,_acceptCallbacks:[],_disposeCallbacks:[],accept:function(e){this._acceptCallbacks.push(e||function(){})},dispose:function(e){this._disposeCallbacks.push(e)}},module.bundle.hotData=null}module.bundle.Module=r;var n=module.bundle.parent;if(!(n&&n.isParcelRequire||"undefined"==typeof WebSocket)){var c=process.env.HMR_HOSTNAME||location.hostname,l="https:"===location.protocol?"wss":"ws",i=new WebSocket(l+"://"+c+":"+process.env.HMR_PORT+"/");i.onmessage=function(t){e={},o=[];var a=JSON.parse(t.data);if("update"===a.type){var r=!1;a.assets.forEach(function(e){e.isNew||f(global.parcelRequire,e.id)&&(r=!0)}),(r=r||a.assets.every(function(e){return"css"===e.type&&e.generated.js}))?(console.clear(),a.assets.forEach(function(e){u(global.parcelRequire,e)}),o.forEach(function(e){h(e[0],e[1])})):location.reload&&location.reload()}if("reload"===a.type&&(i.close(),i.onclose=function(){location.reload()}),"error-resolved"===a.type&&(console.log("[parcel] ✨ Error resolved"),s()),"error"===a.type){console.error("[parcel] 🚨  "+a.error.message+"\n"+a.error.stack),s();var n=p(a);document.body.appendChild(n)}}}function s(){var e=document.getElementById(t);e&&e.remove()}function p(e){var o=document.createElement("div");o.id=t;var a=document.createElement("div"),r=document.createElement("pre");return a.innerText=e.error.message,r.innerText=e.error.stack,o.innerHTML='<div style="background: black; font-size: 16px; color: white; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; padding: 30px; opacity: 0.85; font-family: Menlo, Consolas, monospace; z-index: 9999;"><span style="background: red; padding: 2px 4px; border-radius: 2px;">ERROR</span><span style="top: 2px; margin-left: 5px; position: relative;">🚨</span><div style="font-size: 18px; font-weight: bold; margin-top: 20px;">'+a.innerHTML+"</div><pre>"+r.innerHTML+"</pre></div>",o}function d(e,o){var t=e.modules;if(!t)return[];var a,r,n,c=[];for(a in t)for(r in t[a][1])((n=t[a][1][r])===o||Array.isArray(n)&&n[n.length-1]===o)&&c.push(a);return e.parent&&(c=c.concat(d(e.parent,o))),c}function u(e,o){var t=e.modules;if(t)if(t[o.id]||!e.parent){var a=new Function("require","module","exports",o.generated.js);o.isNew=!t[o.id],t[o.id]=[a,o.deps]}else e.parent&&u(e.parent,o)}function f(t,a){var r=t.modules;if(r){if(!r[a]&&t.parent)return f(t.parent,a);if(!e[a]){e[a]=!0;var n=t.cache[a];return o.push([t,a]),!!(n&&n.hot&&n.hot._acceptCallbacks.length)||d(global.parcelRequire,a).some(function(e){return f(global.parcelRequire,e)})}}}function h(e,o){var t=e.cache[o];if(e.hotData={},t&&(t.hot.data=e.hotData),t&&t.hot&&t.hot._disposeCallbacks.length&&t.hot._disposeCallbacks.forEach(function(o){o(e.hotData)}),delete e.cache[o],e(o),(t=e.cache[o])&&t.hot&&t.hot._acceptCallbacks.length)return t.hot._acceptCallbacks.forEach(function(e){e()}),!0}
+var OVERLAY_ID = '__parcel__error__overlay__';
+var OldModule = module.bundle.Module;
+
+function Module(moduleName) {
+  OldModule.call(this, moduleName);
+  this.hot = {
+    data: module.bundle.hotData,
+    _acceptCallbacks: [],
+    _disposeCallbacks: [],
+    accept: function (fn) {
+      this._acceptCallbacks.push(fn || function () {});
+    },
+    dispose: function (fn) {
+      this._disposeCallbacks.push(fn);
+    }
+  };
+  module.bundle.hotData = null;
+}
+
+module.bundle.Module = Module;
+var checkedAssets, assetsToAccept;
+var parent = module.bundle.parent;
+
+if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
+  var hostname = process.env.HMR_HOSTNAME || location.hostname;
+  var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + process.env.HMR_PORT + '/');
+
+  ws.onmessage = function (event) {
+    checkedAssets = {};
+    assetsToAccept = [];
+    var data = JSON.parse(event.data);
+
+    if (data.type === 'update') {
+      var handled = false;
+      data.assets.forEach(function (asset) {
+        if (!asset.isNew) {
+          var didAccept = hmrAcceptCheck(global.parcelRequire, asset.id);
+
+          if (didAccept) {
+            handled = true;
+          }
+        }
+      }); // Enable HMR for CSS by default.
+
+      handled = handled || data.assets.every(function (asset) {
+        return asset.type === 'css' && asset.generated.js;
+      });
+
+      if (handled) {
+        console.clear();
+        data.assets.forEach(function (asset) {
+          hmrApply(global.parcelRequire, asset);
+        });
+        assetsToAccept.forEach(function (v) {
+          hmrAcceptRun(v[0], v[1]);
+        });
+      } else if (location.reload) {
+        // `location` global exists in a web worker context but lacks `.reload()` function.
+        location.reload();
+      }
+    }
+
+    if (data.type === 'reload') {
+      ws.close();
+
+      ws.onclose = function () {
+        location.reload();
+      };
+    }
+
+    if (data.type === 'error-resolved') {
+      console.log('[parcel] ✨ Error resolved');
+      removeErrorOverlay();
+    }
+
+    if (data.type === 'error') {
+      console.error('[parcel] 🚨  ' + data.error.message + '\n' + data.error.stack);
+      removeErrorOverlay();
+      var overlay = createErrorOverlay(data);
+      document.body.appendChild(overlay);
+    }
+  };
+}
+
+function removeErrorOverlay() {
+  var overlay = document.getElementById(OVERLAY_ID);
+
+  if (overlay) {
+    overlay.remove();
+  }
+}
+
+function createErrorOverlay(data) {
+  var overlay = document.createElement('div');
+  overlay.id = OVERLAY_ID; // html encode message and stack trace
+
+  var message = document.createElement('div');
+  var stackTrace = document.createElement('pre');
+  message.innerText = data.error.message;
+  stackTrace.innerText = data.error.stack;
+  overlay.innerHTML = '<div style="background: black; font-size: 16px; color: white; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; padding: 30px; opacity: 0.85; font-family: Menlo, Consolas, monospace; z-index: 9999;">' + '<span style="background: red; padding: 2px 4px; border-radius: 2px;">ERROR</span>' + '<span style="top: 2px; margin-left: 5px; position: relative;">🚨</span>' + '<div style="font-size: 18px; font-weight: bold; margin-top: 20px;">' + message.innerHTML + '</div>' + '<pre>' + stackTrace.innerHTML + '</pre>' + '</div>';
+  return overlay;
+}
+
+function getParents(bundle, id) {
+  var modules = bundle.modules;
+
+  if (!modules) {
+    return [];
+  }
+
+  var parents = [];
+  var k, d, dep;
+
+  for (k in modules) {
+    for (d in modules[k][1]) {
+      dep = modules[k][1][d];
+
+      if (dep === id || Array.isArray(dep) && dep[dep.length - 1] === id) {
+        parents.push(k);
+      }
+    }
+  }
+
+  if (bundle.parent) {
+    parents = parents.concat(getParents(bundle.parent, id));
+  }
+
+  return parents;
+}
+
+function hmrApply(bundle, asset) {
+  var modules = bundle.modules;
+
+  if (!modules) {
+    return;
+  }
+
+  if (modules[asset.id] || !bundle.parent) {
+    var fn = new Function('require', 'module', 'exports', asset.generated.js);
+    asset.isNew = !modules[asset.id];
+    modules[asset.id] = [fn, asset.deps];
+  } else if (bundle.parent) {
+    hmrApply(bundle.parent, asset);
+  }
+}
+
+function hmrAcceptCheck(bundle, id) {
+  var modules = bundle.modules;
+
+  if (!modules) {
+    return;
+  }
+
+  if (!modules[id] && bundle.parent) {
+    return hmrAcceptCheck(bundle.parent, id);
+  }
+
+  if (checkedAssets[id]) {
+    return;
+  }
+
+  checkedAssets[id] = true;
+  var cached = bundle.cache[id];
+  assetsToAccept.push([bundle, id]);
+
+  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
+    return true;
+  }
+
+  return getParents(global.parcelRequire, id).some(function (id) {
+    return hmrAcceptCheck(global.parcelRequire, id);
+  });
+}
+
+function hmrAcceptRun(bundle, id) {
+  var cached = bundle.cache[id];
+  bundle.hotData = {};
+
+  if (cached) {
+    cached.hot.data = bundle.hotData;
+  }
+
+  if (cached && cached.hot && cached.hot._disposeCallbacks.length) {
+    cached.hot._disposeCallbacks.forEach(function (cb) {
+      cb(bundle.hotData);
+    });
+  }
+
+  delete bundle.cache[id];
+  bundle(id);
+  cached = bundle.cache[id];
+
+  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
+    cached.hot._acceptCallbacks.forEach(function (cb) {
+      cb();
+    });
+
+    return true;
+  }
+}
 },{}]},{},["../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","index.js"], "carrot")
 //# sourceMappingURL=/index.browser.js.map
