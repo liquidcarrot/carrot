@@ -21,7 +21,7 @@ export class NEAT {
     private readonly mutationRate: number;
     private readonly mutationAmount: number;
     private readonly fitnessPopulation: boolean;
-    private readonly fitnessFunction: ((dataset: { input: number[]; output: number[] }[], population: (Network[] | Network)) => Promise<void>) | undefined;
+    private readonly fitnessFunction: ((dataset: { input: number[]; output: number[] }[], population: Network[]) => Promise<void>);
     private readonly selection: Selection;
     private readonly mutations: Mutation[];
     private readonly template: Network;
@@ -40,12 +40,15 @@ export class NEAT {
         this.equal = getOrDefault(options.equal, true);
         this.clear = getOrDefault(options.clear, false);
         this.populationSize = getOrDefault(options.populationSize, 50);
-        this.elitism = getOrDefault(options.elitism, 1);
+        this.elitism = getOrDefault(options.elitism, 5);
         this.provenance = getOrDefault(options.provenance, 0);
         this.mutationRate = getOrDefault(options.mutationRate, 0.4);
         this.mutationAmount = getOrDefault(options.mutationAmount, 1);
         this.fitnessPopulation = getOrDefault(options.fitnessPopulation, false);
+
+        if (!options.fitnessFunction) throw new ReferenceError("No fitness function given");
         this.fitnessFunction = options.fitnessFunction;
+
         this.selection = getOrDefault(options.selection, new PowerSelection());
         this.mutations = getOrDefault(options.mutations, FEEDFORWARD_MUTATIONS);
         this.template = getOrDefault(options.template, new Network(this.input, this.output));
@@ -124,7 +127,7 @@ export class NEAT {
         this.population = newPopulation;
 
         // Mutate the new population
-        this.mutate(undefined);
+        this.mutate();
 
         // Add the elitists
         this.population.push(...elitists);
@@ -163,7 +166,7 @@ export class NEAT {
         return Network.crossOver(parent1, parent2, this.equal);
     }
 
-    public mutate(method: Mutation | undefined): void {
+    public mutate(method?: Mutation | undefined): void {
         if (method) {
             // Elitist genomes should not be included
             this.population
@@ -190,16 +193,14 @@ export class NEAT {
             if (this.clear) {
                 this.population.forEach(genome => genome.clear());
             }
-            if (this.fitnessFunction) {
-                await this.fitnessFunction(dataset, this.population);
-            }
+            await this.fitnessFunction(dataset, this.population);
         } else {
             for (const genome of this.population) {
                 if (this.clear) {
                     genome.clear();
                 }
                 if (this.fitnessFunction) {
-                    await this.fitnessFunction(dataset, genome);
+                    await this.fitnessFunction(dataset, [genome]);
                 }
             }
         }
