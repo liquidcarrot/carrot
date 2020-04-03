@@ -89,6 +89,7 @@
     "include": [
       "build/src/architecture/*.js",
       "build/src/methods/*.js",
+      "build/src/multithreading/*.js",
       "build/src/NEAT.js"
     ],
     "exclude": [
