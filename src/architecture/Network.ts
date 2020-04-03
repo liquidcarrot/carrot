@@ -569,7 +569,7 @@ export class Network {
         const start: number = Date.now();
 
         // Serialize the dataset
-        const serializedDataSet: number[] = serializeDataSet(dataset);
+        const serializedDataSet: string = JSON.stringify(dataset);
 
         const workerPath: string = "../multithreading/Worker";
 
