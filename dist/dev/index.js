@@ -122,7 +122,7 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
 Object.defineProperty(exports, "__esModule", {
   value: true
-});
+}); // TODO: actually implement it
 
 var Layer =
 /** @class */
@@ -142,22 +142,20 @@ exports.Layer = Layer;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -171,7 +169,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var Layer_1 = require("./Layer");
+var Layer_1 = require("./Layer"); // TODO: actually implement it
+
 
 var ConvolutionLayer =
 /** @class */
@@ -948,7 +947,6 @@ function () {
   };
 
   Node.prototype.propagate = function (target, momentum, rate, update) {
-    // TODO: check for errors
     if (target !== undefined && Number.isFinite(target)) {
       this.errorResponsibility = this.errorProjected = target - this.activation;
     } else {
@@ -1131,22 +1129,20 @@ var NodeType;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -1162,7 +1158,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var Layer_1 = require("./Layer");
 
-var Node_1 = require("../Node");
+var Node_1 = require("../Node"); // TODO: actually implement it
+
 
 var DenseLayer =
 /** @class */
@@ -1201,22 +1198,20 @@ exports.DenseLayer = DenseLayer;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -1230,7 +1225,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var Layer_1 = require("./Layer");
+var Layer_1 = require("./Layer"); // TODO: actually implement it
+
 
 var GaussianNoiseLayer =
 /** @class */
@@ -1249,22 +1245,20 @@ exports.GaussianNoiseLayer = GaussianNoiseLayer;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -1278,7 +1272,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var Layer_1 = require("./Layer");
+var Layer_1 = require("./Layer"); // TODO: actually implement it
+
 
 var InputLayer =
 /** @class */
@@ -1297,22 +1292,20 @@ exports.InputLayer = InputLayer;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -1326,7 +1319,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var Layer_1 = require("./Layer");
+var Layer_1 = require("./Layer"); // TODO: actually implement it
+
 
 var LSTMLayer =
 /** @class */
@@ -1334,7 +1328,7 @@ function (_super) {
   __extends(LSTMLayer, _super);
 
   function LSTMLayer(inputSize, outputSize) {
-    return _super.call(this, inputSize, outputSize) || this; // TODO: actually implement
+    return _super.call(this, inputSize, outputSize) || this;
   }
 
   return LSTMLayer;
@@ -1345,22 +1339,20 @@ exports.LSTMLayer = LSTMLayer;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -1374,7 +1366,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var Layer_1 = require("./Layer");
+var Layer_1 = require("./Layer"); // TODO: actually implement it
+
 
 var PoolLayer =
 /** @class */
@@ -1382,7 +1375,7 @@ function (_super) {
   __extends(PoolLayer, _super);
 
   function PoolLayer(inputSize, outputSize, type) {
-    return _super.call(this, inputSize, outputSize) || this; // TODO: actually implement it
+    return _super.call(this, inputSize, outputSize) || this;
   }
 
   return PoolLayer;
@@ -1400,22 +1393,20 @@ var PoolingType;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -1429,7 +1420,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var Layer_1 = require("./Layer");
+var Layer_1 = require("./Layer"); // TODO: actually implement it
+
 
 var RNNLayer =
 /** @class */
@@ -1449,7 +1441,7 @@ exports.RNNLayer = RNNLayer;
 
 Object.defineProperty(exports, "__esModule", {
   value: true
-});
+}); // TODO: actually implement it
 
 var Architect =
 /** @class */
@@ -1475,22 +1467,20 @@ exports.Architect = Architect;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -1974,22 +1964,20 @@ exports.FEEDFORWARD_MUTATIONS = [new AddNodeMutation(), new SubNodeMutation(), n
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -2197,22 +2185,20 @@ exports.ALL_LOSSES = [new CrossEntropyLoss(), new MSELoss(), new BinaryLoss(), n
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -2344,22 +2330,20 @@ exports.InverseRate = InverseRate;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -2543,7 +2527,7 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
 var __generator = this && this.__generator || function (thisArg, body) {
   var _ = {
     label: 0,
-    sent: function sent() {
+    sent: function () {
       if (t[0] & 1) throw t[1];
       return t[1];
     },
@@ -2571,76 +2555,74 @@ var __generator = this && this.__generator || function (thisArg, body) {
   function step(op) {
     if (f) throw new TypeError("Generator is already executing.");
 
-    while (_) {
-      try {
-        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-        if (y = 0, t) op = [op[0] & 2, t.value];
+    while (_) try {
+      if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+      if (y = 0, t) op = [op[0] & 2, t.value];
 
-        switch (op[0]) {
-          case 0:
-          case 1:
+      switch (op[0]) {
+        case 0:
+        case 1:
+          t = op;
+          break;
+
+        case 4:
+          _.label++;
+          return {
+            value: op[1],
+            done: false
+          };
+
+        case 5:
+          _.label++;
+          y = op[1];
+          op = [0];
+          continue;
+
+        case 7:
+          op = _.ops.pop();
+
+          _.trys.pop();
+
+          continue;
+
+        default:
+          if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+            _ = 0;
+            continue;
+          }
+
+          if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+            _.label = op[1];
+            break;
+          }
+
+          if (op[0] === 6 && _.label < t[1]) {
+            _.label = t[1];
             t = op;
             break;
+          }
 
-          case 4:
-            _.label++;
-            return {
-              value: op[1],
-              done: false
-            };
+          if (t && _.label < t[2]) {
+            _.label = t[2];
 
-          case 5:
-            _.label++;
-            y = op[1];
-            op = [0];
-            continue;
+            _.ops.push(op);
 
-          case 7:
-            op = _.ops.pop();
+            break;
+          }
 
-            _.trys.pop();
+          if (t[2]) _.ops.pop();
 
-            continue;
+          _.trys.pop();
 
-          default:
-            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-              _ = 0;
-              continue;
-            }
-
-            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-              _.label = op[1];
-              break;
-            }
-
-            if (op[0] === 6 && _.label < t[1]) {
-              _.label = t[1];
-              t = op;
-              break;
-            }
-
-            if (t && _.label < t[2]) {
-              _.label = t[2];
-
-              _.ops.push(op);
-
-              break;
-            }
-
-            if (t[2]) _.ops.pop();
-
-            _.trys.pop();
-
-            continue;
-        }
-
-        op = body.call(thisArg, _);
-      } catch (e) {
-        op = [6, e];
-        y = 0;
-      } finally {
-        f = t = 0;
+          continue;
       }
+
+      op = body.call(thisArg, _);
+    } catch (e) {
+      op = [6, e];
+      y = 0;
+    } finally {
+      f = t = 0;
     }
 
     if (op[0] & 5) throw op[1];
@@ -2652,15 +2634,9 @@ var __generator = this && this.__generator || function (thisArg, body) {
 };
 
 var __spreadArrays = this && this.__spreadArrays || function () {
-  for (var s = 0, i = 0, il = arguments.length; i < il; i++) {
-    s += arguments[i].length;
-  }
+  for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
 
-  for (var r = Array(s), k = 0, i = 0; i < il; i++) {
-    for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) {
-      r[k] = a[j];
-    }
-  }
+  for (var r = Array(s), k = 0, i = 0; i < il; i++) for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) r[k] = a[j];
 
   return r;
 };
@@ -2692,11 +2668,12 @@ function () {
     this.equal = Utils_1.getOrDefault(options.equal, true);
     this.clear = Utils_1.getOrDefault(options.clear, false);
     this.populationSize = Utils_1.getOrDefault(options.populationSize, 50);
-    this.elitism = Utils_1.getOrDefault(options.elitism, 1);
+    this.elitism = Utils_1.getOrDefault(options.elitism, 5);
     this.provenance = Utils_1.getOrDefault(options.provenance, 0);
     this.mutationRate = Utils_1.getOrDefault(options.mutationRate, 0.4);
     this.mutationAmount = Utils_1.getOrDefault(options.mutationAmount, 1);
     this.fitnessPopulation = Utils_1.getOrDefault(options.fitnessPopulation, false);
+    if (!options.fitnessFunction) throw new ReferenceError("No fitness function given");
     this.fitnessFunction = options.fitnessFunction;
     this.selection = Utils_1.getOrDefault(options.selection, new Selection_1.PowerSelection());
     this.mutations = Utils_1.getOrDefault(options.mutations, Mutation_1.FEEDFORWARD_MUTATIONS);
@@ -2791,7 +2768,7 @@ function () {
 
             this.population = newPopulation; // Mutate the new population
 
-            this.mutate(undefined); // Add the elitists
+            this.mutate(); // Add the elitists
 
             (_a = this.population).push.apply(_a, elitists); // evaluate the population
 
@@ -2871,7 +2848,7 @@ function () {
           case 0:
             if (!this.fitnessPopulation) return [3
             /*break*/
-            , 3];
+            , 2];
 
             if (this.clear) {
               this.population.forEach(function (genome) {
@@ -2879,9 +2856,6 @@ function () {
               });
             }
 
-            if (!this.fitnessFunction) return [3
-            /*break*/
-            , 2];
             return [4
             /*yield*/
             , this.fitnessFunction(dataset, this.population)];
@@ -2889,21 +2863,18 @@ function () {
           case 1:
             _b.sent();
 
-            _b.label = 2;
-
-          case 2:
             return [3
             /*break*/
-            , 7];
+            , 6];
+
+          case 2:
+            _i = 0, _a = this.population;
+            _b.label = 3;
 
           case 3:
-            _i = 0, _a = this.population;
-            _b.label = 4;
-
-          case 4:
             if (!(_i < _a.length)) return [3
             /*break*/
-            , 7];
+            , 6];
             genome = _a[_i];
 
             if (this.clear) {
@@ -2912,23 +2883,23 @@ function () {
 
             if (!this.fitnessFunction) return [3
             /*break*/
-            , 6];
+            , 5];
             return [4
             /*yield*/
-            , this.fitnessFunction(dataset, genome)];
+            , this.fitnessFunction(dataset, [genome])];
 
-          case 5:
+          case 4:
             _b.sent();
 
-            _b.label = 6;
+            _b.label = 5;
 
-          case 6:
+          case 5:
             _i++;
             return [3
             /*break*/
-            , 4];
+            , 3];
 
-          case 7:
+          case 6:
             // Sort the population in order of fitness
             this.sort();
             return [2
@@ -3053,7 +3024,7 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
 var __generator = this && this.__generator || function (thisArg, body) {
   var _ = {
     label: 0,
-    sent: function sent() {
+    sent: function () {
       if (t[0] & 1) throw t[1];
       return t[1];
     },
@@ -3081,76 +3052,74 @@ var __generator = this && this.__generator || function (thisArg, body) {
   function step(op) {
     if (f) throw new TypeError("Generator is already executing.");
 
-    while (_) {
-      try {
-        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-        if (y = 0, t) op = [op[0] & 2, t.value];
+    while (_) try {
+      if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+      if (y = 0, t) op = [op[0] & 2, t.value];
 
-        switch (op[0]) {
-          case 0:
-          case 1:
+      switch (op[0]) {
+        case 0:
+        case 1:
+          t = op;
+          break;
+
+        case 4:
+          _.label++;
+          return {
+            value: op[1],
+            done: false
+          };
+
+        case 5:
+          _.label++;
+          y = op[1];
+          op = [0];
+          continue;
+
+        case 7:
+          op = _.ops.pop();
+
+          _.trys.pop();
+
+          continue;
+
+        default:
+          if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+            _ = 0;
+            continue;
+          }
+
+          if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+            _.label = op[1];
+            break;
+          }
+
+          if (op[0] === 6 && _.label < t[1]) {
+            _.label = t[1];
             t = op;
             break;
+          }
 
-          case 4:
-            _.label++;
-            return {
-              value: op[1],
-              done: false
-            };
+          if (t && _.label < t[2]) {
+            _.label = t[2];
 
-          case 5:
-            _.label++;
-            y = op[1];
-            op = [0];
-            continue;
+            _.ops.push(op);
 
-          case 7:
-            op = _.ops.pop();
+            break;
+          }
 
-            _.trys.pop();
+          if (t[2]) _.ops.pop();
 
-            continue;
+          _.trys.pop();
 
-          default:
-            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-              _ = 0;
-              continue;
-            }
-
-            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-              _.label = op[1];
-              break;
-            }
-
-            if (op[0] === 6 && _.label < t[1]) {
-              _.label = t[1];
-              t = op;
-              break;
-            }
-
-            if (t && _.label < t[2]) {
-              _.label = t[2];
-
-              _.ops.push(op);
-
-              break;
-            }
-
-            if (t[2]) _.ops.pop();
-
-            _.trys.pop();
-
-            continue;
-        }
-
-        op = body.call(thisArg, _);
-      } catch (e) {
-        op = [6, e];
-        y = 0;
-      } finally {
-        f = t = 0;
+          continue;
       }
+
+      op = body.call(thisArg, _);
+    } catch (e) {
+      op = [6, e];
+      y = 0;
+    } finally {
+      f = t = 0;
     }
 
     if (op[0] & 5) throw op[1];
@@ -3178,6 +3147,12 @@ var Loss_1 = require("../methods/Loss");
 var Rate_1 = require("../methods/Rate");
 
 var NEAT_1 = require("../NEAT");
+
+var Activation_1 = require("../methods/Activation");
+
+var threads_1 = require("threads");
+
+require("threads/register");
 
 var Network =
 /** @class */
@@ -3793,7 +3768,7 @@ function () {
     var _a, _b, _c;
 
     return __awaiter(this, void 0, void 0, function () {
-      var targetError, start, neat, error, bestFitness, bestGenome, fittest, fitness;
+      var targetError, start, serializedDataSet, workerPath, pool, neat, error, bestFitness, bestGenome, fittest, fitness;
       return __generator(this, function (_d) {
         switch (_d.label) {
           case 0:
@@ -3821,41 +3796,69 @@ function () {
             options.maxConnections = Utils_1.getOrDefault(options.maxConnections, Infinity);
             options.maxGates = Utils_1.getOrDefault(options.maxGates, Infinity);
             start = Date.now();
+            serializedDataSet = serializeDataSet(dataset);
+            workerPath = "../multithreading/Worker";
+            pool = threads_1.Pool(function () {
+              return threads_1.spawn(new threads_1.Worker(workerPath));
+            });
 
             options.fitnessFunction = function (dataset, population) {
               return __awaiter(this, void 0, void 0, function () {
+                var _loop_1, _i, population_1, genome;
+
                 var _this = this;
 
                 return __generator(this, function (_a) {
                   switch (_a.label) {
                     case 0:
-                      if (!Array.isArray(population)) {
-                        population = [population];
+                      _loop_1 = function (genome) {
+                        pool.queue(function (test) {
+                          return __awaiter(_this, void 0, void 0, function () {
+                            var _a;
+
+                            var _b, _c;
+
+                            return __generator(this, function (_d) {
+                              switch (_d.label) {
+                                case 0:
+                                  if (genome === undefined) {
+                                    return [2
+                                    /*return*/
+                                    ];
+                                  }
+
+                                  _a = genome;
+                                  return [4
+                                  /*yield*/
+                                  , test(serializedDataSet, genome.serialize(), Loss_1.ALL_LOSSES.indexOf((_b = options.loss) !== null && _b !== void 0 ? _b : new Loss_1.MSELoss()))];
+
+                                case 1:
+                                  _a.score = -_d.sent();
+
+                                  if (genome.score === undefined) {
+                                    genome.score = -Infinity;
+                                    console.log("ERROR");
+                                  }
+
+                                  genome.score -= ((_c = options.growth) !== null && _c !== void 0 ? _c : 0.0001) * (genome.nodes.length - genome.inputSize - genome.outputSize + genome.connections.length + genome.gates.length);
+                                  return [2
+                                  /*return*/
+                                  ];
+                              }
+                            });
+                          });
+                        });
+                      };
+
+                      for (_i = 0, population_1 = population; _i < population_1.length; _i++) {
+                        genome = population_1[_i];
+
+                        _loop_1(genome);
                       }
 
                       return [4
                       /*yield*/
-                      , Promise.all(population.map(function (genome) {
-                        return __awaiter(_this, void 0, void 0, function () {
-                          var score, i;
-
-                          var _a, _b, _c;
-
-                          return __generator(this, function (_d) {
-                            score = 0;
-
-                            for (i = 0; i < ((_a = options.amount) !== null && _a !== void 0 ? _a : 1); i++) {
-                              score -= genome.test(dataset, options.loss);
-                            }
-
-                            score -= (_b = options.growth) !== null && _b !== void 0 ? _b : 0.0001 * (genome.nodes.length - genome.inputSize - genome.outputSize + genome.connections.length + genome.gates.length);
-                            genome.score = score / ((_c = options.amount) !== null && _c !== void 0 ? _c : 1);
-                            return [2
-                            /*return*/
-                            ];
-                          });
-                        });
-                      }))];
+                      , pool.settled()];
 
                     case 1:
                       _a.sent();
@@ -3878,7 +3881,7 @@ function () {
             _d.label = 1;
 
           case 1:
-            if (!(error < -targetError && (options.iterations === 0 || neat.generation < ((_a = options.iterations) !== null && _a !== void 0 ? _a : 0)))) return [3
+            if (!(error < -targetError || options.iterations === 0 || neat.generation < ((_a = options.iterations) !== null && _a !== void 0 ? _a : 0))) return [3
             /*break*/
             , 3];
             return [4
@@ -3930,11 +3933,63 @@ function () {
     });
   };
 
+  Network.prototype.serialize = function () {
+    var activations = [];
+    var states = [];
+    var connections = [];
+    connections.push(this.inputSize);
+    connections.push(this.outputSize);
+    var nodeIndexCount = 0;
+    this.nodes.forEach(function (node) {
+      node.index = nodeIndexCount++;
+      activations.push(node.activation);
+      states.push(node.state);
+    });
+    this.nodes.filter(function (node) {
+      return !node.isInputNode();
+    }).forEach(function (node) {
+      var _a, _b;
+
+      connections.push(node.index);
+      connections.push(node.bias);
+      connections.push(Activation_1.ALL_ACTIVATIONS.indexOf(node.squash.type));
+      connections.push(node.selfConnection.weight);
+      connections.push((_b = (_a = node.selfConnection.gateNode) === null || _a === void 0 ? void 0 : _a.index) !== null && _b !== void 0 ? _b : -1);
+      node.incoming.forEach(function (connection) {
+        var _a, _b;
+
+        connections.push(connection.from.index);
+        connections.push(connection.weight);
+        connections.push((_b = (_a = connection.gateNode) === null || _a === void 0 ? void 0 : _a.index) !== null && _b !== void 0 ? _b : -1);
+      });
+      connections.push(-2); // stop token -> next node
+    });
+    return [activations, states, connections];
+  };
+
   return Network;
 }();
 
 exports.Network = Network;
-},{"./Connection":"architecture/Connection.js","./Node":"architecture/Node.js","../methods/Utils":"methods/Utils.js","../methods/Mutation":"methods/Mutation.js","../methods/Loss":"methods/Loss.js","../methods/Rate":"methods/Rate.js","../NEAT":"NEAT.js"}],"index.js":[function(require,module,exports) {
+
+function serializeDataSet(dataSet) {
+  var serialized = [dataSet[0].input.length, dataSet[0].output.length];
+
+  for (var _i = 0, dataSet_1 = dataSet; _i < dataSet_1.length; _i++) {
+    var entry = dataSet_1[_i];
+
+    for (var j = 0; j < serialized[0]; j++) {
+      serialized.push(entry.input[j]);
+    }
+
+    for (var j = 0; j < serialized[1]; j++) {
+      serialized.push(entry.output[j]);
+    }
+  }
+
+  return serialized;
+}
+},{"./Connection":"architecture/Connection.js","./Node":"architecture/Node.js","../methods/Utils":"methods/Utils.js","../methods/Mutation":"methods/Mutation.js","../methods/Loss":"methods/Loss.js","../methods/Rate":"methods/Rate.js","../NEAT":"NEAT.js","../methods/Activation":"methods/Activation.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var __importStar = this && this.__importStar || function (mod) {
