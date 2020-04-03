@@ -2,14 +2,14 @@ import * as path from "path";
 import ParcelBundler = require("parcel-bundler");
 
 async function runBuild(options: ParcelBundler.ParcelOptions): Promise<void> {
-    const entry: string = path.resolve(__dirname, '../src/index.js');
+    const entry: string = path.resolve(__dirname, '../build/index.js');
     const builder: ParcelBundler = new ParcelBundler(entry, options);
     await builder.bundle();
 }
 
 const browserProduction: ParcelBundler.ParcelOptions = {
-    outDir: path.resolve(__dirname, '../../dist/production'),
-    outFile: path.resolve(__dirname, '../../dist/production/index.browser.min.js'),
+    outDir: path.resolve(__dirname, '../dist/production'),
+    outFile: path.resolve(__dirname, '../dist/production/index.browser.min.js'),
     minify: true,
     watch: false,
     target: 'browser',
@@ -17,8 +17,8 @@ const browserProduction: ParcelBundler.ParcelOptions = {
     global: 'carrot',
 };
 const browserDev: ParcelBundler.ParcelOptions = {
-    outDir: path.resolve(__dirname, '../../dist/dev'),
-    outFile: path.resolve(__dirname, '../../dist/dev/index.browser.js'),
+    outDir: path.resolve(__dirname, '../dist/dev'),
+    outFile: path.resolve(__dirname, '../dist/dev/index.browser.js'),
     minify: false,
     watch: true,
     target: 'browser',
@@ -26,16 +26,16 @@ const browserDev: ParcelBundler.ParcelOptions = {
     global: 'carrot',
 };
 const nodeProduction: ParcelBundler.ParcelOptions = {
-    outDir: path.resolve(__dirname, '../../dist/production'),
-    outFile: path.resolve(__dirname, '../../dist/production/index.min.js'),
+    outDir: path.resolve(__dirname, '../dist/production'),
+    outFile: path.resolve(__dirname, '../dist/production/index.min.js'),
     minify: true,
     watch: false,
     target: "node",
     global: 'carrot',
 };
 const nodeDev: ParcelBundler.ParcelOptions = {
-    outDir: path.resolve(__dirname, '../../dist/dev'),
-    outFile: path.resolve(__dirname, '../../dist/dev/index.js'),
+    outDir: path.resolve(__dirname, '../dist/dev'),
+    outFile: path.resolve(__dirname, '../dist/dev/index.js'),
     minify: false,
     watch: true,
     target: "node",
