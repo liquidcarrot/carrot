@@ -2,10 +2,12 @@ import {Connection, ConnectionJSON} from "./Connection";
 import {Node, NodeJSON, NodeType} from "./Node";
 import {anyMatch, getOrDefault, pickRandom, randBoolean, randInt, remove, shuffle} from "../methods/Utils";
 import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
-import {Loss, MSELoss} from "../methods/Loss";
+import {ALL_LOSSES, Loss, MSELoss} from "../methods/Loss";
 import {FixedRate, Rate} from "../methods/Rate";
 import {NEAT} from "../NEAT";
 import {Selection} from "../methods/Selection";
+import {ALL_ACTIVATIONS} from "../methods/Activation";
+import {Pool, spawn, Worker} from "threads";
 
 export class Network {
     public inputSize: number;
@@ -566,26 +568,39 @@ export class Network {
 
         const start: number = Date.now();
 
-        options.fitnessFunction = async function (dataset: { input: number[], output: number[] }[], population: Network[] | Network): Promise<void> {
-            if (!Array.isArray(population)) {
-                population = [population];
+        // Serialize the dataset
+        const serializedDataSet: number[] = serializeDataSet(dataset);
+
+        const workerPath: string = "../multithreading/Worker";
+
+        // tslint:disable-next-line:typedef
+        const pool = Pool(() => spawn(new Worker(workerPath)), 8);
+
+        options.fitnessFunction = async function (dataset: { input: number[], output: number[] }[], population: Network[]): Promise<void> {
+
+
+            for (const genome of population) {
+                pool.queue(async test => {
+                    if (genome === undefined) {
+                        return;
+                    }
+                    genome.score = -await test(serializedDataSet, genome.serialize(), ALL_LOSSES.indexOf(options.loss ?? new MSELoss()));
+                    if (genome.score === undefined) {
+                        genome.score = -Infinity;
+                        console.log("ERROR");
+                    }
+
+                    genome.score -= (options.growth ?? 0.0001) * (
+                        genome.nodes.length
+                        - genome.inputSize
+                        - genome.outputSize
+                        + genome.connections.length
+                        + genome.gates.length
+                    );
+                });
             }
-            await Promise.all(population.map(async genome => {
-                let score: number = 0;
-                for (let i: number = 0; i < (options.amount ?? 1); i++) {
-                    score -= genome.test(dataset, options.loss);
-                }
 
-                score -= options.growth ?? 0.0001 * (
-                    genome.nodes.length
-                    - genome.inputSize
-                    - genome.outputSize
-                    + genome.connections.length
-                    + genome.gates.length
-                );
-
-                genome.score = score / (options.amount ?? 1);
-            }));
+            await pool.settled();
         };
 
         options.fitnessPopulation = true;
@@ -599,7 +614,7 @@ export class Network {
         let bestFitness: number = -Infinity;
         let bestGenome: Network | undefined;
 
-        while (error < -targetError && (options.iterations === 0 || neat.generation < (options.iterations ?? 0))) {
+        while (error < -targetError || (options.iterations === 0 || neat.generation < (options.iterations ?? 0))) {
             const fittest: Network = await neat.evolve(undefined, undefined);
             const fitness: number = fittest.score === undefined ? -Infinity : fittest.score;
             error = fitness + options.growth * (
@@ -640,9 +655,44 @@ export class Network {
             time: Date.now() - start,
         };
     }
+
+    public serialize(): number[][] {
+        const activations: number[] = [];
+        const states: number[] = [];
+        const connections: number[] = [];
+
+        connections.push(this.inputSize);
+        connections.push(this.outputSize);
+
+        let nodeIndexCount: number = 0;
+        this.nodes.forEach(node => {
+            node.index = nodeIndexCount++;
+            activations.push(node.activation);
+            states.push(node.state);
+        });
+        this.nodes
+            .filter(node => !node.isInputNode())
+            .forEach(node => {
+                connections.push(node.index);
+                connections.push(node.bias);
+                connections.push(ALL_ACTIVATIONS.indexOf(node.squash.type));
+
+                connections.push(node.selfConnection.weight);
+                connections.push(node.selfConnection.gateNode?.index ?? -1);
+                node.incoming.forEach(connection => {
+                    connections.push(connection.from.index);
+                    connections.push(connection.weight);
+                    connections.push(connection.gateNode?.index ?? -1);
+                });
+
+                connections.push(-2); // stop token -> next node
+            });
+        return [activations, states, connections];
+    }
 }
 
 export interface EvolveOptions {
+    threads?: number;
     generation?: number;
     template?: Network;
     mutations?: Mutation[];
@@ -652,7 +702,7 @@ export interface EvolveOptions {
     provenance?: number;
     elitism?: number;
     populationSize?: number;
-    fitnessFunction?: (dataset: { input: number[], output: number[] }[], population: Network[] | Network) => Promise<void>;
+    fitnessFunction?: (dataset: { input: number[], output: number[] }[], population: Network[]) => Promise<void>;
     growth?: number;
     loss?: Loss;
     amount?: number;
@@ -691,4 +741,19 @@ export interface TrainOptions {
     crossValidateTestSize?: number;
     log?: number;
     batchSize?: number;
+}
+
+function serializeDataSet(dataSet: { input: number[], output: number[] }[]): number[] {
+    const serialized: number[] = [dataSet[0].input.length, dataSet[0].output.length];
+
+    for (const entry of dataSet) {
+        for (let j: number = 0; j < serialized[0]; j++) {
+            serialized.push(entry.input[j]);
+        }
+        for (let j: number = 0; j < serialized[1]; j++) {
+            serialized.push(entry.output[j]);
+        }
+    }
+
+    return serialized;
 }
