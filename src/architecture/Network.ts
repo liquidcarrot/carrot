@@ -8,6 +8,7 @@ import {NEAT} from "../NEAT";
 import {Selection} from "../methods/Selection";
 import {ALL_ACTIVATIONS} from "../methods/Activation";
 import {Pool, spawn, Worker} from "threads";
+import "threads/register";
 
 export class Network {
     public inputSize: number;
