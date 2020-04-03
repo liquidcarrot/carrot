@@ -1,5 +1,4 @@
-import {Network} from "../../../src/architecture/Network";
-import {Connection, Node} from "../../../src";
+import {Connection, Network, Node} from "../../../src";
 import {anyMatch, randInt} from "../../../src/methods/Utils";
 import {AddConnectionMutation, AddGateMutation, AddNodeMutation, SubGateMutation} from "../../../src/methods/Mutation";
 import {expect} from "chai";
