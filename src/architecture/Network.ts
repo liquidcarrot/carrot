@@ -708,18 +708,3 @@ export interface TrainOptions {
     log?: number;
     batchSize?: number;
 }
-
-function serializeDataSet(dataSet: { input: number[], output: number[] }[]): number[] {
-    const serialized: number[] = [dataSet[0].input.length, dataSet[0].output.length];
-
-    for (const entry of dataSet) {
-        for (let j: number = 0; j < serialized[0]; j++) {
-            serialized.push(entry.input[j]);
-        }
-        for (let j: number = 0; j < serialized[1]; j++) {
-            serialized.push(entry.output[j]);
-        }
-    }
-
-    return serialized;
-}
