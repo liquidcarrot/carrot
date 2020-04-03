@@ -7,15 +7,13 @@
     ],
     "allowJs": false,
     "outDir": "build",
-    "rootDir": "./",
+    "rootDir": "./src",
     "strict": true,
     "noImplicitAny": true,
     "esModuleInterop": true,
     "resolveJsonModule": true
   },
   "include": [
-    "src/**/*",
-    "test/**/*",
-    "scripts/**/*"
+    "src/**/*"
   ]
 }

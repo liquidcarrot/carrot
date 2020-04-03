@@ -12,9 +12,9 @@
     "child_process": false
   },
   "scripts": {
-    "build:src": "tsc --declaration && node build/scripts/build.js",
+    "build:src": "ts-node scripts/build.ts",
     "deploy:docs": "tsc --declaration && jsdoc -c jsdoc.json -d ./theme/static/versions/${npm_package_version}/",
-    "test": "tsc --declaration && mocha --require ts-node/register --extensions ts,tsx --watch --watch-files src 'test/**/*.{ts,tsx}'",
+    "test": "mocha --require ts-node/register --extensions ts,tsx --watch --watch-files src 'test/**/*.{ts,tsx}'",
     "lint": "tslint --project ./",
     "coverage": "nyc npm test && nyc report --reporter=text-lcov | coveralls build/src"
   },
