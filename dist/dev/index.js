@@ -3148,8 +3148,6 @@ var Rate_1 = require("../methods/Rate");
 
 var NEAT_1 = require("../NEAT");
 
-var Activation_1 = require("../methods/Activation");
-
 var threads_1 = require("threads");
 
 require("threads/register");
@@ -3796,9 +3794,11 @@ function () {
             options.maxConnections = Utils_1.getOrDefault(options.maxConnections, Infinity);
             options.maxGates = Utils_1.getOrDefault(options.maxGates, Infinity);
             start = Date.now();
-            serializedDataSet = serializeDataSet(dataset);
+            serializedDataSet = JSON.stringify(dataset);
             workerPath = "../multithreading/Worker";
-            pool = threads_1.Pool(function () {
+            pool = options.threads ? threads_1.Pool(function () {
+              return threads_1.spawn(new threads_1.Worker(workerPath));
+            }, options.threads) : threads_1.Pool(function () {
               return threads_1.spawn(new threads_1.Worker(workerPath));
             });
 
@@ -3830,14 +3830,16 @@ function () {
                                   _a = genome;
                                   return [4
                                   /*yield*/
-                                  , test(serializedDataSet, genome.serialize(), Loss_1.ALL_LOSSES.indexOf((_b = options.loss) !== null && _b !== void 0 ? _b : new Loss_1.MSELoss()))];
+                                  , test(serializedDataSet, JSON.stringify(genome.toJSON()), Loss_1.ALL_LOSSES.indexOf((_b = options.loss) !== null && _b !== void 0 ? _b : new Loss_1.MSELoss()))];
 
                                 case 1:
                                   _a.score = -_d.sent();
 
                                   if (genome.score === undefined) {
                                     genome.score = -Infinity;
-                                    console.log("ERROR");
+                                    return [2
+                                    /*return*/
+                                    ];
                                   }
 
                                   genome.score -= ((_c = options.growth) !== null && _c !== void 0 ? _c : 0.0001) * (genome.nodes.length - genome.inputSize - genome.outputSize + genome.connections.length + genome.gates.length);
@@ -3881,7 +3883,7 @@ function () {
             _d.label = 1;
 
           case 1:
-            if (!(error < -targetError || options.iterations === 0 || neat.generation < ((_a = options.iterations) !== null && _a !== void 0 ? _a : 0))) return [3
+            if (!(error < -targetError && (options.iterations === 0 || neat.generation < ((_a = options.iterations) !== null && _a !== void 0 ? _a : 0)))) return [3
             /*break*/
             , 3];
             return [4
@@ -3921,6 +3923,13 @@ function () {
               }
             }
 
+            return [4
+            /*yield*/
+            , pool.terminate()];
+
+          case 4:
+            _d.sent();
+
             return [2
             /*return*/
             , {
@@ -3933,63 +3942,11 @@ function () {
     });
   };
 
-  Network.prototype.serialize = function () {
-    var activations = [];
-    var states = [];
-    var connections = [];
-    connections.push(this.inputSize);
-    connections.push(this.outputSize);
-    var nodeIndexCount = 0;
-    this.nodes.forEach(function (node) {
-      node.index = nodeIndexCount++;
-      activations.push(node.activation);
-      states.push(node.state);
-    });
-    this.nodes.filter(function (node) {
-      return !node.isInputNode();
-    }).forEach(function (node) {
-      var _a, _b;
-
-      connections.push(node.index);
-      connections.push(node.bias);
-      connections.push(Activation_1.ALL_ACTIVATIONS.indexOf(node.squash.type));
-      connections.push(node.selfConnection.weight);
-      connections.push((_b = (_a = node.selfConnection.gateNode) === null || _a === void 0 ? void 0 : _a.index) !== null && _b !== void 0 ? _b : -1);
-      node.incoming.forEach(function (connection) {
-        var _a, _b;
-
-        connections.push(connection.from.index);
-        connections.push(connection.weight);
-        connections.push((_b = (_a = connection.gateNode) === null || _a === void 0 ? void 0 : _a.index) !== null && _b !== void 0 ? _b : -1);
-      });
-      connections.push(-2); // stop token -> next node
-    });
-    return [activations, states, connections];
-  };
-
   return Network;
 }();
 
 exports.Network = Network;
-
-function serializeDataSet(dataSet) {
-  var serialized = [dataSet[0].input.length, dataSet[0].output.length];
-
-  for (var _i = 0, dataSet_1 = dataSet; _i < dataSet_1.length; _i++) {
-    var entry = dataSet_1[_i];
-
-    for (var j = 0; j < serialized[0]; j++) {
-      serialized.push(entry.input[j]);
-    }
-
-    for (var j = 0; j < serialized[1]; j++) {
-      serialized.push(entry.output[j]);
-    }
-  }
-
-  return serialized;
-}
-},{"./Connection":"architecture/Connection.js","./Node":"architecture/Node.js","../methods/Utils":"methods/Utils.js","../methods/Mutation":"methods/Mutation.js","../methods/Loss":"methods/Loss.js","../methods/Rate":"methods/Rate.js","../NEAT":"NEAT.js","../methods/Activation":"methods/Activation.js"}],"index.js":[function(require,module,exports) {
+},{"./Connection":"architecture/Connection.js","./Node":"architecture/Node.js","../methods/Utils":"methods/Utils.js","../methods/Mutation":"methods/Mutation.js","../methods/Loss":"methods/Loss.js","../methods/Rate":"methods/Rate.js","../NEAT":"NEAT.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 var __importStar = this && this.__importStar || function (mod) {
