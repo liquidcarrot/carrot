@@ -14,7 +14,7 @@
   "scripts": {
     "build:src": "tsc --declaration && node build/scripts/build.js",
     "deploy:docs": "tsc --declaration && jsdoc -c jsdoc.json -d ./theme/static/versions/${npm_package_version}/",
-    "test": "tsc --declaration && nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha --recursive build/test/",
+    "test": "tsc --declaration && mocha --require ts-node/register --extensions ts,tsx --watch --watch-files src 'test/**/*.{ts,tsx}'",
     "lint": "tslint --project ./",
     "coverage": "nyc npm test && nyc report --reporter=text-lcov | coveralls build/src"
   },
@@ -81,6 +81,7 @@
     "mocha": "^7.1.1",
     "nyc": "^15.0.0",
     "parcel-bundler": "^1.12.4",
+    "ts-node": "^8.8.1",
     "tslint": "^6.1.0",
     "typescript": "^3.8.3"
   },
