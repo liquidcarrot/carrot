@@ -1,6 +1,7 @@
 import {expose} from "threads/worker";
-import {ALL_LOSSES, Loss, MSELoss} from "../methods/Loss";
 import {Activation, ALL_ACTIVATIONS} from "../methods/Activation";
+import {Network} from "..";
+import {ALL_LOSSES, MSELoss} from "../methods/Loss";
 
 function activateSerializedNetwork(input: number[], activations: number[], states: number[], connections: number[]): number[] {
     for (let i: number = 0; i < connections[0]; i++) {
@@ -47,16 +48,8 @@ function deserializeDataSet(serializedSet: number[]): { input: number[]; output:
     return set;
 }
 
-expose(async (serializedDataSet: number[], serializedNetwork: number[][], lossIndex: number): Promise<number> => {
-    const activations: number[] = serializedNetwork[0];
-    const states: number[] = serializedNetwork[1];
-    const connections: number[] = serializedNetwork[2];
-    const dataset: { input: number[]; output: number[] }[] = deserializeDataSet(serializedDataSet);
-    const loss: Loss = ALL_LOSSES[lossIndex] ?? new MSELoss();
-
-    let error: number = 0;
-    dataset.forEach(entry => {
-        error += loss.calc(entry.output, activateSerializedNetwork(entry.input, activations, states, connections));
+expose(async (serializedDataSet: number[], jsonNetwork: string, lossIndex: number): Promise<number> => {
+    return new Promise(resolve => {
+        resolve(Network.fromJSON(JSON.parse(jsonNetwork)).test(deserializeDataSet(serializedDataSet), ALL_LOSSES[lossIndex] ?? new MSELoss()));
     });
-    return error / dataset.length;
 });

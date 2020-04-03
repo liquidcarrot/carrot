@@ -6,7 +6,6 @@ import {ALL_LOSSES, Loss, MSELoss} from "../methods/Loss";
 import {FixedRate, Rate} from "../methods/Rate";
 import {NEAT} from "../NEAT";
 import {Selection} from "../methods/Selection";
-import {ALL_ACTIVATIONS} from "../methods/Activation";
 import {Pool, spawn, Worker} from "threads";
 import "threads/register";
 
@@ -575,20 +574,18 @@ export class Network {
         const workerPath: string = "../multithreading/Worker";
 
         // tslint:disable-next-line:typedef
-        const pool = Pool(() => spawn(new Worker(workerPath)));
+        const pool = options.threads ? Pool(() => spawn(new Worker(workerPath)), options.threads) : Pool(() => spawn(new Worker(workerPath)));
 
         options.fitnessFunction = async function (dataset: { input: number[], output: number[] }[], population: Network[]): Promise<void> {
-
-
             for (const genome of population) {
                 pool.queue(async test => {
                     if (genome === undefined) {
                         return;
                     }
-                    genome.score = -await test(serializedDataSet, genome.serialize(), ALL_LOSSES.indexOf(options.loss ?? new MSELoss()));
+                    genome.score = -await test(serializedDataSet, JSON.stringify(genome.toJSON()), ALL_LOSSES.indexOf(options.loss ?? new MSELoss()));
                     if (genome.score === undefined) {
                         genome.score = -Infinity;
-                        console.log("ERROR");
+                        return;
                     }
 
                     genome.score -= (options.growth ?? 0.0001) * (
@@ -615,7 +612,7 @@ export class Network {
         let bestFitness: number = -Infinity;
         let bestGenome: Network | undefined;
 
-        while (error < -targetError || (options.iterations === 0 || neat.generation < (options.iterations ?? 0))) {
+        while (error < -targetError && (options.iterations === 0 || neat.generation < (options.iterations ?? 0))) {
             const fittest: Network = await neat.evolve(undefined, undefined);
             const fitness: number = fittest.score === undefined ? -Infinity : fittest.score;
             error = fitness + options.growth * (
@@ -650,45 +647,13 @@ export class Network {
             }
         }
 
+        await pool.terminate();
+
         return {
             error: -error,
             iterations: neat.generation,
             time: Date.now() - start,
         };
-    }
-
-    public serialize(): number[][] {
-        const activations: number[] = [];
-        const states: number[] = [];
-        const connections: number[] = [];
-
-        connections.push(this.inputSize);
-        connections.push(this.outputSize);
-
-        let nodeIndexCount: number = 0;
-        this.nodes.forEach(node => {
-            node.index = nodeIndexCount++;
-            activations.push(node.activation);
-            states.push(node.state);
-        });
-        this.nodes
-            .filter(node => !node.isInputNode())
-            .forEach(node => {
-                connections.push(node.index);
-                connections.push(node.bias);
-                connections.push(ALL_ACTIVATIONS.indexOf(node.squash.type));
-
-                connections.push(node.selfConnection.weight);
-                connections.push(node.selfConnection.gateNode?.index ?? -1);
-                node.incoming.forEach(connection => {
-                    connections.push(connection.from.index);
-                    connections.push(connection.weight);
-                    connections.push(connection.gateNode?.index ?? -1);
-                });
-
-                connections.push(-2); // stop token -> next node
-            });
-        return [activations, states, connections];
     }
 }
 
