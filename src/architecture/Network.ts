@@ -575,7 +575,7 @@ export class Network {
         const workerPath: string = "../multithreading/Worker";
 
         // tslint:disable-next-line:typedef
-        const pool = Pool(() => spawn(new Worker(workerPath)), 8);
+        const pool = Pool(() => spawn(new Worker(workerPath)));
 
         options.fitnessFunction = async function (dataset: { input: number[], output: number[] }[], population: Network[]): Promise<void> {
 
