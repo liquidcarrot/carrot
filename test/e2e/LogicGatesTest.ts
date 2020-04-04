@@ -63,7 +63,7 @@ describe('Logic Gates', () => {
         expect(final).to.be.at.most(initial);
     });
     it('[NOT] Network.evolve()', async function (): Promise<void> {
-        this.timeout(30000);
+        this.timeout(40000);
 
         const network: Network = new Network(1, 1);
 
@@ -84,7 +84,7 @@ describe('Logic Gates', () => {
         expect(final).to.be.at.most(initial);
     });
     it('[AND] Network.evolve()', async function (): Promise<void> {
-        this.timeout(30000);
+        this.timeout(40000);
 
         const network: Network = new Network(2, 1);
 
@@ -105,7 +105,7 @@ describe('Logic Gates', () => {
         expect(final).to.be.at.most(initial);
     });
     it('[OR] Network.evolve()', async function (): Promise<void> {
-        this.timeout(30000);
+        this.timeout(40000);
 
         const network: Network = new Network(2, 1);
 
@@ -126,7 +126,7 @@ describe('Logic Gates', () => {
         expect(final).to.be.at.most(initial);
     });
     it('[NAND] Network.evolve()', async function (): Promise<void> {
-        this.timeout(30000);
+        this.timeout(40000);
 
         const network: Network = new Network(2, 1);
 
@@ -147,7 +147,7 @@ describe('Logic Gates', () => {
         expect(final).to.be.at.most(initial);
     });
     it('[NOR] Network.evolve()', async function (): Promise<void> {
-        this.timeout(30000);
+        this.timeout(40000);
 
         const network: Network = new Network(2, 1);
 
@@ -168,7 +168,7 @@ describe('Logic Gates', () => {
         expect(final).to.be.at.most(initial);
     });
     it('[XOR] Network.evolve()', async function (): Promise<void> {
-        this.timeout(30000);
+        this.timeout(60000);
 
         const network: Network = new Network(2, 1);
 
@@ -189,7 +189,7 @@ describe('Logic Gates', () => {
         expect(final).to.be.at.most(initial);
     });
     it('[XNOR] Network.evolve()', async function (): Promise<void> {
-        this.timeout(30000);
+        this.timeout(60000);
 
         const network: Network = new Network(2, 1);
 

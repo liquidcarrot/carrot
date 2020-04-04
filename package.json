@@ -14,7 +14,7 @@
   "scripts": {
     "build:src": "ts-node scripts/build.ts",
     "deploy:docs": "tsc --declaration && jsdoc -c jsdoc.json -d ./theme/static/versions/${npm_package_version}/",
-    "test": "mocha --require ts-node/register test/**/*",
+    "test": "tsc && mocha build/test/**/*",
     "test-parallel": "mocha-parallel-tests --require ts-node/register test/**/*",
     "lint": "tslint --project ./",
     "coverage": "nyc npm test && nyc report --reporter=text-lcov | coveralls build/src"
