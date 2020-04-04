@@ -1,4 +1,4 @@
-import {Node} from "./node";
+import {Node} from "./Node";
 
 /**
  * A connection instance describes the connection between two nodes. If you're looking for connections between [Groups](Group) please see [Connection Methods](connection)
