@@ -1,3 +1,21 @@
+/**
+ * Activation functions
+ *
+ * Activation functions determine what activation value neurons should get. Depending on your network's environment, choosing a suitable activation function can have a positive impact on the learning ability of the network.
+ *
+ * @see [Activation Function on Wikipedia](https://en.wikipedia.org/wiki/Activation_function)
+ * @see [Beginners Guide to Activation Functions](https://towardsdatascience.com/secret-sauce-behind-the-beauty-of-deep-learning-beginners-guide-to-activation-functions-a8e23a57d046)
+ * @see [Understanding activation functions in neural networks](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0)
+ * @see [List of activation functions in neural networks with pros/cons](https://stats.stackexchange.com/questions/115258/comprehensive-list-of-activation-functions-in-neural-networks-with-pros-cons)
+ *
+ *
+ * @example
+ * let { methods, Node } = require("@liquid-carrot/carrot");
+ *
+ * // Changing a neuron's activation function
+ * let A = new Node();
+ * A.squash = new LogisticActivation();
+ */
 export abstract class Activation {
     public readonly type: ActivationType = ActivationType.NO_ACTIVATION;
 
@@ -13,8 +31,8 @@ export abstract class Activation {
                 return new StepActivation();
             case ActivationType.RELUActivation:
                 return new RELUActivation();
-            case ActivationType.SoftsignActivation:
-                return new SoftsignActivation();
+            case ActivationType.SoftSignActivation:
+                return new SoftSignActivation();
             case ActivationType.SinusoidActivation:
                 return new LogisticActivation();
             case ActivationType.GaussianActivation:
@@ -40,6 +58,19 @@ export abstract class Activation {
     public abstract calc(x: number, derivative: boolean): number;
 }
 
+/**
+ * [Logistic function.](https://en.wikipedia.org/wiki/Logistic_function)
+ *
+ * @param x Input value(s) to activation function
+ * @param derivative Flag to select derivative function
+ *
+ * @example
+ * let { methods, Node } = require("@liquid-carrot/carrot");
+ *
+ * // Changing a neuron's activation function
+ * let A = new Node();
+ * A.squash = new LogisticActivation();
+ */
 export class LogisticActivation implements Activation {
     public readonly type: ActivationType = ActivationType.LogisticActivation;
 
@@ -52,6 +83,19 @@ export class LogisticActivation implements Activation {
     }
 }
 
+/**
+ * [TanH function.](https://en.wikipedia.org/wiki/Hyperbolic_function#Hyperbolic_tangent)
+ *
+ * @param x Input value to activation function
+ * @param derivative Flag to select derivative function
+ *
+ * @example
+ * let { methods, Node } = require("@liquid-carrot/carrot");
+ *
+ * // Changing a neuron's activation function
+ * let A = new Node();
+ * A.squash = new TanhActivation();
+ */
 export class TanhActivation implements Activation {
     public readonly type: ActivationType = ActivationType.TanhActivation;
 
@@ -64,6 +108,21 @@ export class TanhActivation implements Activation {
     }
 }
 
+/**
+ * [Identity function.](https://en.wikipedia.org/wiki/Identity_function)
+ *
+ * Returns input as output, used for [memory neurons](Layer#.Memory).
+ *
+ * @param x Input values to activation function
+ * @param derivative Flag to select derivative function
+ *
+ * @example
+ * let { methods, Node } = require("@liquid-carrot/carrot");
+ *
+ * // Changing a neuron's activation function
+ * let A = new Node();
+ * A.squash = new IdentityActivation();
+ */
 export class IdentityActivation implements Activation {
     public readonly type: ActivationType = ActivationType.IdentityActivation;
 
@@ -76,6 +135,19 @@ export class IdentityActivation implements Activation {
     }
 }
 
+/**
+ * [Step function.](https://en.wikipedia.org/wiki/Heaviside_step_function)
+ *
+ * @param x Input values to activation function
+ * @param derivative Flag to select derivative function
+ *
+ * @example
+ * let { methods, Node } = require("@liquid-carrot/carrot");
+ *
+ * // Changing a neuron's activation function
+ * let A = new Node();
+ * A.squash = new StepActivation();
+ */
 export class StepActivation implements Activation {
     public readonly type: ActivationType = ActivationType.StepActivation;
 
@@ -88,6 +160,19 @@ export class StepActivation implements Activation {
     }
 }
 
+/**
+ * [ReLU function.]{@link https://en.wikipedia.org/wiki/Rectifier_(neural_networks)}
+ *
+ * @param x Input values to activation function
+ * @param derivative Flag to select derivative function
+ *
+ * @example
+ * let { methods, Node } = require("@liquid-carrot/carrot");
+ *
+ * // Changing a neuron's activation function
+ * let A = new Node();
+ * A.squash = new RELUActivation();
+ */
 export class RELUActivation implements Activation {
     public readonly type: ActivationType = ActivationType.RELUActivation;
 
@@ -100,8 +185,21 @@ export class RELUActivation implements Activation {
     }
 }
 
-export class SoftsignActivation implements Activation {
-    public readonly type: ActivationType = ActivationType.SoftsignActivation;
+/**
+ * [SoftSign function.](https://en.wikipedia.org/wiki/Activation_function#Comparison_of_activation_functions)
+ *
+ * @param x Input values to activation function
+ * @param derivative Flag to select derivative function
+ *
+ * @example
+ * let { methods, Node } = require("@liquid-carrot/carrot");
+ *
+ * // Changing a neuron's activation function
+ * let A = new Node();
+ * A.squash = new SoftSignActivation;
+ */
+export class SoftSignActivation implements Activation {
+    public readonly type: ActivationType = ActivationType.SoftSignActivation;
 
     public calc(x: number, derivative: boolean = false): number {
         if (!derivative) {
@@ -112,6 +210,19 @@ export class SoftsignActivation implements Activation {
     }
 }
 
+/**
+ * [Sinusoid function.](https://en.wikipedia.org/wiki/Sine_wave)
+ *
+ * @param x Input values to activation function
+ * @param derivative Flag to select derivative function
+ *
+ * @example
+ * let { methods, Node } = require("@liquid-carrot/carrot");
+ *
+ * // Changing a neuron's activation function
+ * let A = new Node();
+ * A.squash = new SinusoidActivation();
+ */
 export class SinusoidActivation implements Activation {
     public readonly type: ActivationType = ActivationType.SinusoidActivation;
 
@@ -124,6 +235,19 @@ export class SinusoidActivation implements Activation {
     }
 }
 
+/**
+ * [Guassian function.](https://en.wikipedia.org/wiki/Gaussian_function)
+ *
+ * @param x Input values to activation function
+ * @param derivative Flag to select derivative function
+ *
+ * @example
+ * let { methods, Node } = require("@liquid-carrot/carrot");
+ *
+ * // Changing a neuron's activation function
+ * let A = new Node();
+ * A.squash = new GaussianActivation();
+ */
 export class GaussianActivation implements Activation {
     public readonly type: ActivationType = ActivationType.GaussianActivation;
 
@@ -136,6 +260,19 @@ export class GaussianActivation implements Activation {
     }
 }
 
+/**
+ * [Bent identity function.](https://en.wikipedia.org/wiki/Activation_function#Comparison_of_activation_functions)
+ *
+ * @param x Input values to activation function
+ * @param derivative Flag to select derivative function
+ *
+ * @example
+ * let { methods, Node } = require("@liquid-carrot/carrot");
+ *
+ * // Changing a neuron's activation function
+ * let A = new Node();
+ * A.squash = new BentIdentityActivation();
+ */
 export class BentIdentityActivation implements Activation {
     public readonly type: ActivationType = ActivationType.BentIdentityActivation;
 
@@ -148,6 +285,19 @@ export class BentIdentityActivation implements Activation {
     }
 }
 
+/**
+ * [Bipolar function](https://wagenaartje.github.io/neataptic/docs/methods/activation/), if x > 0 then returns 1, otherwise returns -1
+ *
+ * @param x Input value to activation function
+ * @param derivative Flag to select derivative function
+ *
+ * @example
+ * let { methods, Node } = require("@liquid-carrot/carrot");
+ *
+ * // Changing a neuron's activation function
+ * let A = new Node();
+ * A.squash = new BipolarActivation();
+ */
 export class BipolarActivation implements Activation {
     public readonly type: ActivationType = ActivationType.BipolarActivation;
 
@@ -160,6 +310,19 @@ export class BipolarActivation implements Activation {
     }
 }
 
+/**
+ * [Bipolar sigmoid function.](https://wagenaartje.github.io/neataptic/docs/methods/activation/)
+ *
+ * @param  x Input values to activation function
+ * @param derivative Flag to select derivative function
+ *
+ * @example
+ * let { methods, Node } = require("@liquid-carrot/carrot");
+ *
+ * // Changing a neuron's activation function
+ * let A = new Node();
+ * A.squash = new BipolarSigmoidActivation();
+ */
 export class BipolarSigmoidActivation implements Activation {
     public readonly type: ActivationType = ActivationType.BipolarSigmoidActivation;
 
@@ -172,6 +335,19 @@ export class BipolarSigmoidActivation implements Activation {
     }
 }
 
+/**
+ * [Hard tanh function.](https://wagenaartje.github.io/neataptic/docs/methods/activation/)
+ *
+ * @param x Input values to activation function
+ * @param derivative Flag to select derivative function
+ *
+ * @example
+ * let { methods, Node } = require("@liquid-carrot/carrot");
+ *
+ * // Changing a neuron's activation function
+ * let A = new Node();
+ * A.squash = new HardTanhActivation();
+ */
 export class HardTanhActivation implements Activation {
     public readonly type: ActivationType = ActivationType.HardTanhActivation;
 
@@ -184,6 +360,21 @@ export class HardTanhActivation implements Activation {
     }
 }
 
+/**
+ * [Absolute function.](https://wagenaartje.github.io/neataptic/docs/methods/activation/)
+ *
+ * Avoid using this activation function on a node with a selfconnection
+ *
+ * @param x Input values to activation function
+ * @param derivative Flag to select derivative function
+ *
+ * @example
+ * let { methods, Node } = require("@liquid-carrot/carrot");
+ *
+ * // Changing a neuron's activation function
+ * let A = new Node();
+ * A.squash = new AbsoluteActivation();
+ */
 export class AbsoluteActivation implements Activation {
     public readonly type: ActivationType = ActivationType.AbsoluteActivation;
 
@@ -196,6 +387,19 @@ export class AbsoluteActivation implements Activation {
     }
 }
 
+/**
+ * [Inverse function.](https://wagenaartje.github.io/neataptic/docs/methods/activation/)
+ *
+ * @param x Input values to activation function
+ * @param derivative Flag to select derivative function
+ *
+ * @example
+ * let { methods, Node } = require("@liquid-carrot/carrot");
+ *
+ * // Changing a neuron's activation function
+ * let A = new Node();
+ * A.squash = new InverseActivation();
+ */
 export class InverseActivation implements Activation {
     public readonly type: ActivationType = ActivationType.InverseActivation;
 
@@ -208,12 +412,29 @@ export class InverseActivation implements Activation {
     }
 }
 
+/**
+ * [Scaled exponential linear unit.](https://towardsdatascience.com/selu-make-fnns-great-again-snn-8d61526802a9)
+ *
+ * Exponential linear units try to make the mean activations closer to zero which speeds up learning. It has been shown that ELUs can obtain higher classification accuracy than ReLUs. α is a hyper-parameter here and to be tuned and the constraint is α ≥ 0(zero).
+ *
+ * @see {@link https://arxiv.org/pdf/1706.02515.pdf|Self-Normalizing Neural Networks}
+ *
+ * @param x Input value to activation function
+ * @param derivative Flag to select derivative function
+ *
+ * @example
+ * let { methods, Node } = require("@liquid-carrot/carrot");
+ *
+ * // Changing a neuron's activation function
+ * let A = new Node();
+ * A.squash = new SELUActivation();
+ */
 export class SELUActivation implements Activation {
     public readonly type: ActivationType = ActivationType.SELUActivation;
 
     public calc(x: number, derivative: boolean = false): number {
-        const alpha: number = 1.6732632423543772848170429916717;
-        const scale: number = 1.0507009873554804934193349852946;
+        const alpha: number = 1.6732632423543772848170429916717; // this is bad
+        const scale: number = 1.0507009873554804934193349852946; // this is bad
 
         if (!derivative) {
             if (x > 0) {
@@ -221,10 +442,12 @@ export class SELUActivation implements Activation {
             } else {
                 return alpha * Math.exp(x) - alpha * scale;
             }
-        } else if (x > 0) {
-            return scale;
         } else {
-            return alpha * Math.exp(x) * scale;
+            if (x > 0) {
+                return scale;
+            } else {
+                return alpha * Math.exp(x) * scale;
+            }
         }
     }
 }
@@ -236,7 +459,7 @@ export enum ActivationType {
     IdentityActivation,
     StepActivation,
     RELUActivation,
-    SoftsignActivation,
+    SoftSignActivation,
     SinusoidActivation,
     GaussianActivation,
     BentIdentityActivation,
@@ -254,7 +477,7 @@ export const ALL_ACTIVATIONS: ActivationType[] = [
     ActivationType.IdentityActivation,
     ActivationType.StepActivation,
     ActivationType.RELUActivation,
-    ActivationType.SoftsignActivation,
+    ActivationType.SoftSignActivation,
     ActivationType.SinusoidActivation,
     ActivationType.GaussianActivation,
     ActivationType.BentIdentityActivation,

@@ -11,7 +11,7 @@ import {
     RELUActivation,
     SELUActivation,
     SinusoidActivation,
-    SoftsignActivation,
+    SoftSignActivation,
     StepActivation,
     TanhActivation
 } from "../../../src/methods/Activation";
@@ -75,11 +75,11 @@ describe("Activation", () => {
     describe("activation.SOFTSIGN()", () => {
         it("activation.SOFTSIGN(number, derivate=false) => {number}", () => {
             const x: number = randDouble(-50, 50);
-            expect(new SoftsignActivation().calc(x, false)).to.equal(x / (1 + Math.abs(x)));
+            expect(new SoftSignActivation().calc(x, false)).to.equal(x / (1 + Math.abs(x)));
         });
         it("activation.SOFTSIGN(number, derivate=true) => {number}", () => {
             const x: number = randDouble(-50, 50);
-            expect(new SoftsignActivation().calc(x, true)).to.equal((x / Math.pow(1 + Math.abs(x), 2)));
+            expect(new SoftSignActivation().calc(x, true)).to.equal((x / Math.pow(1 + Math.abs(x), 2)));
         });
     });
     describe("activation.SINUSOID()", () => {
