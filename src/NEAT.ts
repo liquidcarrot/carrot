@@ -9,6 +9,7 @@ import {
     FEEDFORWARD_MUTATIONS,
     Mutation
 } from "./methods/Mutation";
+import {ActivationType, ALL_ACTIVATIONS} from "./methods/Activation";
 
 /**
  * Runs the NEAT algorithm on group of neural networks.
@@ -73,6 +74,7 @@ export class NEAT {
     private readonly maxGates: number;
     private population: Network[];
     private readonly dataset: { input: number[]; output: number[] }[];
+    private activations: ActivationType[];
 
     constructor(dataset: { input: number[], output: number[] }[], options: EvolveOptions = {}) {
         if (dataset.length === 0) {
@@ -97,6 +99,7 @@ export class NEAT {
 
         this.selection = getOrDefault(options.selection, new FitnessProportionateSelection());
         this.mutations = getOrDefault(options.mutations, FEEDFORWARD_MUTATIONS);
+        this.activations = getOrDefault(options.activations, ALL_ACTIVATIONS);
         this.template = getOrDefault(options.template, new Network(this.input, this.output));
         this.maxNodes = getOrDefault(options.maxNodes, Infinity);
         this.maxConnections = getOrDefault(options.maxConnections, Infinity);
@@ -134,7 +137,7 @@ export class NEAT {
             );
         });
 
-        genome.mutate(pickRandom(possible));
+        genome.mutate(pickRandom(possible), {allowedActivations: this.activations});
     }
 
     /**

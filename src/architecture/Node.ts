@@ -170,10 +170,13 @@ export class Node {
      *
      * node.mutateBias(); // Changes node's activation function
      */
-    public mutateActivation(): void {
-        // pick a random activation except the current activation
-        const newActivationType: ActivationType = pickRandom(ALL_ACTIVATIONS.filter(activation => activation !== this.squash.type));
-        this.squash = Activation.getActivation(newActivationType);
+    public mutateActivation(allowedActivations: ActivationType[] = ALL_ACTIVATIONS): void {
+        // pick a random activation from allowed activations except the current activation
+        const possible: ActivationType[] = allowedActivations.filter(activation => activation !== this.squash.type);
+        if (possible.length > 0) {
+            const newActivationType: ActivationType = pickRandom(possible);
+            this.squash = Activation.getActivation(newActivationType);
+        }
     }
 
     /**

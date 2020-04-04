@@ -8,6 +8,7 @@ import {NEAT} from "../NEAT";
 import {Selection} from "../methods/Selection";
 import {Pool, spawn, Worker} from "threads";
 import "threads/register";
+import {ActivationType} from "../methods/Activation";
 
 /**
  * Create a neural network
@@ -562,7 +563,7 @@ export class Network {
      *
      * myNetwork = myNetwork.mutate(new AddNodeMutation()) // returns a mutated network with an added gate
      */
-    public mutate(method: Mutation, options?: { maxNodes?: number, maxConnections?: number, maxGates?: number }): void {
+    public mutate(method: Mutation, options?: { maxNodes?: number, maxConnections?: number, maxGates?: number, allowedActivations?: ActivationType[] }): void {
         method.mutate(this, options);
     }
 
@@ -1087,6 +1088,7 @@ export interface EvolveOptions {
     generation?: number;
     template?: Network;
     mutations?: Mutation[];
+    activations?: ActivationType[];
     selection?: Selection;
     mutationRate?: number;
     mutationAmount?: number;
