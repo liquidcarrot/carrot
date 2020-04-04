@@ -2,23 +2,22 @@
   "name": "@liquid-carrot/carrot",
   "version": "0.3.18",
   "description": "A Simple Node.js AI Library for Neural Network",
-  "main": "dist/index.min.js",
-  "module": "dist/index.min.js",
-  "unpkg": "dist/carrot.browser.min.js",
-  "jsdelivr": "dist/carrot.browser.min.js",
+  "main": "dist/production/index.min.js",
+  "types": "build/src/index.d.ts",
+  "module": "dist/production/index.min.js",
+  "unpkg": "dist/production/index.browser.min.js",
+  "jsdelivr": "dist/production/index.browser.min.js",
   "browser": {
     "fs": false,
     "child_process": false
   },
   "scripts": {
-    "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | coveralls && rm -rf ./src-cov",
-    "build:src": "concurrently 'node scripts/src.build.node.js' 'node scripts/src.build.browser.js'",
-    "build:src:webpack": "./node_modules/.bin/webpack",
-    "deploy:docs": "node theme/deploy-docs.js",
-    "test": "./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha --recursive test/ --exclude test/unit.js",
-    "lint": "./node_modules/.bin/eslint --ignore-path .eslintignore .",
-    "test:debug": "./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha inspect --recursive test/ --exclude test/unit.js",
-    "test:forever": "./node_modules/.bin/nodemon ./node_modules/.bin/mocha --reporter spec test/"
+    "build:src": "ts-node scripts/build.ts",
+    "deploy:docs": "tsc --declaration && jsdoc -c jsdoc.json -d ./theme/static/versions/${npm_package_version}/",
+    "test": "mocha --require ts-node/register test/**/*",
+    "test-parallel": "mocha-parallel-tests --require ts-node/register test/**/*",
+    "lint": "tslint --project ./",
+    "coverage": "nyc npm test && nyc report --reporter=text-lcov | coveralls build/src"
   },
   "repository": {
     "type": "git",
@@ -61,6 +60,7 @@
   ],
   "files": [
     "/src",
+    "/test",
     "/dist"
   ],
   "license": "MIT",
@@ -69,37 +69,33 @@
   },
   "homepage": "https://liquidcarrot.io/",
   "dependencies": {
-    "lodash": "^4.17.15"
+    "threads": "^1.3.1",
+    "tiny-worker": "^2.3.0"
   },
   "devDependencies": {
+    "@types/parcel-bundler": "^1.12.1",
+    "@types/chai": "^4.2.11",
+    "@types/mocha": "^7.0.2",
     "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1",
-    "chai-each": "0.0.1",
-    "chalk": "^2.4.2",
-    "concurrently": "^5.0.0",
-    "copy-webpack-plugin": "^5.0.4",
-    "coveralls": "^3.0.6",
-    "eslint": "^6.6.0",
-    "eslint-config-google": "^0.14.0",
-    "faker": "^4.1.0",
+    "coveralls": "^3.0.11",
     "jsdoc": "^3.6.3",
-    "mocha": "^6.2.0",
-    "nodemon": "^1.19.2",
-    "nyc": "^14.1.1",
-    "parallel-webpack": "^2.4.0",
-    "paralleljs": "^0.2.1",
+    "mocha": "^7.1.1",
+    "mocha-parallel-tests": "^2.3.0",
+    "nyc": "^15.0.0",
     "parcel-bundler": "^1.12.4",
-    "webpack": "^4.41.0",
-    "webpack-cli": "^3.3.9"
+    "ts-node": "^8.8.1",
+    "tslint": "^6.1.0",
+    "typescript": "^3.8.3"
   },
   "nyc": {
     "include": [
-      "src/architecture/*.js",
-      "src/neat.js"
+      "build/src/architecture/*.js",
+      "build/src/methods/*.js",
+      "build/src/multithreading/*.js",
+      "build/src/NEAT.js"
     ],
     "exclude": [
-      "test",
-      "util"
+      "test"
     ]
   }
 }
