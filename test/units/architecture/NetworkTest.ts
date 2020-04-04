@@ -15,12 +15,12 @@ describe('Network', () => {
 
         const input: number[] = Array(10).map(() => Math.random());
 
-        network.activate(input, 0.5);
+        network.activate(input, {dropoutRate: 0.5});
         return network;
     }
 
     describe('new Network()', () => {
-        it('new Network(input_size, output_size) => {Network}', () => {
+        it('new Network(inputSize, outputSize) => {Network}', () => {
             const network: Network = new Network(10, 20);
             expect(network).to.be.an.instanceOf(Network);
             expect(network.nodes).to.be.of.length(30);
@@ -67,7 +67,7 @@ describe('Network', () => {
             it("Shouldn't add node when at max nodes", () => {
                 const network: Network = new Network(3, 4);
 
-                network.mutateRandom([new AddNodeMutation()], 7);
+                network.mutateRandom([new AddNodeMutation()], {maxNodes: 7});
 
                 expect(network.nodes.length).equal(7);
             });
@@ -75,7 +75,7 @@ describe('Network', () => {
             it("Shouldn't add connections when at max connections", () => {
                 const network: Network = new Network(1, 6);
 
-                network.mutateRandom([new AddConnectionMutation()], Infinity, 6);
+                network.mutateRandom([new AddConnectionMutation()], {maxConnections: 6});
 
                 expect(network.connections.length).equal(6);
             });
@@ -124,7 +124,7 @@ describe('Network', () => {
             for (let i: number = 0; i < upperTestEpochLimit; i++) {
                 const randomInput: number[] = Array(inputSize).fill(0).map(() => Math.random());
                 testNetwork.activate(randomInput);
-                testNetwork.propagate(0.25, 0.01, true, idealOutput);
+                testNetwork.propagate(idealOutput, {rate: 0.25, momentum: 0.01, update: true});
             }
 
             const randomInput: number[] = Array(inputSize).fill(0).map(() => Math.random());
