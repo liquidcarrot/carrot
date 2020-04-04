@@ -9,7 +9,7 @@ import {RNNLayer} from "./architecture/layer/RNNLayer";
 import {Architect} from "./architecture/Architect";
 import {Connection} from "./architecture/Connection";
 import {Network} from "./architecture/Network";
-import {Node} from "./architecture/node";
+import {Node} from "./architecture/Node";
 import * as Activation from "./methods/Activation";
 import * as Loss from "./methods/Loss";
 import * as Mutation from "./methods/Mutation";
