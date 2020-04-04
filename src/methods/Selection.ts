@@ -44,9 +44,8 @@ export class FitnessProportionateSelection extends Selection {
         let totalFitness: number = 0;
         let minimalFitness: number = 0;
         for (const genome of population) {
-            const score: number | undefined = genome.score;
-            minimalFitness = score !== undefined && score < minimalFitness ? score : minimalFitness;
-            totalFitness += score ?? 0;
+            minimalFitness = Math.min(genome.score ?? minimalFitness, minimalFitness);
+            totalFitness += genome.score ?? 0;
         }
 
         minimalFitness = Math.abs(minimalFitness);
