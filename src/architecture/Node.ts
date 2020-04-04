@@ -1,7 +1,7 @@
 import {ModBiasMutation} from "../methods/Mutation";
 import {Activation, ActivationType, ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
 import {Connection} from "./Connection";
-import {anyMatch, pickRandom, randDouble, remove} from "../methods/Utils";
+import {anyMatch, getOrDefault, pickRandom, randDouble, removeFromArray} from "../methods/Utils";
 
 /**
  * Creates a new neuron/node
@@ -98,7 +98,7 @@ export class Node {
     public static fromJSON(json: NodeJSON): Node {
         const node: Node = new Node();
         node.bias = json.bias;
-        node.type = (json.type as NodeType);
+        node.type = json.type as NodeType;
         node.squash = Activation.getActivation(json.squash);
         node.mask = json.mask;
         node.index = json.index;
@@ -171,10 +171,8 @@ export class Node {
      * node.mutateBias(); // Changes node's activation function
      */
     public mutateActivation(): void {
-        let newActivationType: ActivationType;
-        do {
-            newActivationType = pickRandom(ALL_ACTIVATIONS);
-        } while (newActivationType === this.squash.type);
+        // pick a random activation except the current activation
+        const newActivationType: ActivationType = pickRandom(ALL_ACTIVATIONS.filter(activation => activation !== this.squash.type));
         this.squash = Activation.getActivation(newActivationType);
     }
 
@@ -205,10 +203,10 @@ export class Node {
      * console.log(node.isProjectedBy(otherNodes)); // true
      */
     public isProjectedBy(node: Node): boolean {
-        if (node === this) {
-            return this.selfConnection.weight !== 0;
+        if (node === this) { // self connection
+            return this.selfConnection.weight !== 0; // is projected, if weight of self connection is unequal 0
         } else {
-            return anyMatch(this.incoming.map(conn => conn.from), node);
+            return anyMatch(this.incoming.map(conn => conn.from), node); // check every incoming connection for node
         }
     }
 
@@ -239,10 +237,10 @@ export class Node {
      * console.log(node.isProjectingTo(otherNodes)); // true
      */
     public isProjectingTo(node: Node): boolean {
-        if (node === this) {
-            return this.selfConnection.weight !== 0;
+        if (node === this) { // self connection
+            return this.selfConnection.weight !== 0; // is projected, if weight of self connection is unequal 0
         } else {
-            return anyMatch(this.outgoing.map(conn => conn.to), node);
+            return anyMatch(this.outgoing.map(conn => conn.to), node); // check every outgoing connection for node
         }
     }
 
@@ -296,7 +294,7 @@ export class Node {
      * console.log(connection.gateNode === node); // false
      */
     public removeGate(connection: Connection): void {
-        remove(this.gated, connection);
+        removeFromArray(this.gated, connection);
         connection.gateNode = null;
         connection.gain = 1;
     }
@@ -394,23 +392,25 @@ export class Node {
             return this.selfConnection;
         }
 
-        for (const connection of this.outgoing) {
-            if (connection.to !== node) {
-                continue;
-            }
-            remove(this.outgoing, connection);
-            remove(connection.to.incoming, connection);
+        const connections: Connection[] = this.outgoing.filter(conn => conn.to === node);
 
-            if (connection.gateNode !== undefined && connection.gateNode != null) {
-                connection.gateNode.removeGate(connection);
-            }
-            if (twoSided) {
-                node.disconnect(this);
-            }
-
-            return connection;
+        if (connections.length === 0) {
+            throw new Error("No Connection found");
         }
-        throw new Error("No connection found!");
+        const connection: Connection = connections[0];
+
+        // remove it from the arrays
+        removeFromArray(this.outgoing, connection);
+        removeFromArray(connection.to.incoming, connection);
+
+        if (connection.gateNode !== undefined && connection.gateNode != null) {
+            connection.gateNode.removeGate(connection); // if connection is gated -> remove gate
+        }
+        if (twoSided) {
+            node.disconnect(this); // disconnect the other direction
+        }
+
+        return connection;
     }
 
     /**
@@ -465,22 +465,21 @@ export class Node {
             for (const connection of this.outgoing) {
                 this.errorProjected += connection.to.errorResponsibility * connection.weight * connection.gain;
             }
-            this.errorProjected *= this.derivative || 1;
+            this.errorProjected *= this.derivative ?? 1;
 
 
             this.errorGated = 0;
-            for (const connection of this.gated) {
-                const node: Node = connection.to;
+            for (const connection of this.gated) { // for all connections gated by this node
                 let influence: number;
-                if (node.selfConnection.gateNode === this) {
-                    influence = node.old + connection.weight * connection.from.activation;
+                if (connection.to.selfConnection.gateNode === this) { // self connection is gated with this node
+                    influence = connection.to.old + connection.weight * connection.from.activation;
                 } else {
                     influence = connection.weight * connection.from.activation;
                 }
 
-                this.errorGated += node.errorResponsibility * influence;
+                this.errorGated += connection.to.errorResponsibility * influence;
             }
-            this.errorGated *= this.derivative || 1;
+            this.errorGated *= this.derivative ?? 1;
 
 
             this.errorResponsibility = this.errorProjected + this.errorGated;

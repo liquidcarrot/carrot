@@ -94,7 +94,11 @@ describe("Node", function (): void {
             const input: number = randDouble(0, 10);
 
             node.activate(input);
-            const error: { responsibility: number, projected: number, gated: number } = node.propagate(undefined, 0, 0, false);
+            const error: { responsibility: number, projected: number, gated: number } = node.propagate(undefined, {
+                momentum: 0,
+                rate: 0,
+                update: false
+            });
 
             expect(error).to.exist;
             expect(error).to.be.an("object");
@@ -108,7 +112,11 @@ describe("Node", function (): void {
             const target: number = randDouble(0, 10);
 
             node.activate(input);
-            const error: { responsibility: number, projected: number, gated: number } = node.propagate(target, 0, 0, false);
+            const error: { responsibility: number, projected: number, gated: number } = node.propagate(target, {
+                rate: 0,
+                momentum: 0,
+                update: false
+            });
 
             expect(error).to.exist;
             expect(error).to.be.an("object");
@@ -123,7 +131,11 @@ describe("Node", function (): void {
             const node: Node = new Node();
             const input: number = randDouble(0, 10);
             node.activate(input);
-            const error: { responsibility: number, projected: number, gated: number } = node.propagate(undefined, 0, 0, false);
+            const error: { responsibility: number, projected: number, gated: number } = node.propagate(undefined, {
+                rate: 0,
+                momentum: 0,
+                update: false
+            });
 
             expect(error).to.exist;
             expect(error).to.be.an("object");
@@ -139,7 +151,11 @@ describe("Node", function (): void {
             const target: number = randDouble(0, 10);
 
             node.activate(input);
-            const error: { responsibility: number, projected: number, gated: number } = node.propagate(target, 0, 0, false);
+            const error: { responsibility: number, projected: number, gated: number } = node.propagate(target, {
+                rate: 0,
+                momentum: 0,
+                update: false
+            });
 
             expect(error).to.exist;
             expect(error).to.be.an("object");
@@ -172,7 +188,7 @@ describe("Node", function (): void {
             for (let i: number = 0; i < size; i++) {
                 inputs.push(new Node());
                 outputs.push(new Node());
-                connections.push(new Connection(inputs[i], outputs[i], 0, null));
+                connections.push(new Connection(inputs[i], outputs[i]));
             }
             connections.forEach((connection: Connection) => node.addGate(connection));
 
@@ -211,7 +227,7 @@ describe("Node", function (): void {
             for (let i: number = 0; i < size; i++) {
                 inputs.push(new Node());
                 outputs.push(new Node());
-                connections.push(new Connection(inputs[i], outputs[i], 0, null));
+                connections.push(new Connection(inputs[i], outputs[i]));
             }
             connections.forEach((conn: Connection) => node.addGate(conn));
             connections.forEach((conn: Connection) => node.removeGate(conn));
@@ -234,7 +250,7 @@ describe("Node", function (): void {
             const input2: number = randDouble(0, 10);
 
             node.activate(input);
-            node.propagate(input2, 0, 0, false);
+            node.propagate(input2, {rate: 0, momentum: 0, update: false});
 
             node.clear();
 
