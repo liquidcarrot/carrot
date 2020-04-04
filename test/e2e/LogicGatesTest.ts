@@ -168,7 +168,7 @@ describe('Logic Gates', () => {
         expect(final).to.be.at.most(initial);
     });
     it('[XOR] Network.evolve()', async function (): Promise<void> {
-        this.timeout(40000);
+        this.timeout(60000);
 
         const network: Network = new Network(2, 1);
 
@@ -189,7 +189,7 @@ describe('Logic Gates', () => {
         expect(final).to.be.at.most(initial);
     });
     it('[XNOR] Network.evolve()', async function (): Promise<void> {
-        this.timeout(40000);
+        this.timeout(60000);
 
         const network: Network = new Network(2, 1);
 
