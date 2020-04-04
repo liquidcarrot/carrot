@@ -29,7 +29,12 @@
     "no-shadowed-variable": false,
     "prefer-readonly": true,
     "no-unused-expression": false,
-    "no-trailing-whitespace": false
+    "no-trailing-whitespace": false,
+    "no-redundant-jsdoc": true,
+    "jsdoc-format": [
+      true,
+      "check-multiline-start"
+    ]
   },
   "rulesDirectory": []
 }
