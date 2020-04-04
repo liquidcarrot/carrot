@@ -1,7 +1,7 @@
 import {Connection, Network} from "..";
 import {Node, NodeType} from "../architecture/Node";
 import {pickRandom, randBoolean, randDouble} from "./Utils";
-import {Activation} from "./Activation";
+import {Activation, ActivationType} from "./Activation";
 
 /**
  *
@@ -35,7 +35,7 @@ export abstract class Mutation {
      * @param network the network to mutate
      * @param options you can set the max amount of nodes, connections and gates
      */
-    public abstract mutate(network: Network, options?: { maxNodes?: number; maxConnections?: number; maxGates?: number }): void;
+    public abstract mutate(network: Network, options?: { maxNodes?: number; maxConnections?: number; maxGates?: number, allowedActivations?: ActivationType[] }): void;
 }
 
 /**
@@ -59,7 +59,7 @@ export class AddNodeMutation extends Mutation {
         this.randomActivation = randomActivation;
     }
 
-    public mutate(network: Network, options?: { maxNodes?: number; maxConnections?: number; maxGates?: number }): void {
+    public mutate(network: Network, options?: { maxNodes?: number; maxConnections?: number; maxGates?: number, allowedActivations?: ActivationType[] }): void {
         // check if max nodes is already reached
         if (options !== undefined && options.maxNodes !== undefined && network.nodes.length >= options.maxNodes) {
             return;
@@ -135,7 +135,7 @@ export class SubNodeMutation extends Mutation {
  * myNetwork.mutate(new AddConnectionMutation()); // creates a random forward pointing connection
  */
 export class AddConnectionMutation extends Mutation {
-    public mutate(network: Network, options?: { maxNodes?: number; maxConnections?: number; maxGates?: number }): void {
+    public mutate(network: Network, options?: { maxNodes?: number; maxConnections?: number; maxGates?: number, allowedActivations?: ActivationType[] }): void {
         // check if max connections is already reached
         if (options !== undefined && options.maxConnections !== undefined && network.connections.length >= options.maxConnections) {
             return;
@@ -265,12 +265,12 @@ export class ModActivationMutation extends Mutation {
         this.mutateOutput = mutateOutput;
     }
 
-    public mutate(network: Network, options?: { maxNodes?: number; maxConnections?: number; maxGates?: number }): void {
+    public mutate(network: Network, options?: { maxNodes?: number; maxConnections?: number; maxGates?: number, allowedActivations?: ActivationType[] }): void {
         const possible: Node[] = this.mutateOutput
             ? network.nodes.filter(node => !node.isInputNode()) // hidden and output nodes
             : network.nodes.filter(node => node.isHiddenNode()); // hidden nodes
         if (possible.length > 0) {
-            pickRandom(possible).mutateActivation(); // mutate the activation of the node
+            pickRandom(possible).mutateActivation(options?.allowedActivations); // mutate the activation of the node
         }
     }
 }
@@ -329,7 +329,7 @@ export class SubSelfConnectionMutation extends Mutation {
  * myNetwork.mutate(new AddGateMutation());
  */
 export class AddGateMutation extends Mutation {
-    public mutate(network: Network, options?: { maxNodes?: number; maxConnections?: number; maxGates?: number }): void {
+    public mutate(network: Network, options?: { maxNodes?: number; maxConnections?: number; maxGates?: number, allowedActivations?: ActivationType[] }): void {
         // check if max gates isn't reached already
         if (options !== undefined && options.maxGates !== undefined && network.gates.length >= options.maxGates) {
             return;
