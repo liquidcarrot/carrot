@@ -1,4 +1,4 @@
-import {Network} from "..";
+import {Network} from "../architecture/Network";
 import {pickRandom, randDouble} from "./Utils";
 
 /**

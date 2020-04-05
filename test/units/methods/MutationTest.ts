@@ -1,7 +1,6 @@
-import {Network} from "../../../src";
+import {Network, NetworkJSON} from "../../../src/architecture/Network";
 import {AddNodeMutation} from "../../../src/methods/Mutation";
 import {expect} from "chai";
-import {NetworkJSON} from "../../../src/architecture/Network";
 
 describe("Mutation", () => {
     describe('network.mutate()', () => {

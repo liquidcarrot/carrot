@@ -1,7 +1,9 @@
-import {Connection, Network, Node} from "../../../src";
 import {anyMatch, randInt} from "../../../src/methods/Utils";
 import {AddConnectionMutation, AddGateMutation, AddNodeMutation, SubGateMutation} from "../../../src/methods/Mutation";
 import {expect} from "chai";
+import {Network} from "../../../src/architecture/Network";
+import {Connection} from "../../../src/architecture/Connection";
+import {Node} from "../../../src/architecture/Node";
 
 describe('Network', () => {
     function createTestNetwork(): Network {

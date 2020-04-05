@@ -1,4 +1,4 @@
-import {Network} from "../../src";
+import {Network} from "../../src/architecture/Network";
 import {expect} from "chai";
 
 describe('Logic Gates', () => {
