@@ -977,6 +977,7 @@ export class Network {
         options.maxNodes = getOrDefault(options.maxNodes, Infinity);
         options.maxConnections = getOrDefault(options.maxConnections, Infinity);
         options.maxGates = getOrDefault(options.maxGates, Infinity);
+        options.threads = getOrDefault(options.threads, 4);
 
         const start: number = Date.now();
 
@@ -992,7 +993,7 @@ export class Network {
             // create default one
 
             // init a pool of workers
-            workerPool = options.threads ? Pool(() => spawn(new Worker("../multithreading/Worker")), options.threads) : Pool(() => spawn(new Worker("../multithreading/Worker")));
+            workerPool = Pool(() => spawn(new Worker("../multithreading/Worker")), options.threads);
 
             options.fitnessFunction = async function (dataset: { input: number[], output: number[] }[], population: Network[]): Promise<void> {
                 for (const genome of population) {
