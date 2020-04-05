@@ -1,0 +1,39 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended"
+  ],
+  "jsRules": {},
+  "rules": {
+    "no-for-in-array": true,
+    "no-any": true,
+    "member-access": true,
+    "no-unnecessary-type-assertion": true,
+    "no-var-requires": false,
+    "typedef": [
+      true,
+      "call-signature",
+      "parameter",
+      "property-declaration",
+      "variable-declaration",
+      "member-variable-declaration",
+      "object-destructuring",
+      "array-destructuring"
+    ],
+    "semicolon": true,
+    "max-classes-per-file": false,
+    "radix": false,
+    "no-console": false,
+    "only-arrow-functions": false,
+    "no-shadowed-variable": false,
+    "prefer-readonly": true,
+    "no-unused-expression": false,
+    "no-trailing-whitespace": false,
+    "no-redundant-jsdoc": true,
+    "jsdoc-format": [
+      true,
+      "check-multiline-start"
+    ]
+  },
+  "rulesDirectory": []
+}
