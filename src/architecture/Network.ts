@@ -675,12 +675,12 @@ export class Network {
         }
 
         // Use the default values, if no value is given
-        options.iterations = getOrDefault(options.iterations, 100);
-        options.error = getOrDefault(options.error, 0.05);
+        options.iterations = getOrDefault(options.iterations, -1);
+        options.error = getOrDefault(options.error, -1);
         options.loss = getOrDefault(options.loss, new MSELoss());
         options.dropout = getOrDefault(options.dropout, 0);
         options.momentum = getOrDefault(options.momentum, 0);
-        options.batchSize = Math.min(dataset.length, getOrDefault(options.batchSize, 1));
+        options.batchSize = Math.min(dataset.length, getOrDefault(options.batchSize, dataset.length));
         const baseRate: number = getOrDefault(options.rate, 0.3);
         options.ratePolicy = getOrDefault(options.ratePolicy, new FixedRate(baseRate));
         options.log = getOrDefault(options.log, NaN);
