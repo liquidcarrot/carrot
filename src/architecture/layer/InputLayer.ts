@@ -1,8 +1,15 @@
 import {Layer} from "./Layer";
+import {Node, NodeType} from "../Node";
 
 // TODO: actually implement it
 export class InputLayer extends Layer {
-    constructor(inputSize: number, outputSize: number) {
-        super(inputSize, outputSize);
+    public constructor(outputSize: number) {
+        super(outputSize);
+
+        for (let i: number = 0; i < outputSize; i++) {
+            const node: Node = new Node(NodeType.INPUT);
+            this.nodes.push(node);
+            this.outputNodes.add(node);
+        }
     }
 }
