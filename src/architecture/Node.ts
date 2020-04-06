@@ -660,6 +660,16 @@ export class Node {
     public isOutputNode(): boolean {
         return this.type === NodeType.OUTPUT;
     }
+
+    public setBias(bias: number): Node {
+        this.bias = bias;
+        return this;
+    }
+
+    public setSquash(activationType: ActivationType): Node {
+        this.squash = Activation.getActivation(activationType);
+        return this;
+    }
 }
 
 export interface NodeJSON {
