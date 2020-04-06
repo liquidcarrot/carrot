@@ -9,10 +9,10 @@ export class DenseLayer extends Layer {
         const activation: ActivationType = options.activationType ?? ActivationType.LogisticActivation;
 
         for (let i: number = 0; i < outputSize; i++) {
-            const node: Node = new Node(NodeType.HIDDEN).setSquash(activation);
-            this.nodes.push(node);
-            this.inputNodes.add(node);
-            this.outputNodes.add(node);
+            this.inputNodes.add(new Node(NodeType.HIDDEN).setSquash(activation));
         }
+
+        this.outputNodes = this.inputNodes;
+        this.nodes.push(...Array.from(this.inputNodes));
     }
 }
