@@ -16,10 +16,10 @@ export class GRULayer extends Layer {
         for (let i: number = 0; i < outputSize; i++) {
             this.inputNodes.add(new Node(NodeType.HIDDEN));
             updateGate.push(new Node(NodeType.HIDDEN).setBias(1));
-            inverseUpdateGate.push(new Node(NodeType.HIDDEN).setBias(0).setSquash(ActivationType.InverseActivation));
+            inverseUpdateGate.push(new Node(NodeType.HIDDEN).setBias(0).setSquash(ActivationType.LogisticActivation));
             resetGate.push(new Node(NodeType.HIDDEN).setBias(0));
             memoryCell.push(new Node(NodeType.HIDDEN).setSquash(ActivationType.TanhActivation));
-            previousOutput.push(new Node(NodeType.HIDDEN).setBias(0).setSquash(ActivationType.IdentityActivation));
+            previousOutput.push(new Node(NodeType.HIDDEN).setBias(0).setSquash(ActivationType.LogisticActivation));
             this.outputNodes.add(new Node(NodeType.HIDDEN));
         }
 
