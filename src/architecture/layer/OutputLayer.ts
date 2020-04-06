@@ -1,6 +1,5 @@
 import {Layer} from "./Layer";
 import {Node, NodeType} from "../Node";
-import {ConnectionType} from "../Architect";
 
 export class OutputLayer extends Layer {
     constructor(outputSize: number) {
@@ -13,7 +12,7 @@ export class OutputLayer extends Layer {
         }
     }
 
-    public connect(targetLayer: Layer, connectionType: ConnectionType): void {
+    public connect(): void {
         throw new ReferenceError("Could not connect an OutputLayer!");
     }
 }
