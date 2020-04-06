@@ -551,6 +551,8 @@ export class Node {
     public activate(input: number | null = null, trace: boolean = true): number {
         if (input !== null && Number.isFinite(input)) {
             return this.activation = input;
+        } else if (this.isInputNode()) {
+            throw new ReferenceError("There is no input given to an input node!");
         }
 
         if (trace) {
