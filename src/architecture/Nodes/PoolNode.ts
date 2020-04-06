@@ -34,9 +34,9 @@ export class PoolNode extends Node {
         throw new ReferenceError("A pool node can't gate a connection!");
     }
 
-    public activate(input?: number, trace: boolean = true): number {
+    public activate(): number {
         // TODO: OVERRIDE
-        return super.activate(input, trace);
+        return super.activate();
     }
 
     public propagate(target: number | undefined, options: { momentum?: number; rate?: number; update?: boolean }): { responsibility: number; projected: number; gated: number } {
