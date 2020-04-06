@@ -15,7 +15,10 @@ describe('Network', () => {
             network.mutate(new AddConnectionMutation());
         }
 
-        const input: number[] = Array(10).map(() => Math.random());
+        const input: number[] = [];
+        for (let i: number = 0; i < 10; i++) {
+            input.push(Math.random());
+        }
 
         network.activate(input, {dropoutRate: 0.5});
         return network;
