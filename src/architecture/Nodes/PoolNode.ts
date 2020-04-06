@@ -34,7 +34,7 @@ export class PoolNode extends Node {
         throw new ReferenceError("A pool node can't gate a connection!");
     }
 
-    public activate(input: number | null = null, trace: boolean = true): number {
+    public activate(input?: number, trace: boolean = true): number {
         // TODO: OVERRIDE
         return super.activate(input, trace);
     }
