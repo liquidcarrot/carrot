@@ -36,37 +36,26 @@ export abstract class Layer {
         if (connectionType === ConnectionType.ALL_TO_ALL) {
             fromNodes.forEach(fromNode => {
                 toNodes.forEach(toNode => {
-                    connections.push(fromNode.connect(toNode, weight));
+                    connections.push(fromNode.connect(toNode, weight)); // connect every "from node" to every "to node"
                 });
             });
         } else if (connectionType === ConnectionType.ONE_TO_ONE) {
             if (fromNodes.length !== toNodes.length) {
-                throw new RangeError("Can't connect! Number of input nodes is inequal to number of output nodes!");
+                throw new RangeError("Can't connect! Number of input nodes is unequal to number of output nodes!");
             }
             for (let i: number = 0; i < fromNodes.length; i++) {
-                connections.push(fromNodes[i].connect(toNodes[i], weight));
+                connections.push(fromNodes[i].connect(toNodes[i], weight)); // connect every nodes with same indices
             }
         }
         return connections;
     }
 
     public static gate(nodes: Node[], connections: Connection[], gateType: GatingType): Connection[] {
-        const fromNodes: Node[] = [];
-        const toNodes: Node[] = [];
-
-        for (const connection of connections) {
-            if (!anyMatch(fromNodes, connection.from)) {
-                fromNodes.push(connection.from);
-            }
-            if (!anyMatch(toNodes, connection.to)) {
-                toNodes.push(connection.to);
-            }
-        }
-
         const gatedConnections: Connection[] = [];
-
         switch (gateType) {
-            case GatingType.INPUT:
+            case GatingType.INPUT: { // gate incoming connections
+                const toNodes: Node[] = connections.map(conn => conn.to).filter(node => !anyMatch(toNodes, node));
+
                 for (let i: number = 0; i < toNodes.length; i++) {
                     const node: Node = toNodes[i];
                     const gateNode: Node = nodes[i % nodes.length];
@@ -79,7 +68,10 @@ export abstract class Layer {
                         });
                 }
                 break;
-            case GatingType.SELF:
+            }
+            case GatingType.SELF: { // gate self connections
+                const fromNodes: Node[] = connections.map(conn => conn.from).filter(node => !anyMatch(fromNodes, node));
+
                 for (let i: number = 0; i < fromNodes.length; i++) {
                     if (anyMatch(connections, fromNodes[i].selfConnection)) {
                         nodes[i % nodes.length].addGate(fromNodes[i].selfConnection);
@@ -87,7 +79,9 @@ export abstract class Layer {
                     }
                 }
                 break;
-            case GatingType.OUTPUT:
+            }
+            case GatingType.OUTPUT: { // gate outgoing connections
+                const fromNodes: Node[] = connections.map(conn => conn.from).filter(node => !anyMatch(fromNodes, node));
                 for (let i: number = 0; i < fromNodes.length; i++) {
                     const node: Node = fromNodes[i];
                     const gateNode: Node = nodes[i % nodes.length];
@@ -100,6 +94,7 @@ export abstract class Layer {
                         });
                 }
                 break;
+            }
         }
 
         return gatedConnections;
