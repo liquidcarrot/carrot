@@ -134,8 +134,8 @@ describe("ArchitectTest", () => {
             shuffle: true,
         }).error;
 
-        expect(error).to.be.a("number");
-        expect(errorBefore).to.be.a("number");
+        expect(Number.isFinite(error)).to.be.true;
+        expect(Number.isFinite(errorBefore)).to.be.true;
         expect(error).to.be.at.most(errorBefore);
     });
 
@@ -165,8 +165,8 @@ describe("ArchitectTest", () => {
             clear: true,
         }).error;
 
-        expect(error).to.be.a("number");
-        expect(errorBefore).to.be.a("number");
+        expect(Number.isFinite(error)).to.be.true;
+        expect(Number.isFinite(errorBefore)).to.be.true;
         expect(error).to.be.at.most(errorBefore);
     });
 
@@ -195,8 +195,8 @@ describe("ArchitectTest", () => {
             clear: true,
         }).error;
 
-        expect(error).to.be.a("number");
-        expect(errorBefore).to.be.a("number");
+        expect(Number.isFinite(error)).to.be.true;
+        expect(Number.isFinite(errorBefore)).to.be.true;
         expect(error).to.be.at.most(errorBefore);
     });
 });

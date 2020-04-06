@@ -1,7 +1,7 @@
 import {ModBiasMutation} from "../methods/Mutation";
 import {Activation, ActivationType, ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
 import {Connection} from "./Connection";
-import {anyMatch, getOrDefault, pickRandom, randDouble, removeFromArray} from "../methods/Utils";
+import {getOrDefault, pickRandom, randDouble, removeFromArray} from "../methods/Utils";
 
 /**
  * Creates a new neuron/node
@@ -209,7 +209,7 @@ export class Node {
         if (node === this) { // self connection
             return this.selfConnection.weight !== 0; // is projected, if weight of self connection is unequal 0
         } else {
-            return anyMatch(this.incoming.map(conn => conn.from), node); // check every incoming connection for node
+            return this.incoming.map(conn => conn.from).includes(node); // check every incoming connection for node
         }
     }
 
@@ -243,7 +243,7 @@ export class Node {
         if (node === this) { // self connection
             return this.selfConnection.weight !== 0; // is projected, if weight of self connection is unequal 0
         } else {
-            return anyMatch(this.outgoing.map(conn => conn.to), node); // check every outgoing connection for node
+            return this.outgoing.map(conn => conn.to).includes(node); // check every outgoing connection for node
         }
     }
 

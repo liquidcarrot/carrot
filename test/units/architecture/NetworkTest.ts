@@ -1,4 +1,4 @@
-import {anyMatch, randInt} from "../../../src/methods/Utils";
+import {randInt} from "../../../src/methods/Utils";
 import {AddConnectionMutation, AddGateMutation, AddNodeMutation, SubGateMutation} from "../../../src/methods/Mutation";
 import {expect} from "chai";
 import {Network} from "../../../src/architecture/Network";
@@ -154,7 +154,7 @@ describe('Network', () => {
             const testNetwork: Network = createTestNetwork();
             const nodesBefore: Node[] = testNetwork.nodes.slice();
             testNetwork.mutate(new AddNodeMutation());
-            const node: Node = testNetwork.nodes.filter(node => !anyMatch(nodesBefore, node))[0];
+            const node: Node = testNetwork.nodes.filter(node => !nodesBefore.includes(node))[0];
             const connection: Connection = node.connect(testNetwork.nodes[20]);
 
             const beforeNumberOfGates: number = testNetwork.gates.length;

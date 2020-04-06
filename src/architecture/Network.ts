@@ -1,6 +1,6 @@
 import {Connection, ConnectionJSON} from "./Connection";
 import {Node, NodeJSON, NodeType} from "./Node";
-import {anyMatch, getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../methods/Utils";
+import {getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../methods/Utils";
 import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
 import {ALL_LOSSES, Loss, MSELoss} from "../methods/Loss";
 import {FixedRate, Rate} from "../methods/Rate";
@@ -467,7 +467,7 @@ export class Network {
      * @param {Connection} connection Connection to remove gate from
      */
     public removeGate(connection: Connection): void {
-        if (!anyMatch(this.gates, connection)) {
+        if (!this.gates.includes(connection)) {
             throw new Error(`This connection is not gated!`);
         }
         removeFromArray(this.gates, connection);
@@ -486,7 +486,7 @@ export class Network {
      * @param keepGates
      */
     public removeNode(node: Node, keepGates: boolean = new SubNodeMutation().keepGates): void {
-        if (!anyMatch(this.nodes, node)) {
+        if (!this.nodes.includes(node)) {
             throw new ReferenceError(`This node does not exist in the network!`);
         }
 

@@ -1,7 +1,6 @@
 import {Connection} from "../Connection";
 import {Node} from "../Node";
 import {ConnectionType, GatingType} from "../Architect";
-import {anyMatch} from "../../methods/Utils";
 
 export abstract class Layer {
     public outputSize: number;
@@ -61,7 +60,7 @@ export abstract class Layer {
                     const gateNode: Node = nodes[i % nodes.length];
 
                     node.incoming
-                        .filter(conn => anyMatch(connections, conn))
+                        .filter(conn => connections.includes(conn))
                         .forEach(conn => {
                             gateNode.addGate(conn);
                             gatedConnections.push(conn);
@@ -73,7 +72,7 @@ export abstract class Layer {
                 const fromNodes: Node[] = Array.from(new Set(connections.map(conn => conn.from)));
 
                 for (let i: number = 0; i < fromNodes.length; i++) {
-                    if (anyMatch(connections, fromNodes[i].selfConnection)) {
+                    if (connections.includes(fromNodes[i].selfConnection)) {
                         nodes[i % nodes.length].addGate(fromNodes[i].selfConnection);
                         gatedConnections.push(fromNodes[i].selfConnection);
                     }
@@ -87,7 +86,7 @@ export abstract class Layer {
                     const gateNode: Node = nodes[i % nodes.length];
 
                     node.outgoing
-                        .filter(conn => anyMatch(connections, conn))
+                        .filter(conn => connections.includes(conn))
                         .forEach(conn => {
                             gateNode.addGate(conn);
                             gatedConnections.push(conn);

@@ -43,22 +43,6 @@ export function randBoolean(): boolean {
 }
 
 /**
- * Checks if the an array contains an element
- *
- * @param arr array to search in
- * @param target the element to search
- * @returns Does the array contains target?
- */
-export function anyMatch<T>(arr: T[], target: T): boolean {
-    for (const elem of arr) {
-        if (elem === target) {
-            return true;
-        }
-    }
-    return false;
-}
-
-/**
  * Removes an element from an array.
  *
  * @param arr the array
@@ -82,8 +66,8 @@ export function removeFromArray<T>(arr: T[], elem: T): boolean {
  * @param defaultValue to return if value is undefined
  * @returns value if defined otherwise defaultValue
  */
-export function getOrDefault<T>(value: T | undefined | null, defaultValue: T): T {
-    return value !== undefined && value !== null ? value : defaultValue;
+export function getOrDefault<T>(value: T | undefined, defaultValue: T): T {
+    return value ?? defaultValue;
 }
 
 /**
