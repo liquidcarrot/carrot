@@ -314,10 +314,12 @@ export class Network {
      * myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
      */
     public activate(input: number[], options: { dropoutRate?: number; trace?: boolean } = {}): number[] {
+        if (input.length !== this.inputSize) {
+            throw new RangeError("Input size of dataset is different to network input size!");
+        }
         // get default value if no value is given
         options.dropoutRate = getOrDefault(options.dropoutRate, 0);
         options.trace = getOrDefault(options.trace, true);
-
 
         this.nodes
             .filter(node => node.isInputNode()) // only input nodes
