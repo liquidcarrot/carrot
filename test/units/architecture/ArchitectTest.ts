@@ -126,12 +126,17 @@ describe("ArchitectTest", () => {
             {input: [1, 1], output: [1]}
         ];
 
-        network.train(AND_GATE, {
-            error: 0.001,
-            loss: new BinaryLoss(),
+        const errorBefore: number = network.test(AND_GATE, new BinaryLoss());
+
+        const error: number = network.train(AND_GATE, {
+            iterations: 10000,
+            rate: 0.01,
             shuffle: true,
-            rate: 0.01
-        });
+        }).error;
+
+        expect(error).to.be.a("number");
+        expect(errorBefore).to.be.a("number");
+        expect(error).to.be.at.most(errorBefore);
     });
 
     it("Train LSTM network", () => {
@@ -154,16 +159,18 @@ describe("ArchitectTest", () => {
 
         const errorBefore: number = network.test(data);
 
-        network.train(data, {
-            iterations: 5000,
-            rate: 0.1,
+        const error: number = network.train(data, {
+            iterations: 10000,
+            rate: 0.01,
             clear: true,
-        });
+        }).error;
 
-        expect(network.test(data)).to.be.at.most(errorBefore);
+        expect(error).to.be.a("number");
+        expect(errorBefore).to.be.a("number");
+        expect(error).to.be.at.most(errorBefore);
     });
 
-    it.skip('Train GRU network', () => {
+    it('Train GRU network', () => {
         const architect: Architect = new Architect();
 
         architect.addLayer(new InputLayer(1));
@@ -183,12 +190,13 @@ describe("ArchitectTest", () => {
         const errorBefore: number = network.test(data);
 
         const error: number = network.train(data, {
-            error: 0.001,
-            iterations: 5000,
-            rate: 0.1,
-            clear: true
+            iterations: 10000,
+            rate: 0.01,
+            clear: true,
         }).error;
 
+        expect(error).to.be.a("number");
+        expect(errorBefore).to.be.a("number");
         expect(error).to.be.at.most(errorBefore);
     });
 });
