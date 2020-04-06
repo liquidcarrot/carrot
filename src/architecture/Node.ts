@@ -548,8 +548,8 @@ export class Node {
      * A.activate(0.5); // 0.5
      * B.activate(); // 0.3244554645
      */
-    public activate(input: number | null = null, trace: boolean = true): number {
-        if (input !== null && Number.isFinite(input)) {
+    public activate(input?: number, trace: boolean = true): number {
+        if (input !== undefined) {
             return this.activation = input;
         } else if (this.isInputNode()) {
             throw new ReferenceError("There is no input given to an input node!");

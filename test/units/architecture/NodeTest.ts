@@ -74,7 +74,7 @@ describe("Node", function (): void {
         it("node.activate(options={ trace: false })", function (): void {
             const node: Node = new Node();
 
-            const output: number = node.activate(null, false);
+            const output: number = node.activate(undefined, false);
 
             expect(output).to.not.be.NaN;
             expect(node.derivative).to.not.exist;
