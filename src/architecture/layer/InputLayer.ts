@@ -1,7 +1,6 @@
 import {Layer} from "./Layer";
 import {Node, NodeType} from "../Node";
 
-// TODO: actually implement it
 export class InputLayer extends Layer {
     public constructor(outputSize: number) {
         super(outputSize);

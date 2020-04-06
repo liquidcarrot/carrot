@@ -2,7 +2,6 @@ import {Layer} from "./Layer";
 import {Node, NodeType} from "../Node";
 import {Activation, ActivationType} from "../../methods/Activation";
 
-// TODO: actually implement it
 export class DenseLayer extends Layer {
     constructor(outputSize: number, options: { activationType?: ActivationType } = {}) {
         super(outputSize);

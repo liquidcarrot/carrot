@@ -2,7 +2,6 @@ import {Connection} from "../Connection";
 import {Node} from "../Node";
 import {ConnectionType} from "../Architect";
 
-// TODO: actually implement it
 export abstract class Layer {
     public outputSize: number;
     public inputNodes: Set<Node>;

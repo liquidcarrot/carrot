@@ -2,7 +2,6 @@ import {Layer} from "./Layer";
 import {Node, NodeType} from "../Node";
 import {ConnectionType} from "../Architect";
 
-// TODO: actually implement it
 export class OutputLayer extends Layer {
     constructor(outputSize: number) {
         super(outputSize);

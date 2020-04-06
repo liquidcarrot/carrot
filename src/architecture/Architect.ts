@@ -3,7 +3,6 @@ import {InputLayer} from "./layer/InputLayer";
 import {Network} from "./Network";
 import {OutputLayer} from "./layer/OutputLayer";
 
-// TODO: actually implement it
 export class Architect {
     private readonly layers: { layer: Layer, connectionType: ConnectionType }[];
 
