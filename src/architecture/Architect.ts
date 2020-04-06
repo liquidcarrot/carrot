@@ -31,10 +31,10 @@ export class Architect {
         network.connections = [];
 
         for (let i: number = 0; i < this.layers.length - 1; i++) {
-            this.layers[i].layer.connect(
+            network.connections.push(...Layer.connect(this.layers[i].layer,
                 this.layers[i + 1].layer,
                 this.layers[i].connectionType
-            );
+            ));
 
             network.nodes.push(...this.layers[i].layer.nodes);
             network.connections.push(...this.layers[i].layer.connections);
