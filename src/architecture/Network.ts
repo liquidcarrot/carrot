@@ -685,7 +685,6 @@ export class Network {
         options.ratePolicy = getOrDefault(options.ratePolicy, new FixedRate(baseRate));
         options.log = getOrDefault(options.log, NaN);
 
-        const targetError: number = options.error <= 0 ? -1 : options.error;
         const start: number = Date.now();
 
         if (options.iterations <= 0 && options.error <= 0) {
@@ -710,7 +709,7 @@ export class Network {
         let error: number = 1;
 
         // train until the target error is reached or the target iterations are reached
-        while (error > targetError && (options.iterations <= 0 || iterationCount < options.iterations)) {
+        while (error > options.error && (options.iterations <= 0 || iterationCount < options.iterations)) {
             iterationCount++;
 
             // update the rate according to the rate policy
