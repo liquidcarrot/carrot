@@ -20,7 +20,7 @@ export class LSTMLayer extends Layer {
         for (let i: number = 0; i < outputSize; i++) {
             this.inputNodes.add(new Node(NodeType.HIDDEN));
             inputGate.push(new Node(NodeType.HIDDEN).setBias(1));
-            forgetGate.push(new Node(NodeType.HIDDEN).setBias(1));
+            forgetGate.push(new Node(NodeType.HIDDEN).setBias(1).setSquash(ActivationType.LogisticActivation));
             memoryCell.push(new Node(NodeType.HIDDEN));
             outputGate.push(new Node(NodeType.HIDDEN).setBias(1));
             this.outputNodes.add(new Node(NodeType.HIDDEN));
@@ -52,7 +52,7 @@ export class LSTMLayer extends Layer {
         this.nodes.push(...Array.from(this.outputNodes));
 
 
-        const activation: Activation = Activation.getActivation(options.activationType ?? ActivationType.LogisticActivation);
+        const activation: Activation = Activation.getActivation(options.activationType ?? ActivationType.TanhActivation);
         this.outputNodes.forEach(node => node.squash = activation);
     }
 }
