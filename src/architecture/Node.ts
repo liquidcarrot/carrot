@@ -100,11 +100,11 @@ export class Node {
      */
     public static fromJSON(json: NodeJSON): Node {
         const node: Node = new Node();
-        node.bias = json.bias;
+        node.bias = json.bias ?? 0;
         node.type = json.type as NodeType;
-        node.squash = Activation.getActivation(json.squash);
-        node.mask = json.mask;
-        node.index = json.index;
+        node.squash = Activation.getActivation(json.squash ?? ActivationType.LogisticActivation);
+        node.mask = json.mask ?? 0;
+        node.index = json.index ?? -1;
 
         return node;
     }
