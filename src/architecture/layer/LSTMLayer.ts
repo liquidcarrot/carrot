@@ -4,8 +4,6 @@ import {Node, NodeType} from "../Node";
 import {ConnectionType, GatingType} from "../Architect";
 import {Connection} from "../Connection";
 
-// TODO BUG FIX
-// Maybe consider using memory layers inside the LSTM Layer
 export class LSTMLayer extends Layer {
 
     constructor(outputSize: number, options: { activationType?: ActivationType } = {}) {
