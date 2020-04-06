@@ -17,7 +17,7 @@
     "test": "tsc && mocha build/test/**/*",
     "test-parallel": "mocha-parallel-tests --require ts-node/register test/**/*",
     "lint": "tslint --project ./",
-    "coverage": "nyc npm test && nyc report --reporter=text-lcov | coveralls build/src"
+    "coverage": "nyc report --reporter=text-lcov | coveralls build/src"
   },
   "repository": {
     "type": "git",
