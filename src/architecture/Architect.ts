@@ -46,5 +46,11 @@ export class Architect {
 }
 
 export enum ConnectionType {
-    ALL_TO_ALL
+    ALL_TO_ALL,
+    ONE_TO_ONE
+}
+
+
+export enum GatingType {
+    INPUT, SELF, OUTPUT
 }
