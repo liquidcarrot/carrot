@@ -19,16 +19,12 @@ export class LSTMLayer extends Layer {
 
         for (let i: number = 0; i < outputSize; i++) {
             this.inputNodes.add(new Node(NodeType.HIDDEN));
-            inputGate.push(new Node(NodeType.HIDDEN));
-            forgetGate.push(new Node(NodeType.HIDDEN));
+            inputGate.push(new Node(NodeType.HIDDEN).setBias(1));
+            forgetGate.push(new Node(NodeType.HIDDEN).setBias(1));
             memoryCell.push(new Node(NodeType.HIDDEN));
-            outputGate.push(new Node(NodeType.HIDDEN));
+            outputGate.push(new Node(NodeType.HIDDEN).setBias(1));
             this.outputNodes.add(new Node(NodeType.HIDDEN));
         }
-
-        inputGate.forEach(node => node.bias = 1);
-        forgetGate.forEach(node => node.bias = 1);
-        outputGate.forEach(node => node.bias = 1);
 
         this.connections.push(...Layer.connect(memoryCell, inputGate, ConnectionType.ALL_TO_ALL));
         this.connections.push(...Layer.connect(memoryCell, forgetGate, ConnectionType.ALL_TO_ALL));
