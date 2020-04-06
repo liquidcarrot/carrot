@@ -216,7 +216,7 @@ describe('Network', () => {
             ];
 
             const initial: number = network.test(dataset);
-            const trainReturn: { error: number; iterations: number; time: number } = network.train(dataset);
+            const trainReturn: { error: number; iterations: number; time: number } = network.train(dataset, {iterations: 100});
             const final: number = network.test(dataset);
 
             expect(trainReturn.error).to.be.a('number');
@@ -249,7 +249,7 @@ describe('Network', () => {
             ];
 
             const initial: number = network.test(dataset);
-            const evolveReturn: { error: number; iterations: number; time: number } = await network.evolve(dataset, {iterations: 50});
+            const evolveReturn: { error: number; iterations: number; time: number } = await network.evolve(dataset, {iterations: 100});
             const final: number = network.test(dataset);
 
             expect(evolveReturn.error).to.be.a('number');
