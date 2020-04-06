@@ -1,8 +1,10 @@
-import {Node, NodeType} from "../architecture/Node";
+import {Node} from "../architecture/Node";
 import {pickRandom, randBoolean, randDouble} from "./Utils";
-import {Activation, ActivationType} from "./Activation";
+import {Activation} from "./Activation";
 import {Network} from "../architecture/Network";
 import {Connection} from "../architecture/Connection";
+import {NodeType} from "../enums/NodeType";
+import {ActivationType} from "../enums/ActivationType";
 
 /**
  *

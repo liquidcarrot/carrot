@@ -1,7 +1,10 @@
 import {ModBiasMutation} from "../methods/Mutation";
-import {Activation, ActivationType, ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
+import {Activation, ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
 import {Connection} from "./Connection";
 import {getOrDefault, pickRandom, randDouble, removeFromArray} from "../methods/Utils";
+import {NodeType} from "../enums/NodeType";
+import {NodeJSON} from "../interfaces/NodeJSON";
+import {ActivationType} from "../enums/ActivationType";
 
 /**
  * Creates a new neuron/node
@@ -670,16 +673,4 @@ export class Node {
         this.squash = Activation.getActivation(activationType);
         return this;
     }
-}
-
-export interface NodeJSON {
-    bias: number;
-    type: number;
-    squash: ActivationType;
-    mask: number;
-    index: number;
-}
-
-export enum NodeType {
-    INPUT, HIDDEN, OUTPUT
 }

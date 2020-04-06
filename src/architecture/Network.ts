@@ -1,14 +1,18 @@
-import {Connection, ConnectionJSON} from "./Connection";
-import {Node, NodeJSON, NodeType} from "./Node";
+import {Connection} from "./Connection";
+import {Node} from "./Node";
 import {getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../methods/Utils";
 import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
 import {ALL_LOSSES, Loss, MSELoss} from "../methods/Loss";
-import {FixedRate, Rate} from "../methods/Rate";
+import {FixedRate} from "../methods/Rate";
 import {NEAT} from "../NEAT";
-import {Selection} from "../methods/Selection";
 import {Pool, spawn, Worker} from "threads";
 import "threads/register";
-import {ActivationType} from "../methods/Activation";
+import {ActivationType} from "../enums/ActivationType";
+import {NetworkJSON} from "../interfaces/NetworkJSON";
+import {NodeType} from "../enums/NodeType";
+import {ConnectionJSON} from "../interfaces/ConnectionJSON";
+import {TrainOptions} from "../interfaces/TrainOptions";
+import {EvolveOptions} from "../interfaces/EvolveOptions";
 
 /**
  * Create a neural network
@@ -1081,54 +1085,4 @@ export class Network {
             time: Date.now() - start,
         };
     }
-}
-
-export interface EvolveOptions {
-    threads?: number;
-    generation?: number;
-    template?: Network;
-    mutations?: Mutation[];
-    activations?: ActivationType[];
-    selection?: Selection;
-    mutationRate?: number;
-    mutationAmount?: number;
-    provenance?: number;
-    elitism?: number;
-    populationSize?: number;
-    fitnessFunction?: (dataset: { input: number[], output: number[] }[], population: Network[]) => Promise<void>;
-    growth?: number;
-    loss?: Loss;
-    amount?: number;
-    maxNodes?: number;
-    maxConnections?: number;
-    maxGates?: number;
-    equal?: boolean;
-    log?: number;
-    schedule?: { iterations: number, function: (fitness: number, error: number, iteration: number) => void };
-    clear?: boolean;
-    error?: number;
-    iterations?: number;
-}
-
-export interface NetworkJSON {
-    nodes: NodeJSON[];
-    connections: ConnectionJSON[];
-    inputSize: number;
-    outputSize: number;
-}
-
-export interface TrainOptions {
-    ratePolicy?: Rate;
-    rate?: number;
-    loss?: Loss;
-    iterations?: number;
-    error?: number;
-    shuffle?: boolean;
-    momentum?: number;
-    dropout?: number;
-    clear?: boolean;
-    schedule?: { iterations: number, function: (error: number, iteration: number) => undefined };
-    crossValidateTestSize?: number;
-    log?: number;
-    batchSize?: number;
 }

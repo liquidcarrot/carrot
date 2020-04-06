@@ -1,9 +1,11 @@
-import {Node, NodeJSON, NodeType} from "../../../src/architecture/Node";
+import {Node} from "../../../src/architecture/Node";
 import {Connection} from "../../../src/architecture/Connection";
 import {randDouble, randInt} from "../../../src/methods/Utils";
 import {ModBiasMutation} from "../../../src/methods/Mutation";
 import {expect} from "chai";
 import {Activation} from "../../../src/methods/Activation";
+import {NodeJSON} from "../../../src/interfaces/NodeJSON";
+import {NodeType} from "../../../src/enums/NodeType";
 
 describe("Node", function (): void {
     describe("node.connect()", function (): void {

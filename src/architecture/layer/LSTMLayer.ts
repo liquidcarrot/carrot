@@ -1,14 +1,16 @@
 import {Layer} from "./Layer";
-import {Activation, ActivationType} from "../../methods/Activation";
-import {Node, NodeType} from "../Node";
-import {ConnectionType, GatingType} from "../Architect";
 import {Connection} from "../Connection";
+import {ActivationType} from "../../enums/ActivationType";
+import {Node} from "../Node";
+import {NodeType} from "../../enums/NodeType";
+import {ConnectionType} from "../../enums/ConnectionType";
+import {GatingType} from "../../enums/GatingType";
+import {Activation} from "../../methods/Activation";
 
 export class LSTMLayer extends Layer {
 
     constructor(outputSize: number, options: { activationType?: ActivationType } = {}) {
         super(outputSize);
-
 
         const inputGate: Node[] = [];
         const forgetGate: Node[] = [];

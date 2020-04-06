@@ -1,7 +1,9 @@
 import {Layer} from "./Layer";
-import {Activation, ActivationType, IdentityActivation} from "../../methods/Activation";
-import {Node, NodeType} from "../Node";
-import {ConnectionType} from "../Architect";
+import {Activation, IdentityActivation} from "../../methods/Activation";
+import {Node} from "../Node";
+import {ActivationType} from "../../enums/ActivationType";
+import {NodeType} from "../../enums/NodeType";
+import {ConnectionType} from "../../enums/ConnectionType";
 
 export class MemoryLayer extends Layer {
     constructor(outputSize: number, options: { memorySize?: number, activationType?: ActivationType } = {}) {

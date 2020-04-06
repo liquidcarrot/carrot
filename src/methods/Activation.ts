@@ -16,6 +16,8 @@
  * let A = new Node();
  * A.squash = new LogisticActivation();
  */
+import {ActivationType} from "../enums/ActivationType";
+
 export abstract class Activation {
     public readonly type: ActivationType = ActivationType.NO_ACTIVATION;
 
@@ -450,25 +452,6 @@ export class SELUActivation implements Activation {
             }
         }
     }
-}
-
-export enum ActivationType {
-    NO_ACTIVATION,
-    LogisticActivation,
-    TanhActivation,
-    IdentityActivation,
-    StepActivation,
-    RELUActivation,
-    SoftSignActivation,
-    SinusoidActivation,
-    GaussianActivation,
-    BentIdentityActivation,
-    BipolarActivation,
-    BipolarSigmoidActivation,
-    HardTanhActivation,
-    AbsoluteActivation,
-    InverseActivation,
-    SELUActivation
 }
 
 export const ALL_ACTIVATIONS: ActivationType[] = [

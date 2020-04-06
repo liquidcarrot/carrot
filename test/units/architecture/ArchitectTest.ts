@@ -1,4 +1,4 @@
-import {ActivationType} from "../../../src/methods/Activation";
+import {ActivationType} from "../../../src/enums/ActivationType";
 import {Architect} from "../../../src/architecture/Architect";
 import {OutputLayer} from "../../../src/architecture/layer/OutputLayer";
 import {InputLayer} from "../../../src/architecture/layer/InputLayer";

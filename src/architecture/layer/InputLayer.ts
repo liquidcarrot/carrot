@@ -1,5 +1,6 @@
 import {Layer} from "./Layer";
-import {Node, NodeType} from "../Node";
+import {Node} from "../Node";
+import {NodeType} from "../../enums/NodeType";
 
 export class InputLayer extends Layer {
     public constructor(outputSize: number) {

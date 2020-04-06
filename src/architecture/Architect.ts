@@ -2,6 +2,7 @@ import {Layer} from "./layer/Layer";
 import {InputLayer} from "./layer/InputLayer";
 import {Network} from "./Network";
 import {OutputLayer} from "./layer/OutputLayer";
+import {ConnectionType} from "../enums/ConnectionType";
 
 export class Architect {
     private readonly layers: { layer: Layer, connectionType: ConnectionType }[];
@@ -43,14 +44,4 @@ export class Architect {
         network.nodes.push(...this.layers[this.layers.length - 1].layer.nodes);
         return network;
     }
-}
-
-export enum ConnectionType {
-    ALL_TO_ALL,
-    ONE_TO_ONE
-}
-
-
-export enum GatingType {
-    INPUT, SELF, OUTPUT
 }

@@ -1,5 +1,5 @@
-import {ActivationType} from "../../methods/Activation";
 import {DenseLayer} from "./DenseLayer";
+import {ActivationType} from "../../enums/ActivationType";
 
 export class HopfieldLayer extends DenseLayer {
     constructor(outputSize: number) {

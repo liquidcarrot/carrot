@@ -1,4 +1,4 @@
-import {EvolveOptions, Network} from "./architecture/Network";
+import {Network} from "./architecture/Network";
 import {getOrDefault, pickRandom} from "./methods/Utils";
 import {FitnessProportionateSelection, Selection} from "./methods/Selection";
 import {
@@ -9,7 +9,9 @@ import {
     FEEDFORWARD_MUTATIONS,
     Mutation
 } from "./methods/Mutation";
-import {ActivationType, ALL_ACTIVATIONS} from "./methods/Activation";
+import {ALL_ACTIVATIONS} from "./methods/Activation";
+import {EvolveOptions} from "./interfaces/EvolveOptions";
+import {ActivationType} from "./enums/ActivationType";
 
 /**
  * Runs the NEAT algorithm on group of neural networks.
@@ -74,7 +76,7 @@ export class NEAT {
     private readonly maxGates: number;
     private population: Network[];
     private readonly dataset: { input: number[]; output: number[] }[];
-    private activations: ActivationType[];
+    private readonly activations: ActivationType[];
 
     constructor(dataset: { input: number[], output: number[] }[], options: EvolveOptions = {}) {
         if (dataset.length === 0) {
