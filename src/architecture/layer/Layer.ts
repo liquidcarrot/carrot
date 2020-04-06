@@ -22,9 +22,8 @@ export abstract class Layer {
     }
 
     public static connect(from: Layer | Set<Node> | Node[], to: Layer | Set<Node> | Node[], connectionType: ConnectionType = ConnectionType.ALL_TO_ALL, weight: number = 1): Connection[] {
-        // TODO: beautify
-        const fromNodes: Node[] = from instanceof Layer ? Array.from(from.outputNodes) : Array.from(from);
-        const toNodes: Node[] = to instanceof Layer ? Array.from(to.inputNodes) : Array.from(to);
+        const fromNodes: Node[] = Array.from(from instanceof Layer ? from.outputNodes : from);
+        const toNodes: Node[] = Array.from(to instanceof Layer ? to.inputNodes : to);
 
         if (toNodes.length === 0) {
             throw new ReferenceError("Target from has no input nodes!");
