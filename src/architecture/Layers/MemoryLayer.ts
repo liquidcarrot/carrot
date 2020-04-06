@@ -1,4 +1,4 @@
-import {Layer} from "./Layer";
+import {Layer} from "../Layer";
 import {Activation, IdentityActivation} from "../../methods/Activation";
 import {Node} from "../Node";
 import {ActivationType} from "../../enums/ActivationType";

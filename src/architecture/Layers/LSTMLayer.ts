@@ -1,4 +1,4 @@
-import {Layer} from "./Layer";
+import {Layer} from "../Layer";
 import {Connection} from "../Connection";
 import {ActivationType} from "../../enums/ActivationType";
 import {Node} from "../Node";

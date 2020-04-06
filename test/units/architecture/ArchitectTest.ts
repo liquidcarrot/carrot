@@ -1,15 +1,15 @@
 import {ActivationType} from "../../../src/enums/ActivationType";
 import {Architect} from "../../../src/architecture/Architect";
-import {OutputLayer} from "../../../src/architecture/layer/OutputLayer";
-import {InputLayer} from "../../../src/architecture/layer/InputLayer";
-import {DenseLayer} from "../../../src/architecture/layer/DenseLayer";
+import {OutputLayer} from "../../../src/architecture/Layers/OutputLayer";
+import {InputLayer} from "../../../src/architecture/Layers/InputLayer";
+import {DenseLayer} from "../../../src/architecture/Layers/DenseLayer";
 import {Network} from "../../../src/architecture/Network";
 import {expect} from "chai";
 import {BinaryLoss} from "../../../src/methods/Loss";
-import {LSTMLayer} from "../../../src/architecture/layer/LSTMLayer";
-import {MemoryLayer} from "../../../src/architecture/layer/MemoryLayer";
+import {LSTMLayer} from "../../../src/architecture/Layers/LSTMLayer";
+import {MemoryLayer} from "../../../src/architecture/Layers/MemoryLayer";
 import {randInt} from "../../../src/methods/Utils";
-import {GRULayer} from "../../../src/architecture/layer/GRULayer";
+import {GRULayer} from "../../../src/architecture/Layers/GRULayer";
 
 describe("ArchitectTest", () => {
     it("Build Multilayer-Perceptron", () => {

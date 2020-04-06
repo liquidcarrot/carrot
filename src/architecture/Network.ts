@@ -1,5 +1,4 @@
 import {Connection} from "./Connection";
-import {Node} from "./Node";
 import {getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../methods/Utils";
 import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
 import {ALL_LOSSES, Loss, MSELoss} from "../methods/Loss";
@@ -13,6 +12,7 @@ import {NodeType} from "../enums/NodeType";
 import {ConnectionJSON} from "../interfaces/ConnectionJSON";
 import {TrainOptions} from "../interfaces/TrainOptions";
 import {EvolveOptions} from "../interfaces/EvolveOptions";
+import {Node} from "./Node";
 
 /**
  * Create a neural network

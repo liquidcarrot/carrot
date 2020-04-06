@@ -1,4 +1,4 @@
-import {Layer} from "./Layer";
+import {Layer} from "../Layer";
 import {Activation} from "../../methods/Activation";
 import {Node} from "../Node";
 import {Connection} from "../Connection";
