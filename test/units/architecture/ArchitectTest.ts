@@ -5,7 +5,6 @@ import {InputLayer} from "../../../src/architecture/Layers/InputLayer";
 import {DenseLayer} from "../../../src/architecture/Layers/DenseLayer";
 import {Network} from "../../../src/architecture/Network";
 import {expect} from "chai";
-import {BinaryLoss} from "../../../src/methods/Loss";
 import {LSTMLayer} from "../../../src/architecture/Layers/LSTMLayer";
 import {MemoryLayer} from "../../../src/architecture/Layers/MemoryLayer";
 import {randInt} from "../../../src/methods/Utils";
@@ -108,12 +107,10 @@ describe("ArchitectTest", () => {
         expect(numNodesWithRELU).to.be.equal(LSTMSize);
     });
 
-    it("Train Multilayer-Perceptron", () => {
+    it("Train Perceptron", () => {
         const architect: Architect = new Architect();
 
         architect.addLayer(new InputLayer(2));
-        architect.addLayer(new DenseLayer(5, {activationType: ActivationType.RELUActivation}));
-        architect.addLayer(new DenseLayer(5, {activationType: ActivationType.RELUActivation}));
         architect.addLayer(new DenseLayer(5, {activationType: ActivationType.RELUActivation}));
         architect.addLayer(new OutputLayer(1));
 
@@ -126,7 +123,7 @@ describe("ArchitectTest", () => {
             {input: [1, 1], output: [1]}
         ];
 
-        const errorBefore: number = network.test(AND_GATE, new BinaryLoss());
+        const errorBefore: number = network.test(AND_GATE);
 
         const error: number = network.train(AND_GATE, {
             iterations: 10000,
