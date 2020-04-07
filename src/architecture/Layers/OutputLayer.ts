@@ -7,7 +7,7 @@ export class OutputLayer extends Layer {
     constructor(outputSize: number, options: { activationType?: ActivationType } = {}) {
         super(outputSize);
 
-        const activation: ActivationType = options.activationType ?? ActivationType.RELUActivation;
+        const activation: ActivationType = options.activationType ?? ActivationType.IdentityActivation;
         for (let i: number = 0; i < outputSize; i++) {
             this.inputNodes.add(new Node(NodeType.OUTPUT).setSquash(activation));
         }
