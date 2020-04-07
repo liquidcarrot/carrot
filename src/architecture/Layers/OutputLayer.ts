@@ -1,16 +1,17 @@
 import {Layer} from "../Layer";
 import {Node} from "../Node";
 import {NodeType} from "../../enums/NodeType";
+import {ActivationType} from "../../enums/ActivationType";
 
 export class OutputLayer extends Layer {
-    constructor(outputSize: number) {
+    constructor(outputSize: number, options: { activationType?: ActivationType } = {}) {
         super(outputSize);
 
+        const activation: ActivationType = options.activationType ?? ActivationType.RELUActivation;
         for (let i: number = 0; i < outputSize; i++) {
-            const node: Node = new Node(NodeType.OUTPUT);
-            this.nodes.push(node);
-            this.inputNodes.add(node);
+            this.inputNodes.add(new Node(NodeType.OUTPUT).setSquash(activation));
         }
+        this.nodes.push(...Array.from(this.inputNodes));
     }
 
     public connect(): void {
