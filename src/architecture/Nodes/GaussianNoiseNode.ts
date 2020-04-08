@@ -24,4 +24,9 @@ export class GaussianNoiseNode extends ConstantNode {
 
         return this.activation;
     }
+
+    public propagate(): void {
+        // TODO implement that
+        throw new Error("Not yet implemented!");
+    }
 }

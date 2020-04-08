@@ -19,10 +19,7 @@ export abstract class ConstantNode extends Node {
 
     public abstract activate(): number;
 
-    public propagate(): void {
-        this.incoming.forEach(conn => conn.weight = 1);
-        super.propagate(undefined, {update: false, rate: 0, momentum: 0});
-    }
+    public abstract propagate(): void;
 
     public toJSON(): NodeJSON {
         return {index: this.index, squash: this.squash.type};

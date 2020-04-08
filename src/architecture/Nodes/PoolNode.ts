@@ -34,11 +34,14 @@ export class PoolNode extends ConstantNode {
         this.activation = this.state;
 
         // Adjust gain
-        for (const connection of this.gated) {
-            connection.gain = this.activation;
-        }
+        this.gated.forEach(conn => conn.gain = this.activation);
 
         return this.activation;
+    }
+
+    public propagate(): void {
+        // TODO implement that
+        throw new Error("Not yet implemented!");
     }
 
     public toJSON(): PoolNodeJSON {
