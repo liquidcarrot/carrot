@@ -38,9 +38,7 @@ export class ConstantNode extends Node {
     }
 
     public propagate(): void {
-        for (const connection of this.incoming) {
-            connection.weight = 1;
-        }
+        this.incoming.forEach(conn => conn.weight = 1);
         super.propagate(undefined, {update: false, rate: 0, momentum: 0});
     }
 
