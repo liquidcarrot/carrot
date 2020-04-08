@@ -11,6 +11,7 @@ import {randInt} from "../../../src/methods/Utils";
 import {GRULayer} from "../../../src/architecture/Layers/GRULayer";
 import {MaxPooling1DLayer} from "../../../src/architecture/Layers/MaxPooling1DLayer";
 import {PoolNode} from "../../../src/architecture/Nodes/PoolNode";
+import {Node} from "../../../src/architecture/Node";
 
 describe("ArchitectTest", () => {
     it("Build Multilayer-Perceptron", () => {
@@ -53,8 +54,9 @@ describe("ArchitectTest", () => {
         const numNodesWithRELU: number = network.nodes.filter(node => node.squash.type === ActivationType.RELUActivation).length;
         expect(numNodesWithRELU).to.be.equal(10 + 2);
 
-        const numPoolingNodes: number = network.nodes.filter(node => node instanceof PoolNode).length;
-        expect(numPoolingNodes).to.be.equal(layerSize);
+        const poolNodes: Node[] = network.nodes.filter(node => node instanceof PoolNode);
+        expect(poolNodes.length).to.be.equal(layerSize);
+        poolNodes.forEach(node => expect(node.bias).to.be.equal(1));
 
         const numNodesWithIdentity: number = network.nodes.filter(node => node.squash.type === ActivationType.IdentityActivation).length;
         expect(numNodesWithIdentity).to.be.equal(layerSize);
