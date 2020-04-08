@@ -1,4 +1,4 @@
-import {generateGaussian, sum} from "../../methods/Utils";
+import {avg, generateGaussian} from "../../methods/Utils";
 import {ConstantNode} from "./ConstantNode";
 
 export class GaussianNoiseNode extends ConstantNode {
@@ -8,8 +8,9 @@ export class GaussianNoiseNode extends ConstantNode {
     }
 
     public activate(): number {
+        // should only be one incoming, but if there are more incoming connections take the average and add gaussian noise
         const incomingStates: number[] = this.incoming.map(conn => conn.from.activation * conn.weight * conn.gain);
-        this.state = sum(incomingStates) + generateGaussian();
+        this.state = avg(incomingStates) + generateGaussian();
         this.activation = this.state;
 
         // Adjust gain
