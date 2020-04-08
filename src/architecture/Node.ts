@@ -87,7 +87,7 @@ export class Node {
      *
      * @param json A node represented as a JSON object
      *
-     * @returns A reconstructed node
+     * @returns itself
      *
      * @example <caption>From Node.toJSON()</caption>
      * const { Node } = require("@liquid-carrot/carrot");
@@ -98,15 +98,13 @@ export class Node {
      *
      * console.log(node);
      */
-    public static fromJSON(json: NodeJSON): Node {
-        const node: Node = new Node();
-        node.bias = json.bias;
-        node.type = json.type as NodeType;
-        node.squash = Activation.getActivation(json.squash);
-        node.mask = json.mask;
-        node.index = json.index;
-
-        return node;
+    public fromJSON(json: NodeJSON): Node {
+        this.bias = json.bias ?? 0;
+        this.type = json.type as NodeType;
+        this.squash = Activation.getActivation(json.squash ?? ActivationType.LogisticActivation);
+        this.mask = json.mask ?? 0;
+        this.index = json.index ?? -1;
+        return this;
     }
 
     /**
@@ -459,7 +457,7 @@ export class Node {
      * @see [Regularization Neataptic](https://wagenaartje.github.io/neataptic/docs/methods/regularization/)
      * @see [What is backpropagation | YouTube](https://www.youtube.com/watch?v=Ilg3gGewQ5U)
      */
-    public propagate(target: number | undefined, options: { momentum?: number, rate?: number, update?: boolean }): { responsibility: number, projected: number, gated: number } {
+    public propagate(target?: number, options: { momentum?: number, rate?: number, update?: boolean } = {}): void {
         options.momentum = getOrDefault(options.momentum, 0);
         options.rate = getOrDefault(options.rate, 0.3);
         options.update = getOrDefault(options.update, true);
@@ -518,12 +516,6 @@ export class Node {
             this.deltaBiasPrevious = this.deltaBiasTotal;
             this.deltaBiasTotal = 0;
         }
-
-        return {
-            responsibility: this.errorResponsibility,
-            projected: this.errorProjected,
-            gated: this.errorGated,
-        };
     }
 
     /**

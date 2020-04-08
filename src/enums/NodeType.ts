@@ -1,3 +1,3 @@
 export enum NodeType {
-    INPUT, HIDDEN, OUTPUT
+    INPUT, HIDDEN, OUTPUT, POOL_NODE
 }

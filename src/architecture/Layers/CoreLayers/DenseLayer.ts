@@ -1,7 +1,7 @@
 import {Layer} from "../Layer";
-import {Node} from "../Node";
-import {ActivationType} from "../../enums/ActivationType";
-import {NodeType} from "../../enums/NodeType";
+import {Node} from "../../Node";
+import {ActivationType} from "../../../enums/ActivationType";
+import {NodeType} from "../../../enums/NodeType";
 
 export class DenseLayer extends Layer {
     constructor(outputSize: number, options: { activationType?: ActivationType } = {}) {

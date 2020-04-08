@@ -1,6 +1,7 @@
 import {Layer} from "../Layer";
-import {Node} from "../Node";
-import {NodeType} from "../../enums/NodeType";
+import {Node} from "../../Node";
+import {NodeType} from "../../../enums/NodeType";
+import {ConnectionType} from "../../../enums/ConnectionType";
 
 export class InputLayer extends Layer {
     public constructor(outputSize: number) {
@@ -11,5 +12,9 @@ export class InputLayer extends Layer {
             this.nodes.push(node);
             this.outputNodes.add(node);
         }
+    }
+
+    public getDefaultIncomingConnectionType(): ConnectionType {
+        return ConnectionType.NO_CONNECTION;
     }
 }

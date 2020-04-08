@@ -1,11 +1,11 @@
 import {Layer} from "../Layer";
-import {Activation} from "../../methods/Activation";
-import {Node} from "../Node";
-import {Connection} from "../Connection";
-import {ActivationType} from "../../enums/ActivationType";
-import {NodeType} from "../../enums/NodeType";
-import {ConnectionType} from "../../enums/ConnectionType";
-import {GatingType} from "../../enums/GatingType";
+import {Activation} from "../../../methods/Activation";
+import {Node} from "../../Node";
+import {Connection} from "../../Connection";
+import {ActivationType} from "../../../enums/ActivationType";
+import {NodeType} from "../../../enums/NodeType";
+import {ConnectionType} from "../../../enums/ConnectionType";
+import {GatingType} from "../../../enums/GatingType";
 
 export class GRULayer extends Layer {
     constructor(outputSize: number, options: { activationType?: ActivationType } = {}) {

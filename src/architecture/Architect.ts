@@ -1,18 +1,21 @@
-import {Layer} from "./Layer";
-import {InputLayer} from "./Layers/InputLayer";
+import {Layer} from "./Layers/Layer";
+import {InputLayer} from "./Layers/CoreLayers/InputLayer";
 import {Network} from "./Network";
-import {OutputLayer} from "./Layers/OutputLayer";
+import {OutputLayer} from "./Layers/CoreLayers/OutputLayer";
 import {ConnectionType} from "../enums/ConnectionType";
 
 export class Architect {
-    private readonly layers: { layer: Layer, connectionType: ConnectionType }[];
+    private readonly layers: { layer: Layer, incomingConnectionType: ConnectionType }[];
 
     constructor() {
         this.layers = [];
     }
 
-    public addLayer(layer: Layer, connectionType: ConnectionType = ConnectionType.ALL_TO_ALL): Architect {
-        this.layers.push({layer, connectionType});
+    public addLayer(layer: Layer, incomingConnectionType?: ConnectionType): Architect {
+        this.layers.push({
+            layer,
+            incomingConnectionType: incomingConnectionType ?? layer.getDefaultIncomingConnectionType()
+        });
         return this; // function as builder class
     }
 
@@ -34,7 +37,7 @@ export class Architect {
         for (let i: number = 0; i < this.layers.length - 1; i++) {
             network.connections.push(...Layer.connect(this.layers[i].layer,
                 this.layers[i + 1].layer,
-                this.layers[i].connectionType
+                this.layers[i + 1].incomingConnectionType
             ));
 
             network.nodes.push(...this.layers[i].layer.nodes);

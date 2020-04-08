@@ -94,3 +94,45 @@ export function shuffle<T>(array: T[]): T[] {
 
     return array;
 }
+
+export function max(array: number[]): number {
+    let maxValue: number = -Infinity;
+    for (const value of array) {
+        if (value > maxValue) {
+            maxValue = value;
+        }
+    }
+    return maxValue;
+}
+
+export function min(array: number[]): number {
+    let minValue: number = Infinity;
+    for (const value of array) {
+        if (value < minValue) {
+            minValue = value;
+        }
+    }
+    return minValue;
+}
+
+export function avg(array: number[]): number {
+    return sum(array) / array.length;
+}
+
+export function sum(array: number[]): number {
+    let sum: number = 0;
+    for (const value of array) {
+        sum += value;
+    }
+    return sum;
+}
+
+export function generateGaussian(mean: number = 0, deviation: number = 2): number {
+    let sum: number = 0;
+    const numSamples: number = 10;
+    for (let i: number = 0; i < numSamples; i++) {
+        sum += Math.random();
+    }
+
+    return deviation * sum / numSamples + mean - 0.5 * deviation;
+}

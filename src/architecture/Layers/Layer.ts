@@ -1,7 +1,7 @@
-import {Connection} from "./Connection";
-import {Node} from "./Node";
-import {ConnectionType} from "../enums/ConnectionType";
-import {GatingType} from "../enums/GatingType";
+import {Connection} from "../Connection";
+import {Node} from "../Node";
+import {ConnectionType} from "../../enums/ConnectionType";
+import {GatingType} from "../../enums/GatingType";
 
 export abstract class Layer {
     public outputSize: number;
@@ -22,6 +22,10 @@ export abstract class Layer {
     }
 
     public static connect(from: Layer | Set<Node> | Node[], to: Layer | Set<Node> | Node[], connectionType: ConnectionType = ConnectionType.ALL_TO_ALL, weight: number = 1): Connection[] {
+        if (connectionType === ConnectionType.NO_CONNECTION) {
+            throw new ReferenceError("Cannot connect with 'NO_CONNECTION' connection type");
+        }
+
         const fromNodes: Node[] = Array.from(from instanceof Layer ? from.outputNodes : from);
         const toNodes: Node[] = Array.from(to instanceof Layer ? to.inputNodes : to);
 
@@ -45,6 +49,11 @@ export abstract class Layer {
             }
             for (let i: number = 0; i < fromNodes.length; i++) {
                 connections.push(fromNodes[i].connect(toNodes[i], weight)); // connect every nodes with same indices
+            }
+        } else if (connectionType === ConnectionType.POOLING) {
+            const ratio: number = toNodes.length / fromNodes.length;
+            for (let i: number = 0; i < fromNodes.length; i++) {
+                connections.push(fromNodes[i].connect(toNodes[Math.floor(i * ratio)], weight));
             }
         }
         return connections;
@@ -98,5 +107,9 @@ export abstract class Layer {
         }
 
         return gatedConnections;
+    }
+
+    public getDefaultIncomingConnectionType(): ConnectionType {
+        return ConnectionType.ALL_TO_ALL;
     }
 }
