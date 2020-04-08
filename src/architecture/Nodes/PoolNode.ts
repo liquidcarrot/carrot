@@ -10,6 +10,7 @@ export class PoolNode extends Node {
     constructor(poolingType: PoolingType = PoolingType.MAX_POOLING) {
         super(NodeType.HIDDEN);
         this.poolingType = poolingType;
+        this.bias = 1;
     }
 
     public static fromJSON(json: PoolNodeJSON): PoolNode {
@@ -60,7 +61,7 @@ export class PoolNode extends Node {
 
     public propagate(): void {
         // TODO: OVERRIDE
-        super.propagate();
+        super.propagate(undefined, {update: false, rate: 0, momentum: 0});
     }
 
     public toJSON(): PoolNodeJSON {
