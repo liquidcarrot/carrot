@@ -9,6 +9,7 @@ import {LSTMLayer} from "../../../src/architecture/Layers/LSTMLayer";
 import {MemoryLayer} from "../../../src/architecture/Layers/MemoryLayer";
 import {randInt} from "../../../src/methods/Utils";
 import {GRULayer} from "../../../src/architecture/Layers/GRULayer";
+import {MaxPooling1DLayer} from "../../../src/architecture/Layers/MaxPooling1DLayer";
 
 describe("ArchitectTest", () => {
     it("Build Multilayer-Perceptron", () => {
@@ -30,6 +31,29 @@ describe("ArchitectTest", () => {
 
         const numNodesWithRELU: number = network.nodes.filter(node => node.squash.type === ActivationType.RELUActivation).length;
         expect(numNodesWithRELU).to.be.equal(layerSizes[0] + layerSizes[1] + layerSizes[2]);
+    });
+
+    it("Build Perceptron with pooling layer", () => {
+        const layerSize: number = randInt(2, 4);
+
+        const architect: Architect = new Architect();
+
+        architect.addLayer(new InputLayer(10));
+        architect.addLayer(new DenseLayer(10, {activationType: ActivationType.RELUActivation}));
+        architect.addLayer(new MaxPooling1DLayer(layerSize, {activationType: ActivationType.IdentityActivation}));
+        architect.addLayer(new OutputLayer(2, {activationType: ActivationType.RELUActivation}));
+
+        const network: Network = architect.buildModel();
+
+        expect(network.nodes.length).to.be.equal(10 + 10 + layerSize + 2);
+        expect(network.connections.length).to.be.equal(10 * 10 + 10 + layerSize * 2);
+        expect(network.gates.length).to.be.equal(0);
+
+        const numNodesWithRELU: number = network.nodes.filter(node => node.squash.type === ActivationType.RELUActivation).length;
+        expect(numNodesWithRELU).to.be.equal(10 + 2);
+
+        const numNodesWithIdentity: number = network.nodes.filter(node => node.squash.type === ActivationType.IdentityActivation).length;
+        expect(numNodesWithIdentity).to.be.equal(layerSize);
     });
 
     it("Build Multilayer-Perceptron with memory layer", () => {
