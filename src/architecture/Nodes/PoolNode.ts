@@ -56,9 +56,9 @@ export class PoolNode extends Node {
         return this.activation;
     }
 
-    public propagate(target: number | undefined, options: { momentum?: number; rate?: number; update?: boolean }): { responsibility: number; projected: number; gated: number } {
+    public propagate(): { responsibility: number; projected: number; gated: number } {
         // TODO: OVERRIDE
-        return super.propagate(target, options);
+        return super.propagate();
     }
 
     public toJSON(): PoolNodeJSON {
