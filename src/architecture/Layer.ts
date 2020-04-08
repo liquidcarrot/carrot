@@ -46,6 +46,10 @@ export abstract class Layer {
             for (let i: number = 0; i < fromNodes.length; i++) {
                 connections.push(fromNodes[i].connect(toNodes[i], weight)); // connect every nodes with same indices
             }
+        } else if (connectionType === ConnectionType.POOLING) {
+            for (let i: number = 0; i < fromNodes.length; i++) {
+                connections.push(fromNodes[i].connect(toNodes[i % toNodes.length], weight));
+            }
         }
         return connections;
     }

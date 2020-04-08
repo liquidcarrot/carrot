@@ -3,6 +3,7 @@ import {InputLayer} from "./Layers/InputLayer";
 import {Network} from "./Network";
 import {OutputLayer} from "./Layers/OutputLayer";
 import {ConnectionType} from "../enums/ConnectionType";
+import {PoolingLayer} from "./Layers/PoolingLayer";
 
 export class Architect {
     private readonly layers: { layer: Layer, connectionType: ConnectionType }[];
@@ -11,8 +12,18 @@ export class Architect {
         this.layers = [];
     }
 
-    public addLayer(layer: Layer, connectionType: ConnectionType = ConnectionType.ALL_TO_ALL): Architect {
-        this.layers.push({layer, connectionType});
+    public addLayer(layer: Layer, connectionType?: ConnectionType): Architect {
+        if (connectionType) {
+            this.layers.push({layer, connectionType});
+        } else if (layer instanceof PoolingLayer) {
+            if (this.layers.length === 0) {
+                throw new ReferenceError("Pool layers cannot be the first layer!");
+            }
+            this.layers[this.layers.length - 1].connectionType = ConnectionType.POOLING;
+            this.layers.push({layer, connectionType: ConnectionType.ALL_TO_ALL});
+        } else {
+            this.layers.push({layer, connectionType: ConnectionType.ALL_TO_ALL});
+        }
         return this; // function as builder class
     }
 
