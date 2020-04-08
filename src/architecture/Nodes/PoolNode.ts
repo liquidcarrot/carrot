@@ -2,7 +2,7 @@ import {Node} from "../Node";
 import {PoolingType} from "../../enums/PoolingType";
 import {NodeType} from "../../enums/NodeType";
 import {PoolNodeJSON} from "../../interfaces/NodeJSON";
-import {avg, max} from "../../methods/Utils";
+import {avg, max, min} from "../../methods/Utils";
 
 export class PoolNode extends Node {
     private readonly poolingType: PoolingType;
@@ -42,6 +42,8 @@ export class PoolNode extends Node {
             this.state = max(incomingStates);
         } else if (this.poolingType === PoolingType.AVG_POOLING) {
             this.state = avg(incomingStates);
+        } else if (this.poolingType === PoolingType.MIN_POOLING) {
+            this.state = min(incomingStates);
         } else {
             throw new ReferenceError("No valid pooling type! Type: " + this.poolingType);
         }
