@@ -72,8 +72,4 @@ export class PoolNode extends Node {
     public setBias(): Node {
         throw new ReferenceError("Cannot set the bias of a pool node!");
     }
-
-    public setSquash(): Node {
-        throw new ReferenceError("Cannot set the squash function of a pool node!");
-    }
 }
