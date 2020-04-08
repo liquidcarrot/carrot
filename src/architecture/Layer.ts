@@ -22,6 +22,10 @@ export abstract class Layer {
     }
 
     public static connect(from: Layer | Set<Node> | Node[], to: Layer | Set<Node> | Node[], connectionType: ConnectionType = ConnectionType.ALL_TO_ALL, weight: number = 1): Connection[] {
+        if (connectionType === ConnectionType.NO_CONNECTION) {
+            throw new ReferenceError("Cannot connect with 'NO_CONNECTION' connection type");
+        }
+
         const fromNodes: Node[] = Array.from(from instanceof Layer ? from.outputNodes : from);
         const toNodes: Node[] = Array.from(to instanceof Layer ? to.inputNodes : to);
 
