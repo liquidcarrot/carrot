@@ -56,9 +56,9 @@ export class PoolNode extends Node {
         return this.activation;
     }
 
-    public propagate(): { responsibility: number; projected: number; gated: number } {
+    public propagate(): void {
         // TODO: OVERRIDE
-        return super.propagate();
+        super.propagate();
     }
 
     public toJSON(): PoolNodeJSON {
