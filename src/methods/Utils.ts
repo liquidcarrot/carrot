@@ -116,11 +116,15 @@ export function min(array: number[]): number {
 }
 
 export function avg(array: number[]): number {
+    return sum(array) / array.length;
+}
+
+export function sum(array: number[]): number {
     let sum: number = 0;
     for (const value of array) {
         sum += value;
     }
-    return sum / array.length;
+    return sum;
 }
 
 export function generateGaussian(mean: number = 0, deviation: number = 2): number {
