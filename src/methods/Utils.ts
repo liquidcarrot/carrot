@@ -94,3 +94,21 @@ export function shuffle<T>(array: T[]): T[] {
 
     return array;
 }
+
+export function max(array: number[]): number {
+    let maxValue: number = -Infinity;
+    for (const elem of array) {
+        if (elem > maxValue) {
+            maxValue = elem;
+        }
+    }
+    return maxValue;
+}
+
+export function avg(array: number[]): number {
+    let sum: number = 0;
+    for (const elem of array) {
+        sum += elem;
+    }
+    return sum / array.length;
+}
