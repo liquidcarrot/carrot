@@ -508,3 +508,22 @@ export const FEEDFORWARD_MUTATIONS: Mutation[] = [
     new ModActivationMutation(),
     new SwapNodesMutation(),
 ];
+
+export const NO_STRUCTURE_MUTATIONS: Mutation[] = [
+    new ModWeightMutation(),
+    new ModBiasMutation(),
+    new ModActivationMutation(),
+];
+export const ONLY_STRUCTURE: Mutation[] = [
+    new AddNodeMutation(),
+    new SubNodeMutation(),
+    new AddConnectionMutation(),
+    new SubConnectionMutation(),
+    new AddGateMutation(),
+    new SubGateMutation(),
+    new AddSelfConnectionMutation(),
+    new SubSelfConnectionMutation(),
+    new AddBackConnectionMutation(),
+    new SubBackConnectionMutation(),
+    new SwapNodesMutation(),
+];
