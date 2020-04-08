@@ -5,7 +5,7 @@ export class GaussianNoiseNode extends ConstantNode {
     private readonly mean: number;
     private readonly deviation: number;
 
-    constructor(options: { mean?: number, deviation?: number }) {
+    constructor(options: { mean?: number, deviation?: number } = {}) {
         super();
         this.mean = options.mean ?? 0;
         this.deviation = options.deviation ?? 2;
