@@ -1,7 +1,7 @@
 import {Layer} from "../Layer";
-import {Node} from "../Node";
-import {NodeType} from "../../enums/NodeType";
-import {ConnectionType} from "../../enums/ConnectionType";
+import {Node} from "../../Node";
+import {NodeType} from "../../../enums/NodeType";
+import {ConnectionType} from "../../../enums/ConnectionType";
 
 export class InputLayer extends Layer {
     public constructor(outputSize: number) {

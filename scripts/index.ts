@@ -1,6 +1,6 @@
-import {Layer} from "../src/architecture/Layer";
-import {DenseLayer} from "../src/architecture/Layers/DenseLayer";
-import {InputLayer} from "../src/architecture/Layers/InputLayer";
+import {Layer} from "../src/architecture/Layers/Layer";
+import {DenseLayer} from "../src/architecture/Layers/CoreLayers/DenseLayer";
+import {InputLayer} from "../src/architecture/Layers/CoreLayers/InputLayer";
 import {Architect} from "../src/architecture/Architect";
 import {Connection} from "../src/architecture/Connection";
 import {Network} from "../src/architecture/Network";
@@ -11,7 +11,7 @@ import * as Mutation from "../src/methods/Mutation";
 import * as Rate from "../src/methods/Rate";
 import * as Selection from "../src/methods/Selection";
 import {NEAT} from "../src/NEAT";
-import {OutputLayer} from "../src/architecture/Layers/OutputLayer";
+import {OutputLayer} from "../src/architecture/Layers/CoreLayers/OutputLayer";
 
 export {
     Layer,

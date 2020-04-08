@@ -1,7 +1,7 @@
-import {Connection} from "./Connection";
-import {Node} from "./Node";
-import {ConnectionType} from "../enums/ConnectionType";
-import {GatingType} from "../enums/GatingType";
+import {Connection} from "../Connection";
+import {Node} from "../Node";
+import {ConnectionType} from "../../enums/ConnectionType";
+import {GatingType} from "../../enums/GatingType";
 
 export abstract class Layer {
     public outputSize: number;

@@ -1,11 +1,11 @@
 import {Layer} from "../Layer";
-import {Connection} from "../Connection";
-import {ActivationType} from "../../enums/ActivationType";
-import {Node} from "../Node";
-import {NodeType} from "../../enums/NodeType";
-import {ConnectionType} from "../../enums/ConnectionType";
-import {GatingType} from "../../enums/GatingType";
-import {Activation} from "../../methods/Activation";
+import {Connection} from "../../Connection";
+import {ActivationType} from "../../../enums/ActivationType";
+import {Node} from "../../Node";
+import {NodeType} from "../../../enums/NodeType";
+import {ConnectionType} from "../../../enums/ConnectionType";
+import {GatingType} from "../../../enums/GatingType";
+import {Activation} from "../../../methods/Activation";
 
 export class LSTMLayer extends Layer {
 

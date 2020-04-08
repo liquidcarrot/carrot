@@ -1,7 +1,7 @@
-import {PoolNode} from "../Nodes/PoolNode";
-import {PoolingType} from "../../enums/PoolingType";
+import {PoolNode} from "../../Nodes/PoolNode";
+import {PoolingType} from "../../../enums/PoolingType";
 import {PoolingLayer} from "./PoolingLayer";
-import {ActivationType} from "../../enums/ActivationType";
+import {ActivationType} from "../../../enums/ActivationType";
 
 export class AvgPooling1DLayer extends PoolingLayer {
     constructor(outputSize: number, options: { activationType?: ActivationType } = {}) {

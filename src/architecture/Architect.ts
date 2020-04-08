@@ -1,7 +1,7 @@
-import {Layer} from "./Layer";
-import {InputLayer} from "./Layers/InputLayer";
+import {Layer} from "./Layers/Layer";
+import {InputLayer} from "./Layers/CoreLayers/InputLayer";
 import {Network} from "./Network";
-import {OutputLayer} from "./Layers/OutputLayer";
+import {OutputLayer} from "./Layers/CoreLayers/OutputLayer";
 import {ConnectionType} from "../enums/ConnectionType";
 
 export class Architect {

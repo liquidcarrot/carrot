@@ -1,7 +1,7 @@
 import {Layer} from "../Layer";
-import {ActivationType} from "../../enums/ActivationType";
-import {ConnectionType} from "../../enums/ConnectionType";
-import {GaussianNoiseNode} from "../Nodes/GaussianNoiseNode";
+import {ActivationType} from "../../../enums/ActivationType";
+import {ConnectionType} from "../../../enums/ConnectionType";
+import {GaussianNoiseNode} from "../../Nodes/GaussianNoiseNode";
 
 export class GaussianNoiseLayer extends Layer {
     constructor(outputSize: number, options: { activationType?: ActivationType, mean?: number, deviation?: number } = {}) {
