@@ -4,9 +4,9 @@ import {NodeJSON} from "../../interfaces/NodeJSON";
 import {Activation} from "../../methods/Activation";
 import {ActivationType} from "../../enums/ActivationType";
 
-export class ConstantNode extends Node {
+export abstract class ConstantNode extends Node {
 
-    constructor() {
+    protected constructor() {
         super(NodeType.HIDDEN);
         this.bias = 1;
     }
@@ -15,6 +15,13 @@ export class ConstantNode extends Node {
         this.index = json.index ?? -1;
         this.squash = Activation.getActivation(json.squash ?? ActivationType.IdentityActivation);
         return this;
+    }
+
+    public abstract activate(): number;
+
+    public propagate(): void {
+        this.incoming.forEach(conn => conn.weight = 1);
+        super.propagate(undefined, {update: false, rate: 0, momentum: 0});
     }
 
     public toJSON(): NodeJSON {
@@ -35,11 +42,6 @@ export class ConstantNode extends Node {
 
     public removeGate(): void {
         throw new ReferenceError("A pool node can't gate a connection!");
-    }
-
-    public propagate(): void {
-        this.incoming.forEach(conn => conn.weight = 1);
-        super.propagate(undefined, {update: false, rate: 0, momentum: 0});
     }
 
     public setBias(): Node {
