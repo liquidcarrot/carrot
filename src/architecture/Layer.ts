@@ -104,4 +104,8 @@ export abstract class Layer {
 
         return gatedConnections;
     }
+
+    public getDefaultIncomingConnectionType(): ConnectionType {
+        return ConnectionType.ALL_TO_ALL;
+    }
 }
