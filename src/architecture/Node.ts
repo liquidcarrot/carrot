@@ -459,7 +459,7 @@ export class Node {
      * @see [Regularization Neataptic](https://wagenaartje.github.io/neataptic/docs/methods/regularization/)
      * @see [What is backpropagation | YouTube](https://www.youtube.com/watch?v=Ilg3gGewQ5U)
      */
-    public propagate(target: number | undefined, options: { momentum?: number, rate?: number, update?: boolean } = {}): { responsibility: number, projected: number, gated: number } {
+    public propagate(target?: number, options: { momentum?: number, rate?: number, update?: boolean } = {}): { responsibility: number, projected: number, gated: number } {
         options.momentum = getOrDefault(options.momentum, 0);
         options.rate = getOrDefault(options.rate, 0.3);
         options.update = getOrDefault(options.update, true);
