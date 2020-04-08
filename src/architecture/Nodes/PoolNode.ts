@@ -2,6 +2,7 @@ import {Node} from "../Node";
 import {PoolingType} from "../../enums/PoolingType";
 import {NodeType} from "../../enums/NodeType";
 import {PoolNodeJSON} from "../../interfaces/NodeJSON";
+import {avg, max} from "../../methods/Utils";
 
 export class PoolNode extends Node {
     private readonly poolingType: PoolingType;
@@ -35,8 +36,24 @@ export class PoolNode extends Node {
     }
 
     public activate(): number {
-        // TODO: OVERRIDE
-        return super.activate();
+        const incomingStates: number[] = this.incoming.map(conn => conn.from.activation * conn.weight * conn.gain);
+
+        if (this.poolingType === PoolingType.MAX_POOLING) {
+            this.state = max(incomingStates);
+        } else if (this.poolingType === PoolingType.AVG_POOLING) {
+            this.state = avg(incomingStates);
+        } else {
+            throw new ReferenceError("No valid pooling type! Type: " + this.poolingType);
+        }
+
+        this.activation = this.state;
+
+        // Adjust gain
+        for (const connection of this.gated) {
+            connection.gain = this.activation;
+        }
+
+        return this.activation;
     }
 
     public propagate(target: number | undefined, options: { momentum?: number; rate?: number; update?: boolean }): { responsibility: number; projected: number; gated: number } {
