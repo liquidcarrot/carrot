@@ -87,7 +87,7 @@ export class Node {
      *
      * @param json A node represented as a JSON object
      *
-     * @returns A reconstructed node
+     * @returns itself
      *
      * @example <caption>From Node.toJSON()</caption>
      * const { Node } = require("@liquid-carrot/carrot");
@@ -98,15 +98,13 @@ export class Node {
      *
      * console.log(node);
      */
-    public static fromJSON(json: NodeJSON): Node {
-        const node: Node = new Node();
-        node.bias = json.bias ?? 0;
-        node.type = json.type as NodeType;
-        node.squash = Activation.getActivation(json.squash ?? ActivationType.LogisticActivation);
-        node.mask = json.mask ?? 0;
-        node.index = json.index ?? -1;
-
-        return node;
+    public fromJSON(json: NodeJSON): Node {
+        this.bias = json.bias ?? 0;
+        this.type = json.type as NodeType;
+        this.squash = Activation.getActivation(json.squash ?? ActivationType.LogisticActivation);
+        this.mask = json.mask ?? 0;
+        this.index = json.index ?? -1;
+        return this;
     }
 
     /**
