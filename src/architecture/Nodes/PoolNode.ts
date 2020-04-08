@@ -62,11 +62,9 @@ export class PoolNode extends Node {
     }
 
     public toJSON(): PoolNodeJSON {
-        // TODO: OVERRIDE
-        return {
-            poolType: this.poolingType,
-            index: this.index,
-        };
+        return Object.assign(super.toJSON(), {
+            poolType: this.poolingType
+        });
     }
 
     public setBias(): Node {
