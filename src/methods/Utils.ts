@@ -122,3 +122,13 @@ export function avg(array: number[]): number {
     }
     return sum / array.length;
 }
+
+export function generateGaussian(mean: number = 0, deviation: number = 2): number {
+    let sum: number = 0;
+    const numSamples: number = 10;
+    for (let i: number = 0; i < numSamples; i++) {
+        sum += Math.random();
+    }
+
+    return deviation * sum / numSamples + mean - 0.5 * deviation;
+}
