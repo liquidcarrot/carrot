@@ -1,5 +1,5 @@
 import {ActivationType} from "../enums/ActivationType";
-import {PoolingType} from "../enums/PoolingType";
+import {PoolNodeType} from "../enums/NodeType";
 
 export interface NodeJSON {
     bias?: number;
@@ -10,5 +10,5 @@ export interface NodeJSON {
 }
 
 export interface PoolNodeJSON extends NodeJSON {
-    poolType: PoolingType;
+    poolType: PoolNodeType;
 }
