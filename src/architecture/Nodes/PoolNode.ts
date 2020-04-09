@@ -1,15 +1,17 @@
 import {PoolingType} from "../../enums/PoolingType";
 import {PoolNodeJSON} from "../../interfaces/NodeJSON";
-import {avg, max, min} from "../../methods/Utils";
+import {avg, getOrDefault, maxValueIndex, minValueIndex, sum} from "../../methods/Utils";
 import {ConstantNode} from "./ConstantNode";
 
 export class PoolNode extends ConstantNode {
     private poolingType: PoolingType;
+    private receivingIndex: number;
 
     constructor(poolingType: PoolingType = PoolingType.MAX_POOLING) {
         super();
         this.poolingType = poolingType;
         this.bias = 1;
+        this.receivingIndex = -1;
     }
 
     public fromJSON(json: PoolNodeJSON): PoolNode {
@@ -22,16 +24,21 @@ export class PoolNode extends ConstantNode {
         const incomingStates: number[] = this.incoming.map(conn => conn.from.activation * conn.weight * conn.gain);
 
         if (this.poolingType === PoolingType.MAX_POOLING) {
-            this.state = max(incomingStates);
+            this.receivingIndex = maxValueIndex(incomingStates);
+            this.state = incomingStates[this.receivingIndex];
         } else if (this.poolingType === PoolingType.AVG_POOLING) {
             this.state = avg(incomingStates);
         } else if (this.poolingType === PoolingType.MIN_POOLING) {
-            this.state = min(incomingStates);
+            this.receivingIndex = minValueIndex(incomingStates);
+            this.state = incomingStates[this.receivingIndex];
         } else {
             throw new ReferenceError("No valid pooling type! Type: " + this.poolingType);
         }
 
-        this.activation = this.state;
+        this.activation = this.squash.calc(this.state, false) * this.mask;
+        if (this.poolingType === PoolingType.AVG_POOLING) {
+            this.derivative = this.squash.calc(this.state, true);
+        }
 
         // Adjust gain
         this.gated.forEach(conn => conn.gain = this.activation);
@@ -39,9 +46,36 @@ export class PoolNode extends ConstantNode {
         return this.activation;
     }
 
-    public propagate(): void {
-        // TODO implement that
-        throw new Error("Not yet implemented!");
+    public propagate(target?: number, options: { momentum?: number, rate?: number, update?: boolean } = {}): void {
+        options.momentum = getOrDefault(options.momentum, 0);
+        options.rate = getOrDefault(options.rate, 0.3);
+        options.update = getOrDefault(options.update, true);
+
+        const connectionsStates: number[] = this.outgoing.map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
+        this.errorResponsibility = this.errorProjected = sum(connectionsStates) * this.derivative;
+        if (this.poolingType === PoolingType.AVG_POOLING) {
+            for (const connection of this.incoming) {
+                // calculate gradient
+                let gradient: number = this.errorProjected * connection.eligibility;
+                for (let i: number = 0; i < connection.xTraceNodes.length; i++) {
+                    gradient += connection.xTraceNodes[i].errorResponsibility * connection.xTraceValues[i];
+                }
+
+                connection.deltaWeightsTotal += options.rate * gradient * this.mask;
+                if (options.update) {
+                    connection.deltaWeightsTotal += options.momentum * connection.deltaWeightsPrevious;
+                    connection.weight += connection.deltaWeightsTotal;
+                    connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
+                    connection.deltaWeightsTotal = 0;
+                }
+            }
+        } else {
+            // Passing only the connections that were used for getting the min or max
+            for (let i: number = 0; i < this.incoming.length; i++) {
+                this.incoming[i].weight = this.receivingIndex === i ? 1 : 0;
+                this.incoming[i].gain = this.receivingIndex === i ? 1 : 0;
+            }
+        }
     }
 
     public toJSON(): PoolNodeJSON {
