@@ -77,7 +77,7 @@ describe("Node", function (): void {
             const output: number = node.activate(undefined, false);
 
             expect(output).to.not.be.NaN;
-            expect(node.derivative).to.not.exist;
+            expect(node.derivative).to.be.equal(1);
         });
         it("node.activate(number, options={ trace: false })", function (): void {
             const node: Node = new Node();
@@ -87,7 +87,7 @@ describe("Node", function (): void {
 
             expect(output).to.not.be.NaN;
             expect(output).to.equal(input);
-            expect(node.derivative).to.not.exist;
+            expect(node.derivative).to.be.equal(1);
         });
     });
     describe("node.propagate()", function (): void {
