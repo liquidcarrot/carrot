@@ -100,11 +100,11 @@ export class Node {
      * console.log(node);
      */
     public fromJSON(json: NodeJSON): Node {
-        this.bias = json.bias ?? 0;
+        this.bias = json.bias ?? randDouble(-1, 1);
         this.type = json.type as NodeType;
         this.squash = Activation.getActivation(json.squash ?? ActivationType.LogisticActivation);
-        this.mask = json.mask ?? 0;
-        this.index = json.index ?? -1;
+        this.mask = json.mask ?? 1;
+        this.index = json.index ?? NaN;
         return this;
     }
 
