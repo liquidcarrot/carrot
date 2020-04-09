@@ -5,3 +5,7 @@ export enum NodeType {
 export enum PoolNodeType {
     MAX_POOLING, AVG_POOLING, MIN_POOLING
 }
+
+export enum NoiseNodeType {
+    GAUSSIAN_NOISE
+}
