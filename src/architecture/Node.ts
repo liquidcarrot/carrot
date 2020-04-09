@@ -52,7 +52,7 @@ export class Node {
     public bias: number;
     public squash: Activation;
     public index: number;
-    public derivative: number | undefined;
+    public derivative: number;
     public deltaBiasPrevious: number;
     public deltaBiasTotal: number;
     public activation: number;
@@ -67,6 +67,7 @@ export class Node {
         this.bias = randDouble(-1, 1);
         this.squash = new LogisticActivation();
         this.activation = 0;
+        this.derivative = 1;
         this.state = 0;
         this.old = 0;
         this.mask = 1;
@@ -469,7 +470,7 @@ export class Node {
             for (const connection of this.outgoing) {
                 this.errorProjected += connection.to.errorResponsibility * connection.weight * connection.gain;
             }
-            this.errorProjected *= this.derivative ?? 1;
+            this.errorProjected *= this.derivative;
 
 
             this.errorGated = 0;
@@ -483,7 +484,7 @@ export class Node {
 
                 this.errorGated += connection.to.errorResponsibility * influence;
             }
-            this.errorGated *= this.derivative ?? 1;
+            this.errorGated *= this.derivative;
 
 
             this.errorResponsibility = this.errorProjected + this.errorGated;
