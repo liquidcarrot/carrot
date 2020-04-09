@@ -1,13 +1,13 @@
-import {PoolingType} from "../../enums/PoolingType";
+import {PoolNodeType} from "../../enums/NodeType";
 import {PoolNodeJSON} from "../../interfaces/NodeJSON";
 import {avg, getOrDefault, maxValueIndex, minValueIndex, sum} from "../../methods/Utils";
 import {ConstantNode} from "./ConstantNode";
 
 export class PoolNode extends ConstantNode {
-    private poolingType: PoolingType;
+    private poolingType: PoolNodeType;
     private receivingIndex: number;
 
-    constructor(poolingType: PoolingType = PoolingType.MAX_POOLING) {
+    constructor(poolingType: PoolNodeType = PoolNodeType.MAX_POOLING) {
         super();
         this.poolingType = poolingType;
         this.bias = 1;
@@ -16,19 +16,19 @@ export class PoolNode extends ConstantNode {
 
     public fromJSON(json: PoolNodeJSON): PoolNode {
         super.fromJSON(json);
-        this.poolingType = json.poolType as PoolingType;
+        this.poolingType = json.poolType as PoolNodeType;
         return this;
     }
 
     public activate(): number {
         const incomingStates: number[] = this.incoming.map(conn => conn.from.activation * conn.weight * conn.gain);
 
-        if (this.poolingType === PoolingType.MAX_POOLING) {
+        if (this.poolingType === PoolNodeType.MAX_POOLING) {
             this.receivingIndex = maxValueIndex(incomingStates);
             this.state = incomingStates[this.receivingIndex];
-        } else if (this.poolingType === PoolingType.AVG_POOLING) {
+        } else if (this.poolingType === PoolNodeType.AVG_POOLING) {
             this.state = avg(incomingStates);
-        } else if (this.poolingType === PoolingType.MIN_POOLING) {
+        } else if (this.poolingType === PoolNodeType.MIN_POOLING) {
             this.receivingIndex = minValueIndex(incomingStates);
             this.state = incomingStates[this.receivingIndex];
         } else {
@@ -36,7 +36,7 @@ export class PoolNode extends ConstantNode {
         }
 
         this.activation = this.squash.calc(this.state, false) * this.mask;
-        if (this.poolingType === PoolingType.AVG_POOLING) {
+        if (this.poolingType === PoolNodeType.AVG_POOLING) {
             this.derivative = this.squash.calc(this.state, true);
         }
 
@@ -53,7 +53,7 @@ export class PoolNode extends ConstantNode {
 
         const connectionsStates: number[] = this.outgoing.map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
         this.errorResponsibility = this.errorProjected = sum(connectionsStates) * this.derivative;
-        if (this.poolingType === PoolingType.AVG_POOLING) {
+        if (this.poolingType === PoolNodeType.AVG_POOLING) {
             for (const connection of this.incoming) {
                 // calculate gradient
                 let gradient: number = this.errorProjected * connection.eligibility;
