@@ -12,3 +12,7 @@ export interface NodeJSON {
 export interface PoolNodeJSON extends NodeJSON {
     poolType: PoolNodeType;
 }
+
+export interface DropoutNodeJSON extends NodeJSON {
+    probability: number;
+}
