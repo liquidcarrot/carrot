@@ -24,4 +24,8 @@ export class NoiseLayer extends Layer {
     public getDefaultIncomingConnectionType(): ConnectionType {
         return ConnectionType.ONE_TO_ONE;
     }
+
+    public connectionTypeisAllowed(type: ConnectionType): boolean {
+        return type === ConnectionType.ONE_TO_ONE;
+    }
 }

@@ -25,4 +25,8 @@ export class InputLayer extends Layer {
     public getDefaultIncomingConnectionType(): ConnectionType {
         return ConnectionType.NO_CONNECTION;
     }
+
+    public connectionTypeisAllowed(type: ConnectionType): boolean {
+        return type === ConnectionType.NO_CONNECTION;
+    }
 }

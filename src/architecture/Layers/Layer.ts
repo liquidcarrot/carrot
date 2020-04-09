@@ -112,4 +112,8 @@ export abstract class Layer {
     public getDefaultIncomingConnectionType(): ConnectionType {
         return ConnectionType.ALL_TO_ALL;
     }
+
+    public connectionTypeisAllowed(type: ConnectionType): boolean {
+        return true;
+    }
 }
