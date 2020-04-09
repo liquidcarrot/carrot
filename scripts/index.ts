@@ -38,6 +38,8 @@ import * as Rate from "../src/methods/Rate";
 import * as Utils from "../src/methods/Utils";
 import * as Selection from "../src/methods/Selection";
 
+// TODO this could be more beautiful and also dynamic
+
 export {
     DenseLayer,
     DropoutLayer,
