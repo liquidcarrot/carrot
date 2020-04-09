@@ -1,4 +1,4 @@
-import {avg, generateGaussian} from "../../methods/Utils";
+import {avg, generateGaussian, getOrDefault, sum} from "../../methods/Utils";
 import {ConstantNode} from "./ConstantNode";
 
 export class GaussianNoiseNode extends ConstantNode {
@@ -12,21 +12,39 @@ export class GaussianNoiseNode extends ConstantNode {
     }
 
     public activate(): number {
-        // should only be one incoming, but if there are more incoming connections take the average and add gaussian noise
+        this.old = this.state;
+
         const incomingStates: number[] = this.incoming.map(conn => conn.from.activation * conn.weight * conn.gain);
         this.state = avg(incomingStates) + generateGaussian(this.mean, this.deviation);
-        this.activation = this.state;
 
-        // Adjust gain
-        for (const connection of this.gated) {
-            connection.gain = this.activation;
-        }
+        this.activation = this.squash.calc(this.state, false) * this.mask;
+        this.derivative = this.squash.calc(this.state, true);
 
         return this.activation;
     }
 
-    public propagate(): void {
-        // TODO implement that
-        throw new Error("Not yet implemented!");
+    public propagate(target?: number, options: { momentum?: number, rate?: number, update?: boolean } = {}): void {
+        options.momentum = getOrDefault(options.momentum, 0);
+        options.rate = getOrDefault(options.rate, 0.3);
+        options.update = getOrDefault(options.update, true);
+
+        const connectionsStates: number[] = this.outgoing.map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
+        this.errorResponsibility = this.errorProjected = sum(connectionsStates) * this.derivative;
+
+        for (const connection of this.incoming) {
+            // calculate gradient
+            let gradient: number = this.errorProjected * connection.eligibility;
+            for (let i: number = 0; i < connection.xTraceNodes.length; i++) {
+                gradient += connection.xTraceNodes[i].errorResponsibility * connection.xTraceValues[i];
+            }
+
+            connection.deltaWeightsTotal += options.rate * gradient * this.mask;
+            if (options.update) {
+                connection.deltaWeightsTotal += options.momentum * connection.deltaWeightsPrevious;
+                connection.weight += connection.deltaWeightsTotal;
+                connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
+                connection.deltaWeightsTotal = 0;
+            }
+        }
     }
 }
