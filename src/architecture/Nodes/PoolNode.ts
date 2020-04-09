@@ -10,7 +10,6 @@ export class PoolNode extends ConstantNode {
     constructor(poolingType: PoolNodeType = PoolNodeType.MAX_POOLING) {
         super();
         this.poolingType = poolingType;
-        this.bias = 1;
         this.receivingIndex = -1;
     }
 
