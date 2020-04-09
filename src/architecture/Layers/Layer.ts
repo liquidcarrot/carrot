@@ -52,9 +52,7 @@ export abstract class Layer {
             }
         } else if (connectionType === ConnectionType.POOLING) {
             const ratio: number = toNodes.length / fromNodes.length;
-            for (let i: number = 0; i < fromNodes.length; i++) {
-                connections.push(fromNodes[i].connect(toNodes[Math.floor(i * ratio)], weight));
-            }
+            connections.push(...fromNodes.map((node, index) => node.connect(toNodes[Math.floor(index * ratio)], weight)));
         }
         return connections;
     }
