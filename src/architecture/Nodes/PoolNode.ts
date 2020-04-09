@@ -69,6 +69,7 @@ export class PoolNode extends ConstantNode {
                 }
             }
         } else {
+            // TODO: don't think that this is correct
             // Passing only the connections that were used for getting the min or max
             for (let i: number = 0; i < this.incoming.length; i++) {
                 this.incoming[i].weight = this.receivingIndex === i ? 1 : 0;
