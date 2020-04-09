@@ -21,7 +21,7 @@ export class NoiseLayer extends Layer {
         this.nodes.push(...Array.from(this.inputNodes));
     }
 
-    public getDefaultIncomingConnection(): ConnectionType {
+    public getDefaultIncomingConnectionType(): ConnectionType {
         return ConnectionType.ONE_TO_ONE;
     }
 }
