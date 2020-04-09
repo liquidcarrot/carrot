@@ -43,7 +43,7 @@ export class DropoutNode extends ConstantNode {
         options.update = getOrDefault(options.update, true);
 
         const connectionsStates: number[] = this.outgoing.map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
-        this.errorResponsibility = this.errorProjected = sum(connectionsStates) * this.derivative;
+        this.errorResponsibility = this.errorProjected = sum(connectionsStates) / (1 - this.probability);
 
         if (this.incoming.length !== 1) {
             throw new RangeError("Dropout node should have exactly one incoming connection!");
