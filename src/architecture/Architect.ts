@@ -35,7 +35,8 @@ export class Architect {
         network.connections = [];
 
         for (let i: number = 0; i < this.layers.length - 1; i++) {
-            network.connections.push(...Layer.connect(this.layers[i].layer,
+            network.connections.push(...Layer.connect(
+                this.layers[i].layer,
                 this.layers[i + 1].layer,
                 this.layers[i + 1].incomingConnectionType
             ));
