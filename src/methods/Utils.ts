@@ -173,6 +173,7 @@ export {
     maxValueIndex,
     minValueIndex,
     min,
+    sum,
     avg,
     generateGaussian
 };
