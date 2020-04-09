@@ -19,7 +19,7 @@ export abstract class ConstantNode extends Node {
 
     public abstract activate(): number;
 
-    public abstract propagate(): void;
+    public abstract propagate(target?: number, options?: { momentum?: number, rate?: number, update?: boolean }): void;
 
     public toJSON(): NodeJSON {
         return {index: this.index, squash: this.squash.type};
