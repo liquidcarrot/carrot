@@ -105,6 +105,30 @@ export function max(array: number[]): number {
     return maxValue;
 }
 
+export function maxValueIndex(array: number[]): number {
+    let maxValue: number = array[0];
+    let maxValueIndex: number = 0;
+    for (let i: number = 0; i < array.length; i++) {
+        if (array[i] > maxValue) {
+            maxValue = array[i];
+            maxValueIndex = i;
+        }
+    }
+    return maxValueIndex;
+}
+
+export function minValueIndex(array: number[]): number {
+    let minValue: number = array[0];
+    let minValueIndex: number = 0;
+    for (let i: number = 0; i < array.length; i++) {
+        if (array[i] < minValue) {
+            minValue = array[i];
+            minValueIndex = i;
+        }
+    }
+    return minValueIndex;
+}
+
 export function min(array: number[]): number {
     let minValue: number = Infinity;
     for (const value of array) {
