@@ -12,9 +12,15 @@ export class Architect {
     }
 
     public addLayer(layer: Layer, incomingConnectionType?: ConnectionType): Architect {
+        const connectionType: ConnectionType = incomingConnectionType ?? layer.getDefaultIncomingConnectionType();
+
+        if (!layer.connectionTypeisAllowed(connectionType)) {
+            throw new ReferenceError("Connection type " + connectionType + " is not allowed at layer " + layer.constructor.name);
+        }
+
         this.layers.push({
             layer,
-            incomingConnectionType: incomingConnectionType ?? layer.getDefaultIncomingConnectionType()
+            incomingConnectionType: connectionType
         });
         return this; // function as builder class
     }

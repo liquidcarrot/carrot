@@ -45,12 +45,14 @@ export abstract class Layer {
             });
         } else if (connectionType === ConnectionType.ONE_TO_ONE) {
             if (fromNodes.length !== toNodes.length) {
-                throw new RangeError("Can't connect! Number of input nodes is unequal to number of output nodes!");
+                throw new RangeError("Can't connect one to one! Number of output nodes from are unequal number of incoming nodes from next layer!");
             }
             for (let i: number = 0; i < fromNodes.length; i++) {
                 connections.push(fromNodes[i].connect(toNodes[i], weight)); // connect every nodes with same indices
             }
         } else if (connectionType === ConnectionType.POOLING) {
+            // connect the same amount of input nodes to every output node
+            // every input node has only one connection available
             const ratio: number = toNodes.length / fromNodes.length;
             connections.push(...fromNodes.map((node, index) => node.connect(toNodes[Math.floor(index * ratio)], weight)));
         }
