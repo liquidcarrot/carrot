@@ -4,7 +4,7 @@ import {ConnectionType} from "../../../enums/ConnectionType";
 import {NoiseNode} from "../../Nodes/NoiseNode";
 import {NoiseNodeType} from "../../../enums/NodeType";
 
-export class GaussianNoiseLayer extends Layer {
+export class NoiseLayer extends Layer {
     constructor(outputSize: number, options: { activationType?: ActivationType, mean?: number, deviation?: number } = {}) {
         super(outputSize);
 
