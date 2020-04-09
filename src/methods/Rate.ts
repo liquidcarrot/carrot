@@ -19,7 +19,7 @@
  * // OPTION #4: InverseRate
  * network.train(dataset, { ratePolicy: new InverseRate() });
  */
-export abstract class Rate {
+abstract class Rate {
     protected baseRate: number;
 
     /**
@@ -49,7 +49,7 @@ export abstract class Rate {
  *
  * network.train(dataset, { ratePolicy: new FixedRate(0.3) });
  */
-export class FixedRate extends Rate {
+class FixedRate extends Rate {
 
     /**
      * Calculates the current training rate.
@@ -72,7 +72,7 @@ export class FixedRate extends Rate {
  *
  * network.train(dataset, { ratePolicy: new StepRate(0.3) });
  */
-export class StepRate extends Rate {
+class StepRate extends Rate {
     private readonly gamma: number;
     private readonly stepSize: number;
 
@@ -100,7 +100,6 @@ export class StepRate extends Rate {
     }
 }
 
-
 /**
  * Exponential Learning Rate
  *
@@ -113,7 +112,7 @@ export class StepRate extends Rate {
  *
  * network.train(dataset, { ratePolicy: new ExponentialRate(0.3) });
  */
-export class ExponentialRate extends Rate {
+class ExponentialRate extends Rate {
     private readonly gamma: number;
 
     /**
@@ -150,7 +149,7 @@ export class ExponentialRate extends Rate {
  *
  * network.train(dataset, { ratePolicy: new InverseRate(0.3) });
  */
-export class InverseRate extends Rate {
+class InverseRate extends Rate {
     private readonly gamma: number;
     private readonly power: number;
 
@@ -177,3 +176,11 @@ export class InverseRate extends Rate {
         return this.baseRate * Math.pow(1 + this.gamma * iteration, -this.power);
     }
 }
+
+export {
+    Rate,
+    FixedRate,
+    StepRate,
+    ExponentialRate,
+    InverseRate
+};
