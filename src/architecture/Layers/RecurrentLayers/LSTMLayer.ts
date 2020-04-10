@@ -55,4 +55,12 @@ export class LSTMLayer extends Layer {
         const activation: Activation = Activation.getActivation(options.activationType ?? ActivationType.TanhActivation);
         this.outputNodes.forEach(node => node.squash = activation);
     }
+
+    public connectionTypeisAllowed(type: ConnectionType): boolean {
+        return true;
+    }
+
+    public getDefaultIncomingConnectionType(): ConnectionType {
+        return ConnectionType.ALL_TO_ALL;
+    }
 }

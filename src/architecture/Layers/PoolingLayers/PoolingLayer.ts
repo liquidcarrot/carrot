@@ -9,4 +9,8 @@ export abstract class PoolingLayer extends Layer {
     public getDefaultIncomingConnectionType(): ConnectionType {
         return ConnectionType.POOLING;
     }
+
+    public connectionTypeisAllowed(type: ConnectionType): boolean {
+        return true;
+    }
 }

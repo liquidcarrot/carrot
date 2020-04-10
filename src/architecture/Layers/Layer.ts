@@ -109,11 +109,7 @@ export abstract class Layer {
         return gatedConnections;
     }
 
-    public getDefaultIncomingConnectionType(): ConnectionType {
-        return ConnectionType.ALL_TO_ALL;
-    }
+    public abstract getDefaultIncomingConnectionType(): ConnectionType;
 
-    public connectionTypeisAllowed(type: ConnectionType): boolean {
-        return true;
-    }
+    public abstract connectionTypeisAllowed(type: ConnectionType): boolean;
 }
