@@ -489,6 +489,7 @@ const architect = {
     const output = new Group(size, 'output');
 
     input.connect(output, methods.connection.ALL_TO_ALL);
+    output.connect(input, methods.connection.ALL_TO_ALL);
 
     output.set({
       squash: methods.activation.STEP,
