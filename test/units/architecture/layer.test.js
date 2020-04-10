@@ -231,19 +231,19 @@ describe("Layer", function() {
     // connect(target, methods.connection[any_method_here]), <- no weight
     // connect(target, methods.connection.ONE_TO_ONE, weight),
     // connect(target, methods.connection.ALL_TO_ELSE, weight),
-    // connect(target, methods.connection.ALL_TO_ALL, weight)
-    it("layer.connect(target, methods.connection.ALL_TO_ALL) => {Connection[]}", function() {
+    // connect(target, methods.connection.ALL_TO_ALL_FORWARD, weight)
+    it("layer.connect(target, methods.connection.ALL_TO_ALL_FORWARD) => {Connection[]}", function() {
       let { main_layer, other_layer } = createRandomLayers(true);
 
-      main_layer.connect(other_layer, methods.connection.ALL_TO_ALL);
+      main_layer.connect(other_layer, methods.connection.ALL_TO_ALL_FORWARD);
       main_layer.nodes.forEach(node => {
         expect(node.outgoing.length).equal(other_layer.nodes.length);
       });
     })
-    it("layer.connect(target, methods.connection.ALL_TO_ALL, weight) => {Connection[]}", function() {
+    it("layer.connect(target, methods.connection.ALL_TO_ALL_FORWARD, weight) => {Connection[]}", function() {
       let { main_layer, other_layer } = createRandomLayers(true);
       const weight = Math.random();
-      main_layer.connect(other_layer, methods.connection.ALL_TO_ALL, weight);
+      main_layer.connect(other_layer, methods.connection.ALL_TO_ALL_FORWARD, weight);
 
       main_layer.nodes.forEach(node => {
         expect(node.outgoing.length).equal(other_layer.nodes.length);
@@ -413,8 +413,8 @@ describe("Layer", function() {
         const input_connections_weight = Math.random();
         const output_connections_weight = Math.random();
 
-        group_for_input.connect(main_created_layer, methods.connection.ALL_TO_ALL, input_connections_weight);
-        main_created_layer.connect(group_for_output, methods.connection.ALL_TO_ALL, output_connections_weight);
+        group_for_input.connect(main_created_layer, methods.connection.ALL_TO_ALL_FORWARD, input_connections_weight);
+        main_created_layer.connect(group_for_output, methods.connection.ALL_TO_ALL_FORWARD, output_connections_weight);
 
         const chain_input = Array(10).fill(0).map(() => Math.random());
 

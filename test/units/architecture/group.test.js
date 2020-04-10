@@ -232,19 +232,19 @@ describe("Group", function() {
     // connect(target, methods.connection[any_method_here]), <- no weight
     // connect(target, methods.connection.ONE_TO_ONE, weight),
     // connect(target, methods.connection.ALL_TO_ELSE, weight),
-    // connect(target, methods.connection.ALL_TO_ALL, weight)
-    it("group.connect(target, methods.connection.ALL_TO_ALL) => {Connection[]}", function() {
+    // connect(target, methods.connection.ALL_TO_ALL_FORWARD, weight)
+    it("group.connect(target, methods.connection.ALL_TO_ALL_FORWARD) => {Connection[]}", function() {
       let { main_group, other_group } = createRandomGroups(true);
-      main_group.connect(other_group, methods.connection.ALL_TO_ALL);
+      main_group.connect(other_group, methods.connection.ALL_TO_ALL_FORWARD);
 
       main_group.nodes.forEach(node => {
         expect(node.outgoing.length).equal(other_group.nodes.length);
       });
     })
-    it("group.connect(target, methods.connection.ALL_TO_ALL, weight) => {Connection[]}", function() {
+    it("group.connect(target, methods.connection.ALL_TO_ALL_FORWARD, weight) => {Connection[]}", function() {
       let { main_group, other_group } = createRandomGroups(true);
       const weight = Math.random();
-      main_group.connect(other_group, methods.connection.ALL_TO_ALL, weight);
+      main_group.connect(other_group, methods.connection.ALL_TO_ALL_FORWARD, weight);
 
       main_group.nodes.forEach(node => {
         expect(node.outgoing.length).equal(other_group.nodes.length);
