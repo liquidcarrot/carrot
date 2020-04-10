@@ -4,24 +4,25 @@ const config = require('../config');
 const Node = require('./node');
 
 /**
-* A group instance denotes a group of nodes. Beware: once a group has been used to construct a network, the groups will fall apart into individual nodes. They are purely for the creation and development of networks.
-*
-* @constructs Group
-*
-* @param {number} [size=0] Amount of nodes to build group with
-*
-* @prop {Nodes[]} [nodes=[]] All nodes within the group
-* @prop {Connection[]} [incoming=[]] Incoming connections
-* @prop {Connection[]} [outgoing=[]] Outgoing connections
-* @prop {Connection[]} [connections_self=[]] Self connections
-*
-* @example
-* let { Group } = require("@liquid-carrot/carrot");
-*
-* // A group with 5 nodes
-* let A = new Group(5);
-*/
-function Group(size) {
+ * A group instance denotes a group of nodes. Beware: once a group has been used to construct a network, the groups will fall apart into individual nodes. They are purely for the creation and development of networks.
+ *
+ * @constructs Group
+ *
+ * @param {number} [size=0] Amount of nodes to build group with
+ *
+ * @param {String} type the type of nodes inside the group
+ * @prop {Nodes[]} [nodes=[]] All nodes within the group
+ * @prop {Connection[]} [incoming=[]] Incoming connections
+ * @prop {Connection[]} [outgoing=[]] Outgoing connections
+ * @prop {Connection[]} [connections_self=[]] Self connections
+ *
+ * @example
+ * let { Group } = require("@liquid-carrot/carrot");
+ *
+ * // A group with 5 nodes
+ * let A = new Group(5);
+ */
+function Group(size,type) {
   const self = this;
 
   // Important:
@@ -32,7 +33,11 @@ function Group(size) {
   self.outgoing = [];
 
   for (let index = 0; index < size; index++) {
-    self.nodes.push(new Node());
+    const node = new Node();
+    if(type) {
+      node.type = type;
+    }
+    self.nodes.push(node);
   }
 
   /**
