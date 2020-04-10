@@ -135,7 +135,7 @@ function Group(size) {
   * let A = new Group(4);
   * let B = new Group(5);
   *
-  * A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional
+  * A.connect(B, methods.connection.ALL_TO_ALL_FORWARD); // specifying a method is optional
   */
   self.connect = function(target, method, weight) {
     const self_targeted = target.nodes ? self.nodes == target.nodes : false;
@@ -147,8 +147,8 @@ function Group(size) {
         if (config.warnings) console.warn('No group connection specified, using ONE_TO_ONE');
         method = methods.connection.ONE_TO_ONE;
       } else {
-        if (config.warnings) console.warn('No group connection specified, using ALL_TO_ALL');
-        method = methods.connection.ALL_TO_ALL;
+        if (config.warnings) console.warn('No group connection specified, using ALL_TO_ALL_FORWARD');
+        method = methods.connection.ALL_TO_ALL_FORWARD;
       }
     }
 
@@ -193,7 +193,7 @@ function Group(size) {
         const connection = source_nodes[i].connect(target_nodes[i], weight);
         new_connections.push(connection);
       }
-      // else (ALL_TO_ELSE or ALL_TO_ALL)
+      // else (ALL_TO_ELSE or ALL_TO_ALL_FORWARD)
       else {
         for (let j = 0; j < source_nodes.length; j++) {
           // create the connection

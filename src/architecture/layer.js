@@ -107,16 +107,16 @@ class Layer extends Group {
     });
 
     // Set up internal connections
-    memory_cell.connect(input_gate, methods.connection.ALL_TO_ALL);
-    memory_cell.connect(forget_gate, methods.connection.ALL_TO_ALL);
-    memory_cell.connect(output_gate, methods.connection.ALL_TO_ALL);
+    memory_cell.connect(input_gate, methods.connection.ALL_TO_ALL_FORWARD);
+    memory_cell.connect(forget_gate, methods.connection.ALL_TO_ALL_FORWARD);
+    memory_cell.connect(output_gate, methods.connection.ALL_TO_ALL_FORWARD);
     const forget_connections = memory_cell.connect(memory_cell, methods.connection.ONE_TO_ONE);
-    const output_connections = memory_cell.connect(output_block, methods.connection.ALL_TO_ALL);
+    const output_connections = memory_cell.connect(output_block, methods.connection.ALL_TO_ALL_FORWARD);
 
-    input_group.connect(memory_cell, methods.connection.ALL_TO_ALL);
-    input_group.connect(output_gate, methods.connection.ALL_TO_ALL),
-    input_group.connect(forget_gate, methods.connection.ALL_TO_ALL);
-    const input_gate_connections = input_group.connect(input_gate, methods.connection.ALL_TO_ALL);
+    input_group.connect(memory_cell, methods.connection.ALL_TO_ALL_FORWARD);
+    input_group.connect(output_gate, methods.connection.ALL_TO_ALL_FORWARD),
+    input_group.connect(forget_gate, methods.connection.ALL_TO_ALL_FORWARD);
+    const input_gate_connections = input_group.connect(input_gate, methods.connection.ALL_TO_ALL_FORWARD);
 
 
     // Set up gates
@@ -186,27 +186,27 @@ class Layer extends Group {
     });
 
     // Initial input forwarding
-    input_group.connect(update_gate, methods.connection.ALL_TO_ALL),
-    input_group.connect(reset_gate, methods.connection.ALL_TO_ALL),
-    input_group.connect(memory_cell, methods.connection.ALL_TO_ALL);
+    input_group.connect(update_gate, methods.connection.ALL_TO_ALL_FORWARD),
+    input_group.connect(reset_gate, methods.connection.ALL_TO_ALL_FORWARD),
+    input_group.connect(memory_cell, methods.connection.ALL_TO_ALL_FORWARD);
 
     // Update gate calculation
-    previous_output.connect(update_gate, methods.connection.ALL_TO_ALL);
+    previous_output.connect(update_gate, methods.connection.ALL_TO_ALL_FORWARD);
 
     // Inverse update gate calculation
     update_gate.connect(inverse_update_gate, methods.connection.ONE_TO_ONE, 1);
 
     // Reset gate calculation
-    previous_output.connect(reset_gate, methods.connection.ALL_TO_ALL);
+    previous_output.connect(reset_gate, methods.connection.ALL_TO_ALL_FORWARD);
 
     // Memory calculation
-    const reset = previous_output.connect(memory_cell, methods.connection.ALL_TO_ALL);
+    const reset = previous_output.connect(memory_cell, methods.connection.ALL_TO_ALL_FORWARD);
 
     reset_gate.gate(reset, methods.gating.OUTPUT); // gate
 
     // Output calculation
-    const update1 = previous_output.connect(output_group, methods.connection.ALL_TO_ALL);
-    const update2 = memory_cell.connect(output_group, methods.connection.ALL_TO_ALL);
+    const update1 = previous_output.connect(output_group, methods.connection.ALL_TO_ALL_FORWARD);
+    const update2 = memory_cell.connect(output_group, methods.connection.ALL_TO_ALL_FORWARD);
 
     update_gate.gate(update1, methods.gating.OUTPUT);
     inverse_update_gate.gate(update2, methods.gating.OUTPUT);

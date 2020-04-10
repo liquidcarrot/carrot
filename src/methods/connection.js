@@ -14,14 +14,14 @@
 * let A = new Group(4);
 * let B = new Group(5);
 *
-* A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional
+* A.connect(B, methods.connection.ALL_TO_ALL_FORWARD); // specifying a method is optional
 *
 * @example <caption>Group connection with itself</caption>
 * let { methods, Group } = require("@liquid-carrot/carrot");
 *
 * let A = new Group(4);
 *
-* A.connect(A, methods.connection.ALL_TO_ALL);
+* A.connect(A, methods.connection.ALL_TO_ALL_FORWARD);
 */
 const connection = {
   /**
@@ -37,9 +37,9 @@ const connection = {
    * let A = new Group(4);
    * let B = new Group(5);
    *
-   * A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional
+   * A.connect(B, methods.connection.ALL_TO_ALL_FORWARD); // specifying a method is optional
    */
-  ALL_TO_ALL: {
+  ALL_TO_ALL_FORWARD: {
     name: 'OUTPUT',
   },
   /**

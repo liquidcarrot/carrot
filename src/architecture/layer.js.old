@@ -196,7 +196,7 @@ function Layer() {
   self.input = function(from, method, weight) {
     if(from instanceof Layer) from = from.output;
 
-    method = method || methods.connection.ALL_TO_ALL;
+    method = method || methods.connection.ALL_TO_ALL_FORWARD;
 
     return from.connect(block, method, weight);
   };
@@ -230,7 +230,7 @@ Layer.Dense = function(size) {
   layer.input = function(from, method, weight) {
     if(from instanceof Layer) from = from.output;
 
-    method = method || methods.connection.ALL_TO_ALL;
+    method = method || methods.connection.ALL_TO_ALL_FORWARD;
 
     let returned_connections = [];
     // this if was added later because .from was being called
@@ -287,11 +287,11 @@ Layer.LSTM = function(size) {
   });
 
   // Set up internal connections
-  memory_cell.connect(input_gate, methods.connection.ALL_TO_ALL);
-  memory_cell.connect(forget_gate, methods.connection.ALL_TO_ALL);
-  memory_cell.connect(output_gate, methods.connection.ALL_TO_ALL);
+  memory_cell.connect(input_gate, methods.connection.ALL_TO_ALL_FORWARD);
+  memory_cell.connect(forget_gate, methods.connection.ALL_TO_ALL_FORWARD);
+  memory_cell.connect(output_gate, methods.connection.ALL_TO_ALL_FORWARD);
   const forget = memory_cell.connect(memory_cell, methods.connection.ONE_TO_ONE);
-  const output = memory_cell.connect(output_block, methods.connection.ALL_TO_ALL);
+  const output = memory_cell.connect(output_block, methods.connection.ALL_TO_ALL_FORWARD);
 
   // Set up gates
   forget_gate.gate(forget, methods.gating.SELF);
@@ -305,7 +305,7 @@ Layer.LSTM = function(size) {
 
   layer.input = function(from, method, weight) {
     if(from instanceof Layer) from = from.output;
-    method = method || methods.connection.ALL_TO_ALL;
+    method = method || methods.connection.ALL_TO_ALL_FORWARD;
 
     const input = from.connect(memory_cell, method, weight);
 
@@ -370,22 +370,22 @@ Layer.GRU = function(size) {
   });
 
   // Update gate calculation
-  previous_output.connect(update_gate, methods.connection.ALL_TO_ALL);
+  previous_output.connect(update_gate, methods.connection.ALL_TO_ALL_FORWARD);
 
   // Inverse update gate calculation
   update_gate.connect(inverse_update_gate, methods.connection.ONE_TO_ONE, 1);
 
   // Reset gate calculation
-  previous_output.connect(reset_gate, methods.connection.ALL_TO_ALL);
+  previous_output.connect(reset_gate, methods.connection.ALL_TO_ALL_FORWARD);
 
   // Memory calculation
-  const reset = previous_output.connect(memory_cell, methods.connection.ALL_TO_ALL);
+  const reset = previous_output.connect(memory_cell, methods.connection.ALL_TO_ALL_FORWARD);
 
   reset_gate.gate(reset, methods.gating.OUTPUT); // gate
 
   // Output calculation
-  const update1 = previous_output.connect(output, methods.connection.ALL_TO_ALL);
-  const update2 = memory_cell.connect(output, methods.connection.ALL_TO_ALL);
+  const update1 = previous_output.connect(output, methods.connection.ALL_TO_ALL_FORWARD);
+  const update2 = memory_cell.connect(output, methods.connection.ALL_TO_ALL_FORWARD);
 
   update_gate.gate(update1, methods.gating.OUTPUT);
   inverse_update_gate.gate(update2, methods.gating.OUTPUT);
@@ -401,7 +401,7 @@ Layer.GRU = function(size) {
   layer.input = function(from, method, weight) {
     if (from instanceof Layer) from = from.output;
 
-    method = method || methods.connection.ALL_TO_ALL;
+    method = method || methods.connection.ALL_TO_ALL_FORWARD;
 
     const connections = [
       from.connect(updateGate, method, weight),
@@ -464,7 +464,7 @@ Layer.Memory = function(size, memory) {
 
   layer.input = function(from, method, weight) {
     if (from instanceof Layer) from = from.output;
-    method = method || methods.connection.ALL_TO_ALL;
+    method = method || methods.connection.ALL_TO_ALL_FORWARD;
 
     if (from.nodes.length !== layer.nodes[layer.nodes.length - 1].nodes.length) throw new Error('Previous layer size must be same as memory size');
 
