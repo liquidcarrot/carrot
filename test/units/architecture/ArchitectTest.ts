@@ -1,3 +1,4 @@
+import {HopfieldLayer} from "../../../src/architecture/Layers/RecurrentLayers/HopfieldLayer";
 import {ActivationType} from "../../../src/enums/ActivationType";
 import {Architect} from "../../../src/architecture/Architect";
 import {OutputLayer} from "../../../src/architecture/Layers/CoreLayers/OutputLayer";
@@ -135,6 +136,41 @@ describe("ArchitectTest", () => {
 
         const numNodesWithRELU: number = network.nodes.filter(node => node.squash.type === ActivationType.RELUActivation).length;
         expect(numNodesWithRELU).to.be.equal(LSTMSize);
+    });
+
+    it("Build Hopfield network", () => {
+        const HopfieldSize: number = randInt(10, 20);
+
+        const architect: Architect = new Architect();
+
+        architect.addLayer(new InputLayer(10));
+        architect.addLayer(new HopfieldLayer(HopfieldSize));
+        architect.addLayer(new OutputLayer(2));
+
+        const network: Network = architect.buildModel();
+
+        expect(network.nodes.length).to.be.equal(10 + HopfieldSize * 2 + 2);
+
+        // Check backward pointing connections
+        let backConnections:number = 0;
+        for(let i:number=0; i < network.nodes.length;i++){
+            for(const conn of network.nodes[i].outgoing){
+                if(network.nodes.indexOf(conn.to)<i){
+                    backConnections++;
+                }
+            }
+        }
+        expect(backConnections).to.be.equal(HopfieldSize * HopfieldSize);
+
+        // 10 * HopfieldSize (input -> LSTM)
+        // HopfieldSize * HopfieldSize * 8 + HopfieldSize (LSTM intern connection)
+        // HopfieldSize * 2 (LSTM -> output)
+        expect(network.connections.length).to.be.equal(10 * HopfieldSize + HopfieldSize * HopfieldSize * 2 + HopfieldSize * 2);
+
+        expect(network.gates.length).to.be.equal(0);
+
+        const numNodesWithSTEP: number = network.nodes.filter(node => node.squash.type === ActivationType.StepActivation).length;
+        expect(numNodesWithSTEP).to.be.equal(HopfieldSize);
     });
 
     it("Train Perceptron", () => {
