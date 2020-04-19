@@ -1,10 +1,10 @@
+import {NoiseNodeType} from "../../enums/NodeType";
 import {avg, generateGaussian, getOrDefault, sum} from "../../methods/Utils";
 import {ConstantNode} from "./ConstantNode";
-import {NoiseNodeType} from "../../enums/NodeType";
 
 export class NoiseNode extends ConstantNode {
     private readonly noiseType: NoiseNodeType;
-    private options: { noiseType?: NoiseNodeType; gaussian?: { mean?: number; deviation?: number } };
+    private readonly options: { noiseType?: NoiseNodeType; gaussian?: { mean?: number; deviation?: number } };
 
     constructor(options: { noiseType?: NoiseNodeType, gaussian?: { mean?: number, deviation?: number } } = {}) {
         super();

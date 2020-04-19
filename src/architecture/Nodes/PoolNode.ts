@@ -15,7 +15,7 @@ export class PoolNode extends ConstantNode {
 
     public fromJSON(json: PoolNodeJSON): PoolNode {
         super.fromJSON(json);
-        this.poolingType = json.poolType as PoolNodeType;
+        this.poolingType = json.poolType;
         return this;
     }
 
