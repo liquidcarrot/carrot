@@ -1,7 +1,9 @@
-import {Connection, Network, Node} from "../../../src";
-import {anyMatch, randInt} from "../../../src/methods/Utils";
+import {randInt} from "../../../src/methods/Utils";
 import {AddConnectionMutation, AddGateMutation, AddNodeMutation, SubGateMutation} from "../../../src/methods/Mutation";
 import {expect} from "chai";
+import {Network} from "../../../src/architecture/Network";
+import {Connection} from "../../../src/architecture/Connection";
+import {Node} from "../../../src/architecture/Node";
 
 describe('Network', () => {
     function createTestNetwork(): Network {
@@ -13,7 +15,10 @@ describe('Network', () => {
             network.mutate(new AddConnectionMutation());
         }
 
-        const input: number[] = Array(10).map(() => Math.random());
+        const input: number[] = [];
+        for (let i: number = 0; i < 10; i++) {
+            input.push(Math.random());
+        }
 
         network.activate(input, {dropoutRate: 0.5});
         return network;
@@ -152,7 +157,7 @@ describe('Network', () => {
             const testNetwork: Network = createTestNetwork();
             const nodesBefore: Node[] = testNetwork.nodes.slice();
             testNetwork.mutate(new AddNodeMutation());
-            const node: Node = testNetwork.nodes.filter(node => !anyMatch(nodesBefore, node))[0];
+            const node: Node = testNetwork.nodes.filter(node => !nodesBefore.includes(node))[0];
             const connection: Connection = node.connect(testNetwork.nodes[20]);
 
             const beforeNumberOfGates: number = testNetwork.gates.length;
@@ -214,7 +219,7 @@ describe('Network', () => {
             ];
 
             const initial: number = network.test(dataset);
-            const trainReturn: { error: number; iterations: number; time: number } = network.train(dataset);
+            const trainReturn: { error: number; iterations: number; time: number } = network.train(dataset, {iterations: 50});
             const final: number = network.test(dataset);
 
             expect(trainReturn.error).to.be.a('number');
@@ -247,7 +252,7 @@ describe('Network', () => {
             ];
 
             const initial: number = network.test(dataset);
-            const evolveReturn: { error: number; iterations: number; time: number } = await network.evolve(dataset, {iterations: 50});
+            const evolveReturn: { error: number; iterations: number; time: number } = await network.evolve(dataset, {iterations: 100});
             const final: number = network.test(dataset);
 
             expect(evolveReturn.error).to.be.a('number');

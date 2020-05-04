@@ -1,5 +1,5 @@
 import {expose} from "threads/worker";
-import {Network} from "..";
+import {Network} from "../architecture/Network";
 import {ALL_LOSSES, MSELoss} from "../methods/Loss";
 
 expose(async (serializedDataSet: string, jsonNetwork: string, lossIndex: number): Promise<number> => {

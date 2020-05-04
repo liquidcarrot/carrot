@@ -1,4 +1,5 @@
 import {Node} from "./Node";
+import {ConnectionJSON} from "../interfaces/ConnectionJSON";
 
 /**
  * A connection instance describes the connection between two nodes. If you're looking for connections between [Groups](Group) please see [Connection Methods](connection)
@@ -81,11 +82,4 @@ export class Connection {
             weight: this.weight
         };
     }
-}
-
-export interface ConnectionJSON {
-    weight: number;
-    fromIndex: number;
-    toIndex: number;
-    gateNodeIndex: number | null;
 }

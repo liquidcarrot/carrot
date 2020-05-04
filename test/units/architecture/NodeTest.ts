@@ -1,9 +1,11 @@
-import {Node, NodeJSON, NodeType} from "../../../src/architecture/Node";
-import {Connection} from "../../../src";
+import {Node} from "../../../src/architecture/Node";
+import {Connection} from "../../../src/architecture/Connection";
 import {randDouble, randInt} from "../../../src/methods/Utils";
 import {ModBiasMutation} from "../../../src/methods/Mutation";
 import {expect} from "chai";
 import {Activation} from "../../../src/methods/Activation";
+import {NodeJSON} from "../../../src/interfaces/NodeJSON";
+import {NodeType} from "../../../src/enums/NodeType";
 
 describe("Node", function (): void {
     describe("node.connect()", function (): void {
@@ -72,10 +74,10 @@ describe("Node", function (): void {
         it("node.activate(options={ trace: false })", function (): void {
             const node: Node = new Node();
 
-            const output: number = node.activate(null, false);
+            const output: number = node.activate(undefined, false);
 
             expect(output).to.not.be.NaN;
-            expect(node.derivative).to.not.exist;
+            expect(node.derivative).to.be.equal(1);
         });
         it("node.activate(number, options={ trace: false })", function (): void {
             const node: Node = new Node();
@@ -85,7 +87,7 @@ describe("Node", function (): void {
 
             expect(output).to.not.be.NaN;
             expect(output).to.equal(input);
-            expect(node.derivative).to.not.exist;
+            expect(node.derivative).to.be.equal(1);
         });
     });
     describe("node.propagate()", function (): void {
@@ -94,17 +96,15 @@ describe("Node", function (): void {
             const input: number = randDouble(0, 10);
 
             node.activate(input);
-            const error: { responsibility: number, projected: number, gated: number } = node.propagate(undefined, {
+            node.propagate(undefined, {
                 momentum: 0,
                 rate: 0,
                 update: false
             });
 
-            expect(error).to.exist;
-            expect(error).to.be.an("object");
-            expect(error.responsibility).to.not.be.NaN;
-            expect(error.projected).to.not.be.NaN;
-            expect(error.gated).to.not.be.NaN;
+            expect(node.errorResponsibility).to.not.be.NaN;
+            expect(node.errorProjected).to.not.be.NaN;
+            expect(node.errorGated).to.not.be.NaN;
         });
         it("node.propagate(number) => { responsibility: number, projected: number, gated: number }", function (): void {
             const node: Node = new Node();
@@ -112,36 +112,32 @@ describe("Node", function (): void {
             const target: number = randDouble(0, 10);
 
             node.activate(input);
-            const error: { responsibility: number, projected: number, gated: number } = node.propagate(target, {
+            node.propagate(target, {
                 rate: 0,
                 momentum: 0,
                 update: false
             });
 
-            expect(error).to.exist;
-            expect(error).to.be.an("object");
-            expect(error.responsibility).to.not.be.NaN;
-            expect(error.projected).to.not.be.NaN;
-            expect(error.gated).to.not.be.NaN;
-            expect(error.responsibility).to.equal(target - input);
-            expect(error.projected).to.equal(target - input);
-            expect(error.gated).to.equal(0);
+            expect(node.errorResponsibility).to.not.be.NaN;
+            expect(node.errorProjected).to.not.be.NaN;
+            expect(node.errorGated).to.not.be.NaN;
+            expect(node.errorResponsibility).to.equal(target - input);
+            expect(node.errorProjected).to.equal(target - input);
+            expect(node.errorGated).to.equal(0);
         });
         it("node.propagate(options={ update: false }) => { responsibility: number, projected: number, gated: number }", function (): void {
             const node: Node = new Node();
             const input: number = randDouble(0, 10);
             node.activate(input);
-            const error: { responsibility: number, projected: number, gated: number } = node.propagate(undefined, {
+            node.propagate(undefined, {
                 rate: 0,
                 momentum: 0,
                 update: false
             });
 
-            expect(error).to.exist;
-            expect(error).to.be.an("object");
-            expect(error.responsibility).to.not.be.NaN;
-            expect(error.projected).to.not.be.NaN;
-            expect(error.gated).to.not.be.NaN;
+            expect(node.errorResponsibility).to.not.be.NaN;
+            expect(node.errorProjected).to.not.be.NaN;
+            expect(node.errorGated).to.not.be.NaN;
             expect(node.deltaBiasTotal).to.equal(0);
             expect(node.deltaBiasPrevious).to.equal(0);
         });
@@ -151,17 +147,15 @@ describe("Node", function (): void {
             const target: number = randDouble(0, 10);
 
             node.activate(input);
-            const error: { responsibility: number, projected: number, gated: number } = node.propagate(target, {
+            node.propagate(target, {
                 rate: 0,
                 momentum: 0,
                 update: false
             });
 
-            expect(error).to.exist;
-            expect(error).to.be.an("object");
-            expect(error.responsibility).to.not.be.NaN;
-            expect(error.projected).to.not.be.NaN;
-            expect(error.gated).to.not.be.NaN;
+            expect(node.errorResponsibility).to.not.be.NaN;
+            expect(node.errorProjected).to.not.be.NaN;
+            expect(node.errorGated).to.not.be.NaN;
             expect(node.deltaBiasPrevious).to.equal(0);
         });
     });

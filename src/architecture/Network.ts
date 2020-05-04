@@ -1,14 +1,18 @@
-import {Connection, ConnectionJSON} from "./Connection";
-import {Node, NodeJSON, NodeType} from "./Node";
-import {anyMatch, getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../methods/Utils";
+import {Connection} from "./Connection";
+import {getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../methods/Utils";
 import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
 import {ALL_LOSSES, Loss, MSELoss} from "../methods/Loss";
-import {FixedRate, Rate} from "../methods/Rate";
+import {FixedRate} from "../methods/Rate";
 import {NEAT} from "../NEAT";
-import {Selection} from "../methods/Selection";
 import {Pool, spawn, Worker} from "threads";
 import "threads/register";
-import {ActivationType} from "../methods/Activation";
+import {ActivationType} from "../enums/ActivationType";
+import {NetworkJSON} from "../interfaces/NetworkJSON";
+import {NodeType} from "../enums/NodeType";
+import {ConnectionJSON} from "../interfaces/ConnectionJSON";
+import {TrainOptions} from "../interfaces/TrainOptions";
+import {EvolveOptions} from "../interfaces/EvolveOptions";
+import {Node} from "./Node";
 
 /**
  * Create a neural network
@@ -86,7 +90,7 @@ export class Network {
         network.nodes = [];
         network.connections = [];
 
-        json.nodes.map(nodeJSON => Node.fromJSON(nodeJSON)).forEach(node => network.nodes[node.index] = node);
+        json.nodes.map(nodeJSON => new Node().fromJSON(nodeJSON)).forEach(node => network.nodes[node.index] = node);
 
         json.connections.forEach((jsonConnection) => {
             const connection: Connection = network.connect(
@@ -310,10 +314,12 @@ export class Network {
      * myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
      */
     public activate(input: number[], options: { dropoutRate?: number; trace?: boolean } = {}): number[] {
+        if (input.length !== this.inputSize) {
+            throw new RangeError("Input size of dataset is different to network input size!");
+        }
         // get default value if no value is given
         options.dropoutRate = getOrDefault(options.dropoutRate, 0);
         options.trace = getOrDefault(options.trace, true);
-
 
         this.nodes
             .filter(node => node.isInputNode()) // only input nodes
@@ -467,7 +473,7 @@ export class Network {
      * @param {Connection} connection Connection to remove gate from
      */
     public removeGate(connection: Connection): void {
-        if (!anyMatch(this.gates, connection)) {
+        if (!this.gates.includes(connection)) {
             throw new Error(`This connection is not gated!`);
         }
         removeFromArray(this.gates, connection);
@@ -486,7 +492,7 @@ export class Network {
      * @param keepGates
      */
     public removeNode(node: Node, keepGates: boolean = new SubNodeMutation().keepGates): void {
-        if (!anyMatch(this.nodes, node)) {
+        if (!this.nodes.includes(node)) {
             throw new ReferenceError(`This node does not exist in the network!`);
         }
 
@@ -675,17 +681,16 @@ export class Network {
         }
 
         // Use the default values, if no value is given
-        options.iterations = getOrDefault(options.iterations, 100);
-        options.error = getOrDefault(options.error, 0.05);
+        options.iterations = getOrDefault(options.iterations, -1);
+        options.error = getOrDefault(options.error, -1);
         options.loss = getOrDefault(options.loss, new MSELoss());
         options.dropout = getOrDefault(options.dropout, 0);
         options.momentum = getOrDefault(options.momentum, 0);
-        options.batchSize = Math.min(dataset.length, getOrDefault(options.batchSize, 1));
+        options.batchSize = Math.min(dataset.length, getOrDefault(options.batchSize, dataset.length));
         const baseRate: number = getOrDefault(options.rate, 0.3);
         options.ratePolicy = getOrDefault(options.ratePolicy, new FixedRate(baseRate));
         options.log = getOrDefault(options.log, NaN);
 
-        const targetError: number = options.error <= 0 ? -1 : options.error;
         const start: number = Date.now();
 
         if (options.iterations <= 0 && options.error <= 0) {
@@ -710,7 +715,7 @@ export class Network {
         let error: number = 1;
 
         // train until the target error is reached or the target iterations are reached
-        while (error > targetError && (options.iterations <= 0 || iterationCount < options.iterations)) {
+        while (error > options.error && (options.iterations <= 0 || iterationCount < options.iterations)) {
             iterationCount++;
 
             // update the rate according to the rate policy
@@ -1082,54 +1087,4 @@ export class Network {
             time: Date.now() - start,
         };
     }
-}
-
-export interface EvolveOptions {
-    threads?: number;
-    generation?: number;
-    template?: Network;
-    mutations?: Mutation[];
-    activations?: ActivationType[];
-    selection?: Selection;
-    mutationRate?: number;
-    mutationAmount?: number;
-    provenance?: number;
-    elitism?: number;
-    populationSize?: number;
-    fitnessFunction?: (dataset: { input: number[], output: number[] }[], population: Network[]) => Promise<void>;
-    growth?: number;
-    loss?: Loss;
-    amount?: number;
-    maxNodes?: number;
-    maxConnections?: number;
-    maxGates?: number;
-    equal?: boolean;
-    log?: number;
-    schedule?: { iterations: number, function: (fitness: number, error: number, iteration: number) => void };
-    clear?: boolean;
-    error?: number;
-    iterations?: number;
-}
-
-export interface NetworkJSON {
-    nodes: NodeJSON[];
-    connections: ConnectionJSON[];
-    inputSize: number;
-    outputSize: number;
-}
-
-export interface TrainOptions {
-    ratePolicy?: Rate;
-    rate?: number;
-    loss?: Loss;
-    iterations?: number;
-    error?: number;
-    shuffle?: boolean;
-    momentum?: number;
-    dropout?: number;
-    clear?: boolean;
-    schedule?: { iterations: number, function: (error: number, iteration: number) => undefined };
-    crossValidateTestSize?: number;
-    log?: number;
-    batchSize?: number;
 }

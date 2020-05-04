@@ -16,7 +16,9 @@
  * let A = new Node();
  * A.squash = new LogisticActivation();
  */
-export abstract class Activation {
+import {ActivationType} from "../enums/ActivationType";
+
+abstract class Activation {
     public readonly type: ActivationType = ActivationType.NO_ACTIVATION;
 
     public static getActivation(activationType: ActivationType): Activation {
@@ -71,7 +73,7 @@ export abstract class Activation {
  * let A = new Node();
  * A.squash = new LogisticActivation();
  */
-export class LogisticActivation implements Activation {
+class LogisticActivation implements Activation {
     public readonly type: ActivationType = ActivationType.LogisticActivation;
 
     public calc(x: number, derivative: boolean = false): number {
@@ -96,7 +98,7 @@ export class LogisticActivation implements Activation {
  * let A = new Node();
  * A.squash = new TanhActivation();
  */
-export class TanhActivation implements Activation {
+class TanhActivation implements Activation {
     public readonly type: ActivationType = ActivationType.TanhActivation;
 
     public calc(x: number, derivative: boolean = false): number {
@@ -123,7 +125,7 @@ export class TanhActivation implements Activation {
  * let A = new Node();
  * A.squash = new IdentityActivation();
  */
-export class IdentityActivation implements Activation {
+class IdentityActivation implements Activation {
     public readonly type: ActivationType = ActivationType.IdentityActivation;
 
     public calc(x: number, derivative: boolean = false): number {
@@ -148,7 +150,7 @@ export class IdentityActivation implements Activation {
  * let A = new Node();
  * A.squash = new StepActivation();
  */
-export class StepActivation implements Activation {
+class StepActivation implements Activation {
     public readonly type: ActivationType = ActivationType.StepActivation;
 
     public calc(x: number, derivative: boolean = false): number {
@@ -173,7 +175,7 @@ export class StepActivation implements Activation {
  * let A = new Node();
  * A.squash = new RELUActivation();
  */
-export class RELUActivation implements Activation {
+class RELUActivation implements Activation {
     public readonly type: ActivationType = ActivationType.RELUActivation;
 
     public calc(x: number, derivative: boolean = false): number {
@@ -198,7 +200,7 @@ export class RELUActivation implements Activation {
  * let A = new Node();
  * A.squash = new SoftSignActivation;
  */
-export class SoftSignActivation implements Activation {
+class SoftSignActivation implements Activation {
     public readonly type: ActivationType = ActivationType.SoftSignActivation;
 
     public calc(x: number, derivative: boolean = false): number {
@@ -223,7 +225,7 @@ export class SoftSignActivation implements Activation {
  * let A = new Node();
  * A.squash = new SinusoidActivation();
  */
-export class SinusoidActivation implements Activation {
+class SinusoidActivation implements Activation {
     public readonly type: ActivationType = ActivationType.SinusoidActivation;
 
     public calc(x: number, derivative: boolean = false): number {
@@ -248,7 +250,7 @@ export class SinusoidActivation implements Activation {
  * let A = new Node();
  * A.squash = new GaussianActivation();
  */
-export class GaussianActivation implements Activation {
+class GaussianActivation implements Activation {
     public readonly type: ActivationType = ActivationType.GaussianActivation;
 
     public calc(x: number, derivative: boolean = false): number {
@@ -273,7 +275,7 @@ export class GaussianActivation implements Activation {
  * let A = new Node();
  * A.squash = new BentIdentityActivation();
  */
-export class BentIdentityActivation implements Activation {
+class BentIdentityActivation implements Activation {
     public readonly type: ActivationType = ActivationType.BentIdentityActivation;
 
     public calc(x: number, derivative: boolean = false): number {
@@ -298,7 +300,7 @@ export class BentIdentityActivation implements Activation {
  * let A = new Node();
  * A.squash = new BipolarActivation();
  */
-export class BipolarActivation implements Activation {
+class BipolarActivation implements Activation {
     public readonly type: ActivationType = ActivationType.BipolarActivation;
 
     public calc(x: number, derivative: boolean = false): number {
@@ -323,7 +325,7 @@ export class BipolarActivation implements Activation {
  * let A = new Node();
  * A.squash = new BipolarSigmoidActivation();
  */
-export class BipolarSigmoidActivation implements Activation {
+class BipolarSigmoidActivation implements Activation {
     public readonly type: ActivationType = ActivationType.BipolarSigmoidActivation;
 
     public calc(x: number, derivative: boolean = false): number {
@@ -348,7 +350,7 @@ export class BipolarSigmoidActivation implements Activation {
  * let A = new Node();
  * A.squash = new HardTanhActivation();
  */
-export class HardTanhActivation implements Activation {
+class HardTanhActivation implements Activation {
     public readonly type: ActivationType = ActivationType.HardTanhActivation;
 
     public calc(x: number, derivative: boolean = false): number {
@@ -375,7 +377,7 @@ export class HardTanhActivation implements Activation {
  * let A = new Node();
  * A.squash = new AbsoluteActivation();
  */
-export class AbsoluteActivation implements Activation {
+class AbsoluteActivation implements Activation {
     public readonly type: ActivationType = ActivationType.AbsoluteActivation;
 
     public calc(x: number, derivative: boolean = false): number {
@@ -400,7 +402,7 @@ export class AbsoluteActivation implements Activation {
  * let A = new Node();
  * A.squash = new InverseActivation();
  */
-export class InverseActivation implements Activation {
+class InverseActivation implements Activation {
     public readonly type: ActivationType = ActivationType.InverseActivation;
 
     public calc(x: number, derivative: boolean = false): number {
@@ -429,7 +431,7 @@ export class InverseActivation implements Activation {
  * let A = new Node();
  * A.squash = new SELUActivation();
  */
-export class SELUActivation implements Activation {
+class SELUActivation implements Activation {
     public readonly type: ActivationType = ActivationType.SELUActivation;
 
     public calc(x: number, derivative: boolean = false): number {
@@ -452,26 +454,7 @@ export class SELUActivation implements Activation {
     }
 }
 
-export enum ActivationType {
-    NO_ACTIVATION,
-    LogisticActivation,
-    TanhActivation,
-    IdentityActivation,
-    StepActivation,
-    RELUActivation,
-    SoftSignActivation,
-    SinusoidActivation,
-    GaussianActivation,
-    BentIdentityActivation,
-    BipolarActivation,
-    BipolarSigmoidActivation,
-    HardTanhActivation,
-    AbsoluteActivation,
-    InverseActivation,
-    SELUActivation
-}
-
-export const ALL_ACTIVATIONS: ActivationType[] = [
+const ALL_ACTIVATIONS: ActivationType[] = [
     ActivationType.LogisticActivation,
     ActivationType.TanhActivation,
     ActivationType.IdentityActivation,
@@ -488,3 +471,23 @@ export const ALL_ACTIVATIONS: ActivationType[] = [
     ActivationType.InverseActivation,
     ActivationType.SELUActivation
 ];
+
+export {
+    ALL_ACTIVATIONS,
+    Activation,
+    LogisticActivation,
+    TanhActivation,
+    IdentityActivation,
+    StepActivation,
+    RELUActivation,
+    SoftSignActivation,
+    SinusoidActivation,
+    GaussianActivation,
+    BentIdentityActivation,
+    BipolarActivation,
+    BipolarSigmoidActivation,
+    HardTanhActivation,
+    AbsoluteActivation,
+    InverseActivation,
+    SELUActivation
+};

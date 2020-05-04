@@ -2,7 +2,7 @@ import * as path from "path";
 import ParcelBundler = require("parcel-bundler");
 
 async function runBuild(options: ParcelBundler.ParcelOptions): Promise<void> {
-    const entry: string = path.resolve(__dirname, '../build/index.js');
+    const entry: string = path.resolve(__dirname, '../build/scripts/index.js');
     const builder: ParcelBundler = new ParcelBundler(entry, options);
     await builder.bundle();
 }

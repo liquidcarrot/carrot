@@ -3,7 +3,7 @@
  *
  * @see [Loss Function on Wikipedia](https://en.wikipedia.org/wiki/Loss_function)
  */
-export abstract class Loss {
+abstract class Loss {
     /**
      * Calculates the loss value from output to target.
      *
@@ -27,7 +27,7 @@ export abstract class Loss {
  * let myNetwork = new Network(5, 5);
  * myNetwork.train(trainingData, { loss: new CrossEntropyLoss() });
  */
-export class CrossEntropyLoss extends Loss {
+class CrossEntropyLoss extends Loss {
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach(((value, index) => {
@@ -49,7 +49,7 @@ export class CrossEntropyLoss extends Loss {
  * let myNetwork = new Network(5, 5);
  * myNetwork.train(trainingData, { loss: new MSELoss() });
  */
-export class MSELoss extends Loss {
+class MSELoss extends Loss {
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach(((value, index) => {
@@ -77,7 +77,7 @@ export class MSELoss extends Loss {
  *   loss: new BinaryLoss()
  * });
  */
-export class BinaryLoss extends Loss {
+class BinaryLoss extends Loss {
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach(((value, index) => {
@@ -105,7 +105,7 @@ export class BinaryLoss extends Loss {
  *   loss: new MAELoss()
  * });
  */
-export class MAELoss extends Loss {
+class MAELoss extends Loss {
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach(((value, index) => {
@@ -133,7 +133,7 @@ export class MAELoss extends Loss {
  *   loss: new MAPELoss()
  * });
  */
-export class MAPELoss extends Loss {
+class MAPELoss extends Loss {
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach(((value, index) => {
@@ -157,7 +157,7 @@ export class MAPELoss extends Loss {
  *   loss: new WAPELoss()
  * });
  */
-export class WAPELoss extends Loss {
+class WAPELoss extends Loss {
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         let sum: number = 0;
@@ -187,7 +187,7 @@ export class WAPELoss extends Loss {
  *   loss: new MSLELoss()
  * });
  */
-export class MSLELoss extends Loss {
+class MSLELoss extends Loss {
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach(((value, index) => {
@@ -215,7 +215,7 @@ export class MSLELoss extends Loss {
  *   loss: new HINGELoss()
  * });
  */
-export class HINGELoss extends Loss {
+class HINGELoss extends Loss {
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach((value, index) => {
@@ -225,7 +225,7 @@ export class HINGELoss extends Loss {
     }
 }
 
-export const ALL_LOSSES: Loss[] = [
+const ALL_LOSSES: Loss[] = [
     new CrossEntropyLoss(),
     new MSELoss(),
     new BinaryLoss(),
@@ -235,3 +235,16 @@ export const ALL_LOSSES: Loss[] = [
     new MSLELoss(),
     new HINGELoss()
 ];
+
+export {
+    ALL_LOSSES,
+    Loss,
+    CrossEntropyLoss,
+    MSELoss,
+    BinaryLoss,
+    MAELoss,
+    MAPELoss,
+    WAPELoss,
+    MSLELoss,
+    HINGELoss
+};

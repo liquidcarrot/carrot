@@ -1,4 +1,4 @@
-import {Network} from "..";
+import {Network} from "../architecture/Network";
 import {pickRandom, randDouble} from "./Utils";
 
 /**
@@ -15,7 +15,7 @@ import {pickRandom, randDouble} from "./Utils";
  *  selection: new PowerSelection() // eg.
  * });
  */
-export abstract class Selection {
+abstract class Selection {
     /**
      * Selects a genome from the population according to the Selection method.
      *
@@ -39,7 +39,7 @@ export abstract class Selection {
  *  selection: new FitnessProportionateSelection() // eg.
  * });
  */
-export class FitnessProportionateSelection extends Selection {
+class FitnessProportionateSelection extends Selection {
     public select(population: Network[]): Network {
         let totalFitness: number = 0;
         let minimalFitness: number = 0;
@@ -79,7 +79,7 @@ export class FitnessProportionateSelection extends Selection {
  *  selection: new PowerSelection() // eg.
  * });
  */
-export class PowerSelection extends Selection {
+class PowerSelection extends Selection {
     public power: number;
 
     constructor(power: number = 4) {
@@ -106,7 +106,7 @@ export class PowerSelection extends Selection {
  *  selection: new TournamentSelection() // eg.
  * });
  */
-export class TournamentSelection extends Selection {
+class TournamentSelection extends Selection {
     public size: number;
     public probability: number;
 
@@ -146,3 +146,10 @@ export class TournamentSelection extends Selection {
         return pickRandom(population);
     }
 }
+
+export {
+    Selection,
+    FitnessProportionateSelection,
+    PowerSelection,
+    TournamentSelection
+};

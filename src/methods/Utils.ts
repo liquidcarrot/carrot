@@ -4,7 +4,7 @@
  * @param arr the array to pick from
  * @returns the random picked element
  */
-export function pickRandom<T>(arr: T[]): T {
+function pickRandom<T>(arr: T[]): T {
     if (arr.length === 0) {
         throw new RangeError("Cannot pick from an empty array");
     }
@@ -18,7 +18,7 @@ export function pickRandom<T>(arr: T[]): T {
  * @param max bound
  * @returns random integer in [min,max)
  */
-export function randInt(min: number, max: number): number {
+function randInt(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min) + min);
 }
 
@@ -29,7 +29,7 @@ export function randInt(min: number, max: number): number {
  * @param max bound
  * @returns random double in [min,max)
  */
-export function randDouble(min: number, max: number): number {
+function randDouble(min: number, max: number): number {
     return Math.random() * (max - min) + min;
 }
 
@@ -38,24 +38,8 @@ export function randDouble(min: number, max: number): number {
  *
  * @returns random boolean
  */
-export function randBoolean(): boolean {
+function randBoolean(): boolean {
     return Math.random() >= 0.5;
-}
-
-/**
- * Checks if the an array contains an element
- *
- * @param arr array to search in
- * @param target the element to search
- * @returns Does the array contains target?
- */
-export function anyMatch<T>(arr: T[], target: T): boolean {
-    for (const elem of arr) {
-        if (elem === target) {
-            return true;
-        }
-    }
-    return false;
 }
 
 /**
@@ -65,7 +49,7 @@ export function anyMatch<T>(arr: T[], target: T): boolean {
  * @param elem the element which will be removed
  * @returns false -> element does not exists on array; true -> element removed from array
  */
-export function removeFromArray<T>(arr: T[], elem: T): boolean {
+function removeFromArray<T>(arr: T[], elem: T): boolean {
     const index: number = arr.indexOf(elem);
     if (index === -1) {
         return false;
@@ -82,8 +66,8 @@ export function removeFromArray<T>(arr: T[], elem: T): boolean {
  * @param defaultValue to return if value is undefined
  * @returns value if defined otherwise defaultValue
  */
-export function getOrDefault<T>(value: T | undefined | null, defaultValue: T): T {
-    return value !== undefined && value !== null ? value : defaultValue;
+function getOrDefault<T>(value: T | undefined, defaultValue: T): T {
+    return value ?? defaultValue;
 }
 
 /**
@@ -91,7 +75,7 @@ export function getOrDefault<T>(value: T | undefined | null, defaultValue: T): T
  * @param array the array
  * @returns the shuffled array
  */
-export function shuffle<T>(array: T[]): T[] {
+function shuffle<T>(array: T[]): T[] {
     let counter: number = array.length;
 
     // While there are elements in the array
@@ -110,3 +94,86 @@ export function shuffle<T>(array: T[]): T[] {
 
     return array;
 }
+
+function max(array: number[]): number {
+    let maxValue: number = -Infinity;
+    for (const value of array) {
+        if (value > maxValue) {
+            maxValue = value;
+        }
+    }
+    return maxValue;
+}
+
+function maxValueIndex(array: number[]): number {
+    let maxValue: number = array[0];
+    let maxValueIndex: number = 0;
+    for (let i: number = 0; i < array.length; i++) {
+        if (array[i] > maxValue) {
+            maxValue = array[i];
+            maxValueIndex = i;
+        }
+    }
+    return maxValueIndex;
+}
+
+function minValueIndex(array: number[]): number {
+    let minValue: number = array[0];
+    let minValueIndex: number = 0;
+    for (let i: number = 0; i < array.length; i++) {
+        if (array[i] < minValue) {
+            minValue = array[i];
+            minValueIndex = i;
+        }
+    }
+    return minValueIndex;
+}
+
+function min(array: number[]): number {
+    let minValue: number = Infinity;
+    for (const value of array) {
+        if (value < minValue) {
+            minValue = value;
+        }
+    }
+    return minValue;
+}
+
+function avg(array: number[]): number {
+    return sum(array) / array.length;
+}
+
+function sum(array: number[]): number {
+    let sum: number = 0;
+    for (const value of array) {
+        sum += value;
+    }
+    return sum;
+}
+
+function generateGaussian(mean: number = 0, deviation: number = 2): number {
+    let sum: number = 0;
+    const numSamples: number = 10;
+    for (let i: number = 0; i < numSamples; i++) {
+        sum += Math.random();
+    }
+
+    return deviation * sum / numSamples + mean - 0.5 * deviation;
+}
+
+export {
+    pickRandom,
+    randInt,
+    randDouble,
+    randBoolean,
+    removeFromArray,
+    getOrDefault,
+    shuffle,
+    max,
+    maxValueIndex,
+    minValueIndex,
+    min,
+    sum,
+    avg,
+    generateGaussian
+};

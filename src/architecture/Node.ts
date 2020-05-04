@@ -1,7 +1,10 @@
 import {ModBiasMutation} from "../methods/Mutation";
-import {Activation, ActivationType, ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
+import {Activation, ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
 import {Connection} from "./Connection";
-import {anyMatch, getOrDefault, pickRandom, randDouble, removeFromArray} from "../methods/Utils";
+import {getOrDefault, pickRandom, randDouble, removeFromArray} from "../methods/Utils";
+import {NodeType} from "../enums/NodeType";
+import {NodeJSON} from "../interfaces/NodeJSON";
+import {ActivationType} from "../enums/ActivationType";
 
 /**
  * Creates a new neuron/node
@@ -49,7 +52,7 @@ export class Node {
     public bias: number;
     public squash: Activation;
     public index: number;
-    public derivative: number | undefined;
+    public derivative: number;
     public deltaBiasPrevious: number;
     public deltaBiasTotal: number;
     public activation: number;
@@ -64,6 +67,7 @@ export class Node {
         this.bias = randDouble(-1, 1);
         this.squash = new LogisticActivation();
         this.activation = 0;
+        this.derivative = 1;
         this.state = 0;
         this.old = 0;
         this.mask = 1;
@@ -84,7 +88,7 @@ export class Node {
      *
      * @param json A node represented as a JSON object
      *
-     * @returns A reconstructed node
+     * @returns itself
      *
      * @example <caption>From Node.toJSON()</caption>
      * const { Node } = require("@liquid-carrot/carrot");
@@ -95,15 +99,13 @@ export class Node {
      *
      * console.log(node);
      */
-    public static fromJSON(json: NodeJSON): Node {
-        const node: Node = new Node();
-        node.bias = json.bias;
-        node.type = json.type as NodeType;
-        node.squash = Activation.getActivation(json.squash);
-        node.mask = json.mask;
-        node.index = json.index;
-
-        return node;
+    public fromJSON(json: NodeJSON): Node {
+        this.bias = json.bias ?? randDouble(-1, 1);
+        this.type = json.type as NodeType;
+        this.squash = Activation.getActivation(json.squash ?? ActivationType.LogisticActivation);
+        this.mask = json.mask ?? 1;
+        this.index = json.index ?? NaN;
+        return this;
     }
 
     /**
@@ -209,7 +211,7 @@ export class Node {
         if (node === this) { // self connection
             return this.selfConnection.weight !== 0; // is projected, if weight of self connection is unequal 0
         } else {
-            return anyMatch(this.incoming.map(conn => conn.from), node); // check every incoming connection for node
+            return this.incoming.map(conn => conn.from).includes(node); // check every incoming connection for node
         }
     }
 
@@ -243,7 +245,7 @@ export class Node {
         if (node === this) { // self connection
             return this.selfConnection.weight !== 0; // is projected, if weight of self connection is unequal 0
         } else {
-            return anyMatch(this.outgoing.map(conn => conn.to), node); // check every outgoing connection for node
+            return this.outgoing.map(conn => conn.to).includes(node); // check every outgoing connection for node
         }
     }
 
@@ -456,7 +458,7 @@ export class Node {
      * @see [Regularization Neataptic](https://wagenaartje.github.io/neataptic/docs/methods/regularization/)
      * @see [What is backpropagation | YouTube](https://www.youtube.com/watch?v=Ilg3gGewQ5U)
      */
-    public propagate(target: number | undefined, options: { momentum?: number, rate?: number, update?: boolean }): { responsibility: number, projected: number, gated: number } {
+    public propagate(target?: number, options: { momentum?: number, rate?: number, update?: boolean } = {}): void {
         options.momentum = getOrDefault(options.momentum, 0);
         options.rate = getOrDefault(options.rate, 0.3);
         options.update = getOrDefault(options.update, true);
@@ -468,7 +470,7 @@ export class Node {
             for (const connection of this.outgoing) {
                 this.errorProjected += connection.to.errorResponsibility * connection.weight * connection.gain;
             }
-            this.errorProjected *= this.derivative ?? 1;
+            this.errorProjected *= this.derivative;
 
 
             this.errorGated = 0;
@@ -482,7 +484,7 @@ export class Node {
 
                 this.errorGated += connection.to.errorResponsibility * influence;
             }
-            this.errorGated *= this.derivative ?? 1;
+            this.errorGated *= this.derivative;
 
 
             this.errorResponsibility = this.errorProjected + this.errorGated;
@@ -515,12 +517,6 @@ export class Node {
             this.deltaBiasPrevious = this.deltaBiasTotal;
             this.deltaBiasTotal = 0;
         }
-
-        return {
-            responsibility: this.errorResponsibility,
-            projected: this.errorProjected,
-            gated: this.errorGated,
-        };
     }
 
     /**
@@ -545,9 +541,11 @@ export class Node {
      * A.activate(0.5); // 0.5
      * B.activate(); // 0.3244554645
      */
-    public activate(input: number | null = null, trace: boolean = true): number {
-        if (input !== null && Number.isFinite(input)) {
+    public activate(input?: number, trace: boolean = true): number {
+        if (input !== undefined) {
             return this.activation = input;
+        } else if (this.isInputNode()) {
+            throw new ReferenceError("There is no input given to an input node!");
         }
 
         if (trace) {
@@ -660,16 +658,14 @@ export class Node {
     public isOutputNode(): boolean {
         return this.type === NodeType.OUTPUT;
     }
-}
 
-export interface NodeJSON {
-    bias: number;
-    type: number;
-    squash: ActivationType;
-    mask: number;
-    index: number;
-}
+    public setBias(bias: number): Node {
+        this.bias = bias;
+        return this;
+    }
 
-export enum NodeType {
-    INPUT, HIDDEN, OUTPUT
+    public setSquash(activationType: ActivationType): Node {
+        this.squash = Activation.getActivation(activationType);
+        return this;
+    }
 }
