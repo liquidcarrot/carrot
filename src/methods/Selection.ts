@@ -88,7 +88,7 @@ class PowerSelection extends Selection {
     }
 
     public select(population: Network[]): Network {
-        return population[Math.floor(Math.pow(Math.random(), this.power) * population.length)];
+        return population[Math.floor(Math.random() ** this.power * population.length)];
     }
 }
 
