@@ -53,7 +53,7 @@ class MSELoss extends Loss {
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach(((value, index) => {
-            error += Math.pow(targets[index] - value, 2);
+            error += (targets[index] - value) ** 2;
         }));
         return error / outputs.length;
     }
