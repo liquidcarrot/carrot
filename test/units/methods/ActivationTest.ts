@@ -1,3 +1,4 @@
+import {expect} from "chai";
 import {
     AbsoluteActivation,
     BentIdentityActivation,
@@ -8,6 +9,7 @@ import {
     IdentityActivation,
     InverseActivation,
     LogisticActivation,
+    MISHActivation,
     RELUActivation,
     SELUActivation,
     SinusoidActivation,
@@ -16,7 +18,6 @@ import {
     TanhActivation
 } from "../../../src/methods/Activation";
 import {randDouble} from "../../../src/methods/Utils";
-import {expect} from "chai";
 
 describe("Activation", () => {
     describe("activation.LOGISTIC()", () => {
@@ -177,6 +178,23 @@ describe("Activation", () => {
             const x: number = randDouble(-50, 50);
             const z: number = x > 0 ? scale : ((x > 0 ? x : alpha * Math.exp(x) - alpha) + alpha) * scale;
             expect(new SELUActivation().calc(x, true)).to.be.closeTo(z, 0.01);
+        });
+    });
+    describe("activation.MISH()", () => {
+        it("activation.MISH(number, derivate=false) => {number}", () => {
+            const x: number = randDouble(-50, 50);
+            const z: number = x * Math.tanh(Math.log(1 + Math.exp(x)));
+            expect(new MISHActivation().calc(x, false)).to.be.closeTo(z, 0.01);
+        });
+        it("activation.MISH(number, derivate=true) => {number}", () => {
+            const x: number = randDouble(-50, 50);
+
+            const ex: number = Math.exp(x);
+            const w: number = ex * ex * ex + 4 * (ex * ex + x * ex + x + 1) + 6 * ex;
+            const d: number = 2 * ex + ex * ex + 2;
+            const z: number = ex * w / (d * d);
+
+            expect(new MISHActivation().calc(x, true)).to.be.closeTo(z, 0.01);
         });
     });
 });
