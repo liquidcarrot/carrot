@@ -53,6 +53,8 @@ abstract class Activation {
                 return new InverseActivation();
             case ActivationType.SELUActivation:
                 return new SELUActivation();
+            case ActivationType.MISHActivation:
+                return new MISHActivation();
         }
         throw new ReferenceError(activationType + " is not the name of any available activations! These are all available activations: " + ALL_ACTIVATIONS);
     }
@@ -454,6 +456,37 @@ class SELUActivation implements Activation {
     }
 }
 
+/**
+ * MISH: Self Regularized Non-Monotonic Activation Function
+ *
+ * @see {@link https://github.com/digantamisra98/Mish Neural Networks}
+ *
+ * @param x Input value to activation function
+ * @param derivative Flag to select derivative function
+ *
+ * @example
+ * let { methods, Node } = require("@liquid-carrot/carrot");
+ *
+ * // Changing a neuron's activation function
+ * let A = new Node();
+ * A.squash = new MISHActivation();
+ */
+class MISHActivation implements Activation {
+    public readonly type: ActivationType = ActivationType.MISHActivation;
+
+    public calc(x: number, derivative: boolean = false): number {
+        const ex: number = Math.exp(x);
+
+        if (derivative) {
+            const w: number = ex * ex * ex + 4 * (ex * ex + x * ex + x + 1) + 6 * ex;
+            const d: number = 2 * ex + ex * ex + 2;
+            return ex * w / (d * d);
+        } else {
+            return x * Math.tanh(Math.log(1 + ex));
+        }
+    }
+}
+
 const ALL_ACTIVATIONS: ActivationType[] = [
     ActivationType.LogisticActivation,
     ActivationType.TanhActivation,
@@ -469,7 +502,8 @@ const ALL_ACTIVATIONS: ActivationType[] = [
     ActivationType.HardTanhActivation,
     ActivationType.AbsoluteActivation,
     ActivationType.InverseActivation,
-    ActivationType.SELUActivation
+    ActivationType.SELUActivation,
+    ActivationType.MISHActivation
 ];
 
 export {
@@ -489,5 +523,6 @@ export {
     HardTanhActivation,
     AbsoluteActivation,
     InverseActivation,
-    SELUActivation
+    SELUActivation,
+    MISHActivation
 };

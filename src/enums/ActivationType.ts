@@ -14,5 +14,6 @@ export enum ActivationType {
     HardTanhActivation,
     AbsoluteActivation,
     InverseActivation,
-    SELUActivation
+    SELUActivation,
+    MISHActivation,
 }
