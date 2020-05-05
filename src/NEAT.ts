@@ -67,7 +67,7 @@ export class NEAT {
     private readonly provenance: number;
     private readonly mutationRate: number;
     private readonly mutationAmount: number;
-    private readonly fitnessFunction: ((dataset: { input: number[]; output: number[] }[], population: Network[]) => Promise<void>);
+    private readonly fitnessFunction: ((population: Network[], dataset?: { input: number[]; output: number[] }[]) => Promise<void>);
     private readonly selection: Selection;
     private readonly mutations: Mutation[];
     private readonly template: Network;
@@ -75,17 +75,17 @@ export class NEAT {
     private readonly maxConnections: number;
     private readonly maxGates: number;
     private population: Network[];
-    private readonly dataset: { input: number[]; output: number[] }[];
+    private readonly dataset?: { input: number[]; output: number[] }[];
     private readonly activations: ActivationType[];
 
-    constructor(dataset: { input: number[], output: number[] }[] = [], options: EvolveOptions = {}) {
+    constructor(options: EvolveOptions = {}) {
         if (!options.fitnessFunction) {
             throw new ReferenceError("No fitness function given!");
         }
 
-        this.dataset = dataset;
-        this.input = dataset.length > 0 ? dataset[0].input.length : 0;
-        this.output = dataset.length > 0 ? dataset[0].output.length : 0;
+        this.dataset = options.dataset;
+        this.input = options.dataset && options.dataset.length > 0 ? options.dataset[0].input.length : 0;
+        this.output = options.dataset && options.dataset.length > 0 ? options.dataset[0].output.length : 0;
 
         this.generation = getOrDefault(options.generation, 0);
         this.equal = getOrDefault(options.equal, true);
@@ -285,7 +285,7 @@ export class NEAT {
         if (this.clear) {
             this.population.forEach(genome => genome.clear());
         }
-        await this.fitnessFunction(this.dataset, this.population);
+        await this.fitnessFunction(this.population, this.dataset);
 
         // Sort the population in order of fitness
         this.sort();

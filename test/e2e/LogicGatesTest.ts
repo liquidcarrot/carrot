@@ -1,5 +1,5 @@
-import {Network} from "../../src/architecture/Network";
 import {expect} from "chai";
+import {Network} from "../../src/architecture/Network";
 
 describe('Logic Gates', () => {
     const data: {
@@ -57,7 +57,7 @@ describe('Logic Gates', () => {
         const network: Network = new Network(1, 1);
 
         const initial: number = network.test(data.NOT);
-        network.train(data.NOT, {iterations: 50});
+        network.train({iterations: 50, dataset: data.NOT});
         const final: number = network.test(data.NOT);
 
         expect(final).to.be.at.most(initial);
@@ -68,7 +68,7 @@ describe('Logic Gates', () => {
         const network: Network = new Network(1, 1);
 
         const initial: number = network.test(data.NOT);
-        await network.evolve(data.NOT, {iterations: 50});
+        await network.evolve({iterations: 50, dataset: data.NOT});
         const final: number = network.test(data.NOT);
 
         expect(final).to.be.at.most(initial);
@@ -78,7 +78,7 @@ describe('Logic Gates', () => {
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.AND);
-        network.train(data.AND, {iterations: 50});
+        network.train({iterations: 50, dataset: data.AND});
         const final: number = network.test(data.AND);
 
         expect(final).to.be.at.most(initial);
@@ -89,7 +89,7 @@ describe('Logic Gates', () => {
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.AND);
-        await network.evolve(data.AND, {iterations: 50});
+        await network.evolve({iterations: 50, dataset: data.AND});
         const final: number = network.test(data.AND);
 
         expect(final).to.be.at.most(initial);
@@ -99,7 +99,7 @@ describe('Logic Gates', () => {
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.OR);
-        network.train(data.OR, {iterations: 50});
+        network.train({iterations: 50, dataset: data.OR});
         const final: number = network.test(data.OR);
 
         expect(final).to.be.at.most(initial);
@@ -110,7 +110,7 @@ describe('Logic Gates', () => {
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.OR);
-        await network.evolve(data.OR, {iterations: 50});
+        await network.evolve({iterations: 50, dataset: data.OR});
         const final: number = network.test(data.OR);
 
         expect(final).to.be.at.most(initial);
@@ -120,7 +120,7 @@ describe('Logic Gates', () => {
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.NAND);
-        network.train(data.NAND, {iterations: 50});
+        network.train({iterations: 50, dataset: data.NAND});
         const final: number = network.test(data.NAND);
 
         expect(final).to.be.at.most(initial);
@@ -131,7 +131,7 @@ describe('Logic Gates', () => {
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.NAND);
-        await network.evolve(data.NAND, {iterations: 50});
+        await network.evolve({iterations: 50, dataset: data.NAND});
         const final: number = network.test(data.NAND);
 
         expect(final).to.be.at.most(initial);
@@ -141,7 +141,7 @@ describe('Logic Gates', () => {
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.NOR);
-        network.train(data.NOR, {iterations: 50});
+        network.train({iterations: 50, dataset: data.NOR});
         const final: number = network.test(data.NOR);
 
         expect(final).to.be.at.most(initial);
@@ -152,7 +152,7 @@ describe('Logic Gates', () => {
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.NOR);
-        await network.evolve(data.NOR), {iterations: 50};
+        await network.evolve({iterations: 50, dataset: data.NOR});
         const final: number = network.test(data.NOR);
 
         expect(final).to.be.at.most(initial);
@@ -162,7 +162,7 @@ describe('Logic Gates', () => {
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.XOR);
-        network.train(data.XOR, {iterations: 50});
+        network.train({iterations: 50, dataset: data.XOR});
         const final: number = network.test(data.XOR);
 
         expect(final).to.be.at.most(initial);
@@ -173,7 +173,7 @@ describe('Logic Gates', () => {
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.XOR);
-        await network.evolve(data.XOR, {iterations: 50});
+        await network.evolve({iterations: 50, dataset: data.XOR});
         const final: number = network.test(data.XOR);
 
         expect(final).to.be.at.most(initial);
@@ -183,7 +183,7 @@ describe('Logic Gates', () => {
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.XNOR);
-        network.train(data.XNOR, {iterations: 50});
+        network.train({iterations: 50, dataset: data.XNOR});
         const final: number = network.test(data.XNOR);
 
         expect(final).to.be.at.most(initial);
@@ -194,7 +194,7 @@ describe('Logic Gates', () => {
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.XNOR);
-        await network.evolve(data.XNOR, {iterations: 50});
+        await network.evolve({iterations: 50, dataset: data.XNOR});
         const final: number = network.test(data.XNOR);
 
         expect(final).to.be.at.most(initial);

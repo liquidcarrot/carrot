@@ -1,7 +1,8 @@
-import {Rate} from "../methods/Rate";
 import {Loss} from "../methods/Loss";
+import {Rate} from "../methods/Rate";
 
 export interface TrainOptions {
+    dataset: { input: number[], output: number[] }[];
     ratePolicy?: Rate;
     rate?: number;
     loss?: Loss;

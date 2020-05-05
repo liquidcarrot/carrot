@@ -1,18 +1,18 @@
-import {HopfieldLayer} from "../../../src/architecture/Layers/RecurrentLayers/HopfieldLayer";
-import {ActivationType} from "../../../src/enums/ActivationType";
-import {Architect} from "../../../src/architecture/Architect";
-import {OutputLayer} from "../../../src/architecture/Layers/CoreLayers/OutputLayer";
-import {InputLayer} from "../../../src/architecture/Layers/CoreLayers/InputLayer";
-import {DenseLayer} from "../../../src/architecture/Layers/CoreLayers/DenseLayer";
-import {Network} from "../../../src/architecture/Network";
 import {expect} from "chai";
+import {Architect} from "../../../src/architecture/Architect";
+import {DenseLayer} from "../../../src/architecture/Layers/CoreLayers/DenseLayer";
+import {InputLayer} from "../../../src/architecture/Layers/CoreLayers/InputLayer";
+import {OutputLayer} from "../../../src/architecture/Layers/CoreLayers/OutputLayer";
+import {MaxPooling1DLayer} from "../../../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer";
+import {GRULayer} from "../../../src/architecture/Layers/RecurrentLayers/GRULayer";
+import {HopfieldLayer} from "../../../src/architecture/Layers/RecurrentLayers/HopfieldLayer";
 import {LSTMLayer} from "../../../src/architecture/Layers/RecurrentLayers/LSTMLayer";
 import {MemoryLayer} from "../../../src/architecture/Layers/RecurrentLayers/MemoryLayer";
-import {randInt} from "../../../src/methods/Utils";
-import {GRULayer} from "../../../src/architecture/Layers/RecurrentLayers/GRULayer";
-import {MaxPooling1DLayer} from "../../../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer";
-import {PoolNode} from "../../../src/architecture/Nodes/PoolNode";
+import {Network} from "../../../src/architecture/Network";
 import {Node} from "../../../src/architecture/Node";
+import {PoolNode} from "../../../src/architecture/Nodes/PoolNode";
+import {ActivationType} from "../../../src/enums/ActivationType";
+import {randInt} from "../../../src/methods/Utils";
 
 describe("ArchitectTest", () => {
     it("Build Multilayer-Perceptron", () => {
@@ -152,10 +152,10 @@ describe("ArchitectTest", () => {
         expect(network.nodes.length).to.be.equal(10 + HopfieldSize * 2 + 2);
 
         // Check backward pointing connections
-        let backConnections:number = 0;
-        for(let i:number=0; i < network.nodes.length;i++){
-            for(const conn of network.nodes[i].outgoing){
-                if(network.nodes.indexOf(conn.to)<i){
+        let backConnections: number = 0;
+        for (let i: number = 0; i < network.nodes.length; i++) {
+            for (const conn of network.nodes[i].outgoing) {
+                if (network.nodes.indexOf(conn.to) < i) {
                     backConnections++;
                 }
             }
@@ -191,7 +191,8 @@ describe("ArchitectTest", () => {
 
         const errorBefore: number = network.test(AND_GATE);
 
-        const error: number = network.train(AND_GATE, {
+        const error: number = network.train({
+            dataset: AND_GATE,
             iterations: 10000,
             rate: 0.01,
             shuffle: true,
@@ -222,7 +223,8 @@ describe("ArchitectTest", () => {
 
         const errorBefore: number = network.test(data);
 
-        const error: number = network.train(data, {
+        const error: number = network.train({
+            dataset: data,
             iterations: 10000,
             rate: 0.01,
             clear: true,
@@ -252,7 +254,8 @@ describe("ArchitectTest", () => {
 
         const errorBefore: number = network.test(data);
 
-        const error: number = network.train(data, {
+        const error: number = network.train({
+            dataset: data,
             iterations: 10000,
             rate: 0.01,
             clear: true,

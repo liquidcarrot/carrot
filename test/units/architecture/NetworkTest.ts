@@ -1,9 +1,9 @@
-import {randInt} from "../../../src/methods/Utils";
-import {AddConnectionMutation, AddGateMutation, AddNodeMutation, SubGateMutation} from "../../../src/methods/Mutation";
 import {expect} from "chai";
-import {Network} from "../../../src/architecture/Network";
 import {Connection} from "../../../src/architecture/Connection";
+import {Network} from "../../../src/architecture/Network";
 import {Node} from "../../../src/architecture/Node";
+import {AddConnectionMutation, AddGateMutation, AddNodeMutation, SubGateMutation} from "../../../src/methods/Mutation";
+import {randInt} from "../../../src/methods/Utils";
 
 describe('Network', () => {
     function createTestNetwork(): Network {
@@ -219,7 +219,10 @@ describe('Network', () => {
             ];
 
             const initial: number = network.test(dataset);
-            const trainReturn: { error: number; iterations: number; time: number } = network.train(dataset, {iterations: 50});
+            const trainReturn: { error: number; iterations: number; time: number } = network.train({
+                iterations: 50,
+                dataset
+            });
             const final: number = network.test(dataset);
 
             expect(trainReturn.error).to.be.a('number');
@@ -252,7 +255,10 @@ describe('Network', () => {
             ];
 
             const initial: number = network.test(dataset);
-            const evolveReturn: { error: number; iterations: number; time: number } = await network.evolve(dataset, {iterations: 100});
+            const evolveReturn: { error: number; iterations: number; time: number } = await network.evolve({
+                iterations: 50,
+                dataset
+            });
             const final: number = network.test(dataset);
 
             expect(evolveReturn.error).to.be.a('number');
