@@ -60,6 +60,28 @@ class MSELoss extends Loss {
 }
 
 /**
+ * Mean Bias Error
+ *
+ * @param targets Ideal value
+ * @param outputs Actual values
+ *
+ * @return [Mean bias error](https://towardsdatascience.com/common-loss-functions-in-machine-learning-46af0ffc4d23)
+ *
+ * @example
+ * let myNetwork = new Network(5, 5);
+ * myNetwork.train(trainingData, { loss: new MSELoss() });
+ */
+class MBELoss extends Loss {
+    public calc(targets: number[], outputs: number[]): number {
+        let error: number = 0;
+        outputs.forEach(((value, index) => {
+            error += (targets[index] - value);
+        }));
+        return error / outputs.length;
+    }
+}
+
+/**
  * Binary Error
  *
  * @param targets Ideal value
@@ -228,6 +250,7 @@ class HINGELoss extends Loss {
 const ALL_LOSSES: Loss[] = [
     new CrossEntropyLoss(),
     new MSELoss(),
+    new MBELoss(),
     new BinaryLoss(),
     new MAELoss(),
     new MAPELoss(),
@@ -241,6 +264,7 @@ export {
     Loss,
     CrossEntropyLoss,
     MSELoss,
+    MBELoss,
     BinaryLoss,
     MAELoss,
     MAPELoss,
