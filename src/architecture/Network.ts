@@ -1,17 +1,17 @@
-import {Connection} from "./Connection";
-import {getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../methods/Utils";
-import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
-import {ALL_LOSSES, Loss, MSELoss} from "../methods/Loss";
-import {FixedRate} from "../methods/Rate";
-import {NEAT} from "../NEAT";
 import {Pool, spawn, Worker} from "threads";
 import "threads/register";
 import {ActivationType} from "../enums/ActivationType";
-import {NetworkJSON} from "../interfaces/NetworkJSON";
 import {NodeType} from "../enums/NodeType";
 import {ConnectionJSON} from "../interfaces/ConnectionJSON";
-import {TrainOptions} from "../interfaces/TrainOptions";
 import {EvolveOptions} from "../interfaces/EvolveOptions";
+import {NetworkJSON} from "../interfaces/NetworkJSON";
+import {TrainOptions} from "../interfaces/TrainOptions";
+import {ALL_LOSSES, Loss, MSELoss} from "../methods/Loss";
+import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
+import {FixedRate} from "../methods/Rate";
+import {getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../methods/Utils";
+import {NEAT} from "../NEAT";
+import {Connection} from "./Connection";
 import {Node} from "./Node";
 
 /**
@@ -675,8 +675,8 @@ export class Network {
      * });
      *
      */
-    public train(dataset: { input: number[], output: number[] }[], options: TrainOptions = {}): { error: number, iterations: number, time: number } {
-        if (dataset[0].input.length !== this.inputSize || dataset[0].output.length !== this.outputSize) {
+    public train(options: TrainOptions): { error: number, iterations: number, time: number } {
+        if (!options.dataset || options.dataset[0].input.length !== this.inputSize || options.dataset[0].output.length !== this.outputSize) {
             throw new Error(`Dataset input/output size should be same as network input/output size!`);
         }
 
@@ -686,7 +686,7 @@ export class Network {
         options.loss = getOrDefault(options.loss, new MSELoss());
         options.dropout = getOrDefault(options.dropout, 0);
         options.momentum = getOrDefault(options.momentum, 0);
-        options.batchSize = Math.min(dataset.length, getOrDefault(options.batchSize, dataset.length));
+        options.batchSize = Math.min(options.dataset.length, getOrDefault(options.batchSize, options.dataset.length));
         const baseRate: number = getOrDefault(options.rate, 0.3);
         options.ratePolicy = getOrDefault(options.ratePolicy, new FixedRate(baseRate));
         options.log = getOrDefault(options.log, NaN);
@@ -702,11 +702,11 @@ export class Network {
         let trainingSet: { input: number[]; output: number[] }[];
         let testSet: { input: number[]; output: number[] }[];
         if (options.crossValidateTestSize && options.crossValidateTestSize > 0) {
-            trainingSetSize = Math.ceil((1 - options.crossValidateTestSize) * dataset.length);
-            trainingSet = dataset.slice(0, trainingSetSize);
-            testSet = dataset.slice(trainingSetSize);
+            trainingSetSize = Math.ceil((1 - options.crossValidateTestSize) * options.dataset.length);
+            trainingSet = options.dataset.slice(0, trainingSetSize);
+            testSet = options.dataset.slice(trainingSetSize);
         } else {
-            trainingSet = dataset;
+            trainingSet = options.dataset;
             testSet = [];
         }
 
@@ -746,7 +746,7 @@ export class Network {
             }
 
             if (options.shuffle ?? false) {
-                shuffle(dataset);
+                shuffle(options.dataset);
             }
 
             if (options.log > 0 && iterationCount % options.log === 0) {
@@ -959,8 +959,8 @@ export class Network {
      *
      * execute();
      */
-    public async evolve(dataset: { input: number[], output: number[] }[], options: EvolveOptions = {}): Promise<{ error: number, iterations: number, time: number }> {
-        if (dataset[0].input.length !== this.inputSize || dataset[0].output.length !== this.outputSize) {
+    public async evolve(options: EvolveOptions = {}): Promise<{ error: number, iterations: number, time: number }> {
+        if (!options.fitnessFunction && options.dataset && (options.dataset[0].input.length !== this.inputSize || options.dataset[0].output.length !== this.outputSize)) {
             throw new Error(`Dataset input/output size should be same as network input/output size!`);
         }
 
@@ -986,9 +986,6 @@ export class Network {
 
         const start: number = Date.now();
 
-        // Serialize the dataset using JSON
-        const serializedDataSet: string = JSON.stringify(dataset);
-
         // TODO: should not ignore this
         // @ts-ignore
         let workerPool: Pool;
@@ -997,10 +994,13 @@ export class Network {
             // if no fitness function is given
             // create default one
 
+            // Serialize the dataset using JSON
+            const serializedDataSet: string = JSON.stringify(options.dataset);
+
             // init a pool of workers
             workerPool = Pool(() => spawn(new Worker("../multithreading/Worker")), options.threads);
 
-            options.fitnessFunction = async function (dataset: { input: number[], output: number[] }[], population: Network[]): Promise<void> {
+            options.fitnessFunction = async function (population: Network[]): Promise<void> {
                 for (const genome of population) {
                     // add a task to the workerPool's queue
 
@@ -1033,7 +1033,7 @@ export class Network {
         }
         options.template = this; // set this network as template for first generation
 
-        const neat: NEAT = new NEAT(dataset, options);
+        const neat: NEAT = new NEAT(options);
 
         let error: number = -Infinity;
         let bestFitness: number = -Infinity;

@@ -1,10 +1,11 @@
-import {Mutation} from "../methods/Mutation";
-import {ActivationType} from "../enums/ActivationType";
-import {Selection} from "../methods/Selection";
-import {Loss} from "../methods/Loss";
 import {Network} from "../architecture/Network";
+import {ActivationType} from "../enums/ActivationType";
+import {Loss} from "../methods/Loss";
+import {Mutation} from "../methods/Mutation";
+import {Selection} from "../methods/Selection";
 
 export interface EvolveOptions {
+    dataset?: { input: number[], output: number[] }[];
     threads?: number;
     generation?: number;
     template?: Network;
@@ -16,7 +17,7 @@ export interface EvolveOptions {
     provenance?: number;
     elitism?: number;
     populationSize?: number;
-    fitnessFunction?: (dataset: { input: number[], output: number[] }[], population: Network[]) => Promise<void>;
+    fitnessFunction?: (population: Network[], dataset?: { input: number[], output: number[] }[]) => Promise<void>;
     growth?: number;
     loss?: Loss;
     amount?: number;
@@ -30,7 +31,3 @@ export interface EvolveOptions {
     error?: number;
     iterations?: number;
 }
-
-
-
-
