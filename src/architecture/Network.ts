@@ -1,12 +1,10 @@
-import {Pool, spawn, Worker} from "threads";
-import "threads/register";
 import {ActivationType} from "../enums/ActivationType";
 import {NodeType} from "../enums/NodeType";
 import {ConnectionJSON} from "../interfaces/ConnectionJSON";
 import {EvolveOptions} from "../interfaces/EvolveOptions";
 import {NetworkJSON} from "../interfaces/NetworkJSON";
 import {TrainOptions} from "../interfaces/TrainOptions";
-import {ALL_LOSSES, Loss, MSELoss} from "../methods/Loss";
+import {Loss, MSELoss} from "../methods/Loss";
 import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
 import {FixedRate} from "../methods/Rate";
 import {getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../methods/Utils";
@@ -879,9 +877,8 @@ export class Network {
      *
      * @function evolve
      * @memberof Network
-     *
-     * @param {Array<{input:number[],output:number[]}>} dataset A set of input values and ideal output values to train the network with
      * @param {object} [options] Configuration options
+     * @param {Array<{input:number[],output:number[]}>} [options.dataset] A set of input values and ideal output values to train the network with
      * @param {number} [options.iterations=1000] Set the maximum amount of iterations/generations for the algorithm to run.
      * @param {number} [options.error=0.05] Set the target error. The algorithm will stop once this target error has been reached.
      * @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connectoins.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
@@ -986,32 +983,20 @@ export class Network {
 
         const start: number = Date.now();
 
-        // TODO: should not ignore this
-        // @ts-ignore
-        let workerPool: Pool;
-
         if (!options.fitnessFunction) {
             // if no fitness function is given
             // create default one
 
-            // Serialize the dataset using JSON
-            const serializedDataSet: string = JSON.stringify(options.dataset);
-
-            // init a pool of workers
-            workerPool = Pool(() => spawn(new Worker("../multithreading/Worker")), options.threads);
-
             options.fitnessFunction = async function (population: Network[]): Promise<void> {
+                const promises: Promise<void>[] = [];
                 for (const genome of population) {
-                    // add a task to the workerPool's queue
-
-                    // TODO: should not ignore this
-                    // @ts-ignore
-                    workerPool.queue(async test => {
-                        if (genome === undefined) {
+                    promises.push(new Promise<void>(((resolve, reject) => {
+                        if (!genome || !options.dataset) {
+                            reject();
                             return;
                         }
                         // test the genome
-                        genome.score = -await test(serializedDataSet, JSON.stringify(genome.toJSON()), ALL_LOSSES.indexOf(options.loss ?? new MSELoss()));
+                        genome.score = -genome.test(options.dataset, options.loss ?? new MSELoss());
                         if (genome.score === undefined) {
                             genome.score = -Infinity;
                             return;
@@ -1025,10 +1010,10 @@ export class Network {
                             + genome.connections.length
                             + genome.gates.length
                         );
-                    });
+                        resolve();
+                    })));
                 }
-
-                await workerPool.settled(); // wait until every task is done
+                await Promise.all(promises);
             };
         }
         options.template = this; // set this network as template for first generation
@@ -1075,10 +1060,6 @@ export class Network {
             if (options.clear) {
                 this.clear();
             }
-        }
-
-        if (workerPool) {
-            workerPool.terminate(); // stop all processes
         }
 
         return {

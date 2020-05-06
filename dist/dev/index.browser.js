@@ -230,7 +230,7 @@ function () {
             return conn.to;
           })));
 
-          var _loop_1 = function _loop_1(i) {
+          var _loop_1 = function (i) {
             var node = toNodes[i];
             var gateNode = nodes[i % nodes.length];
             node.incoming.filter(function (conn) {
@@ -272,7 +272,7 @@ function () {
             return conn.from;
           })));
 
-          var _loop_2 = function _loop_2(i) {
+          var _loop_2 = function (i) {
             var node = fromNodes[i];
             var gateNode = nodes[i % nodes.length];
             node.outgoing.filter(function (conn) {
@@ -292,14 +292,6 @@ function () {
     }
 
     return gatedConnections;
-  };
-
-  Layer.prototype.getDefaultIncomingConnectionType = function () {
-    return ConnectionType_1.ConnectionType.ALL_TO_ALL;
-  };
-
-  Layer.prototype.connectionTypeisAllowed = function (type) {
-    return true;
   };
 
   return Layer;
@@ -558,22 +550,20 @@ var NoiseNodeType;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -2821,22 +2811,20 @@ exports.Node = Node;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -2857,6 +2845,8 @@ var Node_1 = require("../../Node");
 var ActivationType_1 = require("../../../enums/ActivationType");
 
 var NodeType_1 = require("../../../enums/NodeType");
+
+var ConnectionType_1 = require("../../../enums/ConnectionType");
 
 var DenseLayer =
 /** @class */
@@ -2887,30 +2877,36 @@ function (_super) {
     return _this;
   }
 
+  DenseLayer.prototype.connectionTypeisAllowed = function (type) {
+    return true;
+  };
+
+  DenseLayer.prototype.getDefaultIncomingConnectionType = function () {
+    return ConnectionType_1.ConnectionType.ALL_TO_ALL;
+  };
+
   return DenseLayer;
 }(Layer_1.Layer);
 
 exports.DenseLayer = DenseLayer;
-},{"../Layer":"../src/architecture/Layers/Layer.js","../../Node":"../src/architecture/Node.js","../../../enums/ActivationType":"../src/enums/ActivationType.js","../../../enums/NodeType":"../src/enums/NodeType.js"}],"../src/architecture/Nodes/ConstantNode.js":[function(require,module,exports) {
+},{"../Layer":"../src/architecture/Layers/Layer.js","../../Node":"../src/architecture/Node.js","../../../enums/ActivationType":"../src/enums/ActivationType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../enums/ConnectionType":"../src/enums/ConnectionType.js"}],"../src/architecture/Nodes/ConstantNode.js":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -2987,22 +2983,20 @@ exports.ConstantNode = ConstantNode;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -3116,22 +3110,20 @@ exports.DropoutNode = DropoutNode;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -3199,22 +3191,20 @@ exports.DropoutLayer = DropoutLayer;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -3228,11 +3218,11 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var NodeType_1 = require("../../enums/NodeType");
+
 var Utils_1 = require("../../methods/Utils");
 
 var ConstantNode_1 = require("./ConstantNode");
-
-var NodeType_1 = require("../../enums/NodeType");
 
 var NoiseNode =
 /** @class */
@@ -3312,26 +3302,24 @@ function (_super) {
 }(ConstantNode_1.ConstantNode);
 
 exports.NoiseNode = NoiseNode;
-},{"../../methods/Utils":"../src/methods/Utils.js","./ConstantNode":"../src/architecture/Nodes/ConstantNode.js","../../enums/NodeType":"../src/enums/NodeType.js"}],"../src/architecture/Layers/NoiseLayers/NoiseLayer.js":[function(require,module,exports) {
+},{"../../enums/NodeType":"../src/enums/NodeType.js","../../methods/Utils":"../src/methods/Utils.js","./ConstantNode":"../src/architecture/Nodes/ConstantNode.js"}],"../src/architecture/Layers/NoiseLayers/NoiseLayer.js":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -3403,22 +3391,20 @@ exports.NoiseLayer = NoiseLayer;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -3439,6 +3425,8 @@ var Node_1 = require("../../Node");
 var NodeType_1 = require("../../../enums/NodeType");
 
 var ActivationType_1 = require("../../../enums/ActivationType");
+
+var ConnectionType_1 = require("../../../enums/ConnectionType");
 
 var OutputLayer =
 /** @class */
@@ -3471,30 +3459,36 @@ function (_super) {
     throw new ReferenceError("Could not connect an OutputLayer!");
   };
 
+  OutputLayer.prototype.connectionTypeisAllowed = function (type) {
+    return true;
+  };
+
+  OutputLayer.prototype.getDefaultIncomingConnectionType = function () {
+    return ConnectionType_1.ConnectionType.ALL_TO_ALL;
+  };
+
   return OutputLayer;
 }(Layer_1.Layer);
 
 exports.OutputLayer = OutputLayer;
-},{"../Layer":"../src/architecture/Layers/Layer.js","../../Node":"../src/architecture/Node.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../enums/ActivationType":"../src/enums/ActivationType.js"}],"../src/architecture/Layers/CoreLayers/InputLayer.js":[function(require,module,exports) {
+},{"../Layer":"../src/architecture/Layers/Layer.js","../../Node":"../src/architecture/Node.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../enums/ActivationType":"../src/enums/ActivationType.js","../../../enums/ConnectionType":"../src/enums/ConnectionType.js"}],"../src/architecture/Layers/CoreLayers/InputLayer.js":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -3572,22 +3566,20 @@ exports.InputLayer = InputLayer;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -3719,22 +3711,20 @@ exports.PoolNode = PoolNode;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -3765,6 +3755,10 @@ function (_super) {
     return ConnectionType_1.ConnectionType.POOLING;
   };
 
+  PoolingLayer.prototype.connectionTypeisAllowed = function (type) {
+    return true;
+  };
+
   return PoolingLayer;
 }(Layer_1.Layer);
 
@@ -3773,22 +3767,20 @@ exports.PoolingLayer = PoolingLayer;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -3847,22 +3839,20 @@ exports.AvgPooling1DLayer = AvgPooling1DLayer;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -3921,22 +3911,20 @@ exports.MinPooling1DLayer = MinPooling1DLayer;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -3995,22 +3983,20 @@ exports.MaxPooling1DLayer = MaxPooling1DLayer;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -4047,22 +4033,20 @@ exports.GlobalAvgPooling1DLayer = GlobalAvgPooling1DLayer;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -4099,22 +4083,20 @@ exports.GlobalMaxPooling1DLayer = GlobalMaxPooling1DLayer;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -4151,22 +4133,20 @@ exports.GlobalMinPooling1DLayer = GlobalMinPooling1DLayer;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -4282,6 +4262,14 @@ function (_super) {
     return _this;
   }
 
+  GRULayer.prototype.connectionTypeisAllowed = function (type) {
+    return true;
+  };
+
+  GRULayer.prototype.getDefaultIncomingConnectionType = function () {
+    return ConnectionType_1.ConnectionType.ALL_TO_ALL;
+  };
+
   return GRULayer;
 }(Layer_1.Layer);
 
@@ -4290,22 +4278,20 @@ exports.GRULayer = GRULayer;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -4415,6 +4401,14 @@ function (_super) {
     return _this;
   }
 
+  LSTMLayer.prototype.connectionTypeisAllowed = function (type) {
+    return true;
+  };
+
+  LSTMLayer.prototype.getDefaultIncomingConnectionType = function () {
+    return ConnectionType_1.ConnectionType.ALL_TO_ALL;
+  };
+
   return LSTMLayer;
 }(Layer_1.Layer);
 
@@ -4423,22 +4417,20 @@ exports.LSTMLayer = LSTMLayer;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -4519,6 +4511,14 @@ function (_super) {
     return _this;
   }
 
+  MemoryLayer.prototype.connectionTypeisAllowed = function (type) {
+    return true;
+  };
+
+  MemoryLayer.prototype.getDefaultIncomingConnectionType = function () {
+    return ConnectionType_1.ConnectionType.ALL_TO_ALL;
+  };
+
   return MemoryLayer;
 }(Layer_1.Layer);
 
@@ -4527,22 +4527,20 @@ exports.MemoryLayer = MemoryLayer;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -4885,22 +4883,20 @@ exports.ALL_LOSSES = ALL_LOSSES;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -5152,22 +5148,20 @@ exports.InverseRate = InverseRate;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
 
-    return _extendStatics(d, b);
+    return extendStatics(d, b);
   };
 
   return function (d, b) {
-    _extendStatics(d, b);
+    extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -5413,7 +5407,7 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
 var __generator = this && this.__generator || function (thisArg, body) {
   var _ = {
     label: 0,
-    sent: function sent() {
+    sent: function () {
       if (t[0] & 1) throw t[1];
       return t[1];
     },
@@ -5441,76 +5435,74 @@ var __generator = this && this.__generator || function (thisArg, body) {
   function step(op) {
     if (f) throw new TypeError("Generator is already executing.");
 
-    while (_) {
-      try {
-        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-        if (y = 0, t) op = [op[0] & 2, t.value];
+    while (_) try {
+      if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+      if (y = 0, t) op = [op[0] & 2, t.value];
 
-        switch (op[0]) {
-          case 0:
-          case 1:
+      switch (op[0]) {
+        case 0:
+        case 1:
+          t = op;
+          break;
+
+        case 4:
+          _.label++;
+          return {
+            value: op[1],
+            done: false
+          };
+
+        case 5:
+          _.label++;
+          y = op[1];
+          op = [0];
+          continue;
+
+        case 7:
+          op = _.ops.pop();
+
+          _.trys.pop();
+
+          continue;
+
+        default:
+          if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+            _ = 0;
+            continue;
+          }
+
+          if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+            _.label = op[1];
+            break;
+          }
+
+          if (op[0] === 6 && _.label < t[1]) {
+            _.label = t[1];
             t = op;
             break;
+          }
 
-          case 4:
-            _.label++;
-            return {
-              value: op[1],
-              done: false
-            };
+          if (t && _.label < t[2]) {
+            _.label = t[2];
 
-          case 5:
-            _.label++;
-            y = op[1];
-            op = [0];
-            continue;
+            _.ops.push(op);
 
-          case 7:
-            op = _.ops.pop();
+            break;
+          }
 
-            _.trys.pop();
+          if (t[2]) _.ops.pop();
 
-            continue;
+          _.trys.pop();
 
-          default:
-            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-              _ = 0;
-              continue;
-            }
-
-            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-              _.label = op[1];
-              break;
-            }
-
-            if (op[0] === 6 && _.label < t[1]) {
-              _.label = t[1];
-              t = op;
-              break;
-            }
-
-            if (t && _.label < t[2]) {
-              _.label = t[2];
-
-              _.ops.push(op);
-
-              break;
-            }
-
-            if (t[2]) _.ops.pop();
-
-            _.trys.pop();
-
-            continue;
-        }
-
-        op = body.call(thisArg, _);
-      } catch (e) {
-        op = [6, e];
-        y = 0;
-      } finally {
-        f = t = 0;
+          continue;
       }
+
+      op = body.call(thisArg, _);
+    } catch (e) {
+      op = [6, e];
+      y = 0;
+    } finally {
+      f = t = 0;
     }
 
     if (op[0] & 5) throw op[1];
@@ -5522,15 +5514,9 @@ var __generator = this && this.__generator || function (thisArg, body) {
 };
 
 var __spreadArrays = this && this.__spreadArrays || function () {
-  for (var s = 0, i = 0, il = arguments.length; i < il; i++) {
-    s += arguments[i].length;
-  }
+  for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
 
-  for (var r = Array(s), k = 0, i = 0; i < il; i++) {
-    for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) {
-      r[k] = a[j];
-    }
-  }
+  for (var r = Array(s), k = 0, i = 0; i < il; i++) for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) r[k] = a[j];
 
   return r;
 };
@@ -5541,13 +5527,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var Network_1 = require("./architecture/Network");
 
-var Utils_1 = require("./methods/Utils");
-
-var Selection_1 = require("./methods/Selection");
+var Activation_1 = require("./methods/Activation");
 
 var Mutation_1 = require("./methods/Mutation");
 
-var Activation_1 = require("./methods/Activation");
+var Selection_1 = require("./methods/Selection");
+
+var Utils_1 = require("./methods/Utils");
 /**
  * Runs the NEAT algorithm on group of neural networks.
  *
@@ -5596,19 +5582,19 @@ var Activation_1 = require("./methods/Activation");
 var NEAT =
 /** @class */
 function () {
-  function NEAT(dataset, options) {
+  function NEAT(options) {
     if (options === void 0) {
       options = {};
     }
 
-    if (dataset.length === 0) {
-      throw new ReferenceError("No dataset given !");
+    if (!options.fitnessFunction) {
+      throw new ReferenceError("No fitness function given!");
     }
 
-    this.dataset = dataset;
+    this.dataset = options.dataset;
+    this.input = options.dataset && options.dataset.length > 0 ? options.dataset[0].input.length : 0;
+    this.output = options.dataset && options.dataset.length > 0 ? options.dataset[0].output.length : 0;
     this.generation = Utils_1.getOrDefault(options.generation, 0);
-    this.input = dataset[0].input.length;
-    this.output = dataset[0].output.length;
     this.equal = Utils_1.getOrDefault(options.equal, true);
     this.clear = Utils_1.getOrDefault(options.clear, false);
     this.populationSize = Utils_1.getOrDefault(options.populationSize, 50);
@@ -5616,7 +5602,6 @@ function () {
     this.provenance = Utils_1.getOrDefault(options.provenance, 0);
     this.mutationRate = Utils_1.getOrDefault(options.mutationRate, 0.6);
     this.mutationAmount = Utils_1.getOrDefault(options.mutationAmount, 5);
-    if (!options.fitnessFunction) throw new ReferenceError("No fitness function given");
     this.fitnessFunction = options.fitnessFunction;
     this.selection = Utils_1.getOrDefault(options.selection, new Selection_1.FitnessProportionateSelection());
     this.mutations = Utils_1.getOrDefault(options.mutations, Mutation_1.FEEDFORWARD_MUTATIONS);
@@ -5715,7 +5700,7 @@ function () {
             , 2];
             return [4
             /*yield*/
-            , this.evaluate(this.dataset)];
+            , this.evaluate()];
 
           case 1:
             _b.sent();
@@ -5751,7 +5736,7 @@ function () {
 
             return [4
             /*yield*/
-            , this.evaluate(this.dataset)];
+            , this.evaluate()];
 
           case 3:
             // evaluate the population
@@ -5833,7 +5818,7 @@ function () {
    */
 
 
-  NEAT.prototype.evaluate = function (dataset) {
+  NEAT.prototype.evaluate = function () {
     return __awaiter(this, void 0, void 0, function () {
       return __generator(this, function (_a) {
         switch (_a.label) {
@@ -5846,7 +5831,7 @@ function () {
 
             return [4
             /*yield*/
-            , this.fitnessFunction(dataset, this.population)];
+            , this.fitnessFunction(this.population, this.dataset)];
 
           case 1:
             _a.sent(); // Sort the population in order of fitness
@@ -5887,7 +5872,7 @@ function () {
             , 2];
             return [4
             /*yield*/
-            , this.evaluate(this.dataset)];
+            , this.evaluate()];
 
           case 1:
             _a.sent();
@@ -5921,7 +5906,7 @@ function () {
             , 2];
             return [4
             /*yield*/
-            , this.evaluate(this.dataset)];
+            , this.evaluate()];
 
           case 1:
             _a.sent();
@@ -5957,5112 +5942,7 @@ function () {
 }();
 
 exports.NEAT = NEAT;
-},{"./architecture/Network":"../src/architecture/Network.js","./methods/Utils":"../src/methods/Utils.js","./methods/Selection":"../src/methods/Selection.js","./methods/Mutation":"../src/methods/Mutation.js","./methods/Activation":"../src/methods/Activation.js"}],"../../node_modules/threads/dist-esm/serializers.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.extendSerializer = extendSerializer;
-exports.DefaultSerializer = void 0;
-
-function extendSerializer(extend, implementation) {
-  const fallbackDeserializer = extend.deserialize.bind(extend);
-  const fallbackSerializer = extend.serialize.bind(extend);
-  return {
-    deserialize(message) {
-      return implementation.deserialize(message, fallbackDeserializer);
-    },
-
-    serialize(input) {
-      return implementation.serialize(input, fallbackSerializer);
-    }
-
-  };
-}
-
-const DefaultErrorSerializer = {
-  deserialize(message) {
-    return Object.assign(Error(message.message), {
-      name: message.name,
-      stack: message.stack
-    });
-  },
-
-  serialize(error) {
-    return {
-      __error_marker: "$$error",
-      message: error.message,
-      name: error.name,
-      stack: error.stack
-    };
-  }
-
-};
-
-const isSerializedError = thing => thing && typeof thing === "object" && "__error_marker" in thing && thing.__error_marker === "$$error";
-
-const DefaultSerializer = {
-  deserialize(message) {
-    if (isSerializedError(message)) {
-      return DefaultErrorSerializer.deserialize(message);
-    } else {
-      return message;
-    }
-  },
-
-  serialize(input) {
-    if (input instanceof Error) {
-      return DefaultErrorSerializer.serialize(input);
-    } else {
-      return input;
-    }
-  }
-
-};
-exports.DefaultSerializer = DefaultSerializer;
-},{}],"../../node_modules/threads/dist-esm/common.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.registerSerializer = registerSerializer;
-exports.deserialize = deserialize;
-exports.serialize = serialize;
-
-var _serializers = require("./serializers");
-
-let registeredSerializer = _serializers.DefaultSerializer;
-
-function registerSerializer(serializer) {
-  registeredSerializer = (0, _serializers.extendSerializer)(registeredSerializer, serializer);
-}
-
-function deserialize(message) {
-  return registeredSerializer.deserialize(message);
-}
-
-function serialize(input) {
-  return registeredSerializer.serialize(input);
-}
-},{"./serializers":"../../node_modules/threads/dist-esm/serializers.js"}],"../../node_modules/threads/dist-esm/master/get-bundle-url.browser.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.getBaseURL = getBaseURL;
-exports.getBundleURL = getBundleURLCached;
-// Source: <https://github.com/parcel-bundler/parcel/blob/master/packages/core/parcel-bundler/src/builtins/bundle-url.js>
-let bundleURL;
-
-function getBundleURLCached() {
-  if (!bundleURL) {
-    bundleURL = getBundleURL();
-  }
-
-  return bundleURL;
-}
-
-function getBundleURL() {
-  // Attempt to find the URL of the current script and use that as the base URL
-  try {
-    throw new Error();
-  } catch (err) {
-    const matches = ("" + err.stack).match(/(https?|file|ftp|chrome-extension|moz-extension):\/\/[^)\n]+/g);
-
-    if (matches) {
-      return getBaseURL(matches[0]);
-    }
-  }
-
-  return "/";
-}
-
-function getBaseURL(url) {
-  return ("" + url).replace(/^((?:https?|file|ftp|chrome-extension|moz-extension):\/\/.+)?\/[^/]+(?:\?.*)?$/, '$1') + '/';
-}
-},{}],"../../node_modules/threads/dist-esm/master/implementation.browser.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.selectWorkerImplementation = selectWorkerImplementation;
-exports.defaultPoolSize = void 0;
-
-var _getBundleUrl = require("./get-bundle-url.browser");
-
-// tslint:disable max-classes-per-file
-const defaultPoolSize = typeof navigator !== "undefined" && navigator.hardwareConcurrency ? navigator.hardwareConcurrency : 4;
-exports.defaultPoolSize = defaultPoolSize;
-
-const isAbsoluteURL = value => /^(file|https?:)?\/\//i.test(value);
-
-function createSourceBlobURL(code) {
-  const blob = new Blob([code], {
-    type: "application/javascript"
-  });
-  return URL.createObjectURL(blob);
-}
-
-function selectWorkerImplementation() {
-  if (typeof Worker === "undefined") {
-    // Might happen on Safari, for instance
-    // The idea is to only fail if the constructor is actually used
-    return class NoWebWorker {
-      constructor() {
-        throw Error("No web worker implementation available. You might have tried to spawn a worker within a worker in a browser that doesn't support workers in workers.");
-      }
-
-    };
-  }
-
-  return class WebWorker extends Worker {
-    constructor(url, options) {
-      if (typeof url === "string" && options && options._baseURL) {
-        url = new URL(url, options._baseURL);
-      } else if (typeof url === "string" && !isAbsoluteURL(url) && (0, _getBundleUrl.getBundleURL)().match(/^file:\/\//i)) {
-        url = new URL(url, (0, _getBundleUrl.getBundleURL)().replace(/\/[^\/]+$/, "/"));
-        url = createSourceBlobURL(`importScripts(${JSON.stringify(url)});`);
-      }
-
-      if (typeof url === "string" && isAbsoluteURL(url)) {
-        // Create source code blob loading JS file via `importScripts()`
-        // to circumvent worker CORS restrictions
-        url = createSourceBlobURL(`importScripts(${JSON.stringify(url)});`);
-      }
-
-      super(url, options);
-    }
-
-  };
-}
-},{"./get-bundle-url.browser":"../../node_modules/threads/dist-esm/master/get-bundle-url.browser.js"}],"../../node_modules/ms/index.js":[function(require,module,exports) {
-/**
- * Helpers.
- */
-
-var s = 1000;
-var m = s * 60;
-var h = m * 60;
-var d = h * 24;
-var w = d * 7;
-var y = d * 365.25;
-
-/**
- * Parse or format the given `val`.
- *
- * Options:
- *
- *  - `long` verbose formatting [false]
- *
- * @param {String|Number} val
- * @param {Object} [options]
- * @throws {Error} throw an error if val is not a non-empty string or a number
- * @return {String|Number}
- * @api public
- */
-
-module.exports = function(val, options) {
-  options = options || {};
-  var type = typeof val;
-  if (type === 'string' && val.length > 0) {
-    return parse(val);
-  } else if (type === 'number' && isNaN(val) === false) {
-    return options.long ? fmtLong(val) : fmtShort(val);
-  }
-  throw new Error(
-    'val is not a non-empty string or a valid number. val=' +
-      JSON.stringify(val)
-  );
-};
-
-/**
- * Parse the given `str` and return milliseconds.
- *
- * @param {String} str
- * @return {Number}
- * @api private
- */
-
-function parse(str) {
-  str = String(str);
-  if (str.length > 100) {
-    return;
-  }
-  var match = /^((?:\d+)?\-?\d?\.?\d+) *(milliseconds?|msecs?|ms|seconds?|secs?|s|minutes?|mins?|m|hours?|hrs?|h|days?|d|weeks?|w|years?|yrs?|y)?$/i.exec(
-    str
-  );
-  if (!match) {
-    return;
-  }
-  var n = parseFloat(match[1]);
-  var type = (match[2] || 'ms').toLowerCase();
-  switch (type) {
-    case 'years':
-    case 'year':
-    case 'yrs':
-    case 'yr':
-    case 'y':
-      return n * y;
-    case 'weeks':
-    case 'week':
-    case 'w':
-      return n * w;
-    case 'days':
-    case 'day':
-    case 'd':
-      return n * d;
-    case 'hours':
-    case 'hour':
-    case 'hrs':
-    case 'hr':
-    case 'h':
-      return n * h;
-    case 'minutes':
-    case 'minute':
-    case 'mins':
-    case 'min':
-    case 'm':
-      return n * m;
-    case 'seconds':
-    case 'second':
-    case 'secs':
-    case 'sec':
-    case 's':
-      return n * s;
-    case 'milliseconds':
-    case 'millisecond':
-    case 'msecs':
-    case 'msec':
-    case 'ms':
-      return n;
-    default:
-      return undefined;
-  }
-}
-
-/**
- * Short format for `ms`.
- *
- * @param {Number} ms
- * @return {String}
- * @api private
- */
-
-function fmtShort(ms) {
-  var msAbs = Math.abs(ms);
-  if (msAbs >= d) {
-    return Math.round(ms / d) + 'd';
-  }
-  if (msAbs >= h) {
-    return Math.round(ms / h) + 'h';
-  }
-  if (msAbs >= m) {
-    return Math.round(ms / m) + 'm';
-  }
-  if (msAbs >= s) {
-    return Math.round(ms / s) + 's';
-  }
-  return ms + 'ms';
-}
-
-/**
- * Long format for `ms`.
- *
- * @param {Number} ms
- * @return {String}
- * @api private
- */
-
-function fmtLong(ms) {
-  var msAbs = Math.abs(ms);
-  if (msAbs >= d) {
-    return plural(ms, msAbs, d, 'day');
-  }
-  if (msAbs >= h) {
-    return plural(ms, msAbs, h, 'hour');
-  }
-  if (msAbs >= m) {
-    return plural(ms, msAbs, m, 'minute');
-  }
-  if (msAbs >= s) {
-    return plural(ms, msAbs, s, 'second');
-  }
-  return ms + ' ms';
-}
-
-/**
- * Pluralization helper.
- */
-
-function plural(ms, msAbs, n, name) {
-  var isPlural = msAbs >= n * 1.5;
-  return Math.round(ms / n) + ' ' + name + (isPlural ? 's' : '');
-}
-
-},{}],"../../node_modules/debug/src/common.js":[function(require,module,exports) {
-
-/**
- * This is the common logic for both the Node.js and web browser
- * implementations of `debug()`.
- */
-
-function setup(env) {
-	createDebug.debug = createDebug;
-	createDebug.default = createDebug;
-	createDebug.coerce = coerce;
-	createDebug.disable = disable;
-	createDebug.enable = enable;
-	createDebug.enabled = enabled;
-	createDebug.humanize = require('ms');
-
-	Object.keys(env).forEach(key => {
-		createDebug[key] = env[key];
-	});
-
-	/**
-	* Active `debug` instances.
-	*/
-	createDebug.instances = [];
-
-	/**
-	* The currently active debug mode names, and names to skip.
-	*/
-
-	createDebug.names = [];
-	createDebug.skips = [];
-
-	/**
-	* Map of special "%n" handling functions, for the debug "format" argument.
-	*
-	* Valid key names are a single, lower or upper-case letter, i.e. "n" and "N".
-	*/
-	createDebug.formatters = {};
-
-	/**
-	* Selects a color for a debug namespace
-	* @param {String} namespace The namespace string for the for the debug instance to be colored
-	* @return {Number|String} An ANSI color code for the given namespace
-	* @api private
-	*/
-	function selectColor(namespace) {
-		let hash = 0;
-
-		for (let i = 0; i < namespace.length; i++) {
-			hash = ((hash << 5) - hash) + namespace.charCodeAt(i);
-			hash |= 0; // Convert to 32bit integer
-		}
-
-		return createDebug.colors[Math.abs(hash) % createDebug.colors.length];
-	}
-	createDebug.selectColor = selectColor;
-
-	/**
-	* Create a debugger with the given `namespace`.
-	*
-	* @param {String} namespace
-	* @return {Function}
-	* @api public
-	*/
-	function createDebug(namespace) {
-		let prevTime;
-
-		function debug(...args) {
-			// Disabled?
-			if (!debug.enabled) {
-				return;
-			}
-
-			const self = debug;
-
-			// Set `diff` timestamp
-			const curr = Number(new Date());
-			const ms = curr - (prevTime || curr);
-			self.diff = ms;
-			self.prev = prevTime;
-			self.curr = curr;
-			prevTime = curr;
-
-			args[0] = createDebug.coerce(args[0]);
-
-			if (typeof args[0] !== 'string') {
-				// Anything else let's inspect with %O
-				args.unshift('%O');
-			}
-
-			// Apply any `formatters` transformations
-			let index = 0;
-			args[0] = args[0].replace(/%([a-zA-Z%])/g, (match, format) => {
-				// If we encounter an escaped % then don't increase the array index
-				if (match === '%%') {
-					return match;
-				}
-				index++;
-				const formatter = createDebug.formatters[format];
-				if (typeof formatter === 'function') {
-					const val = args[index];
-					match = formatter.call(self, val);
-
-					// Now we need to remove `args[index]` since it's inlined in the `format`
-					args.splice(index, 1);
-					index--;
-				}
-				return match;
-			});
-
-			// Apply env-specific formatting (colors, etc.)
-			createDebug.formatArgs.call(self, args);
-
-			const logFn = self.log || createDebug.log;
-			logFn.apply(self, args);
-		}
-
-		debug.namespace = namespace;
-		debug.enabled = createDebug.enabled(namespace);
-		debug.useColors = createDebug.useColors();
-		debug.color = selectColor(namespace);
-		debug.destroy = destroy;
-		debug.extend = extend;
-		// Debug.formatArgs = formatArgs;
-		// debug.rawLog = rawLog;
-
-		// env-specific initialization logic for debug instances
-		if (typeof createDebug.init === 'function') {
-			createDebug.init(debug);
-		}
-
-		createDebug.instances.push(debug);
-
-		return debug;
-	}
-
-	function destroy() {
-		const index = createDebug.instances.indexOf(this);
-		if (index !== -1) {
-			createDebug.instances.splice(index, 1);
-			return true;
-		}
-		return false;
-	}
-
-	function extend(namespace, delimiter) {
-		const newDebug = createDebug(this.namespace + (typeof delimiter === 'undefined' ? ':' : delimiter) + namespace);
-		newDebug.log = this.log;
-		return newDebug;
-	}
-
-	/**
-	* Enables a debug mode by namespaces. This can include modes
-	* separated by a colon and wildcards.
-	*
-	* @param {String} namespaces
-	* @api public
-	*/
-	function enable(namespaces) {
-		createDebug.save(namespaces);
-
-		createDebug.names = [];
-		createDebug.skips = [];
-
-		let i;
-		const split = (typeof namespaces === 'string' ? namespaces : '').split(/[\s,]+/);
-		const len = split.length;
-
-		for (i = 0; i < len; i++) {
-			if (!split[i]) {
-				// ignore empty strings
-				continue;
-			}
-
-			namespaces = split[i].replace(/\*/g, '.*?');
-
-			if (namespaces[0] === '-') {
-				createDebug.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
-			} else {
-				createDebug.names.push(new RegExp('^' + namespaces + '$'));
-			}
-		}
-
-		for (i = 0; i < createDebug.instances.length; i++) {
-			const instance = createDebug.instances[i];
-			instance.enabled = createDebug.enabled(instance.namespace);
-		}
-	}
-
-	/**
-	* Disable debug output.
-	*
-	* @return {String} namespaces
-	* @api public
-	*/
-	function disable() {
-		const namespaces = [
-			...createDebug.names.map(toNamespace),
-			...createDebug.skips.map(toNamespace).map(namespace => '-' + namespace)
-		].join(',');
-		createDebug.enable('');
-		return namespaces;
-	}
-
-	/**
-	* Returns true if the given mode name is enabled, false otherwise.
-	*
-	* @param {String} name
-	* @return {Boolean}
-	* @api public
-	*/
-	function enabled(name) {
-		if (name[name.length - 1] === '*') {
-			return true;
-		}
-
-		let i;
-		let len;
-
-		for (i = 0, len = createDebug.skips.length; i < len; i++) {
-			if (createDebug.skips[i].test(name)) {
-				return false;
-			}
-		}
-
-		for (i = 0, len = createDebug.names.length; i < len; i++) {
-			if (createDebug.names[i].test(name)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	* Convert regexp to namespace
-	*
-	* @param {RegExp} regxep
-	* @return {String} namespace
-	* @api private
-	*/
-	function toNamespace(regexp) {
-		return regexp.toString()
-			.substring(2, regexp.toString().length - 2)
-			.replace(/\.\*\?$/, '*');
-	}
-
-	/**
-	* Coerce `val`.
-	*
-	* @param {Mixed} val
-	* @return {Mixed}
-	* @api private
-	*/
-	function coerce(val) {
-		if (val instanceof Error) {
-			return val.stack || val.message;
-		}
-		return val;
-	}
-
-	createDebug.enable(createDebug.load());
-
-	return createDebug;
-}
-
-module.exports = setup;
-
-},{"ms":"../../node_modules/ms/index.js"}],"../../node_modules/process/browser.js":[function(require,module,exports) {
-
-// shim for using process in browser
-var process = module.exports = {}; // cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-function defaultSetTimout() {
-  throw new Error('setTimeout has not been defined');
-}
-
-function defaultClearTimeout() {
-  throw new Error('clearTimeout has not been defined');
-}
-
-(function () {
-  try {
-    if (typeof setTimeout === 'function') {
-      cachedSetTimeout = setTimeout;
-    } else {
-      cachedSetTimeout = defaultSetTimout;
-    }
-  } catch (e) {
-    cachedSetTimeout = defaultSetTimout;
-  }
-
-  try {
-    if (typeof clearTimeout === 'function') {
-      cachedClearTimeout = clearTimeout;
-    } else {
-      cachedClearTimeout = defaultClearTimeout;
-    }
-  } catch (e) {
-    cachedClearTimeout = defaultClearTimeout;
-  }
-})();
-
-function runTimeout(fun) {
-  if (cachedSetTimeout === setTimeout) {
-    //normal enviroments in sane situations
-    return setTimeout(fun, 0);
-  } // if setTimeout wasn't available but was latter defined
-
-
-  if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
-    cachedSetTimeout = setTimeout;
-    return setTimeout(fun, 0);
-  }
-
-  try {
-    // when when somebody has screwed with setTimeout but no I.E. maddness
-    return cachedSetTimeout(fun, 0);
-  } catch (e) {
-    try {
-      // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-      return cachedSetTimeout.call(null, fun, 0);
-    } catch (e) {
-      // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-      return cachedSetTimeout.call(this, fun, 0);
-    }
-  }
-}
-
-function runClearTimeout(marker) {
-  if (cachedClearTimeout === clearTimeout) {
-    //normal enviroments in sane situations
-    return clearTimeout(marker);
-  } // if clearTimeout wasn't available but was latter defined
-
-
-  if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
-    cachedClearTimeout = clearTimeout;
-    return clearTimeout(marker);
-  }
-
-  try {
-    // when when somebody has screwed with setTimeout but no I.E. maddness
-    return cachedClearTimeout(marker);
-  } catch (e) {
-    try {
-      // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-      return cachedClearTimeout.call(null, marker);
-    } catch (e) {
-      // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-      // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-      return cachedClearTimeout.call(this, marker);
-    }
-  }
-}
-
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-  if (!draining || !currentQueue) {
-    return;
-  }
-
-  draining = false;
-
-  if (currentQueue.length) {
-    queue = currentQueue.concat(queue);
-  } else {
-    queueIndex = -1;
-  }
-
-  if (queue.length) {
-    drainQueue();
-  }
-}
-
-function drainQueue() {
-  if (draining) {
-    return;
-  }
-
-  var timeout = runTimeout(cleanUpNextTick);
-  draining = true;
-  var len = queue.length;
-
-  while (len) {
-    currentQueue = queue;
-    queue = [];
-
-    while (++queueIndex < len) {
-      if (currentQueue) {
-        currentQueue[queueIndex].run();
-      }
-    }
-
-    queueIndex = -1;
-    len = queue.length;
-  }
-
-  currentQueue = null;
-  draining = false;
-  runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-  var args = new Array(arguments.length - 1);
-
-  if (arguments.length > 1) {
-    for (var i = 1; i < arguments.length; i++) {
-      args[i - 1] = arguments[i];
-    }
-  }
-
-  queue.push(new Item(fun, args));
-
-  if (queue.length === 1 && !draining) {
-    runTimeout(drainQueue);
-  }
-}; // v8 likes predictible objects
-
-
-function Item(fun, array) {
-  this.fun = fun;
-  this.array = array;
-}
-
-Item.prototype.run = function () {
-  this.fun.apply(null, this.array);
-};
-
-process.title = 'browser';
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-process.prependListener = noop;
-process.prependOnceListener = noop;
-
-process.listeners = function (name) {
-  return [];
-};
-
-process.binding = function (name) {
-  throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () {
-  return '/';
-};
-
-process.chdir = function (dir) {
-  throw new Error('process.chdir is not supported');
-};
-
-process.umask = function () {
-  return 0;
-};
-},{}],"../../node_modules/debug/src/browser.js":[function(require,module,exports) {
-var process = require("process");
-/* eslint-env browser */
-
-/**
- * This is the web browser implementation of `debug()`.
- */
-exports.log = log;
-exports.formatArgs = formatArgs;
-exports.save = save;
-exports.load = load;
-exports.useColors = useColors;
-exports.storage = localstorage();
-/**
- * Colors.
- */
-
-exports.colors = ['#0000CC', '#0000FF', '#0033CC', '#0033FF', '#0066CC', '#0066FF', '#0099CC', '#0099FF', '#00CC00', '#00CC33', '#00CC66', '#00CC99', '#00CCCC', '#00CCFF', '#3300CC', '#3300FF', '#3333CC', '#3333FF', '#3366CC', '#3366FF', '#3399CC', '#3399FF', '#33CC00', '#33CC33', '#33CC66', '#33CC99', '#33CCCC', '#33CCFF', '#6600CC', '#6600FF', '#6633CC', '#6633FF', '#66CC00', '#66CC33', '#9900CC', '#9900FF', '#9933CC', '#9933FF', '#99CC00', '#99CC33', '#CC0000', '#CC0033', '#CC0066', '#CC0099', '#CC00CC', '#CC00FF', '#CC3300', '#CC3333', '#CC3366', '#CC3399', '#CC33CC', '#CC33FF', '#CC6600', '#CC6633', '#CC9900', '#CC9933', '#CCCC00', '#CCCC33', '#FF0000', '#FF0033', '#FF0066', '#FF0099', '#FF00CC', '#FF00FF', '#FF3300', '#FF3333', '#FF3366', '#FF3399', '#FF33CC', '#FF33FF', '#FF6600', '#FF6633', '#FF9900', '#FF9933', '#FFCC00', '#FFCC33'];
-/**
- * Currently only WebKit-based Web Inspectors, Firefox >= v31,
- * and the Firebug extension (any Firefox version) are known
- * to support "%c" CSS customizations.
- *
- * TODO: add a `localStorage` variable to explicitly enable/disable colors
- */
-// eslint-disable-next-line complexity
-
-function useColors() {
-  // NB: In an Electron preload script, document will be defined but not fully
-  // initialized. Since we know we're in Chrome, we'll just detect this case
-  // explicitly
-  if (typeof window !== 'undefined' && window.process && (window.process.type === 'renderer' || window.process.__nwjs)) {
-    return true;
-  } // Internet Explorer and Edge do not support colors.
-
-
-  if (typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/(edge|trident)\/(\d+)/)) {
-    return false;
-  } // Is webkit? http://stackoverflow.com/a/16459606/376773
-  // document is undefined in react-native: https://github.com/facebook/react-native/pull/1632
-
-
-  return typeof document !== 'undefined' && document.documentElement && document.documentElement.style && document.documentElement.style.WebkitAppearance || // Is firebug? http://stackoverflow.com/a/398120/376773
-  typeof window !== 'undefined' && window.console && (window.console.firebug || window.console.exception && window.console.table) || // Is firefox >= v31?
-  // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
-  typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31 || // Double check webkit in userAgent just in case we are in a worker
-  typeof navigator !== 'undefined' && navigator.userAgent && navigator.userAgent.toLowerCase().match(/applewebkit\/(\d+)/);
-}
-/**
- * Colorize log arguments if enabled.
- *
- * @api public
- */
-
-
-function formatArgs(args) {
-  args[0] = (this.useColors ? '%c' : '') + this.namespace + (this.useColors ? ' %c' : ' ') + args[0] + (this.useColors ? '%c ' : ' ') + '+' + module.exports.humanize(this.diff);
-
-  if (!this.useColors) {
-    return;
-  }
-
-  const c = 'color: ' + this.color;
-  args.splice(1, 0, c, 'color: inherit'); // The final "%c" is somewhat tricky, because there could be other
-  // arguments passed either before or after the %c, so we need to
-  // figure out the correct index to insert the CSS into
-
-  let index = 0;
-  let lastC = 0;
-  args[0].replace(/%[a-zA-Z%]/g, match => {
-    if (match === '%%') {
-      return;
-    }
-
-    index++;
-
-    if (match === '%c') {
-      // We only are interested in the *last* %c
-      // (the user may have provided their own)
-      lastC = index;
-    }
-  });
-  args.splice(lastC, 0, c);
-}
-/**
- * Invokes `console.log()` when available.
- * No-op when `console.log` is not a "function".
- *
- * @api public
- */
-
-
-function log(...args) {
-  // This hackery is required for IE8/9, where
-  // the `console.log` function doesn't have 'apply'
-  return typeof console === 'object' && console.log && console.log(...args);
-}
-/**
- * Save `namespaces`.
- *
- * @param {String} namespaces
- * @api private
- */
-
-
-function save(namespaces) {
-  try {
-    if (namespaces) {
-      exports.storage.setItem('debug', namespaces);
-    } else {
-      exports.storage.removeItem('debug');
-    }
-  } catch (error) {// Swallow
-    // XXX (@Qix-) should we be logging these?
-  }
-}
-/**
- * Load `namespaces`.
- *
- * @return {String} returns the previously persisted debug modes
- * @api private
- */
-
-
-function load() {
-  let r;
-
-  try {
-    r = exports.storage.getItem('debug');
-  } catch (error) {} // Swallow
-  // XXX (@Qix-) should we be logging these?
-  // If debug isn't set in LS, and we're in Electron, try to load $DEBUG
-
-
-  if (!r && typeof process !== 'undefined' && 'env' in process) {
-    r = undefined;
-  }
-
-  return r;
-}
-/**
- * Localstorage attempts to return the localstorage.
- *
- * This is necessary because safari throws
- * when a user disables cookies/localstorage
- * and you attempt to access it.
- *
- * @return {LocalStorage}
- * @api private
- */
-
-
-function localstorage() {
-  try {
-    // TVMLKit (Apple TV JS Runtime) does not have a window object, just localStorage in the global context
-    // The Browser also has localStorage in the global context.
-    return localStorage;
-  } catch (error) {// Swallow
-    // XXX (@Qix-) should we be logging these?
-  }
-}
-
-module.exports = require('./common')(exports);
-const {
-  formatters
-} = module.exports;
-/**
- * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
- */
-
-formatters.j = function (v) {
-  try {
-    return JSON.stringify(v);
-  } catch (error) {
-    return '[UnexpectedJSONParseError]: ' + error.message;
-  }
-};
-},{"./common":"../../node_modules/debug/src/common.js","process":"../../node_modules/process/browser.js"}],"../../node_modules/observable-fns/dist.esm/_scheduler.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.AsyncSerialScheduler = void 0;
-
-var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
-  return new (P || (P = Promise))(function (resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function step(result) {
-      result.done ? resolve(result.value) : new P(function (resolve) {
-        resolve(result.value);
-      }).then(fulfilled, rejected);
-    }
-
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-
-class AsyncSerialScheduler {
-  constructor(observer) {
-    this._baseObserver = observer;
-    this._pendingPromises = new Set();
-  }
-
-  complete() {
-    Promise.all(this._pendingPromises).then(() => this._baseObserver.complete()).catch(error => this._baseObserver.error(error));
-  }
-
-  error(error) {
-    this._baseObserver.error(error);
-  }
-
-  schedule(task) {
-    const prevPromisesCompletion = Promise.all(this._pendingPromises);
-    const values = [];
-
-    const next = value => values.push(value);
-
-    const promise = Promise.resolve().then(() => __awaiter(this, void 0, void 0, function* () {
-      yield prevPromisesCompletion;
-      yield task(next);
-
-      this._pendingPromises.delete(promise);
-
-      for (const value of values) {
-        this._baseObserver.next(value);
-      }
-    })).catch(error => {
-      this._pendingPromises.delete(promise);
-
-      this._baseObserver.error(error);
-    });
-
-    this._pendingPromises.add(promise);
-  }
-
-}
-
-exports.AsyncSerialScheduler = AsyncSerialScheduler;
-},{}],"../../node_modules/observable-fns/dist.esm/_symbols.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.registerObservableSymbol = registerObservableSymbol;
-exports.getSymbol = exports.hasSymbol = exports.hasSymbols = void 0;
-
-const hasSymbols = () => typeof Symbol === "function";
-
-exports.hasSymbols = hasSymbols;
-
-const hasSymbol = name => hasSymbols() && Boolean(Symbol[name]);
-
-exports.hasSymbol = hasSymbol;
-
-const getSymbol = name => hasSymbol(name) ? Symbol[name] : "@@" + name;
-
-exports.getSymbol = getSymbol;
-
-function registerObservableSymbol() {
-  if (hasSymbols() && !hasSymbol("observable")) {
-    Symbol.observable = Symbol("observable");
-  }
-}
-
-if (!hasSymbol("asyncIterator")) {
-  Symbol.asyncIterator = Symbol.asyncIterator || Symbol.for("Symbol.asyncIterator");
-}
-},{}],"../../node_modules/observable-fns/dist.esm/observable.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = exports.Observable = exports.SubscriptionObserver = exports.Subscription = void 0;
-
-var _symbols = require("./_symbols");
-
-/**
- * Based on <https://raw.githubusercontent.com/zenparsing/zen-observable/master/src/Observable.js>
- * At commit: f63849a8c60af5d514efc8e9d6138d8273c49ad6
- */
-/// <reference path="../types/symbols.d.ts" />
-const SymbolIterator = (0, _symbols.getSymbol)("iterator");
-const SymbolObservable = (0, _symbols.getSymbol)("observable");
-const SymbolSpecies = (0, _symbols.getSymbol)("species"); // === Abstract Operations ===
-
-function getMethod(obj, key) {
-  const value = obj[key];
-
-  if (value == null) {
-    return undefined;
-  }
-
-  if (typeof value !== "function") {
-    throw new TypeError(value + " is not a function");
-  }
-
-  return value;
-}
-
-function getSpecies(obj) {
-  let ctor = obj.constructor;
-
-  if (ctor !== undefined) {
-    ctor = ctor[SymbolSpecies];
-
-    if (ctor === null) {
-      ctor = undefined;
-    }
-  }
-
-  return ctor !== undefined ? ctor : Observable;
-}
-
-function isObservable(x) {
-  return x instanceof Observable; // SPEC: Brand check
-}
-
-function hostReportError(error) {
-  if (hostReportError.log) {
-    hostReportError.log(error);
-  } else {
-    setTimeout(() => {
-      throw error;
-    }, 0);
-  }
-}
-
-function enqueue(fn) {
-  Promise.resolve().then(() => {
-    try {
-      fn();
-    } catch (e) {
-      hostReportError(e);
-    }
-  });
-}
-
-function cleanupSubscription(subscription) {
-  const cleanup = subscription._cleanup;
-
-  if (cleanup === undefined) {
-    return;
-  }
-
-  subscription._cleanup = undefined;
-
-  if (!cleanup) {
-    return;
-  }
-
-  try {
-    if (typeof cleanup === "function") {
-      cleanup();
-    } else {
-      const unsubscribe = getMethod(cleanup, "unsubscribe");
-
-      if (unsubscribe) {
-        unsubscribe.call(cleanup);
-      }
-    }
-  } catch (e) {
-    hostReportError(e);
-  }
-}
-
-function closeSubscription(subscription) {
-  subscription._observer = undefined;
-  subscription._queue = undefined;
-  subscription._state = "closed";
-}
-
-function flushSubscription(subscription) {
-  const queue = subscription._queue;
-
-  if (!queue) {
-    return;
-  }
-
-  subscription._queue = undefined;
-  subscription._state = "ready";
-
-  for (const item of queue) {
-    notifySubscription(subscription, item.type, item.value);
-
-    if (subscription._state === "closed") {
-      break;
-    }
-  }
-}
-
-function notifySubscription(subscription, type, value) {
-  subscription._state = "running";
-  const observer = subscription._observer;
-
-  try {
-    const m = observer ? getMethod(observer, type) : undefined;
-
-    switch (type) {
-      case "next":
-        if (m) m.call(observer, value);
-        break;
-
-      case "error":
-        closeSubscription(subscription);
-        if (m) m.call(observer, value);else throw value;
-        break;
-
-      case "complete":
-        closeSubscription(subscription);
-        if (m) m.call(observer);
-        break;
-    }
-  } catch (e) {
-    hostReportError(e);
-  }
-
-  if (subscription._state === "closed") {
-    cleanupSubscription(subscription);
-  } else if (subscription._state === "running") {
-    subscription._state = "ready";
-  }
-}
-
-function onNotify(subscription, type, value) {
-  if (subscription._state === "closed") {
-    return;
-  }
-
-  if (subscription._state === "buffering") {
-    subscription._queue = subscription._queue || [];
-
-    subscription._queue.push({
-      type,
-      value
-    });
-
-    return;
-  }
-
-  if (subscription._state !== "ready") {
-    subscription._state = "buffering";
-    subscription._queue = [{
-      type,
-      value
-    }];
-    enqueue(() => flushSubscription(subscription));
-    return;
-  }
-
-  notifySubscription(subscription, type, value);
-}
-
-class Subscription {
-  constructor(observer, subscriber) {
-    // ASSERT: observer is an object
-    // ASSERT: subscriber is callable
-    this._cleanup = undefined;
-    this._observer = observer;
-    this._queue = undefined;
-    this._state = "initializing";
-    const subscriptionObserver = new SubscriptionObserver(this);
-
-    try {
-      this._cleanup = subscriber.call(undefined, subscriptionObserver);
-    } catch (e) {
-      subscriptionObserver.error(e);
-    }
-
-    if (this._state === "initializing") {
-      this._state = "ready";
-    }
-  }
-
-  get closed() {
-    return this._state === "closed";
-  }
-
-  unsubscribe() {
-    if (this._state !== "closed") {
-      closeSubscription(this);
-      cleanupSubscription(this);
-    }
-  }
-
-}
-
-exports.Subscription = Subscription;
-
-class SubscriptionObserver {
-  constructor(subscription) {
-    this._subscription = subscription;
-  }
-
-  get closed() {
-    return this._subscription._state === "closed";
-  }
-
-  next(value) {
-    onNotify(this._subscription, "next", value);
-  }
-
-  error(value) {
-    onNotify(this._subscription, "error", value);
-  }
-
-  complete() {
-    onNotify(this._subscription, "complete");
-  }
-
-}
-/**
- * The basic Observable class. This primitive is used to wrap asynchronous
- * data streams in a common standardized data type that is interoperable
- * between libraries and can be composed to represent more complex processes.
- */
-
-
-exports.SubscriptionObserver = SubscriptionObserver;
-
-class Observable {
-  constructor(subscriber) {
-    if (!(this instanceof Observable)) {
-      throw new TypeError("Observable cannot be called as a function");
-    }
-
-    if (typeof subscriber !== "function") {
-      throw new TypeError("Observable initializer must be a function");
-    }
-
-    this._subscriber = subscriber;
-  }
-
-  subscribe(nextOrObserver, onError, onComplete) {
-    if (typeof nextOrObserver !== "object" || nextOrObserver === null) {
-      nextOrObserver = {
-        next: nextOrObserver,
-        error: onError,
-        complete: onComplete
-      };
-    }
-
-    return new Subscription(nextOrObserver, this._subscriber);
-  }
-
-  pipe(first, ...mappers) {
-    // tslint:disable-next-line no-this-assignment
-    let intermediate = this;
-
-    for (const mapper of [first, ...mappers]) {
-      intermediate = mapper(intermediate);
-    }
-
-    return intermediate;
-  }
-
-  tap(nextOrObserver, onError, onComplete) {
-    const tapObserver = typeof nextOrObserver !== "object" || nextOrObserver === null ? {
-      next: nextOrObserver,
-      error: onError,
-      complete: onComplete
-    } : nextOrObserver;
-    return new Observable(observer => {
-      return this.subscribe({
-        next(value) {
-          tapObserver.next && tapObserver.next(value);
-          observer.next(value);
-        },
-
-        error(error) {
-          tapObserver.error && tapObserver.error(error);
-          observer.error(error);
-        },
-
-        complete() {
-          tapObserver.complete && tapObserver.complete();
-          observer.complete();
-        },
-
-        start(subscription) {
-          tapObserver.start && tapObserver.start(subscription);
-        }
-
-      });
-    });
-  }
-
-  forEach(fn) {
-    return new Promise((resolve, reject) => {
-      if (typeof fn !== "function") {
-        reject(new TypeError(fn + " is not a function"));
-        return;
-      }
-
-      function done() {
-        subscription.unsubscribe();
-        resolve();
-      }
-
-      const subscription = this.subscribe({
-        next(value) {
-          try {
-            fn(value, done);
-          } catch (e) {
-            reject(e);
-            subscription.unsubscribe();
-          }
-        },
-
-        error: reject,
-        complete: resolve
-      });
-    });
-  }
-
-  map(fn) {
-    if (typeof fn !== "function") {
-      throw new TypeError(fn + " is not a function");
-    }
-
-    const C = getSpecies(this);
-    return new C(observer => this.subscribe({
-      next(value) {
-        let propagatedValue = value;
-
-        try {
-          propagatedValue = fn(value);
-        } catch (e) {
-          return observer.error(e);
-        }
-
-        observer.next(propagatedValue);
-      },
-
-      error(e) {
-        observer.error(e);
-      },
-
-      complete() {
-        observer.complete();
-      }
-
-    }));
-  }
-
-  filter(fn) {
-    if (typeof fn !== "function") {
-      throw new TypeError(fn + " is not a function");
-    }
-
-    const C = getSpecies(this);
-    return new C(observer => this.subscribe({
-      next(value) {
-        try {
-          if (!fn(value)) return;
-        } catch (e) {
-          return observer.error(e);
-        }
-
-        observer.next(value);
-      },
-
-      error(e) {
-        observer.error(e);
-      },
-
-      complete() {
-        observer.complete();
-      }
-
-    }));
-  }
-
-  reduce(fn, seed) {
-    if (typeof fn !== "function") {
-      throw new TypeError(fn + " is not a function");
-    }
-
-    const C = getSpecies(this);
-    const hasSeed = arguments.length > 1;
-    let hasValue = false;
-    let acc = seed;
-    return new C(observer => this.subscribe({
-      next(value) {
-        const first = !hasValue;
-        hasValue = true;
-
-        if (!first || hasSeed) {
-          try {
-            acc = fn(acc, value);
-          } catch (e) {
-            return observer.error(e);
-          }
-        } else {
-          acc = value;
-        }
-      },
-
-      error(e) {
-        observer.error(e);
-      },
-
-      complete() {
-        if (!hasValue && !hasSeed) {
-          return observer.error(new TypeError("Cannot reduce an empty sequence"));
-        }
-
-        observer.next(acc);
-        observer.complete();
-      }
-
-    }));
-  }
-
-  concat(...sources) {
-    const C = getSpecies(this);
-    return new C(observer => {
-      let subscription;
-      let index = 0;
-
-      function startNext(next) {
-        subscription = next.subscribe({
-          next(v) {
-            observer.next(v);
-          },
-
-          error(e) {
-            observer.error(e);
-          },
-
-          complete() {
-            if (index === sources.length) {
-              subscription = undefined;
-              observer.complete();
-            } else {
-              startNext(C.from(sources[index++]));
-            }
-          }
-
-        });
-      }
-
-      startNext(this);
-      return () => {
-        if (subscription) {
-          subscription.unsubscribe();
-          subscription = undefined;
-        }
-      };
-    });
-  }
-
-  flatMap(fn) {
-    if (typeof fn !== "function") {
-      throw new TypeError(fn + " is not a function");
-    }
-
-    const C = getSpecies(this);
-    return new C(observer => {
-      const subscriptions = [];
-      const outer = this.subscribe({
-        next(value) {
-          let normalizedValue;
-
-          if (fn) {
-            try {
-              normalizedValue = fn(value);
-            } catch (e) {
-              return observer.error(e);
-            }
-          } else {
-            normalizedValue = value;
-          }
-
-          const inner = C.from(normalizedValue).subscribe({
-            next(innerValue) {
-              observer.next(innerValue);
-            },
-
-            error(e) {
-              observer.error(e);
-            },
-
-            complete() {
-              const i = subscriptions.indexOf(inner);
-              if (i >= 0) subscriptions.splice(i, 1);
-              completeIfDone();
-            }
-
-          });
-          subscriptions.push(inner);
-        },
-
-        error(e) {
-          observer.error(e);
-        },
-
-        complete() {
-          completeIfDone();
-        }
-
-      });
-
-      function completeIfDone() {
-        if (outer.closed && subscriptions.length === 0) {
-          observer.complete();
-        }
-      }
-
-      return () => {
-        subscriptions.forEach(s => s.unsubscribe());
-        outer.unsubscribe();
-      };
-    });
-  }
-
-  [SymbolObservable]() {
-    return this;
-  }
-
-  static from(x) {
-    const C = typeof this === "function" ? this : Observable;
-
-    if (x == null) {
-      throw new TypeError(x + " is not an object");
-    }
-
-    const observableMethod = getMethod(x, SymbolObservable);
-
-    if (observableMethod) {
-      const observable = observableMethod.call(x);
-
-      if (Object(observable) !== observable) {
-        throw new TypeError(observable + " is not an object");
-      }
-
-      if (isObservable(observable) && observable.constructor === C) {
-        return observable;
-      }
-
-      return new C(observer => observable.subscribe(observer));
-    }
-
-    if ((0, _symbols.hasSymbol)("iterator")) {
-      const iteratorMethod = getMethod(x, SymbolIterator);
-
-      if (iteratorMethod) {
-        return new C(observer => {
-          enqueue(() => {
-            if (observer.closed) return;
-
-            for (const item of iteratorMethod.call(x)) {
-              observer.next(item);
-              if (observer.closed) return;
-            }
-
-            observer.complete();
-          });
-        });
-      }
-    }
-
-    if (Array.isArray(x)) {
-      return new C(observer => {
-        enqueue(() => {
-          if (observer.closed) return;
-
-          for (const item of x) {
-            observer.next(item);
-            if (observer.closed) return;
-          }
-
-          observer.complete();
-        });
-      });
-    }
-
-    throw new TypeError(x + " is not observable");
-  }
-
-  static of(...items) {
-    const C = typeof this === "function" ? this : Observable;
-    return new C(observer => {
-      enqueue(() => {
-        if (observer.closed) return;
-
-        for (const item of items) {
-          observer.next(item);
-          if (observer.closed) return;
-        }
-
-        observer.complete();
-      });
-    });
-  }
-
-  static get [SymbolSpecies]() {
-    return this;
-  }
-
-}
-
-exports.Observable = Observable;
-
-if ((0, _symbols.hasSymbols)()) {
-  Object.defineProperty(Observable, Symbol("extensions"), {
-    value: {
-      symbol: SymbolObservable,
-      hostReportError
-    },
-    configurable: true
-  });
-}
-
-var _default = Observable;
-exports.default = _default;
-},{"./_symbols":"../../node_modules/observable-fns/dist.esm/_symbols.js"}],"../../node_modules/observable-fns/dist.esm/unsubscribe.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-/**
- * Unsubscribe from a subscription returned by something that looks like an observable,
- * but is not necessarily our observable implementation.
- */
-function unsubscribe(subscription) {
-  if (typeof subscription === "function") {
-    subscription();
-  } else if (subscription && typeof subscription.unsubscribe === "function") {
-    subscription.unsubscribe();
-  }
-}
-
-var _default = unsubscribe;
-exports.default = _default;
-},{}],"../../node_modules/observable-fns/dist.esm/filter.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _scheduler = require("./_scheduler");
-
-var _observable = _interopRequireDefault(require("./observable"));
-
-var _unsubscribe = _interopRequireDefault(require("./unsubscribe"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
-  return new (P || (P = Promise))(function (resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function step(result) {
-      result.done ? resolve(result.value) : new P(function (resolve) {
-        resolve(result.value);
-      }).then(fulfilled, rejected);
-    }
-
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-
-/**
- * Filters the values emitted by another observable.
- * To be applied to an input observable using `pipe()`.
- */
-function filter(test) {
-  return observable => {
-    return new _observable.default(observer => {
-      const scheduler = new _scheduler.AsyncSerialScheduler(observer);
-      const subscription = observable.subscribe({
-        complete() {
-          scheduler.complete();
-        },
-
-        error(error) {
-          scheduler.error(error);
-        },
-
-        next(input) {
-          scheduler.schedule(next => __awaiter(this, void 0, void 0, function* () {
-            if (yield test(input)) {
-              next(input);
-            }
-          }));
-        }
-
-      });
-      return () => (0, _unsubscribe.default)(subscription);
-    });
-  };
-}
-
-var _default = filter;
-exports.default = _default;
-},{"./_scheduler":"../../node_modules/observable-fns/dist.esm/_scheduler.js","./observable":"../../node_modules/observable-fns/dist.esm/observable.js","./unsubscribe":"../../node_modules/observable-fns/dist.esm/unsubscribe.js"}],"../../node_modules/observable-fns/dist.esm/_util.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.isAsyncIterator = isAsyncIterator;
-exports.isIterator = isIterator;
-
-var _symbols = require("./_symbols");
-
-/// <reference lib="es2018" />
-function isAsyncIterator(thing) {
-  return thing && (0, _symbols.hasSymbol)("asyncIterator") && thing[Symbol.asyncIterator];
-}
-
-function isIterator(thing) {
-  return thing && (0, _symbols.hasSymbol)("iterator") && thing[Symbol.iterator];
-}
-},{"./_symbols":"../../node_modules/observable-fns/dist.esm/_symbols.js"}],"../../node_modules/observable-fns/dist.esm/flatMap.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _scheduler = require("./_scheduler");
-
-var _util = require("./_util");
-
-var _observable = _interopRequireDefault(require("./observable"));
-
-var _unsubscribe = _interopRequireDefault(require("./unsubscribe"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
-  return new (P || (P = Promise))(function (resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function step(result) {
-      result.done ? resolve(result.value) : new P(function (resolve) {
-        resolve(result.value);
-      }).then(fulfilled, rejected);
-    }
-
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-
-var __asyncValues = void 0 && (void 0).__asyncValues || function (o) {
-  if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-  var m = o[Symbol.asyncIterator],
-      i;
-  return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () {
-    return this;
-  }, i);
-
-  function verb(n) {
-    i[n] = o[n] && function (v) {
-      return new Promise(function (resolve, reject) {
-        v = o[n](v), settle(resolve, reject, v.done, v.value);
-      });
-    };
-  }
-
-  function settle(resolve, reject, d, v) {
-    Promise.resolve(v).then(function (v) {
-      resolve({
-        value: v,
-        done: d
-      });
-    }, reject);
-  }
-};
-
-/**
- * Maps the values emitted by another observable. In contrast to `map()`
- * the `mapper` function returns an array of values that will be emitted
- * separately.
- * Use `flatMap()` to map input values to zero, one or multiple output
- * values. To be applied to an input observable using `pipe()`.
- */
-function flatMap(mapper) {
-  return observable => {
-    return new _observable.default(observer => {
-      const scheduler = new _scheduler.AsyncSerialScheduler(observer);
-      const subscription = observable.subscribe({
-        complete() {
-          scheduler.complete();
-        },
-
-        error(error) {
-          scheduler.error(error);
-        },
-
-        next(input) {
-          scheduler.schedule(next => __awaiter(this, void 0, void 0, function* () {
-            var e_1, _a;
-
-            const mapped = yield mapper(input);
-
-            if ((0, _util.isIterator)(mapped) || (0, _util.isAsyncIterator)(mapped)) {
-              try {
-                for (var mapped_1 = __asyncValues(mapped), mapped_1_1; mapped_1_1 = yield mapped_1.next(), !mapped_1_1.done;) {
-                  const element = mapped_1_1.value;
-                  next(element);
-                }
-              } catch (e_1_1) {
-                e_1 = {
-                  error: e_1_1
-                };
-              } finally {
-                try {
-                  if (mapped_1_1 && !mapped_1_1.done && (_a = mapped_1.return)) yield _a.call(mapped_1);
-                } finally {
-                  if (e_1) throw e_1.error;
-                }
-              }
-            } else {
-              mapped.map(output => next(output));
-            }
-          }));
-        }
-
-      });
-      return () => (0, _unsubscribe.default)(subscription);
-    });
-  };
-}
-
-var _default = flatMap;
-exports.default = _default;
-},{"./_scheduler":"../../node_modules/observable-fns/dist.esm/_scheduler.js","./_util":"../../node_modules/observable-fns/dist.esm/_util.js","./observable":"../../node_modules/observable-fns/dist.esm/observable.js","./unsubscribe":"../../node_modules/observable-fns/dist.esm/unsubscribe.js"}],"../../node_modules/observable-fns/dist.esm/interval.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = interval;
-
-var _observable = require("./observable");
-
-/**
- * Creates an observable that yields a new value every `period` milliseconds.
- * The first value emitted is 0, then 1, 2, etc. The first value is not emitted
- * immediately, but after the first interval.
- */
-function interval(period) {
-  return new _observable.Observable(observer => {
-    let counter = 0;
-    const handle = setInterval(() => {
-      observer.next(counter++);
-    }, period);
-    return () => clearInterval(handle);
-  });
-}
-},{"./observable":"../../node_modules/observable-fns/dist.esm/observable.js"}],"../../node_modules/observable-fns/dist.esm/map.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _scheduler = require("./_scheduler");
-
-var _observable = _interopRequireDefault(require("./observable"));
-
-var _unsubscribe = _interopRequireDefault(require("./unsubscribe"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
-  return new (P || (P = Promise))(function (resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function step(result) {
-      result.done ? resolve(result.value) : new P(function (resolve) {
-        resolve(result.value);
-      }).then(fulfilled, rejected);
-    }
-
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-
-/**
- * Maps the values emitted by another observable to different values.
- * To be applied to an input observable using `pipe()`.
- */
-function map(mapper) {
-  return observable => {
-    return new _observable.default(observer => {
-      const scheduler = new _scheduler.AsyncSerialScheduler(observer);
-      const subscription = observable.subscribe({
-        complete() {
-          scheduler.complete();
-        },
-
-        error(error) {
-          scheduler.error(error);
-        },
-
-        next(input) {
-          scheduler.schedule(next => __awaiter(this, void 0, void 0, function* () {
-            const mapped = yield mapper(input);
-            next(mapped);
-          }));
-        }
-
-      });
-      return () => (0, _unsubscribe.default)(subscription);
-    });
-  };
-}
-
-var _default = map;
-exports.default = _default;
-},{"./_scheduler":"../../node_modules/observable-fns/dist.esm/_scheduler.js","./observable":"../../node_modules/observable-fns/dist.esm/observable.js","./unsubscribe":"../../node_modules/observable-fns/dist.esm/unsubscribe.js"}],"../../node_modules/observable-fns/dist.esm/merge.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _observable = require("./observable");
-
-var _unsubscribe = _interopRequireDefault(require("./unsubscribe"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function merge(...observables) {
-  if (observables.length === 0) {
-    return _observable.Observable.from([]);
-  }
-
-  return new _observable.Observable(observer => {
-    let completed = 0;
-    const subscriptions = observables.map(input => {
-      return input.subscribe({
-        error(error) {
-          observer.error(error);
-          unsubscribeAll();
-        },
-
-        next(value) {
-          observer.next(value);
-        },
-
-        complete() {
-          if (++completed === observables.length) {
-            observer.complete();
-            unsubscribeAll();
-          }
-        }
-
-      });
-    });
-
-    const unsubscribeAll = () => {
-      subscriptions.forEach(subscription => (0, _unsubscribe.default)(subscription));
-    };
-
-    return unsubscribeAll;
-  });
-}
-
-var _default = merge;
-exports.default = _default;
-},{"./observable":"../../node_modules/observable-fns/dist.esm/observable.js","./unsubscribe":"../../node_modules/observable-fns/dist.esm/unsubscribe.js"}],"../../node_modules/observable-fns/dist.esm/subject.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _observable = _interopRequireDefault(require("./observable"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// TODO: This observer iteration approach looks inelegant and expensive
-// Idea: Come up with super class for Subscription that contains the
-//       notify*, ... methods and use it here
-
-/**
- * A subject is a "hot" observable (see `multicast`) that has its observer
- * methods (`.next(value)`, `.error(error)`, `.complete()`) exposed.
- *
- * Be careful, though! With great power comes great responsibility. Only use
- * the `Subject` when you really need to trigger updates "from the outside" and
- * try to keep the code that can access it to a minimum. Return
- * `Observable.from(mySubject)` to not allow other code to mutate.
- */
-class MulticastSubject extends _observable.default {
-  constructor() {
-    super(observer => {
-      this._observers.add(observer);
-
-      return () => this._observers.delete(observer);
-    });
-    this._observers = new Set();
-  }
-
-  next(value) {
-    for (const observer of this._observers) {
-      observer.next(value);
-    }
-  }
-
-  error(error) {
-    for (const observer of this._observers) {
-      observer.error(error);
-    }
-  }
-
-  complete() {
-    for (const observer of this._observers) {
-      observer.complete();
-    }
-  }
-
-}
-
-var _default = MulticastSubject;
-exports.default = _default;
-},{"./observable":"../../node_modules/observable-fns/dist.esm/observable.js"}],"../../node_modules/observable-fns/dist.esm/multicast.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _observable = _interopRequireDefault(require("./observable"));
-
-var _subject = _interopRequireDefault(require("./subject"));
-
-var _unsubscribe = _interopRequireDefault(require("./unsubscribe"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// TODO: Subject already creates additional observables "under the hood",
-//       now we introduce even more. A true native MulticastObservable
-//       would be preferable.
-
-/**
- * Takes a "cold" observable and returns a wrapping "hot" observable that
- * proxies the input observable's values and errors.
- *
- * An observable is called "cold" when its initialization function is run
- * for each new subscriber. This is how observable-fns's `Observable`
- * implementation works.
- *
- * A hot observable is an observable where new subscribers subscribe to
- * the upcoming values of an already-initialiazed observable.
- *
- * The multicast observable will lazily subscribe to the source observable
- * once it has its first own subscriber and will unsubscribe from the
- * source observable when its last own subscriber unsubscribed.
- */
-function multicast(coldObservable) {
-  const subject = new _subject.default();
-  let sourceSubscription;
-  let subscriberCount = 0;
-  return new _observable.default(observer => {
-    // Init source subscription lazily
-    if (!sourceSubscription) {
-      sourceSubscription = coldObservable.subscribe(subject);
-    } // Pipe all events from `subject` into this observable
-
-
-    const subscription = subject.subscribe(observer);
-    subscriberCount++;
-    return () => {
-      subscriberCount--;
-      subscription.unsubscribe(); // Close source subscription once last subscriber has unsubscribed
-
-      if (subscriberCount === 0) {
-        (0, _unsubscribe.default)(sourceSubscription);
-        sourceSubscription = undefined;
-      }
-    };
-  });
-}
-
-var _default = multicast;
-exports.default = _default;
-},{"./observable":"../../node_modules/observable-fns/dist.esm/observable.js","./subject":"../../node_modules/observable-fns/dist.esm/subject.js","./unsubscribe":"../../node_modules/observable-fns/dist.esm/unsubscribe.js"}],"../../node_modules/observable-fns/dist.esm/scan.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _scheduler = require("./_scheduler");
-
-var _observable = _interopRequireDefault(require("./observable"));
-
-var _unsubscribe = _interopRequireDefault(require("./unsubscribe"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
-  return new (P || (P = Promise))(function (resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function step(result) {
-      result.done ? resolve(result.value) : new P(function (resolve) {
-        resolve(result.value);
-      }).then(fulfilled, rejected);
-    }
-
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-
-function scan(accumulator, seed) {
-  return observable => {
-    return new _observable.default(observer => {
-      let accumulated;
-      let index = 0;
-      const scheduler = new _scheduler.AsyncSerialScheduler(observer);
-      const subscription = observable.subscribe({
-        complete() {
-          scheduler.complete();
-        },
-
-        error(error) {
-          scheduler.error(error);
-        },
-
-        next(value) {
-          scheduler.schedule(next => __awaiter(this, void 0, void 0, function* () {
-            const prevAcc = index === 0 ? typeof seed === "undefined" ? value : seed : accumulated;
-            accumulated = yield accumulator(prevAcc, value, index++);
-            next(accumulated);
-          }));
-        }
-
-      });
-      return () => (0, _unsubscribe.default)(subscription);
-    });
-  };
-}
-
-var _default = scan;
-exports.default = _default;
-},{"./_scheduler":"../../node_modules/observable-fns/dist.esm/_scheduler.js","./observable":"../../node_modules/observable-fns/dist.esm/observable.js","./unsubscribe":"../../node_modules/observable-fns/dist.esm/unsubscribe.js"}],"../../node_modules/observable-fns/dist.esm/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-Object.defineProperty(exports, "filter", {
-  enumerable: true,
-  get: function () {
-    return _filter.default;
-  }
-});
-Object.defineProperty(exports, "flatMap", {
-  enumerable: true,
-  get: function () {
-    return _flatMap.default;
-  }
-});
-Object.defineProperty(exports, "interval", {
-  enumerable: true,
-  get: function () {
-    return _interval.default;
-  }
-});
-Object.defineProperty(exports, "map", {
-  enumerable: true,
-  get: function () {
-    return _map.default;
-  }
-});
-Object.defineProperty(exports, "merge", {
-  enumerable: true,
-  get: function () {
-    return _merge.default;
-  }
-});
-Object.defineProperty(exports, "multicast", {
-  enumerable: true,
-  get: function () {
-    return _multicast.default;
-  }
-});
-Object.defineProperty(exports, "Observable", {
-  enumerable: true,
-  get: function () {
-    return _observable.default;
-  }
-});
-Object.defineProperty(exports, "scan", {
-  enumerable: true,
-  get: function () {
-    return _scan.default;
-  }
-});
-Object.defineProperty(exports, "Subject", {
-  enumerable: true,
-  get: function () {
-    return _subject.default;
-  }
-});
-Object.defineProperty(exports, "unsubscribe", {
-  enumerable: true,
-  get: function () {
-    return _unsubscribe.default;
-  }
-});
-
-var _filter = _interopRequireDefault(require("./filter"));
-
-var _flatMap = _interopRequireDefault(require("./flatMap"));
-
-var _interval = _interopRequireDefault(require("./interval"));
-
-var _map = _interopRequireDefault(require("./map"));
-
-var _merge = _interopRequireDefault(require("./merge"));
-
-var _multicast = _interopRequireDefault(require("./multicast"));
-
-var _observable = _interopRequireDefault(require("./observable"));
-
-var _scan = _interopRequireDefault(require("./scan"));
-
-var _subject = _interopRequireDefault(require("./subject"));
-
-var _unsubscribe = _interopRequireDefault(require("./unsubscribe"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-},{"./filter":"../../node_modules/observable-fns/dist.esm/filter.js","./flatMap":"../../node_modules/observable-fns/dist.esm/flatMap.js","./interval":"../../node_modules/observable-fns/dist.esm/interval.js","./map":"../../node_modules/observable-fns/dist.esm/map.js","./merge":"../../node_modules/observable-fns/dist.esm/merge.js","./multicast":"../../node_modules/observable-fns/dist.esm/multicast.js","./observable":"../../node_modules/observable-fns/dist.esm/observable.js","./scan":"../../node_modules/observable-fns/dist.esm/scan.js","./subject":"../../node_modules/observable-fns/dist.esm/subject.js","./unsubscribe":"../../node_modules/observable-fns/dist.esm/unsubscribe.js"}],"../../node_modules/threads/dist-esm/ponyfills.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.allSettled = allSettled;
-
-// Based on <https://github.com/es-shims/Promise.allSettled/blob/master/implementation.js>
-function allSettled(values) {
-  return Promise.all(values.map(item => {
-    const onFulfill = value => {
-      return {
-        status: 'fulfilled',
-        value
-      };
-    };
-
-    const onReject = reason => {
-      return {
-        status: 'rejected',
-        reason
-      };
-    };
-
-    const itemPromise = Promise.resolve(item);
-
-    try {
-      return itemPromise.then(onFulfill, onReject);
-    } catch (error) {
-      return Promise.reject(error);
-    }
-  }));
-}
-},{}],"../../node_modules/threads/dist-esm/master/pool-types.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.PoolEventType = void 0;
-
-/** Pool event type. Specifies the type of each `PoolEvent`. */
-var PoolEventType;
-exports.PoolEventType = PoolEventType;
-
-(function (PoolEventType) {
-  PoolEventType["initialized"] = "initialized";
-  PoolEventType["taskCanceled"] = "taskCanceled";
-  PoolEventType["taskCompleted"] = "taskCompleted";
-  PoolEventType["taskFailed"] = "taskFailed";
-  PoolEventType["taskQueued"] = "taskQueued";
-  PoolEventType["taskQueueDrained"] = "taskQueueDrained";
-  PoolEventType["taskStart"] = "taskStart";
-  PoolEventType["terminated"] = "terminated";
-})(PoolEventType || (exports.PoolEventType = PoolEventType = {}));
-},{}],"../../node_modules/threads/dist-esm/symbols.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.$worker = exports.$transferable = exports.$terminate = exports.$events = exports.$errors = void 0;
-const $errors = Symbol("thread.errors");
-exports.$errors = $errors;
-const $events = Symbol("thread.events");
-exports.$events = $events;
-const $terminate = Symbol("thread.terminate");
-exports.$terminate = $terminate;
-const $transferable = Symbol("thread.transferable");
-exports.$transferable = $transferable;
-const $worker = Symbol("thread.worker");
-exports.$worker = $worker;
-},{}],"../../node_modules/threads/dist-esm/master/thread.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Thread = void 0;
-
-var _symbols = require("../symbols");
-
-function fail(message) {
-  throw Error(message);
-}
-/** Thread utility functions. Use them to manage or inspect a `spawn()`-ed thread. */
-
-
-const Thread = {
-  /** Return an observable that can be used to subscribe to all errors happening in the thread. */
-  errors(thread) {
-    return thread[_symbols.$errors] || fail("Error observable not found. Make sure to pass a thread instance as returned by the spawn() promise.");
-  },
-
-  /** Return an observable that can be used to subscribe to internal events happening in the thread. Useful for debugging. */
-  events(thread) {
-    return thread[_symbols.$events] || fail("Events observable not found. Make sure to pass a thread instance as returned by the spawn() promise.");
-  },
-
-  /** Terminate a thread. Remember to terminate every thread when you are done using it. */
-  terminate(thread) {
-    return thread[_symbols.$terminate]();
-  }
-
-};
-exports.Thread = Thread;
-},{"../symbols":"../../node_modules/threads/dist-esm/symbols.js"}],"../../node_modules/threads/dist-esm/master/pool.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-Object.defineProperty(exports, "PoolEventType", {
-  enumerable: true,
-  get: function () {
-    return _poolTypes.PoolEventType;
-  }
-});
-Object.defineProperty(exports, "Thread", {
-  enumerable: true,
-  get: function () {
-    return _thread.Thread;
-  }
-});
-exports.Pool = void 0;
-
-var _debug = _interopRequireDefault(require("debug"));
-
-var _observableFns = require("observable-fns");
-
-var _ponyfills = require("../ponyfills");
-
-var _implementation = require("./implementation");
-
-var _poolTypes = require("./pool-types");
-
-var _thread = require("./thread");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
-  function adopt(value) {
-    return value instanceof P ? value : new P(function (resolve) {
-      resolve(value);
-    });
-  }
-
-  return new (P || (P = Promise))(function (resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-    }
-
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-
-let nextPoolID = 1;
-
-function createArray(size) {
-  const array = [];
-
-  for (let index = 0; index < size; index++) {
-    array.push(index);
-  }
-
-  return array;
-}
-
-function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-function flatMap(array, mapper) {
-  return array.reduce((flattened, element) => [...flattened, ...mapper(element)], []);
-}
-
-function slugify(text) {
-  return text.replace(/\W/g, " ").trim().replace(/\s+/g, "-");
-}
-
-function spawnWorkers(spawnWorker, count) {
-  return createArray(count).map(() => ({
-    init: spawnWorker(),
-    runningTasks: []
-  }));
-}
-
-class WorkerPool {
-  constructor(spawnWorker, optionsOrSize) {
-    this.eventSubject = new _observableFns.Subject();
-    this.initErrors = [];
-    this.isClosing = false;
-    this.nextTaskID = 1;
-    this.taskQueue = [];
-    const options = typeof optionsOrSize === "number" ? {
-      size: optionsOrSize
-    } : optionsOrSize || {};
-    const {
-      size = _implementation.defaultPoolSize
-    } = options;
-    this.debug = (0, _debug.default)(`threads:pool:${slugify(options.name || String(nextPoolID++))}`);
-    this.options = options;
-    this.workers = spawnWorkers(spawnWorker, size);
-    this.eventObservable = (0, _observableFns.multicast)(_observableFns.Observable.from(this.eventSubject));
-    Promise.all(this.workers.map(worker => worker.init)).then(() => this.eventSubject.next({
-      type: _poolTypes.PoolEventType.initialized,
-      size: this.workers.length
-    }), error => {
-      this.debug("Error while initializing pool worker:", error);
-      this.eventSubject.error(error);
-      this.initErrors.push(error);
-    });
-  }
-
-  findIdlingWorker() {
-    const {
-      concurrency = 1
-    } = this.options;
-    return this.workers.find(worker => worker.runningTasks.length < concurrency);
-  }
-
-  runPoolTask(worker, task) {
-    return __awaiter(this, void 0, void 0, function* () {
-      const workerID = this.workers.indexOf(worker) + 1;
-      this.debug(`Running task #${task.id} on worker #${workerID}...`);
-      this.eventSubject.next({
-        type: _poolTypes.PoolEventType.taskStart,
-        taskID: task.id,
-        workerID
-      });
-
-      try {
-        const returnValue = yield task.run((yield worker.init));
-        this.debug(`Task #${task.id} completed successfully`);
-        this.eventSubject.next({
-          type: _poolTypes.PoolEventType.taskCompleted,
-          returnValue,
-          taskID: task.id,
-          workerID
-        });
-      } catch (error) {
-        this.debug(`Task #${task.id} failed`);
-        this.eventSubject.next({
-          type: _poolTypes.PoolEventType.taskFailed,
-          taskID: task.id,
-          error,
-          workerID
-        });
-      }
-    });
-  }
-
-  run(worker, task) {
-    return __awaiter(this, void 0, void 0, function* () {
-      const runPromise = (() => __awaiter(this, void 0, void 0, function* () {
-        const removeTaskFromWorkersRunningTasks = () => {
-          worker.runningTasks = worker.runningTasks.filter(someRunPromise => someRunPromise !== runPromise);
-        }; // Defer task execution by one tick to give handlers time to subscribe
-
-
-        yield delay(0);
-
-        try {
-          yield this.runPoolTask(worker, task);
-        } finally {
-          removeTaskFromWorkersRunningTasks();
-
-          if (!this.isClosing) {
-            this.scheduleWork();
-          }
-        }
-      }))();
-
-      worker.runningTasks.push(runPromise);
-    });
-  }
-
-  scheduleWork() {
-    this.debug(`Attempt de-queueing a task in order to run it...`);
-    const availableWorker = this.findIdlingWorker();
-    if (!availableWorker) return;
-    const nextTask = this.taskQueue.shift();
-
-    if (!nextTask) {
-      this.debug(`Task queue is empty`);
-      this.eventSubject.next({
-        type: _poolTypes.PoolEventType.taskQueueDrained
-      });
-      return;
-    }
-
-    this.run(availableWorker, nextTask);
-  }
-
-  taskCompletion(taskID) {
-    return new Promise((resolve, reject) => {
-      const eventSubscription = this.events().subscribe(event => {
-        if (event.type === _poolTypes.PoolEventType.taskCompleted && event.taskID === taskID) {
-          eventSubscription.unsubscribe();
-          resolve(event.returnValue);
-        } else if (event.type === _poolTypes.PoolEventType.taskFailed && event.taskID === taskID) {
-          eventSubscription.unsubscribe();
-          reject(event.error);
-        } else if (event.type === _poolTypes.PoolEventType.terminated) {
-          eventSubscription.unsubscribe();
-          reject(Error("Pool has been terminated before task was run."));
-        }
-      });
-    });
-  }
-
-  settled(allowResolvingImmediately = false) {
-    return __awaiter(this, void 0, void 0, function* () {
-      const getCurrentlyRunningTasks = () => flatMap(this.workers, worker => worker.runningTasks);
-
-      const taskFailures = [];
-      const failureSubscription = this.eventObservable.subscribe(event => {
-        if (event.type === _poolTypes.PoolEventType.taskFailed) {
-          taskFailures.push(event.error);
-        }
-      });
-
-      if (this.initErrors.length > 0) {
-        return Promise.reject(this.initErrors[0]);
-      }
-
-      if (allowResolvingImmediately && this.taskQueue.length === 0) {
-        yield (0, _ponyfills.allSettled)(getCurrentlyRunningTasks());
-        return taskFailures;
-      }
-
-      yield new Promise((resolve, reject) => {
-        const subscription = this.eventObservable.subscribe({
-          next(event) {
-            if (event.type === _poolTypes.PoolEventType.taskQueueDrained) {
-              subscription.unsubscribe();
-              resolve();
-            }
-          },
-
-          error: reject // make a pool-wide error reject the completed() result promise
-
-        });
-      });
-      yield (0, _ponyfills.allSettled)(getCurrentlyRunningTasks());
-      failureSubscription.unsubscribe();
-      return taskFailures;
-    });
-  }
-
-  completed(allowResolvingImmediately = false) {
-    return __awaiter(this, void 0, void 0, function* () {
-      const settlementPromise = this.settled(allowResolvingImmediately);
-      const earlyExitPromise = new Promise((resolve, reject) => {
-        const subscription = this.eventObservable.subscribe({
-          next(event) {
-            if (event.type === _poolTypes.PoolEventType.taskQueueDrained) {
-              subscription.unsubscribe();
-              resolve(settlementPromise);
-            } else if (event.type === _poolTypes.PoolEventType.taskFailed) {
-              subscription.unsubscribe();
-              reject(event.error);
-            }
-          },
-
-          error: reject // make a pool-wide error reject the completed() result promise
-
-        });
-      });
-      const errors = yield Promise.race([settlementPromise, earlyExitPromise]);
-
-      if (errors.length > 0) {
-        throw errors[0];
-      }
-    });
-  }
-
-  events() {
-    return this.eventObservable;
-  }
-
-  queue(taskFunction) {
-    const {
-      maxQueuedJobs = Infinity
-    } = this.options;
-
-    if (this.isClosing) {
-      throw Error(`Cannot schedule pool tasks after terminate() has been called.`);
-    }
-
-    if (this.initErrors.length > 0) {
-      throw this.initErrors[0];
-    }
-
-    const taskCompleted = () => this.taskCompletion(task.id);
-
-    let taskCompletionDotThen;
-    const task = {
-      id: this.nextTaskID++,
-      run: taskFunction,
-      cancel: () => {
-        if (this.taskQueue.indexOf(task) === -1) return;
-        this.taskQueue = this.taskQueue.filter(someTask => someTask !== task);
-        this.eventSubject.next({
-          type: _poolTypes.PoolEventType.taskCanceled,
-          taskID: task.id
-        });
-      },
-
-      get then() {
-        if (!taskCompletionDotThen) {
-          const promise = taskCompleted();
-          taskCompletionDotThen = promise.then.bind(promise);
-        }
-
-        return taskCompletionDotThen;
-      }
-
-    };
-
-    if (this.taskQueue.length >= maxQueuedJobs) {
-      throw Error("Maximum number of pool tasks queued. Refusing to queue another one.\n" + "This usually happens for one of two reasons: We are either at peak " + "workload right now or some tasks just won't finish, thus blocking the pool.");
-    }
-
-    this.debug(`Queueing task #${task.id}...`);
-    this.taskQueue.push(task);
-    this.eventSubject.next({
-      type: _poolTypes.PoolEventType.taskQueued,
-      taskID: task.id
-    });
-    this.scheduleWork();
-    return task;
-  }
-
-  terminate(force) {
-    return __awaiter(this, void 0, void 0, function* () {
-      this.isClosing = true;
-
-      if (!force) {
-        yield this.completed(true);
-      }
-
-      this.eventSubject.next({
-        type: _poolTypes.PoolEventType.terminated,
-        remainingQueue: [...this.taskQueue]
-      });
-      this.eventSubject.complete();
-      yield Promise.all(this.workers.map(worker => __awaiter(this, void 0, void 0, function* () {
-        return _thread.Thread.terminate((yield worker.init));
-      })));
-    });
-  }
-
-}
-
-WorkerPool.EventType = _poolTypes.PoolEventType;
-/**
- * Thread pool constructor. Creates a new pool and spawns its worker threads.
- */
-
-function PoolConstructor(spawnWorker, optionsOrSize) {
-  // The function exists only so we don't need to use `new` to create a pool (we still can, though).
-  // If the Pool is a class or not is an implementation detail that should not concern the user.
-  return new WorkerPool(spawnWorker, optionsOrSize);
-}
-
-PoolConstructor.EventType = _poolTypes.PoolEventType;
-/**
- * Thread pool constructor. Creates a new pool and spawns its worker threads.
- */
-
-const Pool = PoolConstructor;
-exports.Pool = Pool;
-},{"debug":"../../node_modules/debug/src/browser.js","observable-fns":"../../node_modules/observable-fns/dist.esm/index.js","../ponyfills":"../../node_modules/threads/dist-esm/ponyfills.js","./implementation":"../../node_modules/threads/dist-esm/master/implementation.browser.js","./pool-types":"../../node_modules/threads/dist-esm/master/pool-types.js","./thread":"../../node_modules/threads/dist-esm/master/thread.js"}],"../../node_modules/threads/dist-esm/promise.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.createPromiseWithResolver = createPromiseWithResolver;
-
-const doNothing = () => undefined;
-/**
- * Creates a new promise and exposes its resolver function.
- * Use with care!
- */
-
-
-function createPromiseWithResolver() {
-  let alreadyResolved = false;
-  let resolvedTo;
-  let resolver = doNothing;
-  const promise = new Promise(resolve => {
-    if (alreadyResolved) {
-      resolve(resolvedTo);
-    } else {
-      resolver = resolve;
-    }
-  });
-
-  const exposedResolver = value => {
-    alreadyResolved = true;
-    resolvedTo = value;
-    resolver();
-  };
-
-  return [promise, exposedResolver];
-}
-},{}],"../../node_modules/threads/dist-esm/types/master.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.WorkerEventType = void 0;
-
-var _symbols = require("../symbols");
-
-/// <reference lib="dom" />
-
-/** Event as emitted by worker thread. Subscribe to using `Thread.events(thread)`. */
-var WorkerEventType;
-exports.WorkerEventType = WorkerEventType;
-
-(function (WorkerEventType) {
-  WorkerEventType["internalError"] = "internalError";
-  WorkerEventType["message"] = "message";
-  WorkerEventType["termination"] = "termination";
-})(WorkerEventType || (exports.WorkerEventType = WorkerEventType = {}));
-},{"../symbols":"../../node_modules/threads/dist-esm/symbols.js"}],"../../node_modules/threads/dist-esm/observable-promise.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.ObservablePromise = void 0;
-
-var _observableFns = require("observable-fns");
-
-const doNothing = () => undefined;
-
-const returnInput = input => input;
-
-const runDeferred = fn => Promise.resolve().then(fn);
-
-function fail(error) {
-  throw error;
-}
-
-function isThenable(thing) {
-  return thing && typeof thing.then === "function";
-}
-/**
- * Creates a hybrid, combining the APIs of an Observable and a Promise.
- *
- * It is used to proxy async process states when we are initially not sure
- * if that async process will yield values once (-> Promise) or multiple
- * times (-> Observable).
- *
- * Note that the observable promise inherits some of the observable's characteristics:
- * The `init` function will be called *once for every time anyone subscribes to it*.
- *
- * If this is undesired, derive a hot observable from it using `makeHot()` and
- * subscribe to that.
- */
-
-
-class ObservablePromise extends _observableFns.Observable {
-  constructor(init) {
-    super(originalObserver => {
-      // tslint:disable-next-line no-this-assignment
-      const self = this;
-      const observer = Object.assign(Object.assign({}, originalObserver), {
-        complete() {
-          originalObserver.complete();
-          self.onCompletion();
-        },
-
-        error(error) {
-          originalObserver.error(error);
-          self.onError(error);
-        },
-
-        next(value) {
-          originalObserver.next(value);
-          self.onNext(value);
-        }
-
-      });
-
-      try {
-        this.initHasRun = true;
-        return init(observer);
-      } catch (error) {
-        observer.error(error);
-      }
-    });
-    this.initHasRun = false;
-    this.fulfillmentCallbacks = [];
-    this.rejectionCallbacks = [];
-    this.firstValueSet = false;
-    this.state = "pending";
-  }
-
-  onNext(value) {
-    if (!this.firstValueSet) {
-      this.firstValue = value;
-      this.firstValueSet = true;
-    }
-  }
-
-  onError(error) {
-    this.state = "rejected";
-    this.rejection = error;
-
-    for (const onRejected of this.rejectionCallbacks) {
-      // Promisifying the call to turn errors into unhandled promise rejections
-      // instead of them failing sync and cancelling the iteration
-      runDeferred(() => onRejected(error));
-    }
-  }
-
-  onCompletion() {
-    this.state = "fulfilled";
-
-    for (const onFulfilled of this.fulfillmentCallbacks) {
-      // Promisifying the call to turn errors into unhandled promise rejections
-      // instead of them failing sync and cancelling the iteration
-      runDeferred(() => onFulfilled(this.firstValue));
-    }
-  }
-
-  then(onFulfilledRaw, onRejectedRaw) {
-    const onFulfilled = onFulfilledRaw || returnInput;
-    const onRejected = onRejectedRaw || fail;
-    let onRejectedCalled = false;
-    return new Promise((resolve, reject) => {
-      const rejectionCallback = error => {
-        if (onRejectedCalled) return;
-        onRejectedCalled = true;
-
-        try {
-          resolve(onRejected(error));
-        } catch (anotherError) {
-          reject(anotherError);
-        }
-      };
-
-      const fulfillmentCallback = value => {
-        try {
-          resolve(onFulfilled(value));
-        } catch (error) {
-          rejectionCallback(error);
-        }
-      };
-
-      if (!this.initHasRun) {
-        this.subscribe({
-          error: rejectionCallback
-        });
-      }
-
-      if (this.state === "fulfilled") {
-        return resolve(onFulfilled(this.firstValue));
-      }
-
-      if (this.state === "rejected") {
-        onRejectedCalled = true;
-        return resolve(onRejected(this.rejection));
-      }
-
-      this.fulfillmentCallbacks.push(fulfillmentCallback);
-      this.rejectionCallbacks.push(rejectionCallback);
-    });
-  }
-
-  catch(onRejected) {
-    return this.then(undefined, onRejected);
-  }
-
-  finally(onCompleted) {
-    const handler = onCompleted || doNothing;
-    return this.then(value => {
-      handler();
-      return value;
-    }, () => handler());
-  }
-
-  static from(thing) {
-    if (isThenable(thing)) {
-      return new ObservablePromise(observer => {
-        const onFulfilled = value => {
-          observer.next(value);
-          observer.complete();
-        };
-
-        const onRejected = error => {
-          observer.error(error);
-        };
-
-        thing.then(onFulfilled, onRejected);
-      });
-    } else {
-      return super.from(thing);
-    }
-  }
-
-}
-
-exports.ObservablePromise = ObservablePromise;
-},{"observable-fns":"../../node_modules/observable-fns/dist.esm/index.js"}],"../../node_modules/threads/dist-esm/transferable.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.isTransferDescriptor = isTransferDescriptor;
-exports.Transfer = Transfer;
-
-var _symbols = require("./symbols");
-
-function isTransferable(thing) {
-  if (!thing || typeof thing !== "object") return false; // Don't check too thoroughly, since the list of transferable things in JS might grow over time
-
-  return true;
-}
-
-function isTransferDescriptor(thing) {
-  return thing && typeof thing === "object" && thing[_symbols.$transferable];
-}
-
-function Transfer(payload, transferables) {
-  if (!transferables) {
-    if (!isTransferable(payload)) throw Error();
-    transferables = [payload];
-  }
-
-  return {
-    [_symbols.$transferable]: true,
-    send: payload,
-    transferables
-  };
-}
-},{"./symbols":"../../node_modules/threads/dist-esm/symbols.js"}],"../../node_modules/threads/dist-esm/types/messages.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.WorkerMessageType = exports.MasterMessageType = void 0;
-/////////////////////////////
-// Messages sent by master:
-var MasterMessageType;
-exports.MasterMessageType = MasterMessageType;
-
-(function (MasterMessageType) {
-  MasterMessageType["run"] = "run";
-})(MasterMessageType || (exports.MasterMessageType = MasterMessageType = {})); ////////////////////////////
-// Messages sent by worker:
-
-
-var WorkerMessageType;
-exports.WorkerMessageType = WorkerMessageType;
-
-(function (WorkerMessageType) {
-  WorkerMessageType["error"] = "error";
-  WorkerMessageType["init"] = "init";
-  WorkerMessageType["result"] = "result";
-  WorkerMessageType["running"] = "running";
-  WorkerMessageType["uncaughtError"] = "uncaughtError";
-})(WorkerMessageType || (exports.WorkerMessageType = WorkerMessageType = {}));
-},{}],"../../node_modules/threads/dist-esm/master/invocation-proxy.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.createProxyFunction = createProxyFunction;
-exports.createProxyModule = createProxyModule;
-
-var _debug = _interopRequireDefault(require("debug"));
-
-var _observableFns = require("observable-fns");
-
-var _common = require("../common");
-
-var _observablePromise = require("../observable-promise");
-
-var _transferable = require("../transferable");
-
-var _messages = require("../types/messages");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/*
- * This source file contains the code for proxying calls in the master thread to calls in the workers
- * by `.postMessage()`-ing.
- *
- * Keep in mind that this code can make or break the program's performance! Need to optimize more…
- */
-const debugMessages = (0, _debug.default)("threads:master:messages");
-let nextJobUID = 1;
-
-const dedupe = array => Array.from(new Set(array));
-
-const isJobErrorMessage = data => data && data.type === _messages.WorkerMessageType.error;
-
-const isJobResultMessage = data => data && data.type === _messages.WorkerMessageType.result;
-
-const isJobStartMessage = data => data && data.type === _messages.WorkerMessageType.running;
-
-function createObservableForJob(worker, jobUID) {
-  return new _observableFns.Observable(observer => {
-    let asyncType;
-
-    const messageHandler = event => {
-      debugMessages("Message from worker:", event.data);
-      if (!event.data || event.data.uid !== jobUID) return;
-
-      if (isJobStartMessage(event.data)) {
-        asyncType = event.data.resultType;
-      } else if (isJobResultMessage(event.data)) {
-        if (asyncType === "promise") {
-          if (typeof event.data.payload !== "undefined") {
-            observer.next((0, _common.deserialize)(event.data.payload));
-          }
-
-          observer.complete();
-          worker.removeEventListener("message", messageHandler);
-        } else {
-          if (event.data.payload) {
-            observer.next((0, _common.deserialize)(event.data.payload));
-          }
-
-          if (event.data.complete) {
-            observer.complete();
-            worker.removeEventListener("message", messageHandler);
-          }
-        }
-      } else if (isJobErrorMessage(event.data)) {
-        const error = (0, _common.deserialize)(event.data.error);
-
-        if (asyncType === "promise" || !asyncType) {
-          observer.error(error);
-        } else {
-          observer.error(error);
-        }
-
-        worker.removeEventListener("message", messageHandler);
-      }
-    };
-
-    worker.addEventListener("message", messageHandler);
-    return () => worker.removeEventListener("message", messageHandler);
-  });
-}
-
-function prepareArguments(rawArgs) {
-  if (rawArgs.length === 0) {
-    // Exit early if possible
-    return {
-      args: [],
-      transferables: []
-    };
-  }
-
-  const args = [];
-  const transferables = [];
-
-  for (const arg of rawArgs) {
-    if ((0, _transferable.isTransferDescriptor)(arg)) {
-      args.push((0, _common.serialize)(arg.send));
-      transferables.push(...arg.transferables);
-    } else {
-      args.push((0, _common.serialize)(arg));
-    }
-  }
-
-  return {
-    args,
-    transferables: transferables.length === 0 ? transferables : dedupe(transferables)
-  };
-}
-
-function createProxyFunction(worker, method) {
-  return (...rawArgs) => {
-    const uid = nextJobUID++;
-    const {
-      args,
-      transferables
-    } = prepareArguments(rawArgs);
-    const runMessage = {
-      type: _messages.MasterMessageType.run,
-      uid,
-      method,
-      args
-    };
-    debugMessages("Sending command to run function to worker:", runMessage);
-
-    try {
-      worker.postMessage(runMessage, transferables);
-    } catch (error) {
-      return _observablePromise.ObservablePromise.from(Promise.reject(error));
-    }
-
-    return _observablePromise.ObservablePromise.from((0, _observableFns.multicast)(createObservableForJob(worker, uid)));
-  };
-}
-
-function createProxyModule(worker, methodNames) {
-  const proxy = {};
-
-  for (const methodName of methodNames) {
-    proxy[methodName] = createProxyFunction(worker, methodName);
-  }
-
-  return proxy;
-}
-},{"debug":"../../node_modules/debug/src/browser.js","observable-fns":"../../node_modules/observable-fns/dist.esm/index.js","../common":"../../node_modules/threads/dist-esm/common.js","../observable-promise":"../../node_modules/threads/dist-esm/observable-promise.js","../transferable":"../../node_modules/threads/dist-esm/transferable.js","../types/messages":"../../node_modules/threads/dist-esm/types/messages.js"}],"../../node_modules/threads/dist-esm/master/spawn.js":[function(require,module,exports) {
-var process = require("process");
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.spawn = spawn;
-
-var _debug = _interopRequireDefault(require("debug"));
-
-var _observableFns = require("observable-fns");
-
-var _common = require("../common");
-
-var _promise = require("../promise");
-
-var _symbols = require("../symbols");
-
-var _master = require("../types/master");
-
-var _invocationProxy = require("./invocation-proxy");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
-  function adopt(value) {
-    return value instanceof P ? value : new P(function (resolve) {
-      resolve(value);
-    });
-  }
-
-  return new (P || (P = Promise))(function (resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-    }
-
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-
-const debugMessages = (0, _debug.default)("threads:master:messages");
-const debugSpawn = (0, _debug.default)("threads:master:spawn");
-const debugThreadUtils = (0, _debug.default)("threads:master:thread-utils");
-
-const isInitMessage = data => data && data.type === "init";
-
-const isUncaughtErrorMessage = data => data && data.type === "uncaughtError";
-
-const initMessageTimeout = typeof process !== "undefined" && undefined ? Number.parseInt(undefined, 10) : 10000;
-
-function withTimeout(promise, timeoutInMs, errorMessage) {
-  return __awaiter(this, void 0, void 0, function* () {
-    let timeoutHandle;
-    const timeout = new Promise((resolve, reject) => {
-      timeoutHandle = setTimeout(() => reject(Error(errorMessage)), timeoutInMs);
-    });
-    const result = yield Promise.race([promise, timeout]);
-    clearTimeout(timeoutHandle);
-    return result;
-  });
-}
-
-function receiveInitMessage(worker) {
-  return new Promise((resolve, reject) => {
-    const messageHandler = event => {
-      debugMessages("Message from worker before finishing initialization:", event.data);
-
-      if (isInitMessage(event.data)) {
-        worker.removeEventListener("message", messageHandler);
-        resolve(event.data);
-      } else if (isUncaughtErrorMessage(event.data)) {
-        worker.removeEventListener("message", messageHandler);
-        reject((0, _common.deserialize)(event.data.error));
-      }
-    };
-
-    worker.addEventListener("message", messageHandler);
-  });
-}
-
-function createEventObservable(worker, workerTermination) {
-  return new _observableFns.Observable(observer => {
-    const messageHandler = messageEvent => {
-      const workerEvent = {
-        type: _master.WorkerEventType.message,
-        data: messageEvent.data
-      };
-      observer.next(workerEvent);
-    };
-
-    const rejectionHandler = errorEvent => {
-      debugThreadUtils("Unhandled promise rejection event in thread:", errorEvent);
-      const workerEvent = {
-        type: _master.WorkerEventType.internalError,
-        error: Error(errorEvent.reason)
-      };
-      observer.next(workerEvent);
-    };
-
-    worker.addEventListener("message", messageHandler);
-    worker.addEventListener("unhandledrejection", rejectionHandler);
-    workerTermination.then(() => {
-      const terminationEvent = {
-        type: _master.WorkerEventType.termination
-      };
-      worker.removeEventListener("message", messageHandler);
-      worker.removeEventListener("unhandledrejection", rejectionHandler);
-      observer.next(terminationEvent);
-      observer.complete();
-    });
-  });
-}
-
-function createTerminator(worker) {
-  const [termination, resolver] = (0, _promise.createPromiseWithResolver)();
-
-  const terminate = () => __awaiter(this, void 0, void 0, function* () {
-    debugThreadUtils("Terminating worker"); // Newer versions of worker_threads workers return a promise
-
-    yield worker.terminate();
-    resolver();
-  });
-
-  return {
-    terminate,
-    termination
-  };
-}
-
-function setPrivateThreadProps(raw, worker, workerEvents, terminate) {
-  const workerErrors = workerEvents.filter(event => event.type === _master.WorkerEventType.internalError).map(errorEvent => errorEvent.error); // tslint:disable-next-line prefer-object-spread
-
-  return Object.assign(raw, {
-    [_symbols.$errors]: workerErrors,
-    [_symbols.$events]: workerEvents,
-    [_symbols.$terminate]: terminate,
-    [_symbols.$worker]: worker
-  });
-}
-/**
- * Spawn a new thread. Takes a fresh worker instance, wraps it in a thin
- * abstraction layer to provide the transparent API and verifies that
- * the worker has initialized successfully.
- *
- * @param worker Instance of `Worker`. Either a web worker, `worker_threads` worker or `tiny-worker` worker.
- * @param [options]
- * @param [options.timeout] Init message timeout. Default: 10000 or set by environment variable.
- */
-
-
-function spawn(worker, options) {
-  return __awaiter(this, void 0, void 0, function* () {
-    debugSpawn("Initializing new thread");
-    const initMessage = yield withTimeout(receiveInitMessage(worker), options && options.timeout ? options.timeout : initMessageTimeout, `Timeout: Did not receive an init message from worker after ${initMessageTimeout}ms. Make sure the worker calls expose().`);
-    const exposed = initMessage.exposed;
-    const {
-      termination,
-      terminate
-    } = createTerminator(worker);
-    const events = createEventObservable(worker, termination);
-
-    if (exposed.type === "function") {
-      const proxy = (0, _invocationProxy.createProxyFunction)(worker);
-      return setPrivateThreadProps(proxy, worker, events, terminate);
-    } else if (exposed.type === "module") {
-      const proxy = (0, _invocationProxy.createProxyModule)(worker, exposed.methods);
-      return setPrivateThreadProps(proxy, worker, events, terminate);
-    } else {
-      const type = exposed.type;
-      throw Error(`Worker init message states unexpected type of expose(): ${type}`);
-    }
-  });
-}
-},{"debug":"../../node_modules/debug/src/browser.js","observable-fns":"../../node_modules/observable-fns/dist.esm/index.js","../common":"../../node_modules/threads/dist-esm/common.js","../promise":"../../node_modules/threads/dist-esm/promise.js","../symbols":"../../node_modules/threads/dist-esm/symbols.js","../types/master":"../../node_modules/threads/dist-esm/types/master.js","./invocation-proxy":"../../node_modules/threads/dist-esm/master/invocation-proxy.js","process":"../../node_modules/process/browser.js"}],"../../node_modules/threads/dist-esm/master/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-Object.defineProperty(exports, "Pool", {
-  enumerable: true,
-  get: function () {
-    return _pool.Pool;
-  }
-});
-Object.defineProperty(exports, "spawn", {
-  enumerable: true,
-  get: function () {
-    return _spawn.spawn;
-  }
-});
-Object.defineProperty(exports, "Thread", {
-  enumerable: true,
-  get: function () {
-    return _thread.Thread;
-  }
-});
-exports.Worker = void 0;
-
-var _implementation = require("./implementation");
-
-var _pool = require("./pool");
-
-var _spawn = require("./spawn");
-
-var _thread = require("./thread");
-
-/** Worker implementation. Either web worker or a node.js Worker class. */
-const Worker = (0, _implementation.selectWorkerImplementation)();
-exports.Worker = Worker;
-},{"./implementation":"../../node_modules/threads/dist-esm/master/implementation.browser.js","./pool":"../../node_modules/threads/dist-esm/master/pool.js","./spawn":"../../node_modules/threads/dist-esm/master/spawn.js","./thread":"../../node_modules/threads/dist-esm/master/thread.js"}],"../../node_modules/symbol-observable/es/ponyfill.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = symbolObservablePonyfill;
-
-function symbolObservablePonyfill(root) {
-  var result;
-  var Symbol = root.Symbol;
-
-  if (typeof Symbol === 'function') {
-    if (Symbol.observable) {
-      result = Symbol.observable;
-    } else {
-      result = Symbol('observable');
-      Symbol.observable = result;
-    }
-  } else {
-    result = '@@observable';
-  }
-
-  return result;
-}
-
-;
-},{}],"../../node_modules/symbol-observable/es/index.js":[function(require,module,exports) {
-var global = arguments[3];
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-var _ponyfill = _interopRequireDefault(require("./ponyfill.js"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/* global window */
-var root;
-
-if (typeof self !== 'undefined') {
-  root = self;
-} else if (typeof window !== 'undefined') {
-  root = window;
-} else if (typeof global !== 'undefined') {
-  root = global;
-} else if (typeof module !== 'undefined') {
-  root = module;
-} else {
-  root = Function('return this')();
-}
-
-var result = (0, _ponyfill.default)(root);
-var _default = result;
-exports.default = _default;
-},{"./ponyfill.js":"../../node_modules/symbol-observable/es/ponyfill.js"}],"../../node_modules/is-observable/index.js":[function(require,module,exports) {
-'use strict';
-
-const symbolObservable = require('symbol-observable').default;
-
-module.exports = value => Boolean(value && value[symbolObservable] && value === value[symbolObservable]());
-},{"symbol-observable":"../../node_modules/symbol-observable/es/index.js"}],"../../node_modules/threads/dist-esm/worker/implementation.browser.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.default = void 0;
-
-/// <reference lib="dom" />
-// tslint:disable no-shadowed-variable
-const isWorkerRuntime = function isWorkerRuntime() {
-  return typeof self !== "undefined" && self.postMessage ? true : false;
-};
-
-const postMessageToMaster = function postMessageToMaster(data, transferList) {
-  self.postMessage(data, transferList);
-};
-
-const subscribeToMasterMessages = function subscribeToMasterMessages(onMessage) {
-  const messageHandler = messageEvent => {
-    onMessage(messageEvent.data);
-  };
-
-  const unsubscribe = () => {
-    self.removeEventListener("message", messageHandler);
-  };
-
-  self.addEventListener("message", messageHandler);
-  return unsubscribe;
-};
-
-var _default = {
-  isWorkerRuntime,
-  postMessageToMaster,
-  subscribeToMasterMessages
-};
-exports.default = _default;
-},{}],"../../node_modules/threads/dist-esm/worker/index.js":[function(require,module,exports) {
-var process = require("process");
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.expose = expose;
-Object.defineProperty(exports, "registerSerializer", {
-  enumerable: true,
-  get: function () {
-    return _common.registerSerializer;
-  }
-});
-Object.defineProperty(exports, "Transfer", {
-  enumerable: true,
-  get: function () {
-    return _transferable.Transfer;
-  }
-});
-
-var _isObservable = _interopRequireDefault(require("is-observable"));
-
-var _common = require("../common");
-
-var _transferable = require("../transferable");
-
-var _messages = require("../types/messages");
-
-var _implementation = _interopRequireDefault(require("./implementation"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var __awaiter = void 0 && (void 0).__awaiter || function (thisArg, _arguments, P, generator) {
-  function adopt(value) {
-    return value instanceof P ? value : new P(function (resolve) {
-      resolve(value);
-    });
-  }
-
-  return new (P || (P = Promise))(function (resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-    }
-
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-
-let exposeCalled = false;
-
-const isMasterJobRunMessage = thing => thing && thing.type === _messages.MasterMessageType.run;
-/**
- * There are issues with `is-observable` not recognizing zen-observable's instances.
- * We are using `observable-fns`, but it's based on zen-observable, too.
- */
-
-
-const isObservable = thing => (0, _isObservable.default)(thing) || isZenObservable(thing);
-
-function isZenObservable(thing) {
-  return thing && typeof thing === "object" && typeof thing.subscribe === "function";
-}
-
-function deconstructTransfer(thing) {
-  return (0, _transferable.isTransferDescriptor)(thing) ? {
-    payload: thing.send,
-    transferables: thing.transferables
-  } : {
-    payload: thing,
-    transferables: undefined
-  };
-}
-
-function postFunctionInitMessage() {
-  const initMessage = {
-    type: _messages.WorkerMessageType.init,
-    exposed: {
-      type: "function"
-    }
-  };
-
-  _implementation.default.postMessageToMaster(initMessage);
-}
-
-function postModuleInitMessage(methodNames) {
-  const initMessage = {
-    type: _messages.WorkerMessageType.init,
-    exposed: {
-      type: "module",
-      methods: methodNames
-    }
-  };
-
-  _implementation.default.postMessageToMaster(initMessage);
-}
-
-function postJobErrorMessage(uid, rawError) {
-  const {
-    payload: error,
-    transferables
-  } = deconstructTransfer(rawError);
-  const errorMessage = {
-    type: _messages.WorkerMessageType.error,
-    uid,
-    error: (0, _common.serialize)(error)
-  };
-
-  _implementation.default.postMessageToMaster(errorMessage, transferables);
-}
-
-function postJobResultMessage(uid, completed, resultValue) {
-  const {
-    payload,
-    transferables
-  } = deconstructTransfer(resultValue);
-  const resultMessage = {
-    type: _messages.WorkerMessageType.result,
-    uid,
-    complete: completed ? true : undefined,
-    payload
-  };
-
-  _implementation.default.postMessageToMaster(resultMessage, transferables);
-}
-
-function postJobStartMessage(uid, resultType) {
-  const startMessage = {
-    type: _messages.WorkerMessageType.running,
-    uid,
-    resultType
-  };
-
-  _implementation.default.postMessageToMaster(startMessage);
-}
-
-function postUncaughtErrorMessage(error) {
-  try {
-    const errorMessage = {
-      type: _messages.WorkerMessageType.uncaughtError,
-      error: (0, _common.serialize)(error)
-    };
-
-    _implementation.default.postMessageToMaster(errorMessage);
-  } catch (subError) {
-    // tslint:disable-next-line no-console
-    console.error("Not reporting uncaught error back to master thread as it occured while " + "reporting an uncaught error already. Latest error:", subError);
-  }
-}
-
-function runFunction(jobUID, fn, args) {
-  return __awaiter(this, void 0, void 0, function* () {
-    let syncResult;
-
-    try {
-      syncResult = fn(...args);
-    } catch (error) {
-      return postJobErrorMessage(jobUID, error);
-    }
-
-    const resultType = isObservable(syncResult) ? "observable" : "promise";
-    postJobStartMessage(jobUID, resultType);
-
-    if (isObservable(syncResult)) {
-      syncResult.subscribe(value => postJobResultMessage(jobUID, false, (0, _common.serialize)(value)), error => postJobErrorMessage(jobUID, (0, _common.serialize)(error)), () => postJobResultMessage(jobUID, true));
-    } else {
-      try {
-        const result = yield syncResult;
-        postJobResultMessage(jobUID, true, (0, _common.serialize)(result));
-      } catch (error) {
-        postJobErrorMessage(jobUID, (0, _common.serialize)(error));
-      }
-    }
-  });
-}
-/**
- * Expose a function or a module (an object whose values are functions)
- * to the main thread. Must be called exactly once in every worker thread
- * to signal its API to the main thread.
- *
- * @param exposed Function or object whose values are functions
- */
-
-
-function expose(exposed) {
-  if (!_implementation.default.isWorkerRuntime()) {
-    throw Error("expose() called in the master thread.");
-  }
-
-  if (exposeCalled) {
-    throw Error("expose() called more than once. This is not possible. Pass an object to expose() if you want to expose multiple functions.");
-  }
-
-  exposeCalled = true;
-
-  if (typeof exposed === "function") {
-    _implementation.default.subscribeToMasterMessages(messageData => {
-      if (isMasterJobRunMessage(messageData) && !messageData.method) {
-        runFunction(messageData.uid, exposed, messageData.args.map(_common.deserialize));
-      }
-    });
-
-    postFunctionInitMessage();
-  } else if (typeof exposed === "object" && exposed) {
-    _implementation.default.subscribeToMasterMessages(messageData => {
-      if (isMasterJobRunMessage(messageData) && messageData.method) {
-        runFunction(messageData.uid, exposed[messageData.method], messageData.args.map(_common.deserialize));
-      }
-    });
-
-    const methodNames = Object.keys(exposed).filter(key => typeof exposed[key] === "function");
-    postModuleInitMessage(methodNames);
-  } else {
-    throw Error(`Invalid argument passed to expose(). Expected a function or an object, got: ${exposed}`);
-  }
-}
-
-if (typeof self !== "undefined" && typeof self.addEventListener === "function" && _implementation.default.isWorkerRuntime()) {
-  self.addEventListener("error", event => {
-    // Post with some delay, so the master had some time to subscribe to messages
-    setTimeout(() => postUncaughtErrorMessage(event.error || event), 250);
-  });
-  self.addEventListener("unhandledrejection", event => {
-    const error = event.reason;
-
-    if (error && typeof error.message === "string") {
-      // Post with some delay, so the master had some time to subscribe to messages
-      setTimeout(() => postUncaughtErrorMessage(error), 250);
-    }
-  });
-}
-
-if (typeof process !== "undefined" && typeof process.on === "function" && _implementation.default.isWorkerRuntime()) {
-  process.on("uncaughtException", error => {
-    // Post with some delay, so the master had some time to subscribe to messages
-    setTimeout(() => postUncaughtErrorMessage(error), 250);
-  });
-  process.on("unhandledRejection", error => {
-    if (error && typeof error.message === "string") {
-      // Post with some delay, so the master had some time to subscribe to messages
-      setTimeout(() => postUncaughtErrorMessage(error), 250);
-    }
-  });
-}
-},{"is-observable":"../../node_modules/is-observable/index.js","../common":"../../node_modules/threads/dist-esm/common.js","../transferable":"../../node_modules/threads/dist-esm/transferable.js","../types/messages":"../../node_modules/threads/dist-esm/types/messages.js","./implementation":"../../node_modules/threads/dist-esm/worker/implementation.browser.js","process":"../../node_modules/process/browser.js"}],"../../node_modules/threads/dist-esm/index.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var _exportNames = {
-  registerSerializer: true,
-  expose: true,
-  DefaultSerializer: true,
-  Transfer: true
-};
-Object.defineProperty(exports, "registerSerializer", {
-  enumerable: true,
-  get: function () {
-    return _common.registerSerializer;
-  }
-});
-Object.defineProperty(exports, "expose", {
-  enumerable: true,
-  get: function () {
-    return _index2.expose;
-  }
-});
-Object.defineProperty(exports, "DefaultSerializer", {
-  enumerable: true,
-  get: function () {
-    return _serializers.DefaultSerializer;
-  }
-});
-Object.defineProperty(exports, "Transfer", {
-  enumerable: true,
-  get: function () {
-    return _transferable.Transfer;
-  }
-});
-
-var _common = require("./common");
-
-var _index = require("./master/index");
-
-Object.keys(_index).forEach(function (key) {
-  if (key === "default" || key === "__esModule") return;
-  if (Object.prototype.hasOwnProperty.call(_exportNames, key)) return;
-  Object.defineProperty(exports, key, {
-    enumerable: true,
-    get: function () {
-      return _index[key];
-    }
-  });
-});
-
-var _index2 = require("./worker/index");
-
-var _serializers = require("./serializers");
-
-var _transferable = require("./transferable");
-},{"./common":"../../node_modules/threads/dist-esm/common.js","./master/index":"../../node_modules/threads/dist-esm/master/index.js","./worker/index":"../../node_modules/threads/dist-esm/worker/index.js","./serializers":"../../node_modules/threads/dist-esm/serializers.js","./transferable":"../../node_modules/threads/dist-esm/transferable.js"}],"../../node_modules/threads/dist/master/get-bundle-url.browser.js":[function(require,module,exports) {
-"use strict";
-// Source: <https://github.com/parcel-bundler/parcel/blob/master/packages/core/parcel-bundler/src/builtins/bundle-url.js>
-Object.defineProperty(exports, "__esModule", { value: true });
-let bundleURL;
-function getBundleURLCached() {
-    if (!bundleURL) {
-        bundleURL = getBundleURL();
-    }
-    return bundleURL;
-}
-exports.getBundleURL = getBundleURLCached;
-function getBundleURL() {
-    // Attempt to find the URL of the current script and use that as the base URL
-    try {
-        throw new Error;
-    }
-    catch (err) {
-        const matches = ("" + err.stack).match(/(https?|file|ftp|chrome-extension|moz-extension):\/\/[^)\n]+/g);
-        if (matches) {
-            return getBaseURL(matches[0]);
-        }
-    }
-    return "/";
-}
-function getBaseURL(url) {
-    return ("" + url).replace(/^((?:https?|file|ftp|chrome-extension|moz-extension):\/\/.+)?\/[^/]+(?:\?.*)?$/, '$1') + '/';
-}
-exports.getBaseURL = getBaseURL;
-
-},{}],"../../node_modules/threads/dist/master/implementation.browser.js":[function(require,module,exports) {
-"use strict";
-// tslint:disable max-classes-per-file
-Object.defineProperty(exports, "__esModule", { value: true });
-const get_bundle_url_browser_1 = require("./get-bundle-url.browser");
-exports.defaultPoolSize = typeof navigator !== "undefined" && navigator.hardwareConcurrency
-    ? navigator.hardwareConcurrency
-    : 4;
-const isAbsoluteURL = (value) => /^(file|https?:)?\/\//i.test(value);
-function createSourceBlobURL(code) {
-    const blob = new Blob([code], { type: "application/javascript" });
-    return URL.createObjectURL(blob);
-}
-function selectWorkerImplementation() {
-    if (typeof Worker === "undefined") {
-        // Might happen on Safari, for instance
-        // The idea is to only fail if the constructor is actually used
-        return class NoWebWorker {
-            constructor() {
-                throw Error("No web worker implementation available. You might have tried to spawn a worker within a worker in a browser that doesn't support workers in workers.");
-            }
-        };
-    }
-    return class WebWorker extends Worker {
-        constructor(url, options) {
-            if (typeof url === "string" && options && options._baseURL) {
-                url = new URL(url, options._baseURL);
-            }
-            else if (typeof url === "string" && !isAbsoluteURL(url) && get_bundle_url_browser_1.getBundleURL().match(/^file:\/\//i)) {
-                url = new URL(url, get_bundle_url_browser_1.getBundleURL().replace(/\/[^\/]+$/, "/"));
-                url = createSourceBlobURL(`importScripts(${JSON.stringify(url)});`);
-            }
-            if (typeof url === "string" && isAbsoluteURL(url)) {
-                // Create source code blob loading JS file via `importScripts()`
-                // to circumvent worker CORS restrictions
-                url = createSourceBlobURL(`importScripts(${JSON.stringify(url)});`);
-            }
-            super(url, options);
-        }
-    };
-}
-exports.selectWorkerImplementation = selectWorkerImplementation;
-
-},{"./get-bundle-url.browser":"../../node_modules/threads/dist/master/get-bundle-url.browser.js"}],"../../node_modules/threads/dist/ponyfills.js":[function(require,module,exports) {
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-// Based on <https://github.com/es-shims/Promise.allSettled/blob/master/implementation.js>
-function allSettled(values) {
-    return Promise.all(values.map(item => {
-        const onFulfill = (value) => {
-            return { status: 'fulfilled', value };
-        };
-        const onReject = (reason) => {
-            return { status: 'rejected', reason };
-        };
-        const itemPromise = Promise.resolve(item);
-        try {
-            return itemPromise.then(onFulfill, onReject);
-        }
-        catch (error) {
-            return Promise.reject(error);
-        }
-    }));
-}
-exports.allSettled = allSettled;
-
-},{}],"../../node_modules/threads/dist/master/pool-types.js":[function(require,module,exports) {
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-/** Pool event type. Specifies the type of each `PoolEvent`. */
-var PoolEventType;
-(function (PoolEventType) {
-    PoolEventType["initialized"] = "initialized";
-    PoolEventType["taskCanceled"] = "taskCanceled";
-    PoolEventType["taskCompleted"] = "taskCompleted";
-    PoolEventType["taskFailed"] = "taskFailed";
-    PoolEventType["taskQueued"] = "taskQueued";
-    PoolEventType["taskQueueDrained"] = "taskQueueDrained";
-    PoolEventType["taskStart"] = "taskStart";
-    PoolEventType["terminated"] = "terminated";
-})(PoolEventType = exports.PoolEventType || (exports.PoolEventType = {}));
-
-},{}],"../../node_modules/threads/dist/symbols.js":[function(require,module,exports) {
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.$errors = Symbol("thread.errors");
-exports.$events = Symbol("thread.events");
-exports.$terminate = Symbol("thread.terminate");
-exports.$transferable = Symbol("thread.transferable");
-exports.$worker = Symbol("thread.worker");
-
-},{}],"../../node_modules/threads/dist/master/thread.js":[function(require,module,exports) {
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const symbols_1 = require("../symbols");
-function fail(message) {
-    throw Error(message);
-}
-/** Thread utility functions. Use them to manage or inspect a `spawn()`-ed thread. */
-exports.Thread = {
-    /** Return an observable that can be used to subscribe to all errors happening in the thread. */
-    errors(thread) {
-        return thread[symbols_1.$errors] || fail("Error observable not found. Make sure to pass a thread instance as returned by the spawn() promise.");
-    },
-    /** Return an observable that can be used to subscribe to internal events happening in the thread. Useful for debugging. */
-    events(thread) {
-        return thread[symbols_1.$events] || fail("Events observable not found. Make sure to pass a thread instance as returned by the spawn() promise.");
-    },
-    /** Terminate a thread. Remember to terminate every thread when you are done using it. */
-    terminate(thread) {
-        return thread[symbols_1.$terminate]();
-    }
-};
-
-},{"../symbols":"../../node_modules/threads/dist/symbols.js"}],"../../node_modules/threads/dist/master/pool.js":[function(require,module,exports) {
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const debug_1 = __importDefault(require("debug"));
-const observable_fns_1 = require("observable-fns");
-const ponyfills_1 = require("../ponyfills");
-const implementation_1 = require("./implementation");
-const pool_types_1 = require("./pool-types");
-exports.PoolEventType = pool_types_1.PoolEventType;
-const thread_1 = require("./thread");
-exports.Thread = thread_1.Thread;
-let nextPoolID = 1;
-function createArray(size) {
-    const array = [];
-    for (let index = 0; index < size; index++) {
-        array.push(index);
-    }
-    return array;
-}
-function delay(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-function flatMap(array, mapper) {
-    return array.reduce((flattened, element) => [...flattened, ...mapper(element)], []);
-}
-function slugify(text) {
-    return text.replace(/\W/g, " ").trim().replace(/\s+/g, "-");
-}
-function spawnWorkers(spawnWorker, count) {
-    return createArray(count).map(() => ({
-        init: spawnWorker(),
-        runningTasks: []
-    }));
-}
-class WorkerPool {
-    constructor(spawnWorker, optionsOrSize) {
-        this.eventSubject = new observable_fns_1.Subject();
-        this.initErrors = [];
-        this.isClosing = false;
-        this.nextTaskID = 1;
-        this.taskQueue = [];
-        const options = typeof optionsOrSize === "number"
-            ? { size: optionsOrSize }
-            : optionsOrSize || {};
-        const { size = implementation_1.defaultPoolSize } = options;
-        this.debug = debug_1.default(`threads:pool:${slugify(options.name || String(nextPoolID++))}`);
-        this.options = options;
-        this.workers = spawnWorkers(spawnWorker, size);
-        this.eventObservable = observable_fns_1.multicast(observable_fns_1.Observable.from(this.eventSubject));
-        Promise.all(this.workers.map(worker => worker.init)).then(() => this.eventSubject.next({
-            type: pool_types_1.PoolEventType.initialized,
-            size: this.workers.length
-        }), error => {
-            this.debug("Error while initializing pool worker:", error);
-            this.eventSubject.error(error);
-            this.initErrors.push(error);
-        });
-    }
-    findIdlingWorker() {
-        const { concurrency = 1 } = this.options;
-        return this.workers.find(worker => worker.runningTasks.length < concurrency);
-    }
-    runPoolTask(worker, task) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const workerID = this.workers.indexOf(worker) + 1;
-            this.debug(`Running task #${task.id} on worker #${workerID}...`);
-            this.eventSubject.next({
-                type: pool_types_1.PoolEventType.taskStart,
-                taskID: task.id,
-                workerID
-            });
-            try {
-                const returnValue = yield task.run(yield worker.init);
-                this.debug(`Task #${task.id} completed successfully`);
-                this.eventSubject.next({
-                    type: pool_types_1.PoolEventType.taskCompleted,
-                    returnValue,
-                    taskID: task.id,
-                    workerID
-                });
-            }
-            catch (error) {
-                this.debug(`Task #${task.id} failed`);
-                this.eventSubject.next({
-                    type: pool_types_1.PoolEventType.taskFailed,
-                    taskID: task.id,
-                    error,
-                    workerID
-                });
-            }
-        });
-    }
-    run(worker, task) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const runPromise = (() => __awaiter(this, void 0, void 0, function* () {
-                const removeTaskFromWorkersRunningTasks = () => {
-                    worker.runningTasks = worker.runningTasks.filter(someRunPromise => someRunPromise !== runPromise);
-                };
-                // Defer task execution by one tick to give handlers time to subscribe
-                yield delay(0);
-                try {
-                    yield this.runPoolTask(worker, task);
-                }
-                finally {
-                    removeTaskFromWorkersRunningTasks();
-                    if (!this.isClosing) {
-                        this.scheduleWork();
-                    }
-                }
-            }))();
-            worker.runningTasks.push(runPromise);
-        });
-    }
-    scheduleWork() {
-        this.debug(`Attempt de-queueing a task in order to run it...`);
-        const availableWorker = this.findIdlingWorker();
-        if (!availableWorker)
-            return;
-        const nextTask = this.taskQueue.shift();
-        if (!nextTask) {
-            this.debug(`Task queue is empty`);
-            this.eventSubject.next({ type: pool_types_1.PoolEventType.taskQueueDrained });
-            return;
-        }
-        this.run(availableWorker, nextTask);
-    }
-    taskCompletion(taskID) {
-        return new Promise((resolve, reject) => {
-            const eventSubscription = this.events().subscribe(event => {
-                if (event.type === pool_types_1.PoolEventType.taskCompleted && event.taskID === taskID) {
-                    eventSubscription.unsubscribe();
-                    resolve(event.returnValue);
-                }
-                else if (event.type === pool_types_1.PoolEventType.taskFailed && event.taskID === taskID) {
-                    eventSubscription.unsubscribe();
-                    reject(event.error);
-                }
-                else if (event.type === pool_types_1.PoolEventType.terminated) {
-                    eventSubscription.unsubscribe();
-                    reject(Error("Pool has been terminated before task was run."));
-                }
-            });
-        });
-    }
-    settled(allowResolvingImmediately = false) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const getCurrentlyRunningTasks = () => flatMap(this.workers, worker => worker.runningTasks);
-            const taskFailures = [];
-            const failureSubscription = this.eventObservable.subscribe(event => {
-                if (event.type === pool_types_1.PoolEventType.taskFailed) {
-                    taskFailures.push(event.error);
-                }
-            });
-            if (this.initErrors.length > 0) {
-                return Promise.reject(this.initErrors[0]);
-            }
-            if (allowResolvingImmediately && this.taskQueue.length === 0) {
-                yield ponyfills_1.allSettled(getCurrentlyRunningTasks());
-                return taskFailures;
-            }
-            yield new Promise((resolve, reject) => {
-                const subscription = this.eventObservable.subscribe({
-                    next(event) {
-                        if (event.type === pool_types_1.PoolEventType.taskQueueDrained) {
-                            subscription.unsubscribe();
-                            resolve();
-                        }
-                    },
-                    error: reject // make a pool-wide error reject the completed() result promise
-                });
-            });
-            yield ponyfills_1.allSettled(getCurrentlyRunningTasks());
-            failureSubscription.unsubscribe();
-            return taskFailures;
-        });
-    }
-    completed(allowResolvingImmediately = false) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const settlementPromise = this.settled(allowResolvingImmediately);
-            const earlyExitPromise = new Promise((resolve, reject) => {
-                const subscription = this.eventObservable.subscribe({
-                    next(event) {
-                        if (event.type === pool_types_1.PoolEventType.taskQueueDrained) {
-                            subscription.unsubscribe();
-                            resolve(settlementPromise);
-                        }
-                        else if (event.type === pool_types_1.PoolEventType.taskFailed) {
-                            subscription.unsubscribe();
-                            reject(event.error);
-                        }
-                    },
-                    error: reject // make a pool-wide error reject the completed() result promise
-                });
-            });
-            const errors = yield Promise.race([
-                settlementPromise,
-                earlyExitPromise
-            ]);
-            if (errors.length > 0) {
-                throw errors[0];
-            }
-        });
-    }
-    events() {
-        return this.eventObservable;
-    }
-    queue(taskFunction) {
-        const { maxQueuedJobs = Infinity } = this.options;
-        if (this.isClosing) {
-            throw Error(`Cannot schedule pool tasks after terminate() has been called.`);
-        }
-        if (this.initErrors.length > 0) {
-            throw this.initErrors[0];
-        }
-        const taskCompleted = () => this.taskCompletion(task.id);
-        let taskCompletionDotThen;
-        const task = {
-            id: this.nextTaskID++,
-            run: taskFunction,
-            cancel: () => {
-                if (this.taskQueue.indexOf(task) === -1)
-                    return;
-                this.taskQueue = this.taskQueue.filter(someTask => someTask !== task);
-                this.eventSubject.next({
-                    type: pool_types_1.PoolEventType.taskCanceled,
-                    taskID: task.id
-                });
-            },
-            get then() {
-                if (!taskCompletionDotThen) {
-                    const promise = taskCompleted();
-                    taskCompletionDotThen = promise.then.bind(promise);
-                }
-                return taskCompletionDotThen;
-            }
-        };
-        if (this.taskQueue.length >= maxQueuedJobs) {
-            throw Error("Maximum number of pool tasks queued. Refusing to queue another one.\n" +
-                "This usually happens for one of two reasons: We are either at peak " +
-                "workload right now or some tasks just won't finish, thus blocking the pool.");
-        }
-        this.debug(`Queueing task #${task.id}...`);
-        this.taskQueue.push(task);
-        this.eventSubject.next({
-            type: pool_types_1.PoolEventType.taskQueued,
-            taskID: task.id
-        });
-        this.scheduleWork();
-        return task;
-    }
-    terminate(force) {
-        return __awaiter(this, void 0, void 0, function* () {
-            this.isClosing = true;
-            if (!force) {
-                yield this.completed(true);
-            }
-            this.eventSubject.next({
-                type: pool_types_1.PoolEventType.terminated,
-                remainingQueue: [...this.taskQueue]
-            });
-            this.eventSubject.complete();
-            yield Promise.all(this.workers.map((worker) => __awaiter(this, void 0, void 0, function* () { return thread_1.Thread.terminate(yield worker.init); })));
-        });
-    }
-}
-WorkerPool.EventType = pool_types_1.PoolEventType;
-/**
- * Thread pool constructor. Creates a new pool and spawns its worker threads.
- */
-function PoolConstructor(spawnWorker, optionsOrSize) {
-    // The function exists only so we don't need to use `new` to create a pool (we still can, though).
-    // If the Pool is a class or not is an implementation detail that should not concern the user.
-    return new WorkerPool(spawnWorker, optionsOrSize);
-}
-PoolConstructor.EventType = pool_types_1.PoolEventType;
-/**
- * Thread pool constructor. Creates a new pool and spawns its worker threads.
- */
-exports.Pool = PoolConstructor;
-
-},{"debug":"../../node_modules/debug/src/browser.js","observable-fns":"../../node_modules/observable-fns/dist.esm/index.js","../ponyfills":"../../node_modules/threads/dist/ponyfills.js","./implementation":"../../node_modules/threads/dist/master/implementation.browser.js","./pool-types":"../../node_modules/threads/dist/master/pool-types.js","./thread":"../../node_modules/threads/dist/master/thread.js"}],"../../node_modules/threads/dist/serializers.js":[function(require,module,exports) {
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-function extendSerializer(extend, implementation) {
-    const fallbackDeserializer = extend.deserialize.bind(extend);
-    const fallbackSerializer = extend.serialize.bind(extend);
-    return {
-        deserialize(message) {
-            return implementation.deserialize(message, fallbackDeserializer);
-        },
-        serialize(input) {
-            return implementation.serialize(input, fallbackSerializer);
-        }
-    };
-}
-exports.extendSerializer = extendSerializer;
-const DefaultErrorSerializer = {
-    deserialize(message) {
-        return Object.assign(Error(message.message), {
-            name: message.name,
-            stack: message.stack
-        });
-    },
-    serialize(error) {
-        return {
-            __error_marker: "$$error",
-            message: error.message,
-            name: error.name,
-            stack: error.stack
-        };
-    }
-};
-const isSerializedError = (thing) => thing && typeof thing === "object" && "__error_marker" in thing && thing.__error_marker === "$$error";
-exports.DefaultSerializer = {
-    deserialize(message) {
-        if (isSerializedError(message)) {
-            return DefaultErrorSerializer.deserialize(message);
-        }
-        else {
-            return message;
-        }
-    },
-    serialize(input) {
-        if (input instanceof Error) {
-            return DefaultErrorSerializer.serialize(input);
-        }
-        else {
-            return input;
-        }
-    }
-};
-
-},{}],"../../node_modules/threads/dist/common.js":[function(require,module,exports) {
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const serializers_1 = require("./serializers");
-let registeredSerializer = serializers_1.DefaultSerializer;
-function registerSerializer(serializer) {
-    registeredSerializer = serializers_1.extendSerializer(registeredSerializer, serializer);
-}
-exports.registerSerializer = registerSerializer;
-function deserialize(message) {
-    return registeredSerializer.deserialize(message);
-}
-exports.deserialize = deserialize;
-function serialize(input) {
-    return registeredSerializer.serialize(input);
-}
-exports.serialize = serialize;
-
-},{"./serializers":"../../node_modules/threads/dist/serializers.js"}],"../../node_modules/threads/dist/promise.js":[function(require,module,exports) {
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const doNothing = () => undefined;
-/**
- * Creates a new promise and exposes its resolver function.
- * Use with care!
- */
-function createPromiseWithResolver() {
-    let alreadyResolved = false;
-    let resolvedTo;
-    let resolver = doNothing;
-    const promise = new Promise(resolve => {
-        if (alreadyResolved) {
-            resolve(resolvedTo);
-        }
-        else {
-            resolver = resolve;
-        }
-    });
-    const exposedResolver = (value) => {
-        alreadyResolved = true;
-        resolvedTo = value;
-        resolver();
-    };
-    return [promise, exposedResolver];
-}
-exports.createPromiseWithResolver = createPromiseWithResolver;
-
-},{}],"../../node_modules/threads/dist/types/master.js":[function(require,module,exports) {
-"use strict";
-/// <reference lib="dom" />
-Object.defineProperty(exports, "__esModule", { value: true });
-const symbols_1 = require("../symbols");
-/** Event as emitted by worker thread. Subscribe to using `Thread.events(thread)`. */
-var WorkerEventType;
-(function (WorkerEventType) {
-    WorkerEventType["internalError"] = "internalError";
-    WorkerEventType["message"] = "message";
-    WorkerEventType["termination"] = "termination";
-})(WorkerEventType = exports.WorkerEventType || (exports.WorkerEventType = {}));
-
-},{"../symbols":"../../node_modules/threads/dist/symbols.js"}],"../../node_modules/threads/dist/observable-promise.js":[function(require,module,exports) {
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const observable_fns_1 = require("observable-fns");
-const doNothing = () => undefined;
-const returnInput = (input) => input;
-const runDeferred = (fn) => Promise.resolve().then(fn);
-function fail(error) {
-    throw error;
-}
-function isThenable(thing) {
-    return thing && typeof thing.then === "function";
-}
-/**
- * Creates a hybrid, combining the APIs of an Observable and a Promise.
- *
- * It is used to proxy async process states when we are initially not sure
- * if that async process will yield values once (-> Promise) or multiple
- * times (-> Observable).
- *
- * Note that the observable promise inherits some of the observable's characteristics:
- * The `init` function will be called *once for every time anyone subscribes to it*.
- *
- * If this is undesired, derive a hot observable from it using `makeHot()` and
- * subscribe to that.
- */
-class ObservablePromise extends observable_fns_1.Observable {
-    constructor(init) {
-        super(originalObserver => {
-            // tslint:disable-next-line no-this-assignment
-            const self = this;
-            const observer = Object.assign(Object.assign({}, originalObserver), { complete() {
-                    originalObserver.complete();
-                    self.onCompletion();
-                },
-                error(error) {
-                    originalObserver.error(error);
-                    self.onError(error);
-                },
-                next(value) {
-                    originalObserver.next(value);
-                    self.onNext(value);
-                } });
-            try {
-                this.initHasRun = true;
-                return init(observer);
-            }
-            catch (error) {
-                observer.error(error);
-            }
-        });
-        this.initHasRun = false;
-        this.fulfillmentCallbacks = [];
-        this.rejectionCallbacks = [];
-        this.firstValueSet = false;
-        this.state = "pending";
-    }
-    onNext(value) {
-        if (!this.firstValueSet) {
-            this.firstValue = value;
-            this.firstValueSet = true;
-        }
-    }
-    onError(error) {
-        this.state = "rejected";
-        this.rejection = error;
-        for (const onRejected of this.rejectionCallbacks) {
-            // Promisifying the call to turn errors into unhandled promise rejections
-            // instead of them failing sync and cancelling the iteration
-            runDeferred(() => onRejected(error));
-        }
-    }
-    onCompletion() {
-        this.state = "fulfilled";
-        for (const onFulfilled of this.fulfillmentCallbacks) {
-            // Promisifying the call to turn errors into unhandled promise rejections
-            // instead of them failing sync and cancelling the iteration
-            runDeferred(() => onFulfilled(this.firstValue));
-        }
-    }
-    then(onFulfilledRaw, onRejectedRaw) {
-        const onFulfilled = onFulfilledRaw || returnInput;
-        const onRejected = onRejectedRaw || fail;
-        let onRejectedCalled = false;
-        return new Promise((resolve, reject) => {
-            const rejectionCallback = (error) => {
-                if (onRejectedCalled)
-                    return;
-                onRejectedCalled = true;
-                try {
-                    resolve(onRejected(error));
-                }
-                catch (anotherError) {
-                    reject(anotherError);
-                }
-            };
-            const fulfillmentCallback = (value) => {
-                try {
-                    resolve(onFulfilled(value));
-                }
-                catch (error) {
-                    rejectionCallback(error);
-                }
-            };
-            if (!this.initHasRun) {
-                this.subscribe({ error: rejectionCallback });
-            }
-            if (this.state === "fulfilled") {
-                return resolve(onFulfilled(this.firstValue));
-            }
-            if (this.state === "rejected") {
-                onRejectedCalled = true;
-                return resolve(onRejected(this.rejection));
-            }
-            this.fulfillmentCallbacks.push(fulfillmentCallback);
-            this.rejectionCallbacks.push(rejectionCallback);
-        });
-    }
-    catch(onRejected) {
-        return this.then(undefined, onRejected);
-    }
-    finally(onCompleted) {
-        const handler = onCompleted || doNothing;
-        return this.then((value) => {
-            handler();
-            return value;
-        }, () => handler());
-    }
-    static from(thing) {
-        if (isThenable(thing)) {
-            return new ObservablePromise(observer => {
-                const onFulfilled = (value) => {
-                    observer.next(value);
-                    observer.complete();
-                };
-                const onRejected = (error) => {
-                    observer.error(error);
-                };
-                thing.then(onFulfilled, onRejected);
-            });
-        }
-        else {
-            return super.from(thing);
-        }
-    }
-}
-exports.ObservablePromise = ObservablePromise;
-
-},{"observable-fns":"../../node_modules/observable-fns/dist.esm/index.js"}],"../../node_modules/threads/dist/transferable.js":[function(require,module,exports) {
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const symbols_1 = require("./symbols");
-function isTransferable(thing) {
-    if (!thing || typeof thing !== "object")
-        return false;
-    // Don't check too thoroughly, since the list of transferable things in JS might grow over time
-    return true;
-}
-function isTransferDescriptor(thing) {
-    return thing && typeof thing === "object" && thing[symbols_1.$transferable];
-}
-exports.isTransferDescriptor = isTransferDescriptor;
-function Transfer(payload, transferables) {
-    if (!transferables) {
-        if (!isTransferable(payload))
-            throw Error();
-        transferables = [payload];
-    }
-    return {
-        [symbols_1.$transferable]: true,
-        send: payload,
-        transferables
-    };
-}
-exports.Transfer = Transfer;
-
-},{"./symbols":"../../node_modules/threads/dist/symbols.js"}],"../../node_modules/threads/dist/types/messages.js":[function(require,module,exports) {
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-/////////////////////////////
-// Messages sent by master:
-var MasterMessageType;
-(function (MasterMessageType) {
-    MasterMessageType["run"] = "run";
-})(MasterMessageType = exports.MasterMessageType || (exports.MasterMessageType = {}));
-////////////////////////////
-// Messages sent by worker:
-var WorkerMessageType;
-(function (WorkerMessageType) {
-    WorkerMessageType["error"] = "error";
-    WorkerMessageType["init"] = "init";
-    WorkerMessageType["result"] = "result";
-    WorkerMessageType["running"] = "running";
-    WorkerMessageType["uncaughtError"] = "uncaughtError";
-})(WorkerMessageType = exports.WorkerMessageType || (exports.WorkerMessageType = {}));
-
-},{}],"../../node_modules/threads/dist/master/invocation-proxy.js":[function(require,module,exports) {
-"use strict";
-/*
- * This source file contains the code for proxying calls in the master thread to calls in the workers
- * by `.postMessage()`-ing.
- *
- * Keep in mind that this code can make or break the program's performance! Need to optimize more…
- */
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const debug_1 = __importDefault(require("debug"));
-const observable_fns_1 = require("observable-fns");
-const common_1 = require("../common");
-const observable_promise_1 = require("../observable-promise");
-const transferable_1 = require("../transferable");
-const messages_1 = require("../types/messages");
-const debugMessages = debug_1.default("threads:master:messages");
-let nextJobUID = 1;
-const dedupe = (array) => Array.from(new Set(array));
-const isJobErrorMessage = (data) => data && data.type === messages_1.WorkerMessageType.error;
-const isJobResultMessage = (data) => data && data.type === messages_1.WorkerMessageType.result;
-const isJobStartMessage = (data) => data && data.type === messages_1.WorkerMessageType.running;
-function createObservableForJob(worker, jobUID) {
-    return new observable_fns_1.Observable(observer => {
-        let asyncType;
-        const messageHandler = ((event) => {
-            debugMessages("Message from worker:", event.data);
-            if (!event.data || event.data.uid !== jobUID)
-                return;
-            if (isJobStartMessage(event.data)) {
-                asyncType = event.data.resultType;
-            }
-            else if (isJobResultMessage(event.data)) {
-                if (asyncType === "promise") {
-                    if (typeof event.data.payload !== "undefined") {
-                        observer.next(common_1.deserialize(event.data.payload));
-                    }
-                    observer.complete();
-                    worker.removeEventListener("message", messageHandler);
-                }
-                else {
-                    if (event.data.payload) {
-                        observer.next(common_1.deserialize(event.data.payload));
-                    }
-                    if (event.data.complete) {
-                        observer.complete();
-                        worker.removeEventListener("message", messageHandler);
-                    }
-                }
-            }
-            else if (isJobErrorMessage(event.data)) {
-                const error = common_1.deserialize(event.data.error);
-                if (asyncType === "promise" || !asyncType) {
-                    observer.error(error);
-                }
-                else {
-                    observer.error(error);
-                }
-                worker.removeEventListener("message", messageHandler);
-            }
-        });
-        worker.addEventListener("message", messageHandler);
-        return () => worker.removeEventListener("message", messageHandler);
-    });
-}
-function prepareArguments(rawArgs) {
-    if (rawArgs.length === 0) {
-        // Exit early if possible
-        return {
-            args: [],
-            transferables: []
-        };
-    }
-    const args = [];
-    const transferables = [];
-    for (const arg of rawArgs) {
-        if (transferable_1.isTransferDescriptor(arg)) {
-            args.push(common_1.serialize(arg.send));
-            transferables.push(...arg.transferables);
-        }
-        else {
-            args.push(common_1.serialize(arg));
-        }
-    }
-    return {
-        args,
-        transferables: transferables.length === 0 ? transferables : dedupe(transferables)
-    };
-}
-function createProxyFunction(worker, method) {
-    return ((...rawArgs) => {
-        const uid = nextJobUID++;
-        const { args, transferables } = prepareArguments(rawArgs);
-        const runMessage = {
-            type: messages_1.MasterMessageType.run,
-            uid,
-            method,
-            args
-        };
-        debugMessages("Sending command to run function to worker:", runMessage);
-        try {
-            worker.postMessage(runMessage, transferables);
-        }
-        catch (error) {
-            return observable_promise_1.ObservablePromise.from(Promise.reject(error));
-        }
-        return observable_promise_1.ObservablePromise.from(observable_fns_1.multicast(createObservableForJob(worker, uid)));
-    });
-}
-exports.createProxyFunction = createProxyFunction;
-function createProxyModule(worker, methodNames) {
-    const proxy = {};
-    for (const methodName of methodNames) {
-        proxy[methodName] = createProxyFunction(worker, methodName);
-    }
-    return proxy;
-}
-exports.createProxyModule = createProxyModule;
-
-},{"debug":"../../node_modules/debug/src/browser.js","observable-fns":"../../node_modules/observable-fns/dist.esm/index.js","../common":"../../node_modules/threads/dist/common.js","../observable-promise":"../../node_modules/threads/dist/observable-promise.js","../transferable":"../../node_modules/threads/dist/transferable.js","../types/messages":"../../node_modules/threads/dist/types/messages.js"}],"../../node_modules/threads/dist/master/spawn.js":[function(require,module,exports) {
-var process = require("process");
-"use strict";
-
-var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
-  function adopt(value) {
-    return value instanceof P ? value : new P(function (resolve) {
-      resolve(value);
-    });
-  }
-
-  return new (P || (P = Promise))(function (resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-    }
-
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-
-var __importDefault = this && this.__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-const debug_1 = __importDefault(require("debug"));
-
-const observable_fns_1 = require("observable-fns");
-
-const common_1 = require("../common");
-
-const promise_1 = require("../promise");
-
-const symbols_1 = require("../symbols");
-
-const master_1 = require("../types/master");
-
-const invocation_proxy_1 = require("./invocation-proxy");
-
-const debugMessages = debug_1.default("threads:master:messages");
-const debugSpawn = debug_1.default("threads:master:spawn");
-const debugThreadUtils = debug_1.default("threads:master:thread-utils");
-
-const isInitMessage = data => data && data.type === "init";
-
-const isUncaughtErrorMessage = data => data && data.type === "uncaughtError";
-
-const initMessageTimeout = typeof process !== "undefined" && undefined ? Number.parseInt(undefined, 10) : 10000;
-
-function withTimeout(promise, timeoutInMs, errorMessage) {
-  return __awaiter(this, void 0, void 0, function* () {
-    let timeoutHandle;
-    const timeout = new Promise((resolve, reject) => {
-      timeoutHandle = setTimeout(() => reject(Error(errorMessage)), timeoutInMs);
-    });
-    const result = yield Promise.race([promise, timeout]);
-    clearTimeout(timeoutHandle);
-    return result;
-  });
-}
-
-function receiveInitMessage(worker) {
-  return new Promise((resolve, reject) => {
-    const messageHandler = event => {
-      debugMessages("Message from worker before finishing initialization:", event.data);
-
-      if (isInitMessage(event.data)) {
-        worker.removeEventListener("message", messageHandler);
-        resolve(event.data);
-      } else if (isUncaughtErrorMessage(event.data)) {
-        worker.removeEventListener("message", messageHandler);
-        reject(common_1.deserialize(event.data.error));
-      }
-    };
-
-    worker.addEventListener("message", messageHandler);
-  });
-}
-
-function createEventObservable(worker, workerTermination) {
-  return new observable_fns_1.Observable(observer => {
-    const messageHandler = messageEvent => {
-      const workerEvent = {
-        type: master_1.WorkerEventType.message,
-        data: messageEvent.data
-      };
-      observer.next(workerEvent);
-    };
-
-    const rejectionHandler = errorEvent => {
-      debugThreadUtils("Unhandled promise rejection event in thread:", errorEvent);
-      const workerEvent = {
-        type: master_1.WorkerEventType.internalError,
-        error: Error(errorEvent.reason)
-      };
-      observer.next(workerEvent);
-    };
-
-    worker.addEventListener("message", messageHandler);
-    worker.addEventListener("unhandledrejection", rejectionHandler);
-    workerTermination.then(() => {
-      const terminationEvent = {
-        type: master_1.WorkerEventType.termination
-      };
-      worker.removeEventListener("message", messageHandler);
-      worker.removeEventListener("unhandledrejection", rejectionHandler);
-      observer.next(terminationEvent);
-      observer.complete();
-    });
-  });
-}
-
-function createTerminator(worker) {
-  const [termination, resolver] = promise_1.createPromiseWithResolver();
-
-  const terminate = () => __awaiter(this, void 0, void 0, function* () {
-    debugThreadUtils("Terminating worker"); // Newer versions of worker_threads workers return a promise
-
-    yield worker.terminate();
-    resolver();
-  });
-
-  return {
-    terminate,
-    termination
-  };
-}
-
-function setPrivateThreadProps(raw, worker, workerEvents, terminate) {
-  const workerErrors = workerEvents.filter(event => event.type === master_1.WorkerEventType.internalError).map(errorEvent => errorEvent.error); // tslint:disable-next-line prefer-object-spread
-
-  return Object.assign(raw, {
-    [symbols_1.$errors]: workerErrors,
-    [symbols_1.$events]: workerEvents,
-    [symbols_1.$terminate]: terminate,
-    [symbols_1.$worker]: worker
-  });
-}
-/**
- * Spawn a new thread. Takes a fresh worker instance, wraps it in a thin
- * abstraction layer to provide the transparent API and verifies that
- * the worker has initialized successfully.
- *
- * @param worker Instance of `Worker`. Either a web worker, `worker_threads` worker or `tiny-worker` worker.
- * @param [options]
- * @param [options.timeout] Init message timeout. Default: 10000 or set by environment variable.
- */
-
-
-function spawn(worker, options) {
-  return __awaiter(this, void 0, void 0, function* () {
-    debugSpawn("Initializing new thread");
-    const initMessage = yield withTimeout(receiveInitMessage(worker), options && options.timeout ? options.timeout : initMessageTimeout, `Timeout: Did not receive an init message from worker after ${initMessageTimeout}ms. Make sure the worker calls expose().`);
-    const exposed = initMessage.exposed;
-    const {
-      termination,
-      terminate
-    } = createTerminator(worker);
-    const events = createEventObservable(worker, termination);
-
-    if (exposed.type === "function") {
-      const proxy = invocation_proxy_1.createProxyFunction(worker);
-      return setPrivateThreadProps(proxy, worker, events, terminate);
-    } else if (exposed.type === "module") {
-      const proxy = invocation_proxy_1.createProxyModule(worker, exposed.methods);
-      return setPrivateThreadProps(proxy, worker, events, terminate);
-    } else {
-      const type = exposed.type;
-      throw Error(`Worker init message states unexpected type of expose(): ${type}`);
-    }
-  });
-}
-
-exports.spawn = spawn;
-},{"debug":"../../node_modules/debug/src/browser.js","observable-fns":"../../node_modules/observable-fns/dist.esm/index.js","../common":"../../node_modules/threads/dist/common.js","../promise":"../../node_modules/threads/dist/promise.js","../symbols":"../../node_modules/threads/dist/symbols.js","../types/master":"../../node_modules/threads/dist/types/master.js","./invocation-proxy":"../../node_modules/threads/dist/master/invocation-proxy.js","process":"../../node_modules/process/browser.js"}],"../../node_modules/threads/dist/master/index.js":[function(require,module,exports) {
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const implementation_1 = require("./implementation");
-var pool_1 = require("./pool");
-exports.Pool = pool_1.Pool;
-var spawn_1 = require("./spawn");
-exports.spawn = spawn_1.spawn;
-var thread_1 = require("./thread");
-exports.Thread = thread_1.Thread;
-/** Worker implementation. Either web worker or a node.js Worker class. */
-exports.Worker = implementation_1.selectWorkerImplementation();
-
-},{"./implementation":"../../node_modules/threads/dist/master/implementation.browser.js","./pool":"../../node_modules/threads/dist/master/pool.js","./spawn":"../../node_modules/threads/dist/master/spawn.js","./thread":"../../node_modules/threads/dist/master/thread.js"}],"../../node_modules/threads/dist/master/register.js":[function(require,module,exports) {
-var global = arguments[3];
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const index_1 = require("./index");
-if (typeof global !== "undefined") {
-    global.Worker = index_1.Worker;
-}
-else if (typeof window !== "undefined") {
-    window.Worker = index_1.Worker;
-}
-
-},{"./index":"../../node_modules/threads/dist/master/index.js"}],"../../node_modules/threads/register.js":[function(require,module,exports) {
-require("./dist/master/register")
-
-},{"./dist/master/register":"../../node_modules/threads/dist/master/register.js"}],"../src/architecture/Network.js":[function(require,module,exports) {
+},{"./architecture/Network":"../src/architecture/Network.js","./methods/Activation":"../src/methods/Activation.js","./methods/Mutation":"../src/methods/Mutation.js","./methods/Selection":"../src/methods/Selection.js","./methods/Utils":"../src/methods/Utils.js"}],"../src/architecture/Network.js":[function(require,module,exports) {
 "use strict";
 
 var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
@@ -11100,7 +5980,7 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
 var __generator = this && this.__generator || function (thisArg, body) {
   var _ = {
     label: 0,
-    sent: function sent() {
+    sent: function () {
       if (t[0] & 1) throw t[1];
       return t[1];
     },
@@ -11128,76 +6008,74 @@ var __generator = this && this.__generator || function (thisArg, body) {
   function step(op) {
     if (f) throw new TypeError("Generator is already executing.");
 
-    while (_) {
-      try {
-        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-        if (y = 0, t) op = [op[0] & 2, t.value];
+    while (_) try {
+      if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+      if (y = 0, t) op = [op[0] & 2, t.value];
 
-        switch (op[0]) {
-          case 0:
-          case 1:
+      switch (op[0]) {
+        case 0:
+        case 1:
+          t = op;
+          break;
+
+        case 4:
+          _.label++;
+          return {
+            value: op[1],
+            done: false
+          };
+
+        case 5:
+          _.label++;
+          y = op[1];
+          op = [0];
+          continue;
+
+        case 7:
+          op = _.ops.pop();
+
+          _.trys.pop();
+
+          continue;
+
+        default:
+          if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+            _ = 0;
+            continue;
+          }
+
+          if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+            _.label = op[1];
+            break;
+          }
+
+          if (op[0] === 6 && _.label < t[1]) {
+            _.label = t[1];
             t = op;
             break;
+          }
 
-          case 4:
-            _.label++;
-            return {
-              value: op[1],
-              done: false
-            };
+          if (t && _.label < t[2]) {
+            _.label = t[2];
 
-          case 5:
-            _.label++;
-            y = op[1];
-            op = [0];
-            continue;
+            _.ops.push(op);
 
-          case 7:
-            op = _.ops.pop();
+            break;
+          }
 
-            _.trys.pop();
+          if (t[2]) _.ops.pop();
 
-            continue;
+          _.trys.pop();
 
-          default:
-            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-              _ = 0;
-              continue;
-            }
-
-            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-              _.label = op[1];
-              break;
-            }
-
-            if (op[0] === 6 && _.label < t[1]) {
-              _.label = t[1];
-              t = op;
-              break;
-            }
-
-            if (t && _.label < t[2]) {
-              _.label = t[2];
-
-              _.ops.push(op);
-
-              break;
-            }
-
-            if (t[2]) _.ops.pop();
-
-            _.trys.pop();
-
-            continue;
-        }
-
-        op = body.call(thisArg, _);
-      } catch (e) {
-        op = [6, e];
-        y = 0;
-      } finally {
-        f = t = 0;
+          continue;
       }
+
+      op = body.call(thisArg, _);
+    } catch (e) {
+      op = [6, e];
+      y = 0;
+    } finally {
+      f = t = 0;
     }
 
     if (op[0] & 5) throw op[1];
@@ -11212,23 +6090,19 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var Connection_1 = require("./Connection");
-
-var Utils_1 = require("../methods/Utils");
-
-var Mutation_1 = require("../methods/Mutation");
+var NodeType_1 = require("../enums/NodeType");
 
 var Loss_1 = require("../methods/Loss");
 
+var Mutation_1 = require("../methods/Mutation");
+
 var Rate_1 = require("../methods/Rate");
+
+var Utils_1 = require("../methods/Utils");
 
 var NEAT_1 = require("../NEAT");
 
-var threads_1 = require("threads");
-
-require("threads/register");
-
-var NodeType_1 = require("../enums/NodeType");
+var Connection_1 = require("./Connection");
 
 var Node_1 = require("./Node");
 /**
@@ -11976,14 +6850,10 @@ function () {
    */
 
 
-  Network.prototype.train = function (dataset, options) {
-    if (options === void 0) {
-      options = {};
-    }
-
+  Network.prototype.train = function (options) {
     var _a;
 
-    if (dataset[0].input.length !== this.inputSize || dataset[0].output.length !== this.outputSize) {
+    if (!options.dataset || options.dataset[0].input.length !== this.inputSize || options.dataset[0].output.length !== this.outputSize) {
       throw new Error("Dataset input/output size should be same as network input/output size!");
     } // Use the default values, if no value is given
 
@@ -11993,7 +6863,7 @@ function () {
     options.loss = Utils_1.getOrDefault(options.loss, new Loss_1.MSELoss());
     options.dropout = Utils_1.getOrDefault(options.dropout, 0);
     options.momentum = Utils_1.getOrDefault(options.momentum, 0);
-    options.batchSize = Math.min(dataset.length, Utils_1.getOrDefault(options.batchSize, dataset.length));
+    options.batchSize = Math.min(options.dataset.length, Utils_1.getOrDefault(options.batchSize, options.dataset.length));
     var baseRate = Utils_1.getOrDefault(options.rate, 0.3);
     options.ratePolicy = Utils_1.getOrDefault(options.ratePolicy, new Rate_1.FixedRate(baseRate));
     options.log = Utils_1.getOrDefault(options.log, NaN);
@@ -12009,11 +6879,11 @@ function () {
     var testSet;
 
     if (options.crossValidateTestSize && options.crossValidateTestSize > 0) {
-      trainingSetSize = Math.ceil((1 - options.crossValidateTestSize) * dataset.length);
-      trainingSet = dataset.slice(0, trainingSetSize);
-      testSet = dataset.slice(trainingSetSize);
+      trainingSetSize = Math.ceil((1 - options.crossValidateTestSize) * options.dataset.length);
+      trainingSet = options.dataset.slice(0, trainingSetSize);
+      testSet = options.dataset.slice(trainingSetSize);
     } else {
-      trainingSet = dataset;
+      trainingSet = options.dataset;
       testSet = [];
     }
 
@@ -12044,7 +6914,7 @@ function () {
       }
 
       if ((_a = options.shuffle) !== null && _a !== void 0 ? _a : false) {
-        Utils_1.shuffle(dataset);
+        Utils_1.shuffle(options.dataset);
       }
 
       if (options.log > 0 && iterationCount % options.log === 0) {
@@ -12196,9 +7066,8 @@ function () {
    *
    * @function evolve
    * @memberof Network
-   *
-   * @param {Array<{input:number[],output:number[]}>} dataset A set of input values and ideal output values to train the network with
    * @param {object} [options] Configuration options
+   * @param {Array<{input:number[],output:number[]}>} [options.dataset] A set of input values and ideal output values to train the network with
    * @param {number} [options.iterations=1000] Set the maximum amount of iterations/generations for the algorithm to run.
    * @param {number} [options.error=0.05] Set the target error. The algorithm will stop once this target error has been reached.
    * @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connectoins.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
@@ -12278,7 +7147,7 @@ function () {
    */
 
 
-  Network.prototype.evolve = function (dataset, options) {
+  Network.prototype.evolve = function (options) {
     if (options === void 0) {
       options = {};
     }
@@ -12286,11 +7155,11 @@ function () {
     var _a, _b, _c, _d;
 
     return __awaiter(this, void 0, void 0, function () {
-      var targetError, start, serializedDataSet, workerPool, neat, error, bestFitness, bestGenome, fittest, fitness;
+      var targetError, start, neat, error, bestFitness, bestGenome, fittest, fitness;
       return __generator(this, function (_e) {
         switch (_e.label) {
           case 0:
-            if (dataset[0].input.length !== this.inputSize || dataset[0].output.length !== this.outputSize) {
+            if (!options.fitnessFunction && options.dataset && (options.dataset[0].input.length !== this.inputSize || options.dataset[0].output.length !== this.outputSize)) {
               throw new Error("Dataset input/output size should be same as network input/output size!");
             }
 
@@ -12315,70 +7184,40 @@ function () {
             options.maxGates = Utils_1.getOrDefault(options.maxGates, Infinity);
             options.threads = Utils_1.getOrDefault(options.threads, 4);
             start = Date.now();
-            serializedDataSet = JSON.stringify(dataset);
 
             if (!options.fitnessFunction) {
               // if no fitness function is given
               // create default one
-              // init a pool of workers
-              workerPool = threads_1.Pool(function () {
-                return threads_1.spawn(new threads_1.Worker("../multithreading/Worker"));
-              }, options.threads);
-
-              options.fitnessFunction = function (dataset, population) {
+              options.fitnessFunction = function (population) {
                 return __awaiter(this, void 0, void 0, function () {
-                  var _loop_1, _i, population_1, genome;
-
-                  var _this = this;
+                  var promises, _loop_1, _i, population_1, genome;
 
                   return __generator(this, function (_a) {
                     switch (_a.label) {
                       case 0:
-                        _loop_1 = function _loop_1(genome) {
-                          // add a task to the workerPool's queue
-                          // TODO: should not ignore this
-                          // @ts-ignore
-                          workerPool.queue(function (test) {
-                            return __awaiter(_this, void 0, void 0, function () {
-                              var _a;
+                        promises = [];
 
-                              var _b, _c;
+                        _loop_1 = function (genome) {
+                          promises.push(new Promise(function (resolve, reject) {
+                            var _a, _b;
 
-                              return __generator(this, function (_d) {
-                                switch (_d.label) {
-                                  case 0:
-                                    if (genome === undefined) {
-                                      return [2
-                                      /*return*/
-                                      ];
-                                    } // test the genome
+                            if (!genome || !options.dataset) {
+                              reject();
+                              return;
+                            } // test the genome
 
 
-                                    _a = genome;
-                                    return [4
-                                    /*yield*/
-                                    , test(serializedDataSet, JSON.stringify(genome.toJSON()), Loss_1.ALL_LOSSES.indexOf((_b = options.loss) !== null && _b !== void 0 ? _b : new Loss_1.MSELoss()))];
+                            genome.score = -genome.test(options.dataset, (_a = options.loss) !== null && _a !== void 0 ? _a : new Loss_1.MSELoss());
 
-                                  case 1:
-                                    // test the genome
-                                    _a.score = -_d.sent();
-
-                                    if (genome.score === undefined) {
-                                      genome.score = -Infinity;
-                                      return [2
-                                      /*return*/
-                                      ];
-                                    } // subtract growth value
+                            if (genome.score === undefined) {
+                              genome.score = -Infinity;
+                              return;
+                            } // subtract growth value
 
 
-                                    genome.score -= ((_c = options.growth) !== null && _c !== void 0 ? _c : 0.0001) * (genome.nodes.length - genome.inputSize - genome.outputSize + genome.connections.length + genome.gates.length);
-                                    return [2
-                                    /*return*/
-                                    ];
-                                }
-                              });
-                            });
-                          });
+                            genome.score -= ((_b = options.growth) !== null && _b !== void 0 ? _b : 0.0001) * (genome.nodes.length - genome.inputSize - genome.outputSize + genome.connections.length + genome.gates.length);
+                            resolve();
+                          }));
                         };
 
                         for (_i = 0, population_1 = population; _i < population_1.length; _i++) {
@@ -12389,11 +7228,10 @@ function () {
 
                         return [4
                         /*yield*/
-                        , workerPool.settled()];
+                        , Promise.all(promises)];
 
                       case 1:
-                        _a.sent(); // wait until every task is done
-
+                        _a.sent();
 
                         return [2
                         /*return*/
@@ -12406,7 +7244,7 @@ function () {
 
             options.template = this; // set this network as template for first generation
 
-            neat = new NEAT_1.NEAT(dataset, options);
+            neat = new NEAT_1.NEAT(options);
             error = -Infinity;
             bestFitness = -Infinity;
             _e.label = 1;
@@ -12454,10 +7292,6 @@ function () {
               }
             }
 
-            if (workerPool) {
-              workerPool.terminate(); // stop all processes
-            }
-
             return [2
             /*return*/
             , {
@@ -12474,7 +7308,7 @@ function () {
 }();
 
 exports.Network = Network;
-},{"./Connection":"../src/architecture/Connection.js","../methods/Utils":"../src/methods/Utils.js","../methods/Mutation":"../src/methods/Mutation.js","../methods/Loss":"../src/methods/Loss.js","../methods/Rate":"../src/methods/Rate.js","../NEAT":"../src/NEAT.js","threads":"../../node_modules/threads/dist-esm/index.js","threads/register":"../../node_modules/threads/register.js","../enums/NodeType":"../src/enums/NodeType.js","./Node":"../src/architecture/Node.js"}],"../src/architecture/Architect.js":[function(require,module,exports) {
+},{"../enums/NodeType":"../src/enums/NodeType.js","../methods/Loss":"../src/methods/Loss.js","../methods/Mutation":"../src/methods/Mutation.js","../methods/Rate":"../src/methods/Rate.js","../methods/Utils":"../src/methods/Utils.js","../NEAT":"../src/NEAT.js","./Connection":"../src/architecture/Connection.js","./Node":"../src/architecture/Node.js"}],"../src/architecture/Architect.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12754,7 +7588,6 @@ exports.removeFromArray = Utils_1.removeFromArray;
 exports.shuffle = Utils_1.shuffle;
 exports.sum = Utils_1.sum;
 },{"../src/architecture/Layers/CoreLayers/DenseLayer":"../src/architecture/Layers/CoreLayers/DenseLayer.js","../src/architecture/Node":"../src/architecture/Node.js","../src/architecture/Layers/CoreLayers/DropoutLayer":"../src/architecture/Layers/CoreLayers/DropoutLayer.js","../src/architecture/Layers/NoiseLayers/NoiseLayer":"../src/architecture/Layers/NoiseLayers/NoiseLayer.js","../src/architecture/Layers/CoreLayers/OutputLayer":"../src/architecture/Layers/CoreLayers/OutputLayer.js","../src/architecture/Layers/CoreLayers/InputLayer":"../src/architecture/Layers/CoreLayers/InputLayer.js","../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer":"../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/MinPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MinPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js","../src/architecture/Layers/RecurrentLayers/GRULayer":"../src/architecture/Layers/RecurrentLayers/GRULayer.js","../src/architecture/Layers/RecurrentLayers/LSTMLayer":"../src/architecture/Layers/RecurrentLayers/LSTMLayer.js","../src/architecture/Layers/RecurrentLayers/MemoryLayer":"../src/architecture/Layers/RecurrentLayers/MemoryLayer.js","../src/architecture/Layers/Layer":"../src/architecture/Layers/Layer.js","../src/architecture/Nodes/ConstantNode":"../src/architecture/Nodes/ConstantNode.js","../src/architecture/Nodes/DropoutNode":"../src/architecture/Nodes/DropoutNode.js","../src/architecture/Nodes/NoiseNode":"../src/architecture/Nodes/NoiseNode.js","../src/architecture/Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","../src/architecture/Architect":"../src/architecture/Architect.js","../src/architecture/Connection":"../src/architecture/Connection.js","../src/architecture/Network":"../src/architecture/Network.js","../src/enums/ActivationType":"../src/enums/ActivationType.js","../src/enums/ConnectionType":"../src/enums/ConnectionType.js","../src/enums/GatingType":"../src/enums/GatingType.js","../src/enums/NodeType":"../src/enums/NodeType.js","../src/methods/Activation":"../src/methods/Activation.js","../src/methods/Loss":"../src/methods/Loss.js","../src/methods/Mutation":"../src/methods/Mutation.js","../src/methods/Rate":"../src/methods/Rate.js","../src/methods/Selection":"../src/methods/Selection.js","../src/methods/Utils":"../src/methods/Utils.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
-var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
 
@@ -12779,9 +7612,9 @@ var checkedAssets, assetsToAccept;
 var parent = module.bundle.parent;
 
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
-  var hostname = "" || location.hostname;
+  var hostname = process.env.HMR_HOSTNAME || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "65396" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + process.env.HMR_PORT + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
