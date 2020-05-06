@@ -73,16 +73,21 @@
     "tiny-worker": "^2.3.0"
   },
   "devDependencies": {
-    "@types/parcel-bundler": "^1.12.1",
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
+    "@types/parcel-bundler": "^1.12.1",
     "chai": "^4.2.0",
     "coveralls": "^3.0.11",
+    "debug": "^4.1.1",
+    "is-observable": "^2.0.0",
     "jsdoc": "^3.6.3",
     "mocha": "^7.1.1",
     "mocha-parallel-tests": "^2.3.0",
+    "ms": "^2.1.2",
     "nyc": "^15.0.0",
+    "observable-fns": "^0.5.1",
     "parcel-bundler": "^1.12.4",
+    "symbol-observable": "^1.2.0",
     "ts-node": "^8.8.1",
     "tslint": "^6.1.0",
     "typescript": "^3.8.3"

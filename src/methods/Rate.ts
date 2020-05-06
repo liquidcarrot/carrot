@@ -96,7 +96,7 @@ class StepRate extends Rate {
      * @returns the current training rate
      */
     public calc(iteration: number): number {
-        return this.baseRate * Math.pow(this.gamma, Math.floor(iteration / this.stepSize));
+        return this.baseRate * this.gamma ** Math.floor(iteration / this.stepSize);
     }
 }
 
@@ -133,7 +133,7 @@ class ExponentialRate extends Rate {
      * @returns the current training rate
      */
     public calc(iteration: number): number {
-        return this.baseRate * Math.pow(this.gamma, iteration);
+        return this.baseRate * this.gamma ** iteration;
     }
 }
 
@@ -173,7 +173,7 @@ class InverseRate extends Rate {
      * @returns the current training rate
      */
     public calc(iteration: number): number {
-        return this.baseRate * Math.pow(1 + this.gamma * iteration, -this.power);
+        return this.baseRate * (1 + this.gamma * iteration) ** -this.power;
     }
 }
 
