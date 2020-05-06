@@ -69,7 +69,6 @@
   },
   "homepage": "https://liquidcarrot.io/",
   "dependencies": {
-    "threads": "^1.4.0",
     "tiny-worker": "^2.3.0"
   },
   "devDependencies": {
