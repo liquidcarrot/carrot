@@ -16,9 +16,7 @@ export class NoiseNode extends ConstantNode {
         this.old = this.state;
 
         const incomingStates: number[] = this.incoming.map(conn => conn.from.activation * conn.weight * conn.gain);
-        switch (this.noiseType) {
 
-        }
         switch (this.noiseType) {
             case NoiseNodeType.GAUSSIAN_NOISE:
                 this.state = avg(incomingStates) + generateGaussian(this.options.gaussian?.mean ?? 0, this.options.gaussian?.deviation ?? 2);
