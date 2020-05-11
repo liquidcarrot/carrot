@@ -29,6 +29,7 @@
     "prefer-readonly": true,
     "no-unused-expression": false,
     "no-trailing-whitespace": false,
+    "completed-docs": true,
     "no-redundant-jsdoc": true,
     "jsdoc-format": [
       true,
