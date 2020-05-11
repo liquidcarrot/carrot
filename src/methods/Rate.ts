@@ -20,6 +20,9 @@
  * network.train(dataset, { ratePolicy: new InverseRate() });
  */
 abstract class Rate {
+    /**
+     * The rate at the first iteration.
+     */
     protected baseRate: number;
 
     /**
@@ -73,7 +76,13 @@ class FixedRate extends Rate {
  * network.train(dataset, { ratePolicy: new StepRate(0.3) });
  */
 class StepRate extends Rate {
+    /**
+     * Learning rate retention per step; - _0 < `gamma` < 1_ - _large `gamma` CAN cause networks to never converge, low `gamma` CAN cause networks to converge too quickly_
+     */
     private readonly gamma: number;
+    /**
+     * Learning rate is updated every `step_size` iterations
+     */
     private readonly stepSize: number;
 
     /**
@@ -113,6 +122,9 @@ class StepRate extends Rate {
  * network.train(dataset, { ratePolicy: new ExponentialRate(0.3) });
  */
 class ExponentialRate extends Rate {
+    /**
+     * Learning rate retention per step; - _0 < `gamma` < 1_ - _large `gamma` CAN cause networks to never converge, low `gamma` CAN cause networks to converge too quickly_
+     */
     private readonly gamma: number;
 
     /**
@@ -150,14 +162,20 @@ class ExponentialRate extends Rate {
  * network.train(dataset, { ratePolicy: new InverseRate(0.3) });
  */
 class InverseRate extends Rate {
+    /**
+     * Learning rate decay per iteration; - _0 < `gamma` < 1_ - _large `gamma` CAN cause networks to converge too quickly and stop learning, low `gamma` CAN cause networks to converge to learn VERY slowly_
+     */
     private readonly gamma: number;
+    /**
+     * Decay rate per iteration - _0 < `power`_ - _large `power` CAN cause networks to stop learning quickly, low `power` CAN cause networks to learn VERY slowly_
+     */
     private readonly power: number;
 
     /**
      * Constructs a step rate policy.
      *
      * @param baseRate the rate at first iteration
-     * @param [gamma=0.001] Learning rate decay per iteration; - _0 < `gamma` < 1_ - _large `gamma` CAN cause networks to converge too quickly and stop learning, low `gamma` CAN cause networks to converge to learn VERY slowly_
+     * @param gamma=0.001 Learning rate decay per iteration; - _0 < `gamma` < 1_ - _large `gamma` CAN cause networks to converge too quickly and stop learning, low `gamma` CAN cause networks to converge to learn VERY slowly_
      * @param power=2 Decay rate per iteration - _0 < `power`_ - _large `power` CAN cause networks to stop learning quickly, low `power` CAN cause networks to learn VERY slowly_
      */
     constructor(baseRate: number, gamma: number = 0.001, power: number = 2) {
