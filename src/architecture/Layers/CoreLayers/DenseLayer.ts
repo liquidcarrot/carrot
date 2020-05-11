@@ -4,8 +4,16 @@ import {NodeType} from "../../../enums/NodeType";
 import {Node} from "../../Node";
 import {Layer} from "../Layer";
 
+/**
+ * Dense layer
+ */
 export class DenseLayer extends Layer {
-    constructor(outputSize: number, options: { activationType?: ActivationType } = {}) {
+    constructor(outputSize: number, options: {
+        /**
+         * The activation type for the output nodes of this layer.
+         */
+        activationType?: ActivationType
+    } = {}) {
         super(outputSize);
 
         const activation: ActivationType = options.activationType ?? ActivationType.LogisticActivation;
@@ -18,10 +26,22 @@ export class DenseLayer extends Layer {
         this.nodes.push(...Array.from(this.inputNodes));
     }
 
+    /**
+     * Checks if a given connection type is allowed on this layer.
+     *
+     * @param type the type to check
+     *
+     * @return Is this connection type allowed?
+     */
     public connectionTypeisAllowed(type: ConnectionType): boolean {
         return true;
     }
 
+    /**
+     * Gets the default connection type for a incoming connection to this layer.
+     *
+     * @returns the default incoming connection
+     */
     public getDefaultIncomingConnectionType(): ConnectionType {
         return ConnectionType.ALL_TO_ALL;
     }

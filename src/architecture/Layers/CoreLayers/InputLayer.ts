@@ -1,11 +1,19 @@
-import {Layer} from "../Layer";
-import {Node} from "../../Node";
-import {NodeType, NoiseNodeType} from "../../../enums/NodeType";
 import {ConnectionType} from "../../../enums/ConnectionType";
+import {NodeType, NoiseNodeType} from "../../../enums/NodeType";
+import {Node} from "../../Node";
+import {Layer} from "../Layer";
 import {NoiseLayer} from "../NoiseLayers/NoiseLayer";
 
+/**
+ * Input layer
+ */
 export class InputLayer extends Layer {
-    public constructor(outputSize: number, options: { noise?: NoiseNodeType } = {}) {
+    public constructor(outputSize: number, options: {
+        /**
+         * The noise type
+         */
+        noise?: NoiseNodeType
+    } = {}) {
         super(outputSize);
 
         for (let i: number = 0; i < outputSize; i++) {
@@ -22,10 +30,22 @@ export class InputLayer extends Layer {
         }
     }
 
+    /**
+     * Gets the default connection type for a incoming connection to this layer.
+     *
+     * @returns the default incoming connection
+     */
     public getDefaultIncomingConnectionType(): ConnectionType {
         return ConnectionType.NO_CONNECTION;
     }
 
+    /**
+     * Checks if a given connection type is allowed on this layer.
+     *
+     * @param type the type to check
+     *
+     * @return Is this connection type allowed?
+     */
     public connectionTypeisAllowed(type: ConnectionType): boolean {
         return type === ConnectionType.NO_CONNECTION;
     }

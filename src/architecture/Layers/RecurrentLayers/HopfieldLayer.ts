@@ -4,6 +4,9 @@ import {NodeType} from "../../../enums/NodeType";
 import {Node} from "../../Node";
 import {Layer} from "../Layer";
 
+/**
+ * Hopfield layer
+ */
 export class HopfieldLayer extends Layer {
     constructor(outputSize: number) {
         super(outputSize);
@@ -20,10 +23,22 @@ export class HopfieldLayer extends Layer {
         this.nodes.push(...Array.from(this.outputNodes));
     }
 
+    /**
+     * Checks if a given connection type is allowed on this layer.
+     *
+     * @param type the type to check
+     *
+     * @return Is this connection type allowed?
+     */
     public connectionTypeisAllowed(type: ConnectionType): boolean {
         return true;
     }
 
+    /**
+     * Gets the default connection type for a incoming connection to this layer.
+     *
+     * @returns the default incoming connection
+     */
     public getDefaultIncomingConnectionType(): ConnectionType {
         return ConnectionType.ALL_TO_ALL;
     }

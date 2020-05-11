@@ -7,8 +7,16 @@ import {Connection} from "../../Connection";
 import {Node} from "../../Node";
 import {Layer} from "../Layer";
 
+/**
+ * GRU layer
+ */
 export class GRULayer extends Layer {
-    constructor(outputSize: number, options: { activationType?: ActivationType } = {}) {
+    constructor(outputSize: number, options: {
+        /**
+         * The activation type for the output nodes of this layer.
+         */
+        activationType?: ActivationType
+    } = {}) {
         super(outputSize);
         const updateGate: Node[] = [];
         const inverseUpdateGate: Node[] = [];
@@ -63,10 +71,22 @@ export class GRULayer extends Layer {
         this.outputNodes.forEach(node => node.squash = activation);
     }
 
+    /**
+     * Checks if a given connection type is allowed on this layer.
+     *
+     * @param type the type to check
+     *
+     * @return Is this connection type allowed?
+     */
     public connectionTypeisAllowed(type: ConnectionType): boolean {
         return true;
     }
 
+    /**
+     * Gets the default connection type for a incoming connection to this layer.
+     *
+     * @returns the default incoming connection
+     */
     public getDefaultIncomingConnectionType(): ConnectionType {
         return ConnectionType.ALL_TO_ALL;
     }

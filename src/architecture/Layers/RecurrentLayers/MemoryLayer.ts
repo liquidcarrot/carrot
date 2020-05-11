@@ -1,12 +1,24 @@
-import {Layer} from "../Layer";
+import {ActivationType} from "../../../enums/ActivationType";
+import {ConnectionType} from "../../../enums/ConnectionType";
+import {NodeType} from "../../../enums/NodeType";
 import {Activation, IdentityActivation} from "../../../methods/Activation";
 import {Node} from "../../Node";
-import {ActivationType} from "../../../enums/ActivationType";
-import {NodeType} from "../../../enums/NodeType";
-import {ConnectionType} from "../../../enums/ConnectionType";
+import {Layer} from "../Layer";
 
+/**
+ * Memory layer
+ */
 export class MemoryLayer extends Layer {
-    constructor(outputSize: number, options: { memorySize?: number, activationType?: ActivationType } = {}) {
+    constructor(outputSize: number, options: {
+        /**
+         * The activation type for the output nodes of this layer.
+         */
+        activationType?: ActivationType,
+        /**
+         * The size of the memory.
+         */
+        memorySize?: number
+    } = {}) {
         super(outputSize);
 
         for (let i: number = 0; i < outputSize; i++) {
@@ -37,10 +49,22 @@ export class MemoryLayer extends Layer {
         this.outputNodes.forEach(node => node.squash = activation);
     }
 
+    /**
+     * Checks if a given connection type is allowed on this layer.
+     *
+     * @param type the type to check
+     *
+     * @return Is this connection type allowed?
+     */
     public connectionTypeisAllowed(type: ConnectionType): boolean {
         return true;
     }
 
+    /**
+     * Gets the default connection type for a incoming connection to this layer.
+     *
+     * @returns the default incoming connection
+     */
     public getDefaultIncomingConnectionType(): ConnectionType {
         return ConnectionType.ALL_TO_ALL;
     }

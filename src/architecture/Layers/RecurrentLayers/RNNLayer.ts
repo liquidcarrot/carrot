@@ -4,8 +4,16 @@ import {NodeType} from "../../../enums/NodeType";
 import {Node} from "../../Node";
 import {Layer} from "../Layer";
 
+/**
+ * RNN layer
+ */
 export class RNNLayer extends Layer {
-    constructor(outputSize: number, options: { activationType?: ActivationType } = {}) {
+    constructor(outputSize: number, options: {
+        /**
+         * The activation type for the output nodes of this layer.
+         */
+        activationType?: ActivationType
+    } = {}) {
         super(outputSize);
 
         const activation: ActivationType = options.activationType ?? ActivationType.LogisticActivation;
@@ -21,10 +29,22 @@ export class RNNLayer extends Layer {
         this.connections.push(...Layer.connect(this.outputNodes, this.inputNodes, ConnectionType.ONE_TO_ONE));
     }
 
+    /**
+     * Checks if a given connection type is allowed on this layer.
+     *
+     * @param type the type to check
+     *
+     * @return Is this connection type allowed?
+     */
     public connectionTypeisAllowed(type: ConnectionType): boolean {
         return true;
     }
 
+    /**
+     * Gets the default connection type for a incoming connection to this layer.
+     *
+     * @returns the default incoming connection
+     */
     public getDefaultIncomingConnectionType(): ConnectionType {
         return ConnectionType.ALL_TO_ALL;
     }
