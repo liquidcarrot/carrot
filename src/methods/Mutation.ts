@@ -146,6 +146,16 @@ class AddNodeMutation extends Mutation {
  */
 class SubNodeMutation extends Mutation {
     /**
+     * Keep gates or remove them too ?
+     */
+    public keepGates: boolean;
+
+    constructor(keepGates: boolean = true) {
+        super();
+        this.keepGates = keepGates;
+    }
+
+    /**
      * Mutates the network.
      *
      * @param network The network which gets mutated
@@ -153,7 +163,7 @@ class SubNodeMutation extends Mutation {
     public mutate(network: Network): void {
         const possible: Node[] = network.nodes.filter(node => node !== undefined && node.isHiddenNode()); // hidden nodes
         if (possible.length > 0) {
-            network.removeNode(pickRandom(possible)); // remove a random node from the filtered array
+            network.removeNode(pickRandom(possible), this.keepGates); // remove a random node from the filtered array
         }
     }
 }
