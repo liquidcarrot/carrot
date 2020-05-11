@@ -172,23 +172,15 @@ export class NEAT {
     /**
      * Filter genomes from population
      *
-     * @param pickGenome function which to pick a network from the population
-     * @param adjustGenome
+     * @param pickGenome Pick a network from the population which gets adjusted or removed
+     * @param adjustGenome Adjust the picked network
      */
     public filterGenome(pickGenome: (genome: Network) => boolean, adjustGenome: ((genome: Network) => Network) | undefined): Network[] {
-        const filtered: Network[] = [...this.population]; // avoid mutations
-
-        if (adjustGenome) {
-            filtered
-                .filter(genome => pickGenome(genome))
-                .forEach((genome, index) => filtered[index] = adjustGenome(filtered[index]));
-        } else {
-            filtered
-                .filter(genome => pickGenome(genome))
-                .forEach((genome, index) => filtered[index] = this.template.copy());
-        }
-
-        return filtered;
+        return this.population
+            .filter(genome => pickGenome(genome))
+            .map(genome => {
+                return adjustGenome ? adjustGenome(genome) : this.template.copy();
+            });
     }
 
     /**
