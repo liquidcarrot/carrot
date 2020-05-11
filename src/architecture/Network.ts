@@ -885,7 +885,6 @@ export class Network {
      * @param {Loss} [loss=new MSELoss()] The [loss function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
      *
      * @returns {number} A summary object of the network's performance
-     *
      */
     public test(dataset: {
         /**
