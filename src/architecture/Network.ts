@@ -35,11 +35,29 @@ import {Node} from "./Node";
  * let myNetwork = new Network(2, 1);
  */
 export class Network {
+    /**
+     * The input size of this network.
+     */
     public inputSize: number;
+    /**
+     * The output size of this network.
+     */
     public outputSize: number;
-    public nodes: Node[]; // stored in activation order
+    /**
+     * The nodes inside this network. Stored in activation order.
+     */
+    public nodes: Node[];
+    /**
+     * The connections inside this network.
+     */
     public connections: Connection[];
+    /**
+     * The gates inside this network.
+     */
     public gates: Connection[];
+    /**
+     * The score of this network for evolution.
+     */
     public score: number | undefined;
 
     constructor(inputSize: number, outputSize: number) {
@@ -299,8 +317,6 @@ export class Network {
      *
      * @param {number[]} [input] Input values to activate nodes with
      * @param options
-     * @param {number} [options.dropoutRate=0] The dropout rate. [dropout](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5)
-     * @param {boolean} [options.trace=true] Controls whether traces are created when activation happens (a trace is meta information left behind for different uses, e.g. backpropagation).
      * @returns {number[]} Squashed output values
      *
      * @example
@@ -311,7 +327,16 @@ export class Network {
      *
      * myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
      */
-    public activate(input: number[], options: { dropoutRate?: number; trace?: boolean } = {}): number[] {
+    public activate(input: number[], options: {
+        /**
+         * The dropout rate. [dropout](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5)
+         */
+        dropoutRate?: number;
+        /**
+         * Controls whether traces are created when activation happens (a trace is meta information left behind for different uses, e.g. backpropagation).
+         */
+        trace?: boolean
+    } = {}): number[] {
         if (input.length !== this.inputSize) {
             throw new RangeError("Input size of dataset is different to network input size!");
         }
@@ -349,9 +374,6 @@ export class Network {
      *
      * @param {number[]} target Ideal values of the previous activate. Will use the difference to improve the weights
      * @param options More option for propagation
-     * @param {number} options.momentum=0 [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html). Adds a fraction of the previous weight update to the current one.
-     * @param {boolean} options.update=false When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
-     * @param {number} options.rate=0.3 Sets the [learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10) of the backpropagation process
      *
      * @example
      * let { Network } = require("@liquid-carrot/carrot");
@@ -366,7 +388,20 @@ export class Network {
      *  network.propagate(0.3, 0, true, [0]);
      * }
      */
-    public propagate(target: number[], options: { rate?: number, momentum?: number, update?: boolean } = {}): void {
+    public propagate(target: number[], options: {
+        /**
+         * Sets the [learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10) of the backpropagation process.
+         */
+        rate?: number,
+        /**
+         * [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html). Adds a fraction of the previous weight update to the current one.
+         */
+        momentum?: number,
+        /**
+         * When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
+         */
+        update?: boolean
+    } = {}): void {
         // get default value if value isn't given
         options.rate = getOrDefault(options.rate, 0.3);
         options.momentum = getOrDefault(options.momentum, 0);
@@ -558,8 +593,8 @@ export class Network {
      *
      * @param {Mutation} method [Mutation method](mutation)
      * @param {object} options
-     * @param {number} [options.maxNodes] Maximum amount of [Nodes](node) a network can grow to
-     * @param {number} [options.maxConnections] Maximum amount of [Connections](connection) a network can grow to
+     * @param {number} [options.maxNodes]
+     * @param {number} [options.maxConnections]
      * @param {number} [options.maxGates] Maximum amount of Gates a network can grow to
      *
      * @example
@@ -567,7 +602,24 @@ export class Network {
      *
      * myNetwork = myNetwork.mutate(new AddNodeMutation()) // returns a mutated network with an added gate
      */
-    public mutate(method: Mutation, options?: { maxNodes?: number, maxConnections?: number, maxGates?: number, allowedActivations?: ActivationType[] }): void {
+    public mutate(method: Mutation, options?: {
+        /**
+         * Maximum amount of [Nodes](node) a network can grow to
+         */
+        maxNodes?: number,
+        /**
+         * Maximum amount of [Connections](connection) a network can grow to
+         */
+        maxConnections?: number,
+        /**
+         * Maximum amount of Gates a network can grow to
+         */
+        maxGates?: number,
+        /**
+         * All allowed activations
+         */
+        allowedActivations?: ActivationType[]
+    }): void {
         method.mutate(this, options);
     }
 
@@ -584,7 +636,24 @@ export class Network {
      * @param {number} [options.maxConnections] Maximum amount of [Connections](connection) a network can grow to
      * @param {number} [options.maxGates] Maximum amount of Gates a network can grow to
      */
-    public mutateRandom(allowedMethods: Mutation[] = ALL_MUTATIONS, options: { maxNodes?: number, maxConnections?: number, maxGates?: number } = {}): void {
+    public mutateRandom(allowedMethods: Mutation[] = ALL_MUTATIONS, options: {
+        /**
+         * Maximum amount of [Nodes](node) a network can grow to
+         */
+        maxNodes?: number,
+        /**
+         * Maximum amount of [Connections](connection) a network can grow to
+         */
+        maxConnections?: number,
+        /**
+         * Maximum amount of Gates a network can grow to
+         */
+        maxGates?: number,
+        /**
+         * All allowed activations
+         */
+        allowedActivations?: ActivationType[]
+    } = {}): void {
         if (allowedMethods.length === 0) {
             return;
         }
@@ -598,8 +667,8 @@ export class Network {
      * @function train
      * @memberof Network
      *
-     * @param {Array<{input:number[],output:number[]}>} dataset A data of input values and ideal output values to train the network with
      * @param {TrainOptions} options Options used to train network
+     * @param {Array<{input:number[],output:number[]}>} options.data A data of input values and ideal output values to train the network with
      * @param {options.loss} [options.loss=new MSELoss()] The [options.loss function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
      * @param {rate} [options.ratePolicy=new FixedRate(options.rate)] A [learning rate policy](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10), i.e. how to change the learning rate during training to get better network performance
      * @param {number} [options.rate=0.3] Sets the [learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10) of the backpropagation process
@@ -673,7 +742,20 @@ export class Network {
      * });
      *
      */
-    public train(options: TrainOptions): { error: number, iterations: number, time: number } {
+    public train(options: TrainOptions): {
+        /**
+         * The loss of the network after training.
+         */
+        error: number,
+        /**
+         * The iterations took for training the network.
+         */
+        iterations: number,
+        /**
+         * The time from begin to end in milliseconds
+         */
+        time: number
+    } {
         if (!options.dataset || options.dataset[0].input.length !== this.inputSize || options.dataset[0].output.length !== this.outputSize) {
             throw new Error(`Dataset input/output size should be same as network input/output size!`);
         }
@@ -697,8 +779,26 @@ export class Network {
 
         // Split into trainingSet and testSet if cross validation is enabled
         let trainingSetSize: number;
-        let trainingSet: { input: number[]; output: number[] }[];
-        let testSet: { input: number[]; output: number[] }[];
+        let trainingSet: {
+            /**
+             * The input values of the dataset.
+             */
+            input: number[];
+            /**
+             * The output values of the dataset.
+             */
+            output: number[]
+        }[];
+        let testSet: {
+            /**
+             * The input values of the dataset.
+             */
+            input: number[];
+            /**
+             * The output values of the dataset.
+             */
+            output: number[]
+        }[];
         if (options.crossValidateTestSize && options.crossValidateTestSize > 0) {
             trainingSetSize = Math.ceil((1 - options.crossValidateTestSize) * options.dataset.length);
             trainingSet = options.dataset.slice(0, trainingSetSize);
@@ -784,7 +884,16 @@ export class Network {
      *
      * @returns {number}
      */
-    public trainEpoch(dataset: { input: number[], output: number[] }[], batchSize: number, trainingRate: number, momentum: number, loss: Loss, dropoutRate: number = 0.5): number {
+    public trainEpoch(dataset: {
+        /**
+         * The input values of the dataset.
+         */
+        input: number[];
+        /**
+         * The output values of the dataset.
+         */
+        output: number[]
+    }[], batchSize: number, trainingRate: number, momentum: number, loss: Loss, dropoutRate: number = 0.5): number {
         let errorSum: number = 0;
         for (let i: number = 0; i < dataset.length; i++) {
             const input: number[] = dataset[i].input;
@@ -812,7 +921,16 @@ export class Network {
      * @returns {number} A summary object of the network's performance
      *
      */
-    public test(dataset: { input: number[], output: number[] }[], loss: Loss = new MSELoss()): number {
+    public test(dataset: {
+        /**
+         * The input values of the dataset.
+         */
+        input: number[];
+        /**
+         * The output values of the dataset.
+         */
+        output: number[]
+    }[], loss: Loss = new MSELoss()): number {
         let error: number = 0;
 
         for (const entry of dataset) {
@@ -956,7 +1074,20 @@ export class Network {
      *
      * execute();
      */
-    public async evolve(options: EvolveOptions = {}): Promise<{ error: number, iterations: number, time: number }> {
+    public async evolve(options: EvolveOptions = {}): Promise<{
+        /**
+         * The loss of the network after training.
+         */
+        error: number,
+        /**
+         * The iterations took for training the network.
+         */
+        iterations: number,
+        /**
+         * The time from begin to end in milliseconds
+         */
+        time: number
+    }> {
         if (!options.fitnessFunction && options.dataset && (options.dataset[0].input.length !== this.inputSize || options.dataset[0].output.length !== this.outputSize)) {
             throw new Error(`Dataset input/output size should be same as network input/output size!`);
         }
