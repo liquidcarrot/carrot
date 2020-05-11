@@ -6,7 +6,6 @@ import {
     AddConnectionMutation,
     AddGateMutation,
     AddNodeMutation,
-    ALL_MUTATIONS,
     FEEDFORWARD_MUTATIONS,
     Mutation
 } from "./methods/Mutation";
@@ -194,17 +193,15 @@ export class NEAT {
      * Mutate a network with a random mutation from the allowed array.
      *
      * @param network The network which will be mutated.
-     * @param allowed The allowed mutations.
      */
-    public mutateRandom(network: Network, allowed: Mutation[] = ALL_MUTATIONS): void {
-        allowed = allowed.filter(method => {
+    public mutateRandom(network: Network): void {
+        const allowed: Mutation[] = this.mutations.filter(method => {
             return (
                 method.constructor.name !== AddNodeMutation.constructor.name || network.nodes.length < this.maxNodes ||
                 method.constructor.name !== AddConnectionMutation.constructor.name || network.connections.length < this.maxConnections ||
                 method.constructor.name !== AddGateMutation.constructor.name || network.gates.length < this.maxGates
             );
         });
-
         network.mutate(pickRandom(allowed), {allowedActivations: this.activations});
     }
 
@@ -323,25 +320,18 @@ export class NEAT {
      * @param {Mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
      */
     public mutate(method?: Mutation | undefined): void {
-        if (method) {
-            // Elitist genomes should not be included
-            this.population
-                .filter(() => Math.random() <= this.mutationRate)
-                .forEach(genome => {
-                    for (let i: number = 0; i < this.mutationAmount; i++) {
+        // Elitist genomes should not be included
+        this.population
+            .filter(() => Math.random() <= this.mutationRate)
+            .forEach(genome => {
+                for (let i: number = 0; i < this.mutationAmount; i++) {
+                    if (method) {
                         genome.mutate(method);
+                    } else {
+                        this.mutateRandom(genome);
                     }
-                });
-        } else {
-            // Elitist genomes should not be included
-            this.population
-                .filter(() => Math.random() <= this.mutationRate)
-                .forEach(genome => {
-                    for (let i: number = 0; i < this.mutationAmount; i++) {
-                        this.mutateRandom(genome, this.mutations);
-                    }
-                });
-        }
+                }
+            });
     }
 
     /**
