@@ -164,7 +164,9 @@ export class NEAT {
         this.maxGates = getOrDefault(options.maxGates, Infinity);
         this.population = [];
 
-        this.createInitialPopulation();
+        for (let i: number = 0; i < this.populationSize; i++) {
+            this.population.push(this.template.copy());
+        }
     }
 
     /**
@@ -388,14 +390,5 @@ export class NEAT {
             .map(genome => genome.score)
             .forEach(val => score += val ?? 0);
         return score / this.population.length;
-    }
-
-    /**
-     * Create the initial pool of genomes
-     */
-    private createInitialPopulation(): void {
-        for (let i: number = 0; i < this.populationSize; i++) {
-            this.population.push(this.template.copy());
-        }
     }
 }
