@@ -1065,11 +1065,9 @@ export class Network {
         // set options to default if necessary
         options.growth = getOrDefault<number>(options.growth, 0.0001);
         options.loss = getOrDefault(options.loss, new MSELoss());
-        options.amount = getOrDefault(options.amount, 1);
         options.maxNodes = getOrDefault(options.maxNodes, Infinity);
         options.maxConnections = getOrDefault(options.maxConnections, Infinity);
         options.maxGates = getOrDefault(options.maxGates, Infinity);
-        options.threads = getOrDefault(options.threads, 4);
 
         const start: number = Date.now();
 
