@@ -1,8 +1,8 @@
-import {Layer} from "../Layer";
 import {ActivationType} from "../../../enums/ActivationType";
 import {ConnectionType} from "../../../enums/ConnectionType";
-import {NoiseNode} from "../../Nodes/NoiseNode";
 import {NoiseNodeType} from "../../../enums/NodeType";
+import {NoiseNode} from "../../Nodes/NoiseNode";
+import {Layer} from "../Layer";
 
 export class NoiseLayer extends Layer {
     constructor(outputSize: number, options: { activationType?: ActivationType, mean?: number, deviation?: number } = {}) {
@@ -14,7 +14,7 @@ export class NoiseLayer extends Layer {
             this.inputNodes.add(new NoiseNode({
                 noiseType: NoiseNodeType.GAUSSIAN_NOISE,
                 gaussian: options
-            }).setSquash(activation));
+            }).setActivationType(activation));
         }
 
         this.outputNodes = this.inputNodes;

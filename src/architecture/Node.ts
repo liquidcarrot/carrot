@@ -1,10 +1,10 @@
-import {ModBiasMutation} from "../methods/Mutation";
-import {Activation, ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
-import {Connection} from "./Connection";
-import {getOrDefault, pickRandom, randDouble, removeFromArray} from "../methods/Utils";
+import {ActivationType} from "../enums/ActivationType";
 import {NodeType} from "../enums/NodeType";
 import {NodeJSON} from "../interfaces/NodeJSON";
-import {ActivationType} from "../enums/ActivationType";
+import {Activation, ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
+import {ModBiasMutation} from "../methods/Mutation";
+import {getOrDefault, pickRandom, randDouble, removeFromArray} from "../methods/Utils";
+import {Connection} from "./Connection";
 
 /**
  * Creates a new neuron/node
@@ -18,21 +18,8 @@ import {ActivationType} from "../enums/ActivationType";
  * - [here](https://github.com/cazala/synaptic/wiki/Neural-Networks-101)
  * - [here](https://keras.io/backend/#bias_add)
  *
- * @param type defines the type of node
- *
- * @prop {number} bias Neuron's bias [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
- * @prop {activation} squash [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0)
- * @prop {string} type
- * @prop {number} activation Output value
- * @prop {number} state
- * @prop {number} old
- * @prop {number} mask=1 Used for dropout. This is either 0 (ignored) or 1 (included) during training and is used to avoid [overfit](https://www.kdnuggets.com/2015/04/preventing-overfitting-neural-networks.html).
  * @prop {number} previousDeltaBias
  * @prop {number} totalDeltaBias
- * @prop {Array<Connection>} incoming Incoming connections to this node
- * @prop {Array<Connection>} outgoing Outgoing connections from this node
- * @prop {Array<Connection>} gated Connections this node gates
- * @prop {Connection} connections_self A self-connection
  * @prop {number} error.responsibility
  * @prop {number} error.projected
  * @prop {number} error.gated
@@ -43,23 +30,77 @@ import {ActivationType} from "../enums/ActivationType";
  * let node = new Node();
  */
 export class Node {
+    /**
+     * The type of this node.
+     */
     public type: NodeType;
+    /**
+     * Used for dropout. This is either 0 (ignored) or 1 (included) during training and is used to avoid [overfit](https://www.kdnuggets.com/2015/04/preventing-overfitting-neural-networks.html).
+     */
     public mask: number;
+    /**
+     * Incoming connections to this node
+     */
     public incoming: Connection[];
+    /**
+     * Outgoing connections from this node
+     */
     public outgoing: Connection[];
+    /**
+     * Connections this node gates
+     */
     public gated: Connection[];
+    /**
+     * A self connection
+     */
     public selfConnection: Connection;
+    /**
+     * Neuron's bias [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
+     */
     public bias: number;
+    /**
+     * [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0)
+     */
     public squash: Activation;
+    /**
+     * index
+     */
     public index: number;
-    public derivative: number;
+    /**
+     * derivative state
+     */
+    public derivativeState: number;
+    /**
+     * delta bias previous
+     */
     public deltaBiasPrevious: number;
+    /**
+     * delta bias total
+     */
     public deltaBiasTotal: number;
+    /**
+     * Output value
+     */
     public activation: number;
+    /**
+     * state
+     */
     public state: number;
+    /**
+     * old state
+     */
     public old: number;
+    /**
+     * error responsibility
+     */
     public errorResponsibility: number;
+    /**
+     * error projected
+     */
     public errorProjected: number;
+    /**
+     * error gated
+     */
     public errorGated: number;
 
     constructor(type: NodeType = NodeType.HIDDEN) {
@@ -67,7 +108,7 @@ export class Node {
         this.bias = randDouble(-1, 1);
         this.squash = new LogisticActivation();
         this.activation = 0;
-        this.derivative = 1;
+        this.derivativeState = 1;
         this.state = 0;
         this.old = 0;
         this.mask = 1;
@@ -427,9 +468,6 @@ export class Node {
      *
      * @param target The target value (i.e. "the value the network SHOULD have given")
      * @param options More options for propagation
-     * @param [options.rate=0.3] [Learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
-     * @param [options.momentum=0] [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one.
-     * @param [options.update=true] When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
      *
      * @example
      * let { Node } = require("@liquid-carrot/carrot");
@@ -458,7 +496,20 @@ export class Node {
      * @see [Regularization Neataptic](https://wagenaartje.github.io/neataptic/docs/methods/regularization/)
      * @see [What is backpropagation | YouTube](https://www.youtube.com/watch?v=Ilg3gGewQ5U)
      */
-    public propagate(target?: number, options: { momentum?: number, rate?: number, update?: boolean } = {}): void {
+    public propagate(target?: number, options: {
+        /**
+         * [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one.
+         */
+        momentum?: number,
+        /**
+         * [Learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
+         */
+        rate?: number,
+        /**
+         * When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
+         */
+        update?: boolean
+    } = {}): void {
         options.momentum = getOrDefault(options.momentum, 0);
         options.rate = getOrDefault(options.rate, 0.3);
         options.update = getOrDefault(options.update, true);
@@ -470,7 +521,7 @@ export class Node {
             for (const connection of this.outgoing) {
                 this.errorProjected += connection.to.errorResponsibility * connection.weight * connection.gain;
             }
-            this.errorProjected *= this.derivative;
+            this.errorProjected *= this.derivativeState;
 
 
             this.errorGated = 0;
@@ -484,7 +535,7 @@ export class Node {
 
                 this.errorGated += connection.to.errorResponsibility * influence;
             }
-            this.errorGated *= this.derivative;
+            this.errorGated *= this.derivativeState;
 
 
             this.errorResponsibility = this.errorProjected + this.errorGated;
@@ -559,7 +610,7 @@ export class Node {
             });
 
             this.activation = this.squash.calc(this.state, false) * this.mask;
-            this.derivative = this.squash.calc(this.state, true);
+            this.derivativeState = this.squash.calc(this.state, true);
 
 
             // store traces
@@ -595,10 +646,10 @@ export class Node {
                     const index: number = connection.xTraceNodes.indexOf(node);
 
                     if (index > -1) {
-                        connection.xTraceValues[index] = node.selfConnection.gain * node.selfConnection.weight * connection.xTraceValues[index] + this.derivative * connection.eligibility * influence;
+                        connection.xTraceValues[index] = node.selfConnection.gain * node.selfConnection.weight * connection.xTraceValues[index] + this.derivativeState * connection.eligibility * influence;
                     } else {
                         connection.xTraceNodes.push(node);
-                        connection.xTraceValues.push(this.derivative * connection.eligibility * influence);
+                        connection.xTraceValues.push(this.derivativeState * connection.eligibility * influence);
                     }
                 }
             }
@@ -647,24 +698,43 @@ export class Node {
         };
     }
 
+    /**
+     * Is this a input Node?
+     */
     public isInputNode(): boolean {
         return this.type === NodeType.INPUT;
     }
 
+    /**
+     * Is this a hidden Node?
+     */
     public isHiddenNode(): boolean {
         return this.type === NodeType.HIDDEN;
     }
 
+    /**
+     * Is this a output Node?
+     */
     public isOutputNode(): boolean {
         return this.type === NodeType.OUTPUT;
     }
 
+    /**
+     * Set bias.
+     *
+     * @param bias the new bias value
+     */
     public setBias(bias: number): Node {
         this.bias = bias;
         return this;
     }
 
-    public setSquash(activationType: ActivationType): Node {
+    /**
+     * Set activation type
+     *
+     * @param activationType the new activation type
+     */
+    public setActivationType(activationType: ActivationType): Node {
         this.squash = Activation.getActivation(activationType);
         return this;
     }

@@ -1,8 +1,8 @@
-import {Layer} from "../Layer";
-import {Node} from "../../Node";
-import {NodeType} from "../../../enums/NodeType";
 import {ActivationType} from "../../../enums/ActivationType";
 import {ConnectionType} from "../../../enums/ConnectionType";
+import {NodeType} from "../../../enums/NodeType";
+import {Node} from "../../Node";
+import {Layer} from "../Layer";
 
 export class OutputLayer extends Layer {
     constructor(outputSize: number, options: { activationType?: ActivationType } = {}) {
@@ -10,7 +10,7 @@ export class OutputLayer extends Layer {
 
         const activation: ActivationType = options.activationType ?? ActivationType.IdentityActivation;
         for (let i: number = 0; i < outputSize; i++) {
-            this.inputNodes.add(new Node(NodeType.OUTPUT).setSquash(activation));
+            this.inputNodes.add(new Node(NodeType.OUTPUT).setActivationType(activation));
         }
         this.nodes.push(...Array.from(this.inputNodes));
     }

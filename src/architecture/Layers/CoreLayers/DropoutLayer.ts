@@ -1,7 +1,7 @@
-import {Layer} from "../Layer";
 import {ActivationType} from "../../../enums/ActivationType";
-import {DropoutNode} from "../../Nodes/DropoutNode";
 import {ConnectionType} from "../../../enums/ConnectionType";
+import {DropoutNode} from "../../Nodes/DropoutNode";
+import {Layer} from "../Layer";
 
 export class DropoutLayer extends Layer {
     constructor(outputSize: number, options: { activationType?: ActivationType, probability?: number } = {}) {
@@ -11,7 +11,7 @@ export class DropoutLayer extends Layer {
         const probability: number = options.probability ?? 0.1;
 
         for (let i: number = 0; i < outputSize; i++) {
-            this.inputNodes.add(new DropoutNode(probability).setSquash(activation));
+            this.inputNodes.add(new DropoutNode(probability).setActivationType(activation));
         }
 
         this.outputNodes = this.inputNodes;

@@ -1,8 +1,8 @@
-import {Layer} from "../Layer";
-import {Node} from "../../Node";
 import {ActivationType} from "../../../enums/ActivationType";
-import {NodeType} from "../../../enums/NodeType";
 import {ConnectionType} from "../../../enums/ConnectionType";
+import {NodeType} from "../../../enums/NodeType";
+import {Node} from "../../Node";
+import {Layer} from "../Layer";
 
 export class DenseLayer extends Layer {
     constructor(outputSize: number, options: { activationType?: ActivationType } = {}) {
@@ -11,7 +11,7 @@ export class DenseLayer extends Layer {
         const activation: ActivationType = options.activationType ?? ActivationType.LogisticActivation;
 
         for (let i: number = 0; i < outputSize; i++) {
-            this.inputNodes.add(new Node(NodeType.HIDDEN).setSquash(activation));
+            this.inputNodes.add(new Node(NodeType.HIDDEN).setActivationType(activation));
         }
 
         this.outputNodes = this.inputNodes;

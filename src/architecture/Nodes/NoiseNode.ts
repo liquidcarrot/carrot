@@ -27,7 +27,7 @@ export class NoiseNode extends ConstantNode {
         }
 
         this.activation = this.squash.calc(this.state, false) * this.mask;
-        this.derivative = this.squash.calc(this.state, true);
+        this.derivativeState = this.squash.calc(this.state, true);
 
         return this.activation;
     }
@@ -38,7 +38,7 @@ export class NoiseNode extends ConstantNode {
         options.update = getOrDefault(options.update, true);
 
         const connectionsStates: number[] = this.outgoing.map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
-        this.errorResponsibility = this.errorProjected = sum(connectionsStates) * this.derivative;
+        this.errorResponsibility = this.errorProjected = sum(connectionsStates) * this.derivativeState;
 
         for (const connection of this.incoming) {
             // calculate gradient

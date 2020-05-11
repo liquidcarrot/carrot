@@ -1,11 +1,11 @@
-import {Layer} from "../Layer";
-import {Connection} from "../../Connection";
 import {ActivationType} from "../../../enums/ActivationType";
-import {Node} from "../../Node";
-import {NodeType} from "../../../enums/NodeType";
 import {ConnectionType} from "../../../enums/ConnectionType";
 import {GatingType} from "../../../enums/GatingType";
+import {NodeType} from "../../../enums/NodeType";
 import {Activation} from "../../../methods/Activation";
+import {Connection} from "../../Connection";
+import {Node} from "../../Node";
+import {Layer} from "../Layer";
 
 export class LSTMLayer extends Layer {
 
@@ -20,7 +20,7 @@ export class LSTMLayer extends Layer {
         for (let i: number = 0; i < outputSize; i++) {
             this.inputNodes.add(new Node(NodeType.HIDDEN));
             inputGate.push(new Node(NodeType.HIDDEN).setBias(1));
-            forgetGate.push(new Node(NodeType.HIDDEN).setBias(1).setSquash(ActivationType.LogisticActivation));
+            forgetGate.push(new Node(NodeType.HIDDEN).setBias(1).setActivationType(ActivationType.LogisticActivation));
             memoryCell.push(new Node(NodeType.HIDDEN));
             outputGate.push(new Node(NodeType.HIDDEN).setBias(1));
             this.outputNodes.add(new Node(NodeType.HIDDEN));

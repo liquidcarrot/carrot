@@ -1,11 +1,11 @@
-import {Layer} from "../Layer";
-import {Activation} from "../../../methods/Activation";
-import {Node} from "../../Node";
-import {Connection} from "../../Connection";
 import {ActivationType} from "../../../enums/ActivationType";
-import {NodeType} from "../../../enums/NodeType";
 import {ConnectionType} from "../../../enums/ConnectionType";
 import {GatingType} from "../../../enums/GatingType";
+import {NodeType} from "../../../enums/NodeType";
+import {Activation} from "../../../methods/Activation";
+import {Connection} from "../../Connection";
+import {Node} from "../../Node";
+import {Layer} from "../Layer";
 
 export class GRULayer extends Layer {
     constructor(outputSize: number, options: { activationType?: ActivationType } = {}) {
@@ -19,10 +19,10 @@ export class GRULayer extends Layer {
         for (let i: number = 0; i < outputSize; i++) {
             this.inputNodes.add(new Node(NodeType.HIDDEN));
             updateGate.push(new Node(NodeType.HIDDEN).setBias(1));
-            inverseUpdateGate.push(new Node(NodeType.HIDDEN).setBias(0).setSquash(ActivationType.LogisticActivation));
+            inverseUpdateGate.push(new Node(NodeType.HIDDEN).setBias(0).setActivationType(ActivationType.LogisticActivation));
             resetGate.push(new Node(NodeType.HIDDEN).setBias(0));
-            memoryCell.push(new Node(NodeType.HIDDEN).setSquash(ActivationType.TanhActivation));
-            previousOutput.push(new Node(NodeType.HIDDEN).setBias(0).setSquash(ActivationType.LogisticActivation));
+            memoryCell.push(new Node(NodeType.HIDDEN).setActivationType(ActivationType.TanhActivation));
+            previousOutput.push(new Node(NodeType.HIDDEN).setBias(0).setActivationType(ActivationType.LogisticActivation));
             this.outputNodes.add(new Node(NodeType.HIDDEN));
         }
 

@@ -1,7 +1,7 @@
-import {PoolNode} from "../../Nodes/PoolNode";
-import {PoolNodeType} from "../../../enums/NodeType";
-import {PoolingLayer} from "./PoolingLayer";
 import {ActivationType} from "../../../enums/ActivationType";
+import {PoolNodeType} from "../../../enums/NodeType";
+import {PoolNode} from "../../Nodes/PoolNode";
+import {PoolingLayer} from "./PoolingLayer";
 
 export class MaxPooling1DLayer extends PoolingLayer {
     constructor(outputSize: number, options: { activationType?: ActivationType } = {}) {
@@ -10,7 +10,7 @@ export class MaxPooling1DLayer extends PoolingLayer {
         const activationType: ActivationType = options.activationType ?? ActivationType.IdentityActivation;
 
         for (let i: number = 0; i < outputSize; i++) {
-            this.inputNodes.add(new PoolNode(PoolNodeType.MAX_POOLING).setSquash(activationType));
+            this.inputNodes.add(new PoolNode(PoolNodeType.MAX_POOLING).setActivationType(activationType));
         }
 
         this.outputNodes = this.inputNodes;

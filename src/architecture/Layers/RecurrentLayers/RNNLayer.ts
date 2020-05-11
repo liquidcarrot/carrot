@@ -11,7 +11,7 @@ export class RNNLayer extends Layer {
         const activation: ActivationType = options.activationType ?? ActivationType.LogisticActivation;
 
         for (let i: number = 0; i < outputSize; i++) {
-            this.inputNodes.add(new Node(NodeType.HIDDEN).setSquash(activation));
+            this.inputNodes.add(new Node(NodeType.HIDDEN).setActivationType(activation));
         }
 
         this.outputNodes = this.inputNodes;

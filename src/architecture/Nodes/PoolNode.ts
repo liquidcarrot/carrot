@@ -36,7 +36,7 @@ export class PoolNode extends ConstantNode {
 
         this.activation = this.squash.calc(this.state, false) * this.mask;
         if (this.poolingType === PoolNodeType.AVG_POOLING) {
-            this.derivative = this.squash.calc(this.state, true);
+            this.derivativeState = this.squash.calc(this.state, true);
         }
 
         // Adjust gain
@@ -51,7 +51,7 @@ export class PoolNode extends ConstantNode {
         options.update = getOrDefault(options.update, true);
 
         const connectionsStates: number[] = this.outgoing.map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
-        this.errorResponsibility = this.errorProjected = sum(connectionsStates) * this.derivative;
+        this.errorResponsibility = this.errorProjected = sum(connectionsStates) * this.derivativeState;
         if (this.poolingType === PoolNodeType.AVG_POOLING) {
             for (const connection of this.incoming) {
                 // calculate gradient
