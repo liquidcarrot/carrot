@@ -40,6 +40,12 @@ abstract class Selection {
  * });
  */
 class FitnessProportionateSelection extends Selection {
+    /**
+     * Selects a genome from the population according to the Selection method.
+     *
+     * @param population the pool of networks
+     * @returns the selected genome
+     */
     public select(population: Network[]): Network {
         let totalFitness: number = 0;
         let minimalFitness: number = 0;
@@ -80,13 +86,26 @@ class FitnessProportionateSelection extends Selection {
  * });
  */
 class PowerSelection extends Selection {
+    /**
+     * Probability of picking better networks.
+     */
     public power: number;
 
+    /**
+     * Constructs a power selection.
+     * @param power Probability of picking better networks.
+     */
     constructor(power: number = 4) {
         super();
         this.power = power;
     }
 
+    /**
+     * Selects a genome from the population according to the Selection method.
+     *
+     * @param population the pool of networks
+     * @returns the selected genome
+     */
     public select(population: Network[]): Network {
         return population[Math.floor(Math.random() ** this.power * population.length)];
     }
@@ -107,7 +126,13 @@ class PowerSelection extends Selection {
  * });
  */
 class TournamentSelection extends Selection {
+    /**
+     * The size of a tournament.
+     */
     public size: number;
+    /**
+     * The probability of just picking the best network.
+     */
     public probability: number;
 
     /**
@@ -121,6 +146,12 @@ class TournamentSelection extends Selection {
         this.probability = probability;
     }
 
+    /**
+     * Selects a genome from the population according to the Selection method.
+     *
+     * @param population the pool of networks
+     * @returns the selected genome
+     */
     public select(population: Network[]): Network {
         if (this.size > population.length) {
             throw new Error(`Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size`);
