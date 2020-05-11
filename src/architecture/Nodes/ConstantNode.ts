@@ -5,7 +5,7 @@ import {Activation} from "../../methods/Activation";
 import {Node} from "../Node";
 
 /**
- * A constant node can't change it's own bias.
+ * Constant node
  */
 export abstract class ConstantNode extends Node {
 
