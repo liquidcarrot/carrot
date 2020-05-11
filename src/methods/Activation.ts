@@ -1,3 +1,5 @@
+import {ActivationType} from "../enums/ActivationType";
+
 /**
  * Activation functions
  *
@@ -16,12 +18,20 @@
  * let A = new Node();
  * A.squash = new LogisticActivation();
  */
-import {ActivationType} from "../enums/ActivationType";
-
 abstract class Activation {
+    /**
+     * The type of activation.
+     */
     public readonly type: ActivationType = ActivationType.NO_ACTIVATION;
 
+    /**
+     * Converts a ActivationType to Activation, by creating a new object.
+     * @param activationType the activation type to create a new object for
+     */
     public static getActivation(activationType: ActivationType): Activation {
+        /**
+         * The type of activation.
+         */
         switch (activationType) {
             case ActivationType.LogisticActivation:
                 return new LogisticActivation();
@@ -59,6 +69,14 @@ abstract class Activation {
         throw new ReferenceError(activationType + " is not the name of any available activations! These are all available activations: " + ALL_ACTIVATIONS);
     }
 
+    /**
+     * Calculates the activation value.
+     *
+     * @param x the input value
+     * @param derivative Use derivative function?
+     *
+     * @returns the squashed input value
+     */
     public abstract calc(x: number, derivative: boolean): number;
 }
 
@@ -76,8 +94,19 @@ abstract class Activation {
  * A.squash = new LogisticActivation();
  */
 class LogisticActivation implements Activation {
+    /**
+     * The type of activation.
+     */
     public readonly type: ActivationType = ActivationType.LogisticActivation;
 
+    /**
+     * Calculates the activation value.
+     *
+     * @param x the input value
+     * @param derivative Use derivative function?
+     *
+     * @returns the squashed input value
+     */
     public calc(x: number, derivative: boolean = false): number {
         if (!derivative) {
             return 1 / (1 + Math.exp(-x));
@@ -101,8 +130,19 @@ class LogisticActivation implements Activation {
  * A.squash = new TanhActivation();
  */
 class TanhActivation implements Activation {
+    /**
+     * The type of activation.
+     */
     public readonly type: ActivationType = ActivationType.TanhActivation;
 
+    /**
+     * Calculates the activation value.
+     *
+     * @param x the input value
+     * @param derivative Use derivative function?
+     *
+     * @returns the squashed input value
+     */
     public calc(x: number, derivative: boolean = false): number {
         if (!derivative) {
             return Math.tanh(x);
@@ -128,8 +168,19 @@ class TanhActivation implements Activation {
  * A.squash = new IdentityActivation();
  */
 class IdentityActivation implements Activation {
+    /**
+     * The type of activation.
+     */
     public readonly type: ActivationType = ActivationType.IdentityActivation;
 
+    /**
+     * Calculates the activation value.
+     *
+     * @param x the input value
+     * @param derivative Use derivative function?
+     *
+     * @returns the squashed input value
+     */
     public calc(x: number, derivative: boolean = false): number {
         if (!derivative) {
             return x;
@@ -153,8 +204,19 @@ class IdentityActivation implements Activation {
  * A.squash = new StepActivation();
  */
 class StepActivation implements Activation {
+    /**
+     * The type of activation.
+     */
     public readonly type: ActivationType = ActivationType.StepActivation;
 
+    /**
+     * Calculates the activation value.
+     *
+     * @param x the input value
+     * @param derivative Use derivative function?
+     *
+     * @returns the squashed input value
+     */
     public calc(x: number, derivative: boolean = false): number {
         if (!derivative) {
             return x < 0 ? 0 : 1;
@@ -178,8 +240,19 @@ class StepActivation implements Activation {
  * A.squash = new RELUActivation();
  */
 class RELUActivation implements Activation {
+    /**
+     * The type of activation.
+     */
     public readonly type: ActivationType = ActivationType.RELUActivation;
 
+    /**
+     * Calculates the activation value.
+     *
+     * @param x the input value
+     * @param derivative Use derivative function?
+     *
+     * @returns the squashed input value
+     */
     public calc(x: number, derivative: boolean = false): number {
         if (!derivative) {
             return x <= 0 ? 0 : x;
@@ -203,8 +276,19 @@ class RELUActivation implements Activation {
  * A.squash = new SoftSignActivation;
  */
 class SoftSignActivation implements Activation {
+    /**
+     * The type of activation.
+     */
     public readonly type: ActivationType = ActivationType.SoftSignActivation;
 
+    /**
+     * Calculates the activation value.
+     *
+     * @param x the input value
+     * @param derivative Use derivative function?
+     *
+     * @returns the squashed input value
+     */
     public calc(x: number, derivative: boolean = false): number {
         if (!derivative) {
             return x / (1 + Math.abs(x));
@@ -228,8 +312,19 @@ class SoftSignActivation implements Activation {
  * A.squash = new SinusoidActivation();
  */
 class SinusoidActivation implements Activation {
+    /**
+     * The type of activation.
+     */
     public readonly type: ActivationType = ActivationType.SinusoidActivation;
 
+    /**
+     * Calculates the activation value.
+     *
+     * @param x the input value
+     * @param derivative Use derivative function?
+     *
+     * @returns the squashed input value
+     */
     public calc(x: number, derivative: boolean = false): number {
         if (!derivative) {
             return Math.sin(x);
@@ -253,8 +348,19 @@ class SinusoidActivation implements Activation {
  * A.squash = new GaussianActivation();
  */
 class GaussianActivation implements Activation {
+    /**
+     * The type of activation.
+     */
     public readonly type: ActivationType = ActivationType.GaussianActivation;
 
+    /**
+     * Calculates the activation value.
+     *
+     * @param x the input value
+     * @param derivative Use derivative function?
+     *
+     * @returns the squashed input value
+     */
     public calc(x: number, derivative: boolean = false): number {
         if (!derivative) {
             return Math.exp(-x * x);
@@ -278,8 +384,19 @@ class GaussianActivation implements Activation {
  * A.squash = new BentIdentityActivation();
  */
 class BentIdentityActivation implements Activation {
+    /**
+     * The type of activation.
+     */
     public readonly type: ActivationType = ActivationType.BentIdentityActivation;
 
+    /**
+     * Calculates the activation value.
+     *
+     * @param x the input value
+     * @param derivative Use derivative function?
+     *
+     * @returns the squashed input value
+     */
     public calc(x: number, derivative: boolean = false): number {
         if (!derivative) {
             return (Math.sqrt(x * x + 1) - 1) / 2 + x;
@@ -303,8 +420,19 @@ class BentIdentityActivation implements Activation {
  * A.squash = new BipolarActivation();
  */
 class BipolarActivation implements Activation {
+    /**
+     * The type of activation.
+     */
     public readonly type: ActivationType = ActivationType.BipolarActivation;
 
+    /**
+     * Calculates the activation value.
+     *
+     * @param x the input value
+     * @param derivative Use derivative function?
+     *
+     * @returns the squashed input value
+     */
     public calc(x: number, derivative: boolean = false): number {
         if (!derivative) {
             return x > 0 ? 1 : -1;
@@ -328,8 +456,19 @@ class BipolarActivation implements Activation {
  * A.squash = new BipolarSigmoidActivation();
  */
 class BipolarSigmoidActivation implements Activation {
+    /**
+     * The type of activation.
+     */
     public readonly type: ActivationType = ActivationType.BipolarSigmoidActivation;
 
+    /**
+     * Calculates the activation value.
+     *
+     * @param x the input value
+     * @param derivative Use derivative function?
+     *
+     * @returns the squashed input value
+     */
     public calc(x: number, derivative: boolean = false): number {
         if (!derivative) {
             return 2 / (1 + Math.exp(-x)) - 1;
@@ -353,8 +492,19 @@ class BipolarSigmoidActivation implements Activation {
  * A.squash = new HardTanhActivation();
  */
 class HardTanhActivation implements Activation {
+    /**
+     * The type of activation.
+     */
     public readonly type: ActivationType = ActivationType.HardTanhActivation;
 
+    /**
+     * Calculates the activation value.
+     *
+     * @param x the input value
+     * @param derivative Use derivative function?
+     *
+     * @returns the squashed input value
+     */
     public calc(x: number, derivative: boolean = false): number {
         if (!derivative) {
             return Math.max(-1, Math.min(1, x));
@@ -380,8 +530,19 @@ class HardTanhActivation implements Activation {
  * A.squash = new AbsoluteActivation();
  */
 class AbsoluteActivation implements Activation {
+    /**
+     * The type of activation.
+     */
     public readonly type: ActivationType = ActivationType.AbsoluteActivation;
 
+    /**
+     * Calculates the activation value.
+     *
+     * @param x the input value
+     * @param derivative Use derivative function?
+     *
+     * @returns the squashed input value
+     */
     public calc(x: number, derivative: boolean = false): number {
         if (!derivative) {
             return Math.abs(x);
@@ -405,8 +566,19 @@ class AbsoluteActivation implements Activation {
  * A.squash = new InverseActivation();
  */
 class InverseActivation implements Activation {
+    /**
+     * The type of activation.
+     */
     public readonly type: ActivationType = ActivationType.InverseActivation;
 
+    /**
+     * Calculates the activation value.
+     *
+     * @param x the input value
+     * @param derivative Use derivative function?
+     *
+     * @returns the squashed input value
+     */
     public calc(x: number, derivative: boolean = false): number {
         if (!derivative) {
             return 1 - x;
@@ -434,8 +606,19 @@ class InverseActivation implements Activation {
  * A.squash = new SELUActivation();
  */
 class SELUActivation implements Activation {
+    /**
+     * The type of activation.
+     */
     public readonly type: ActivationType = ActivationType.SELUActivation;
 
+    /**
+     * Calculates the activation value.
+     *
+     * @param x the input value
+     * @param derivative Use derivative function?
+     *
+     * @returns the squashed input value
+     */
     public calc(x: number, derivative: boolean = false): number {
         const alpha: number = 1.6732632423543772848170429916717; // this is bad
         const scale: number = 1.0507009873554804934193349852946; // this is bad
@@ -472,8 +655,19 @@ class SELUActivation implements Activation {
  * A.squash = new MISHActivation();
  */
 class MISHActivation implements Activation {
+    /**
+     * The type of activation.
+     */
     public readonly type: ActivationType = ActivationType.MISHActivation;
 
+    /**
+     * Calculates the activation value.
+     *
+     * @param x the input value
+     * @param derivative Use derivative function?
+     *
+     * @returns the squashed input value
+     */
     public calc(x: number, derivative: boolean = false): number {
         const ex: number = Math.exp(x);
 
