@@ -1,39 +1,52 @@
-import {Node} from "./Node";
 import {ConnectionJSON} from "../interfaces/ConnectionJSON";
+import {Node} from "./Node";
 
 /**
  * A connection instance describes the connection between two nodes. If you're looking for connections between [Groups](Group) please see [Connection Methods](connection)
- *
- * @param from Connection origin node (neuron)
- * @param to Connection destination node (neuron)
- * @param weight=random Weight of the connection
- * @param gateNode Node which gates this connection
- *
- * @prop {Node} from Connection origin node (neuron)
- * @prop {Node} to Connection destination node (neuron)
- * @prop {number} weight=random Weight of the connection
- * @prop {number} gain=1 Used for gating, gets multiplied with weight
- * @prop {Node} gateNode=null The node gating this connection
- * @prop {number} eligibility=0
- * @prop {Node[]} xTraceNodes
- * @prop {number[]} xTraceValues
- * @prop {number[]} delta_weights
- * @prop {number} deltaWeightsPrevious=0 Tracks [momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html)
- * @prop {number} deltaWeightsTotal=0 Tracks [momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) - _for [batch training](https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes)_
  *
  * @see {@link connection|Connection Methods}
  * @see {@link Node|Node}
  */
 export class Connection {
+    /**
+     * eligibility
+     */
     public eligibility: number;
+    /**
+     * Used for gating, gets multiplied with weight
+     */
     public gain: number;
+    /**
+     * Weight of the connection
+     */
     public weight: number;
+    /**
+     * Connection origin node (neuron)
+     */
     public from: Node;
+    /**
+     * Connection destination node (neuron)
+     */
     public to: Node;
+    /**
+     * xTraceNodes
+     */
     public xTraceNodes: Node[];
+    /**
+     * xTraceValues
+     */
     public xTraceValues: number[];
+    /**
+     * The node gating this connection
+     */
     public gateNode: Node | null;
+    /**
+     * Tracks [momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) - _for [batch training](https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes)_
+     */
     public deltaWeightsTotal: number;
+    /**
+     * Tracks [momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html)
+     */
     public deltaWeightsPrevious: number;
 
     constructor(from: Node, to: Node, weight?: number, gateNode?: Node) {
