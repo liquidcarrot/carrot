@@ -352,7 +352,7 @@ export class NEAT {
     }
 
     /**
-     * Sorts the population by score
+     * Sorts the population by score (descending)
      */
     public sort(): void {
         this.population.sort((a: Network, b: Network) => {
