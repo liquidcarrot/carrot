@@ -5,6 +5,8 @@ import {Mutation} from "../methods/Mutation";
 import {Selection} from "../methods/Selection";
 
 export interface EvolveOptions {
+    input?: number;
+    output?: number;
     dataset?: { input: number[], output: number[] }[];
     threads?: number;
     generation?: number;
