@@ -71,7 +71,7 @@ function getOrDefault<T>(value: T | undefined, defaultValue: T): T {
 }
 
 /**
- * Shuffles an aray
+ * Shuffles an array
  * @param array the array
  * @returns the shuffled array
  */

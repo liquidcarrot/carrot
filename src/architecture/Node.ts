@@ -318,9 +318,9 @@ export class Node {
     /**
      * Stops this node from gating (manipulating) the given connection(s)
      *
-     * @param  connection Connections to ungate - _i.e. remove this node from_
+     * @param connection Connections to remove gate - _i.e. remove this node from_
      *
-     * @example <caption>Ungate one <code>connection</code></caption>
+     * @example <caption>Remove gate one <code>connection</code></caption>
      * const { Node } = require("@liquid-carrot/carrot");
      *
      * let input = new Node();
@@ -506,7 +506,7 @@ export class Node {
          */
         rate?: number,
         /**
-         * When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
+         * When set to false weights won't update, but when set to true after being false the last propagation will include the delta weights of the first "update:false" propagations too.
          */
         update?: boolean
     } = {}): void {

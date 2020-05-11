@@ -21,7 +21,7 @@ import {pickRandom, randBoolean, randDouble} from "./Utils";
  * myNetwork.mutate(new AddNodeMutation());
  *
  * // specifying a list of network mutation methods to use during evolution
- * myNetwork.evolve(trainingset, {
+ * myNetwork.evolve(trainingSet, {
  *  mutation: [new AddNodeMutation(),new ModBiasMutation()]
  * }
  *
@@ -625,7 +625,7 @@ class SwapNodesMutation extends Mutation {
  * @example <caption>A group of mutation methods for evolution</caption>
  * let myNetwork = new Network(5, 5);
  *
- * network.evolve(trainingset, {
+ * network.evolve(trainingSet, {
  *  mutation: methods.mutation.ALL // all mutation methods
  * }
  */
@@ -646,12 +646,12 @@ const ALL_MUTATIONS: Mutation[] = [
     new SwapNodesMutation(),
 ];
 /**
- * Array of all feedforwad mutation methods
+ * Array of all feed forward mutation methods
  *
  * @example <caption>A group of mutation methods for evolution</caption>
  * let myNetwork = new Network(5, 5);
  *
- * network.evolve(trainingset, {
+ * network.evolve(trainingSet, {
  *  mutation: methods.mutation.FEEDFORWARD_MUTATIONS // all feedforward mutation methods
  * }
  */

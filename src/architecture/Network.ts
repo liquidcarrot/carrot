@@ -312,9 +312,6 @@ export class Network {
      *
      * It will activate all the nodes in activation order and produce an output.
      *
-     * @function activate
-     * @memberof Network
-     *
      * @param {number[]} [input] Input values to activate nodes with
      * @param options
      * @returns {number[]} Squashed output values
@@ -369,9 +366,6 @@ export class Network {
      *
      * This function allows you to teach the network. If you want to do more complex training, use the `network.train()` function.
      *
-     * @function propagate
-     * @memberof Network
-     *
      * @param {number[]} target Ideal values of the previous activate. Will use the difference to improve the weights
      * @param options More option for propagation
      *
@@ -398,7 +392,7 @@ export class Network {
          */
         momentum?: number,
         /**
-         * When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
+         * When set to false weights won't update, but when set to true after being false the last propagation will include the delta weights of the first "update:false" propagation too.
          */
         update?: boolean
     } = {}): void {
@@ -434,9 +428,6 @@ export class Network {
 
     /**
      * Clear the context of the network
-     *
-     * @function clear
-     * @memberof Network
      */
     public clear(): void {
         this.nodes.forEach(node => node.clear());
@@ -444,9 +435,6 @@ export class Network {
 
     /**
      * Removes the connection of the `from` node to the `to` node
-     *
-     * @function disconnect
-     * @memberof Network
      *
      * @param {Node} from Source node
      * @param {Node} to Destination node
@@ -473,9 +461,6 @@ export class Network {
     /**
      * Makes a network node gate a connection
      *
-     * @function gate
-     * @memberof Network
-     *
      * @todo Add ability to gate several network connections at once
      *
      * @param {Node} node Gating node
@@ -485,7 +470,7 @@ export class Network {
      * let { Network } = require("@liquid-carrot/carrot");
      *
      * myNetwork.gate(myNetwork.nodes[1], myNetwork.connections[5])
-     * // now: connection 5's weight is multiplied with node 1's activaton
+     * // now: connection 5's weight is multiplied with node 1's activation
      */
     public addGate(node: Node, connection: Connection): void {
         if (this.nodes.indexOf(node) === -1) {
@@ -499,9 +484,6 @@ export class Network {
 
     /**
      * Remove the gate of a connection.
-     *
-     * @function ungate
-     * @memberof Network
      *
      * @param {Connection} connection Connection to remove gate from
      */
@@ -517,9 +499,6 @@ export class Network {
 
     /**
      * Removes a node from a network, all its connections will be redirected. If it gates a connection, the gate will be removed.
-     *
-     * @function remove
-     * @memberof Network
      *
      * @param {Node} node Node to remove from the network
      * @param keepGates
@@ -588,9 +567,6 @@ export class Network {
     /**
      * Mutates the network with the given method.
      *
-     * @function mutate
-     * @memberof Network
-     *
      * @param {Mutation} method [Mutation method](mutation)
      * @param {object} options
      * @param {number} [options.maxNodes]
@@ -626,10 +602,6 @@ export class Network {
     /**
      * Selects a random mutation method and returns a mutated copy of the network. Warning! Mutates network directly.
      *
-     * @function mutateRandom
-     *
-     * @memberof Network
-     *
      * @param {Mutation[]} [allowedMethods=methods.mutation.ALL] An array of [Mutation methods](mutation) to automatically pick from
      * @param {object} options
      * @param {number} [options.maxNodes] Maximum amount of [Nodes](node) a network can grow to
@@ -664,9 +636,6 @@ export class Network {
     /**
      * Train the given data to this network
      *
-     * @function train
-     * @memberof Network
-     *
      * @param {TrainOptions} options Options used to train network
      * @param {Array<{input:number[],output:number[]}>} options.data A data of input values and ideal output values to train the network with
      * @param {options.loss} [options.loss=new MSELoss()] The [options.loss function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
@@ -679,7 +648,7 @@ export class Network {
      * @param {number} [options.batchSize=1] Sets the (mini-) batch size of your training. Default: 1 [(online training)](https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes)
      * @param {number} [options.crossValidate.testSize] Sets the amount of test cases that should be assigned to cross validation. If data to 0.4, 40% of the given data will be used for cross validation.
      * @param {number} [options.crossValidate.testError] Sets the target error of the validation data.
-     * @param {boolean} [options.clear=false] If set to true, will clear the network after every activation. This is useful for training LSTM's, more importantly for timeseries prediction.
+     * @param {boolean} [options.clear=false] If set to true, will clear the network after every activation. This is useful for training LSTM's, more importantly for time series prediction.
      * @param {boolean} [options.shuffle=false] When set to true, will shuffle the training data every iterationNumber. Good option to use if the network is performing worse in [cross validation](https://artint.info/html/ArtInt_189.html) than in the real training data.
      * @param {number|boolean} [options.log=false] If set to n, outputs training status every n iterations. Setting `log` to 1 will log the status every iteration_number
      * @param {number} [options.schedule.iterations] You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
@@ -912,9 +881,6 @@ export class Network {
     /**
      * Tests a set and returns the error and elapsed time
      *
-     * @function test
-     * @memberof Network
-     *
      * @param {Array<{input:number[],output:number[]}>} dataset A set of input values and ideal output values to test the network against
      * @param {Loss} [loss=new MSELoss()] The [loss function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
      *
@@ -945,9 +911,6 @@ export class Network {
 
     /**
      * Convert the network to a json object
-     *
-     * @function toJSON
-     * @memberof Network
      *
      * @returns {NetworkJSON} The network represented as a json object
      *
@@ -992,22 +955,19 @@ export class Network {
      * Evolves the network to reach a lower error on a dataset using the [NEAT algorithm](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf)
      *
      * If both `iterations` and `error` options are unset, evolve will default to `iterations` as an end condition.
-     *
-     * @function evolve
-     * @memberof Network
      * @param {object} [options] Configuration options
      * @param {Array<{input:number[],output:number[]}>} [options.dataset] A set of input values and ideal output values to train the network with
      * @param {number} [options.iterations=1000] Set the maximum amount of iterations/generations for the algorithm to run.
      * @param {number} [options.error=0.05] Set the target error. The algorithm will stop once this target error has been reached.
-     * @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connectoins.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
+     * @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connections.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
      * @param {loss} [options.loss=loss.MSE]  Specify the loss function for the evolution, this tells a genome in the population how well it's performing. Default: methods.loss.MSE (recommended).
-     * @param {number} [options.amount=1] Set the amount of times to test the trainingset on a genome each generation. Useful for timeseries. Do not use for regular feedfoward problems.
+     * @param {number} [options.amount=1] Set the amount of times to test the trainingSet on a genome each generation. Useful for time series. Do not use for regular feed forward problems.
      * @param {number} [options.threads] Specify the amount of threads to use. Default value is the amount of cores in your CPU.
      * @param {Network} [options.network]
      * @param {number|boolean} [options.log=false] If set to n, outputs training status every n iterations. Setting `log` to 1 will log the status every iteration
      * @param {number} [options.schedule.iterations] You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
      * @param {schedule} [options.schedule.function] A function to run every n iterations as set by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
-     * @param {boolean} [options.clear=false] If set to true, will clear the network after every activation. This is useful for evolving recurrent networks, more importantly for timeseries prediction.
+     * @param {boolean} [options.clear=false] If set to true, will clear the network after every activation. This is useful for evolving recurrent networks, more importantly for time series prediction.
      * @param {boolean} [options.equal=true] If set to true when [Network.crossOver](Network.crossOver) runs it will assume both genomes are equally fit.
      * @param {number} [options.populationSize=50] Population size of each generation.
      * @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)

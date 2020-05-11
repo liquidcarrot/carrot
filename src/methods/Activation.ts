@@ -335,7 +335,7 @@ class SinusoidActivation implements Activation {
 }
 
 /**
- * [Guassian function.](https://en.wikipedia.org/wiki/Gaussian_function)
+ * [Gaussian function.](https://en.wikipedia.org/wiki/Gaussian_function)
  *
  * @param x Input values to activation function
  * @param derivative Flag to select derivative function
@@ -517,7 +517,7 @@ class HardTanhActivation implements Activation {
 /**
  * [Absolute function.](https://wagenaartje.github.io/neataptic/docs/methods/activation/)
  *
- * Avoid using this activation function on a node with a selfconnection
+ * Avoid using this activation function on a node with a self connection
  *
  * @param x Input values to activation function
  * @param derivative Flag to select derivative function

@@ -44,7 +44,7 @@ export class NEAT {
      */
     private readonly equal: boolean;
     /**
-     * Clear the context of the population's nodes, basically reverting them to 'new' neurons. Useful for predicting timeseries with LSTM's.
+     * Clear the context of the population's nodes, basically reverting them to 'new' neurons. Useful for predicting time series with LSTM's.
      */
     private readonly clear: boolean;
     /**
@@ -52,7 +52,7 @@ export class NEAT {
      */
     private readonly populationSize: number;
     /**
-     * Elitism of every evolution loop. [Elitism in genetic algortihtms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
+     * Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
      */
     private readonly elitism: number;
     /**
