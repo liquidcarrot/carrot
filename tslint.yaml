@@ -29,8 +29,7 @@
     "prefer-readonly": true,
     "no-unused-expression": false,
     "no-trailing-whitespace": false,
-    "completed-docs": true,
-    "no-redundant-jsdoc": true,
+    "completed-docs": [true, "classes","enums","enum-members","functions","interfaces","methods","properties"],
     "jsdoc-format": [
       true,
       "check-multiline-start"
