@@ -1,5 +1,5 @@
 /**
- * The type of gating
+ * The type of gating.
  */
 export enum GatingType {
     /**
