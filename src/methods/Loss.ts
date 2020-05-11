@@ -28,6 +28,13 @@ abstract class Loss {
  * myNetwork.train(trainingData, { loss: new CrossEntropyLoss() });
  */
 class CrossEntropyLoss extends Loss {
+    /**
+     * Calculates the loss value from output to target.
+     *
+     * @param targets the target values
+     * @param outputs the real output values
+     * @returns the loss between output and target
+     */
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach(((value, index) => {
@@ -50,6 +57,13 @@ class CrossEntropyLoss extends Loss {
  * myNetwork.train(trainingData, { loss: new MSELoss() });
  */
 class MSELoss extends Loss {
+    /**
+     * Calculates the loss value from output to target.
+     *
+     * @param targets the target values
+     * @param outputs the real output values
+     * @returns the loss between output and target
+     */
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach(((value, index) => {
@@ -78,6 +92,13 @@ class MSELoss extends Loss {
  * });
  */
 class BinaryLoss extends Loss {
+    /**
+     * Calculates the loss value from output to target.
+     *
+     * @param targets the target values
+     * @param outputs the real output values
+     * @returns the loss between output and target
+     */
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach(((value, index) => {
@@ -106,6 +127,13 @@ class BinaryLoss extends Loss {
  * });
  */
 class MAELoss extends Loss {
+    /**
+     * Calculates the loss value from output to target.
+     *
+     * @param targets the target values
+     * @param outputs the real output values
+     * @returns the loss between output and target
+     */
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach(((value, index) => {
@@ -134,6 +162,13 @@ class MAELoss extends Loss {
  * });
  */
 class MAPELoss extends Loss {
+    /**
+     * Calculates the loss value from output to target.
+     *
+     * @param targets the target values
+     * @param outputs the real output values
+     * @returns the loss between output and target
+     */
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach(((value, index) => {
@@ -158,6 +193,13 @@ class MAPELoss extends Loss {
  * });
  */
 class WAPELoss extends Loss {
+    /**
+     * Calculates the loss value from output to target.
+     *
+     * @param targets the target values
+     * @param outputs the real output values
+     * @returns the loss between output and target
+     */
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         let sum: number = 0;
@@ -188,6 +230,13 @@ class WAPELoss extends Loss {
  * });
  */
 class MSLELoss extends Loss {
+    /**
+     * Calculates the loss value from output to target.
+     *
+     * @param targets the target values
+     * @param outputs the real output values
+     * @returns the loss between output and target
+     */
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach(((value, index) => {
@@ -216,6 +265,13 @@ class MSLELoss extends Loss {
  * });
  */
 class HINGELoss extends Loss {
+    /**
+     * Calculates the loss value from output to target.
+     *
+     * @param targets the target values
+     * @param outputs the real output values
+     * @returns the loss between output and target
+     */
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach((value, index) => {
