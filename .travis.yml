@@ -5,5 +5,3 @@ node_js:
 before_install:
   - sudo apt-get update -y
   - sudo apt-get install xserver-xorg-dev libxi-dev libxext-dev -y
-
-after_success: npm run coverage
