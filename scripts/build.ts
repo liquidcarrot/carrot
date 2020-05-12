@@ -41,5 +41,9 @@ const nodeDev: ParcelBundler.ParcelOptions = {
     target: "node",
     global: 'carrot',
 };
-Promise.all([runBuild(browserProduction), runBuild(browserDev), runBuild(nodeProduction), runBuild(nodeDev)])
-    .then(() => process.exit(0));
+Promise.all([
+    runBuild(browserProduction),
+    runBuild(browserDev),
+    runBuild(nodeProduction),
+    runBuild(nodeDev)
+]).then(() => process.exit(0));
