@@ -10,13 +10,6 @@ import {ActivationType} from "../enums/ActivationType";
  * @see [Understanding activation functions in neural networks](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0)
  * @see [List of activation functions in neural networks with pros/cons](https://stats.stackexchange.com/questions/115258/comprehensive-list-of-activation-functions-in-neural-networks-with-pros-cons)
  *
- *
- * @example
- * let { methods, Node } = require("@liquid-carrot/carrot");
- *
- * // Changing a neuron's activation function
- * let A = new Node();
- * A.squash = new LogisticActivation();
  */
 abstract class Activation {
     /**
@@ -85,13 +78,6 @@ abstract class Activation {
  *
  * @param x Input value(s) to activation function
  * @param derivative Flag to select derivative function
- *
- * @example
- * let { methods, Node } = require("@liquid-carrot/carrot");
- *
- * // Changing a neuron's activation function
- * let A = new Node();
- * A.squash = new LogisticActivation();
  */
 class LogisticActivation implements Activation {
     /**
@@ -121,13 +107,6 @@ class LogisticActivation implements Activation {
  *
  * @param x Input value to activation function
  * @param derivative Flag to select derivative function
- *
- * @example
- * let { methods, Node } = require("@liquid-carrot/carrot");
- *
- * // Changing a neuron's activation function
- * let A = new Node();
- * A.squash = new TanhActivation();
  */
 class TanhActivation implements Activation {
     /**
@@ -159,13 +138,6 @@ class TanhActivation implements Activation {
  *
  * @param x Input values to activation function
  * @param derivative Flag to select derivative function
- *
- * @example
- * let { methods, Node } = require("@liquid-carrot/carrot");
- *
- * // Changing a neuron's activation function
- * let A = new Node();
- * A.squash = new IdentityActivation();
  */
 class IdentityActivation implements Activation {
     /**
@@ -195,13 +167,6 @@ class IdentityActivation implements Activation {
  *
  * @param x Input values to activation function
  * @param derivative Flag to select derivative function
- *
- * @example
- * let { methods, Node } = require("@liquid-carrot/carrot");
- *
- * // Changing a neuron's activation function
- * let A = new Node();
- * A.squash = new StepActivation();
  */
 class StepActivation implements Activation {
     /**
@@ -231,13 +196,6 @@ class StepActivation implements Activation {
  *
  * @param x Input values to activation function
  * @param derivative Flag to select derivative function
- *
- * @example
- * let { methods, Node } = require("@liquid-carrot/carrot");
- *
- * // Changing a neuron's activation function
- * let A = new Node();
- * A.squash = new RELUActivation();
  */
 class RELUActivation implements Activation {
     /**
@@ -267,13 +225,6 @@ class RELUActivation implements Activation {
  *
  * @param x Input values to activation function
  * @param derivative Flag to select derivative function
- *
- * @example
- * let { methods, Node } = require("@liquid-carrot/carrot");
- *
- * // Changing a neuron's activation function
- * let A = new Node();
- * A.squash = new SoftSignActivation;
  */
 class SoftSignActivation implements Activation {
     /**
@@ -303,13 +254,6 @@ class SoftSignActivation implements Activation {
  *
  * @param x Input values to activation function
  * @param derivative Flag to select derivative function
- *
- * @example
- * let { methods, Node } = require("@liquid-carrot/carrot");
- *
- * // Changing a neuron's activation function
- * let A = new Node();
- * A.squash = new SinusoidActivation();
  */
 class SinusoidActivation implements Activation {
     /**
@@ -339,13 +283,6 @@ class SinusoidActivation implements Activation {
  *
  * @param x Input values to activation function
  * @param derivative Flag to select derivative function
- *
- * @example
- * let { methods, Node } = require("@liquid-carrot/carrot");
- *
- * // Changing a neuron's activation function
- * let A = new Node();
- * A.squash = new GaussianActivation();
  */
 class GaussianActivation implements Activation {
     /**
@@ -375,13 +312,6 @@ class GaussianActivation implements Activation {
  *
  * @param x Input values to activation function
  * @param derivative Flag to select derivative function
- *
- * @example
- * let { methods, Node } = require("@liquid-carrot/carrot");
- *
- * // Changing a neuron's activation function
- * let A = new Node();
- * A.squash = new BentIdentityActivation();
  */
 class BentIdentityActivation implements Activation {
     /**
@@ -411,13 +341,6 @@ class BentIdentityActivation implements Activation {
  *
  * @param x Input value to activation function
  * @param derivative Flag to select derivative function
- *
- * @example
- * let { methods, Node } = require("@liquid-carrot/carrot");
- *
- * // Changing a neuron's activation function
- * let A = new Node();
- * A.squash = new BipolarActivation();
  */
 class BipolarActivation implements Activation {
     /**
@@ -447,13 +370,6 @@ class BipolarActivation implements Activation {
  *
  * @param  x Input values to activation function
  * @param derivative Flag to select derivative function
- *
- * @example
- * let { methods, Node } = require("@liquid-carrot/carrot");
- *
- * // Changing a neuron's activation function
- * let A = new Node();
- * A.squash = new BipolarSigmoidActivation();
  */
 class BipolarSigmoidActivation implements Activation {
     /**
@@ -483,13 +399,6 @@ class BipolarSigmoidActivation implements Activation {
  *
  * @param x Input values to activation function
  * @param derivative Flag to select derivative function
- *
- * @example
- * let { methods, Node } = require("@liquid-carrot/carrot");
- *
- * // Changing a neuron's activation function
- * let A = new Node();
- * A.squash = new HardTanhActivation();
  */
 class HardTanhActivation implements Activation {
     /**
@@ -521,13 +430,6 @@ class HardTanhActivation implements Activation {
  *
  * @param x Input values to activation function
  * @param derivative Flag to select derivative function
- *
- * @example
- * let { methods, Node } = require("@liquid-carrot/carrot");
- *
- * // Changing a neuron's activation function
- * let A = new Node();
- * A.squash = new AbsoluteActivation();
  */
 class AbsoluteActivation implements Activation {
     /**
@@ -557,13 +459,6 @@ class AbsoluteActivation implements Activation {
  *
  * @param x Input values to activation function
  * @param derivative Flag to select derivative function
- *
- * @example
- * let { methods, Node } = require("@liquid-carrot/carrot");
- *
- * // Changing a neuron's activation function
- * let A = new Node();
- * A.squash = new InverseActivation();
  */
 class InverseActivation implements Activation {
     /**
@@ -597,13 +492,6 @@ class InverseActivation implements Activation {
  *
  * @param x Input value to activation function
  * @param derivative Flag to select derivative function
- *
- * @example
- * let { methods, Node } = require("@liquid-carrot/carrot");
- *
- * // Changing a neuron's activation function
- * let A = new Node();
- * A.squash = new SELUActivation();
  */
 class SELUActivation implements Activation {
     /**
@@ -646,13 +534,6 @@ class SELUActivation implements Activation {
  *
  * @param x Input value to activation function
  * @param derivative Flag to select derivative function
- *
- * @example
- * let { methods, Node } = require("@liquid-carrot/carrot");
- *
- * // Changing a neuron's activation function
- * let A = new Node();
- * A.squash = new MISHActivation();
  */
 class MISHActivation implements Activation {
     /**

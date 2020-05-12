@@ -2,10 +2,7 @@ import {ConnectionJSON} from "../interfaces/ConnectionJSON";
 import {Node} from "./Node";
 
 /**
- * A connection instance describes the connection between two nodes. If you're looking for connections between [Groups](Group) please see [Connection Methods](connection)
- *
- * @see {@link connection|Connection Methods}
- * @see {@link Node|Node}
+ * A connection instance describes the connection between two nodes.
  */
 export class Connection {
     /**

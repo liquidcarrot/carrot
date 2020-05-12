@@ -16,15 +16,6 @@ import {getOrDefault, pickRandom} from "./methods/Utils";
  * Runs the NEAT algorithm on group of neural networks.
  *
  * @constructs Neat
- *
- * @example
- * let { Neat } = require("@liquid-carrot/carrot");
- *
- * let neat = new Neat(dataset, {
- *   elitism: 10,
- *   clear: true,
- *   populationSize: 1000
- * });
  */
 export class NEAT {
     /**
@@ -206,27 +197,6 @@ export class NEAT {
      * @param {function} [adjustGenome=self.template] Accepts a network, modifies it, and returns it. Used to modify unwanted genomes returned by `pickGenome` and reincorporate them into the population. If left unset, unwanted genomes will be replaced with the template Network. Will only run when pickGenome is defined.
      *
      * @returns {Network} Fittest network
-     *
-     * @example
-     * let neat = new Neat(dataset, {
-     *  elitism: 10,
-     *  clear: true,
-     *  populationSize: 1000
-     * });
-     *
-     * let filter = function(genome) {
-     *  // Remove genomes with more than 100 nodes
-     *  return genome.nodes.length > 100 ? true : false
-     * }
-     *
-     * let adjust = function(genome) {
-     *  // clear the nodes
-     *  return genome.clear()
-     * }
-     *
-     * neat.evolve(evolveSet, filter, adjust).then(function(fittest) {
-     *  console.log(fittest)
-     * })
      */
     public async evolve(pickGenome?: ((genome: Network) => boolean) | undefined, adjustGenome?: ((genome: Network) => Network) | undefined): Promise<Network> {
         // Check if evolve is possible

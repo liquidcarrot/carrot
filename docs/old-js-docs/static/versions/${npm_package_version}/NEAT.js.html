@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Liquid Carrot - NEAT.js - Documentation</title>
+    <link rel="shortcut icon" href="/liquid-carrot-favicon.png" />
+    
+    
+    
+    
+    
+    <meta property="og:title" content=""/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content=""/>
+    
+    <meta property="og:url" content=""/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="styles/bulma.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/ionicons/2.0.1/css/ionicons.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger">
+  <div class="fixed-action-btn">
+    <div class="button-floating">
+      <!--
+      <label for="nav-trigger" class="navicon-button x">
+        <div class="navicon"></div>
+      </label>
+      -->
+        <i class="ion-ios-book" aria-hidden="true"></i>
+    </div>
+  </div>
+</label>
+<label for="nav-trigger" class="overlay"></label>
+
+<div class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="#" style="padding:0">
+      <img src="img/carrot-logo.png" height="28">
+    </a>
+
+    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+
+  <div id="navbarBasicExample" class="navbar-menu">
+    <div class="navbar-start">
+      <a class="navbar-item" href="/">Home</a>
+      <a class="navbar-item" href="/carrot">Docs</a>
+      <a class="navbar-item" href="https://github.com/liquidcarrot/carrot" target="_blank"><i class="ion-social-github" aria-hidden="true"></i></a>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          Versions
+        </a>
+        
+        <div class="navbar-dropdown">
+          <a href='https://liquidcarrot.io/carrot/versions/0.2.27/' class="navbar-item">v0.2.27</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.2.28/' class="navbar-item">v0.2.28</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.0/' class="navbar-item">v0.3.0</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.1/' class="navbar-item">v0.3.1</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.10/' class="navbar-item">v0.3.10</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.11/' class="navbar-item">v0.3.11</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.12/' class="navbar-item">v0.3.12</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.16/' class="navbar-item">v0.3.16</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.18/' class="navbar-item">v0.3.18</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.3/' class="navbar-item">v0.3.3</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.4/' class="navbar-item">v0.3.4</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.7/' class="navbar-item">v0.3.7</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.8/' class="navbar-item">v0.3.8</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.9/' class="navbar-item">v0.3.9</a>
+      <a href='https://liquidcarrot.io/carrot/' class="navbar-item">latest</a>
+        </div>
+      </div>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More
+        </a>
+
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="mailto:people@liquidcarrot.io?subject=Contact%20From%20Docs">
+            Contact
+          </a>
+          <hr class="navbar-divider">
+          <a class="navbar-item" href="https://github.com/liquidcarrot/carrot/issues/new">
+            Report an issue
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <input type="text" id="nav-search" placeholder="Search" autofocus>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav >
+    <h3>Classes</h3><ul><li><a href="Neat.html">Neat</a><ul class='methods'><li data-type='method'><a href="Neat.html#evaluate">evaluate</a></li><li data-type='method'><a href="Neat.html#evolve">evolve</a></li><li data-type='method'><a href="Neat.html#filterGenome">filterGenome</a></li><li data-type='method'><a href="Neat.html#getAverage">getAverage</a></li><li data-type='method'><a href="Neat.html#getFittest">getFittest</a></li><li data-type='method'><a href="Neat.html#getOffspring">getOffspring</a></li><li data-type='method'><a href="Neat.html#mutate">mutate</a></li><li data-type='method'><a href="Neat.html#mutateRandom">mutateRandom</a></li><li data-type='method'><a href="Neat.html#sort">sort</a></li></ul></li><li><a href="Network.html">Network</a><ul class='methods'><li data-type='method'><a href="Network.html#.crossOver">crossOver</a></li><li data-type='method'><a href="Network.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Network.html#activate">activate</a></li><li data-type='method'><a href="Network.html#addGate">addGate</a></li><li data-type='method'><a href="Network.html#clear">clear</a></li><li data-type='method'><a href="Network.html#connect">connect</a></li><li data-type='method'><a href="Network.html#copy">copy</a></li><li data-type='method'><a href="Network.html#disconnect">disconnect</a></li><li data-type='method'><a href="Network.html#evolve">evolve</a></li><li data-type='method'><a href="Network.html#mutate">mutate</a></li><li data-type='method'><a href="Network.html#mutateRandom">mutateRandom</a></li><li data-type='method'><a href="Network.html#propagate">propagate</a></li><li data-type='method'><a href="Network.html#removeGate">removeGate</a></li><li data-type='method'><a href="Network.html#removeNode">removeNode</a></li><li data-type='method'><a href="Network.html#test">test</a></li><li data-type='method'><a href="Network.html#toJSON">toJSON</a></li><li data-type='method'><a href="Network.html#train">train</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#AbsoluteActivation">AbsoluteActivation</a></li><li><a href="global.html#Activation">Activation</a></li><li><a href="global.html#ActivationType">ActivationType</a></li><li><a href="global.html#ActivationType%255Bundefined%255D">ActivationType[undefined]</a></li><li><a href="global.html#AddBackConnectionMutation">AddBackConnectionMutation</a></li><li><a href="global.html#AddConnectionMutation">AddConnectionMutation</a></li><li><a href="global.html#AddGateMutation">AddGateMutation</a></li><li><a href="global.html#AddNodeMutation">AddNodeMutation</a></li><li><a href="global.html#AddSelfConnectionMutation">AddSelfConnectionMutation</a></li><li><a href="global.html#ALL_MUTATIONS">ALL_MUTATIONS</a></li><li><a href="global.html#Architect">Architect</a></li><li><a href="global.html#avg">avg</a></li><li><a href="global.html#AvgPooling1DLayer">AvgPooling1DLayer</a></li><li><a href="global.html#BentIdentityActivation">BentIdentityActivation</a></li><li><a href="global.html#BinaryLoss">BinaryLoss</a></li><li><a href="global.html#BipolarActivation">BipolarActivation</a></li><li><a href="global.html#BipolarSigmoidActivation">BipolarSigmoidActivation</a></li><li><a href="global.html#Connection">Connection</a></li><li><a href="global.html#ConnectionType">ConnectionType</a></li><li><a href="global.html#ConnectionType%255Bundefined%255D">ConnectionType[undefined]</a></li><li><a href="global.html#ConstantNode">ConstantNode</a></li><li><a href="global.html#CrossEntropyLoss">CrossEntropyLoss</a></li><li><a href="global.html#DenseLayer">DenseLayer</a></li><li><a href="global.html#DropoutLayer">DropoutLayer</a></li><li><a href="global.html#DropoutNode">DropoutNode</a></li><li><a href="global.html#ExponentialRate">ExponentialRate</a></li><li><a href="global.html#FEEDFORWARD_MUTATIONS">FEEDFORWARD_MUTATIONS</a></li><li><a href="global.html#FitnessProportionateSelection">FitnessProportionateSelection</a></li><li><a href="global.html#FixedRate">FixedRate</a></li><li><a href="global.html#GatingType">GatingType</a></li><li><a href="global.html#GatingType%255Bundefined%255D">GatingType[undefined]</a></li><li><a href="global.html#GaussianActivation">GaussianActivation</a></li><li><a href="global.html#generateGaussian">generateGaussian</a></li><li><a href="global.html#getOrDefault">getOrDefault</a></li><li><a href="global.html#GlobalAvgPooling1DLayer">GlobalAvgPooling1DLayer</a></li><li><a href="global.html#GlobalMaxPooling1DLayer">GlobalMaxPooling1DLayer</a></li><li><a href="global.html#GlobalMinPooling1DLayer">GlobalMinPooling1DLayer</a></li><li><a href="global.html#GRULayer">GRULayer</a></li><li><a href="global.html#HardTanhActivation">HardTanhActivation</a></li><li><a href="global.html#HINGELoss">HINGELoss</a></li><li><a href="global.html#HopfieldLayer">HopfieldLayer</a></li><li><a href="global.html#IdentityActivation">IdentityActivation</a></li><li><a href="global.html#InputLayer">InputLayer</a></li><li><a href="global.html#InverseActivation">InverseActivation</a></li><li><a href="global.html#InverseRate">InverseRate</a></li><li><a href="global.html#Layer">Layer</a></li><li><a href="global.html#LogisticActivation">LogisticActivation</a></li><li><a href="global.html#Loss">Loss</a></li><li><a href="global.html#LSTMLayer">LSTMLayer</a></li><li><a href="global.html#MAELoss">MAELoss</a></li><li><a href="global.html#MAPELoss">MAPELoss</a></li><li><a href="global.html#max">max</a></li><li><a href="global.html#MaxPooling1DLayer">MaxPooling1DLayer</a></li><li><a href="global.html#maxValueIndex">maxValueIndex</a></li><li><a href="global.html#MemoryLayer">MemoryLayer</a></li><li><a href="global.html#min">min</a></li><li><a href="global.html#MinPooling1DLayer">MinPooling1DLayer</a></li><li><a href="global.html#minValueIndex">minValueIndex</a></li><li><a href="global.html#MISHActivation">MISHActivation</a></li><li><a href="global.html#ModActivationMutation">ModActivationMutation</a></li><li><a href="global.html#ModBiasMutation">ModBiasMutation</a></li><li><a href="global.html#ModWeightMutation">ModWeightMutation</a></li><li><a href="global.html#MSELoss">MSELoss</a></li><li><a href="global.html#MSLELoss">MSLELoss</a></li><li><a href="global.html#Mutation">Mutation</a></li><li><a href="global.html#Node">Node</a></li><li><a href="global.html#NodeType">NodeType</a></li><li><a href="global.html#NodeType%255Bundefined%255D">NodeType[undefined]</a></li><li><a href="global.html#NoiseLayer">NoiseLayer</a></li><li><a href="global.html#NoiseNode">NoiseNode</a></li><li><a href="global.html#NoiseNodeType">NoiseNodeType</a></li><li><a href="global.html#NoiseNodeType%255Bundefined%255D">NoiseNodeType[undefined]</a></li><li><a href="global.html#OutputLayer">OutputLayer</a></li><li><a href="global.html#pickRandom">pickRandom</a></li><li><a href="global.html#PoolingLayer">PoolingLayer</a></li><li><a href="global.html#PoolNode">PoolNode</a></li><li><a href="global.html#PoolNodeType">PoolNodeType</a></li><li><a href="global.html#PoolNodeType%255Bundefined%255D">PoolNodeType[undefined]</a></li><li><a href="global.html#PowerSelection">PowerSelection</a></li><li><a href="global.html#randBoolean">randBoolean</a></li><li><a href="global.html#randDouble">randDouble</a></li><li><a href="global.html#randInt">randInt</a></li><li><a href="global.html#Rate">Rate</a></li><li><a href="global.html#RELUActivation">RELUActivation</a></li><li><a href="global.html#removeFromArray">removeFromArray</a></li><li><a href="global.html#RNNLayer">RNNLayer</a></li><li><a href="global.html#Selection">Selection</a></li><li><a href="global.html#SELUActivation">SELUActivation</a></li><li><a href="global.html#shuffle">shuffle</a></li><li><a href="global.html#SinusoidActivation">SinusoidActivation</a></li><li><a href="global.html#SoftSignActivation">SoftSignActivation</a></li><li><a href="global.html#StepActivation">StepActivation</a></li><li><a href="global.html#StepRate">StepRate</a></li><li><a href="global.html#SubBackConnectionMutation">SubBackConnectionMutation</a></li><li><a href="global.html#SubConnectionMutation">SubConnectionMutation</a></li><li><a href="global.html#SubGateMutation">SubGateMutation</a></li><li><a href="global.html#SubNodeMutation">SubNodeMutation</a></li><li><a href="global.html#SubSelfConnectionMutation">SubSelfConnectionMutation</a></li><li><a href="global.html#sum">sum</a></li><li><a href="global.html#SwapNodesMutation">SwapNodesMutation</a></li><li><a href="global.html#TanhActivation">TanhActivation</a></li><li><a href="global.html#TournamentSelection">TournamentSelection</a></li><li><a href="global.html#WAPELoss">WAPELoss</a></li></ul>
+</nav>
+
+<div id="main">
+    <div class="columns">
+        <div class="column is-hidden-touch"></div>
+        <div class="column is-11-desktop is-10-widescreen">
+
+            
+                <h1 class="page-title">NEAT.js</h1>
+            
+
+            
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+var __awaiter = (this &amp;&amp; this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this &amp;&amp; this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] &amp; 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" &amp;&amp; (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (_) try {
+            if (f = 1, y &amp;&amp; (t = op[0] &amp; 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) &amp;&amp; t.call(y), 0) : y.next) &amp;&amp; !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] &amp; 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 &amp;&amp; t[t.length - 1]) &amp;&amp; (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 &amp;&amp; (!t || (op[1] > t[0] &amp;&amp; op[1] &lt; t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 &amp;&amp; _.label &lt; t[1]) { _.label = t[1]; t = op; break; }
+                    if (t &amp;&amp; _.label &lt; t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] &amp; 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+var Network_1 = require("./architecture/Network");
+var Activation_1 = require("./methods/Activation");
+var Mutation_1 = require("./methods/Mutation");
+var Selection_1 = require("./methods/Selection");
+var Utils_1 = require("./methods/Utils");
+/**
+ * Runs the NEAT algorithm on group of neural networks.
+ *
+ * @constructs Neat
+ *
+ * @example
+ * let { Neat } = require("@liquid-carrot/carrot");
+ *
+ * let neat = new Neat(dataset, {
+ *   elitism: 10,
+ *   clear: true,
+ *   populationSize: 1000
+ * });
+ */
+var NEAT = /** @class */ (function () {
+    /**
+     * Constructs a NEAT object.
+     *
+     * @param options
+     */
+    function NEAT(options) {
+        if (!options.fitnessFunction) {
+            throw new ReferenceError("No fitness function given!");
+        }
+        this.dataset = options.dataset;
+        if (options.dataset &amp;&amp; options.dataset.length > 0) {
+            this.input = options.dataset[0].input.length;
+            this.output = options.dataset[0].output.length;
+        }
+        else {
+            this.input = Utils_1.getOrDefault(options.input, 0);
+            this.output = Utils_1.getOrDefault(options.output, 0);
+        }
+        this.generation = Utils_1.getOrDefault(options.generation, 0);
+        this.equal = Utils_1.getOrDefault(options.equal, true);
+        this.clear = Utils_1.getOrDefault(options.clear, false);
+        this.populationSize = Utils_1.getOrDefault(options.populationSize, 50);
+        this.elitism = Utils_1.getOrDefault(options.elitism, 2);
+        this.provenance = Utils_1.getOrDefault(options.provenance, 0);
+        this.mutationRate = Utils_1.getOrDefault(options.mutationRate, 0.6);
+        this.mutationAmount = Utils_1.getOrDefault(options.mutationAmount, 5);
+        this.fitnessFunction = options.fitnessFunction;
+        this.selection = Utils_1.getOrDefault(options.selection, new Selection_1.FitnessProportionateSelection());
+        this.mutations = Utils_1.getOrDefault(options.mutations, Mutation_1.FEEDFORWARD_MUTATIONS);
+        this.activations = Utils_1.getOrDefault(options.activations, Activation_1.ALL_ACTIVATIONS);
+        this.template = Utils_1.getOrDefault(options.template, new Network_1.Network(this.input, this.output));
+        this.maxNodes = Utils_1.getOrDefault(options.maxNodes, Infinity);
+        this.maxConnections = Utils_1.getOrDefault(options.maxConnections, Infinity);
+        this.maxGates = Utils_1.getOrDefault(options.maxGates, Infinity);
+        this.population = [];
+        for (var i = 0; i &lt; this.populationSize; i++) {
+            this.population.push(this.template.copy());
+        }
+    }
+    /**
+     * Filter genomes from population
+     *
+     * @param pickGenome Pick a network from the population which gets adjusted or removed
+     * @param adjustGenome Adjust the picked network
+     */
+    NEAT.prototype.filterGenome = function (pickGenome, adjustGenome) {
+        var _this = this;
+        return this.population
+            .filter(function (genome) { return pickGenome(genome); })
+            .map(function (genome) {
+            return adjustGenome ? adjustGenome(genome) : _this.template.copy();
+        });
+    };
+    /**
+     * Mutate a network with a random mutation from the allowed array.
+     *
+     * @param network The network which will be mutated.
+     */
+    NEAT.prototype.mutateRandom = function (network) {
+        var _this = this;
+        var allowed = this.mutations.filter(function (method) {
+            return (method.constructor.name !== Mutation_1.AddNodeMutation.constructor.name || network.nodes.length &lt; _this.maxNodes ||
+                method.constructor.name !== Mutation_1.AddConnectionMutation.constructor.name || network.connections.length &lt; _this.maxConnections ||
+                method.constructor.name !== Mutation_1.AddGateMutation.constructor.name || network.gates.length &lt; _this.maxGates);
+        });
+        network.mutate(Utils_1.pickRandom(allowed), { allowedActivations: this.activations });
+    };
+    /**
+     * Evaluates, selects, breeds and mutates population
+     *
+     * @param {function} [pickGenome] A custom selection function to pick out unwanted genomes. Accepts a network as a parameter and returns true for selection.
+     * @param {function} [adjustGenome=self.template] Accepts a network, modifies it, and returns it. Used to modify unwanted genomes returned by `pickGenome` and reincorporate them into the population. If left unset, unwanted genomes will be replaced with the template Network. Will only run when pickGenome is defined.
+     *
+     * @returns {Network} Fittest network
+     *
+     * @example
+     * let neat = new Neat(dataset, {
+     *  elitism: 10,
+     *  clear: true,
+     *  populationSize: 1000
+     * });
+     *
+     * let filter = function(genome) {
+     *  // Remove genomes with more than 100 nodes
+     *  return genome.nodes.length > 100 ? true : false
+     * }
+     *
+     * let adjust = function(genome) {
+     *  // clear the nodes
+     *  return genome.clear()
+     * }
+     *
+     * neat.evolve(evolveSet, filter, adjust).then(function(fittest) {
+     *  console.log(fittest)
+     * })
+     */
+    NEAT.prototype.evolve = function (pickGenome, adjustGenome) {
+        return __awaiter(this, void 0, void 0, function () {
+            var elitists, i, newPopulation, i, fittest;
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        // Check if evolve is possible
+                        if (this.elitism + this.provenance > this.populationSize) {
+                            throw new Error("Can`t evolve! Elitism + provenance exceeds population size!");
+                        }
+                        if (!(this.population[this.population.length - 1].score === undefined)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.evaluate()];
+                    case 1:
+                        _b.sent();
+                        _b.label = 2;
+                    case 2:
+                        if (pickGenome) {
+                            this.population = this.filterGenome(pickGenome, adjustGenome);
+                        }
+                        // Sort in order of fitness (fittest first)
+                        this.sort();
+                        elitists = [];
+                        for (i = 0; i &lt; this.elitism; i++) {
+                            elitists.push(this.population[i]);
+                        }
+                        newPopulation = Array(this.provenance).fill(this.template.copy());
+                        // Breed the next individuals
+                        for (i = 0; i &lt; this.populationSize - this.elitism - this.provenance; i++) {
+                            newPopulation.push(this.getOffspring());
+                        }
+                        // Replace the old population with the new population
+                        this.population = newPopulation;
+                        // Mutate the new population
+                        this.mutate();
+                        // Add the elitists
+                        (_a = this.population).push.apply(_a, elitists);
+                        // evaluate the population
+                        return [4 /*yield*/, this.evaluate()];
+                    case 3:
+                        // evaluate the population
+                        _b.sent();
+                        // Check &amp; adjust genomes as needed
+                        if (pickGenome) {
+                            this.population = this.filterGenome(pickGenome, adjustGenome);
+                        }
+                        // Sort in order of fitness (fittest first)
+                        this.sort();
+                        fittest = this.population[0].copy();
+                        fittest.score = this.population[0].score;
+                        // Reset the scores
+                        this.population.forEach(function (genome) { return genome.score = undefined; });
+                        this.generation++;
+                        return [2 /*return*/, fittest];
+                }
+            });
+        });
+    };
+    /**
+     * Selects two genomes from the population with `getParent()`, and returns the offspring from those parents. NOTE: Population MUST be sorted
+     *
+     * @returns {Network} Child network
+     */
+    NEAT.prototype.getOffspring = function () {
+        this.sort();
+        var parent1 = this.selection.select(this.population);
+        var parent2 = this.selection.select(this.population);
+        if (parent1 === null || parent2 === null) {
+            throw new ReferenceError("Should not be null!");
+        }
+        return Network_1.Network.crossOver(parent1, parent2, this.equal);
+    };
+    /**
+     * Mutates the given (or current) population
+     *
+     * @param {Mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
+     */
+    NEAT.prototype.mutate = function (method) {
+        var _this = this;
+        // Elitist genomes should not be included
+        this.population
+            .filter(function () { return Math.random() &lt;= _this.mutationRate; })
+            .forEach(function (genome) {
+            for (var i = 0; i &lt; _this.mutationAmount; i++) {
+                if (method) {
+                    genome.mutate(method);
+                }
+                else {
+                    _this.mutateRandom(genome);
+                }
+            }
+        });
+    };
+    /**
+     * Evaluates the current population, basically sets their `.score` property
+     *
+     * @return {Network} Fittest Network
+     */
+    NEAT.prototype.evaluate = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (this.clear) {
+                            this.population.forEach(function (genome) { return genome.clear(); });
+                        }
+                        return [4 /*yield*/, this.fitnessFunction(this.population, this.dataset)];
+                    case 1:
+                        _a.sent();
+                        // Sort the population in order of fitness
+                        this.sort();
+                        return [2 /*return*/, this.population[0]];
+                }
+            });
+        });
+    };
+    /**
+     * Sorts the population by score (descending)
+     */
+    NEAT.prototype.sort = function () {
+        this.population.sort(function (a, b) {
+            return a.score === undefined || b.score === undefined ? 0 : b.score - a.score;
+        });
+    };
+    /**
+     * Returns the fittest genome of the current population
+     *
+     * @returns {Network} Current population's fittest genome
+     */
+    NEAT.prototype.getFittest = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!(this.population[this.population.length - 1].score === undefined)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.evaluate()];
+                    case 1:
+                        _a.sent();
+                        _a.label = 2;
+                    case 2:
+                        this.sort();
+                        return [2 /*return*/, this.population[0]];
+                }
+            });
+        });
+    };
+    /**
+     * Returns the average fitness of the current population
+     *
+     * @returns {number} Average fitness of the current population
+     */
+    NEAT.prototype.getAverage = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var score;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!(this.population[this.population.length - 1].score === undefined)) return [3 /*break*/, 2];
+                        return [4 /*yield*/, this.evaluate()];
+                    case 1:
+                        _a.sent();
+                        _a.label = 2;
+                    case 2:
+                        score = 0;
+                        this.population
+                            .map(function (genome) { return genome.score; })
+                            .forEach(function (val) { return score += val !== null &amp;&amp; val !== void 0 ? val : 0; });
+                        return [2 /*return*/, score / this.population.length];
+                }
+            });
+        });
+    };
+    return NEAT;
+}());
+exports.NEAT = NEAT;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+
+            
+
+        </div>
+        <div class="column is-hidden-touch"></div>
+    </div>
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> on Tue May 12 2020 21:51:13 GMT+0200 (GMT+02:00) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/jquery-3.1.1.min.js"></script>
+
+<script src="scripts/search.js"></script>
+
+
+
+
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+  heap.load("1195922815");
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Get all "navbar-burger" elements
+  const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+  // Check if there are any navbar burgers
+  if ($navbarBurgers.length > 0) {
+
+    // Add a click event on each of them
+    $navbarBurgers.forEach( el => {
+      el.addEventListener('click', () => {
+
+        // Get the target from the "data-target" attribute
+        const target = el.dataset.target;
+        const $target = document.getElementById(target);
+
+        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+        el.classList.toggle('is-active');
+        $target.classList.toggle('is-active');
+
+      });
+    });
+  }
+
+});
+</script>
+<script src="scripts/clipboard.min.js"></script>
+<script>
+  // example copying functionality
+  const clipboard = new ClipboardJS('code');
+  const clipboard_button = new ClipboardJS('.copy-button');
+
+  clipboard_button.on('success', (e) => {
+    e.trigger.innerText = "Copied!"
+  });
+
+  const copy_buttons = document.querySelectorAll(".copy-button");
+  
+  copy_buttons.forEach(function(btn) {
+    btn.addEventListener("mouseout", function(e) {
+      setTimeout(function() {
+        e.fromElement.innerText = "Copy"
+      }, 200);
+    });
+  });
+</script>
+<script>prettyPrint();</script>
+</body>
+</html>

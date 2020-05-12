@@ -27,12 +27,6 @@ import {Node} from "./Node";
  * @prop {Array<Node>} nodes Nodes currently within the network
  * @prop {Array<Node>} gates Gates within the network
  * @prop {Array<Connection>} connections Connections within the network
- *
- * @example
- * let { Network } = require("@liquid-carrot/carrot");
- *
- * // Network with 2 input neurons and 1 output neuron
- * let myNetwork = new Network(2, 1);
  */
 export class Network {
     /**
@@ -94,11 +88,6 @@ export class Network {
      *
      * @returns {Network} Network A reconstructed network
      *
-     * @example
-     * let { Network } = require("@liquid-carrot/carrot");
-     *
-     * let exported = myNetwork.toJSON();
-     * let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
      */
     public static fromJSON(json: NetworkJSON): Network {
         const network: Network = new Network(json.inputSize, json.outputSize);
@@ -297,9 +286,6 @@ export class Network {
      * @param {number} [weight=0] An initial weight for the connections to be formed
      *
      * @returns {Connection[]} An array of the formed connections
-     *
-     * @example
-     * myNetwork.connect(myNetwork.nodes[4], myNetwork.nodes[5]); // connects network node 4 to network node 5
      */
     public connect(from: Node, to: Node, weight: number = 0): Connection {
         const connection: Connection = from.connect(to, weight); // run node-level connect
@@ -315,14 +301,6 @@ export class Network {
      * @param {number[]} [input] Input values to activate nodes with
      * @param options
      * @returns {number[]} Squashed output values
-     *
-     * @example
-     * let { Network } = require("@liquid-carrot/carrot");
-     *
-     * // Create a network
-     * let myNetwork = new Network(3, 2);
-     *
-     * myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
      */
     public activate(input: number[], options: {
         /**
@@ -368,19 +346,6 @@ export class Network {
      *
      * @param {number[]} target Ideal values of the previous activate. Will use the difference to improve the weights
      * @param options More option for propagation
-     *
-     * @example
-     * let { Network } = require("@liquid-carrot/carrot");
-     *
-     * let myNetwork = new Network(1,1);
-     *
-     * // This trains the network to function as a NOT gate
-     * for(let nodeIndex: number= 0; i < 1000; i++){
-     *  network.activate([0]);
-     *  network.propagate(0.2, 0, true, [1]);
-     *  network.activate([1]);
-     *  network.propagate(0.3, 0, true, [0]);
-     * }
      */
     public propagate(target: number[], options: {
         /**
@@ -438,10 +403,6 @@ export class Network {
      *
      * @param {Node} from Source node
      * @param {Node} to Destination node
-     *
-     * @example
-     * myNetwork.disconnect(myNetwork.nodes[4], myNetwork.nodes[5]);
-     * // now node 4 does not have an effect on the output of node 5 anymore
      */
     public disconnect(from: Node, to: Node): Connection {
         // remove the connection network-level
@@ -465,12 +426,6 @@ export class Network {
      *
      * @param {Node} node Gating node
      * @param {Connection} connection Connection to gate with node
-     *
-     * @example
-     * let { Network } = require("@liquid-carrot/carrot");
-     *
-     * myNetwork.gate(myNetwork.nodes[1], myNetwork.connections[5])
-     * // now: connection 5's weight is multiplied with node 1's activation
      */
     public addGate(node: Node, connection: Connection): void {
         if (this.nodes.indexOf(node) === -1) {
@@ -572,11 +527,6 @@ export class Network {
      * @param {number} [options.maxNodes]
      * @param {number} [options.maxConnections]
      * @param {number} [options.maxGates] Maximum amount of Gates a network can grow to
-     *
-     * @example
-     * let { Network } = require("@liquid-carrot/carrot");
-     *
-     * myNetwork = myNetwork.mutate(new AddNodeMutation()) // returns a mutated network with an added gate
      */
     public mutate(method: Mutation, options?: {
         /**
@@ -655,61 +605,6 @@ export class Network {
      * @param {schedule} [options.schedule.function] A function to run every n iterations as data by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
      *
      * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance
-     *
-     * @example <caption>Training with Defaults</caption>
-     * let { Network } = require("@liquid-carrot/carrot");
-     *
-     * let network = new Network(2, 1);
-     *
-     * // Train the XOR gate
-     * network.train([{ input: [0,0], output: [0] },
-     *                { input: [0,1], output: [1] },
-     *                { input: [1,0], output: [1] },
-     *                { input: [1,1], output: [0] }]);
-     *
-     * network.activate([0,1]); // 0.9824...
-     *
-     * @example <caption>Training with Options</caption>
-     * let { Network } = require("@liquid-carrot/carrot");
-     *
-     * let network = new Network(2, 1);
-     *
-     * let trainingSet = [
-     *    { input: [0,0], output: [0] },
-     *    { input: [0,1], output: [1] },
-     *    { input: [1,0], output: [1] },
-     *    { input: [1,1], output: [0] }
-     * ];
-     *
-     * // Train the XNOR gate
-     * network.train(trainingSet, {
-     *    log: 1,
-     *    iterations: 1000,
-     *    error: 0.0001,
-     *    rate: 0.2
-     * });
-     *
-     * @example <caption>Cross Validation Example</caption>
-     * let { Network } = require("@liquid-carrot/carrot");
-     *
-     * let network = new Network(2,1);
-     *
-     * let trainingSet = [ // PS: don't use cross validation for small sets, this is just an example
-     *  { input: [0,0], output: [1] },
-     *  { input: [0,1], output: [0] },
-     *  { input: [1,0], output: [0] },
-     *  { input: [1,1], output: [1] }
-     * ];
-     *
-     * // Train the XNOR gate
-     * network.train(trainingSet, {
-     *  crossValidate:
-     *    {
-     *      testSize: 0.4,
-     *      testError: 0.02
-     *    }
-     * });
-     *
      */
     public train(options: TrainOptions): {
         /**
@@ -912,12 +807,6 @@ export class Network {
      * Convert the network to a json object
      *
      * @returns {NetworkJSON} The network represented as a json object
-     *
-     * @example
-     * let { Network } = require("@liquid-carrot/carrot");
-     *
-     * let exported = myNetwork.toJSON();
-     * let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
      */
     public toJSON(): NetworkJSON {
         const json: NetworkJSON = {
@@ -985,53 +874,6 @@ export class Network {
      * @param {boolean} [options.efficientMutation=false] Test & reduce [mutation methods](mutation) to avoid failed mutation attempts
      *
      * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance. <br /> Properties include: `error` - error of the best genome, `iterations` - generations used to evolve networks, `time` - clock time elapsed while evolving
-     *
-     * @example
-     * let { Network, methods } = require("@liquid-carrot/carrot");
-     *
-     * async function execute () {
-     *    var network = new Network(2,1);
-     *
-     *    // XOR dataset
-     *    var trainingSet = [
-     *        { input: [0,0], output: [0] },
-     *        { input: [0,1], output: [1] },
-     *        { input: [1,0], output: [1] },
-     *        { input: [1,1], output: [0] }
-     *    ];
-     *
-     *    await network.evolve(trainingSet, {
-     *        mutation: methods.mutation.FFW,
-     *        equal: true,
-     *        error: 0.05,
-     *        elitism: 5,
-     *        mutationRate: 0.5
-     *    });
-     *
-     *    // another option
-     *    // await network.evolve(trainingSet, {
-     *    //     mutation: methods.mutation.FFW,
-     *    //     equal: true,
-     *    //     error: 0.05,
-     *    //     elitism: 5,
-     *    //     mutationRate: 0.5,
-     *    //     loss: (targets, outputs) => {
-     *    //       const error = outputs.reduce(function(total, value, index) {
-     *    //         return total += Math.pow(targets[index] - outputs[index], 2);
-     *    //       }, 0);
-     *    //
-     *    //       return error / outputs.length;
-     *    //     }
-     *    // });
-     *
-     *
-     *    network.activate([0,0]); // 0.2413
-     *    network.activate([0,1]); // 1.0000
-     *    network.activate([1,0]); // 0.7663
-     *    network.activate([1,1]); // -0.008
-     * }
-     *
-     * execute();
      */
     public async evolve(options: EvolveOptions = {}): Promise<{
         /**

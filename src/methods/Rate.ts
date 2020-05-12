@@ -4,20 +4,6 @@
  * @see [Learning rates and how-to improve performance](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
  * @see [Learning rate policy](https://stackoverflow.com/questions/30033096/what-is-lr-policy-in-caffe/30045244)
  *
- * @example
- * let network = new Network(5, 5);
- *
- * // OPTION #1: FixedRate
- * network.train(dataset, { ratePolicy: new FixedRate() });
- *
- * // OPTION #2: StepRate
- * network.train(dataset, { ratePolicy: new StepRate() });
- *
- * // OPTION #3: ExponentialRate
- * network.train(dataset, { ratePolicy: new ExponentialRate() });
- *
- * // OPTION #4: InverseRate
- * network.train(dataset, { ratePolicy: new InverseRate() });
  */
 abstract class Rate {
     /**
@@ -46,11 +32,6 @@ abstract class Rate {
  * Fixed Learning Rate
  *
  * Default rate policy. Using this will make learning rate static (no change). Useful as a way to update a previous rate policy.
- *
- * @example
- * let network = new Network(10, 1);
- *
- * network.train(dataset, { ratePolicy: new FixedRate(0.3) });
  */
 class FixedRate extends Rate {
 
@@ -69,11 +50,6 @@ class FixedRate extends Rate {
  * Step Learning Rate
  *
  * The learning rate will decrease (i.e. 'step down') every `stepSize` iterations.
- *
- * @example
- * let network = new Network(10, 1);
- *
- * network.train(dataset, { ratePolicy: new StepRate(0.3) });
  */
 class StepRate extends Rate {
     /**
@@ -115,11 +91,6 @@ class StepRate extends Rate {
  * The learning rate will exponentially decrease.
  *
  * The rate at `iteration` is calculated as: `rate = base_rate * Math.pow(gamma, iteration)`
- *
- * @example
- * let network = new Network(10, 1);
- *
- * network.train(dataset, { ratePolicy: new ExponentialRate(0.3) });
  */
 class ExponentialRate extends Rate {
     /**
@@ -155,11 +126,6 @@ class ExponentialRate extends Rate {
  * The learning rate will exponentially decrease.
  *
  * The rate at `iteration` is calculated as: `rate = baseRate * Math.pow(1 + gamma * iteration, -power)`
- *
- * @example
- * let network = new Network(10, 1);
- *
- * network.train(dataset, { ratePolicy: new InverseRate(0.3) });
  */
 class InverseRate extends Rate {
     /**

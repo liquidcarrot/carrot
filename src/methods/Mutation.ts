@@ -13,23 +13,6 @@ import {pickRandom, randBoolean, randDouble} from "./Utils";
  * @see {@link https://en.wikipedia.org/wiki/mutation_(genetic_algorithm)|Mutation (genetic algorithms) on Wikipedia}
  * @see {@link https://en.wikipedia.org/wiki/Genetic_algorithm#Selection|Selection (genetic algorithms) on Wikipedia}
  *
- * @example <caption>Mutation methods with networks</caption>
- *
- * let myNetwork = new Network(5, 5);
- *
- * // Setting a mutation method for a network
- * myNetwork.mutate(new AddNodeMutation());
- *
- * // specifying a list of network mutation methods to use during evolution
- * myNetwork.evolve(trainingSet, {
- *  mutation: [new AddNodeMutation(),new ModBiasMutation()]
- * }
- *
- * @example <caption>Using a mutation method with a neuron</caption>
- *
- * let myNode = new Node(NodeType.HIDDEN);
- *
- * myNode.mutateBias(new ModBiasMutation(-0.5,0.3));
  */
 abstract class Mutation {
     /**
@@ -64,12 +47,6 @@ abstract class Mutation {
  * Adds a hidden node to the network.
  *
  * @prop {boolean} randomActivation=true If enabled, sets a random activation function on the newly created node
- *
- * @example
- *
- * let myNetwork = new Network(5, 5);
- *
- * myNetwork.mutate(new AddNodeMutation());
  */
 class AddNodeMutation extends Mutation {
     /**
@@ -137,12 +114,6 @@ class AddNodeMutation extends Mutation {
  * Removes a random node from the network.
  *
  * @prop keepGates=true Ensures replacement node has gated connections if the removed node did.
- *
- * @example
- * let myNetwork = new Network(5, 5);
- *
- * myNetwork.mutate(new AddNodeMutation()); // Network will have one hidden node
- * myNetwork.mutate(new SubNodeMutation()); // Network will have no hidden node
  */
 class SubNodeMutation extends Mutation {
     /**
@@ -172,13 +143,6 @@ class SubNodeMutation extends Mutation {
  * Add connections mutation.
  *
  * Adds a connection to the network.
- *
- * @example
- *
- * let myNetwork = new Network(5, 5);
- *
- * myNetwork.mutate(new AddNodeMutation()); // adds a hidden node
- * myNetwork.mutate(new AddConnectionMutation()); // creates a random forward pointing connection
  */
 class AddConnectionMutation extends Mutation {
     /**
@@ -220,12 +184,6 @@ class AddConnectionMutation extends Mutation {
  * Sub connection mutation.
  *
  * Removes a random connection from the network.
- *
- * @example
- *
- * let myNetwork = new Network(5, 5);
- *
- * myNetwork.mutate(new SubConnectionMutation());
  */
 class SubConnectionMutation extends Mutation {
     /**
@@ -252,12 +210,6 @@ class SubConnectionMutation extends Mutation {
  *
  * @prop {number} min=-1 lower bound for weight modification
  * @prop {number} max=1 higher bound for weight modification
- *
- * @example
- *
- * let myNetwork = new Network(5, 5);
- *
- * myNetwork.mutate(new ModWeightMutation()); // modifies the weight of a random connection
  */
 class ModWeightMutation extends Mutation {
     /**
@@ -298,14 +250,6 @@ class ModWeightMutation extends Mutation {
  *
  * @prop {number} min=-1 lower bound for modification of a neuron's bias
  * @prop {number} max=1 higher bound for modification of a neuron's bias
- *
- * @example
- *
- * let myNetwork = new Network(5, 5);
- *
- * let myNode = new Node();
- *
- * myNode.mutate(new ModBiasMutation());
  */
 class ModBiasMutation extends Mutation {
     /**
@@ -345,11 +289,6 @@ class ModBiasMutation extends Mutation {
  * Modifies the activation function of a random node
  *
  * @prop {boolean} mutateOutput=false Change activation function of network output neurons. Enable this to let the network experiment with its output.
- *
- * @example <caption>Mutating the activation function of a node</caption>
- * let myNode = new Node();
- *
- * myNode.mutate(new ModActivationMutation());
  */
 class ModActivationMutation extends Mutation {
     /**
@@ -391,11 +330,6 @@ class ModActivationMutation extends Mutation {
  * Add self connection.
  *
  * Adds a connection from a node to itself.
- *
- * @example
- * let myNetwork = new Network(5, 5);
- *
- * myNetwork.mutate(new AddSelfConnectionMutation());
  */
 class AddSelfConnectionMutation extends Mutation {
     /**
@@ -418,12 +352,6 @@ class AddSelfConnectionMutation extends Mutation {
  * Sub self connection.
  *
  * Removes a connection from a node to itself.
- *
- * @example
- * let myNetwork = new Network(5, 5);
- *
- * myNetwork.mutate(new AddSelfConnectionMutation()); // add a self connection
- * myNetwork.mutate(new SubSelfConnectionMutation()); // remove a self connection
  */
 class SubSelfConnectionMutation extends Mutation {
     /**
@@ -444,11 +372,6 @@ class SubSelfConnectionMutation extends Mutation {
  * Add gate mutation.
  *
  * Adds a gate to the network.
- *
- * @example
- * let myNetwork = new Network(5, 5);
- *
- * myNetwork.mutate(new AddGateMutation());
  */
 class AddGateMutation extends Mutation {
     /**
@@ -483,12 +406,6 @@ class AddGateMutation extends Mutation {
  * Sub gate mutation.
  *
  * Removes a gate from the network.
- *
- * @example
- * let myNetwork = new Network(5, 5);
- *
- * myNetwork.mutate(new AddGateMutation()); // add a gate to the network
- * myNetwork.mutate(new SubGateMutation()); // remove the gate from the network
  */
 class SubGateMutation extends Mutation {
     /**
@@ -507,11 +424,6 @@ class SubGateMutation extends Mutation {
  * Add back connection mutation.
  *
  * Adds a backward pointing connection to the network.
- *
- * @example
- * let myNetwork = new Network(5, 5);
- *
- * myNetwork.mutate(new AddBackConnectionMutation);
  */
 class AddBackConnectionMutation extends Mutation {
     /**
@@ -541,12 +453,6 @@ class AddBackConnectionMutation extends Mutation {
  * Sub back connection mutation.
  *
  * Removes a backward pointing connection to the network.
- *
- * @example
- * let myNetwork = new Network(5, 5);
- *
- * myNetwork.mutate(new AddBackConnectionMutation); // add a back connection
- * myNetwork.mutate(new SubBackConnectionMutation); // remove the back connection
  */
 class SubBackConnectionMutation extends Mutation {
     /**
@@ -572,10 +478,6 @@ class SubBackConnectionMutation extends Mutation {
  * Swaps the values of two randomly picked nodes.
  *
  * @prop {boolean} mutateOutput=false Swap bias and activation function of network output neurons too. Disable this to keep output of a neural network normalized.
- * @example
- * let myNetwork = new Network(5, 5);
- *
- * myNetwork.mutate(new SwapNodesMutation());
  */
 class SwapNodesMutation extends Mutation {
     /**
@@ -621,13 +523,6 @@ class SwapNodesMutation extends Mutation {
 
 /**
  * Array of all mutation methods
- *
- * @example <caption>A group of mutation methods for evolution</caption>
- * let myNetwork = new Network(5, 5);
- *
- * network.evolve(trainingSet, {
- *  mutation: methods.mutation.ALL // all mutation methods
- * }
  */
 const ALL_MUTATIONS: Mutation[] = [
     new AddNodeMutation(),
@@ -647,13 +542,6 @@ const ALL_MUTATIONS: Mutation[] = [
 ];
 /**
  * Array of all feed forward mutation methods
- *
- * @example <caption>A group of mutation methods for evolution</caption>
- * let myNetwork = new Network(5, 5);
- *
- * network.evolve(trainingSet, {
- *  mutation: methods.mutation.FEEDFORWARD_MUTATIONS // all feedforward mutation methods
- * }
  */
 const FEEDFORWARD_MUTATIONS: Mutation[] = [
     new AddNodeMutation(),
