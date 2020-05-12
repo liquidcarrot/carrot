@@ -15,8 +15,7 @@
     "build:src": "ts-node scripts/build.ts",
     "deploy:docs": "typedoc --options typedoc.json",
     "test": "tsc && mocha build/test/**/*",
-    "lint": "tslint --project ./",
-    "coverage": "nyc report --reporter=text-lcov | coveralls build/src"
+    "lint": "tslint --project ./"
   },
   "repository": {
     "type": "git",
