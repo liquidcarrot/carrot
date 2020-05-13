@@ -908,7 +908,6 @@ export class Network {
         // set options to default if necessary
         options.growth = getOrDefault<number>(options.growth, 0.0001);
         options.loss = getOrDefault(options.loss, new MSELoss());
-        options.amount = getOrDefault(options.amount, 1);
         options.maxNodes = getOrDefault(options.maxNodes, Infinity);
         options.maxConnections = getOrDefault(options.maxConnections, Infinity);
         options.maxGates = getOrDefault(options.maxGates, Infinity);
@@ -928,7 +927,7 @@ export class Network {
             const serializedDataSet: string = JSON.stringify(options.dataset);
 
             // init a pool of workers
-            workerPool = Pool(() => spawn(new Worker("../multithreading/Worker")), options.threads);
+            workerPool = Pool(() => spawn(new Worker("../multithreading/Worker")), options.threads ?? 1);
 
             options.fitnessFunction = async function (population: Network[]): Promise<void> {
                 for (const genome of population) {
