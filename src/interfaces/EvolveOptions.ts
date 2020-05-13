@@ -9,6 +9,10 @@ import {Selection} from "../methods/Selection";
  */
 export interface EvolveOptions {
     /**
+     * Number of CPU cores used for evolution.
+     */
+    threads?: number;
+    /**
      * The input size of the network.
      */
     input?: number;

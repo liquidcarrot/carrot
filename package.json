@@ -91,5 +91,8 @@
     "exclude": [
       "test"
     ]
+  },
+  "dependencies": {
+    "threads": "^1.4.1"
   }
 }
