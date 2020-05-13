@@ -68,7 +68,10 @@
     "url": "https://github.com/liquidcarrot/carrot/issues"
   },
   "homepage": "https://liquidcarrot.io/",
-  "dependencies": {},
+  "dependencies": {
+    "threads": "^1.4.0",
+    "tiny-worker": "^2.3.0"
+  },
   "devDependencies": {
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
