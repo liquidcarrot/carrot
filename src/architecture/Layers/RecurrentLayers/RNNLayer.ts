@@ -18,7 +18,7 @@ export class RNNLayer extends Layer {
         this.nodes.push(...Array.from(this.inputNodes));
 
         // Adding self connections
-        this.connections.push(...Layer.connect(this.outputNodes, this.inputNodes, ConnectionType.ONE_TO_ONE));
+        this.connections.push(...Layer.connect(this.nodes, this.nodes, ConnectionType.ONE_TO_ONE));
     }
 
     public connectionTypeisAllowed(type: ConnectionType): boolean {
