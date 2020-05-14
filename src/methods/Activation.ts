@@ -444,7 +444,7 @@ class SELUActivation implements Activation {
             if (x > 0) {
                 return x * scale;
             } else {
-                return alpha * Math.exp(x) - alpha * scale;
+                return (alpha * Math.exp(x) - alpha) * scale;
             }
         } else {
             if (x > 0) {
