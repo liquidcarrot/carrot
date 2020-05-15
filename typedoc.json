@@ -1,0 +1,27 @@
+{
+  "inputFiles": [
+    "./src"
+  ],
+  "exclude": [
+    "./test",
+    "./scripts"
+  ],
+  "out": "docs/4.0/",
+  "mode": "file",
+  "tsconfig": "./tsconfig.json",
+  "includeVersion": true,
+  "readme": "README.md",
+  "name": "Carrot",
+  "toc": [
+    "NEAT",
+    "Network",
+    "Architect",
+    "Node",
+    "Connection",
+    "Activation",
+    "Loss",
+    "Mutation",
+    "Rate",
+    "Selection"
+  ]
+}

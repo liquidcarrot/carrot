@@ -71,7 +71,7 @@ function getOrDefault<T>(value: T | undefined, defaultValue: T): T {
 }
 
 /**
- * Shuffles an aray
+ * Shuffles an array
  * @param array the array
  * @returns the shuffled array
  */
@@ -95,6 +95,11 @@ function shuffle<T>(array: T[]): T[] {
     return array;
 }
 
+/**
+ * Finds the maximum value of an number array
+ *
+ * @param array
+ */
 function max(array: number[]): number {
     let maxValue: number = -Infinity;
     for (const value of array) {
@@ -105,6 +110,11 @@ function max(array: number[]): number {
     return maxValue;
 }
 
+/**
+ * Finds the maximum value index of an number array
+ *
+ * @param array
+ */
 function maxValueIndex(array: number[]): number {
     let maxValue: number = array[0];
     let maxValueIndex: number = 0;
@@ -117,6 +127,11 @@ function maxValueIndex(array: number[]): number {
     return maxValueIndex;
 }
 
+/**
+ * Finds the minimum value index of an number array
+ *
+ * @param array
+ */
 function minValueIndex(array: number[]): number {
     let minValue: number = array[0];
     let minValueIndex: number = 0;
@@ -129,6 +144,11 @@ function minValueIndex(array: number[]): number {
     return minValueIndex;
 }
 
+/**
+ * Finds the minimum value of an number array
+ *
+ * @param array
+ */
 function min(array: number[]): number {
     let minValue: number = Infinity;
     for (const value of array) {
@@ -139,10 +159,20 @@ function min(array: number[]): number {
     return minValue;
 }
 
+/**
+ * Calculates the average value of an array
+ *
+ * @param array
+ */
 function avg(array: number[]): number {
     return sum(array) / array.length;
 }
 
+/**
+ * Calculates the sum of all values of an array
+ *
+ * @param array
+ */
 function sum(array: number[]): number {
     let sum: number = 0;
     for (const value of array) {
@@ -151,6 +181,14 @@ function sum(array: number[]): number {
     return sum;
 }
 
+/**
+ * Generates a random number with the gaussian distribution.
+ *
+ * @see https://en.wikipedia.org/wiki/Normal_distribution
+ *
+ * @param mean the mean value
+ * @param deviation the standard deviation
+ */
 function generateGaussian(mean: number = 0, deviation: number = 2): number {
     let sum: number = 0;
     const numSamples: number = 10;

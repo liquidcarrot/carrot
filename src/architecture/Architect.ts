@@ -1,16 +1,38 @@
-import {Layer} from "./Layers/Layer";
-import {InputLayer} from "./Layers/CoreLayers/InputLayer";
-import {Network} from "./Network";
-import {OutputLayer} from "./Layers/CoreLayers/OutputLayer";
 import {ConnectionType} from "../enums/ConnectionType";
+import {InputLayer} from "./Layers/CoreLayers/InputLayer";
+import {OutputLayer} from "./Layers/CoreLayers/OutputLayer";
+import {Layer} from "./Layers/Layer";
+import {Network} from "./Network";
 
+/**
+ * Architect constructs multilayer networks with various types of layers.
+ */
 export class Architect {
-    private readonly layers: { layer: Layer, incomingConnectionType: ConnectionType }[];
+    /**
+     * Array with all layers and there incoming connection type
+     */
+    private readonly layers: {
+        /**
+         * The Layer
+         */
+        layer: Layer,
+        /**
+         * The incoming connection type for this layer
+         */
+        incomingConnectionType: ConnectionType
+    }[];
 
     constructor() {
         this.layers = [];
     }
 
+    /**
+     * Adds a layer to the architect.
+     *
+     * @param layer The layer
+     * @param incomingConnectionType The incoming connection to this layer
+     * @returns this object to function as builder class
+     */
     public addLayer(layer: Layer, incomingConnectionType?: ConnectionType): Architect {
         const connectionType: ConnectionType = incomingConnectionType ?? layer.getDefaultIncomingConnectionType();
 
@@ -25,6 +47,11 @@ export class Architect {
         return this; // function as builder class
     }
 
+    /**
+     * Build the network from the layers added to the architect.
+     *
+     * @returns the constructed network
+     */
     public buildModel(): Network {
         if (!(this.layers[0].layer instanceof InputLayer)) {
             throw new ReferenceError("First layer has to be a InputLayer! Currently is: " + this.layers[0].layer.constructor.name);

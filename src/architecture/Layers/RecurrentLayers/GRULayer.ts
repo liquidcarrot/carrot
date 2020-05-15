@@ -1,14 +1,22 @@
-import {Layer} from "../Layer";
-import {Activation} from "../../../methods/Activation";
-import {Node} from "../../Node";
-import {Connection} from "../../Connection";
 import {ActivationType} from "../../../enums/ActivationType";
-import {NodeType} from "../../../enums/NodeType";
 import {ConnectionType} from "../../../enums/ConnectionType";
 import {GatingType} from "../../../enums/GatingType";
+import {NodeType} from "../../../enums/NodeType";
+import {Activation} from "../../../methods/Activation";
+import {Connection} from "../../Connection";
+import {Node} from "../../Node";
+import {Layer} from "../Layer";
 
+/**
+ * GRU layer
+ */
 export class GRULayer extends Layer {
-    constructor(outputSize: number, options: { activationType?: ActivationType } = {}) {
+    constructor(outputSize: number, options: {
+        /**
+         * The activation type for the output nodes of this layer.
+         */
+        activationType?: ActivationType
+    } = {}) {
         super(outputSize);
         const updateGate: Node[] = [];
         const inverseUpdateGate: Node[] = [];
@@ -19,10 +27,10 @@ export class GRULayer extends Layer {
         for (let i: number = 0; i < outputSize; i++) {
             this.inputNodes.add(new Node(NodeType.HIDDEN));
             updateGate.push(new Node(NodeType.HIDDEN).setBias(1));
-            inverseUpdateGate.push(new Node(NodeType.HIDDEN).setBias(0).setSquash(ActivationType.LogisticActivation));
+            inverseUpdateGate.push(new Node(NodeType.HIDDEN).setBias(0).setActivationType(ActivationType.LogisticActivation));
             resetGate.push(new Node(NodeType.HIDDEN).setBias(0));
-            memoryCell.push(new Node(NodeType.HIDDEN).setSquash(ActivationType.TanhActivation));
-            previousOutput.push(new Node(NodeType.HIDDEN).setBias(0).setSquash(ActivationType.LogisticActivation));
+            memoryCell.push(new Node(NodeType.HIDDEN).setActivationType(ActivationType.TanhActivation));
+            previousOutput.push(new Node(NodeType.HIDDEN).setBias(0).setActivationType(ActivationType.LogisticActivation));
             this.outputNodes.add(new Node(NodeType.HIDDEN));
         }
 
@@ -63,10 +71,22 @@ export class GRULayer extends Layer {
         this.outputNodes.forEach(node => node.squash = activation);
     }
 
+    /**
+     * Checks if a given connection type is allowed on this layer.
+     *
+     * @param type the type to check
+     *
+     * @return Is this connection type allowed?
+     */
     public connectionTypeisAllowed(type: ConnectionType): boolean {
         return true;
     }
 
+    /**
+     * Gets the default connection type for a incoming connection to this layer.
+     *
+     * @returns the default incoming connection
+     */
     public getDefaultIncomingConnectionType(): ConnectionType {
         return ConnectionType.ALL_TO_ALL;
     }

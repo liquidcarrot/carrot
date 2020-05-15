@@ -1,18 +1,19 @@
-import {HopfieldLayer} from "../../../src/architecture/Layers/RecurrentLayers/HopfieldLayer";
-import {ActivationType} from "../../../src/enums/ActivationType";
-import {Architect} from "../../../src/architecture/Architect";
-import {OutputLayer} from "../../../src/architecture/Layers/CoreLayers/OutputLayer";
-import {InputLayer} from "../../../src/architecture/Layers/CoreLayers/InputLayer";
-import {DenseLayer} from "../../../src/architecture/Layers/CoreLayers/DenseLayer";
-import {Network} from "../../../src/architecture/Network";
 import {expect} from "chai";
+import {Architect} from "../../../src/architecture/Architect";
+import {DenseLayer} from "../../../src/architecture/Layers/CoreLayers/DenseLayer";
+import {InputLayer} from "../../../src/architecture/Layers/CoreLayers/InputLayer";
+import {OutputLayer} from "../../../src/architecture/Layers/CoreLayers/OutputLayer";
+import {MaxPooling1DLayer} from "../../../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer";
+import {GRULayer} from "../../../src/architecture/Layers/RecurrentLayers/GRULayer";
+import {HopfieldLayer} from "../../../src/architecture/Layers/RecurrentLayers/HopfieldLayer";
 import {LSTMLayer} from "../../../src/architecture/Layers/RecurrentLayers/LSTMLayer";
 import {MemoryLayer} from "../../../src/architecture/Layers/RecurrentLayers/MemoryLayer";
-import {randInt} from "../../../src/methods/Utils";
-import {GRULayer} from "../../../src/architecture/Layers/RecurrentLayers/GRULayer";
-import {MaxPooling1DLayer} from "../../../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer";
-import {PoolNode} from "../../../src/architecture/Nodes/PoolNode";
+import {RNNLayer} from "../../../src/architecture/Layers/RecurrentLayers/RNNLayer";
+import {Network} from "../../../src/architecture/Network";
 import {Node} from "../../../src/architecture/Node";
+import {PoolNode} from "../../../src/architecture/Nodes/PoolNode";
+import {ActivationType} from "../../../src/enums/ActivationType";
+import {randInt} from "../../../src/methods/Utils";
 
 describe("ArchitectTest", () => {
     it("Build Multilayer-Perceptron", () => {
@@ -86,6 +87,27 @@ describe("ArchitectTest", () => {
         expect(numNodesWithRELU).to.be.equal(10 + outputSize + 20 + 10);
     });
 
+    it("Build RNN layer", () => {
+        const outputSize: number = randInt(20, 30);
+
+        const architect: Architect = new Architect();
+
+        architect.addLayer(new InputLayer(10));
+        architect.addLayer(new DenseLayer(10, {activationType: ActivationType.LogisticActivation}));
+        architect.addLayer(new RNNLayer(outputSize, {activationType: ActivationType.RELUActivation}));
+        architect.addLayer(new DenseLayer(2, {activationType: ActivationType.LogisticActivation}));
+        architect.addLayer(new OutputLayer(2));
+
+        const network: Network = architect.buildModel();
+
+        expect(network.nodes.length).to.be.equal(10 + 10 + outputSize + 2 + 2);
+        expect(network.connections.length).to.be.equal(10 * 10 + 10 * outputSize + outputSize + outputSize * 2 + 2 * 2);
+        expect(network.gates.length).to.be.equal(0);
+
+        const numNodesWithRELU: number = network.nodes.filter(node => node.squash.type === ActivationType.RELUActivation).length;
+        expect(numNodesWithRELU).to.be.equal(outputSize);
+    });
+
     it("Build GRU network", () => {
         const GRUSize: number = randInt(10, 20);
 
@@ -152,10 +174,10 @@ describe("ArchitectTest", () => {
         expect(network.nodes.length).to.be.equal(10 + HopfieldSize * 2 + 2);
 
         // Check backward pointing connections
-        let backConnections:number = 0;
-        for(let i:number=0; i < network.nodes.length;i++){
-            for(const conn of network.nodes[i].outgoing){
-                if(network.nodes.indexOf(conn.to)<i){
+        let backConnections: number = 0;
+        for (let i: number = 0; i < network.nodes.length; i++) {
+            for (const conn of network.nodes[i].outgoing) {
+                if (network.nodes.indexOf(conn.to) < i) {
                     backConnections++;
                 }
             }
@@ -191,11 +213,44 @@ describe("ArchitectTest", () => {
 
         const errorBefore: number = network.test(AND_GATE);
 
-        const error: number = network.train(AND_GATE, {
+        const error: number = network.train({
+            dataset: AND_GATE,
             iterations: 10000,
             rate: 0.01,
             shuffle: true,
         }).error;
+
+        expect(Number.isFinite(error)).to.be.true;
+        expect(Number.isFinite(errorBefore)).to.be.true;
+        expect(error).to.be.at.most(errorBefore);
+    });
+
+    it("Train RNN network", () => {
+        const architect: Architect = new Architect();
+
+        architect.addLayer(new InputLayer(1));
+        architect.addLayer(new RNNLayer(2, {activationType: ActivationType.RELUActivation}));
+        architect.addLayer(new OutputLayer(1));
+
+        const network: Network = architect.buildModel();
+
+        const data: { input: number[], output: number[] }[] = [
+            {input: [0], output: [0]},
+            {input: [1], output: [1]},
+            {input: [1], output: [0]},
+            {input: [0], output: [1]},
+            {input: [0], output: [0]}
+        ];
+
+        const errorBefore: number = network.test(data);
+
+        const error: number = network.train({
+            dataset: data,
+            iterations: 10000,
+            rate: 0.01,
+            clear: true,
+        }).error;
+
 
         expect(Number.isFinite(error)).to.be.true;
         expect(Number.isFinite(errorBefore)).to.be.true;
@@ -222,7 +277,8 @@ describe("ArchitectTest", () => {
 
         const errorBefore: number = network.test(data);
 
-        const error: number = network.train(data, {
+        const error: number = network.train({
+            dataset: data,
             iterations: 10000,
             rate: 0.01,
             clear: true,
@@ -252,7 +308,8 @@ describe("ArchitectTest", () => {
 
         const errorBefore: number = network.test(data);
 
-        const error: number = network.train(data, {
+        const error: number = network.train({
+            dataset: data,
             iterations: 10000,
             rate: 0.01,
             clear: true,

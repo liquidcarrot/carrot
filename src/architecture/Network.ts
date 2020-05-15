@@ -1,17 +1,17 @@
-import {Connection} from "./Connection";
-import {getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../methods/Utils";
-import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
-import {ALL_LOSSES, Loss, MSELoss} from "../methods/Loss";
-import {FixedRate} from "../methods/Rate";
-import {NEAT} from "../NEAT";
 import {Pool, spawn, Worker} from "threads";
 import "threads/register";
 import {ActivationType} from "../enums/ActivationType";
-import {NetworkJSON} from "../interfaces/NetworkJSON";
 import {NodeType} from "../enums/NodeType";
 import {ConnectionJSON} from "../interfaces/ConnectionJSON";
-import {TrainOptions} from "../interfaces/TrainOptions";
 import {EvolveOptions} from "../interfaces/EvolveOptions";
+import {NetworkJSON} from "../interfaces/NetworkJSON";
+import {TrainOptions} from "../interfaces/TrainOptions";
+import {ALL_LOSSES, Loss, MSELoss} from "../methods/Loss";
+import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
+import {FixedRate} from "../methods/Rate";
+import {getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../methods/Utils";
+import {NEAT} from "../NEAT";
+import {Connection} from "./Connection";
 import {Node} from "./Node";
 
 /**
@@ -29,19 +29,31 @@ import {Node} from "./Node";
  * @prop {Array<Node>} nodes Nodes currently within the network
  * @prop {Array<Node>} gates Gates within the network
  * @prop {Array<Connection>} connections Connections within the network
- *
- * @example
- * let { Network } = require("@liquid-carrot/carrot");
- *
- * // Network with 2 input neurons and 1 output neuron
- * let myNetwork = new Network(2, 1);
  */
 export class Network {
+    /**
+     * The input size of this network.
+     */
     public inputSize: number;
+    /**
+     * The output size of this network.
+     */
     public outputSize: number;
-    public nodes: Node[]; // stored in activation order
+    /**
+     * The nodes inside this network. Stored in activation order.
+     */
+    public nodes: Node[];
+    /**
+     * The connections inside this network.
+     */
     public connections: Connection[];
+    /**
+     * The gates inside this network.
+     */
     public gates: Connection[];
+    /**
+     * The score of this network for evolution.
+     */
     public score: number | undefined;
 
     constructor(inputSize: number, outputSize: number) {
@@ -78,11 +90,6 @@ export class Network {
      *
      * @returns {Network} Network A reconstructed network
      *
-     * @example
-     * let { Network } = require("@liquid-carrot/carrot");
-     *
-     * let exported = myNetwork.toJSON();
-     * let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
      */
     public static fromJSON(json: NetworkJSON): Network {
         const network: Network = new Network(json.inputSize, json.outputSize);
@@ -281,9 +288,6 @@ export class Network {
      * @param {number} [weight=0] An initial weight for the connections to be formed
      *
      * @returns {Connection[]} An array of the formed connections
-     *
-     * @example
-     * myNetwork.connect(myNetwork.nodes[4], myNetwork.nodes[5]); // connects network node 4 to network node 5
      */
     public connect(from: Node, to: Node, weight: number = 0): Connection {
         const connection: Connection = from.connect(to, weight); // run node-level connect
@@ -296,24 +300,20 @@ export class Network {
      *
      * It will activate all the nodes in activation order and produce an output.
      *
-     * @function activate
-     * @memberof Network
-     *
      * @param {number[]} [input] Input values to activate nodes with
      * @param options
-     * @param {number} [options.dropoutRate=0] The dropout rate. [dropout](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5)
-     * @param {boolean} [options.trace=true] Controls whether traces are created when activation happens (a trace is meta information left behind for different uses, e.g. backpropagation).
      * @returns {number[]} Squashed output values
-     *
-     * @example
-     * let { Network } = require("@liquid-carrot/carrot");
-     *
-     * // Create a network
-     * let myNetwork = new Network(3, 2);
-     *
-     * myNetwork.activate([0.8, 1, 0.21]); // gives: [0.49, 0.51]
      */
-    public activate(input: number[], options: { dropoutRate?: number; trace?: boolean } = {}): number[] {
+    public activate(input: number[], options: {
+        /**
+         * The dropout rate. [dropout](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-dropout-in-deep-machine-learning-74334da4bfc5)
+         */
+        dropoutRate?: number;
+        /**
+         * Controls whether traces are created when activation happens (a trace is meta information left behind for different uses, e.g. backpropagation).
+         */
+        trace?: boolean
+    } = {}): number[] {
         if (input.length !== this.inputSize) {
             throw new RangeError("Input size of dataset is different to network input size!");
         }
@@ -346,29 +346,23 @@ export class Network {
      *
      * This function allows you to teach the network. If you want to do more complex training, use the `network.train()` function.
      *
-     * @function propagate
-     * @memberof Network
-     *
      * @param {number[]} target Ideal values of the previous activate. Will use the difference to improve the weights
      * @param options More option for propagation
-     * @param {number} options.momentum=0 [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html). Adds a fraction of the previous weight update to the current one.
-     * @param {boolean} options.update=false When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
-     * @param {number} options.rate=0.3 Sets the [learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10) of the backpropagation process
-     *
-     * @example
-     * let { Network } = require("@liquid-carrot/carrot");
-     *
-     * let myNetwork = new Network(1,1);
-     *
-     * // This trains the network to function as a NOT gate
-     * for(let nodeIndex: number= 0; i < 1000; i++){
-     *  network.activate([0]);
-     *  network.propagate(0.2, 0, true, [1]);
-     *  network.activate([1]);
-     *  network.propagate(0.3, 0, true, [0]);
-     * }
      */
-    public propagate(target: number[], options: { rate?: number, momentum?: number, update?: boolean } = {}): void {
+    public propagate(target: number[], options: {
+        /**
+         * Sets the [learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10) of the backpropagation process.
+         */
+        rate?: number,
+        /**
+         * [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html). Adds a fraction of the previous weight update to the current one.
+         */
+        momentum?: number,
+        /**
+         * When set to false weights won't update, but when set to true after being false the last propagation will include the delta weights of the first "update:false" propagation too.
+         */
+        update?: boolean
+    } = {}): void {
         // get default value if value isn't given
         options.rate = getOrDefault(options.rate, 0.3);
         options.momentum = getOrDefault(options.momentum, 0);
@@ -401,9 +395,6 @@ export class Network {
 
     /**
      * Clear the context of the network
-     *
-     * @function clear
-     * @memberof Network
      */
     public clear(): void {
         this.nodes.forEach(node => node.clear());
@@ -412,15 +403,8 @@ export class Network {
     /**
      * Removes the connection of the `from` node to the `to` node
      *
-     * @function disconnect
-     * @memberof Network
-     *
      * @param {Node} from Source node
      * @param {Node} to Destination node
-     *
-     * @example
-     * myNetwork.disconnect(myNetwork.nodes[4], myNetwork.nodes[5]);
-     * // now node 4 does not have an effect on the output of node 5 anymore
      */
     public disconnect(from: Node, to: Node): Connection {
         // remove the connection network-level
@@ -440,19 +424,10 @@ export class Network {
     /**
      * Makes a network node gate a connection
      *
-     * @function gate
-     * @memberof Network
-     *
      * @todo Add ability to gate several network connections at once
      *
      * @param {Node} node Gating node
      * @param {Connection} connection Connection to gate with node
-     *
-     * @example
-     * let { Network } = require("@liquid-carrot/carrot");
-     *
-     * myNetwork.gate(myNetwork.nodes[1], myNetwork.connections[5])
-     * // now: connection 5's weight is multiplied with node 1's activaton
      */
     public addGate(node: Node, connection: Connection): void {
         if (this.nodes.indexOf(node) === -1) {
@@ -466,9 +441,6 @@ export class Network {
 
     /**
      * Remove the gate of a connection.
-     *
-     * @function ungate
-     * @memberof Network
      *
      * @param {Connection} connection Connection to remove gate from
      */
@@ -484,9 +456,6 @@ export class Network {
 
     /**
      * Removes a node from a network, all its connections will be redirected. If it gates a connection, the gate will be removed.
-     *
-     * @function remove
-     * @memberof Network
      *
      * @param {Node} node Node to remove from the network
      * @param keepGates
@@ -555,30 +524,35 @@ export class Network {
     /**
      * Mutates the network with the given method.
      *
-     * @function mutate
-     * @memberof Network
-     *
      * @param {Mutation} method [Mutation method](mutation)
      * @param {object} options
-     * @param {number} [options.maxNodes] Maximum amount of [Nodes](node) a network can grow to
-     * @param {number} [options.maxConnections] Maximum amount of [Connections](connection) a network can grow to
+     * @param {number} [options.maxNodes]
+     * @param {number} [options.maxConnections]
      * @param {number} [options.maxGates] Maximum amount of Gates a network can grow to
-     *
-     * @example
-     * let { Network } = require("@liquid-carrot/carrot");
-     *
-     * myNetwork = myNetwork.mutate(new AddNodeMutation()) // returns a mutated network with an added gate
      */
-    public mutate(method: Mutation, options?: { maxNodes?: number, maxConnections?: number, maxGates?: number, allowedActivations?: ActivationType[] }): void {
+    public mutate(method: Mutation, options?: {
+        /**
+         * Maximum amount of [Nodes](node) a network can grow to
+         */
+        maxNodes?: number,
+        /**
+         * Maximum amount of [Connections](connection) a network can grow to
+         */
+        maxConnections?: number,
+        /**
+         * Maximum amount of Gates a network can grow to
+         */
+        maxGates?: number,
+        /**
+         * All allowed activations
+         */
+        allowedActivations?: ActivationType[]
+    }): void {
         method.mutate(this, options);
     }
 
     /**
      * Selects a random mutation method and returns a mutated copy of the network. Warning! Mutates network directly.
-     *
-     * @function mutateRandom
-     *
-     * @memberof Network
      *
      * @param {Mutation[]} [allowedMethods=methods.mutation.ALL] An array of [Mutation methods](mutation) to automatically pick from
      * @param {object} options
@@ -586,7 +560,24 @@ export class Network {
      * @param {number} [options.maxConnections] Maximum amount of [Connections](connection) a network can grow to
      * @param {number} [options.maxGates] Maximum amount of Gates a network can grow to
      */
-    public mutateRandom(allowedMethods: Mutation[] = ALL_MUTATIONS, options: { maxNodes?: number, maxConnections?: number, maxGates?: number } = {}): void {
+    public mutateRandom(allowedMethods: Mutation[] = ALL_MUTATIONS, options: {
+        /**
+         * Maximum amount of [Nodes](node) a network can grow to
+         */
+        maxNodes?: number,
+        /**
+         * Maximum amount of [Connections](connection) a network can grow to
+         */
+        maxConnections?: number,
+        /**
+         * Maximum amount of Gates a network can grow to
+         */
+        maxGates?: number,
+        /**
+         * All allowed activations
+         */
+        allowedActivations?: ActivationType[]
+    } = {}): void {
         if (allowedMethods.length === 0) {
             return;
         }
@@ -597,11 +588,8 @@ export class Network {
     /**
      * Train the given data to this network
      *
-     * @function train
-     * @memberof Network
-     *
-     * @param {Array<{input:number[],output:number[]}>} dataset A data of input values and ideal output values to train the network with
      * @param {TrainOptions} options Options used to train network
+     * @param {Array<{input:number[],output:number[]}>} options.data A data of input values and ideal output values to train the network with
      * @param {options.loss} [options.loss=new MSELoss()] The [options.loss function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
      * @param {rate} [options.ratePolicy=new FixedRate(options.rate)] A [learning rate policy](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10), i.e. how to change the learning rate during training to get better network performance
      * @param {number} [options.rate=0.3] Sets the [learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10) of the backpropagation process
@@ -612,71 +600,29 @@ export class Network {
      * @param {number} [options.batchSize=1] Sets the (mini-) batch size of your training. Default: 1 [(online training)](https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes)
      * @param {number} [options.crossValidate.testSize] Sets the amount of test cases that should be assigned to cross validation. If data to 0.4, 40% of the given data will be used for cross validation.
      * @param {number} [options.crossValidate.testError] Sets the target error of the validation data.
-     * @param {boolean} [options.clear=false] If set to true, will clear the network after every activation. This is useful for training LSTM's, more importantly for timeseries prediction.
+     * @param {boolean} [options.clear=false] If set to true, will clear the network after every activation. This is useful for training LSTM's, more importantly for time series prediction.
      * @param {boolean} [options.shuffle=false] When set to true, will shuffle the training data every iterationNumber. Good option to use if the network is performing worse in [cross validation](https://artint.info/html/ArtInt_189.html) than in the real training data.
      * @param {number|boolean} [options.log=false] If set to n, outputs training status every n iterations. Setting `log` to 1 will log the status every iteration_number
      * @param {number} [options.schedule.iterations] You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
      * @param {schedule} [options.schedule.function] A function to run every n iterations as data by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
      *
      * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance
-     *
-     * @example <caption>Training with Defaults</caption>
-     * let { Network } = require("@liquid-carrot/carrot");
-     *
-     * let network = new Network(2, 1);
-     *
-     * // Train the XOR gate
-     * network.train([{ input: [0,0], output: [0] },
-     *                { input: [0,1], output: [1] },
-     *                { input: [1,0], output: [1] },
-     *                { input: [1,1], output: [0] }]);
-     *
-     * network.activate([0,1]); // 0.9824...
-     *
-     * @example <caption>Training with Options</caption>
-     * let { Network } = require("@liquid-carrot/carrot");
-     *
-     * let network = new Network(2, 1);
-     *
-     * let trainingSet = [
-     *    { input: [0,0], output: [0] },
-     *    { input: [0,1], output: [1] },
-     *    { input: [1,0], output: [1] },
-     *    { input: [1,1], output: [0] }
-     * ];
-     *
-     * // Train the XNOR gate
-     * network.train(trainingSet, {
-     *    log: 1,
-     *    iterations: 1000,
-     *    error: 0.0001,
-     *    rate: 0.2
-     * });
-     *
-     * @example <caption>Cross Validation Example</caption>
-     * let { Network } = require("@liquid-carrot/carrot");
-     *
-     * let network = new Network(2,1);
-     *
-     * let trainingSet = [ // PS: don't use cross validation for small sets, this is just an example
-     *  { input: [0,0], output: [1] },
-     *  { input: [0,1], output: [0] },
-     *  { input: [1,0], output: [0] },
-     *  { input: [1,1], output: [1] }
-     * ];
-     *
-     * // Train the XNOR gate
-     * network.train(trainingSet, {
-     *  crossValidate:
-     *    {
-     *      testSize: 0.4,
-     *      testError: 0.02
-     *    }
-     * });
-     *
      */
-    public train(dataset: { input: number[], output: number[] }[], options: TrainOptions = {}): { error: number, iterations: number, time: number } {
-        if (dataset[0].input.length !== this.inputSize || dataset[0].output.length !== this.outputSize) {
+    public train(options: TrainOptions): {
+        /**
+         * The loss of the network after training.
+         */
+        error: number,
+        /**
+         * The iterations took for training the network.
+         */
+        iterations: number,
+        /**
+         * The time from begin to end in milliseconds
+         */
+        time: number
+    } {
+        if (!options.dataset || options.dataset[0].input.length !== this.inputSize || options.dataset[0].output.length !== this.outputSize) {
             throw new Error(`Dataset input/output size should be same as network input/output size!`);
         }
 
@@ -686,7 +632,7 @@ export class Network {
         options.loss = getOrDefault(options.loss, new MSELoss());
         options.dropout = getOrDefault(options.dropout, 0);
         options.momentum = getOrDefault(options.momentum, 0);
-        options.batchSize = Math.min(dataset.length, getOrDefault(options.batchSize, dataset.length));
+        options.batchSize = Math.min(options.dataset.length, getOrDefault(options.batchSize, options.dataset.length));
         const baseRate: number = getOrDefault(options.rate, 0.3);
         options.ratePolicy = getOrDefault(options.ratePolicy, new FixedRate(baseRate));
         options.log = getOrDefault(options.log, NaN);
@@ -699,14 +645,32 @@ export class Network {
 
         // Split into trainingSet and testSet if cross validation is enabled
         let trainingSetSize: number;
-        let trainingSet: { input: number[]; output: number[] }[];
-        let testSet: { input: number[]; output: number[] }[];
+        let trainingSet: {
+            /**
+             * The input values of the dataset.
+             */
+            input: number[];
+            /**
+             * The output values of the dataset.
+             */
+            output: number[]
+        }[];
+        let testSet: {
+            /**
+             * The input values of the dataset.
+             */
+            input: number[];
+            /**
+             * The output values of the dataset.
+             */
+            output: number[]
+        }[];
         if (options.crossValidateTestSize && options.crossValidateTestSize > 0) {
-            trainingSetSize = Math.ceil((1 - options.crossValidateTestSize) * dataset.length);
-            trainingSet = dataset.slice(0, trainingSetSize);
-            testSet = dataset.slice(trainingSetSize);
+            trainingSetSize = Math.ceil((1 - options.crossValidateTestSize) * options.dataset.length);
+            trainingSet = options.dataset.slice(0, trainingSetSize);
+            testSet = options.dataset.slice(trainingSetSize);
         } else {
-            trainingSet = dataset;
+            trainingSet = options.dataset;
             testSet = [];
         }
 
@@ -746,7 +710,7 @@ export class Network {
             }
 
             if (options.shuffle ?? false) {
-                shuffle(dataset);
+                shuffle(options.dataset);
             }
 
             if (options.log > 0 && iterationCount % options.log === 0) {
@@ -786,7 +750,16 @@ export class Network {
      *
      * @returns {number}
      */
-    public trainEpoch(dataset: { input: number[], output: number[] }[], batchSize: number, trainingRate: number, momentum: number, loss: Loss, dropoutRate: number = 0.5): number {
+    public trainEpoch(dataset: {
+        /**
+         * The input values of the dataset.
+         */
+        input: number[];
+        /**
+         * The output values of the dataset.
+         */
+        output: number[]
+    }[], batchSize: number, trainingRate: number, momentum: number, loss: Loss, dropoutRate: number = 0.5): number {
         let errorSum: number = 0;
         for (let i: number = 0; i < dataset.length; i++) {
             const input: number[] = dataset[i].input;
@@ -805,16 +778,21 @@ export class Network {
     /**
      * Tests a set and returns the error and elapsed time
      *
-     * @function test
-     * @memberof Network
-     *
      * @param {Array<{input:number[],output:number[]}>} dataset A set of input values and ideal output values to test the network against
      * @param {Loss} [loss=new MSELoss()] The [loss function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
      *
      * @returns {number} A summary object of the network's performance
-     *
      */
-    public test(dataset: { input: number[], output: number[] }[], loss: Loss = new MSELoss()): number {
+    public test(dataset: {
+        /**
+         * The input values of the dataset.
+         */
+        input: number[];
+        /**
+         * The output values of the dataset.
+         */
+        output: number[]
+    }[], loss: Loss = new MSELoss()): number {
         let error: number = 0;
 
         for (const entry of dataset) {
@@ -830,16 +808,7 @@ export class Network {
     /**
      * Convert the network to a json object
      *
-     * @function toJSON
-     * @memberof Network
-     *
      * @returns {NetworkJSON} The network represented as a json object
-     *
-     * @example
-     * let { Network } = require("@liquid-carrot/carrot");
-     *
-     * let exported = myNetwork.toJSON();
-     * let imported = Network.fromJSON(exported) // imported will be a new instance of Network that is an exact clone of myNetwork
      */
     public toJSON(): NetworkJSON {
         const json: NetworkJSON = {
@@ -876,23 +845,18 @@ export class Network {
      * Evolves the network to reach a lower error on a dataset using the [NEAT algorithm](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf)
      *
      * If both `iterations` and `error` options are unset, evolve will default to `iterations` as an end condition.
-     *
-     * @function evolve
-     * @memberof Network
-     *
-     * @param {Array<{input:number[],output:number[]}>} dataset A set of input values and ideal output values to train the network with
      * @param {object} [options] Configuration options
      * @param {number} [options.iterations=1000] Set the maximum amount of iterations/generations for the algorithm to run.
      * @param {number} [options.error=0.05] Set the target error. The algorithm will stop once this target error has been reached.
-     * @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connectoins.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
+     * @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connections.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
      * @param {loss} [options.loss=loss.MSE]  Specify the loss function for the evolution, this tells a genome in the population how well it's performing. Default: methods.loss.MSE (recommended).
-     * @param {number} [options.amount=1] Set the amount of times to test the trainingset on a genome each generation. Useful for timeseries. Do not use for regular feedfoward problems.
+     * @param {number} [options.amount=1] Set the amount of times to test the trainingSet on a genome each generation. Useful for time series. Do not use for regular feed forward problems.
      * @param {number} [options.threads] Specify the amount of threads to use. Default value is the amount of cores in your CPU.
      * @param {Network} [options.network]
      * @param {number|boolean} [options.log=false] If set to n, outputs training status every n iterations. Setting `log` to 1 will log the status every iteration
      * @param {number} [options.schedule.iterations] You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
      * @param {schedule} [options.schedule.function] A function to run every n iterations as set by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
-     * @param {boolean} [options.clear=false] If set to true, will clear the network after every activation. This is useful for evolving recurrent networks, more importantly for timeseries prediction.
+     * @param {boolean} [options.clear=false] If set to true, will clear the network after every activation. This is useful for evolving recurrent networks, more importantly for time series prediction.
      * @param {boolean} [options.equal=true] If set to true when [Network.crossOver](Network.crossOver) runs it will assume both genomes are equally fit.
      * @param {number} [options.populationSize=50] Population size of each generation.
      * @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
@@ -911,56 +875,22 @@ export class Network {
      * @param {boolean} [options.efficientMutation=false] Test & reduce [mutation methods](mutation) to avoid failed mutation attempts
      *
      * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance. <br /> Properties include: `error` - error of the best genome, `iterations` - generations used to evolve networks, `time` - clock time elapsed while evolving
-     *
-     * @example
-     * let { Network, methods } = require("@liquid-carrot/carrot");
-     *
-     * async function execute () {
-     *    var network = new Network(2,1);
-     *
-     *    // XOR dataset
-     *    var trainingSet = [
-     *        { input: [0,0], output: [0] },
-     *        { input: [0,1], output: [1] },
-     *        { input: [1,0], output: [1] },
-     *        { input: [1,1], output: [0] }
-     *    ];
-     *
-     *    await network.evolve(trainingSet, {
-     *        mutation: methods.mutation.FFW,
-     *        equal: true,
-     *        error: 0.05,
-     *        elitism: 5,
-     *        mutationRate: 0.5
-     *    });
-     *
-     *    // another option
-     *    // await network.evolve(trainingSet, {
-     *    //     mutation: methods.mutation.FFW,
-     *    //     equal: true,
-     *    //     error: 0.05,
-     *    //     elitism: 5,
-     *    //     mutationRate: 0.5,
-     *    //     loss: (targets, outputs) => {
-     *    //       const error = outputs.reduce(function(total, value, index) {
-     *    //         return total += Math.pow(targets[index] - outputs[index], 2);
-     *    //       }, 0);
-     *    //
-     *    //       return error / outputs.length;
-     *    //     }
-     *    // });
-     *
-     *
-     *    network.activate([0,0]); // 0.2413
-     *    network.activate([0,1]); // 1.0000
-     *    network.activate([1,0]); // 0.7663
-     *    network.activate([1,1]); // -0.008
-     * }
-     *
-     * execute();
      */
-    public async evolve(dataset: { input: number[], output: number[] }[], options: EvolveOptions = {}): Promise<{ error: number, iterations: number, time: number }> {
-        if (dataset[0].input.length !== this.inputSize || dataset[0].output.length !== this.outputSize) {
+    public async evolve(options: EvolveOptions = {}): Promise<{
+        /**
+         * The loss of the network after training.
+         */
+        error: number,
+        /**
+         * The iterations took for training the network.
+         */
+        iterations: number,
+        /**
+         * The time from begin to end in milliseconds
+         */
+        time: number
+    }> {
+        if (!options.fitnessFunction && options.dataset && (options.dataset[0].input.length !== this.inputSize || options.dataset[0].output.length !== this.outputSize)) {
             throw new Error(`Dataset input/output size should be same as network input/output size!`);
         }
 
@@ -978,16 +908,12 @@ export class Network {
         // set options to default if necessary
         options.growth = getOrDefault<number>(options.growth, 0.0001);
         options.loss = getOrDefault(options.loss, new MSELoss());
-        options.amount = getOrDefault(options.amount, 1);
         options.maxNodes = getOrDefault(options.maxNodes, Infinity);
         options.maxConnections = getOrDefault(options.maxConnections, Infinity);
         options.maxGates = getOrDefault(options.maxGates, Infinity);
         options.threads = getOrDefault(options.threads, 4);
 
         const start: number = Date.now();
-
-        // Serialize the dataset using JSON
-        const serializedDataSet: string = JSON.stringify(dataset);
 
         // TODO: should not ignore this
         // @ts-ignore
@@ -997,10 +923,13 @@ export class Network {
             // if no fitness function is given
             // create default one
 
-            // init a pool of workers
-            workerPool = Pool(() => spawn(new Worker("../multithreading/Worker")), options.threads);
+            // Serialize the dataset using JSON
+            const serializedDataSet: string = JSON.stringify(options.dataset);
 
-            options.fitnessFunction = async function (dataset: { input: number[], output: number[] }[], population: Network[]): Promise<void> {
+            // init a pool of workers
+            workerPool = Pool(() => spawn(new Worker("../multithreading/Worker")), options.threads ?? 1);
+
+            options.fitnessFunction = async function (population: Network[]): Promise<void> {
                 for (const genome of population) {
                     // add a task to the workerPool's queue
 
@@ -1033,7 +962,7 @@ export class Network {
         }
         options.template = this; // set this network as template for first generation
 
-        const neat: NEAT = new NEAT(dataset, options);
+        const neat: NEAT = new NEAT(options);
 
         let error: number = -Infinity;
         let bestFitness: number = -Infinity;

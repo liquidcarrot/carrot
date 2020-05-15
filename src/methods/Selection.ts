@@ -6,14 +6,6 @@ import {pickRandom, randDouble} from "./Utils";
  *
  * @see [Genetic Algorithm - Selection]{@link https://en.wikipedia.org/wiki/Selection_(genetic_algorithm)}
  *
- * @example
- * let myNetwork = new Network(1,1);
- * let myTrainingSet = [{ input:[0], output:[1]}, { input:[1], output:[0]}];
- *
- * myNetwork.evolve(myTrainingSet, {
- *  generations: 10,
- *  selection: new PowerSelection() // eg.
- * });
  */
 abstract class Selection {
     /**
@@ -29,17 +21,14 @@ abstract class Selection {
  * Fitness proportionate selection
  *
  * [Fitness Proportionate / Roulette Wheel Selection on Wikipedia](https://en.wikipedia.org/wiki/Fitness_proportionate_selection)
- *
- * @example
- * let myNetwork = new Network(1,1);
- * let myTrainingSet = [{ input:[0], output:[1]}, { input:[1], output:[0]}];
- *
- * myNetwork.evolve(myTrainingSet, {
- *  iterations: 10,
- *  selection: new FitnessProportionateSelection() // eg.
- * });
  */
 class FitnessProportionateSelection extends Selection {
+    /**
+     * Selects a genome from the population according to the Selection method.
+     *
+     * @param population the pool of networks
+     * @returns the selected genome
+     */
     public select(population: Network[]): Network {
         let totalFitness: number = 0;
         let minimalFitness: number = 0;
@@ -69,26 +58,30 @@ class FitnessProportionateSelection extends Selection {
  * Power selection
  *
  * A random decimal value between 0 and 1 will be generated (e.g. 0.5) then this value will get an exponential value (power, default is 4). So 0.5**4 = 0.0625. This is converted into an index for the array of the current population, sorted from fittest to worst.
- *
- * @example
- * let myNetwork = new Network(1,1);
- * let myTrainingSet = [{ input:[0], output:[1]}, { input:[1], output:[0]}];
- *
- * myNetwork.evolve(myTrainingSet, {
- *  iterations: 10,
- *  selection: new PowerSelection() // eg.
- * });
  */
 class PowerSelection extends Selection {
+    /**
+     * Probability of picking better networks.
+     */
     public power: number;
 
+    /**
+     * Constructs a power selection.
+     * @param power Probability of picking better networks.
+     */
     constructor(power: number = 4) {
         super();
         this.power = power;
     }
 
+    /**
+     * Selects a genome from the population according to the Selection method.
+     *
+     * @param population the pool of networks
+     * @returns the selected genome
+     */
     public select(population: Network[]): Network {
-        return population[Math.floor(Math.pow(Math.random(), this.power) * population.length)];
+        return population[Math.floor(Math.random() ** this.power * population.length)];
     }
 }
 
@@ -96,18 +89,15 @@ class PowerSelection extends Selection {
  * Tournament selection
  *
  * [Tournament Selection on Wikipedia](https://en.wikipedia.org/wiki/Tournament_selection)
- *
- * @example
- * let myNetwork = new Network(1,1);
- * let myTrainingSet = [{ input:[0], output:[1]}, { input:[1], output:[0]}];
- *
- * myNetwork.evolve(myTrainingSet, {
- *  iterations: 10,
- *  selection: new TournamentSelection() // eg.
- * });
  */
 class TournamentSelection extends Selection {
+    /**
+     * The size of a tournament.
+     */
     public size: number;
+    /**
+     * The probability of just picking the best network.
+     */
     public probability: number;
 
     /**
@@ -121,6 +111,12 @@ class TournamentSelection extends Selection {
         this.probability = probability;
     }
 
+    /**
+     * Selects a genome from the population according to the Selection method.
+     *
+     * @param population the pool of networks
+     * @returns the selected genome
+     */
     public select(population: Network[]): Network {
         if (this.size > population.length) {
             throw new Error(`Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size`);

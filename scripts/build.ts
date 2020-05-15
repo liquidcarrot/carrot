@@ -3,8 +3,7 @@ import ParcelBundler = require("parcel-bundler");
 
 async function runBuild(options: ParcelBundler.ParcelOptions): Promise<void> {
     const entry: string = path.resolve(__dirname, '../build/scripts/index.js');
-    const builder: ParcelBundler = new ParcelBundler(entry, options);
-    await builder.bundle();
+    await new ParcelBundler(entry, options).bundle();
 }
 
 const browserProduction: ParcelBundler.ParcelOptions = {
@@ -41,5 +40,9 @@ const nodeDev: ParcelBundler.ParcelOptions = {
     target: "node",
     global: 'carrot',
 };
-Promise.all([runBuild(browserProduction), runBuild(browserDev), runBuild(nodeProduction), runBuild(nodeDev)])
-    .then(() => process.exit(0));
+Promise.all([
+    runBuild(browserProduction),
+    runBuild(browserDev),
+    runBuild(nodeProduction),
+    runBuild(nodeDev)
+]).then(() => process.exit(0));

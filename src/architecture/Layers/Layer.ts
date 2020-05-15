@@ -1,14 +1,35 @@
-import {Connection} from "../Connection";
-import {Node} from "../Node";
 import {ConnectionType} from "../../enums/ConnectionType";
 import {GatingType} from "../../enums/GatingType";
+import {Connection} from "../Connection";
+import {Node} from "../Node";
 
+/**
+ * Parent class for layers.
+ */
 export abstract class Layer {
+    /**
+     * The output size of the layer.
+     */
     public outputSize: number;
+    /**
+     * The nodes which gets connected to the previous layer.
+     */
     public inputNodes: Set<Node>;
+    /**
+     * The nodes which gets connected to the next layer.
+     */
     public outputNodes: Set<Node>;
+    /**
+     * All nodes in this layer.
+     */
     public nodes: Node[];
+    /**
+     * All connections in this layer.
+     */
     public connections: Connection[];
+    /**
+     * All gates in this layer.
+     */
     public gates: Connection[];
 
 
@@ -21,6 +42,16 @@ export abstract class Layer {
         this.gates = [];
     }
 
+    /**
+     * Connect two Layers or sets of Nodes.
+     *
+     * @param from origin Nodes / Layer
+     * @param to destination Nodes / Layer
+     * @param connectionType The type of connection
+     * @param weight the initial weights for all new connections
+     *
+     * @returns all created connections
+     */
     public static connect(from: Layer | Set<Node> | Node[], to: Layer | Set<Node> | Node[], connectionType: ConnectionType = ConnectionType.ALL_TO_ALL, weight: number = 1): Connection[] {
         if (connectionType === ConnectionType.NO_CONNECTION) {
             throw new ReferenceError("Cannot connect with 'NO_CONNECTION' connection type");
@@ -59,6 +90,15 @@ export abstract class Layer {
         return connections;
     }
 
+    /**
+     * Gate nodes and connections.
+     *
+     * @param nodes the nodes which function as gateNodes
+     * @param connections the connections which will be gated
+     * @param gateType The type of gating
+     *
+     * @returns all gated connections
+     */
     public static gate(nodes: Node[], connections: Connection[], gateType: GatingType): Connection[] {
         const gatedConnections: Connection[] = [];
         switch (gateType) {
@@ -109,7 +149,19 @@ export abstract class Layer {
         return gatedConnections;
     }
 
+    /**
+     * Gets the default connection type for a incoming connection to this layer.
+     *
+     * @returns the default incoming connection
+     */
     public abstract getDefaultIncomingConnectionType(): ConnectionType;
 
+    /**
+     * Checks if a given connection type is allowed on this layer.
+     *
+     * @param type the type to check
+     *
+     * @return Is this connection type allowed?
+     */
     public abstract connectionTypeisAllowed(type: ConnectionType): boolean;
 }

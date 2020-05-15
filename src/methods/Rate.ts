@@ -4,22 +4,11 @@
  * @see [Learning rates and how-to improve performance](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
  * @see [Learning rate policy](https://stackoverflow.com/questions/30033096/what-is-lr-policy-in-caffe/30045244)
  *
- * @example
- * let network = new Network(5, 5);
- *
- * // OPTION #1: FixedRate
- * network.train(dataset, { ratePolicy: new FixedRate() });
- *
- * // OPTION #2: StepRate
- * network.train(dataset, { ratePolicy: new StepRate() });
- *
- * // OPTION #3: ExponentialRate
- * network.train(dataset, { ratePolicy: new ExponentialRate() });
- *
- * // OPTION #4: InverseRate
- * network.train(dataset, { ratePolicy: new InverseRate() });
  */
 abstract class Rate {
+    /**
+     * The rate at the first iteration.
+     */
     protected baseRate: number;
 
     /**
@@ -43,11 +32,6 @@ abstract class Rate {
  * Fixed Learning Rate
  *
  * Default rate policy. Using this will make learning rate static (no change). Useful as a way to update a previous rate policy.
- *
- * @example
- * let network = new Network(10, 1);
- *
- * network.train(dataset, { ratePolicy: new FixedRate(0.3) });
  */
 class FixedRate extends Rate {
 
@@ -66,14 +50,15 @@ class FixedRate extends Rate {
  * Step Learning Rate
  *
  * The learning rate will decrease (i.e. 'step down') every `stepSize` iterations.
- *
- * @example
- * let network = new Network(10, 1);
- *
- * network.train(dataset, { ratePolicy: new StepRate(0.3) });
  */
 class StepRate extends Rate {
+    /**
+     * Learning rate retention per step; - _0 < `gamma` < 1_ - _large `gamma` CAN cause networks to never converge, low `gamma` CAN cause networks to converge too quickly_
+     */
     private readonly gamma: number;
+    /**
+     * Learning rate is updated every `step_size` iterations
+     */
     private readonly stepSize: number;
 
     /**
@@ -96,7 +81,7 @@ class StepRate extends Rate {
      * @returns the current training rate
      */
     public calc(iteration: number): number {
-        return this.baseRate * Math.pow(this.gamma, Math.floor(iteration / this.stepSize));
+        return this.baseRate * this.gamma ** Math.floor(iteration / this.stepSize);
     }
 }
 
@@ -106,13 +91,11 @@ class StepRate extends Rate {
  * The learning rate will exponentially decrease.
  *
  * The rate at `iteration` is calculated as: `rate = base_rate * Math.pow(gamma, iteration)`
- *
- * @example
- * let network = new Network(10, 1);
- *
- * network.train(dataset, { ratePolicy: new ExponentialRate(0.3) });
  */
 class ExponentialRate extends Rate {
+    /**
+     * Learning rate retention per step; - _0 < `gamma` < 1_ - _large `gamma` CAN cause networks to never converge, low `gamma` CAN cause networks to converge too quickly_
+     */
     private readonly gamma: number;
 
     /**
@@ -133,7 +116,7 @@ class ExponentialRate extends Rate {
      * @returns the current training rate
      */
     public calc(iteration: number): number {
-        return this.baseRate * Math.pow(this.gamma, iteration);
+        return this.baseRate * this.gamma ** iteration;
     }
 }
 
@@ -143,21 +126,22 @@ class ExponentialRate extends Rate {
  * The learning rate will exponentially decrease.
  *
  * The rate at `iteration` is calculated as: `rate = baseRate * Math.pow(1 + gamma * iteration, -power)`
- *
- * @example
- * let network = new Network(10, 1);
- *
- * network.train(dataset, { ratePolicy: new InverseRate(0.3) });
  */
 class InverseRate extends Rate {
+    /**
+     * Learning rate decay per iteration; - _0 < `gamma` < 1_ - _large `gamma` CAN cause networks to converge too quickly and stop learning, low `gamma` CAN cause networks to converge to learn VERY slowly_
+     */
     private readonly gamma: number;
+    /**
+     * Decay rate per iteration - _0 < `power`_ - _large `power` CAN cause networks to stop learning quickly, low `power` CAN cause networks to learn VERY slowly_
+     */
     private readonly power: number;
 
     /**
      * Constructs a step rate policy.
      *
      * @param baseRate the rate at first iteration
-     * @param [gamma=0.001] Learning rate decay per iteration; - _0 < `gamma` < 1_ - _large `gamma` CAN cause networks to converge too quickly and stop learning, low `gamma` CAN cause networks to converge to learn VERY slowly_
+     * @param gamma=0.001 Learning rate decay per iteration; - _0 < `gamma` < 1_ - _large `gamma` CAN cause networks to converge too quickly and stop learning, low `gamma` CAN cause networks to converge to learn VERY slowly_
      * @param power=2 Decay rate per iteration - _0 < `power`_ - _large `power` CAN cause networks to stop learning quickly, low `power` CAN cause networks to learn VERY slowly_
      */
     constructor(baseRate: number, gamma: number = 0.001, power: number = 2) {
@@ -173,7 +157,7 @@ class InverseRate extends Rate {
      * @returns the current training rate
      */
     public calc(iteration: number): number {
-        return this.baseRate * Math.pow(1 + this.gamma * iteration, -this.power);
+        return this.baseRate * (1 + this.gamma * iteration) ** -this.power;
     }
 }
 

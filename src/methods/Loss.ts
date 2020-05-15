@@ -22,12 +22,15 @@ abstract class Loss {
  * @param outputs Actual values
  *
  * @return [Cross entropy error](https://ml-cheatsheet.readthedocs.io/en/latest/loss_functions.html)
- *
- * @example
- * let myNetwork = new Network(5, 5);
- * myNetwork.train(trainingData, { loss: new CrossEntropyLoss() });
  */
 class CrossEntropyLoss extends Loss {
+    /**
+     * Calculates the loss value from output to target.
+     *
+     * @param targets the target values
+     * @param outputs the real output values
+     * @returns the loss between output and target
+     */
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach(((value, index) => {
@@ -44,16 +47,19 @@ class CrossEntropyLoss extends Loss {
  * @param outputs Actual values
  *
  * @return [Mean squared error](https://medium.freecodecamp.org/machine-learning-mean-squared-error-regression-line-c7dde9a26b93)
- *
- * @example
- * let myNetwork = new Network(5, 5);
- * myNetwork.train(trainingData, { loss: new MSELoss() });
  */
 class MSELoss extends Loss {
+    /**
+     * Calculates the loss value from output to target.
+     *
+     * @param targets the target values
+     * @param outputs the real output values
+     * @returns the loss between output and target
+     */
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach(((value, index) => {
-            error += Math.pow(targets[index] - value, 2);
+            error += (targets[index] - value) ** 2;
         }));
         return error / outputs.length;
     }
@@ -66,18 +72,15 @@ class MSELoss extends Loss {
  * @param outputs Actual values
  *
  * @return misses The amount of times targets value was missed
- *
- * @example
- * let myNetwork = new Network(5, 5);
- * myNetwork.train(trainingData, {
- *   log: 1,
- *   iterations: 500,
- *   error: 0.03,
- *   rate: 0.05,
- *   loss: new BinaryLoss()
- * });
  */
 class BinaryLoss extends Loss {
+    /**
+     * Calculates the loss value from output to target.
+     *
+     * @param targets the target values
+     * @param outputs the real output values
+     * @returns the loss between output and target
+     */
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach(((value, index) => {
@@ -94,18 +97,15 @@ class BinaryLoss extends Loss {
  * @param outputs Actual values
  *
  * @return [Mean absolute error](https://en.wikipedia.org/wiki/Mean_absolute_error)
- *
- * @example
- * let myNetwork = new Network(5, 5);
- * myNetwork.train(trainingData, {
- *   log: 1,
- *   iterations: 500,
- *   error: 0.03,
- *   rate: 0.05,
- *   loss: new MAELoss()
- * });
  */
 class MAELoss extends Loss {
+    /**
+     * Calculates the loss value from output to target.
+     *
+     * @param targets the target values
+     * @param outputs the real output values
+     * @returns the loss between output and target
+     */
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach(((value, index) => {
@@ -122,18 +122,15 @@ class MAELoss extends Loss {
  * @param outputs Actual values
  *
  * @return [Mean absolute percentage error](https://en.wikipedia.org/wiki/Mean_absolute_percentage_error)
- *
- * @example
- * let myNetwork = new Network(5, 5);
- * myNetwork.train(trainingData, {
- *   log: 1,
- *   iterations: 500,
- *   error: 0.03,
- *   rate: 0.05,
- *   loss: new MAPELoss()
- * });
  */
 class MAPELoss extends Loss {
+    /**
+     * Calculates the loss value from output to target.
+     *
+     * @param targets the target values
+     * @param outputs the real output values
+     * @returns the loss between output and target
+     */
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach(((value, index) => {
@@ -150,14 +147,15 @@ class MAPELoss extends Loss {
  * @param outputs Actual values
  *
  * @return - [Weighted absolute percentage error](https://help.sap.com/doc/saphelp_nw70/7.0.31/en-US/76/487053bbe77c1ee10000000a174cb4/content.htm?no_cache=true)
- *
- * @example
- * let myNetwork = new Network(5, 5);
- * myNetwork.train(trainingData, {
- *   loss: new WAPELoss()
- * });
  */
 class WAPELoss extends Loss {
+    /**
+     * Calculates the loss value from output to target.
+     *
+     * @param targets the target values
+     * @param outputs the real output values
+     * @returns the loss between output and target
+     */
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         let sum: number = 0;
@@ -176,18 +174,15 @@ class WAPELoss extends Loss {
  * @param outputs Actual values
  *
  * @return - [Mean squared logarithmic error](https://peltarion.com/knowledge-center/documentation/modeling-view/build-an-ai-model/loss-functions/mean-squared-logarithmic-error)
- *
- * @example
- * let myNetwork = new Network(5, 5);
- * myNetwork.train(trainingData, {
- *   log: 1,
- *   iterations: 500,
- *   error: 0.03,
- *   rate: 0.05,
- *   loss: new MSLELoss()
- * });
  */
 class MSLELoss extends Loss {
+    /**
+     * Calculates the loss value from output to target.
+     *
+     * @param targets the target values
+     * @param outputs the real output values
+     * @returns the loss between output and target
+     */
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach(((value, index) => {
@@ -204,18 +199,15 @@ class MSLELoss extends Loss {
  * @param outputs Actual values
  *
  * @return - [Hinge loss](https://towardsdatascience.com/support-vector-machines-intuitive-understanding-part-1-3fb049df4ba1)
- *
- * @example
- * let myNetwork = new Network(5, 5);
- * myNetwork.train(trainingData, {
- *   log: 1,
- *   iterations: 500,
- *   error: 0.03,
- *   rate: 0.05,
- *   loss: new HINGELoss()
- * });
  */
 class HINGELoss extends Loss {
+    /**
+     * Calculates the loss value from output to target.
+     *
+     * @param targets the target values
+     * @param outputs the real output values
+     * @returns the loss between output and target
+     */
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach((value, index) => {
