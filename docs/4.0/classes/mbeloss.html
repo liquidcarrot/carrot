@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>SubSelfConnectionMutation | Carrot - v0.4.0</title>
+	<title>MBELoss | Carrot - v0.4.0</title>
 	<meta name="description" content="Documentation for Carrot - v0.4.0">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="subselfconnectionmutation.html">SubSelfConnectionMutation</a>
+					<a href="mbeloss.html">MBELoss</a>
 				</li>
 			</ul>
-			<h1>Class SubSelfConnectionMutation</h1>
+			<h1>Class MBELoss</h1>
 		</div>
 	</div>
 </header>
@@ -69,19 +69,33 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Sub self connection.</p>
+						<p>Mean Bias Error</p>
 					</div>
-					<p>Removes a connection from a node to itself.</p>
+					<dl class="tsd-comment-tags">
+						<dt>param</dt>
+						<dd><p>Ideal value</p>
+						</dd>
+						<dt>param</dt>
+						<dd><p>Actual values</p>
+						</dd>
+						<dt>returns</dt>
+						<dd><p>(<a href="https://towardsdatascience.com/common-loss-functions-in-machine-learning-46af0ffc4d23">https://towardsdatascience.com/common-loss-functions-in-machine-learning-46af0ffc4d23</a>)</p>
+						</dd>
+						<dt>example</dt>
+						<dd><p>let myNetwork = new Network(5, 5);
+							myNetwork.train(trainingData, { loss: new MSELoss() });</p>
+						</dd>
+					</dl>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<a href="mutation.html" class="tsd-signature-type">Mutation</a>
+						<a href="loss.html" class="tsd-signature-type">Loss</a>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">SubSelfConnectionMutation</span>
+								<span class="target">MBELoss</span>
 							</li>
 						</ul>
 					</li>
@@ -94,7 +108,7 @@
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="subselfconnectionmutation.html#mutate" class="tsd-kind-icon">mutate</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite"><a href="mbeloss.html#calc" class="tsd-kind-icon">calc</a></li>
 							</ul>
 						</section>
 					</div>
@@ -103,34 +117,29 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Methods</h2>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-					<a name="mutate" class="tsd-anchor"></a>
-					<h3>mutate</h3>
+					<a name="calc" class="tsd-anchor"></a>
+					<h3>calc</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">mutate<span class="tsd-signature-symbol">(</span>network<span class="tsd-signature-symbol">: </span><a href="network.html" class="tsd-signature-type">Network</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">calc<span class="tsd-signature-symbol">(</span>targets<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, outputs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
-								<p>Overrides <a href="mutation.html">Mutation</a>.<a href="mutation.html#mutate">mutate</a></p>
+								<p>Overrides <a href="loss.html">Loss</a>.<a href="loss.html#calc">calc</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/9fa2632/src/methods/Mutation.ts#L362">src/methods/Mutation.ts:362</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/9fa2632/src/methods/Loss.ts#L81">src/methods/Loss.ts:81</a></li>
 								</ul>
 							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Mutates the network.</p>
-								</div>
-							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>network: <a href="network.html" class="tsd-signature-type">Network</a></h5>
-									<div class="tsd-comment tsd-typography">
-										<p>The network which gets mutated</p>
-									</div>
+									<h5>targets: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+								</li>
+								<li>
+									<h5>outputs: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -149,10 +158,10 @@
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class">
-						<a href="subselfconnectionmutation.html" class="tsd-kind-icon">Sub<wbr>Self<wbr>Connection<wbr>Mutation</a>
+						<a href="mbeloss.html" class="tsd-kind-icon">MBELoss</a>
 						<ul>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite">
-								<a href="subselfconnectionmutation.html#mutate" class="tsd-kind-icon">mutate</a>
+								<a href="mbeloss.html#calc" class="tsd-kind-icon">calc</a>
 							</li>
 						</ul>
 					</li>
