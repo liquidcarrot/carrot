@@ -1,5 +1,5 @@
-import {Pool, spawn, Worker} from "threads";
-import "threads/register";
+import {spawn, Worker} from "threads";
+import {Pool} from "threads/dist";
 import {ActivationType} from "../enums/ActivationType";
 import {NodeType} from "../enums/NodeType";
 import {ConnectionJSON} from "../interfaces/ConnectionJSON";
@@ -911,9 +911,9 @@ export class Network {
         options.maxNodes = getOrDefault(options.maxNodes, Infinity);
         options.maxConnections = getOrDefault(options.maxConnections, Infinity);
         options.maxGates = getOrDefault(options.maxGates, Infinity);
-        options.threads = getOrDefault(options.threads, 4);
 
         const start: number = Date.now();
+
 
         // TODO: should not ignore this
         // @ts-ignore
@@ -927,7 +927,7 @@ export class Network {
             const serializedDataSet: string = JSON.stringify(options.dataset);
 
             // init a pool of workers
-            workerPool = Pool(() => spawn(new Worker("../multithreading/Worker")), options.threads ?? 1);
+            workerPool = Pool(() => spawn(new Worker("../multithreading/Worker")), options.threads ?? 2);
 
             options.fitnessFunction = async function (population: Network[]): Promise<void> {
                 for (const genome of population) {
@@ -1007,7 +1007,7 @@ export class Network {
         }
 
         if (workerPool) {
-            workerPool.terminate(); // stop all processes
+            await workerPool.terminate(); // stop all processes
         }
 
         return {
