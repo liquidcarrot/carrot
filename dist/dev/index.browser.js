@@ -6481,10 +6481,18 @@ var __generator = this && this.__generator || function (thisArg, body) {
   }
 };
 
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Network = void 0;
+
+var os_1 = __importDefault(require("os"));
 
 var threads_1 = require("threads");
 
@@ -7385,7 +7393,7 @@ function () {
 
               workerPool = dist_1.Pool(function () {
                 return threads_1.spawn(new threads_1.Worker("../multithreading/Worker"));
-              }, (_a = options.threads) !== null && _a !== void 0 ? _a : 2);
+              }, (_a = options.threads) !== null && _a !== void 0 ? _a : os_1.default.cpus().length);
 
               options.fitnessFunction = function (population) {
                 return __awaiter(this, void 0, void 0, function () {
@@ -7649,7 +7657,7 @@ var DenseLayer_1 = require("../src/architecture/Layers/CoreLayers/DenseLayer");
 
 Object.defineProperty(exports, "DenseLayer", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return DenseLayer_1.DenseLayer;
   }
 });
@@ -7658,7 +7666,7 @@ var Node_1 = require("../src/architecture/Node");
 
 Object.defineProperty(exports, "Node", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Node_1.Node;
   }
 });
@@ -7667,7 +7675,7 @@ var DropoutLayer_1 = require("../src/architecture/Layers/CoreLayers/DropoutLayer
 
 Object.defineProperty(exports, "DropoutLayer", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return DropoutLayer_1.DropoutLayer;
   }
 });
@@ -7676,7 +7684,7 @@ var NoiseLayer_1 = require("../src/architecture/Layers/NoiseLayers/NoiseLayer");
 
 Object.defineProperty(exports, "NoiseLayer", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return NoiseLayer_1.NoiseLayer;
   }
 });
@@ -7685,7 +7693,7 @@ var OutputLayer_1 = require("../src/architecture/Layers/CoreLayers/OutputLayer")
 
 Object.defineProperty(exports, "OutputLayer", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return OutputLayer_1.OutputLayer;
   }
 });
@@ -7694,7 +7702,7 @@ var InputLayer_1 = require("../src/architecture/Layers/CoreLayers/InputLayer");
 
 Object.defineProperty(exports, "InputLayer", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return InputLayer_1.InputLayer;
   }
 });
@@ -7703,7 +7711,7 @@ var AvgPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/AvgP
 
 Object.defineProperty(exports, "AvgPooling1DLayer", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return AvgPooling1DLayer_1.AvgPooling1DLayer;
   }
 });
@@ -7712,7 +7720,7 @@ var MinPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/MinP
 
 Object.defineProperty(exports, "MinPooling1DLayer", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return MinPooling1DLayer_1.MinPooling1DLayer;
   }
 });
@@ -7721,7 +7729,7 @@ var MaxPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/MaxP
 
 Object.defineProperty(exports, "MaxPooling1DLayer", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return MaxPooling1DLayer_1.MaxPooling1DLayer;
   }
 });
@@ -7730,7 +7738,7 @@ var GlobalAvgPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayer
 
 Object.defineProperty(exports, "GlobalAvgPooling1DLayer", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return GlobalAvgPooling1DLayer_1.GlobalAvgPooling1DLayer;
   }
 });
@@ -7739,7 +7747,7 @@ var GlobalMaxPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayer
 
 Object.defineProperty(exports, "GlobalMaxPooling1DLayer", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return GlobalMaxPooling1DLayer_1.GlobalMaxPooling1DLayer;
   }
 });
@@ -7748,7 +7756,7 @@ var GlobalMinPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayer
 
 Object.defineProperty(exports, "GlobalMinPooling1DLayer", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return GlobalMinPooling1DLayer_1.GlobalMinPooling1DLayer;
   }
 });
@@ -7757,7 +7765,7 @@ var PoolingLayer_1 = require("../src/architecture/Layers/PoolingLayers/PoolingLa
 
 Object.defineProperty(exports, "PoolingLayer", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return PoolingLayer_1.PoolingLayer;
   }
 });
@@ -7766,7 +7774,7 @@ var GRULayer_1 = require("../src/architecture/Layers/RecurrentLayers/GRULayer");
 
 Object.defineProperty(exports, "GRULayer", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return GRULayer_1.GRULayer;
   }
 });
@@ -7775,7 +7783,7 @@ var LSTMLayer_1 = require("../src/architecture/Layers/RecurrentLayers/LSTMLayer"
 
 Object.defineProperty(exports, "LSTMLayer", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return LSTMLayer_1.LSTMLayer;
   }
 });
@@ -7784,7 +7792,7 @@ var MemoryLayer_1 = require("../src/architecture/Layers/RecurrentLayers/MemoryLa
 
 Object.defineProperty(exports, "MemoryLayer", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return MemoryLayer_1.MemoryLayer;
   }
 });
@@ -7793,7 +7801,7 @@ var Layer_1 = require("../src/architecture/Layers/Layer");
 
 Object.defineProperty(exports, "Layer", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Layer_1.Layer;
   }
 });
@@ -7802,7 +7810,7 @@ var ConstantNode_1 = require("../src/architecture/Nodes/ConstantNode");
 
 Object.defineProperty(exports, "ConstantNode", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return ConstantNode_1.ConstantNode;
   }
 });
@@ -7811,7 +7819,7 @@ var DropoutNode_1 = require("../src/architecture/Nodes/DropoutNode");
 
 Object.defineProperty(exports, "DropoutNode", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return DropoutNode_1.DropoutNode;
   }
 });
@@ -7820,7 +7828,7 @@ var NoiseNode_1 = require("../src/architecture/Nodes/NoiseNode");
 
 Object.defineProperty(exports, "NoiseNode", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return NoiseNode_1.NoiseNode;
   }
 });
@@ -7829,7 +7837,7 @@ var PoolNode_1 = require("../src/architecture/Nodes/PoolNode");
 
 Object.defineProperty(exports, "PoolNode", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return PoolNode_1.PoolNode;
   }
 });
@@ -7838,7 +7846,7 @@ var Architect_1 = require("../src/architecture/Architect");
 
 Object.defineProperty(exports, "Architect", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Architect_1.Architect;
   }
 });
@@ -7847,7 +7855,7 @@ var Connection_1 = require("../src/architecture/Connection");
 
 Object.defineProperty(exports, "Connection", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Connection_1.Connection;
   }
 });
@@ -7856,7 +7864,7 @@ var Network_1 = require("../src/architecture/Network");
 
 Object.defineProperty(exports, "Network", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Network_1.Network;
   }
 });
@@ -7865,7 +7873,7 @@ var ActivationType_1 = require("../src/enums/ActivationType");
 
 Object.defineProperty(exports, "ActivationType", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return ActivationType_1.ActivationType;
   }
 });
@@ -7874,7 +7882,7 @@ var ConnectionType_1 = require("../src/enums/ConnectionType");
 
 Object.defineProperty(exports, "ConnectionType", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return ConnectionType_1.ConnectionType;
   }
 });
@@ -7883,7 +7891,7 @@ var GatingType_1 = require("../src/enums/GatingType");
 
 Object.defineProperty(exports, "GatingType", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return GatingType_1.GatingType;
   }
 });
@@ -7892,19 +7900,19 @@ var NodeType_1 = require("../src/enums/NodeType");
 
 Object.defineProperty(exports, "NodeType", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return NodeType_1.NodeType;
   }
 });
 Object.defineProperty(exports, "NoiseNodeType", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return NodeType_1.NoiseNodeType;
   }
 });
 Object.defineProperty(exports, "PoolNodeType", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return NodeType_1.PoolNodeType;
   }
 });
@@ -7913,103 +7921,103 @@ var Activation_1 = require("../src/methods/Activation");
 
 Object.defineProperty(exports, "AbsoluteActivation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Activation_1.AbsoluteActivation;
   }
 });
 Object.defineProperty(exports, "Activation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Activation_1.Activation;
   }
 });
 Object.defineProperty(exports, "ALL_ACTIVATIONS", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Activation_1.ALL_ACTIVATIONS;
   }
 });
 Object.defineProperty(exports, "BentIdentityActivation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Activation_1.BentIdentityActivation;
   }
 });
 Object.defineProperty(exports, "BipolarActivation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Activation_1.BipolarActivation;
   }
 });
 Object.defineProperty(exports, "BipolarSigmoidActivation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Activation_1.BipolarSigmoidActivation;
   }
 });
 Object.defineProperty(exports, "GaussianActivation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Activation_1.GaussianActivation;
   }
 });
 Object.defineProperty(exports, "HardTanhActivation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Activation_1.HardTanhActivation;
   }
 });
 Object.defineProperty(exports, "IdentityActivation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Activation_1.IdentityActivation;
   }
 });
 Object.defineProperty(exports, "InverseActivation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Activation_1.InverseActivation;
   }
 });
 Object.defineProperty(exports, "LogisticActivation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Activation_1.LogisticActivation;
   }
 });
 Object.defineProperty(exports, "RELUActivation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Activation_1.RELUActivation;
   }
 });
 Object.defineProperty(exports, "SELUActivation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Activation_1.SELUActivation;
   }
 });
 Object.defineProperty(exports, "SinusoidActivation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Activation_1.SinusoidActivation;
   }
 });
 Object.defineProperty(exports, "SoftSignActivation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Activation_1.SoftSignActivation;
   }
 });
 Object.defineProperty(exports, "StepActivation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Activation_1.StepActivation;
   }
 });
 Object.defineProperty(exports, "TanhActivation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Activation_1.TanhActivation;
   }
 });
@@ -8018,61 +8026,61 @@ var Loss_1 = require("../src/methods/Loss");
 
 Object.defineProperty(exports, "ALL_LOSSES", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Loss_1.ALL_LOSSES;
   }
 });
 Object.defineProperty(exports, "BinaryLoss", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Loss_1.BinaryLoss;
   }
 });
 Object.defineProperty(exports, "CrossEntropyLoss", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Loss_1.CrossEntropyLoss;
   }
 });
 Object.defineProperty(exports, "HINGELoss", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Loss_1.HINGELoss;
   }
 });
 Object.defineProperty(exports, "Loss", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Loss_1.Loss;
   }
 });
 Object.defineProperty(exports, "MAELoss", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Loss_1.MAELoss;
   }
 });
 Object.defineProperty(exports, "MAPELoss", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Loss_1.MAPELoss;
   }
 });
 Object.defineProperty(exports, "MSELoss", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Loss_1.MSELoss;
   }
 });
 Object.defineProperty(exports, "MSLELoss", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Loss_1.MSLELoss;
   }
 });
 Object.defineProperty(exports, "WAPELoss", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Loss_1.WAPELoss;
   }
 });
@@ -8081,115 +8089,115 @@ var Mutation_1 = require("../src/methods/Mutation");
 
 Object.defineProperty(exports, "AddBackConnectionMutation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Mutation_1.AddBackConnectionMutation;
   }
 });
 Object.defineProperty(exports, "AddConnectionMutation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Mutation_1.AddConnectionMutation;
   }
 });
 Object.defineProperty(exports, "AddGateMutation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Mutation_1.AddGateMutation;
   }
 });
 Object.defineProperty(exports, "AddNodeMutation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Mutation_1.AddNodeMutation;
   }
 });
 Object.defineProperty(exports, "AddSelfConnectionMutation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Mutation_1.AddSelfConnectionMutation;
   }
 });
 Object.defineProperty(exports, "ALL_MUTATIONS", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Mutation_1.ALL_MUTATIONS;
   }
 });
 Object.defineProperty(exports, "FEEDFORWARD_MUTATIONS", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Mutation_1.FEEDFORWARD_MUTATIONS;
   }
 });
 Object.defineProperty(exports, "ModActivationMutation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Mutation_1.ModActivationMutation;
   }
 });
 Object.defineProperty(exports, "ModBiasMutation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Mutation_1.ModBiasMutation;
   }
 });
 Object.defineProperty(exports, "ModWeightMutation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Mutation_1.ModWeightMutation;
   }
 });
 Object.defineProperty(exports, "Mutation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Mutation_1.Mutation;
   }
 });
 Object.defineProperty(exports, "NO_STRUCTURE_MUTATIONS", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Mutation_1.NO_STRUCTURE_MUTATIONS;
   }
 });
 Object.defineProperty(exports, "ONLY_STRUCTURE", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Mutation_1.ONLY_STRUCTURE;
   }
 });
 Object.defineProperty(exports, "SubBackConnectionMutation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Mutation_1.SubBackConnectionMutation;
   }
 });
 Object.defineProperty(exports, "SubConnectionMutation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Mutation_1.SubConnectionMutation;
   }
 });
 Object.defineProperty(exports, "SubGateMutation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Mutation_1.SubGateMutation;
   }
 });
 Object.defineProperty(exports, "SubNodeMutation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Mutation_1.SubNodeMutation;
   }
 });
 Object.defineProperty(exports, "SubSelfConnectionMutation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Mutation_1.SubSelfConnectionMutation;
   }
 });
 Object.defineProperty(exports, "SwapNodesMutation", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Mutation_1.SwapNodesMutation;
   }
 });
@@ -8198,31 +8206,31 @@ var Rate_1 = require("../src/methods/Rate");
 
 Object.defineProperty(exports, "ExponentialRate", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Rate_1.ExponentialRate;
   }
 });
 Object.defineProperty(exports, "FixedRate", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Rate_1.FixedRate;
   }
 });
 Object.defineProperty(exports, "InverseRate", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Rate_1.InverseRate;
   }
 });
 Object.defineProperty(exports, "Rate", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Rate_1.Rate;
   }
 });
 Object.defineProperty(exports, "StepRate", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Rate_1.StepRate;
   }
 });
@@ -8231,25 +8239,25 @@ var Selection_1 = require("../src/methods/Selection");
 
 Object.defineProperty(exports, "FitnessProportionateSelection", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Selection_1.FitnessProportionateSelection;
   }
 });
 Object.defineProperty(exports, "PowerSelection", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Selection_1.PowerSelection;
   }
 });
 Object.defineProperty(exports, "Selection", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Selection_1.Selection;
   }
 });
 Object.defineProperty(exports, "TournamentSelection", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Selection_1.TournamentSelection;
   }
 });
@@ -8258,85 +8266,85 @@ var Utils_1 = require("../src/methods/Utils");
 
 Object.defineProperty(exports, "avg", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Utils_1.avg;
   }
 });
 Object.defineProperty(exports, "generateGaussian", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Utils_1.generateGaussian;
   }
 });
 Object.defineProperty(exports, "getOrDefault", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Utils_1.getOrDefault;
   }
 });
 Object.defineProperty(exports, "max", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Utils_1.max;
   }
 });
 Object.defineProperty(exports, "maxValueIndex", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Utils_1.maxValueIndex;
   }
 });
 Object.defineProperty(exports, "min", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Utils_1.min;
   }
 });
 Object.defineProperty(exports, "minValueIndex", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Utils_1.minValueIndex;
   }
 });
 Object.defineProperty(exports, "pickRandom", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Utils_1.pickRandom;
   }
 });
 Object.defineProperty(exports, "randBoolean", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Utils_1.randBoolean;
   }
 });
 Object.defineProperty(exports, "randDouble", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Utils_1.randDouble;
   }
 });
 Object.defineProperty(exports, "randInt", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Utils_1.randInt;
   }
 });
 Object.defineProperty(exports, "removeFromArray", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Utils_1.removeFromArray;
   }
 });
 Object.defineProperty(exports, "shuffle", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Utils_1.shuffle;
   }
 });
 Object.defineProperty(exports, "sum", {
   enumerable: true,
-  get: function () {
+  get: function get() {
     return Utils_1.sum;
   }
 });
