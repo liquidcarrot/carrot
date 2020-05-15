@@ -67,6 +67,7 @@
   },
   "homepage": "https://liquidcarrot.io/",
   "dependencies": {
+    "os": "^0.1.1",
     "threads": "^1.4.1"
   },
   "devDependencies": {

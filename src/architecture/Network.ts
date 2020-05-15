@@ -1,3 +1,4 @@
+import os from "os";
 import {spawn, Worker} from "threads";
 import {Pool} from "threads/dist";
 import "threads/register";
@@ -928,7 +929,7 @@ export class Network {
             const serializedDataSet: string = JSON.stringify(options.dataset);
 
             // init a pool of workers
-            workerPool = Pool(() => spawn(new Worker("../multithreading/Worker")), options.threads ?? 2);
+            workerPool = Pool(() => spawn(new Worker("../multithreading/Worker")), options.threads ?? os.cpus().length);
 
             options.fitnessFunction = async function (population: Network[]): Promise<void> {
                 for (const genome of population) {
