@@ -928,7 +928,7 @@ export class Network {
             const serializedDataSet: string = JSON.stringify(options.dataset);
 
             // init a pool of workers
-            workerPool = Pool(() => spawn(new Worker("../multithreading/Worker")), options.threads ?? 4);
+            workerPool = Pool(() => spawn(new Worker("../multithreading/Worker")), options.threads ?? 2);
 
             options.fitnessFunction = async function (population: Network[]): Promise<void> {
                 for (const genome of population) {
