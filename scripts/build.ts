@@ -1,6 +1,7 @@
 import * as path from "path";
 import ParcelBundler = require("parcel-bundler");
 
+// tslint:disable-next-line:completed-docs
 async function runBuild(options: ParcelBundler.ParcelOptions): Promise<void> {
     const entry: string = path.resolve(__dirname, '../build/scripts/index.js');
     await new ParcelBundler(entry, options).bundle();
