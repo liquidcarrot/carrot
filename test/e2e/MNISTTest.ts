@@ -31,7 +31,6 @@ describe('MNIST', () => {
             mutationRate: 0.6,
             iterations: 20,
             error: 0,
-            log: 1
         };
         await net.evolve(options);
 
