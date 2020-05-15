@@ -1,5 +1,6 @@
 import {spawn, Worker} from "threads";
 import {Pool} from "threads/dist";
+import "threads/register";
 import {ActivationType} from "../enums/ActivationType";
 import {NodeType} from "../enums/NodeType";
 import {ConnectionJSON} from "../interfaces/ConnectionJSON";
