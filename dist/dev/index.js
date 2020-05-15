@@ -5029,7 +5029,7 @@ var __extends = this && this.__extends || function () {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.HINGELoss = exports.MSLELoss = exports.WAPELoss = exports.MAPELoss = exports.MAELoss = exports.BinaryLoss = exports.MSELoss = exports.CrossEntropyLoss = exports.Loss = exports.ALL_LOSSES = void 0;
+exports.HINGELoss = exports.MSLELoss = exports.WAPELoss = exports.MAPELoss = exports.MAELoss = exports.BinaryLoss = exports.MBELoss = exports.MSELoss = exports.CrossEntropyLoss = exports.Loss = exports.ALL_LOSSES = void 0;
 /**
  * Loss functions play an important role in neural networks. They give neural networks an indication of 'how wrong' they are; a.k.a. how far they are from the desired outputs. Also in fitness functions, loss functions play an important role.
  *
@@ -5122,6 +5122,40 @@ function (_super) {
 }(Loss);
 
 exports.MSELoss = MSELoss;
+/**
+ * Mean Bias Error
+ *
+ * @param targets Ideal value
+ * @param outputs Actual values
+ *
+ * @return [Mean bias error](https://towardsdatascience.com/common-loss-functions-in-machine-learning-46af0ffc4d23)
+ *
+ * @example
+ * let myNetwork = new Network(5, 5);
+ * myNetwork.train(trainingData, { loss: new MSELoss() });
+ */
+
+var MBELoss =
+/** @class */
+function (_super) {
+  __extends(MBELoss, _super);
+
+  function MBELoss() {
+    return _super !== null && _super.apply(this, arguments) || this;
+  }
+
+  MBELoss.prototype.calc = function (targets, outputs) {
+    var error = 0;
+    outputs.forEach(function (value, index) {
+      error += targets[index] - value;
+    });
+    return error / outputs.length;
+  };
+
+  return MBELoss;
+}(Loss);
+
+exports.MBELoss = MBELoss;
 /**
  * Binary Error
  *
@@ -5354,7 +5388,7 @@ function (_super) {
 }(Loss);
 
 exports.HINGELoss = HINGELoss;
-var ALL_LOSSES = [new CrossEntropyLoss(), new MSELoss(), new BinaryLoss(), new MAELoss(), new MAPELoss(), new WAPELoss(), new MSLELoss(), new HINGELoss()];
+var ALL_LOSSES = [new CrossEntropyLoss(), new MSELoss(), new MBELoss(), new BinaryLoss(), new MAELoss(), new MAPELoss(), new WAPELoss(), new MSLELoss(), new HINGELoss()];
 exports.ALL_LOSSES = ALL_LOSSES;
 },{}],"../src/methods/Rate.js":[function(require,module,exports) {
 "use strict";
@@ -6454,6 +6488,8 @@ exports.Network = void 0;
 
 var threads_1 = require("threads");
 
+var dist_1 = require("threads/dist");
+
 require("threads/register");
 
 var NodeType_1 = require("../enums/NodeType");
@@ -7342,15 +7378,14 @@ function () {
             options.maxNodes = Utils_1.getOrDefault(options.maxNodes, Infinity);
             options.maxConnections = Utils_1.getOrDefault(options.maxConnections, Infinity);
             options.maxGates = Utils_1.getOrDefault(options.maxGates, Infinity);
-            options.threads = Utils_1.getOrDefault(options.threads, 4);
             start = Date.now();
 
             if (!options.fitnessFunction) {
               serializedDataSet_1 = JSON.stringify(options.dataset); // init a pool of workers
 
-              workerPool = threads_1.Pool(function () {
+              workerPool = dist_1.Pool(function () {
                 return threads_1.spawn(new threads_1.Worker("../multithreading/Worker"));
-              }, (_a = options.threads) !== null && _a !== void 0 ? _a : 1);
+              }, (_a = options.threads) !== null && _a !== void 0 ? _a : 2);
 
               options.fitnessFunction = function (population) {
                 return __awaiter(this, void 0, void 0, function () {
@@ -7481,10 +7516,20 @@ function () {
               }
             }
 
-            if (workerPool) {
-              workerPool.terminate(); // stop all processes
-            }
+            if (!workerPool) return [3
+            /*break*/
+            , 5];
+            return [4
+            /*yield*/
+            , workerPool.terminate()];
 
+          case 4:
+            _f.sent(); // stop all processes
+
+
+            _f.label = 5;
+
+          case 5:
             return [2
             /*return*/
             , {
