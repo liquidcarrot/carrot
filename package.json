@@ -14,7 +14,7 @@
   "scripts": {
     "build:src": "ts-node scripts/build.ts",
     "deploy:docs": "typedoc --options typedoc.json",
-    "test": "tsc && mocha build/test/**/*",
+    "test": "tsc && mocha build/test --recursive",
     "lint": "tslint --project ./"
   },
   "repository": {
