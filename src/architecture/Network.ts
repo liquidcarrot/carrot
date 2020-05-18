@@ -1,6 +1,7 @@
 import os from "os";
 import {spawn, Worker} from "threads";
 import {Pool} from "threads/dist";
+import {WorkerFunction} from "threads/dist/types/worker";
 import "threads/register";
 import {ActivationType} from "../enums/ActivationType";
 import {NodeType} from "../enums/NodeType";
@@ -916,8 +917,6 @@ export class Network {
 
         const start: number = Date.now();
 
-
-        // TODO: should not ignore this
         // @ts-ignore
         let workerPool: Pool;
 
@@ -935,9 +934,7 @@ export class Network {
                 for (const genome of population) {
                     // add a task to the workerPool's queue
 
-                    // TODO: should not ignore this
-                    // @ts-ignore
-                    workerPool.queue(async test => {
+                    workerPool.queue(async (test: WorkerFunction) => {
                         if (genome === undefined) {
                             return;
                         }
