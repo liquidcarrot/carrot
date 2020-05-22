@@ -12,11 +12,44 @@ describe('MNIST', () => {
         this.timeout(0);
 
         const set: {
-            training: { input: number[], output: number[] }[],
-            test: { input: number[], output: number[] }[]
+            /**
+             * The training dataset
+             */
+            training: {
+                /**
+                 * The input values
+                 */
+                input: number[],
+                /**
+                 * The target output values
+                 */
+                output: number[]
+            }[],
+            /**
+             * The test dataset
+             */
+            test: {
+                /**
+                 * The input values
+                 */
+                input: number[],
+                /**
+                 * The target output values
+                 */
+                output: number[]
+            }[]
         } = mnist.set(2000, 0);
 
-        const trainingSet: { input: number[], output: number[] }[] = set.training;
+        const trainingSet: {
+            /**
+             * The input values
+             */
+            input: number[],
+            /**
+             * The target output values
+             */
+            output: number[]
+        }[] = set.training;
 
         const net: Network = new Network(trainingSet[0].input.length, trainingSet[0].output.length);
         const errorBefore: number = net.test(trainingSet);
