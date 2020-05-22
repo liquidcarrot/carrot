@@ -78,6 +78,13 @@ class MSELoss extends Loss {
  * myNetwork.train(trainingData, { loss: new MSELoss() });
  */
 class MBELoss extends Loss {
+    /**
+     * Calculates the loss value from output to target.
+     *
+     * @param targets the target values
+     * @param outputs the real output values
+     * @returns the loss between output and target
+     */
     public calc(targets: number[], outputs: number[]): number {
         let error: number = 0;
         outputs.forEach(((value, index) => {
