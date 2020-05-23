@@ -264,7 +264,7 @@ describe('Network', () => {
             expect(evolveReturn.error).to.be.a('number');
             expect(evolveReturn.iterations).to.be.a('number');
             expect(evolveReturn.time).to.be.a('number');
-            expect(final).to.be.below(initial);
+            expect(final).to.be.at.most(initial);
         });
     });
 });
