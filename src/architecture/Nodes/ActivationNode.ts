@@ -1,15 +1,9 @@
-import {NoiseNodeType} from "../../enums/NodeType";
-import {avg, generateGaussian, getOrDefault, sum} from "../../methods/Utils";
+import {getOrDefault, sum} from "../../methods/Utils";
 import {ConstantNode} from "./ConstantNode";
 
-export class NoiseNode extends ConstantNode {
-    private readonly noiseType: NoiseNodeType;
-    private readonly options: { noiseType?: NoiseNodeType; gaussian?: { mean?: number; deviation?: number } };
-
-    constructor(options: { noiseType?: NoiseNodeType, gaussian?: { mean?: number, deviation?: number } } = {}) {
+export class ActivationNode extends ConstantNode {
+    constructor() {
         super();
-        this.noiseType = getOrDefault(options.noiseType, NoiseNodeType.GAUSSIAN_NOISE);
-        this.options = options;
     }
 
     public activate(): number {
@@ -17,14 +11,11 @@ export class NoiseNode extends ConstantNode {
 
         const incomingStates: number[] = this.incoming.map(conn => conn.from.activation * conn.weight * conn.gain);
 
-        switch (this.noiseType) {
-            case NoiseNodeType.GAUSSIAN_NOISE:
-                this.state = avg(incomingStates) + generateGaussian(this.options.gaussian?.mean ?? 0, this.options.gaussian?.deviation ?? 2);
-                break;
-            default:
-                throw new ReferenceError("Cannot activate this noise type!");
-
+        if (incomingStates.length !== 1) {
+            throw new ReferenceError("Only 1 incoming connections is allowed!");
         }
+
+        this.state = incomingStates[0];
 
         this.activation = this.squash.calc(this.state, false) * this.mask;
         this.derivative = this.squash.calc(this.state, true);
