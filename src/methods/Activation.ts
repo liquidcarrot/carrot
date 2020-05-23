@@ -182,7 +182,7 @@ class RELUActivation implements Activation {
 
     public calc(x: number, derivative: boolean = false): number {
         if (!derivative) {
-            return x <= 0 ? 0 : x;
+            return Math.max(Math.min(1, x), 0);
         } else {
             return x <= 0 ? 0 : 1;
         }
@@ -444,7 +444,7 @@ class SELUActivation implements Activation {
             if (x > 0) {
                 return x * scale;
             } else {
-                return alpha * Math.exp(x) - alpha * scale;
+                return (alpha * Math.exp(x) - alpha) * scale;
             }
         } else {
             if (x > 0) {
