@@ -1,6 +1,7 @@
 import {Network} from "./architecture/Network";
-import {getOrDefault, pickRandom} from "./methods/Utils";
-import {FitnessProportionateSelection, Selection} from "./methods/Selection";
+import {ActivationType} from "./enums/ActivationType";
+import {EvolveOptions} from "./interfaces/EvolveOptions";
+import {ALL_ACTIVATIONS} from "./methods/Activation";
 import {
     AddConnectionMutation,
     AddGateMutation,
@@ -9,9 +10,8 @@ import {
     FEEDFORWARD_MUTATIONS,
     Mutation
 } from "./methods/Mutation";
-import {ALL_ACTIVATIONS} from "./methods/Activation";
-import {EvolveOptions} from "./interfaces/EvolveOptions";
-import {ActivationType} from "./enums/ActivationType";
+import {FitnessProportionateSelection, Selection} from "./methods/Selection";
+import {getOrDefault, pickRandom} from "./methods/Utils";
 
 /**
  * Runs the NEAT algorithm on group of neural networks.
@@ -67,7 +67,7 @@ export class NEAT {
     private readonly provenance: number;
     private readonly mutationRate: number;
     private readonly mutationAmount: number;
-    private readonly fitnessFunction: ((dataset: { input: number[]; output: number[] }[], population: Network[]) => Promise<void>);
+    private readonly fitnessFunction: ((population: Network[], dataset?: { input: number[]; output: number[] }[]) => Promise<void>);
     private readonly selection: Selection;
     private readonly mutations: Mutation[];
     private readonly template: Network;
@@ -75,19 +75,19 @@ export class NEAT {
     private readonly maxConnections: number;
     private readonly maxGates: number;
     private population: Network[];
-    private readonly dataset: { input: number[]; output: number[] }[];
+    private readonly dataset?: { input: number[]; output: number[] }[];
     private readonly activations: ActivationType[];
 
-    constructor(dataset: { input: number[], output: number[] }[], options: EvolveOptions = {}) {
-        if (dataset.length === 0) {
-            throw new ReferenceError("No dataset given !");
+    constructor(options: EvolveOptions = {}) {
+        if (!options.fitnessFunction) {
+            throw new ReferenceError("No fitness function given!");
         }
 
-        this.dataset = dataset;
+        this.dataset = options.dataset;
+        this.input = options.dataset && options.dataset.length > 0 ? options.dataset[0].input.length : 0;
+        this.output = options.dataset && options.dataset.length > 0 ? options.dataset[0].output.length : 0;
 
         this.generation = getOrDefault(options.generation, 0);
-        this.input = dataset[0].input.length;
-        this.output = dataset[0].output.length;
         this.equal = getOrDefault(options.equal, true);
         this.clear = getOrDefault(options.clear, false);
         this.populationSize = getOrDefault(options.populationSize, 50);
@@ -95,8 +95,6 @@ export class NEAT {
         this.provenance = getOrDefault(options.provenance, 0);
         this.mutationRate = getOrDefault(options.mutationRate, 0.6);
         this.mutationAmount = getOrDefault(options.mutationAmount, 5);
-
-        if (!options.fitnessFunction) throw new ReferenceError("No fitness function given");
         this.fitnessFunction = options.fitnessFunction;
 
         this.selection = getOrDefault(options.selection, new FitnessProportionateSelection());
@@ -179,7 +177,7 @@ export class NEAT {
 
         // Check population for evaluation
         if (this.population[this.population.length - 1].score === undefined) {
-            await this.evaluate(this.dataset);
+            await this.evaluate();
         }
 
         if (pickGenome) {
@@ -213,7 +211,7 @@ export class NEAT {
         this.population.push(...elitists);
 
         // evaluate the population
-        await this.evaluate(this.dataset);
+        await this.evaluate();
 
         // Check & adjust genomes as needed
         if (pickGenome) {
@@ -283,11 +281,11 @@ export class NEAT {
      *
      * @return {Network} Fittest Network
      */
-    public async evaluate(dataset: { input: number[], output: number[] }[]): Promise<Network> {
+    public async evaluate(): Promise<Network> {
         if (this.clear) {
             this.population.forEach(genome => genome.clear());
         }
-        await this.fitnessFunction(dataset, this.population);
+        await this.fitnessFunction(this.population, this.dataset);
 
         // Sort the population in order of fitness
         this.sort();
@@ -311,7 +309,7 @@ export class NEAT {
      */
     public async getFittest(): Promise<Network> {
         if (this.population[this.population.length - 1].score === undefined) {
-            await this.evaluate(this.dataset);
+            await this.evaluate();
         }
         this.sort();
 
@@ -325,7 +323,7 @@ export class NEAT {
      */
     public async getAverage(): Promise<number> {
         if (this.population[this.population.length - 1].score === undefined) {
-            await this.evaluate(this.dataset);
+            await this.evaluate();
         }
         let score: number = 0;
         this.population
