@@ -213,7 +213,7 @@ class RELUActivation implements Activation {
      */
     public calc(x: number, derivative: boolean = false): number {
         if (!derivative) {
-            return Math.max(Math.min(1, x), 0);
+            return x > 0 ? x : 0;
         } else {
             return x <= 0 ? 0 : 1;
         }
