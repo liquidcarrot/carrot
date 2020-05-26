@@ -230,8 +230,6 @@ describe("ArchitectTest", () => {
 
         architect.addLayer(new InputLayer(1));
         architect.addLayer(new RNNLayer(2, {activationType: ActivationType.RELUActivation}));
-        architect.addLayer(new RNNLayer(5, {activationType: ActivationType.RELUActivation}));
-        architect.addLayer(new RNNLayer(2, {activationType: ActivationType.RELUActivation}));
         architect.addLayer(new OutputLayer(1));
 
         const network: Network = architect.buildModel();
