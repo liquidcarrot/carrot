@@ -1,15 +1,23 @@
-import {Layer} from "../Layer";
-import {Connection} from "../../Connection";
 import {ActivationType} from "../../../enums/ActivationType";
-import {Node} from "../../Node";
-import {NodeType} from "../../../enums/NodeType";
 import {ConnectionType} from "../../../enums/ConnectionType";
 import {GatingType} from "../../../enums/GatingType";
+import {NodeType} from "../../../enums/NodeType";
 import {Activation} from "../../../methods/Activation";
+import {Connection} from "../../Connection";
+import {Node} from "../../Node";
+import {Layer} from "../Layer";
 
+/**
+ * LSTM layer
+ */
 export class LSTMLayer extends Layer {
 
-    constructor(outputSize: number, options: { activationType?: ActivationType } = {}) {
+    constructor(outputSize: number, options: {
+        /**
+         * The activation type for the output nodes of this layer.
+         */
+        activationType?: ActivationType
+    } = {}) {
         super(outputSize);
 
         const inputGate: Node[] = [];
@@ -20,7 +28,7 @@ export class LSTMLayer extends Layer {
         for (let i: number = 0; i < outputSize; i++) {
             this.inputNodes.add(new Node(NodeType.HIDDEN));
             inputGate.push(new Node(NodeType.HIDDEN).setBias(1));
-            forgetGate.push(new Node(NodeType.HIDDEN).setBias(1).setSquash(ActivationType.LogisticActivation));
+            forgetGate.push(new Node(NodeType.HIDDEN).setBias(1).setActivationType(ActivationType.LogisticActivation));
             memoryCell.push(new Node(NodeType.HIDDEN));
             outputGate.push(new Node(NodeType.HIDDEN).setBias(1));
             this.outputNodes.add(new Node(NodeType.HIDDEN));
@@ -56,10 +64,22 @@ export class LSTMLayer extends Layer {
         this.outputNodes.forEach(node => node.squash = activation);
     }
 
+    /**
+     * Checks if a given connection type is allowed on this layer.
+     *
+     * @param type the type to check
+     *
+     * @return Is this connection type allowed?
+     */
     public connectionTypeisAllowed(type: ConnectionType): boolean {
         return true;
     }
 
+    /**
+     * Gets the default connection type for a incoming connection to this layer.
+     *
+     * @returns the default incoming connection
+     */
     public getDefaultIncomingConnectionType(): ConnectionType {
         return ConnectionType.ALL_TO_ALL;
     }

@@ -1,11 +1,11 @@
-import {Node} from "../../../src/architecture/Node";
-import {Connection} from "../../../src/architecture/Connection";
-import {randDouble, randInt} from "../../../src/methods/Utils";
-import {ModBiasMutation} from "../../../src/methods/Mutation";
 import {expect} from "chai";
-import {Activation} from "../../../src/methods/Activation";
-import {NodeJSON} from "../../../src/interfaces/NodeJSON";
+import {Connection} from "../../../src/architecture/Connection";
+import {Node} from "../../../src/architecture/Node";
 import {NodeType} from "../../../src/enums/NodeType";
+import {NodeJSON} from "../../../src/interfaces/NodeJSON";
+import {Activation} from "../../../src/methods/Activation";
+import {ModBiasMutation} from "../../../src/methods/Mutation";
+import {randDouble, randInt} from "../../../src/methods/Utils";
 
 describe("Node", function (): void {
     describe("node.connect()", function (): void {
@@ -77,7 +77,7 @@ describe("Node", function (): void {
             const output: number = node.activate(undefined, false);
 
             expect(output).to.not.be.NaN;
-            expect(node.derivative).to.be.equal(1);
+            expect(node.derivativeState).to.be.equal(1);
         });
         it("node.activate(number, options={ trace: false })", function (): void {
             const node: Node = new Node();
@@ -87,7 +87,7 @@ describe("Node", function (): void {
 
             expect(output).to.not.be.NaN;
             expect(output).to.equal(input);
-            expect(node.derivative).to.be.equal(1);
+            expect(node.derivativeState).to.be.equal(1);
         });
     });
     describe("node.propagate()", function (): void {

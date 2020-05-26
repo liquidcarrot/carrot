@@ -1,10 +1,10 @@
-import {ModBiasMutation} from "../methods/Mutation";
-import {Activation, ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
-import {Connection} from "./Connection";
-import {getOrDefault, pickRandom, randDouble, removeFromArray} from "../methods/Utils";
+import {ActivationType} from "../enums/ActivationType";
 import {NodeType} from "../enums/NodeType";
 import {NodeJSON} from "../interfaces/NodeJSON";
-import {ActivationType} from "../enums/ActivationType";
+import {Activation, ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
+import {ModBiasMutation} from "../methods/Mutation";
+import {getOrDefault, pickRandom, randDouble, removeFromArray} from "../methods/Utils";
+import {Connection} from "./Connection";
 
 /**
  * Creates a new neuron/node
@@ -18,48 +18,85 @@ import {ActivationType} from "../enums/ActivationType";
  * - [here](https://github.com/cazala/synaptic/wiki/Neural-Networks-101)
  * - [here](https://keras.io/backend/#bias_add)
  *
- * @param type defines the type of node
- *
- * @prop {number} bias Neuron's bias [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
- * @prop {activation} squash [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0)
- * @prop {string} type
- * @prop {number} activation Output value
- * @prop {number} state
- * @prop {number} old
- * @prop {number} mask=1 Used for dropout. This is either 0 (ignored) or 1 (included) during training and is used to avoid [overfit](https://www.kdnuggets.com/2015/04/preventing-overfitting-neural-networks.html).
  * @prop {number} previousDeltaBias
  * @prop {number} totalDeltaBias
- * @prop {Array<Connection>} incoming Incoming connections to this node
- * @prop {Array<Connection>} outgoing Outgoing connections from this node
- * @prop {Array<Connection>} gated Connections this node gates
- * @prop {Connection} connections_self A self-connection
  * @prop {number} error.responsibility
  * @prop {number} error.projected
  * @prop {number} error.gated
  *
- * @example
- * let { Node } = require("@liquid-carrot/carrot");
- *
- * let node = new Node();
  */
 export class Node {
+    /**
+     * The type of this node.
+     */
     public type: NodeType;
+    /**
+     * Used for dropout. This is either 0 (ignored) or 1 (included) during training and is used to avoid [overfit](https://www.kdnuggets.com/2015/04/preventing-overfitting-neural-networks.html).
+     */
     public mask: number;
+    /**
+     * Incoming connections to this node
+     */
     public incoming: Connection[];
+    /**
+     * Outgoing connections from this node
+     */
     public outgoing: Connection[];
+    /**
+     * Connections this node gates
+     */
     public gated: Connection[];
+    /**
+     * A self connection
+     */
     public selfConnection: Connection;
+    /**
+     * Neuron's bias [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
+     */
     public bias: number;
+    /**
+     * [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0)
+     */
     public squash: Activation;
+    /**
+     * index
+     */
     public index: number;
-    public derivative: number;
+    /**
+     * derivative state
+     */
+    public derivativeState: number;
+    /**
+     * delta bias previous
+     */
     public deltaBiasPrevious: number;
+    /**
+     * delta bias total
+     */
     public deltaBiasTotal: number;
+    /**
+     * Output value
+     */
     public activation: number;
+    /**
+     * state
+     */
     public state: number;
+    /**
+     * old state
+     */
     public old: number;
+    /**
+     * error responsibility
+     */
     public errorResponsibility: number;
+    /**
+     * error projected
+     */
     public errorProjected: number;
+    /**
+     * error gated
+     */
     public errorGated: number;
 
     constructor(type: NodeType = NodeType.HIDDEN) {
@@ -67,7 +104,7 @@ export class Node {
         this.bias = randDouble(-1, 1);
         this.squash = new LogisticActivation();
         this.activation = 0;
-        this.derivative = 1;
+        this.derivativeState = 1;
         this.state = 0;
         this.old = 0;
         this.mask = 1;
@@ -90,14 +127,6 @@ export class Node {
      *
      * @returns itself
      *
-     * @example <caption>From Node.toJSON()</caption>
-     * const { Node } = require("@liquid-carrot/carrot");
-     *
-     * let otherNode = new Node();
-     * let json = otherNode.toJSON();
-     * let node = Node.fromJSON(json);
-     *
-     * console.log(node);
      */
     public fromJSON(json: NodeJSON): Node {
         this.bias = json.bias ?? randDouble(-1, 1);
@@ -113,19 +142,6 @@ export class Node {
      *
      * `node.clear()` is useful for predicting time series.
      *
-     * @example
-     * const { Node } = require("@liquid-carrot/carrot");
-     *
-     * let node = new Node();
-     *
-     * node.activate([1, 0]);
-     * node.propagate([1]);
-     *
-     * console.log(node); // Node has state information (e.g. `node.derivative`)
-     *
-     * node.clear(); // Factory resets node
-     *
-     * console.log(node); // Node has no state information
      */
     public clear(): void {
         for (const connection of this.incoming) {
@@ -147,14 +163,6 @@ export class Node {
      *
      * @param method The method is needed for the min and max value of the node's bias otherwise a range of [-1,1] is chosen
      *
-     * @example
-     * const { Node } = require("@liquid-carrot/carrot");
-     *
-     * let node = new Node();
-     *
-     * console.log(node);
-     *
-     * node.mutateBias(); // Changes node's bias
      */
     public mutateBias(method: ModBiasMutation = new ModBiasMutation()): void {
         this.bias += randDouble(method.min, method.max); // add a random value in range [min,max)
@@ -162,15 +170,6 @@ export class Node {
 
     /**
      * Mutates the node's activation function
-     *
-     * @example
-     * const { Node } = require("@liquid-carrot/carrot");
-     *
-     * let node = new Node();
-     *
-     * console.log(node);
-     *
-     * node.mutateBias(); // Changes node's activation function
      */
     public mutateActivation(allowedActivations: ActivationType[] = ALL_ACTIVATIONS): void {
         // pick a random activation from allowed activations except the current activation
@@ -187,25 +186,6 @@ export class Node {
      * @param node Checks if `node(s)` have outgoing connections into this node
      *
      * @return Returns true, if every node(s) has an outgoing connection into this node
-     *
-     * @example <caption>Check one <code>node</code></caption>
-     * const { Node } = require("@liquid-carrot/carrot");
-     *
-     * let otherNode = new Node();
-     * let node = new Node();
-     * otherNode.connect(node);
-     *
-     * console.log(node.isProjectedBy(otherNode)); // true
-     *
-     * @example <caption>Check many <code>nodes</code></caption>
-     * const { Node } = require("@liquid-carrot/carrot");
-     *
-     * let otherNodes = Array.from({ length: 5 }, () => new Node());
-     * let node = new Node();
-     *
-     * otherNodes.forEach(otherNode => otherNode.connect(node));
-     *
-     * console.log(node.isProjectedBy(otherNodes)); // true
      */
     public isProjectedBy(node: Node): boolean {
         if (node === this) { // self connection
@@ -221,25 +201,6 @@ export class Node {
      * @param node Checks if this node has outgoing connection(s) into `node(s)`
      *
      * @returns Returns true, if this node has an outgoing connection into every node(s)
-     *
-     * @example <caption>Check one <code>node</code></caption>
-     * const { Node } = require("@liquid-carrot/carrot");
-     *
-     * let otherNode = new Node();
-     * let node = new Node();
-     * node.connect(otherNode);
-     *
-     * console.log(node.isProjectingTo(otherNode)); // true
-     *
-     * @example <caption>Check many <code>nodes</code></caption>
-     * const { Node } = require("@liquid-carrot/carrot");
-     *
-     * let otherNodes = Array.from({ length: 5 }, () => new Node());
-     * let node = new Node();
-     *
-     * otherNodes.forEach(otherNode => node.connect(otherNode));
-     *
-     * console.log(node.isProjectingTo(otherNodes)); // true
      */
     public isProjectingTo(node: Node): boolean {
         if (node === this) { // self connection
@@ -253,21 +214,6 @@ export class Node {
      * This node gates (influences) the given connection
      *
      * @param connection Connection to be gated (influenced) by a neuron
-     *
-     * @example <caption>Gate one <code>connection</code></caption>
-     * const { Node } = require("@liquid-carrot/carrot");
-     *
-     * let input = new Node();
-     * let output = new Node();
-     * let connection = input.connect(output);
-     *
-     * let node = new Node();
-     *
-     * console.log(connection.gateNode === node); // false
-     *
-     * node.gate(connection); // Node now gates (manipulates) `connection`
-     *
-     * console.log(connection.gateNode === node); // true
      */
     public addGate(connection: Connection): void {
         this.gated.push(connection);
@@ -277,26 +223,7 @@ export class Node {
     /**
      * Stops this node from gating (manipulating) the given connection(s)
      *
-     * @param  connection Connections to ungate - _i.e. remove this node from_
-     *
-     * @example <caption>Ungate one <code>connection</code></caption>
-     * const { Node } = require("@liquid-carrot/carrot");
-     *
-     * let input = new Node();
-     * let output = new Node();
-     * let connection = input.connect(output);
-     *
-     * let node = new Node();
-     *
-     * console.log(connection.gateNode === node); // false
-     *
-     * node.addGate(connection); // Node now gates (manipulates) `connection`
-     *
-     * console.log(connection.gateNode === node); // true
-     *
-     * node.removeGate(connection); // Node is removed from `connection`
-     *
-     * console.log(connection.gateNode === node); // false
+     * @param connection Connections to remove gate - _i.e. remove this node from_
      */
     public removeGate(connection: Connection): void {
         removeFromArray(this.gated, connection);
@@ -310,26 +237,6 @@ export class Node {
      * @param target Node(s) to project connection(s) to
      * @param weight Initial connection(s) [weight](https://en.wikipedia.org/wiki/Synaptic_weight)
      * @param twoSided If `true` connect nodes to each other
-     *
-     * @example <caption>Connecting node (neuron) to another node (neuron)</caption>
-     * const { Node } = require("@liquid-carrot/carrot");
-     *
-     * let node = new Node();
-     * let otherNode = new Node();
-     *
-     * let connection = node.connect(otherNode); // Both nodes now share a connection
-     *
-     * console.log(connection); // Connection { from: [Object object], to: [Object object], ...}
-     *
-     *
-     * @example <caption>Connecting a node (neuron) to itself</caption>
-     * const { Node } = require("@liquid-carrot/carrot");
-     *
-     * let node = new Node();
-     *
-     * let connection = node.connect(node); // Node is connected to itself.
-     *
-     * console.log(connection); // Connection { from: [Object object], to: [Object object], ...}
      */
     public connect(target: Node, weight: number = 1, twoSided: boolean = false): Connection {
         if (target === this) { // self connection
@@ -356,40 +263,6 @@ export class Node {
      *
      * @param node Node(s) to remove connection(s) to
      * @param twoSided=false If `true` disconnects nodes from each other (i.e. both sides)
-     *
-     * @example <caption>Disconnect from one <code>node</code></caption>
-     * const { Node } = require("@liquid-carrot/carrot");
-     *
-     * let node = new Node();
-     * let other = new Node();
-     *
-     * node.connect(other); // `node` now connected to `other`
-     *
-     * console.log(node.incoming.length); // 0
-     * console.log(node.outgoing.length); // 1
-     *
-     * node.disconnect(other); // `node` is now disconnected from `other`
-     *
-     * console.log(node.incoming.length); // 0
-     * console.log(node.outgoing.length); // 0
-     *
-     * @example <caption>Connect to one <code>node</code> - <em>two-sided</em></caption>
-     * const { Node } = require("@liquid-carrot/carrot");
-     *
-     * let node = new Node();
-     * let other = new Node();
-     *
-     * // `node` & `other` are now connected to each other
-     * node.connect(other, true);
-     *
-     * console.log(node.incoming.length); // 1
-     * console.log(node.outgoing.length); // 1
-     *
-     * // `node` & `other` are now disconnected from each other
-     * node.disconnect(other, true);
-     *
-     * console.log(node.incoming.length); // 0
-     * console.log(node.outgoing.length); // 0
      */
     public disconnect(node: Node, twoSided: boolean = false): Connection {
         if (node === this) { // self connection
@@ -427,38 +300,24 @@ export class Node {
      *
      * @param target The target value (i.e. "the value the network SHOULD have given")
      * @param options More options for propagation
-     * @param [options.rate=0.3] [Learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
-     * @param [options.momentum=0] [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one.
-     * @param [options.update=true] When set to false weights won't update, but when set to true after being false the last propagation will include the deltaweights of the first "update:false" propagations too.
-     *
-     * @example
-     * let { Node } = require("@liquid-carrot/carrot");
-     *
-     * let A = new Node();
-     * let B = new Node('output');
-     * A.connect(B);
-     *
-     * let learningRate = .3;
-     * let momentum = 0;
-     *
-     * for(let i = 0; i < 20000; i++)
-     * {
-     *   // when A activates 1
-     *   A.activate(1);
-     *
-     *   // train B to activate 0
-     *   B.activate();
-     *   B.propagate(learningRate, momentum, true, 0);
-     * }
-     *
-     * // test it
-     * A.activate(1);
-     * B.activate(); // 0.006540565760853365
      *
      * @see [Regularization Neataptic](https://wagenaartje.github.io/neataptic/docs/methods/regularization/)
      * @see [What is backpropagation | YouTube](https://www.youtube.com/watch?v=Ilg3gGewQ5U)
      */
-    public propagate(target?: number, options: { momentum?: number, rate?: number, update?: boolean } = {}): void {
+    public propagate(target?: number, options: {
+        /**
+         * [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one.
+         */
+        momentum?: number,
+        /**
+         * [Learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
+         */
+        rate?: number,
+        /**
+         * When set to false weights won't update, but when set to true after being false the last propagation will include the delta weights of the first "update:false" propagations too.
+         */
+        update?: boolean
+    } = {}): void {
         options.momentum = getOrDefault(options.momentum, 0);
         options.rate = getOrDefault(options.rate, 0.3);
         options.update = getOrDefault(options.update, true);
@@ -470,7 +329,7 @@ export class Node {
             for (const connection of this.outgoing) {
                 this.errorProjected += connection.to.errorResponsibility * connection.weight * connection.gain;
             }
-            this.errorProjected *= this.derivative;
+            this.errorProjected *= this.derivativeState;
 
 
             this.errorGated = 0;
@@ -484,7 +343,7 @@ export class Node {
 
                 this.errorGated += connection.to.errorResponsibility * influence;
             }
-            this.errorGated *= this.derivative;
+            this.errorGated *= this.derivativeState;
 
 
             this.errorResponsibility = this.errorProjected + this.errorGated;
@@ -530,16 +389,6 @@ export class Node {
      * @param [trace] Controls whether traces are created when activation happens (a trace is meta information left behind for different uses, e.g. backpropagation).
      *
      * @returns A neuron's ['Squashed'](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) output value
-     *
-     * @example
-     * let { Node } = require("@liquid-carrot/carrot");
-     *
-     * let A = new Node();
-     * let B = new Node();
-     *
-     * A.connect(B);
-     * A.activate(0.5); // 0.5
-     * B.activate(); // 0.3244554645
      */
     public activate(input?: number, trace: boolean = true): number {
         if (input !== undefined) {
@@ -559,7 +408,7 @@ export class Node {
             });
 
             this.activation = this.squash.calc(this.state, false) * this.mask;
-            this.derivative = this.squash.calc(this.state, true);
+            this.derivativeState = this.squash.calc(this.state, true);
 
 
             // store traces
@@ -595,10 +444,10 @@ export class Node {
                     const index: number = connection.xTraceNodes.indexOf(node);
 
                     if (index > -1) {
-                        connection.xTraceValues[index] = node.selfConnection.gain * node.selfConnection.weight * connection.xTraceValues[index] + this.derivative * connection.eligibility * influence;
+                        connection.xTraceValues[index] = node.selfConnection.gain * node.selfConnection.weight * connection.xTraceValues[index] + this.derivativeState * connection.eligibility * influence;
                     } else {
                         connection.xTraceNodes.push(node);
-                        connection.xTraceValues.push(this.derivative * connection.eligibility * influence);
+                        connection.xTraceValues.push(this.derivativeState * connection.eligibility * influence);
                     }
                 }
             }
@@ -629,13 +478,6 @@ export class Node {
      * Converts the node to a json object that can later be converted back
      *
      * @returns A node representing json object
-     *
-     * @example
-     * const { Node } = require("@liquid-carrot/carrot");
-     *
-     * let node = new Node();
-     *
-     * console.log(node.toJSON());
      */
     public toJSON(): NodeJSON {
         return {
@@ -647,24 +489,43 @@ export class Node {
         };
     }
 
+    /**
+     * Is this a input Node?
+     */
     public isInputNode(): boolean {
         return this.type === NodeType.INPUT;
     }
 
+    /**
+     * Is this a hidden Node?
+     */
     public isHiddenNode(): boolean {
         return this.type === NodeType.HIDDEN;
     }
 
+    /**
+     * Is this a output Node?
+     */
     public isOutputNode(): boolean {
         return this.type === NodeType.OUTPUT;
     }
 
+    /**
+     * Set bias.
+     *
+     * @param bias the new bias value
+     */
     public setBias(bias: number): Node {
         this.bias = bias;
         return this;
     }
 
-    public setSquash(activationType: ActivationType): Node {
+    /**
+     * Set activation type
+     *
+     * @param activationType the new activation type
+     */
+    public setActivationType(activationType: ActivationType): Node {
         this.squash = Activation.getActivation(activationType);
         return this;
     }

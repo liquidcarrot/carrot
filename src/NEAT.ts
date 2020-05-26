@@ -6,7 +6,6 @@ import {
     AddConnectionMutation,
     AddGateMutation,
     AddNodeMutation,
-    ALL_MUTATIONS,
     FEEDFORWARD_MUTATIONS,
     Mutation
 } from "./methods/Mutation";
@@ -17,75 +16,125 @@ import {getOrDefault, pickRandom} from "./methods/Utils";
  * Runs the NEAT algorithm on group of neural networks.
  *
  * @constructs Neat
- *
- * @private
- *
- * @param {Array<{input:number[],output:number[]}>} [dataset] A set of input values and ideal output values to evaluate a genome's fitness with. Must be included to use `NEAT.evaluate` without passing a dataset
- * @param {EvolveOptions} options - Configuration options
- * @param {number} input - The input size of `template` networks.
- * @param {number} output - The output size of `template` networks.
- * @param {boolean} [options.equal=false] When true [crossover](Network.crossOver) parent genomes are assumed to be equally fit and offspring are built with a random amount of neurons within the range of parents' number of neurons. Set to false to select the "fittest" parent as the neuron amount template.
- * @param {number} [options.clear=false] Clear the context of the population's nodes, basically reverting them to 'new' neurons. Useful for predicting timeseries with LSTM's.
- * @param {number} [options.populationSize=50] Population size of each generation.
- * @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connectoins.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
- * @param {Loss} [options.loss=new MSELoss()]  Specify the cost function for the evolution, this tells a genome in the population how well it's performing. Default: methods.new MSELoss() (recommended).
- * @param {number} [options.amount=1] Set the amount of times to test the trainingset on a genome each generation. Useful for timeseries. Do not use for regular feedfoward problems.
- * @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algortihtms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
- * @param {number} [options.provenance=0] Number of genomes inserted the original network template (Network(input,output)) per evolution.
- * @param {number} [options.mutationRate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.4.
- * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
- * @param {boolean} [options.fitnessPopulation=false] Flag to return the fitness of a population of genomes. Set this to false to evaluate each genome inidividually.
- * @param {((dataset: { input: number[]; output: number[] }[], population: Network[]) => Promise<void>)} [options.fitness] - A fitness function to evaluate the networks. Takes a `dataset` and a `genome` i.e. a [network](Network) or a `population` i.e. an array of networks and sets the genome `.score` property
- * @param {string} [options.selection=FITNESS_PROPORTIONATE] [Selection method](selection) for evolution (e.g. Selection.FITNESS_PROPORTIONATE).
- * @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
- * @param {Network} [options.network=false] Network to start evolution from
- * @param {number} [options.maxNodes=Infinity] Maximum nodes for a potential network
- * @param {number} [options.maxConnections=Infinity] Maximum connections for a potential network
- * @param {number} [options.maxGates=Infinity] Maximum gates for a potential network
- * @param {Mutation[]} [options.mutation] Sets allowed [mutation methods](mutation) for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent
- *
- * @prop {number} generation A count of the generations
- * @prop {Network[]} population The current population for the neat instance. Accessible through `neat.population`
- *
- * @example
- * let { Neat } = require("@liquid-carrot/carrot");
- *
- * let neat = new Neat(dataset, {
- *   elitism: 10,
- *   clear: true,
- *   populationSize: 1000
- * });
  */
 export class NEAT {
+    /**
+     * A count of the generations
+     */
     public generation: number;
+    /**
+     * The input size of `template` networks.
+     */
     private readonly input: number;
+    /**
+     * The output size of `template` networks.
+     */
     private readonly output: number;
+    /**
+     * When true [crossover](Network.crossOver) parent genomes are assumed to be equally fit and offspring are built with a random amount of neurons within the range of parents' number of neurons. Set to false to select the "fittest" parent as the neuron amount template.
+     */
     private readonly equal: boolean;
+    /**
+     * Clear the context of the population's nodes, basically reverting them to 'new' neurons. Useful for predicting time series with LSTM's.
+     */
     private readonly clear: boolean;
+    /**
+     * Population size of each generation.
+     */
     private readonly populationSize: number;
+    /**
+     * Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
+     */
     private readonly elitism: number;
+    /**
+     * Number of genomes inserted the original network template (Network(input,output)) per evolution.
+     */
     private readonly provenance: number;
+    /**
+     * Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.4.
+     */
     private readonly mutationRate: number;
+    /**
+     * If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
+     */
     private readonly mutationAmount: number;
-    private readonly fitnessFunction: ((population: Network[], dataset?: { input: number[]; output: number[] }[]) => Promise<void>);
+    /**
+     * A fitness function to evaluate the networks. Takes a `dataset` and a `genome` i.e. a network or a `population` i.e. an array of networks and sets the genome `.score` property
+     */
+    private readonly fitnessFunction: ((population: Network[], dataset?: {
+        /**
+         * Set with all input values.
+         */
+        input: number[];
+        /**
+         * Set with all output values.
+         */
+        output: number[]
+    }[]) => Promise<void>);
+    /**
+     * Selection for evolution (e.g. Selection.FITNESS_PROPORTIONATE)
+     */
     private readonly selection: Selection;
+    /**
+     * Sets allowed mutations for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
+     */
     private readonly mutations: Mutation[];
+    /**
+     * Network to start evolution from.
+     */
     private readonly template: Network;
+    /**
+     * Maximum nodes for a potential network.
+     */
     private readonly maxNodes: number;
+    /**
+     * Maximum connections for a potential network.
+     */
     private readonly maxConnections: number;
+    /**
+     * Maximum gates for a potential network.
+     */
     private readonly maxGates: number;
+    /**
+     * population The current population for the neat instance. Accessible through `neat.population`.
+     */
     private population: Network[];
-    private readonly dataset?: { input: number[]; output: number[] }[];
+    /**
+     * A set of input values and ideal output values to evaluate a genome's fitness with. Must be included to use `NEAT.evaluate` without passing a dataset.
+     */
+    private readonly dataset?: {
+        /**
+         * Set with all input values.
+         */
+        input: number[];
+        /**
+         * Set with all output values.
+         */
+        output: number[]
+    }[];
+    /**
+     * Sets allowed activations for evolution, a random activation method will be chosen from the array when activation mutation occurs.
+     */
     private readonly activations: ActivationType[];
 
-    constructor(options: EvolveOptions = {}) {
+    /**
+     * Constructs a NEAT object.
+     *
+     * @param options
+     */
+    constructor(options: EvolveOptions) {
         if (!options.fitnessFunction) {
             throw new ReferenceError("No fitness function given!");
         }
 
         this.dataset = options.dataset;
-        this.input = options.dataset && options.dataset.length > 0 ? options.dataset[0].input.length : 0;
-        this.output = options.dataset && options.dataset.length > 0 ? options.dataset[0].output.length : 0;
+        if (options.dataset && options.dataset.length > 0) {
+            this.input = options.dataset[0].input.length;
+            this.output = options.dataset[0].output.length;
+        } else {
+            this.input = getOrDefault(options.input, 0);
+            this.output = getOrDefault(options.output, 0);
+        }
 
         this.generation = getOrDefault(options.generation, 0);
         this.equal = getOrDefault(options.equal, true);
@@ -106,38 +155,39 @@ export class NEAT {
         this.maxGates = getOrDefault(options.maxGates, Infinity);
         this.population = [];
 
-        this.createInitialPopulation();
-    }
-
-    public filterGenome(population: Network[], template: Network, pickGenome: (genome: Network) => boolean, adjustGenome: ((genome: Network) => Network) | undefined): Network[] {
-        const filtered: Network[] = [...population]; // avoid mutations
-
-        if (adjustGenome) {
-            filtered
-                .filter(genome => pickGenome(genome))
-                .forEach((genome, index) => filtered[index] = adjustGenome(filtered[index]));
-        } else {
-            filtered
-                .filter(genome => pickGenome(genome))
-                .forEach((genome, index) => filtered[index] = template.copy());
+        for (let i: number = 0; i < this.populationSize; i++) {
+            this.population.push(this.template.copy());
         }
-
-        return filtered;
     }
 
-    public mutateRandom(genome: Network, possible: Mutation[] = ALL_MUTATIONS): void {
-        const maxNodes: number = this.maxNodes;
-        const maxConnections: number = this.maxConnections;
-        const maxGates: number = this.maxGates;
-        possible = possible.filter(method => {
+    /**
+     * Filter genomes from population
+     *
+     * @param pickGenome Pick a network from the population which gets adjusted or removed
+     * @param adjustGenome Adjust the picked network
+     */
+    public filterGenome(pickGenome: (genome: Network) => boolean, adjustGenome: ((genome: Network) => Network) | undefined): Network[] {
+        return this.population
+            .filter(genome => pickGenome(genome))
+            .map(genome => {
+                return adjustGenome ? adjustGenome(genome) : this.template.copy();
+            });
+    }
+
+    /**
+     * Mutate a network with a random mutation from the allowed array.
+     *
+     * @param network The network which will be mutated.
+     */
+    public mutateRandom(network: Network): void {
+        const allowed: Mutation[] = this.mutations.filter(method => {
             return (
-                method.constructor.name !== AddNodeMutation.constructor.name || genome.nodes.length < maxNodes ||
-                method.constructor.name !== AddConnectionMutation.constructor.name || genome.connections.length < maxConnections ||
-                method.constructor.name !== AddGateMutation.constructor.name || genome.gates.length < maxGates
+                method.constructor.name !== AddNodeMutation.constructor.name || network.nodes.length < this.maxNodes ||
+                method.constructor.name !== AddConnectionMutation.constructor.name || network.connections.length < this.maxConnections ||
+                method.constructor.name !== AddGateMutation.constructor.name || network.gates.length < this.maxGates
             );
         });
-
-        genome.mutate(pickRandom(possible), {allowedActivations: this.activations});
+        network.mutate(pickRandom(allowed), {allowedActivations: this.activations});
     }
 
     /**
@@ -147,27 +197,6 @@ export class NEAT {
      * @param {function} [adjustGenome=self.template] Accepts a network, modifies it, and returns it. Used to modify unwanted genomes returned by `pickGenome` and reincorporate them into the population. If left unset, unwanted genomes will be replaced with the template Network. Will only run when pickGenome is defined.
      *
      * @returns {Network} Fittest network
-     *
-     * @example
-     * let neat = new Neat(dataset, {
-     *  elitism: 10,
-     *  clear: true,
-     *  populationSize: 1000
-     * });
-     *
-     * let filter = function(genome) {
-     *  // Remove genomes with more than 100 nodes
-     *  return genome.nodes.length > 100 ? true : false
-     * }
-     *
-     * let adjust = function(genome) {
-     *  // clear the nodes
-     *  return genome.clear()
-     * }
-     *
-     * neat.evolve(evolveSet, filter, adjust).then(function(fittest) {
-     *  console.log(fittest)
-     * })
      */
     public async evolve(pickGenome?: ((genome: Network) => boolean) | undefined, adjustGenome?: ((genome: Network) => Network) | undefined): Promise<Network> {
         // Check if evolve is possible
@@ -181,7 +210,7 @@ export class NEAT {
         }
 
         if (pickGenome) {
-            this.population = this.filterGenome(this.population, this.template, pickGenome, adjustGenome);
+            this.population = this.filterGenome(pickGenome, adjustGenome);
         }
 
         // Sort in order of fitness (fittest first)
@@ -215,7 +244,7 @@ export class NEAT {
 
         // Check & adjust genomes as needed
         if (pickGenome) {
-            this.population = this.filterGenome(this.population, this.template, pickGenome, adjustGenome);
+            this.population = this.filterGenome(pickGenome, adjustGenome);
         }
 
         // Sort in order of fitness (fittest first)
@@ -255,25 +284,18 @@ export class NEAT {
      * @param {Mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
      */
     public mutate(method?: Mutation | undefined): void {
-        if (method) {
-            // Elitist genomes should not be included
-            this.population
-                .filter(() => Math.random() <= this.mutationRate)
-                .forEach(genome => {
-                    for (let i: number = 0; i < this.mutationAmount; i++) {
+        // Elitist genomes should not be included
+        this.population
+            .filter(() => Math.random() <= this.mutationRate)
+            .forEach(genome => {
+                for (let i: number = 0; i < this.mutationAmount; i++) {
+                    if (method) {
                         genome.mutate(method);
+                    } else {
+                        this.mutateRandom(genome);
                     }
-                });
-        } else {
-            // Elitist genomes should not be included
-            this.population
-                .filter(() => Math.random() <= this.mutationRate)
-                .forEach(genome => {
-                    for (let i: number = 0; i < this.mutationAmount; i++) {
-                        this.mutateRandom(genome, this.mutations);
-                    }
-                });
-        }
+                }
+            });
     }
 
     /**
@@ -294,7 +316,7 @@ export class NEAT {
     }
 
     /**
-     * Sorts the population by score
+     * Sorts the population by score (descending)
      */
     public sort(): void {
         this.population.sort((a: Network, b: Network) => {
@@ -330,14 +352,5 @@ export class NEAT {
             .map(genome => genome.score)
             .forEach(val => score += val ?? 0);
         return score / this.population.length;
-    }
-
-    /**
-     * Create the initial pool of genomes
-     */
-    private createInitialPopulation(): void {
-        for (let i: number = 0; i < this.populationSize; i++) {
-            this.population.push(this.template.copy());
-        }
     }
 }

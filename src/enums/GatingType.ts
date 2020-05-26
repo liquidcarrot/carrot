@@ -1,3 +1,17 @@
+/**
+ * The type of gating.
+ */
 export enum GatingType {
-    INPUT, SELF, OUTPUT
+    /**
+     * Gate incoming connections.
+     */
+    INPUT,
+    /**
+     * Gate self connections.
+     */
+    SELF,
+    /**
+     * Gate outgoing connections.
+     */
+    OUTPUT
 }
