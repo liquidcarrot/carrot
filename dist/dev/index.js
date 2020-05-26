@@ -615,7 +615,7 @@ function () {
     }
 
     if (!derivative) {
-      return x <= 0 ? 0 : x;
+      return x > 0 ? x : 0;
     } else {
       return x <= 0 ? 0 : 1;
     }
@@ -1048,7 +1048,7 @@ function () {
       if (x > 0) {
         return x * scale;
       } else {
-        return alpha * Math.exp(x) - alpha * scale;
+        return (alpha * Math.exp(x) - alpha) * scale;
       }
     } else {
       if (x > 0) {
@@ -5143,6 +5143,14 @@ function (_super) {
   function MBELoss() {
     return _super !== null && _super.apply(this, arguments) || this;
   }
+  /**
+   * Calculates the loss value from output to target.
+   *
+   * @param targets the target values
+   * @param outputs the real output values
+   * @returns the loss between output and target
+   */
+
 
   MBELoss.prototype.calc = function (targets, outputs) {
     var error = 0;
@@ -7406,8 +7414,6 @@ function () {
                       case 0:
                         _loop_1 = function (genome) {
                           // add a task to the workerPool's queue
-                          // TODO: should not ignore this
-                          // @ts-ignore
                           workerPool.queue(function (test) {
                             return __awaiter(_this, void 0, void 0, function () {
                               var _a;
