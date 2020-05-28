@@ -4,17 +4,6 @@
 
 <p align="center">
     <a href="https://travis-ci.org/liquidcarrot/carrot">
-        <img src="https://travis-ci.org/liquidcarrot/carrot.svg?branch=master"
-             alt="Build Status via Travis CI">
-    </a>
-    <a href="https://www.codacy.com/app/christianechevarria/carrot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=liquidcarrot/carrot&amp;utm_campaign=Badge_Grade">
-        <img src="https://api.codacy.com/project/badge/Grade/3ee723b170f14b4990c8a0a6fc1feb27"
-             alt="Codacy Badge">
-    </a>
-    <a href="https://coveralls.io/github/liquidcarrot/carrot?branch=master">
-        <img src="https://coveralls.io/repos/github/liquidcarrot/carrot/badge.svg?branch=master"
-             alt="Coverage Status">
-    </a>
     <a href="https://gitter.im/carrot-ai/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badgee&utm_content=badge">
         <img src="https://badges.gitter.im/Join%20Chat.svg"
              alt="Join the chat at https://gitter.im/carrot-ai/community">
