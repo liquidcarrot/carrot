@@ -3,7 +3,9 @@
 </p>
 
 <p align="center">
-    <a href="https://travis-ci.org/liquidcarrot/carrot">
+    <a href="https://github.com/liquidcarrot/carrot/actions">
+        <img src="https://github.com/liquidcarrot/carrot/workflows/Node.js%20CI/badge.svg">
+    </a>
     <a href="https://gitter.im/carrot-ai/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badgee&utm_content=badge">
         <img src="https://badges.gitter.im/Join%20Chat.svg"
              alt="Join the chat at https://gitter.im/carrot-ai/community">
