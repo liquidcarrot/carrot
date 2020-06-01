@@ -1,7 +1,6 @@
-import {ActivationType} from "../enums/ActivationType";
 import {NodeType} from "../enums/NodeType";
 import {NodeJSON} from "../interfaces/NodeJSON";
-import {Activation, ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
+import {ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
 import {ModBiasMutation} from "../methods/Mutation";
 import {getOrDefault, pickRandom, randDouble, removeFromArray} from "../methods/Utils";
 import {Connection} from "./Connection";
@@ -57,7 +56,7 @@ export class Node {
     /**
      * [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0)
      */
-    public squash: Activation;
+    public squash: ((x: number, derivative: boolean) => number);
     /**
      * index
      */
@@ -102,7 +101,7 @@ export class Node {
     constructor(type: NodeType = NodeType.HIDDEN) {
         this.type = type;
         this.bias = randDouble(-1, 1);
-        this.squash = new LogisticActivation();
+        this.squash = LogisticActivation;
         this.activation = 0;
         this.derivativeState = 1;
         this.state = 0;
@@ -131,7 +130,7 @@ export class Node {
     public fromJSON(json: NodeJSON): Node {
         this.bias = json.bias ?? randDouble(-1, 1);
         this.type = json.type as NodeType;
-        this.squash = Activation.getActivation(json.squash ?? ActivationType.LogisticActivation);
+        this.squash = json.squash ?? LogisticActivation;
         this.mask = json.mask ?? 1;
         this.index = json.index ?? NaN;
         return this;
@@ -171,12 +170,11 @@ export class Node {
     /**
      * Mutates the node's activation function
      */
-    public mutateActivation(allowedActivations: ActivationType[] = ALL_ACTIVATIONS): void {
+    public mutateActivation(allowedActivations: ((x: number, derivative: boolean) => number)[] = Object.values(ALL_ACTIVATIONS)): void {
         // pick a random activation from allowed activations except the current activation
-        const possible: ActivationType[] = allowedActivations.filter(activation => activation !== this.squash.type);
+        const possible: ((x: number, derivative: boolean) => number)[] = allowedActivations.filter(activation => activation !== this.squash);
         if (possible.length > 0) {
-            const newActivationType: ActivationType = pickRandom(possible);
-            this.squash = Activation.getActivation(newActivationType);
+            this.squash = pickRandom(possible);
         }
     }
 
@@ -407,8 +405,8 @@ export class Node {
                 this.state += conn.from.activation * conn.weight * conn.gain;
             });
 
-            this.activation = this.squash.calc(this.state, false) * this.mask;
-            this.derivativeState = this.squash.calc(this.state, true);
+            this.activation = this.squash(this.state, false) * this.mask;
+            this.derivativeState = this.squash(this.state, true);
 
 
             // store traces
@@ -463,7 +461,7 @@ export class Node {
                 this.state += connection.from.activation * connection.weight * connection.gain;
             }
 
-            this.activation = this.squash.calc(this.state, false);
+            this.activation = this.squash(this.state, false);
 
             // Adjust gain
             for (const connection of this.gated) {
@@ -483,7 +481,7 @@ export class Node {
         return {
             bias: this.bias,
             type: this.type,
-            squash: this.squash.type,
+            squash: this.squash,
             mask: this.mask,
             index: this.index
         };
@@ -523,10 +521,10 @@ export class Node {
     /**
      * Set activation type
      *
-     * @param activationType the new activation type
+     * @param activation the new activation type
      */
-    public setActivationType(activationType: ActivationType): Node {
-        this.squash = Activation.getActivation(activationType);
+    public setActivationType(activation: ((x: number, derivative: boolean) => number)): Node {
+        this.squash = activation;
         return this;
     }
 }

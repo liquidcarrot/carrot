@@ -3,7 +3,6 @@ import {spawn, Worker} from "threads";
 import {Pool} from "threads/dist";
 import {WorkerFunction} from "threads/dist/types/worker";
 import "threads/register";
-import {ActivationType} from "../enums/ActivationType";
 import {NodeType} from "../enums/NodeType";
 import {ConnectionJSON} from "../interfaces/ConnectionJSON";
 import {EvolveOptions} from "../interfaces/EvolveOptions";
@@ -547,7 +546,7 @@ export class Network {
         /**
          * All allowed activations
          */
-        allowedActivations?: ActivationType[]
+        allowedActivations?: ((x: number, derivative: boolean) => number)[]
     }): void {
         method.mutate(this, options);
     }
@@ -577,7 +576,7 @@ export class Network {
         /**
          * All allowed activations
          */
-        allowedActivations?: ActivationType[]
+        allowedActivations?: ((x: number, derivative: boolean) => number)[]
     } = {}): void {
         if (allowedMethods.length === 0) {
             return;

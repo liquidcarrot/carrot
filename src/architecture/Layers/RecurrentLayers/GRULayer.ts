@@ -1,8 +1,7 @@
-import {ActivationType} from "../../../enums/ActivationType";
 import {ConnectionType} from "../../../enums/ConnectionType";
 import {GatingType} from "../../../enums/GatingType";
 import {NodeType} from "../../../enums/NodeType";
-import {Activation} from "../../../methods/Activation";
+import {LogisticActivation, TanhActivation} from "../../../methods/Activation";
 import {Connection} from "../../Connection";
 import {Node} from "../../Node";
 import {Layer} from "../Layer";
@@ -15,7 +14,7 @@ export class GRULayer extends Layer {
         /**
          * The activation type for the output nodes of this layer.
          */
-        activationType?: ActivationType
+        activation?: ((x: number, derivative: boolean) => number)
     } = {}) {
         super(outputSize);
         const updateGate: Node[] = [];
@@ -27,10 +26,10 @@ export class GRULayer extends Layer {
         for (let i: number = 0; i < outputSize; i++) {
             this.inputNodes.add(new Node(NodeType.HIDDEN));
             updateGate.push(new Node(NodeType.HIDDEN).setBias(1));
-            inverseUpdateGate.push(new Node(NodeType.HIDDEN).setBias(0).setActivationType(ActivationType.LogisticActivation));
+            inverseUpdateGate.push(new Node(NodeType.HIDDEN).setBias(0).setActivationType(LogisticActivation));
             resetGate.push(new Node(NodeType.HIDDEN).setBias(0));
-            memoryCell.push(new Node(NodeType.HIDDEN).setActivationType(ActivationType.TanhActivation));
-            previousOutput.push(new Node(NodeType.HIDDEN).setBias(0).setActivationType(ActivationType.LogisticActivation));
+            memoryCell.push(new Node(NodeType.HIDDEN).setActivationType(TanhActivation));
+            previousOutput.push(new Node(NodeType.HIDDEN).setBias(0).setActivationType(LogisticActivation));
             this.outputNodes.add(new Node(NodeType.HIDDEN));
         }
 
@@ -67,8 +66,7 @@ export class GRULayer extends Layer {
         this.nodes.push(...Array.from(this.outputNodes));
         this.nodes.push(...previousOutput);
 
-        const activation: Activation = Activation.getActivation(options.activationType ?? ActivationType.LogisticActivation);
-        this.outputNodes.forEach(node => node.squash = activation);
+        this.outputNodes.forEach(node => node.squash = options.activation ?? LogisticActivation);
     }
 
     /**

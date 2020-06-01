@@ -1,5 +1,4 @@
 import {Network} from "./architecture/Network";
-import {ActivationType} from "./enums/ActivationType";
 import {EvolveOptions} from "./interfaces/EvolveOptions";
 import {ALL_ACTIVATIONS} from "./methods/Activation";
 import {
@@ -115,7 +114,7 @@ export class NEAT {
     /**
      * Sets allowed activations for evolution, a random activation method will be chosen from the array when activation mutation occurs.
      */
-    private readonly activations: ActivationType[];
+    private readonly activations: ((x: number, derivative: boolean) => number)[];
 
     /**
      * Constructs a NEAT object.
@@ -148,7 +147,7 @@ export class NEAT {
 
         this.selection = getOrDefault(options.selection, new FitnessProportionateSelection());
         this.mutations = getOrDefault(options.mutations, FEEDFORWARD_MUTATIONS);
-        this.activations = getOrDefault(options.activations, ALL_ACTIVATIONS);
+        this.activations = getOrDefault(options.activations, Object.values(ALL_ACTIVATIONS));
         this.template = getOrDefault(options.template, new Network(this.input, this.output));
         this.maxNodes = getOrDefault(options.maxNodes, Infinity);
         this.maxConnections = getOrDefault(options.maxConnections, Infinity);

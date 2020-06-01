@@ -1,6 +1,6 @@
-import {ActivationType} from "../../../enums/ActivationType";
 import {ConnectionType} from "../../../enums/ConnectionType";
 import {NodeType} from "../../../enums/NodeType";
+import {StepActivation} from "../../../methods/Activation";
 import {Node} from "../../Node";
 import {Layer} from "../Layer";
 
@@ -13,7 +13,7 @@ export class HopfieldLayer extends Layer {
 
         for (let i: number = 0; i < outputSize; i++) {
             this.inputNodes.add(new Node(NodeType.HIDDEN));
-            this.outputNodes.add(new Node(NodeType.HIDDEN).setActivationType(ActivationType.StepActivation));
+            this.outputNodes.add(new Node(NodeType.HIDDEN).setActivationType(StepActivation));
         }
 
         this.connections.push(...Layer.connect(this.inputNodes, this.outputNodes, ConnectionType.ALL_TO_ALL));

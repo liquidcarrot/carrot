@@ -1,8 +1,8 @@
-import {Node} from "../../../src/architecture/Node";
-import {Connection} from "../../../src/architecture/Connection";
 import {expect} from "chai";
-import {randDouble, randInt} from "../../../src/methods/Utils";
+import {Connection} from "../../../src/architecture/Connection";
+import {Node} from "../../../src/architecture/Node";
 import {ConnectionJSON} from "../../../src/interfaces/ConnectionJSON";
+import {randDouble, randInt} from "../../../src/methods/Utils";
 
 const was: { connected: (connection: Connection, from: Node, to: Node) => void } = {
     connected: (connection: Connection, from: Node, to: Node): void => {

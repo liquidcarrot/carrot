@@ -1,6 +1,6 @@
-import {ActivationType} from "../../../enums/ActivationType";
 import {ConnectionType} from "../../../enums/ConnectionType";
 import {NodeType} from "../../../enums/NodeType";
+import {IdentityActivation} from "../../../methods/Activation";
 import {Node} from "../../Node";
 import {Layer} from "../Layer";
 
@@ -12,11 +12,11 @@ export class OutputLayer extends Layer {
         /**
          * The activation type for the output nodes of this layer.
          */
-        activationType?: ActivationType
+        activation?: ((x: number, derivative: boolean) => number)
     } = {}) {
         super(outputSize);
 
-        const activation: ActivationType = options.activationType ?? ActivationType.IdentityActivation;
+        const activation: ((x: number, derivative: boolean) => number) = options.activation ?? IdentityActivation;
         for (let i: number = 0; i < outputSize; i++) {
             this.inputNodes.add(new Node(NodeType.OUTPUT).setActivationType(activation));
         }

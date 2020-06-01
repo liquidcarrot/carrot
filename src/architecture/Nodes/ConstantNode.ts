@@ -1,7 +1,6 @@
-import {ActivationType} from "../../enums/ActivationType";
 import {NodeType} from "../../enums/NodeType";
 import {NodeJSON} from "../../interfaces/NodeJSON";
-import {Activation} from "../../methods/Activation";
+import {IdentityActivation} from "../../methods/Activation";
 import {Node} from "../Node";
 
 /**
@@ -23,7 +22,7 @@ export abstract class ConstantNode extends Node {
      */
     public fromJSON(json: NodeJSON): Node {
         this.index = json.index ?? -1;
-        this.squash = Activation.getActivation(json.squash ?? ActivationType.IdentityActivation);
+        this.squash = json.squash ?? IdentityActivation;
         return this;
     }
 
@@ -69,7 +68,7 @@ export abstract class ConstantNode extends Node {
      * @returns the json object representing this node
      */
     public toJSON(): NodeJSON {
-        return {index: this.index, squash: this.squash.type};
+        return {index: this.index, squash: this.squash};
     }
 
     /**

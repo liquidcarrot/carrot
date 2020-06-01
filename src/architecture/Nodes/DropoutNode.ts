@@ -47,7 +47,7 @@ export class DropoutNode extends ConstantNode {
             this.state = incomingConnection.from.activation * incomingConnection.weight * incomingConnection.gain;
             this.state *= 1 / (1 - this.probability);
         }
-        this.activation = this.squash.calc(this.state, false) * this.mask;
+        this.activation = this.squash(this.state, false) * this.mask;
 
         // Adjust gain
         this.gated.forEach(conn => conn.gain = this.activation);

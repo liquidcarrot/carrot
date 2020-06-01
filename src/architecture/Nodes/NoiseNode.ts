@@ -76,8 +76,8 @@ export class NoiseNode extends ConstantNode {
 
         }
 
-        this.activation = this.squash.calc(this.state, false) * this.mask;
-        this.derivativeState = this.squash.calc(this.state, true);
+        this.activation = this.squash(this.state, false) * this.mask;
+        this.derivativeState = this.squash(this.state, true);
 
         return this.activation;
     }

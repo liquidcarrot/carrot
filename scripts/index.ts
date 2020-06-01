@@ -22,7 +22,6 @@ import {ConstantNode} from "../src/architecture/Nodes/ConstantNode";
 import {DropoutNode} from "../src/architecture/Nodes/DropoutNode";
 import {NoiseNode} from "../src/architecture/Nodes/NoiseNode";
 import {PoolNode} from "../src/architecture/Nodes/PoolNode";
-import {ActivationType} from "../src/enums/ActivationType";
 import {ConnectionType} from "../src/enums/ConnectionType";
 import {GatingType} from "../src/enums/GatingType";
 import {NodeType, NoiseNodeType, PoolNodeType} from "../src/enums/NodeType";
@@ -31,25 +30,7 @@ import {EvolveOptions} from "../src/interfaces/EvolveOptions";
 import {NetworkJSON} from "../src/interfaces/NetworkJSON";
 import {DropoutNodeJSON, NodeJSON, PoolNodeJSON} from "../src/interfaces/NodeJSON";
 import {TrainOptions} from "../src/interfaces/TrainOptions";
-import {
-    AbsoluteActivation,
-    Activation,
-    ALL_ACTIVATIONS,
-    BentIdentityActivation,
-    BipolarActivation,
-    BipolarSigmoidActivation,
-    GaussianActivation,
-    HardTanhActivation,
-    IdentityActivation,
-    InverseActivation,
-    LogisticActivation,
-    RELUActivation,
-    SELUActivation,
-    SinusoidActivation,
-    SoftSignActivation,
-    StepActivation,
-    TanhActivation
-} from "../src/methods/Activation";
+import {ALL_ACTIVATIONS} from "../src/methods/Activation";
 import {
     ALL_LOSSES,
     BinaryLoss,
@@ -127,7 +108,6 @@ export {
     Connection,
     Network,
     Node,
-    ActivationType,
     ConnectionType,
     GatingType,
     NodeType,
@@ -141,22 +121,6 @@ export {
     DropoutNodeJSON,
     TrainOptions,
     ALL_ACTIVATIONS,
-    Activation,
-    LogisticActivation,
-    TanhActivation,
-    IdentityActivation,
-    StepActivation,
-    RELUActivation,
-    SoftSignActivation,
-    SinusoidActivation,
-    GaussianActivation,
-    BentIdentityActivation,
-    BipolarActivation,
-    BipolarSigmoidActivation,
-    HardTanhActivation,
-    AbsoluteActivation,
-    InverseActivation,
-    SELUActivation,
     ALL_LOSSES,
     Loss,
     MSELoss,
