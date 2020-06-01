@@ -30,8 +30,36 @@ import {EvolveOptions} from "../src/interfaces/EvolveOptions";
 import {NetworkJSON} from "../src/interfaces/NetworkJSON";
 import {DropoutNodeJSON, NodeJSON, PoolNodeJSON} from "../src/interfaces/NodeJSON";
 import {TrainOptions} from "../src/interfaces/TrainOptions";
-import {ALL_ACTIVATIONS} from "../src/methods/Activation";
-import {ALL_LOSSES} from "../src/methods/Loss";
+import {
+    AbsoluteActivation,
+    ALL_ACTIVATIONS,
+    BentIdentityActivation,
+    BipolarActivation,
+    BipolarSigmoidActivation,
+    GaussianActivation,
+    HardTanhActivation,
+    IdentityActivation,
+    InverseActivation,
+    LogisticActivation,
+    MISHActivation,
+    RELUActivation,
+    SELUActivation,
+    SinusoidActivation,
+    SoftSignActivation,
+    StepActivation,
+    TanhActivation
+} from "../src/methods/Activation";
+import {
+    ALL_LOSSES,
+    BinaryLoss,
+    HINGELoss,
+    MAELoss,
+    MAPELoss,
+    MBELoss,
+    MSELoss,
+    MSLELoss,
+    WAPELoss
+} from "../src/methods/Loss";
 import {
     AddBackConnectionMutation,
     AddConnectionMutation,
@@ -111,7 +139,31 @@ export {
     DropoutNodeJSON,
     TrainOptions,
     ALL_ACTIVATIONS,
+    LogisticActivation,
+    TanhActivation,
+    IdentityActivation,
+    StepActivation,
+    RELUActivation,
+    SoftSignActivation,
+    SinusoidActivation,
+    GaussianActivation,
+    BentIdentityActivation,
+    BipolarActivation,
+    BipolarSigmoidActivation,
+    HardTanhActivation,
+    AbsoluteActivation,
+    InverseActivation,
+    SELUActivation,
+    MISHActivation,
     ALL_LOSSES,
+    MSELoss,
+    MBELoss,
+    BinaryLoss,
+    MAELoss,
+    MAPELoss,
+    WAPELoss,
+    MSLELoss,
+    HINGELoss,
     ALL_MUTATIONS,
     FEEDFORWARD_MUTATIONS,
     NO_STRUCTURE_MUTATIONS,
