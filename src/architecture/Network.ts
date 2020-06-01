@@ -879,36 +879,40 @@ export class Network {
 
         const neat: NEAT = new NEAT(options);
 
-        let error: number = -Infinity;
-        let bestFitness: number = -Infinity;
+        let error: number;
+        let bestFitness: number | undefined;
         let bestGenome: Network | undefined;
 
         // run until error goal is reached or iteration goal is reached
-        while (error < -targetError && (options.iterations === 0 || neat.generation < (options.iterations ?? 0))) {
+        do {
             const fittest: Network = await neat.evolve(); // run one generation
-            const fitness: number = fittest.score ?? -Infinity;
+
+            if (!fittest.score) {
+                throw new ReferenceError();
+            }
+
             // add the growth value back to get the real error
-            error = fitness + options.growth * (
+            error = fittest.score + options.growth * (
                 fittest.nodes.length
-                - fittest.inputSize
-                - fittest.outputSize
                 + fittest.connections.length
                 + fittest.gates.length
+                - fittest.inputSize
+                - fittest.outputSize
             );
 
-            if (fitness > bestFitness) {
-                bestFitness = fitness;
+            if (!bestFitness || fittest.score > bestFitness) {
+                bestFitness = fittest.score;
                 bestGenome = fittest;
             }
 
             if ((options.log ?? 0) > 0 && neat.generation % (options.log ?? 0) === 0) {
-                console.log(`iteration`, neat.generation, `fitness`, fitness, `error`, -error);
+                console.log(`iteration`, neat.generation, `fitness`, fittest.score, `error`, -error);
             }
 
             if (options.schedule && neat.generation % options.schedule.iterations === 0) {
-                options.schedule.function(fitness, -error, neat.generation);
+                options.schedule.function(fittest.score, -error, neat.generation);
             }
-        }
+        } while (error < -targetError && (options.iterations === 0 || neat.generation < (options.iterations ?? 0)));
 
         if (bestGenome !== undefined) {
             // set this network to the fittest from NEAT
