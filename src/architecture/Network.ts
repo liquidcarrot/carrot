@@ -8,7 +8,7 @@ import {ConnectionJSON} from "../interfaces/ConnectionJSON";
 import {EvolveOptions} from "../interfaces/EvolveOptions";
 import {NetworkJSON} from "../interfaces/NetworkJSON";
 import {TrainOptions} from "../interfaces/TrainOptions";
-import {ALL_LOSSES, Loss, MSELoss} from "../methods/Loss";
+import {MSELoss} from "../methods/Loss";
 import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
 import {FixedRate} from "../methods/Rate";
 import {getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../methods/Utils";
@@ -613,7 +613,7 @@ export class Network {
         // Use the default values, if no value is given
         options.iterations = getOrDefault(options.iterations, -1);
         options.error = getOrDefault(options.error, -1);
-        options.loss = getOrDefault(options.loss, new MSELoss());
+        options.loss = getOrDefault(options.loss, MSELoss);
         options.dropout = getOrDefault(options.dropout, 0);
         options.momentum = getOrDefault(options.momentum, 0);
         options.batchSize = Math.min(options.dataset.length, getOrDefault(options.batchSize, options.dataset.length));
@@ -731,14 +731,14 @@ export class Network {
          * The output values of the dataset.
          */
         output: number[]
-    }[], loss: Loss = new MSELoss()): number {
+    }[], loss: (targets: number[], outputs: number[]) => number = MSELoss): number {
         let error: number = 0;
 
         for (const entry of dataset) {
             const input: number[] = entry.input;
             const target: number[] = entry.output;
             const output: number[] = this.activate(input, {trace: false});
-            error += loss.calc(target, output);
+            error += loss(target, output);
         }
 
         return error / dataset.length;
@@ -820,7 +820,7 @@ export class Network {
 
         // set options to default if necessary
         options.growth = getOrDefault<number>(options.growth, 0.0001);
-        options.loss = getOrDefault(options.loss, new MSELoss());
+        options.loss = getOrDefault(options.loss, MSELoss);
         options.maxNodes = getOrDefault(options.maxNodes, Infinity);
         options.maxConnections = getOrDefault(options.maxConnections, Infinity);
         options.maxGates = getOrDefault(options.maxGates, Infinity);
@@ -851,7 +851,7 @@ export class Network {
                             return;
                         }
                         // test the genome
-                        genome.score = -await test(serializedDataSet, JSON.stringify(genome.toJSON()), ALL_LOSSES.indexOf(options.loss ?? new MSELoss()));
+                        genome.score = -await test(serializedDataSet, JSON.stringify(genome.toJSON()), options.loss ?? MSELoss);
                         if (genome.score === undefined) {
                             genome.score = -Infinity;
                             return;
@@ -964,7 +964,7 @@ export class Network {
         /**
          * The loss function.
          */
-        loss?: Loss,
+        loss?: (targets: number[], outputs: number[]) => number,
         /**
          * The dropout rate
          */
@@ -980,7 +980,7 @@ export class Network {
             const output: number[] = this.activate(input, {dropoutRate: options.dropoutRate ?? 0.5});
             this.propagate(correctOutput, {rate: options.trainingRate, momentum: options.momentum, update});
 
-            errorSum += (options.loss ?? new MSELoss()).calc(correctOutput, output);
+            errorSum += (options.loss ?? MSELoss)(correctOutput, output);
         }
         return errorSum / options.dataset.length;
     }

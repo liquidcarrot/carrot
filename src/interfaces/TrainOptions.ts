@@ -1,4 +1,3 @@
-import {Loss} from "../methods/Loss";
 import {Rate} from "../methods/Rate";
 
 /**
@@ -29,7 +28,7 @@ export interface TrainOptions {
     /**
      * The [options.loss function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
      */
-    loss?: Loss;
+    loss?: (targets: number[], outputs: number[]) => number;
     /**
      * Sets amount of training cycles the process will maximally run, even when the target error has not been reached.
      */

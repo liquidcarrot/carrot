@@ -31,17 +31,7 @@ import {NetworkJSON} from "../src/interfaces/NetworkJSON";
 import {DropoutNodeJSON, NodeJSON, PoolNodeJSON} from "../src/interfaces/NodeJSON";
 import {TrainOptions} from "../src/interfaces/TrainOptions";
 import {ALL_ACTIVATIONS} from "../src/methods/Activation";
-import {
-    ALL_LOSSES,
-    BinaryLoss,
-    HINGELoss,
-    Loss,
-    MAELoss,
-    MAPELoss,
-    MSELoss,
-    MSLELoss,
-    WAPELoss
-} from "../src/methods/Loss";
+import {ALL_LOSSES} from "../src/methods/Loss";
 import {
     AddBackConnectionMutation,
     AddConnectionMutation,
@@ -122,14 +112,6 @@ export {
     TrainOptions,
     ALL_ACTIVATIONS,
     ALL_LOSSES,
-    Loss,
-    MSELoss,
-    BinaryLoss,
-    MAELoss,
-    MAPELoss,
-    WAPELoss,
-    MSLELoss,
-    HINGELoss,
     ALL_MUTATIONS,
     FEEDFORWARD_MUTATIONS,
     NO_STRUCTURE_MUTATIONS,
