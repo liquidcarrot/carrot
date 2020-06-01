@@ -785,34 +785,8 @@ export class Network {
      * Evolves the network to reach a lower error on a dataset using the [NEAT algorithm](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf)
      *
      * If both `iterations` and `error` options are unset, evolve will default to `iterations` as an end condition.
+     *
      * @param {object} [options] Configuration options
-     * @param {number} [options.iterations=1000] Set the maximum amount of iterations/generations for the algorithm to run.
-     * @param {number} [options.error=0.05] Set the target error. The algorithm will stop once this target error has been reached.
-     * @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connections.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
-     * @param {loss} [options.loss=loss.MSE]  Specify the loss function for the evolution, this tells a genome in the population how well it's performing. Default: methods.loss.MSE (recommended).
-     * @param {number} [options.amount=1] Set the amount of times to test the trainingSet on a genome each generation. Useful for time series. Do not use for regular feed forward problems.
-     * @param {number} [options.threads] Specify the amount of threads to use. Default value is the amount of cores in your CPU.
-     * @param {Network} [options.network]
-     * @param {number|boolean} [options.log=false] If set to n, outputs training status every n iterations. Setting `log` to 1 will log the status every iteration
-     * @param {number} [options.schedule.iterations] You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
-     * @param {schedule} [options.schedule.function] A function to run every n iterations as set by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
-     * @param {boolean} [options.clear=false] If set to true, will clear the network after every activation. This is useful for evolving recurrent networks, more importantly for time series prediction.
-     * @param {boolean} [options.equal=true] If set to true when [Network.crossOver](Network.crossOver) runs it will assume both genomes are equally fit.
-     * @param {number} [options.populationSize=50] Population size of each generation.
-     * @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
-     * @param {number} [options.provenance=0] Number of genomes inserted into the original network template (Network(input,output)) per evolution.
-     * @param {number} [options.mutationRate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated.
-     * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
-     * @param {boolean} [options.fitnessPopulation=true] Flag to return the fitness of a population of genomes. false => evaluate each genome individually. true => evaluate entire population. Adjust fitness function accordingly
-     * @param {Function} [options.fitness] - A fitness function to evaluate the networks. Takes a `genome`, i.e. a [network](Network), and a `dataset` and sets the genome's score property
-     * @param {string} [options.selection=new FitnessProportionateSelection()] [Selection method](selection) for evolution (e.g. methods.Selection.FITNESS_PROPORTIONATE).
-     * @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
-     * @param {Array} [options.mutation] Sets allowed [mutation methods](mutation) for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
-     * @param {number} [options.maxNodes=Infinity] Maximum nodes for a potential network
-     * @param {number} [options.maxConnections=Infinity] Maximum connections for a potential network
-     * @param {number} [options.maxGates=Infinity] Maximum gates for a potential network
-     * @param {function} [options.mutationSelection=random] Custom mutation selection function if given
-     * @param {boolean} [options.efficientMutation=false] Test & reduce [mutation methods](mutation) to avoid failed mutation attempts
      *
      * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance. <br /> Properties include: `error` - error of the best genome, `iterations` - generations used to evolve networks, `time` - clock time elapsed while evolving
      */
@@ -851,6 +825,8 @@ export class Network {
         options.maxNodes = getOrDefault(options.maxNodes, Infinity);
         options.maxConnections = getOrDefault(options.maxConnections, Infinity);
         options.maxGates = getOrDefault(options.maxGates, Infinity);
+        options.input = this.inputSize;
+        options.output = this.outputSize;
 
         const start: number = Date.now();
 

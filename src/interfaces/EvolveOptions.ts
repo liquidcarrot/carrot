@@ -5,11 +5,11 @@ import {Mutation} from "../methods/Mutation";
 import {Selection} from "../methods/Selection";
 
 /**
- * Options for evolving a network.
+ * Options used to evolve network
  */
 export interface EvolveOptions {
     /**
-     * Number of CPU cores used for evolution.
+     * Specify the amount of threads to use. Default value is the amount of cores in your CPU.
      */
     threads?: number;
     /**
@@ -21,7 +21,7 @@ export interface EvolveOptions {
      */
     output?: number;
     /**
-     * The dataset to train on.
+     * A data of input values and ideal output values to train the network with.
      */
     dataset?: {
         /**
@@ -42,39 +42,39 @@ export interface EvolveOptions {
      */
     template?: Network;
     /**
-     * All allowed mutation methods.
+     * Sets allowed [mutation methods](Mutation) for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
      */
     mutations?: Mutation[];
     /**
-     * All allowed activation methods.
+     * Sets allowed [activation methods](Activation) for evolution, a random activation method will be chosen from the array when mutation occurs.
      */
     activations?: ActivationType[];
     /**
-     * The Selection method to use.
+     * [Selection method](selection) for evolution (e.g. methods.Selection.FITNESS_PROPORTIONATE).
      */
     selection?: Selection;
     /**
-     * The probability to mutate a genome.
+     * Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated.
      */
     mutationRate?: number;
     /**
-     * The amount of mutations done to a genome.
+     * If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
      */
     mutationAmount?: number;
     /**
-     * The number of template networks added to each new population.
+     * Number of genomes inserted into the original network template (Network(input,output)) per evolution.
      */
     provenance?: number;
     /**
-     * The number of elitists, which won't be deleted or mutated.
+     * Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
      */
     elitism?: number;
     /**
-     * The number of genomes in a population.
+     * Population size of each generation.
      */
     populationSize?: number;
     /**
-     * The function which evaluates a population.
+     * A fitness function to evaluate the networks. Takes a `genome`, i.e. a [network](Network), and a `dataset` and sets the genome's score property
      *
      * @param population The population which needs to be evaluated
      * @param dataset The dataset to test the networks.
@@ -90,44 +90,43 @@ export interface EvolveOptions {
         output: number[]
     }[]) => Promise<void>;
     /**
-     * The penalty of creating bigger networks.
+     * Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connections.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
      */
     growth?: number;
     /**
-     * The function to calculate the loss value.
+     * Specify the loss function for the evolution, this tells a genome in the population how well it's performing. Default: methods.loss.MSE (recommended).
      */
     loss?: Loss;
     /**
-     * The maximum allowed nodes.
+     * Maximum nodes for a potential network
      */
     maxNodes?: number;
     /**
-     * The maximum allowed connections.
+     * Maximum connections for a potential network
      */
     maxConnections?: number;
     /**
-     * The maximum allowed gates.
+     * Maximum gates for a potential network
      */
     maxGates?: number;
     /**
-     * Handle two networks as equally fit at crossover.
+     * If set to true when [Network.crossOver](Network.crossOver) runs it will assume both genomes are equally fit.
      */
     equal?: boolean;
     /**
-     * log = 10 -> logging every 10th iteration
-     * log = 0 -> logging never
+     * If set to n, outputs training status every n iterations. Setting `log` to 1 will log the status every iteration
      */
     log?: number;
     /**
-     * A function which runs after every schedule.iterations
+     * You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
      */
     schedule?: {
         /**
-         * After every amount of "iterations" the function runs.
+         * You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
          */
         iterations: number,
         /**
-         * The function to run.
+         * A function to run every n iterations as set by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
          *
          * @param fitness the fitness value of the best genome
          * @param error the current network error
@@ -136,15 +135,15 @@ export interface EvolveOptions {
         function: (fitness: number, error: number, iteration: number) => undefined
     };
     /**
-     * Clear all node states at the end of each iteration
+     * If set to true, will clear the network after every activation. This is useful for evolving recurrent networks, more importantly for time series prediction.
      */
     clear?: boolean;
     /**
-     * The number of iterations to train.
+     * Set the maximum amount of iterations/generations for the algorithm to run.
      */
     iterations?: number;
     /**
-     * The target error value
+     * Set the target error. The algorithm will stop once this target error has been reached.
      */
     error?: number;
 }
