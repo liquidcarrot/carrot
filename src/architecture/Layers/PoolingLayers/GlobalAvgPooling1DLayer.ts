@@ -1,3 +1,4 @@
+import {activationType} from "../../../methods/Activation";
 import {AvgPooling1DLayer} from "./AvgPooling1DLayer";
 
 /**
@@ -8,7 +9,7 @@ export class GlobalAvgPooling1DLayer extends AvgPooling1DLayer {
         /**
          * The activation type for the output nodes of this layer.
          */
-        activation?: ((x: number, derivative: boolean) => number)
+        activation?: activationType
     } = {}) {
         super(1, options);
     }

@@ -1,4 +1,5 @@
 import {Network} from "../architecture/Network";
+import {activationType} from "../methods/Activation";
 import {Mutation} from "../methods/Mutation";
 import {Selection} from "../methods/Selection";
 
@@ -46,7 +47,7 @@ export interface EvolveOptions {
     /**
      * Sets allowed [activation methods](Activation) for evolution, a random activation method will be chosen from the array when mutation occurs.
      */
-    activations?: ((x: number, derivative: boolean) => number)[];
+    activations?: activationType[];
     /**
      * [Selection method](selection) for evolution (e.g. methods.Selection.FITNESS_PROPORTIONATE).
      */

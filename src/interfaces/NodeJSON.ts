@@ -1,4 +1,5 @@
 import {PoolNodeType} from "../enums/NodeType";
+import {activationType} from "../methods/Activation";
 
 /**
  * An interface for representing a node with an json object
@@ -15,7 +16,7 @@ export interface NodeJSON {
     /**
      * The activation type of this node
      */
-    squash?: ((x: number, derivative: boolean) => number);
+    squash?: activationType;
     /**
      * The mask value of this node
      */

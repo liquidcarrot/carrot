@@ -1,6 +1,6 @@
 import {Network} from "./architecture/Network";
 import {EvolveOptions} from "./interfaces/EvolveOptions";
-import {ALL_ACTIVATIONS} from "./methods/Activation";
+import {activationType, ALL_ACTIVATIONS} from "./methods/Activation";
 import {
     AddConnectionMutation,
     AddGateMutation,
@@ -114,7 +114,7 @@ export class NEAT {
     /**
      * Sets allowed activations for evolution, a random activation method will be chosen from the array when activation mutation occurs.
      */
-    private readonly activations: ((x: number, derivative: boolean) => number)[];
+    private readonly activations: activationType[];
 
     /**
      * Constructs a NEAT object.

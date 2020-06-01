@@ -1,6 +1,6 @@
 import {NodeType} from "../enums/NodeType";
 import {NodeJSON} from "../interfaces/NodeJSON";
-import {ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
+import {activationType, ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
 import {ModBiasMutation} from "../methods/Mutation";
 import {getOrDefault, pickRandom, randDouble, removeFromArray} from "../methods/Utils";
 import {Connection} from "./Connection";
@@ -49,7 +49,7 @@ export class Node {
     /**
      * [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0)
      */
-    public squash: ((x: number, derivative: boolean) => number);
+    public squash: activationType;
     /**
      * index
      */
@@ -161,9 +161,9 @@ export class Node {
     /**
      * Mutates the node's activation function
      */
-    public mutateActivation(allowedActivations: ((x: number, derivative: boolean) => number)[] = Object.values(ALL_ACTIVATIONS)): void {
+    public mutateActivation(allowedActivations: activationType[] = Object.values(ALL_ACTIVATIONS)): void {
         // pick a random activation from allowed activations except the current activation
-        const possible: ((x: number, derivative: boolean) => number)[] = allowedActivations.filter(activation => activation !== this.squash);
+        const possible: activationType[] = allowedActivations.filter(activation => activation !== this.squash);
         if (possible.length > 0) {
             this.squash = pickRandom(possible);
         }
@@ -513,7 +513,7 @@ export class Node {
      *
      * @param activation the new activation type
      */
-    public setActivationType(activation: ((x: number, derivative: boolean) => number)): Node {
+    public setActivationType(activation: activationType): Node {
         this.squash = activation;
         return this;
     }

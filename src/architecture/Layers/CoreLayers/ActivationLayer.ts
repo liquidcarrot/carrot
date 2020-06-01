@@ -1,5 +1,5 @@
 import {ConnectionType} from "../../../enums/ConnectionType";
-import {LogisticActivation} from "../../../methods/Activation";
+import {activationType, LogisticActivation} from "../../../methods/Activation";
 import {ActivationNode} from "../../Nodes/ActivationNode";
 import {Layer} from "../Layer";
 
@@ -12,11 +12,11 @@ export class ActivationLayer extends Layer {
         /**
          * The activation type for the output nodes of this layer.
          */
-        activation?: ((x: number, derivative: boolean) => number)
+        activation?: activationType
     } = {}) {
         super(outputSize);
 
-        const activation: ((x: number, derivative: boolean) => number) = options.activation ?? LogisticActivation;
+        const activation: activationType = options.activation ?? LogisticActivation;
 
         for (let i: number = 0; i < outputSize; i++) {
             this.inputNodes.add(new ActivationNode().setActivationType(activation));

@@ -8,6 +8,7 @@ import {ConnectionJSON} from "../interfaces/ConnectionJSON";
 import {EvolveOptions} from "../interfaces/EvolveOptions";
 import {NetworkJSON} from "../interfaces/NetworkJSON";
 import {TrainOptions} from "../interfaces/TrainOptions";
+import {activationType} from "../methods/Activation";
 import {MSELoss} from "../methods/Loss";
 import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
 import {FixedRate} from "../methods/Rate";
@@ -546,7 +547,7 @@ export class Network {
         /**
          * All allowed activations
          */
-        allowedActivations?: ((x: number, derivative: boolean) => number)[]
+        allowedActivations?: activationType[]
     }): void {
         method.mutate(this, options);
     }
@@ -576,7 +577,7 @@ export class Network {
         /**
          * All allowed activations
          */
-        allowedActivations?: ((x: number, derivative: boolean) => number)[]
+        allowedActivations?: activationType[]
     } = {}): void {
         if (allowedMethods.length === 0) {
             return;

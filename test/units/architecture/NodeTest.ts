@@ -3,6 +3,7 @@ import {Connection} from "../../../src/architecture/Connection";
 import {Node} from "../../../src/architecture/Node";
 import {NodeType} from "../../../src/enums/NodeType";
 import {NodeJSON} from "../../../src/interfaces/NodeJSON";
+import {activationType} from "../../../src/methods/Activation";
 import {ModBiasMutation} from "../../../src/methods/Mutation";
 import {randDouble, randInt} from "../../../src/methods/Utils";
 
@@ -267,7 +268,7 @@ describe("Node", function (): void {
     describe("node.mutate()", function (): void {
         it("node.mutate(options={ method: methods.mutation.MOD_ACTIVATION }) => {undefined}", function (): void {
             const node: Node = new Node();
-            const squash: ((x: number, derivative: boolean) => number) = node.squash;
+            const squash: activationType = node.squash;
             const bias: number = node.bias;
 
             node.mutateActivation();
@@ -278,7 +279,7 @@ describe("Node", function (): void {
         });
         it("node.mutate(options={ method: methods.mutation.MOD_BIAS }) => {undefined}", function (): void {
             const node: Node = new Node();
-            const squash: ((x: number, derivative: boolean) => number) = node.squash;
+            const squash: activationType = node.squash;
             const bias: number = node.bias;
 
             node.mutateBias(new ModBiasMutation(-1, 1));
