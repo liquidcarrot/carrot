@@ -1,5 +1,6 @@
 import {Network} from "../architecture/Network";
 import {activationType} from "../methods/Activation";
+import {lossType} from "../methods/Loss";
 import {Mutation} from "../methods/Mutation";
 import {Selection} from "../methods/Selection";
 
@@ -95,7 +96,7 @@ export interface EvolveOptions {
     /**
      * Specify the loss function for the evolution, this tells a genome in the population how well it's performing. Default: methods.loss.MSE (recommended).
      */
-    loss?: (targets: number[], outputs: number[]) => number;
+    loss?: lossType;
     /**
      * Maximum nodes for a potential network
      */

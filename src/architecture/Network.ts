@@ -9,7 +9,7 @@ import {EvolveOptions} from "../interfaces/EvolveOptions";
 import {NetworkJSON} from "../interfaces/NetworkJSON";
 import {TrainOptions} from "../interfaces/TrainOptions";
 import {activationType} from "../methods/Activation";
-import {MSELoss} from "../methods/Loss";
+import {lossType, MSELoss} from "../methods/Loss";
 import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
 import {FixedRate} from "../methods/Rate";
 import {getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../methods/Utils";
@@ -719,7 +719,7 @@ export class Network {
      * Tests a set and returns the error and elapsed time
      *
      * @param {Array<{input:number[],output:number[]}>} dataset A set of input values and ideal output values to test the network against
-     * @param {(targets: number[], outputs: number[]) => number} [loss=MSELoss] The [loss function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
+     * @param {lossType} [loss=MSELoss] The [loss function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
      *
      * @returns {number} A summary object of the network's performance
      */
@@ -732,7 +732,7 @@ export class Network {
          * The output values of the dataset.
          */
         output: number[]
-    }[], loss: (targets: number[], outputs: number[]) => number = MSELoss): number {
+    }[], loss: lossType = MSELoss): number {
         let error: number = 0;
 
         for (const entry of dataset) {
@@ -965,7 +965,7 @@ export class Network {
         /**
          * The loss function.
          */
-        loss?: (targets: number[], outputs: number[]) => number,
+        loss?: lossType,
         /**
          * The dropout rate
          */
