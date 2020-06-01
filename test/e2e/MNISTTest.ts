@@ -4,7 +4,8 @@ const mnist: any = require("mnist");
 import {expect} from "chai";
 import {Network} from "../../src/architecture/Network";
 import {EvolveOptions} from "../../src/interfaces/EvolveOptions";
-import {LogisticActivation, MISHActivation, RELUActivation} from "../../src/methods/Activation";
+import {IdentityActivation, RELUActivation} from "../../src/methods/Activation";
+import {BinaryLoss} from "../../src/methods/Loss";
 import {FEEDFORWARD_MUTATIONS} from "../../src/methods/Mutation";
 
 describe('MNIST', () => {
@@ -52,22 +53,23 @@ describe('MNIST', () => {
         }[] = set.training;
 
         const net: Network = new Network(trainingSet[0].input.length, trainingSet[0].output.length);
-        const errorBefore: number = net.test(trainingSet);
+        const errorBefore: number = net.test(trainingSet, BinaryLoss);
 
         const options: EvolveOptions = {
             dataset: trainingSet,
             populationSize: 20,
-            elitism: 2,
+            elitism: 1,
+            log: 1,
             mutations: FEEDFORWARD_MUTATIONS,
-            activations: [RELUActivation, MISHActivation, LogisticActivation],
-            mutationAmount: 20,
-            mutationRate: 0.6,
-            iterations: 20,
-            error: 0,
+            activations: [RELUActivation, IdentityActivation],
+            mutationAmount: 10,
+            mutationRate: 0.4,
+            iterations: 30,
+            loss: BinaryLoss
         };
         await net.evolve(options);
 
-        const errorAfter: number = net.test(trainingSet);
+        const errorAfter: number = net.test(trainingSet, BinaryLoss);
 
         expect(Number.isFinite(errorAfter)).to.be.true;
         expect(errorAfter).to.be.at.most(errorBefore);
