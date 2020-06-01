@@ -15,12 +15,12 @@
   "toc": [
     "NEAT",
     "Network",
+    "Layer",
     "Architect",
     "Node",
     "Connection",
     "Mutation",
     "Rate",
-    "Selection",
-    "Layer"
+    "Selection"
   ]
 }
