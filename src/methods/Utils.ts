@@ -101,10 +101,10 @@ function shuffle<T>(array: T[]): T[] {
  * @param array
  */
 function max(array: number[]): number {
-    let maxValue: number = -Infinity;
-    for (const value of array) {
-        if (value > maxValue) {
-            maxValue = value;
+    let maxValue: number = array[0];
+    for (let i: number = 1; i < array.length; i++) {
+        if (array[i] > maxValue) {
+            maxValue = array[i];
         }
     }
     return maxValue;
@@ -118,7 +118,7 @@ function max(array: number[]): number {
 function maxValueIndex(array: number[]): number {
     let maxValue: number = array[0];
     let maxValueIndex: number = 0;
-    for (let i: number = 0; i < array.length; i++) {
+    for (let i: number = 1; i < array.length; i++) {
         if (array[i] > maxValue) {
             maxValue = array[i];
             maxValueIndex = i;
@@ -135,7 +135,7 @@ function maxValueIndex(array: number[]): number {
 function minValueIndex(array: number[]): number {
     let minValue: number = array[0];
     let minValueIndex: number = 0;
-    for (let i: number = 0; i < array.length; i++) {
+    for (let i: number = 1; i < array.length; i++) {
         if (array[i] < minValue) {
             minValue = array[i];
             minValueIndex = i;
@@ -150,10 +150,10 @@ function minValueIndex(array: number[]): number {
  * @param array
  */
 function min(array: number[]): number {
-    let minValue: number = Infinity;
-    for (const value of array) {
-        if (value < minValue) {
-            minValue = value;
+    let minValue: number = array[0];
+    for (let i: number = 1; i < array.length; i++) {
+        if (array[i] < minValue) {
+            minValue = array[i];
         }
     }
     return minValue;
