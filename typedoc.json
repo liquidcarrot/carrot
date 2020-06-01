@@ -22,6 +22,7 @@
     "Loss",
     "Mutation",
     "Rate",
-    "Selection"
+    "Selection",
+    "Layer"
   ]
 }
