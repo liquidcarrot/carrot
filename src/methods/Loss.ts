@@ -15,32 +15,6 @@ abstract class Loss {
 }
 
 /**
- * Cross entropy error
- *
- * @see {@link http://bit.ly/2p5W29A | Cross-entropy Error Function}
- * @param targets Ideal value
- * @param outputs Actual values
- *
- * @return [Cross entropy error](https://ml-cheatsheet.readthedocs.io/en/latest/loss_functions.html)
- */
-class CrossEntropyLoss extends Loss {
-    /**
-     * Calculates the loss value from output to target.
-     *
-     * @param targets the target values
-     * @param outputs the real output values
-     * @returns the loss between output and target
-     */
-    public calc(targets: number[], outputs: number[]): number {
-        let error: number = 0;
-        outputs.forEach(((value, index) => {
-            error -= targets[index] * Math.log(Math.max(value, 1e-15)) + (1 - targets[index]) * Math.log(1 - Math.max(value, 1e-15));
-        }));
-        return error / outputs.length;
-    }
-}
-
-/**
  * Mean Squared Error
  *
  * @param targets Ideal value
@@ -247,7 +221,6 @@ class HINGELoss extends Loss {
 }
 
 const ALL_LOSSES: Loss[] = [
-    new CrossEntropyLoss(),
     new MSELoss(),
     new MBELoss(),
     new BinaryLoss(),
@@ -261,7 +234,6 @@ const ALL_LOSSES: Loss[] = [
 export {
     ALL_LOSSES,
     Loss,
-    CrossEntropyLoss,
     MSELoss,
     MBELoss,
     BinaryLoss,
