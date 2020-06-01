@@ -59,7 +59,6 @@ describe('MNIST', () => {
             dataset: trainingSet,
             populationSize: 20,
             elitism: 1,
-            log: 1,
             mutations: FEEDFORWARD_MUTATIONS,
             activations: [RELUActivation, IdentityActivation],
             mutationAmount: 10,
