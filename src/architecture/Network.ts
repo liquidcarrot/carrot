@@ -427,8 +427,6 @@ export class Network {
     /**
      * Makes a network node gate a connection
      *
-     * @todo Add ability to gate several network connections at once
-     *
      * @param {Node} node Gating node
      * @param {Connection} connection Connection to gate with node
      */
