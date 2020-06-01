@@ -9,7 +9,7 @@ import {EvolveOptions} from "../interfaces/EvolveOptions";
 import {NetworkJSON} from "../interfaces/NetworkJSON";
 import {TrainOptions} from "../interfaces/TrainOptions";
 import {activationType} from "../methods/Activation";
-import {lossType, MSELoss} from "../methods/Loss";
+import {ALL_LOSSES, lossType, MSELoss} from "../methods/Loss";
 import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
 import {FixedRate} from "../methods/Rate";
 import {getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../methods/Utils";
@@ -852,7 +852,7 @@ export class Network {
                             return;
                         }
                         // test the genome
-                        genome.score = -await test(serializedDataSet, JSON.stringify(genome.toJSON()), options.loss ?? MSELoss);
+                        genome.score = -await test(serializedDataSet, JSON.stringify(genome.toJSON()), Object.values(ALL_LOSSES).indexOf(options.loss ?? MSELoss));
                         if (genome.score === undefined) {
                             genome.score = -Infinity;
                             return;
