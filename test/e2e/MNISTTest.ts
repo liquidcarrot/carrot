@@ -3,8 +3,8 @@
 const mnist: any = require("mnist");
 import {expect} from "chai";
 import {Network} from "../../src/architecture/Network";
-import {ActivationType} from "../../src/enums/ActivationType";
 import {EvolveOptions} from "../../src/interfaces/EvolveOptions";
+import {LogisticActivation, MISHActivation, RELUActivation} from "../../src/methods/Activation";
 import {FEEDFORWARD_MUTATIONS} from "../../src/methods/Mutation";
 
 describe('MNIST', () => {
@@ -59,7 +59,7 @@ describe('MNIST', () => {
             populationSize: 20,
             elitism: 2,
             mutations: FEEDFORWARD_MUTATIONS,
-            activations: [ActivationType.RELUActivation, ActivationType.MISHActivation, ActivationType.LogisticActivation],
+            activations: [RELUActivation, MISHActivation, LogisticActivation],
             mutationAmount: 20,
             mutationRate: 0.6,
             iterations: 20,

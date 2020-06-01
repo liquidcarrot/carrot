@@ -1,8 +1,7 @@
-import {ActivationType} from "../../../enums/ActivationType";
 import {ConnectionType} from "../../../enums/ConnectionType";
 import {GatingType} from "../../../enums/GatingType";
 import {NodeType} from "../../../enums/NodeType";
-import {Activation} from "../../../methods/Activation";
+import {LogisticActivation, TanhActivation} from "../../../methods/Activation";
 import {Connection} from "../../Connection";
 import {Node} from "../../Node";
 import {Layer} from "../Layer";
@@ -16,7 +15,7 @@ export class LSTMLayer extends Layer {
         /**
          * The activation type for the output nodes of this layer.
          */
-        activationType?: ActivationType
+        activation?: ((x: number, derivative: boolean) => number)
     } = {}) {
         super(outputSize);
 
@@ -28,7 +27,7 @@ export class LSTMLayer extends Layer {
         for (let i: number = 0; i < outputSize; i++) {
             this.inputNodes.add(new Node(NodeType.HIDDEN));
             inputGate.push(new Node(NodeType.HIDDEN).setBias(1));
-            forgetGate.push(new Node(NodeType.HIDDEN).setBias(1).setActivationType(ActivationType.LogisticActivation));
+            forgetGate.push(new Node(NodeType.HIDDEN).setBias(1).setActivationType(LogisticActivation));
             memoryCell.push(new Node(NodeType.HIDDEN));
             outputGate.push(new Node(NodeType.HIDDEN).setBias(1));
             this.outputNodes.add(new Node(NodeType.HIDDEN));
@@ -59,9 +58,7 @@ export class LSTMLayer extends Layer {
         this.nodes.push(...outputGate);
         this.nodes.push(...Array.from(this.outputNodes));
 
-
-        const activation: Activation = Activation.getActivation(options.activationType ?? ActivationType.TanhActivation);
-        this.outputNodes.forEach(node => node.squash = activation);
+        this.outputNodes.forEach(node => node.squash = options.activation ?? TanhActivation);
     }
 
     /**

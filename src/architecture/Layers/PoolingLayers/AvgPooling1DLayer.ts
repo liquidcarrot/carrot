@@ -1,5 +1,5 @@
-import {ActivationType} from "../../../enums/ActivationType";
 import {PoolNodeType} from "../../../enums/NodeType";
+import {IdentityActivation} from "../../../methods/Activation";
 import {PoolNode} from "../../Nodes/PoolNode";
 import {PoolingLayer} from "./PoolingLayer";
 
@@ -11,11 +11,11 @@ export class AvgPooling1DLayer extends PoolingLayer {
         /**
          * The activation type for the output nodes of this layer.
          */
-        activationType?: ActivationType
+        activation?: ((x: number, derivative: boolean) => number)
     } = {}) {
         super(outputSize);
 
-        const activationType: ActivationType = options.activationType ?? ActivationType.IdentityActivation;
+        const activationType: ((x: number, derivative: boolean) => number) = options.activation ?? IdentityActivation;
 
         for (let i: number = 0; i < outputSize; i++) {
             this.inputNodes.add(new PoolNode(PoolNodeType.AVG_POOLING).setActivationType(activationType));

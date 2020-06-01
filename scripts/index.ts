@@ -1,28 +1,27 @@
+import {Architect} from "../src/architecture/Architect";
+import {Connection} from "../src/architecture/Connection";
 import {DenseLayer} from "../src/architecture/Layers/CoreLayers/DenseLayer";
-import {Node} from "../src/architecture/Node";
 import {DropoutLayer} from "../src/architecture/Layers/CoreLayers/DropoutLayer";
-import {NoiseLayer} from "../src/architecture/Layers/NoiseLayers/NoiseLayer";
-import {OutputLayer} from "../src/architecture/Layers/CoreLayers/OutputLayer";
 import {InputLayer} from "../src/architecture/Layers/CoreLayers/InputLayer";
+import {OutputLayer} from "../src/architecture/Layers/CoreLayers/OutputLayer";
+import {Layer} from "../src/architecture/Layers/Layer";
+import {NoiseLayer} from "../src/architecture/Layers/NoiseLayers/NoiseLayer";
 import {AvgPooling1DLayer} from "../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer";
-import {MinPooling1DLayer} from "../src/architecture/Layers/PoolingLayers/MinPooling1DLayer";
-import {MaxPooling1DLayer} from "../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer";
 import {GlobalAvgPooling1DLayer} from "../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer";
 import {GlobalMaxPooling1DLayer} from "../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer";
 import {GlobalMinPooling1DLayer} from "../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer";
+import {MaxPooling1DLayer} from "../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer";
+import {MinPooling1DLayer} from "../src/architecture/Layers/PoolingLayers/MinPooling1DLayer";
 import {PoolingLayer} from "../src/architecture/Layers/PoolingLayers/PoolingLayer";
 import {GRULayer} from "../src/architecture/Layers/RecurrentLayers/GRULayer";
 import {LSTMLayer} from "../src/architecture/Layers/RecurrentLayers/LSTMLayer";
 import {MemoryLayer} from "../src/architecture/Layers/RecurrentLayers/MemoryLayer";
-import {Layer} from "../src/architecture/Layers/Layer";
+import {Network} from "../src/architecture/Network";
+import {Node} from "../src/architecture/Node";
 import {ConstantNode} from "../src/architecture/Nodes/ConstantNode";
 import {DropoutNode} from "../src/architecture/Nodes/DropoutNode";
 import {NoiseNode} from "../src/architecture/Nodes/NoiseNode";
 import {PoolNode} from "../src/architecture/Nodes/PoolNode";
-import {Architect} from "../src/architecture/Architect";
-import {Connection} from "../src/architecture/Connection";
-import {Network} from "../src/architecture/Network";
-import {ActivationType} from "../src/enums/ActivationType";
 import {ConnectionType} from "../src/enums/ConnectionType";
 import {GatingType} from "../src/enums/GatingType";
 import {NodeType, NoiseNodeType, PoolNodeType} from "../src/enums/NodeType";
@@ -31,37 +30,8 @@ import {EvolveOptions} from "../src/interfaces/EvolveOptions";
 import {NetworkJSON} from "../src/interfaces/NetworkJSON";
 import {DropoutNodeJSON, NodeJSON, PoolNodeJSON} from "../src/interfaces/NodeJSON";
 import {TrainOptions} from "../src/interfaces/TrainOptions";
-import {
-    AbsoluteActivation,
-    Activation,
-    ALL_ACTIVATIONS,
-    BentIdentityActivation,
-    BipolarActivation,
-    BipolarSigmoidActivation,
-    GaussianActivation,
-    HardTanhActivation,
-    IdentityActivation,
-    InverseActivation,
-    LogisticActivation,
-    RELUActivation,
-    SELUActivation,
-    SinusoidActivation,
-    SoftSignActivation,
-    StepActivation,
-    TanhActivation
-} from "../src/methods/Activation";
-import {
-    ALL_LOSSES,
-    BinaryLoss,
-    CrossEntropyLoss,
-    HINGELoss,
-    Loss,
-    MAELoss,
-    MAPELoss,
-    MSELoss,
-    MSLELoss,
-    WAPELoss
-} from "../src/methods/Loss";
+import {ALL_ACTIVATIONS} from "../src/methods/Activation";
+import {ALL_LOSSES} from "../src/methods/Loss";
 import {
     AddBackConnectionMutation,
     AddConnectionMutation,
@@ -128,7 +98,6 @@ export {
     Connection,
     Network,
     Node,
-    ActivationType,
     ConnectionType,
     GatingType,
     NodeType,
@@ -142,32 +111,7 @@ export {
     DropoutNodeJSON,
     TrainOptions,
     ALL_ACTIVATIONS,
-    Activation,
-    LogisticActivation,
-    TanhActivation,
-    IdentityActivation,
-    StepActivation,
-    RELUActivation,
-    SoftSignActivation,
-    SinusoidActivation,
-    GaussianActivation,
-    BentIdentityActivation,
-    BipolarActivation,
-    BipolarSigmoidActivation,
-    HardTanhActivation,
-    AbsoluteActivation,
-    InverseActivation,
-    SELUActivation,
     ALL_LOSSES,
-    Loss,
-    CrossEntropyLoss,
-    MSELoss,
-    BinaryLoss,
-    MAELoss,
-    MAPELoss,
-    WAPELoss,
-    MSLELoss,
-    HINGELoss,
     ALL_MUTATIONS,
     FEEDFORWARD_MUTATIONS,
     NO_STRUCTURE_MUTATIONS,

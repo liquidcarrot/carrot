@@ -1,9 +1,7 @@
 import {Connection} from "../architecture/Connection";
 import {Network} from "../architecture/Network";
 import {Node} from "../architecture/Node";
-import {ActivationType} from "../enums/ActivationType";
 import {NodeType} from "../enums/NodeType";
-import {Activation} from "./Activation";
 import {pickRandom, randBoolean, randDouble} from "./Utils";
 
 /**
@@ -37,7 +35,7 @@ abstract class Mutation {
         /**
          * All allowed activations.
          */
-        allowedActivations?: ActivationType[]
+        allowedActivations?: ((x: number, derivative: boolean) => number)[]
     }): void;
 }
 
@@ -315,7 +313,7 @@ class ModActivationMutation extends Mutation {
         /**
          * All allowed activations.
          */
-        allowedActivations?: ActivationType[]
+        allowedActivations?: ((x: number, derivative: boolean) => number)[]
     }): void {
         const possible: Node[] = this.mutateOutput
             ? network.nodes.filter(node => !node.isInputNode()) // hidden and output nodes
@@ -511,7 +509,7 @@ class SwapNodesMutation extends Mutation {
 
             // change there parameters
             const biasTemp: number = node1.bias;
-            const squashTemp: Activation = node1.squash;
+            const squashTemp: ((x: number, derivative: boolean) => number) = node1.squash;
 
             node1.bias = node2.bias;
             node1.squash = node2.squash;

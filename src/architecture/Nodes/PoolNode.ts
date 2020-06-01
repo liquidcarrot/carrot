@@ -59,9 +59,9 @@ export class PoolNode extends ConstantNode {
             throw new ReferenceError("No valid pooling type! Type: " + this.poolingType);
         }
 
-        this.activation = this.squash.calc(this.state, false) * this.mask;
+        this.activation = this.squash(this.state, false) * this.mask;
         if (this.poolingType === PoolNodeType.AVG_POOLING) {
-            this.derivativeState = this.squash.calc(this.state, true);
+            this.derivativeState = this.squash(this.state, true);
         }
 
         // Adjust gain

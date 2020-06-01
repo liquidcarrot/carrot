@@ -1,6 +1,6 @@
-import {ActivationType} from "../../../enums/ActivationType";
 import {ConnectionType} from "../../../enums/ConnectionType";
 import {NodeType} from "../../../enums/NodeType";
+import {LogisticActivation} from "../../../methods/Activation";
 import {Node} from "../../Node";
 import {Layer} from "../Layer";
 
@@ -12,14 +12,12 @@ export class RNNLayer extends Layer {
         /**
          * The activation type for the output nodes of this layer.
          */
-        activationType?: ActivationType
+        activation?: ((x: number, derivative: boolean) => number)
     } = {}) {
         super(outputSize);
 
-        const activation: ActivationType = options.activationType ?? ActivationType.LogisticActivation;
-
         for (let i: number = 0; i < outputSize; i++) {
-            this.inputNodes.add(new Node(NodeType.HIDDEN).setActivationType(activation));
+            this.inputNodes.add(new Node(NodeType.HIDDEN).setActivationType(options.activation ?? LogisticActivation));
         }
 
         this.outputNodes = this.inputNodes;

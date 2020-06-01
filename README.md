@@ -3,8 +3,8 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/liquidcarrot/carrot/actions">
-        <img src="https://github.com/liquidcarrot/carrot/workflows/Node.js%20CI/badge.svg">
+    <a href="https://github.com/raimannma/carrot/actions">
+     <img src="https://github.com/raimannma/carrot/workflows/Node.js%20CI/badge.svg?branch=master">
     </a>
     <a href="https://gitter.im/carrot-ai/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badgee&utm_content=badge">
         <img src="https://badges.gitter.im/Join%20Chat.svg"

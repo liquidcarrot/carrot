@@ -1,4 +1,3 @@
-import {ActivationType} from "../../../enums/ActivationType";
 import {MaxPooling1DLayer} from "./MaxPooling1DLayer";
 
 /**
@@ -9,7 +8,7 @@ export class GlobalMaxPooling1DLayer extends MaxPooling1DLayer {
         /**
          * The activation type for the output nodes of this layer.
          */
-        activationType?: ActivationType
+        activation?: ((x: number, derivative: boolean) => number)
     } = {}) {
         super(1, options);
     }

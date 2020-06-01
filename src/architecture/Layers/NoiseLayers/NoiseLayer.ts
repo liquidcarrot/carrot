@@ -1,6 +1,6 @@
-import {ActivationType} from "../../../enums/ActivationType";
 import {ConnectionType} from "../../../enums/ConnectionType";
 import {NoiseNodeType} from "../../../enums/NodeType";
+import {IdentityActivation} from "../../../methods/Activation";
 import {NoiseNode} from "../../Nodes/NoiseNode";
 import {Layer} from "../Layer";
 
@@ -12,7 +12,7 @@ export class NoiseLayer extends Layer {
         /**
          * The activation type for the output nodes of this layer.
          */
-        activationType?: ActivationType,
+        activation?: ((x: number, derivative: boolean) => number),
         /**
          * The mean value for gaussian noise
          */
@@ -24,7 +24,7 @@ export class NoiseLayer extends Layer {
     } = {}) {
         super(outputSize);
 
-        const activation: ActivationType = options.activationType ?? ActivationType.IdentityActivation;
+        const activation: ((x: number, derivative: boolean) => number) = options.activation ?? IdentityActivation;
 
         for (let i: number = 0; i < outputSize; i++) {
             this.inputNodes.add(new NoiseNode({

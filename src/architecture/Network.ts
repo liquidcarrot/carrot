@@ -3,13 +3,12 @@ import {spawn, Worker} from "threads";
 import {Pool} from "threads/dist";
 import {WorkerFunction} from "threads/dist/types/worker";
 import "threads/register";
-import {ActivationType} from "../enums/ActivationType";
 import {NodeType} from "../enums/NodeType";
 import {ConnectionJSON} from "../interfaces/ConnectionJSON";
 import {EvolveOptions} from "../interfaces/EvolveOptions";
 import {NetworkJSON} from "../interfaces/NetworkJSON";
 import {TrainOptions} from "../interfaces/TrainOptions";
-import {ALL_LOSSES, Loss, MSELoss} from "../methods/Loss";
+import {MSELoss} from "../methods/Loss";
 import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
 import {FixedRate} from "../methods/Rate";
 import {getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../methods/Utils";
@@ -427,8 +426,6 @@ export class Network {
     /**
      * Makes a network node gate a connection
      *
-     * @todo Add ability to gate several network connections at once
-     *
      * @param {Node} node Gating node
      * @param {Connection} connection Connection to gate with node
      */
@@ -549,7 +546,7 @@ export class Network {
         /**
          * All allowed activations
          */
-        allowedActivations?: ActivationType[]
+        allowedActivations?: ((x: number, derivative: boolean) => number)[]
     }): void {
         method.mutate(this, options);
     }
@@ -579,7 +576,7 @@ export class Network {
         /**
          * All allowed activations
          */
-        allowedActivations?: ActivationType[]
+        allowedActivations?: ((x: number, derivative: boolean) => number)[]
     } = {}): void {
         if (allowedMethods.length === 0) {
             return;
@@ -592,22 +589,6 @@ export class Network {
      * Train the given data to this network
      *
      * @param {TrainOptions} options Options used to train network
-     * @param {Array<{input:number[],output:number[]}>} options.data A data of input values and ideal output values to train the network with
-     * @param {options.loss} [options.loss=new MSELoss()] The [options.loss function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
-     * @param {rate} [options.ratePolicy=new FixedRate(options.rate)] A [learning rate policy](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10), i.e. how to change the learning rate during training to get better network performance
-     * @param {number} [options.rate=0.3] Sets the [learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10) of the backpropagation process
-     * @param {number} [options.iterations=1000] Sets amount of training cycles the process will maximally run, even when the target error has not been reached.
-     * @param {number} [options.error] The target error to train for, once the network falls below this error, the process is stopped. Lower error rates require more training cycles.
-     * @param {number} [options.dropout=0] [Dropout rate](https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-options.dropout-in-deep-machine-learning-74334da4bfc5) likelihood for any given neuron to be ignored during network training. Must be between zero and one, numbers closer to one will result in more neurons ignored.
-     * @param {number} [options.momentum=0] [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html). Adds a fraction of the previous weight update to the current one.
-     * @param {number} [options.batchSize=1] Sets the (mini-) batch size of your training. Default: 1 [(online training)](https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes)
-     * @param {number} [options.crossValidate.testSize] Sets the amount of test cases that should be assigned to cross validation. If data to 0.4, 40% of the given data will be used for cross validation.
-     * @param {number} [options.crossValidate.testError] Sets the target error of the validation data.
-     * @param {boolean} [options.clear=false] If set to true, will clear the network after every activation. This is useful for training LSTM's, more importantly for time series prediction.
-     * @param {boolean} [options.shuffle=false] When set to true, will shuffle the training data every iterationNumber. Good option to use if the network is performing worse in [cross validation](https://artint.info/html/ArtInt_189.html) than in the real training data.
-     * @param {number|boolean} [options.log=false] If set to n, outputs training status every n iterations. Setting `log` to 1 will log the status every iteration_number
-     * @param {number} [options.schedule.iterations] You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
-     * @param {schedule} [options.schedule.function] A function to run every n iterations as data by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
      *
      * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance
      */
@@ -632,7 +613,7 @@ export class Network {
         // Use the default values, if no value is given
         options.iterations = getOrDefault(options.iterations, -1);
         options.error = getOrDefault(options.error, -1);
-        options.loss = getOrDefault(options.loss, new MSELoss());
+        options.loss = getOrDefault(options.loss, MSELoss);
         options.dropout = getOrDefault(options.dropout, 0);
         options.momentum = getOrDefault(options.momentum, 0);
         options.batchSize = Math.min(options.dataset.length, getOrDefault(options.batchSize, options.dataset.length));
@@ -689,14 +670,11 @@ export class Network {
             currentTrainingRate = options.ratePolicy.calc(iterationCount);
 
             // train a single epoch
-            const trainError: number = this.trainEpoch(
-                trainingSet,
-                options.batchSize,
-                currentTrainingRate,
-                options.momentum,
-                options.loss,
-                options.dropout
-            );
+            const trainError: number = this.trainEpoch({
+                ...options,
+                dataset: trainingSet,
+                trainingRate: currentTrainingRate
+            });
 
             if (options.clear) {
                 this.clear();
@@ -737,48 +715,6 @@ export class Network {
     }
 
     /**
-     * Performs one training epoch and returns the error - this is a private function used in `self.train`
-     *
-     * @todo Add `@param` tag descriptions
-     * @todo Add `@returns` tag description
-     *
-     * @private
-     *
-     * @param {Array<{input:number[], output: number[]}>} dataset
-     * @param {number} batchSize
-     * @param {number} trainingRate
-     * @param {number} momentum
-     * @param {loss} loss
-     * @param {number} dropoutRate=0.5 The dropout rate to use when training
-     *
-     * @returns {number}
-     */
-    public trainEpoch(dataset: {
-        /**
-         * The input values of the dataset.
-         */
-        input: number[];
-        /**
-         * The output values of the dataset.
-         */
-        output: number[]
-    }[], batchSize: number, trainingRate: number, momentum: number, loss: Loss, dropoutRate: number = 0.5): number {
-        let errorSum: number = 0;
-        for (let i: number = 0; i < dataset.length; i++) {
-            const input: number[] = dataset[i].input;
-            const correctOutput: number[] = dataset[i].output;
-
-            const update: boolean = (i + 1) % batchSize === 0 || i + 1 === dataset.length;
-
-            const output: number[] = this.activate(input, {dropoutRate});
-            this.propagate(correctOutput, {rate: trainingRate, momentum, update});
-
-            errorSum += loss.calc(correctOutput, output);
-        }
-        return errorSum / dataset.length;
-    }
-
-    /**
      * Tests a set and returns the error and elapsed time
      *
      * @param {Array<{input:number[],output:number[]}>} dataset A set of input values and ideal output values to test the network against
@@ -795,14 +731,14 @@ export class Network {
          * The output values of the dataset.
          */
         output: number[]
-    }[], loss: Loss = new MSELoss()): number {
+    }[], loss: (targets: number[], outputs: number[]) => number = MSELoss): number {
         let error: number = 0;
 
         for (const entry of dataset) {
             const input: number[] = entry.input;
             const target: number[] = entry.output;
             const output: number[] = this.activate(input, {trace: false});
-            error += loss.calc(target, output);
+            error += loss(target, output);
         }
 
         return error / dataset.length;
@@ -848,34 +784,8 @@ export class Network {
      * Evolves the network to reach a lower error on a dataset using the [NEAT algorithm](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf)
      *
      * If both `iterations` and `error` options are unset, evolve will default to `iterations` as an end condition.
+     *
      * @param {object} [options] Configuration options
-     * @param {number} [options.iterations=1000] Set the maximum amount of iterations/generations for the algorithm to run.
-     * @param {number} [options.error=0.05] Set the target error. The algorithm will stop once this target error has been reached.
-     * @param {number} [options.growth=0.0001] Set the penalty for large networks. Penalty calculation: penalty = (genome.nodes.length + genome.connections.length + genome.gates.length) * growth; This penalty will get added on top of the error. Your growth should be a very small number.
-     * @param {loss} [options.loss=loss.MSE]  Specify the loss function for the evolution, this tells a genome in the population how well it's performing. Default: methods.loss.MSE (recommended).
-     * @param {number} [options.amount=1] Set the amount of times to test the trainingSet on a genome each generation. Useful for time series. Do not use for regular feed forward problems.
-     * @param {number} [options.threads] Specify the amount of threads to use. Default value is the amount of cores in your CPU.
-     * @param {Network} [options.network]
-     * @param {number|boolean} [options.log=false] If set to n, outputs training status every n iterations. Setting `log` to 1 will log the status every iteration
-     * @param {number} [options.schedule.iterations] You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
-     * @param {schedule} [options.schedule.function] A function to run every n iterations as set by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
-     * @param {boolean} [options.clear=false] If set to true, will clear the network after every activation. This is useful for evolving recurrent networks, more importantly for time series prediction.
-     * @param {boolean} [options.equal=true] If set to true when [Network.crossOver](Network.crossOver) runs it will assume both genomes are equally fit.
-     * @param {number} [options.populationSize=50] Population size of each generation.
-     * @param {number} [options.elitism=1] Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
-     * @param {number} [options.provenance=0] Number of genomes inserted into the original network template (Network(input,output)) per evolution.
-     * @param {number} [options.mutationRate=0.4] Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated.
-     * @param {number} [options.mutationAmount=1] If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
-     * @param {boolean} [options.fitnessPopulation=true] Flag to return the fitness of a population of genomes. false => evaluate each genome individually. true => evaluate entire population. Adjust fitness function accordingly
-     * @param {Function} [options.fitness] - A fitness function to evaluate the networks. Takes a `genome`, i.e. a [network](Network), and a `dataset` and sets the genome's score property
-     * @param {string} [options.selection=new FitnessProportionateSelection()] [Selection method](selection) for evolution (e.g. methods.Selection.FITNESS_PROPORTIONATE).
-     * @param {Array} [options.crossover] Sets allowed crossover methods for evolution.
-     * @param {Array} [options.mutation] Sets allowed [mutation methods](mutation) for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
-     * @param {number} [options.maxNodes=Infinity] Maximum nodes for a potential network
-     * @param {number} [options.maxConnections=Infinity] Maximum connections for a potential network
-     * @param {number} [options.maxGates=Infinity] Maximum gates for a potential network
-     * @param {function} [options.mutationSelection=random] Custom mutation selection function if given
-     * @param {boolean} [options.efficientMutation=false] Test & reduce [mutation methods](mutation) to avoid failed mutation attempts
      *
      * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance. <br /> Properties include: `error` - error of the best genome, `iterations` - generations used to evolve networks, `time` - clock time elapsed while evolving
      */
@@ -910,10 +820,12 @@ export class Network {
 
         // set options to default if necessary
         options.growth = getOrDefault<number>(options.growth, 0.0001);
-        options.loss = getOrDefault(options.loss, new MSELoss());
+        options.loss = getOrDefault(options.loss, MSELoss);
         options.maxNodes = getOrDefault(options.maxNodes, Infinity);
         options.maxConnections = getOrDefault(options.maxConnections, Infinity);
         options.maxGates = getOrDefault(options.maxGates, Infinity);
+        options.input = this.inputSize;
+        options.output = this.outputSize;
 
         const start: number = Date.now();
 
@@ -939,7 +851,7 @@ export class Network {
                             return;
                         }
                         // test the genome
-                        genome.score = -await test(serializedDataSet, JSON.stringify(genome.toJSON()), ALL_LOSSES.indexOf(options.loss ?? new MSELoss()));
+                        genome.score = -await test(serializedDataSet, JSON.stringify(genome.toJSON()), options.loss ?? MSELoss);
                         if (genome.score === undefined) {
                             genome.score = -Infinity;
                             return;
@@ -1014,5 +926,62 @@ export class Network {
             iterations: neat.generation,
             time: Date.now() - start,
         };
+    }
+
+    /**
+     * Performs one training epoch and returns the error - this is a private function used in `self.train`
+     *
+     * @private
+     *
+     * @returns {number}
+     */
+    private trainEpoch(options: {
+        /**
+         * The dataset.
+         */
+        dataset: {
+            /**
+             * The input values of the dataset.
+             */
+            input: number[];
+            /**
+             * The output values of the dataset.
+             */
+            output: number[]
+        }[],
+        /**
+         * The batch size.
+         */
+        batchSize?: number,
+        /**
+         * The training rate.
+         */
+        trainingRate?: number,
+        /**
+         * The momentum.
+         */
+        momentum?: number,
+        /**
+         * The loss function.
+         */
+        loss?: (targets: number[], outputs: number[]) => number,
+        /**
+         * The dropout rate
+         */
+        dropoutRate?: number
+    }): number {
+        let errorSum: number = 0;
+        for (let i: number = 0; i < options.dataset.length; i++) {
+            const input: number[] = options.dataset[i].input;
+            const correctOutput: number[] = options.dataset[i].output;
+
+            const update: boolean = (i + 1) % (options.batchSize ?? options.dataset.length) === 0 || i + 1 === options.dataset.length;
+
+            const output: number[] = this.activate(input, {dropoutRate: options.dropoutRate ?? 0.5});
+            this.propagate(correctOutput, {rate: options.trainingRate, momentum: options.momentum, update});
+
+            errorSum += (options.loss ?? MSELoss)(correctOutput, output);
+        }
+        return errorSum / options.dataset.length;
     }
 }
