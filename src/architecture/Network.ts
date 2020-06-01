@@ -689,14 +689,11 @@ export class Network {
             currentTrainingRate = options.ratePolicy.calc(iterationCount);
 
             // train a single epoch
-            const trainError: number = this.trainEpoch(
-                trainingSet,
-                options.batchSize,
-                currentTrainingRate,
-                options.momentum,
-                options.loss,
-                options.dropout
-            );
+            const trainError: number = this.trainEpoch({
+                ...options,
+                dataset: trainingSet,
+                trainingRate: currentTrainingRate
+            });
 
             if (options.clear) {
                 this.clear();
@@ -734,48 +731,6 @@ export class Network {
             iterations: iterationCount,
             time: Date.now() - start
         };
-    }
-
-    /**
-     * Performs one training epoch and returns the error - this is a private function used in `self.train`
-     *
-     * @todo Add `@param` tag descriptions
-     * @todo Add `@returns` tag description
-     *
-     * @private
-     *
-     * @param {Array<{input:number[], output: number[]}>} dataset
-     * @param {number} batchSize
-     * @param {number} trainingRate
-     * @param {number} momentum
-     * @param {loss} loss
-     * @param {number} dropoutRate=0.5 The dropout rate to use when training
-     *
-     * @returns {number}
-     */
-    public trainEpoch(dataset: {
-        /**
-         * The input values of the dataset.
-         */
-        input: number[];
-        /**
-         * The output values of the dataset.
-         */
-        output: number[]
-    }[], batchSize: number, trainingRate: number, momentum: number, loss: Loss, dropoutRate: number = 0.5): number {
-        let errorSum: number = 0;
-        for (let i: number = 0; i < dataset.length; i++) {
-            const input: number[] = dataset[i].input;
-            const correctOutput: number[] = dataset[i].output;
-
-            const update: boolean = (i + 1) % batchSize === 0 || i + 1 === dataset.length;
-
-            const output: number[] = this.activate(input, {dropoutRate});
-            this.propagate(correctOutput, {rate: trainingRate, momentum, update});
-
-            errorSum += loss.calc(correctOutput, output);
-        }
-        return errorSum / dataset.length;
     }
 
     /**
@@ -1014,5 +969,62 @@ export class Network {
             iterations: neat.generation,
             time: Date.now() - start,
         };
+    }
+
+    /**
+     * Performs one training epoch and returns the error - this is a private function used in `self.train`
+     *
+     * @private
+     *
+     * @returns {number}
+     */
+    private trainEpoch(options: {
+        /**
+         * The dataset.
+         */
+        dataset: {
+            /**
+             * The input values of the dataset.
+             */
+            input: number[];
+            /**
+             * The output values of the dataset.
+             */
+            output: number[]
+        }[],
+        /**
+         * The batch size.
+         */
+        batchSize?: number,
+        /**
+         * The training rate.
+         */
+        trainingRate?: number,
+        /**
+         * The momentum.
+         */
+        momentum?: number,
+        /**
+         * The loss function.
+         */
+        loss?: Loss,
+        /**
+         * The dropout rate
+         */
+        dropoutRate?: number
+    }): number {
+        let errorSum: number = 0;
+        for (let i: number = 0; i < options.dataset.length; i++) {
+            const input: number[] = options.dataset[i].input;
+            const correctOutput: number[] = options.dataset[i].output;
+
+            const update: boolean = (i + 1) % (options.batchSize ?? options.dataset.length) === 0 || i + 1 === options.dataset.length;
+
+            const output: number[] = this.activate(input, {dropoutRate: options.dropoutRate ?? 0.5});
+            this.propagate(correctOutput, {rate: options.trainingRate, momentum: options.momentum, update});
+
+            errorSum += (options.loss ?? new MSELoss()).calc(correctOutput, output);
+        }
+        return errorSum / options.dataset.length;
     }
 }
