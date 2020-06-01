@@ -677,6 +677,10 @@ export class Network {
                 trainingRate: currentTrainingRate
             });
 
+            if (!Number.isFinite(trainError)) {
+                throw new RangeError();
+            }
+
             if (options.clear) {
                 this.clear();
             }
@@ -849,13 +853,12 @@ export class Network {
 
                     workerPool.queue(async (test: WorkerFunction) => {
                         if (genome === undefined) {
-                            return;
+                            throw new ReferenceError();
                         }
                         // test the genome
                         genome.score = -await test(serializedDataSet, JSON.stringify(genome.toJSON()), Object.values(ALL_LOSSES).indexOf(options.loss ?? MSELoss));
-                        if (genome.score === undefined) {
-                            genome.score = -Infinity;
-                            return;
+                        if (!Number.isFinite(genome.score)) {
+                            throw new RangeError();
                         }
 
                         // subtract growth value
@@ -869,7 +872,7 @@ export class Network {
                     });
                 }
 
-                await workerPool.settled(); // wait until every task is done
+                await workerPool.completed(); // wait until every task is done
             };
         }
         options.template = this; // set this network as template for first generation
