@@ -843,7 +843,7 @@ export class Network {
 
             // Serialize the dataset using JSON
             const serializedDataSet: string = JSON.stringify(options.dataset);
-
+            const lossIndex: number = Object.values(ALL_LOSSES).indexOf(options.loss ?? MSELoss);
             // init a pool of workers
             workerPool = Pool(() => spawn(new Worker("../multithreading/Worker")), options.threads ?? os.cpus().length);
 
@@ -856,7 +856,7 @@ export class Network {
                             throw new ReferenceError();
                         }
                         // test the genome
-                        genome.score = -await test(serializedDataSet, JSON.stringify(genome.toJSON()), Object.values(ALL_LOSSES).indexOf(options.loss ?? MSELoss));
+                        genome.score = -await test(serializedDataSet, JSON.stringify(genome.toJSON()), lossIndex);
                         if (!Number.isFinite(genome.score)) {
                             throw new RangeError();
                         }
