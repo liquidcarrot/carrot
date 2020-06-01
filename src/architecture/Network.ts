@@ -718,7 +718,7 @@ export class Network {
      * Tests a set and returns the error and elapsed time
      *
      * @param {Array<{input:number[],output:number[]}>} dataset A set of input values and ideal output values to test the network against
-     * @param {Loss} [loss=new MSELoss()] The [loss function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
+     * @param {(targets: number[], outputs: number[]) => number} [loss=MSELoss] The [loss function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
      *
      * @returns {number} A summary object of the network's performance
      */
