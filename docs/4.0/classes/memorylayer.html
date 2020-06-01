@@ -125,14 +125,14 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Memory<wbr>Layer<span class="tsd-signature-symbol">(</span>outputSize<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>activationType<span class="tsd-signature-symbol">?: </span><a href="../enums/activationtype.html" class="tsd-signature-type">ActivationType</a><span class="tsd-signature-symbol">; </span>memorySize<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="memorylayer.html" class="tsd-signature-type">MemoryLayer</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Memory<wbr>Layer<span class="tsd-signature-symbol">(</span>outputSize<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>activation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span>memorySize<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="memorylayer.html" class="tsd-signature-type">MemoryLayer</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="layer.html">Layer</a>.<a href="layer.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/architecture/Layers/RecurrentLayers/MemoryLayer.ts#L11">src/architecture/Layers/RecurrentLayers/MemoryLayer.ts:11</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/RecurrentLayers/MemoryLayer.ts#L10">src/architecture/Layers/RecurrentLayers/MemoryLayer.ts:10</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -141,10 +141,10 @@
 									<h5>outputSize: <span class="tsd-signature-type">number</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <span class="tsd-signature-symbol">{ </span>activationType<span class="tsd-signature-symbol">?: </span><a href="../enums/activationtype.html" class="tsd-signature-type">ActivationType</a><span class="tsd-signature-symbol">; </span>memorySize<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = {}</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <span class="tsd-signature-symbol">{ </span>activation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">; </span>memorySize<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = {}</span></h5>
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter">
-											<h5><span class="tsd-flag ts-flagOptional">Optional</span> activation<wbr>Type<span class="tsd-signature-symbol">?: </span><a href="../enums/activationtype.html" class="tsd-signature-type">ActivationType</a></h5>
+											<h5><span class="tsd-flag ts-flagOptional">Optional</span> activation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span></h5>
 											<div class="tsd-comment tsd-typography">
 												<div class="lead">
 													<p>The activation type for the output nodes of this layer.</p>
@@ -176,7 +176,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#connections">connections</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/architecture/Layers/Layer.ts#L29">src/architecture/Layers/Layer.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/Layer.ts#L29">src/architecture/Layers/Layer.ts:29</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -192,7 +192,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#gates">gates</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/architecture/Layers/Layer.ts#L33">src/architecture/Layers/Layer.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/Layer.ts#L33">src/architecture/Layers/Layer.ts:33</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -208,7 +208,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#inputnodes">inputNodes</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/architecture/Layers/Layer.ts#L17">src/architecture/Layers/Layer.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/Layer.ts#L17">src/architecture/Layers/Layer.ts:17</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -224,7 +224,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#nodes">nodes</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/architecture/Layers/Layer.ts#L25">src/architecture/Layers/Layer.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/Layer.ts#L25">src/architecture/Layers/Layer.ts:25</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -240,7 +240,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#outputnodes">outputNodes</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/architecture/Layers/Layer.ts#L21">src/architecture/Layers/Layer.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/Layer.ts#L21">src/architecture/Layers/Layer.ts:21</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -256,7 +256,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#outputsize">outputSize</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/architecture/Layers/Layer.ts#L13">src/architecture/Layers/Layer.ts:13</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/Layer.ts#L13">src/architecture/Layers/Layer.ts:13</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -279,7 +279,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="layer.html">Layer</a>.<a href="layer.html#connectiontypeisallowed">connectionTypeisAllowed</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/architecture/Layers/RecurrentLayers/MemoryLayer.ts#L59">src/architecture/Layers/RecurrentLayers/MemoryLayer.ts:59</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/RecurrentLayers/MemoryLayer.ts#L57">src/architecture/Layers/RecurrentLayers/MemoryLayer.ts:57</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -312,7 +312,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="layer.html">Layer</a>.<a href="layer.html#getdefaultincomingconnectiontype">getDefaultIncomingConnectionType</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/architecture/Layers/RecurrentLayers/MemoryLayer.ts#L68">src/architecture/Layers/RecurrentLayers/MemoryLayer.ts:68</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/RecurrentLayers/MemoryLayer.ts#L66">src/architecture/Layers/RecurrentLayers/MemoryLayer.ts:66</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -336,7 +336,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#connect">connect</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/architecture/Layers/Layer.ts#L55">src/architecture/Layers/Layer.ts:55</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/Layer.ts#L55">src/architecture/Layers/Layer.ts:55</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -387,7 +387,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#gate">gate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/architecture/Layers/Layer.ts#L102">src/architecture/Layers/Layer.ts:102</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/Layer.ts#L102">src/architecture/Layers/Layer.ts:102</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">

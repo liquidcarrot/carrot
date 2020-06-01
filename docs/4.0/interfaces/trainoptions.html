@@ -69,7 +69,7 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Options for training a network</p>
+						<p>Options used to train network</p>
 					</div>
 				</div>
 			</section>
@@ -115,12 +115,12 @@
 					<div class="tsd-signature tsd-kind-icon">batch<wbr>Size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/interfaces/TrainOptions.ts#L85">src/interfaces/TrainOptions.ts:85</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/interfaces/TrainOptions.ts#L83">src/interfaces/TrainOptions.ts:83</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The batch size</p>
+							<p>Sets the (mini-) batch size of your training. Default: 1 <a href="https://www.quora.com/What-is-the-difference-between-batch-online-and-mini-batch-training-in-neural-networks-Which-one-should-I-use-for-a-small-to-medium-sized-dataset-for-prediction-purposes">(online training)</a></p>
 						</div>
 					</div>
 				</section>
@@ -130,12 +130,12 @@
 					<div class="tsd-signature tsd-kind-icon">clear<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/interfaces/TrainOptions.ts#L56">src/interfaces/TrainOptions.ts:56</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/interfaces/TrainOptions.ts#L55">src/interfaces/TrainOptions.ts:55</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Clear all node states at the end of each iteration</p>
+							<p>If set to true, will clear the network after every activation. This is useful for training LSTM&#39;s, more importantly for time series prediction.</p>
 						</div>
 					</div>
 				</section>
@@ -145,12 +145,12 @@
 					<div class="tsd-signature tsd-kind-icon">cross<wbr>Validate<wbr>Test<wbr>Size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/interfaces/TrainOptions.ts#L76">src/interfaces/TrainOptions.ts:76</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/interfaces/TrainOptions.ts#L75">src/interfaces/TrainOptions.ts:75</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The size of the dataset for cross validation</p>
+							<p>Sets the amount of test cases that should be assigned to cross validation. If data to 0.4, 40% of the given data will be used for cross validation.</p>
 						</div>
 					</div>
 				</section>
@@ -160,12 +160,12 @@
 					<div class="tsd-signature tsd-kind-icon">dataset<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">{ </span>input<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>output<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/interfaces/TrainOptions.ts#L11">src/interfaces/TrainOptions.ts:11</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/interfaces/TrainOptions.ts#L10">src/interfaces/TrainOptions.ts:10</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The dataset to train on.</p>
+							<p>A data of input values and ideal output values to train the network with</p>
 						</div>
 					</div>
 				</section>
@@ -175,12 +175,12 @@
 					<div class="tsd-signature tsd-kind-icon">dropout<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/interfaces/TrainOptions.ts#L52">src/interfaces/TrainOptions.ts:52</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/interfaces/TrainOptions.ts#L51">src/interfaces/TrainOptions.ts:51</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The dropout probability</p>
+							<p><a href="https://medium.com/@amarbudhiraja/https-medium-com-amarbudhiraja-learning-less-to-learn-better-options.dropout-in-deep-machine-learning-74334da4bfc5">Dropout rate</a> likelihood for any given neuron to be ignored during network training. Must be between zero and one, numbers closer to one will result in more neurons ignored.</p>
 						</div>
 					</div>
 				</section>
@@ -190,12 +190,12 @@
 					<div class="tsd-signature tsd-kind-icon">error<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/interfaces/TrainOptions.ts#L40">src/interfaces/TrainOptions.ts:40</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/interfaces/TrainOptions.ts#L39">src/interfaces/TrainOptions.ts:39</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The target error value</p>
+							<p>The target error to train for, once the network falls below this error, the process is stopped. Lower error rates require more training cycles.</p>
 						</div>
 					</div>
 				</section>
@@ -205,12 +205,12 @@
 					<div class="tsd-signature tsd-kind-icon">iterations<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/interfaces/TrainOptions.ts#L36">src/interfaces/TrainOptions.ts:36</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/interfaces/TrainOptions.ts#L35">src/interfaces/TrainOptions.ts:35</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The number of iterations to train.</p>
+							<p>Sets amount of training cycles the process will maximally run, even when the target error has not been reached.</p>
 						</div>
 					</div>
 				</section>
@@ -220,28 +220,27 @@
 					<div class="tsd-signature tsd-kind-icon">log<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/interfaces/TrainOptions.ts#L81">src/interfaces/TrainOptions.ts:81</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/interfaces/TrainOptions.ts#L79">src/interfaces/TrainOptions.ts:79</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>log = 10 -&gt; logging every 10th iteration
-							log = 0 -&gt; logging never</p>
+							<p>If set to n, outputs training status every n iterations. Setting <code>log</code> to 1 will log the status every iteration_number</p>
 						</div>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="loss" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> loss</h3>
-					<div class="tsd-signature tsd-kind-icon">loss<span class="tsd-signature-symbol">:</span> <a href="../classes/loss.html" class="tsd-signature-type">Loss</a></div>
+					<div class="tsd-signature tsd-kind-icon">loss<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>targets<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, outputs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/interfaces/TrainOptions.ts#L32">src/interfaces/TrainOptions.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/interfaces/TrainOptions.ts#L31">src/interfaces/TrainOptions.ts:31</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The loss method used for training</p>
+							<p>The <a href="https://en.wikipedia.org/wiki/Loss_function">options.loss function</a> used to determine network error</p>
 						</div>
 					</div>
 				</section>
@@ -251,12 +250,12 @@
 					<div class="tsd-signature tsd-kind-icon">momentum<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/interfaces/TrainOptions.ts#L48">src/interfaces/TrainOptions.ts:48</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/interfaces/TrainOptions.ts#L47">src/interfaces/TrainOptions.ts:47</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The momentum value</p>
+							<p><a href="https://www.willamette.edu/~gorr/classes/cs449/momrate.html">Momentum</a>. Adds a fraction of the previous weight update to the current one.</p>
 						</div>
 					</div>
 				</section>
@@ -266,12 +265,12 @@
 					<div class="tsd-signature tsd-kind-icon">rate<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/interfaces/TrainOptions.ts#L28">src/interfaces/TrainOptions.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/interfaces/TrainOptions.ts#L27">src/interfaces/TrainOptions.ts:27</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The base learning rate (only necessary if no rate policy is given)</p>
+							<p>Sets the <a href="https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10">learning rate</a> of the backpropagation process</p>
 						</div>
 					</div>
 				</section>
@@ -281,12 +280,12 @@
 					<div class="tsd-signature tsd-kind-icon">rate<wbr>Policy<span class="tsd-signature-symbol">:</span> <a href="../classes/rate.html" class="tsd-signature-type">Rate</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/interfaces/TrainOptions.ts#L24">src/interfaces/TrainOptions.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/interfaces/TrainOptions.ts#L23">src/interfaces/TrainOptions.ts:23</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>A rate policy to shrink the learning rate</p>
+							<p>A <a href="https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10">learning rate policy</a>, i.e. how to change the learning rate during training to get better network performance</p>
 						</div>
 					</div>
 				</section>
@@ -296,12 +295,12 @@
 					<div class="tsd-signature tsd-kind-icon">schedule<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">{ </span>function<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">(</span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, iteration<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol">; </span>iterations<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/interfaces/TrainOptions.ts#L60">src/interfaces/TrainOptions.ts:60</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/interfaces/TrainOptions.ts#L59">src/interfaces/TrainOptions.ts:59</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>A function which runs after every schedule.iterations</p>
+							<p>You can schedule tasks to happen every n iterations. Paired with <code>options.schedule.function</code></p>
 						</div>
 					</div>
 				</section>
@@ -311,12 +310,12 @@
 					<div class="tsd-signature tsd-kind-icon">shuffle<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">true</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/8fc56b4/src/interfaces/TrainOptions.ts#L44">src/interfaces/TrainOptions.ts:44</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/interfaces/TrainOptions.ts#L43">src/interfaces/TrainOptions.ts:43</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Shuffle the dataset at the end of each iteration</p>
+							<p>When set to true, will shuffle the training data every iterationNumber. Good option to use if the network is performing worse in <a href="https://artint.info/html/ArtInt_189.html">cross validation</a> than in the real training data.</p>
 						</div>
 					</div>
 				</section>
