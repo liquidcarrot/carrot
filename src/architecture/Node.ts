@@ -11,18 +11,11 @@ import {Connection} from "./Connection";
  * Neurons are the basic unit of the neural network. They can be connected together, or used to gate connections between other neurons. A Neuron can perform basically 4 operations: form connections, gate connections, activate and [propagate](https://www.youtube.com/watch?v=Ilg3gGewQ5U).
  *
  * For more information check:
- * - [here](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
- * - [here](https://en.wikipedia.org/wiki/Artificial_neuron)
- * - [here](https://wagenaartje.github.io/neataptic/docs/architecture/node/)
- * - [here](https://github.com/cazala/synaptic/wiki/Neural-Networks-101)
- * - [here](https://keras.io/backend/#bias_add)
- *
- * @prop {number} previousDeltaBias
- * @prop {number} totalDeltaBias
- * @prop {number} error.responsibility
- * @prop {number} error.projected
- * @prop {number} error.gated
- *
+ * - [BecomingHuman](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
+ * - [Wikipedia](https://en.wikipedia.org/wiki/Artificial_neuron)
+ * - [Neataptic](https://wagenaartje.github.io/neataptic/docs/architecture/node/)
+ * - [Synaptic](https://github.com/cazala/synaptic/wiki/Neural-Networks-101)
+ * - [Keras](https://keras.io/backend/#bias_add)
  */
 export class Node {
     /**
@@ -241,7 +234,7 @@ export class Node {
             this.selfConnection.weight = weight;
             return this.selfConnection;
         } else if (this.isProjectingTo(target)) {
-            throw new ReferenceError(); // already connected
+            throw new ReferenceError("Their is already a connection!"); // already connected
         } else {
             const connection: Connection = new Connection(this, target, weight); // create new connection
 
