@@ -142,9 +142,7 @@ export class Node {
             connection.xTraceValues = [];
         }
 
-        for (const connection of this.gated) {
-            connection.gain = 0;
-        }
+        this.gated.forEach(conn => conn.gain = 0);
 
         this.errorResponsibility = this.errorProjected = this.errorGated = 0;
         this.old = this.state = this.activation = 0;
@@ -345,8 +343,7 @@ export class Node {
             // calculate gradient
             let gradient: number = this.errorProjected * connection.eligibility;
             for (let j: number = 0; j < connection.xTraceNodes.length; j++) {
-                const node: Node = connection.xTraceNodes[j];
-                gradient += node.errorResponsibility * connection.xTraceValues[j];
+                gradient += connection.xTraceNodes[j].errorResponsibility * connection.xTraceValues[j];
             }
 
 
