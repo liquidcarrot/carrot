@@ -26,14 +26,13 @@ jobs:
       - run: npm run build:src
       - run: npm run deploy:docs
       - name: Commit files
-        run: |
-        echo ${{ github.ref }}
-        git add .
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git commit -m "CI: Automated build push" -a | exit 0
+      - run: echo ${{ github.ref }}
+      - run: git add .
+      - run: git config --local user.email "action@github.com"
+      - run: git config --local user.name "GitHub Action"
+      - run: git commit -n -a -m "CI: Automated build push"
       - name: Push changes
-        if: github.ref == 'refs/heads/master'
+      - if: github.ref == 'refs/heads/master'
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
