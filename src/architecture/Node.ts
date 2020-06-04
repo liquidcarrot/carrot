@@ -2,7 +2,7 @@ import {NodeType} from "../enums/NodeType";
 import {NodeJSON} from "../interfaces/NodeJSON";
 import {activationType, ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
 import {ModBiasMutation} from "../methods/Mutation";
-import {getOrDefault, pickRandom, randDouble, removeFromArray} from "../methods/Utils";
+import {getOrDefault, pickRandom, randDouble} from "../methods/Utils";
 import {Connection} from "./Connection";
 
 /**
@@ -29,15 +29,15 @@ export class Node {
     /**
      * Incoming connections to this node
      */
-    public incoming: Connection[];
+    public incoming: Set<Connection>;
     /**
      * Outgoing connections from this node
      */
-    public outgoing: Connection[];
+    public outgoing: Set<Connection>;
     /**
      * Connections this node gates
      */
-    public gated: Connection[];
+    public gated: Set<Connection>;
     /**
      * A self connection
      */
@@ -102,9 +102,9 @@ export class Node {
         this.mask = 1;
         this.deltaBiasPrevious = 0;
         this.deltaBiasTotal = 0;
-        this.incoming = [];
-        this.outgoing = [];
-        this.gated = [];
+        this.incoming = new Set<Connection>();
+        this.outgoing = new Set<Connection>();
+        this.gated = new Set<Connection>();
         this.selfConnection = new Connection(this, this, 0);
         this.errorResponsibility = 0;
         this.errorProjected = 0;
@@ -136,11 +136,11 @@ export class Node {
      *
      */
     public clear(): void {
-        for (const connection of this.incoming) {
+        this.incoming.forEach(connection => {
             connection.eligibility = 0;
             connection.xTraceNodes = [];
             connection.xTraceValues = [];
-        }
+        });
 
         this.gated.forEach(conn => conn.gain = 0);
 
@@ -180,7 +180,7 @@ export class Node {
         if (node === this) { // self connection
             return this.selfConnection.weight !== 0; // is projected, if weight of self connection is unequal 0
         } else {
-            return this.incoming.map(conn => conn.from).includes(node); // check every incoming connection for node
+            return Array.from(this.incoming).map(conn => conn.from).includes(node); // check every incoming connection for node
         }
     }
 
@@ -195,7 +195,7 @@ export class Node {
         if (node === this) { // self connection
             return this.selfConnection.weight !== 0; // is projected, if weight of self connection is unequal 0
         } else {
-            return this.outgoing.map(conn => conn.to).includes(node); // check every outgoing connection for node
+            return Array.from(this.outgoing).map(conn => conn.to).includes(node); // check every outgoing connection for node
         }
     }
 
@@ -205,7 +205,7 @@ export class Node {
      * @param connection Connection to be gated (influenced) by a neuron
      */
     public addGate(connection: Connection): void {
-        this.gated.push(connection);
+        this.gated.add(connection);
         connection.gateNode = this;
     }
 
@@ -215,7 +215,7 @@ export class Node {
      * @param connection Connections to remove gate - _i.e. remove this node from_
      */
     public removeGate(connection: Connection): void {
-        removeFromArray(this.gated, connection);
+        this.gated.delete(connection);
         connection.gateNode = null;
         connection.gain = 1;
     }
@@ -237,8 +237,8 @@ export class Node {
             const connection: Connection = new Connection(this, target, weight); // create new connection
 
             // add it to the arrays
-            this.outgoing.push(connection);
-            target.incoming.push(connection);
+            this.outgoing.add(connection);
+            target.incoming.add(connection);
 
             if (twoSided) {
                 target.connect(this); // connect in the other direction
@@ -259,7 +259,7 @@ export class Node {
             return this.selfConnection;
         }
 
-        const connections: Connection[] = this.outgoing.filter(conn => conn.to === node);
+        const connections: Connection[] = Array.from(this.outgoing).filter(conn => conn.to === node);
 
         if (connections.length === 0) {
             throw new Error("No Connection found");
@@ -267,8 +267,8 @@ export class Node {
         const connection: Connection = connections[0];
 
         // remove it from the arrays
-        removeFromArray(this.outgoing, connection);
-        removeFromArray(connection.to.incoming, connection);
+        this.outgoing.delete(connection);
+        connection.to.incoming.delete(connection);
 
         if (connection.gateNode !== undefined && connection.gateNode != null) {
             connection.gateNode.removeGate(connection); // if connection is gated -> remove gate
@@ -315,14 +315,14 @@ export class Node {
             this.errorResponsibility = this.errorProjected = target - this.activation;
         } else {
             this.errorProjected = 0;
-            for (const connection of this.outgoing) {
+            this.outgoing.forEach(connection => {
                 this.errorProjected += connection.to.errorResponsibility * connection.weight * connection.gain;
-            }
+            });
             this.errorProjected *= this.derivativeState;
 
 
             this.errorGated = 0;
-            for (const connection of this.gated) { // for all connections gated by this node
+            this.gated.forEach(connection => {
                 let influence: number;
                 if (connection.to.selfConnection.gateNode === this) { // self connection is gated with this node
                     influence = connection.to.old + connection.weight * connection.from.activation;
@@ -331,7 +331,7 @@ export class Node {
                 }
 
                 this.errorGated += connection.to.errorResponsibility * influence;
-            }
+            });
             this.errorGated *= this.derivativeState;
 
 
@@ -339,7 +339,7 @@ export class Node {
         }
 
 
-        for (const connection of this.incoming) {
+        this.incoming.forEach(connection => {
             // calculate gradient
             let gradient: number = this.errorProjected * connection.eligibility;
             for (let j: number = 0; j < connection.xTraceNodes.length; j++) {
@@ -347,14 +347,14 @@ export class Node {
             }
 
 
-            connection.deltaWeightsTotal += options.rate * gradient * this.mask;
+            connection.deltaWeightsTotal += (options.rate ?? 0.3) * gradient * this.mask;
             if (options.update) {
-                connection.deltaWeightsTotal += options.momentum * connection.deltaWeightsPrevious;
+                connection.deltaWeightsTotal += (options.momentum ?? 0) * connection.deltaWeightsPrevious;
                 connection.weight += connection.deltaWeightsTotal;
                 connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
                 connection.deltaWeightsTotal = 0;
             }
-        }
+        });
 
 
         this.deltaBiasTotal += options.rate * this.errorResponsibility;
@@ -422,7 +422,7 @@ export class Node {
             });
 
             // Forwarding 'xTrace' (to incoming connections)
-            for (const connection of this.incoming) {
+            this.incoming.forEach(connection => {
                 connection.eligibility = this.selfConnection.gain * this.selfConnection.weight * connection.eligibility + connection.from.activation * connection.gain;
 
                 for (let i: number = 0; i < nodes.length; i++) {
@@ -438,7 +438,7 @@ export class Node {
                         connection.xTraceValues.push(this.derivativeState * connection.eligibility * influence);
                     }
                 }
-            }
+            });
 
             return this.activation;
         } else {
@@ -446,17 +446,12 @@ export class Node {
 
             this.state = this.selfConnection.gain * this.selfConnection.weight * this.state + this.bias;
 
-
-            for (const connection of this.incoming) {
-                this.state += connection.from.activation * connection.weight * connection.gain;
-            }
+            this.incoming.forEach(connection => this.state += connection.from.activation * connection.weight * connection.gain);
 
             this.activation = this.squash(this.state, false);
 
             // Adjust gain
-            for (const connection of this.gated) {
-                connection.gain = this.activation;
-            }
+            this.gated.forEach(connection => connection.gain = this.activation);
 
             return this.activation;
         }

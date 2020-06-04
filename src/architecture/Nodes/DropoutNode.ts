@@ -32,10 +32,10 @@ export class DropoutNode extends ConstantNode {
      * @returns A neuron's output value
      */
     public activate(): number {
-        if (this.incoming.length !== 1) {
+        if (this.incoming.size !== 1) {
             throw new RangeError("Dropout node should have exactly one incoming connection!");
         }
-        const incomingConnection: Connection = this.incoming[0];
+        const incomingConnection: Connection = Array.from(this.incoming)[0];
 
         // https://stats.stackexchange.com/a/219240
         if (randDouble(0, 1) < this.probability) {
@@ -83,13 +83,13 @@ export class DropoutNode extends ConstantNode {
         options.rate = getOrDefault(options.rate, 0.3);
         options.update = getOrDefault(options.update, true);
 
-        const connectionsStates: number[] = this.outgoing.map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
+        const connectionsStates: number[] = Array.from(this.outgoing).map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
         this.errorResponsibility = this.errorProjected = sum(connectionsStates) / (1 - this.probability);
 
-        if (this.incoming.length !== 1) {
+        if (this.incoming.size !== 1) {
             throw new RangeError("Dropout node should have exactly one incoming connection!");
         }
-        const incomingConnection: Connection = this.incoming[0];
+        const incomingConnection: Connection = Array.from(this.incoming)[0];
 
         // calculate gradient
         if (!this.droppedOut) {

@@ -82,7 +82,7 @@ describe('Network', () => {
 
                 network.mutateRandom([new AddConnectionMutation()], {maxConnections: 6});
 
-                expect(network.connections.length).equal(6);
+                expect(network.connections.size).equal(6);
             });
 
             it("Shouldn't change network when all methods impossible", () => {

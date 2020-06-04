@@ -110,10 +110,11 @@ export abstract class Layer {
                     const gateNode: Node = nodes[i % nodes.length];
 
                     node.incoming
-                        .filter(conn => connections.includes(conn))
                         .forEach(conn => {
-                            gateNode.addGate(conn);
-                            gatedConnections.push(conn);
+                            if (connections.includes(conn)) {
+                                gateNode.addGate(conn);
+                                gatedConnections.push(conn);
+                            }
                         });
                 }
                 break;
@@ -136,10 +137,11 @@ export abstract class Layer {
                     const gateNode: Node = nodes[i % nodes.length];
 
                     node.outgoing
-                        .filter(conn => connections.includes(conn))
                         .forEach(conn => {
-                            gateNode.addGate(conn);
-                            gatedConnections.push(conn);
+                            if (connections.includes(conn)) {
+                                gateNode.addGate(conn);
+                                gatedConnections.push(conn);
+                            }
                         });
                 }
                 break;

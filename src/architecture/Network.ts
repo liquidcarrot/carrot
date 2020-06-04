@@ -49,7 +49,7 @@ export class Network {
     /**
      * The connections inside this network.
      */
-    public connections: Connection[];
+    public connections: Set<Connection>;
     /**
      * The gates inside this network.
      */
@@ -64,7 +64,7 @@ export class Network {
         this.outputSize = outputSize;
 
         this.nodes = [];
-        this.connections = [];
+        this.connections = new Set<Connection>();
         this.gates = [];
         this.score = undefined;
 
@@ -98,7 +98,7 @@ export class Network {
         const network: Network = new Network(json.inputSize, json.outputSize);
 
         network.nodes = [];
-        network.connections = [];
+        network.connections.clear();
 
         json.nodes.map(nodeJSON => new Node().fromJSON(nodeJSON)).forEach(node => network.nodes[node.index] = node);
 
@@ -136,7 +136,7 @@ export class Network {
 
         // Initialise offspring
         const offspring: Network = new Network(network1.inputSize, network1.outputSize);
-        offspring.connections = []; // clear
+        offspring.connections.clear(); // clear
         offspring.nodes = []; // clear
 
         // Save scores and create a copy
@@ -294,7 +294,7 @@ export class Network {
      */
     public connect(from: Node, to: Node, weight: number = 0): Connection {
         const connection: Connection = from.connect(to, weight); // run node-level connect
-        this.connections.push(connection); // add it to the array
+        this.connections.add(connection); // add it to the array
         return connection;
     }
 
@@ -411,15 +411,14 @@ export class Network {
      */
     public disconnect(from: Node, to: Node): Connection {
         // remove the connection network-level
-        this.connections
-            .filter(conn => conn.from === from) // check for incoming node
-            .filter(conn => conn.to === to) // check for outgoing node
-            .forEach(conn => {
+        this.connections.forEach((conn) => {
+            if (conn.from === from && conn.to === to) {
                 if (conn.gateNode !== null) {
                     this.removeGate(conn); // remove possible gate
                 }
-                removeFromArray(this.connections, conn); // remove connection from array
-            });
+                this.connections.delete(conn); // remove connection from array
+            }
+        });
         // disconnect node-level
         return from.disconnect(to);
     }
@@ -474,24 +473,22 @@ export class Network {
         const connections: Connection[] = []; // keep track
 
         // read all inputs from node and keep track of the nodes that gate the incoming connection
-        for (let i: number = node.incoming.length - 1; i >= 0; i--) {
-            const connection: Connection = node.incoming[i];
+        node.incoming.forEach(connection => {
             if (keepGates && connection.gateNode !== null && connection.gateNode !== node) {
                 gates.push(connection.gateNode);
             }
             inputs.push(connection.from);
             this.disconnect(connection.from, node);
-        }
+        });
 
         // read all outputs from node and keep track of the nodes that gate the outgoing connection
-        for (let i: number = node.outgoing.length - 1; i >= 0; i--) {
-            const connection: Connection = node.outgoing[i];
+        node.outgoing.forEach(connection => {
             if (keepGates && connection.gateNode !== null && connection.gateNode !== node) {
                 gates.push(connection.gateNode);
             }
             outputs.push(connection.to);
             this.disconnect(node, connection.to);
-        }
+        });
 
         // add all connections the node has
         inputs.forEach(input => {
@@ -515,9 +512,7 @@ export class Network {
         }
 
         // remove every gate the node has
-        for (let i: number = node.gated.length - 1; i >= 0; i--) {
-            this.removeGate(node.gated[i]);
-        }
+        node.gated.forEach(this.removeGate);
 
         removeFromArray(this.nodes, node); // remove the node from the nodes array
     }
@@ -778,10 +773,9 @@ export class Network {
             }
         });
 
-        this.connections
-            .map(conn => conn.toJSON()) // convert all connections to json
-            .forEach(connJSON => json.connections.push(connJSON)); // and add them to the json object
-
+        this.connections.forEach(conn => {
+            json.connections.push(conn.toJSON());
+        });
         return json;
     }
 
@@ -866,7 +860,7 @@ export class Network {
                             genome.nodes.length
                             - genome.inputSize
                             - genome.outputSize
-                            + genome.connections.length
+                            + genome.connections.size
                             + genome.gates.length
                         );
                     });
@@ -894,7 +888,7 @@ export class Network {
             // add the growth value back to get the real error
             error = fittest.score + options.growth * (
                 fittest.nodes.length
-                + fittest.connections.length
+                + fittest.connections.size
                 + fittest.gates.length
                 - fittest.inputSize
                 - fittest.outputSize

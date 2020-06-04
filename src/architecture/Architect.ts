@@ -65,17 +65,17 @@ export class Architect {
 
         const network: Network = new Network(inputSize, outputSize);
         network.nodes = [];
-        network.connections = [];
+        network.connections.clear();
 
         for (let i: number = 0; i < this.layers.length - 1; i++) {
-            network.connections.push(...Layer.connect(
+            Layer.connect(
                 this.layers[i].layer,
                 this.layers[i + 1].layer,
                 this.layers[i + 1].incomingConnectionType
-            ));
+            ).forEach(conn => network.connections.add(conn));
 
             network.nodes.push(...this.layers[i].layer.nodes);
-            network.connections.push(...this.layers[i].layer.connections);
+            this.layers[i].layer.connections.forEach(conn => network.connections.add(conn));
             network.gates.push(...this.layers[i].layer.gates);
         }
         network.nodes.push(...this.layers[this.layers.length - 1].layer.nodes);

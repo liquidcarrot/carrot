@@ -182,7 +182,7 @@ export class NEAT {
         const allowed: Mutation[] = this.mutations.filter(method => {
             return (
                 method.constructor.name !== AddNodeMutation.constructor.name || network.nodes.length < this.maxNodes ||
-                method.constructor.name !== AddConnectionMutation.constructor.name || network.connections.length < this.maxConnections ||
+                method.constructor.name !== AddConnectionMutation.constructor.name || network.connections.size < this.maxConnections ||
                 method.constructor.name !== AddGateMutation.constructor.name || network.gates.length < this.maxGates
             );
         });

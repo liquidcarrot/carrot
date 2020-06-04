@@ -255,13 +255,13 @@ describe("Node", function (): void {
             expect(node.errorProjected).to.equal(0);
             expect(node.errorGated).to.equal(0);
 
-            for (const connection of node.incoming) {
+            node.incoming.forEach(connection => {
                 expect(connection.eligibility).to.equal(0);
                 expect(connection.xTraceNodes).to.be.an("array");
                 expect(connection.xTraceNodes).to.have.lengthOf(0);
                 expect(connection.xTraceValues).to.be.an("array");
                 expect(connection.xTraceValues).to.have.lengthOf(0);
-            }
+            });
             node.gated.forEach((connection: Connection) => expect(connection.gain).to.equal(0));
         });
     });

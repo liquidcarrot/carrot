@@ -30,7 +30,7 @@ describe("ArchitectTest", () => {
         const network: Network = architect.buildModel();
 
         expect(network.nodes.length).to.be.equal(10 + layerSizes[0] + layerSizes[1] + layerSizes[2] + 2);
-        expect(network.connections.length).to.be.equal(10 * layerSizes[0] + layerSizes[0] * layerSizes[1] + layerSizes[1] * layerSizes[2] + layerSizes[2] * 2);
+        expect(network.connections.size).to.be.equal(10 * layerSizes[0] + layerSizes[0] * layerSizes[1] + layerSizes[1] * layerSizes[2] + layerSizes[2] * 2);
         expect(network.gates.length).to.be.equal(0);
 
         const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELUActivation).length;
@@ -50,7 +50,7 @@ describe("ArchitectTest", () => {
         const network: Network = architect.buildModel();
 
         expect(network.nodes.length).to.be.equal(10 + 10 + layerSize + 2);
-        expect(network.connections.length).to.be.equal(10 * 10 + 10 + layerSize * 2);
+        expect(network.connections.size).to.be.equal(10 * 10 + 10 + layerSize * 2);
         expect(network.gates.length).to.be.equal(0);
 
         const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELUActivation).length;
@@ -80,7 +80,7 @@ describe("ArchitectTest", () => {
         const network: Network = architect.buildModel();
 
         expect(network.nodes.length).to.be.equal(10 + 10 + outputSize * (memorySize + 1) + 20 + 10 + 2);
-        expect(network.connections.length).to.be.equal(10 * 10 + 10 * outputSize + memorySize * outputSize + outputSize * 20 + 20 * 10 + 10 * 2);
+        expect(network.connections.size).to.be.equal(10 * 10 + 10 * outputSize + memorySize * outputSize + outputSize * 20 + 20 * 10 + 10 * 2);
         expect(network.gates.length).to.be.equal(0);
 
         const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELUActivation).length;
@@ -101,7 +101,7 @@ describe("ArchitectTest", () => {
         const network: Network = architect.buildModel();
 
         expect(network.nodes.length).to.be.equal(10 + 10 + outputSize + 2 + 2);
-        expect(network.connections.length).to.be.equal(10 * 10 + 10 * outputSize + outputSize + outputSize * 2 + 2 * 2);
+        expect(network.connections.size).to.be.equal(10 * 10 + 10 * outputSize + outputSize + outputSize * 2 + 2 * 2);
         expect(network.gates.length).to.be.equal(0);
 
         const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELUActivation).length;
@@ -126,7 +126,7 @@ describe("ArchitectTest", () => {
         // 10 * GRUSize (input -> LSTM)
         // GRUSize * GRUSize * 8 + GRUSize (LSTM intern connection)
         // GRUSize * 2 (LSTM -> output)
-        expect(network.connections.length).to.be.equal(10 * GRUSize + GRUSize * GRUSize * 8 + 2 * GRUSize + GRUSize * 2);
+        expect(network.connections.size).to.be.equal(10 * GRUSize + GRUSize * GRUSize * 8 + 2 * GRUSize + GRUSize * 2);
 
         expect(network.gates.length).to.be.equal(3 * GRUSize * GRUSize);
 
@@ -152,7 +152,7 @@ describe("ArchitectTest", () => {
         // 10 * LSTMSize (input -> LSTM)
         // LSTMSize * LSTMSize * 8 + LSTMSize (LSTM intern connection)
         // LSTMSize * 2 (LSTM -> output)
-        expect(network.connections.length).to.be.equal(10 * LSTMSize + LSTMSize * LSTMSize * 8 + LSTMSize + LSTMSize * 2);
+        expect(network.connections.size).to.be.equal(10 * LSTMSize + LSTMSize * LSTMSize * 8 + LSTMSize + LSTMSize * 2);
 
         expect(network.gates.length).to.be.equal(2 * LSTMSize * LSTMSize + LSTMSize);
 
@@ -176,18 +176,18 @@ describe("ArchitectTest", () => {
         // Check backward pointing connections
         let backConnections: number = 0;
         for (let i: number = 0; i < network.nodes.length; i++) {
-            for (const conn of network.nodes[i].outgoing) {
+            network.nodes[i].outgoing.forEach(conn => {
                 if (network.nodes.indexOf(conn.to) < i) {
                     backConnections++;
                 }
-            }
+            });
         }
         expect(backConnections).to.be.equal(HopfieldSize * HopfieldSize);
 
         // 10 * HopfieldSize (input -> LSTM)
         // HopfieldSize * HopfieldSize * 8 + HopfieldSize (LSTM intern connection)
         // HopfieldSize * 2 (LSTM -> output)
-        expect(network.connections.length).to.be.equal(10 * HopfieldSize + HopfieldSize * HopfieldSize * 2 + HopfieldSize * 2);
+        expect(network.connections.size).to.be.equal(10 * HopfieldSize + HopfieldSize * HopfieldSize * 2 + HopfieldSize * 2);
 
         expect(network.gates.length).to.be.equal(0);
 

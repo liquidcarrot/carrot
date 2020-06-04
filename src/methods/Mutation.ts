@@ -84,7 +84,7 @@ class AddNodeMutation extends Mutation {
             node.mutateActivation(); // choose random activation
         }
         // take a random connection
-        const connection: Connection = pickRandom(network.connections);
+        const connection: Connection = pickRandom(Array.from(network.connections));
         const from: Node = connection.from;
         const to: Node = connection.to;
         network.disconnect(from, to); // disconnect it
@@ -157,7 +157,7 @@ class AddConnectionMutation extends Mutation {
         maxConnections?: number;
     }): void {
         // check if max connections is already reached
-        if (options !== undefined && options.maxConnections !== undefined && network.connections.length >= options.maxConnections) {
+        if (options !== undefined && options.maxConnections !== undefined && network.connections.size >= options.maxConnections) {
             return;
         }
         const possible: Node[][] = [];
@@ -191,9 +191,9 @@ class SubConnectionMutation extends Mutation {
      * @param network The network which gets mutated
      */
     public mutate(network: Network): void {
-        const possible: Connection[] = network.connections
-            .filter(conn => conn.from.outgoing.length > 1) // do not deactivate a neuron
-            .filter(conn => conn.to.incoming.length > 1) // do not deactivate a neuron
+        const possible: Connection[] = Array.from(network.connections)
+            .filter(conn => conn.from.outgoing.size > 1) // do not deactivate a neuron
+            .filter(conn => conn.to.incoming.size > 1) // do not deactivate a neuron
             .filter(conn => network.nodes.indexOf(conn.to) > network.nodes.indexOf(conn.from)); // look for forward pointing connections
         if (possible.length > 0) {
             const randomConnection: Connection = pickRandom(possible); // pick a random connection from the filtered array
@@ -238,7 +238,7 @@ class ModWeightMutation extends Mutation {
      */
     public mutate(network: Network): void {
         // pick random connection and mutate it's weight
-        pickRandom(network.connections).weight += randDouble(this.min, this.max);
+        pickRandom(Array.from(network.connections)).weight += randDouble(this.min, this.max);
     }
 }
 
@@ -359,7 +359,7 @@ class SubSelfConnectionMutation extends Mutation {
      * @param network The network which gets mutated
      */
     public mutate(network: Network): void {
-        const possible: Connection[] = network.connections.filter(conn => conn.from === conn.to);
+        const possible: Connection[] = Array.from(network.connections).filter(conn => conn.from === conn.to);
         if (possible.length > 0) {
             const randomConnection: Connection = pickRandom(possible);
             network.disconnect(randomConnection.from, randomConnection.to);
@@ -391,7 +391,7 @@ class AddGateMutation extends Mutation {
         }
 
         // use only connections that aren't already gated
-        const possible: Connection[] = network.connections.filter(conn => conn.gateNode === null);
+        const possible: Connection[] = Array.from(network.connections).filter(conn => conn.gateNode === null);
         if (possible.length > 0) {
             const node: Node = pickRandom(network.nodes.filter(node => !node.isInputNode())); // hidden or output node
             const connection: Connection = pickRandom(possible); // random connection from filtered array
@@ -460,9 +460,9 @@ class SubBackConnectionMutation extends Mutation {
      * @param network The network which gets mutated
      */
     public mutate(network: Network): void {
-        const possible: Connection[] = network.connections
-            .filter(conn => conn.from.outgoing.length > 1)
-            .filter(conn => conn.to.incoming.length > 1)
+        const possible: Connection[] = Array.from(network.connections)
+            .filter(conn => conn.from.outgoing.size > 1)
+            .filter(conn => conn.to.incoming.size > 1)
             .filter(conn => network.nodes.indexOf(conn.from) > network.nodes.indexOf(conn.to));
         if (possible.length > 0) {
             const randomConnection: Connection = pickRandom(possible);

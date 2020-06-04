@@ -23,19 +23,19 @@ describe("Mutation", () => {
                 expect(network.nodes.length).equal(originalNodesLength + 1);
             });
 
-            it("Network.connections.length is greater by 1 after mutation", () => {
+            it("network.connections.size is greater by 1 after mutation", () => {
                 const network: Network = new Network(1, 1);
-                const originalConnectionsLength: number = network.connections.length;
+                const originalConnectionsLength: number = network.connections.size;
                 network.mutate(new AddNodeMutation());
 
-                expect(network.connections.length).equal(originalConnectionsLength + 1);
+                expect(network.connections.size).equal(originalConnectionsLength + 1);
             });
 
             it("First neuron should have no incoming connections | new Network(1,1)", () => {
                 const network: Network = new Network(1, 1);
                 network.mutate(new AddNodeMutation());
 
-                expect(network.nodes[0].incoming).eql([]);
+                expect(network.nodes[0].incoming.size).equal(0);
             });
 
             it('Middle (hidden) neuron should have directionally correct incoming & outgoing connections | new Network(1,1)', () => {
@@ -61,24 +61,23 @@ describe("Mutation", () => {
 
             it("New neuron's out connection matches replaced connection's weight", () => {
                 const network: Network = new Network(1, 1);
-                const original: number = network.connections[0].weight;
+                const original: number = Array.from(network.connections)[0].weight;
                 network.mutate(new AddNodeMutation());
                 // Assumption about removing original connection, not what should happen according to NEAT spec.
-                expect(network.connections[1].weight).equal(original);
-            });
-
-            it("New neuron's in connection has a weight of 1", () => {
-                const network: Network = new Network(1, 1);
-                network.mutate(new AddNodeMutation());
-                // Assumption about removing original connection, not what should happen according to NEAT spec.
-                expect(network.connections[0].weight).equal(1);
+                network.connections.forEach(conn => {
+                    if (conn.to.isOutputNode()) {
+                        expect(conn.weight).equal(original);
+                    } else {
+                        expect(conn.weight).equal(1);
+                    }
+                });
             });
 
             it("Last neuron should have no outgoing connections | new Network(1,1)", () => {
                 const network: Network = new Network(1, 1);
                 network.mutate(new AddNodeMutation());
 
-                expect(network.nodes[2].outgoing).eql([]);
+                expect(network.nodes[2].outgoing.size).equal(0);
             });
         });
     });
