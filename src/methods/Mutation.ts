@@ -68,14 +68,14 @@ class AddNodeMutation extends Mutation {
      * @param network The network which gets mutated
      * @param options
      */
-    public mutate(network: Network, options?: {
+    public mutate(network: Network, options: {
         /**
          * Maximum amount of nodes.
          */
         maxNodes?: number
-    }): void {
+    } = {}): void {
         // check if max nodes is already reached
-        if (options !== undefined && options.maxNodes !== undefined && network.nodes.length >= options.maxNodes) {
+        if (options.maxNodes !== undefined && network.nodes.length >= options.maxNodes) {
             return;
         }
         // create a new hidden node
@@ -150,14 +150,14 @@ class AddConnectionMutation extends Mutation {
      * @param network The network which gets mutated
      * @param options
      */
-    public mutate(network: Network, options?: {
+    public mutate(network: Network, options: {
         /**
          * Maximum allowed connections.
          */
         maxConnections?: number;
-    }): void {
+    } = {}): void {
         // check if max connections is already reached
-        if (options !== undefined && options.maxConnections !== undefined && network.connections.size >= options.maxConnections) {
+        if (options.maxConnections !== undefined && network.connections.size >= options.maxConnections) {
             return;
         }
         const possible: Node[][] = [];
@@ -310,17 +310,17 @@ class ModActivationMutation extends Mutation {
      * @param network The network which gets mutated
      * @param options
      */
-    public mutate(network: Network, options?: {
+    public mutate(network: Network, options: {
         /**
          * All allowed activations.
          */
         allowedActivations?: activationType[]
-    }): void {
+    } = {}): void {
         const possible: Node[] = this.mutateOutput
             ? network.nodes.filter(node => !node.isInputNode()) // hidden and output nodes
             : network.nodes.filter(node => node.isHiddenNode()); // hidden nodes
         if (possible.length > 0) {
-            pickRandom(possible).mutateActivation(options?.allowedActivations); // mutate the activation of the node
+            pickRandom(possible).mutateActivation(options.allowedActivations); // mutate the activation of the node
         }
     }
 }
@@ -379,14 +379,14 @@ class AddGateMutation extends Mutation {
      * @param network The network which gets mutated
      * @param options
      */
-    public mutate(network: Network, options?: {
+    public mutate(network: Network, options: {
         /**
          * Maximum allowed gates.
          */
         maxGates?: number
-    }): void {
+    } = {}): void {
         // check if max gates isn't reached already
-        if (options !== undefined && options.maxGates !== undefined && network.gates.length >= options.maxGates) {
+        if (options.maxGates !== undefined && network.gates.length >= options.maxGates) {
             return;
         }
 
