@@ -10,11 +10,11 @@ export abstract class Layer {
     /**
      * The output size of the layer.
      */
-    public outputSize: number;
+    public readonly outputSize: number;
     /**
      * The nodes which gets connected to the previous layer.
      */
-    public inputNodes: Set<Node>;
+    public readonly inputNodes: Set<Node>;
     /**
      * The nodes which gets connected to the next layer.
      */
@@ -22,15 +22,15 @@ export abstract class Layer {
     /**
      * All nodes in this layer.
      */
-    public nodes: Node[];
+    public readonly nodes: Node[];
     /**
      * All connections in this layer.
      */
-    public connections: Connection[];
+    public readonly connections: Connection[];
     /**
      * All gates in this layer.
      */
-    public gates: Connection[];
+    public readonly gates: Connection[];
 
 
     protected constructor(outputSize: number) {
