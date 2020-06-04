@@ -734,8 +734,12 @@ function (_super) {
 
 
   AddNodeMutation.prototype.mutate = function (network, options) {
-    // check if max nodes is already reached
-    if (options !== undefined && options.maxNodes !== undefined && network.nodes.length >= options.maxNodes) {
+    if (options === void 0) {
+      options = {};
+    } // check if max nodes is already reached
+
+
+    if (options.maxNodes !== undefined && network.nodes.length >= options.maxNodes) {
       return;
     } // create a new hidden node
 
@@ -840,8 +844,12 @@ function (_super) {
 
 
   AddConnectionMutation.prototype.mutate = function (network, options) {
-    // check if max connections is already reached
-    if (options !== undefined && options.maxConnections !== undefined && network.connections.size >= options.maxConnections) {
+    if (options === void 0) {
+      options = {};
+    } // check if max connections is already reached
+
+
+    if (options.maxConnections !== undefined && network.connections.size >= options.maxConnections) {
       return;
     }
 
@@ -1053,6 +1061,10 @@ function (_super) {
 
 
   ModActivationMutation.prototype.mutate = function (network, options) {
+    if (options === void 0) {
+      options = {};
+    }
+
     var possible = this.mutateOutput ? network.nodes.filter(function (node) {
       return !node.isInputNode();
     }) // hidden and output nodes
@@ -1061,7 +1073,7 @@ function (_super) {
     }); // hidden nodes
 
     if (possible.length > 0) {
-      Utils_1.pickRandom(possible).mutateActivation(options === null || options === void 0 ? void 0 : options.allowedActivations); // mutate the activation of the node
+      Utils_1.pickRandom(possible).mutateActivation(options.allowedActivations); // mutate the activation of the node
     }
   };
 
@@ -1168,8 +1180,12 @@ function (_super) {
 
 
   AddGateMutation.prototype.mutate = function (network, options) {
-    // check if max gates isn't reached already
-    if (options !== undefined && options.maxGates !== undefined && network.gates.length >= options.maxGates) {
+    if (options === void 0) {
+      options = {};
+    } // check if max gates isn't reached already
+
+
+    if (options.maxGates !== undefined && network.gates.length >= options.maxGates) {
       return;
     } // use only connections that aren't already gated
 
