@@ -8,17 +8,17 @@ export interface NetworkJSON {
     /**
      * All nodes inside the network
      */
-    nodes: NodeJSON[];
+    readonly nodes: NodeJSON[];
     /**
      * All connections in the network
      */
-    connections: ConnectionJSON[];
+    readonly connections: ConnectionJSON[];
     /**
      * The input size of the network
      */
-    inputSize: number;
+    readonly inputSize: number;
     /**
      * The output size of the network
      */
-    outputSize: number;
+    readonly  outputSize: number;
 }

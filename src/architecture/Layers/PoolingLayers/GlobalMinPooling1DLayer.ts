@@ -1,3 +1,4 @@
+import {activationType} from "../../../methods/Activation";
 import {MinPooling1DLayer} from "./MinPooling1DLayer";
 
 /**
@@ -8,7 +9,7 @@ export class GlobalMinPooling1DLayer extends MinPooling1DLayer {
         /**
          * The activation type for the output nodes of this layer.
          */
-        activation?: ((x: number, derivative: boolean) => number)
+        activation?: activationType
     } = {}) {
         super(1, options);
     }

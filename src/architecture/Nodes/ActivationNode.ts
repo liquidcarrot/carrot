@@ -21,7 +21,7 @@ export class ActivationNode extends ConstantNode {
     public activate(): number {
         this.old = this.state;
 
-        const incomingStates: number[] = this.incoming.map(conn => conn.from.activation * conn.weight * conn.gain);
+        const incomingStates: number[] = Array.from(this.incoming).map(conn => conn.from.activation * conn.weight * conn.gain);
 
         if (incomingStates.length !== 1) {
             throw new ReferenceError("Only 1 incoming connections is allowed!");
@@ -63,23 +63,23 @@ export class ActivationNode extends ConstantNode {
         options.rate = getOrDefault(options.rate, 0.3);
         options.update = getOrDefault(options.update, true);
 
-        const connectionsStates: number[] = this.outgoing.map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
+        const connectionsStates: number[] = Array.from(this.outgoing).map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
         this.errorResponsibility = this.errorProjected = sum(connectionsStates) * this.derivativeState;
 
-        for (const connection of this.incoming) {
+        this.incoming.forEach(connection => {
             // calculate gradient
             let gradient: number = this.errorProjected * connection.eligibility;
-            for (let i: number = 0; i < connection.xTraceNodes.length; i++) {
-                gradient += connection.xTraceNodes[i].errorResponsibility * connection.xTraceValues[i];
-            }
+            connection.xTrace.forEach((value, key) => {
+                gradient += key.errorResponsibility * value;
+            });
 
-            connection.deltaWeightsTotal += options.rate * gradient * this.mask;
+            connection.deltaWeightsTotal += (options.rate ?? 0.3) * gradient * this.mask;
             if (options.update) {
-                connection.deltaWeightsTotal += options.momentum * connection.deltaWeightsPrevious;
+                connection.deltaWeightsTotal += (options.momentum ?? 0) * connection.deltaWeightsPrevious;
                 connection.weight += connection.deltaWeightsTotal;
                 connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
                 connection.deltaWeightsTotal = 0;
             }
-        }
+        });
     }
 }

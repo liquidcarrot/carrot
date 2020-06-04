@@ -73,7 +73,16 @@ describe("Connection", function (): void {
         const b: number = randInt(0, 100);
 
         it(`Connection.innovationID(a=${a}, b=${b}) => {number}`, () => {
-            expect(Connection.innovationID(a, b)).to.be.a("number");
+            const innovationID: number = Connection.innovationID(a, b);
+            expect(innovationID).to.be.a("number");
+
+            const w: number = Math.floor((Math.sqrt(8 * innovationID + 1) - 1) / 2);
+            const t: number = (w * w + w) / 2;
+            const y: number = innovationID - t;
+            const x: number = w - y;
+
+            expect(a).to.be.equal(x);
+            expect(b).to.be.equal(y);
         });
     });
 });

@@ -1,6 +1,6 @@
 import {ConnectionType} from "../../../enums/ConnectionType";
 import {NodeType} from "../../../enums/NodeType";
-import {IdentityActivation, LogisticActivation} from "../../../methods/Activation";
+import {activationType, IdentityActivation, LogisticActivation} from "../../../methods/Activation";
 import {Node} from "../../Node";
 import {Layer} from "../Layer";
 
@@ -12,7 +12,7 @@ export class MemoryLayer extends Layer {
         /**
          * The activation type for the output nodes of this layer.
          */
-        activation?: ((x: number, derivative: boolean) => number),
+        activation?: activationType,
         /**
          * The size of the memory.
          */

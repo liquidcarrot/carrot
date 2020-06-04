@@ -5,17 +5,17 @@ export interface ConnectionJSON {
     /**
      * The connection weight
      */
-    weight: number;
+    readonly weight: number;
     /**
      * The index of the origin node
      */
-    fromIndex: number;
+    readonly fromIndex: number;
     /**
      * The index of the destination node
      */
-    toIndex: number;
+    readonly toIndex: number;
     /**
      * The index of the gate node, if connection is gated
      */
-    gateNodeIndex: number | null;
+    readonly gateNodeIndex: number | null;
 }

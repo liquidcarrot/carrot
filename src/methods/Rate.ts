@@ -9,7 +9,7 @@ abstract class Rate {
     /**
      * The rate at the first iteration.
      */
-    protected baseRate: number;
+    protected readonly baseRate: number;
 
     /**
      * Constructs a rate policy

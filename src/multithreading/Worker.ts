@@ -1,16 +1,7 @@
 import {expose} from "threads/worker";
 import {Network} from "../architecture/Network";
-import {NetworkJSON} from "../interfaces/NetworkJSON";
+import {ALL_LOSSES} from "../methods/Loss";
 
-expose((serializedDataSet: {
-    /**
-     * The input values
-     */
-    input: number[],
-    /**
-     * The target output values
-     */
-    output: number[]
-}[], jsonNetwork: NetworkJSON, loss: (targets: number[], outputs: number[]) => number): number => {
-    return Network.fromJSON(jsonNetwork).test(serializedDataSet, loss);
+expose((serializedDataSet: string, jsonNetwork: string, lossIndex: number): number => {
+    return Network.fromJSON(JSON.parse(jsonNetwork)).test(JSON.parse(serializedDataSet), Object.values(ALL_LOSSES)[lossIndex]);
 });

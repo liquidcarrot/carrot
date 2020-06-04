@@ -15,11 +15,10 @@
   "toc": [
     "NEAT",
     "Network",
+    "Layer",
     "Architect",
     "Node",
     "Connection",
-    "Activation",
-    "Loss",
     "Mutation",
     "Rate",
     "Selection"

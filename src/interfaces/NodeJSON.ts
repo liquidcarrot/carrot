@@ -1,4 +1,5 @@
 import {PoolNodeType} from "../enums/NodeType";
+import {activationType} from "../methods/Activation";
 
 /**
  * An interface for representing a node with an json object
@@ -7,23 +8,23 @@ export interface NodeJSON {
     /**
      * The bias value of the node
      */
-    bias?: number;
+    readonly bias?: number;
     /**
      * The type of this node
      */
-    type?: number;
+    readonly type?: number;
     /**
      * The activation type of this node
      */
-    squash?: ((x: number, derivative: boolean) => number);
+    readonly squash?: activationType;
     /**
      * The mask value of this node
      */
-    mask?: number;
+    readonly mask?: number;
     /**
      * The index of this node
      */
-    index?: number;
+    readonly index?: number;
 }
 
 /**
@@ -33,7 +34,7 @@ export interface PoolNodeJSON extends NodeJSON {
     /**
      * The poolType of this pooling node
      */
-    poolType: PoolNodeType;
+    readonly poolType: PoolNodeType;
 }
 
 /**
@@ -43,5 +44,5 @@ export interface DropoutNodeJSON extends NodeJSON {
     /**
      * The dropout probability of this dropout node
      */
-    probability: number;
+    readonly probability: number;
 }

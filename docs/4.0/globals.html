@@ -148,6 +148,13 @@
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
+							<h3>Type aliases</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-type-alias"><a href="globals.html#activationtype" class="tsd-kind-icon">activation<wbr>Type</a></li>
+								<li class="tsd-kind-type-alias"><a href="globals.html#losstype" class="tsd-kind-icon">loss<wbr>Type</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
 							<h3>Variables</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-variable"><a href="globals.html#all_mutations" class="tsd-kind-icon">ALL_<wbr>MUTATIONS</a></li>
@@ -218,6 +225,77 @@
 				</section>
 			</section>
 			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Type aliases</h2>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias">
+					<a name="activationtype" class="tsd-anchor"></a>
+					<h3>activation<wbr>Type</h3>
+					<div class="tsd-signature tsd-kind-icon">activation<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L1">src/methods/Activation.ts:1</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-signature">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>x: <span class="tsd-signature-type">number</span></h5>
+											</li>
+											<li>
+												<h5>derivative: <span class="tsd-signature-type">boolean</span></h5>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-type-alias">
+					<a name="losstype" class="tsd-anchor"></a>
+					<h3>loss<wbr>Type</h3>
+					<div class="tsd-signature tsd-kind-icon">loss<wbr>Type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>targets<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, outputs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Loss.ts#L1">src/methods/Loss.ts:1</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-type-declaration">
+						<h4>Type declaration</h4>
+						<ul class="tsd-parameters">
+							<li class="tsd-parameter-signature">
+								<ul class="tsd-signatures tsd-kind-type-literal tsd-parent-kind-type-alias">
+									<li class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">(</span>targets<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, outputs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+								</ul>
+								<ul class="tsd-descriptions">
+									<li class="tsd-description">
+										<h4 class="tsd-parameters-title">Parameters</h4>
+										<ul class="tsd-parameters">
+											<li>
+												<h5>targets: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+											</li>
+											<li>
+												<h5>outputs: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span></h5>
+											</li>
+										</ul>
+										<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Variables</h2>
 				<section class="tsd-panel tsd-member tsd-kind-variable">
 					<a name="all_mutations" class="tsd-anchor"></a>
@@ -225,7 +303,7 @@
 					<div class="tsd-signature tsd-kind-icon">ALL_<wbr>MUTATIONS<span class="tsd-signature-symbol">:</span> <a href="classes/mutation.html" class="tsd-signature-type">Mutation</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = [new AddNodeMutation(),new SubNodeMutation(),new AddConnectionMutation(),new SubConnectionMutation(),new ModWeightMutation(),new ModBiasMutation(),new ModActivationMutation(),new AddGateMutation(),new SubGateMutation(),new AddSelfConnectionMutation(),new SubSelfConnectionMutation(),new AddBackConnectionMutation(),new SubBackConnectionMutation(),new SwapNodesMutation(),]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Mutation.ts#L525">src/methods/Mutation.ts:525</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Mutation.ts#L526">src/methods/Mutation.ts:526</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -240,7 +318,7 @@
 					<div class="tsd-signature tsd-kind-icon">FEEDFORWARD_<wbr>MUTATIONS<span class="tsd-signature-symbol">:</span> <a href="classes/mutation.html" class="tsd-signature-type">Mutation</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = [new AddNodeMutation(),new SubNodeMutation(),new AddConnectionMutation(),new SubConnectionMutation(),new ModWeightMutation(),new ModBiasMutation(),new ModActivationMutation(),new SwapNodesMutation(),]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Mutation.ts#L544">src/methods/Mutation.ts:544</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Mutation.ts#L545">src/methods/Mutation.ts:545</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -255,7 +333,7 @@
 					<div class="tsd-signature tsd-kind-icon">NO_<wbr>STRUCTURE_<wbr>MUTATIONS<span class="tsd-signature-symbol">:</span> <a href="classes/mutation.html" class="tsd-signature-type">Mutation</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = [new ModWeightMutation(),new ModBiasMutation(),new ModActivationMutation(),]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Mutation.ts#L555">src/methods/Mutation.ts:555</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Mutation.ts#L556">src/methods/Mutation.ts:556</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -265,7 +343,7 @@
 					<div class="tsd-signature tsd-kind-icon">ONLY_<wbr>STRUCTURE<span class="tsd-signature-symbol">:</span> <a href="classes/mutation.html" class="tsd-signature-type">Mutation</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = [new AddNodeMutation(),new SubNodeMutation(),new AddConnectionMutation(),new SubConnectionMutation(),new AddGateMutation(),new SubGateMutation(),new AddSelfConnectionMutation(),new SubSelfConnectionMutation(),new AddBackConnectionMutation(),new SubBackConnectionMutation(),new SwapNodesMutation(),]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Mutation.ts#L560">src/methods/Mutation.ts:560</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Mutation.ts#L561">src/methods/Mutation.ts:561</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -275,7 +353,7 @@
 					<div class="tsd-signature tsd-kind-icon">Parcel<wbr>Bundler<span class="tsd-signature-symbol">:</span> <a href="globals.html#parcelbundler" class="tsd-signature-type">ParcelBundler</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L2">scripts/build.ts:2</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L2">scripts/build.ts:2</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -285,7 +363,7 @@
 					<div class="tsd-signature tsd-kind-icon">mnist<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span><span class="tsd-signature-symbol"> = require(&quot;mnist&quot;)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/test/e2e/MNISTTest.ts#L3">test/e2e/MNISTTest.ts:3</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/test/e2e/MNISTTest.ts#L3">test/e2e/MNISTTest.ts:3</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -302,7 +380,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L85">src/methods/Activation.ts:85</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L87">src/methods/Activation.ts:87</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -328,7 +406,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L57">src/methods/Activation.ts:57</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L59">src/methods/Activation.ts:59</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -354,7 +432,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Loss.ts#L15">src/methods/Loss.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Loss.ts#L17">src/methods/Loss.ts:17</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -380,7 +458,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L64">src/methods/Activation.ts:64</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L66">src/methods/Activation.ts:66</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -406,7 +484,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L71">src/methods/Activation.ts:71</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L73">src/methods/Activation.ts:73</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -432,7 +510,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L50">src/methods/Activation.ts:50</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L52">src/methods/Activation.ts:52</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -458,7 +536,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Loss.ts#L53">src/methods/Loss.ts:53</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Loss.ts#L55">src/methods/Loss.ts:55</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -484,7 +562,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L78">src/methods/Activation.ts:78</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L80">src/methods/Activation.ts:80</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -510,7 +588,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L15">src/methods/Activation.ts:15</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L17">src/methods/Activation.ts:17</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -536,7 +614,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L92">src/methods/Activation.ts:92</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L94">src/methods/Activation.ts:94</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -562,7 +640,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L1">src/methods/Activation.ts:1</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L3">src/methods/Activation.ts:3</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -588,7 +666,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Loss.ts#L22">src/methods/Loss.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Loss.ts#L24">src/methods/Loss.ts:24</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -614,7 +692,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Loss.ts#L29">src/methods/Loss.ts:29</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Loss.ts#L31">src/methods/Loss.ts:31</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -640,7 +718,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Loss.ts#L8">src/methods/Loss.ts:8</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Loss.ts#L10">src/methods/Loss.ts:10</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -666,7 +744,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L117">src/methods/Activation.ts:117</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L119">src/methods/Activation.ts:119</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -692,7 +770,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Loss.ts#L1">src/methods/Loss.ts:1</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Loss.ts#L3">src/methods/Loss.ts:3</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -718,7 +796,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Loss.ts#L45">src/methods/Loss.ts:45</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Loss.ts#L47">src/methods/Loss.ts:47</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -744,7 +822,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L29">src/methods/Activation.ts:29</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L31">src/methods/Activation.ts:31</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -770,7 +848,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L99">src/methods/Activation.ts:99</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L101">src/methods/Activation.ts:101</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -796,7 +874,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L43">src/methods/Activation.ts:43</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L45">src/methods/Activation.ts:45</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -822,7 +900,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L36">src/methods/Activation.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L38">src/methods/Activation.ts:38</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -848,7 +926,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L22">src/methods/Activation.ts:22</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L24">src/methods/Activation.ts:24</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -874,7 +952,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L8">src/methods/Activation.ts:8</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L10">src/methods/Activation.ts:10</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -900,7 +978,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Loss.ts#L36">src/methods/Loss.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Loss.ts#L38">src/methods/Loss.ts:38</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -926,7 +1004,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Utils.ts#L167">src/methods/Utils.ts:167</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Utils.ts#L167">src/methods/Utils.ts:167</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -956,7 +1034,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Utils.ts#L192">src/methods/Utils.ts:192</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Utils.ts#L192">src/methods/Utils.ts:192</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -998,7 +1076,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Utils.ts#L69">src/methods/Utils.ts:69</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Utils.ts#L69">src/methods/Utils.ts:69</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1042,7 +1120,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Utils.ts#L103">src/methods/Utils.ts:103</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Utils.ts#L103">src/methods/Utils.ts:103</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1072,7 +1150,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Utils.ts#L118">src/methods/Utils.ts:118</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Utils.ts#L118">src/methods/Utils.ts:118</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1102,7 +1180,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Utils.ts#L152">src/methods/Utils.ts:152</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Utils.ts#L152">src/methods/Utils.ts:152</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1132,7 +1210,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Utils.ts#L135">src/methods/Utils.ts:135</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Utils.ts#L135">src/methods/Utils.ts:135</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1162,7 +1240,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Utils.ts#L7">src/methods/Utils.ts:7</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Utils.ts#L7">src/methods/Utils.ts:7</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1200,7 +1278,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Utils.ts#L41">src/methods/Utils.ts:41</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Utils.ts#L41">src/methods/Utils.ts:41</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1223,7 +1301,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Utils.ts#L32">src/methods/Utils.ts:32</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Utils.ts#L32">src/methods/Utils.ts:32</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1261,7 +1339,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Utils.ts#L21">src/methods/Utils.ts:21</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Utils.ts#L21">src/methods/Utils.ts:21</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1299,7 +1377,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Utils.ts#L52">src/methods/Utils.ts:52</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Utils.ts#L52">src/methods/Utils.ts:52</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1343,7 +1421,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L5">scripts/build.ts:5</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L5">scripts/build.ts:5</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -1366,7 +1444,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Utils.ts#L78">src/methods/Utils.ts:78</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Utils.ts#L78">src/methods/Utils.ts:78</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1404,7 +1482,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Utils.ts#L176">src/methods/Utils.ts:176</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Utils.ts#L176">src/methods/Utils.ts:176</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1433,7 +1511,7 @@
 					<div class="tsd-signature tsd-kind-icon">ALL_<wbr>ACTIVATIONS<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L130">src/methods/Activation.ts:130</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L132">src/methods/Activation.ts:132</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
@@ -1442,7 +1520,7 @@
 						<div class="tsd-signature tsd-kind-icon">Absolute<wbr>Activation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L266">src/methods/Activation.ts:266</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L268">src/methods/Activation.ts:268</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -1476,7 +1554,7 @@
 						<div class="tsd-signature tsd-kind-icon">Bent<wbr>Identity<wbr>Activation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L262">src/methods/Activation.ts:262</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L264">src/methods/Activation.ts:264</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -1510,7 +1588,7 @@
 						<div class="tsd-signature tsd-kind-icon">Bipolar<wbr>Activation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L263">src/methods/Activation.ts:263</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L265">src/methods/Activation.ts:265</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -1544,7 +1622,7 @@
 						<div class="tsd-signature tsd-kind-icon">Bipolar<wbr>Sigmoid<wbr>Activation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L264">src/methods/Activation.ts:264</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L266">src/methods/Activation.ts:266</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -1578,7 +1656,7 @@
 						<div class="tsd-signature tsd-kind-icon">Gaussian<wbr>Activation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L261">src/methods/Activation.ts:261</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L263">src/methods/Activation.ts:263</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -1612,7 +1690,7 @@
 						<div class="tsd-signature tsd-kind-icon">Hard<wbr>Tanh<wbr>Activation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L265">src/methods/Activation.ts:265</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L267">src/methods/Activation.ts:267</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -1646,7 +1724,7 @@
 						<div class="tsd-signature tsd-kind-icon">Identity<wbr>Activation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L256">src/methods/Activation.ts:256</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L258">src/methods/Activation.ts:258</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -1680,7 +1758,7 @@
 						<div class="tsd-signature tsd-kind-icon">Inverse<wbr>Activation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L267">src/methods/Activation.ts:267</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L269">src/methods/Activation.ts:269</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -1714,7 +1792,7 @@
 						<div class="tsd-signature tsd-kind-icon">Logistic<wbr>Activation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L254">src/methods/Activation.ts:254</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L256">src/methods/Activation.ts:256</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -1748,7 +1826,7 @@
 						<div class="tsd-signature tsd-kind-icon">MISHActivation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L269">src/methods/Activation.ts:269</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L271">src/methods/Activation.ts:271</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -1782,7 +1860,7 @@
 						<div class="tsd-signature tsd-kind-icon">RELUActivation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L258">src/methods/Activation.ts:258</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L260">src/methods/Activation.ts:260</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -1816,7 +1894,7 @@
 						<div class="tsd-signature tsd-kind-icon">SELUActivation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L268">src/methods/Activation.ts:268</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L270">src/methods/Activation.ts:270</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -1850,7 +1928,7 @@
 						<div class="tsd-signature tsd-kind-icon">Sinusoid<wbr>Activation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L260">src/methods/Activation.ts:260</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L262">src/methods/Activation.ts:262</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -1884,7 +1962,7 @@
 						<div class="tsd-signature tsd-kind-icon">Soft<wbr>Sign<wbr>Activation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L259">src/methods/Activation.ts:259</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L261">src/methods/Activation.ts:261</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -1918,7 +1996,7 @@
 						<div class="tsd-signature tsd-kind-icon">Step<wbr>Activation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L257">src/methods/Activation.ts:257</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L259">src/methods/Activation.ts:259</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -1952,7 +2030,7 @@
 						<div class="tsd-signature tsd-kind-icon">Tanh<wbr>Activation<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Activation.ts#L255">src/methods/Activation.ts:255</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Activation.ts#L257">src/methods/Activation.ts:257</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -1987,7 +2065,7 @@
 					<div class="tsd-signature tsd-kind-icon">ALL_<wbr>LOSSES<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Loss.ts#L61">src/methods/Loss.ts:61</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Loss.ts#L63">src/methods/Loss.ts:63</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
@@ -1996,7 +2074,7 @@
 						<div class="tsd-signature tsd-kind-icon">Binary<wbr>Loss<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>targets<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, outputs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Loss.ts#L141">src/methods/Loss.ts:141</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Loss.ts#L143">src/methods/Loss.ts:143</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -2030,7 +2108,7 @@
 						<div class="tsd-signature tsd-kind-icon">HINGELoss<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>targets<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, outputs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Loss.ts#L146">src/methods/Loss.ts:146</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Loss.ts#L148">src/methods/Loss.ts:148</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -2064,7 +2142,7 @@
 						<div class="tsd-signature tsd-kind-icon">MAELoss<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>targets<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, outputs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Loss.ts#L142">src/methods/Loss.ts:142</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Loss.ts#L144">src/methods/Loss.ts:144</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -2098,7 +2176,7 @@
 						<div class="tsd-signature tsd-kind-icon">MAPELoss<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>targets<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, outputs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Loss.ts#L143">src/methods/Loss.ts:143</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Loss.ts#L145">src/methods/Loss.ts:145</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -2132,7 +2210,7 @@
 						<div class="tsd-signature tsd-kind-icon">MBELoss<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>targets<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, outputs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Loss.ts#L140">src/methods/Loss.ts:140</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Loss.ts#L142">src/methods/Loss.ts:142</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -2166,7 +2244,7 @@
 						<div class="tsd-signature tsd-kind-icon">MSELoss<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>targets<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, outputs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Loss.ts#L139">src/methods/Loss.ts:139</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Loss.ts#L141">src/methods/Loss.ts:141</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -2200,7 +2278,7 @@
 						<div class="tsd-signature tsd-kind-icon">MSLELoss<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>targets<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, outputs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Loss.ts#L145">src/methods/Loss.ts:145</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Loss.ts#L147">src/methods/Loss.ts:147</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -2234,7 +2312,7 @@
 						<div class="tsd-signature tsd-kind-icon">WAPELoss<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span>targets<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span>, outputs<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/methods/Loss.ts#L144">src/methods/Loss.ts:144</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/methods/Loss.ts#L146">src/methods/Loss.ts:146</a></li>
 							</ul>
 						</aside>
 						<div class="tsd-type-declaration">
@@ -2269,7 +2347,7 @@
 					<div class="tsd-signature tsd-kind-icon">browser<wbr>Dev<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L19">scripts/build.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L19">scripts/build.ts:19</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
@@ -2278,7 +2356,7 @@
 						<div class="tsd-signature tsd-kind-icon">bundle<wbr>Node<wbr>Modules<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> = true</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L25">scripts/build.ts:25</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L25">scripts/build.ts:25</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2288,7 +2366,7 @@
 						<div class="tsd-signature tsd-kind-icon">global<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;carrot&quot;</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L26">scripts/build.ts:26</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L26">scripts/build.ts:26</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2298,7 +2376,7 @@
 						<div class="tsd-signature tsd-kind-icon">minify<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> = false</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L22">scripts/build.ts:22</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L22">scripts/build.ts:22</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2308,7 +2386,7 @@
 						<div class="tsd-signature tsd-kind-icon">out<wbr>Dir<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = path.resolve(__dirname, &#x27;../dist/dev&#x27;)</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L20">scripts/build.ts:20</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L20">scripts/build.ts:20</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2318,7 +2396,7 @@
 						<div class="tsd-signature tsd-kind-icon">out<wbr>File<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = path.resolve(__dirname, &#x27;../dist/dev/index.browser.js&#x27;)</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L21">scripts/build.ts:21</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L21">scripts/build.ts:21</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2328,7 +2406,7 @@
 						<div class="tsd-signature tsd-kind-icon">target<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"browser"</span><span class="tsd-signature-symbol"> = &quot;browser&quot;</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L24">scripts/build.ts:24</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L24">scripts/build.ts:24</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2338,7 +2416,7 @@
 						<div class="tsd-signature tsd-kind-icon">watch<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> = true</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L23">scripts/build.ts:23</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L23">scripts/build.ts:23</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2349,7 +2427,7 @@
 					<div class="tsd-signature tsd-kind-icon">browser<wbr>Production<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L10">scripts/build.ts:10</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L10">scripts/build.ts:10</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
@@ -2358,7 +2436,7 @@
 						<div class="tsd-signature tsd-kind-icon">bundle<wbr>Node<wbr>Modules<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> = true</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L16">scripts/build.ts:16</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L16">scripts/build.ts:16</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2368,7 +2446,7 @@
 						<div class="tsd-signature tsd-kind-icon">global<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;carrot&quot;</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L17">scripts/build.ts:17</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L17">scripts/build.ts:17</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2378,7 +2456,7 @@
 						<div class="tsd-signature tsd-kind-icon">minify<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> = true</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L13">scripts/build.ts:13</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L13">scripts/build.ts:13</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2388,7 +2466,7 @@
 						<div class="tsd-signature tsd-kind-icon">out<wbr>Dir<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = path.resolve(__dirname, &#x27;../dist/production&#x27;)</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L11">scripts/build.ts:11</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L11">scripts/build.ts:11</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2398,7 +2476,7 @@
 						<div class="tsd-signature tsd-kind-icon">out<wbr>File<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = path.resolve(__dirname, &#x27;../dist/production/index.browser.min.js&#x27;)</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L12">scripts/build.ts:12</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L12">scripts/build.ts:12</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2408,7 +2486,7 @@
 						<div class="tsd-signature tsd-kind-icon">target<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"browser"</span><span class="tsd-signature-symbol"> = &quot;browser&quot;</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L15">scripts/build.ts:15</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L15">scripts/build.ts:15</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2418,7 +2496,7 @@
 						<div class="tsd-signature tsd-kind-icon">watch<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> = false</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L14">scripts/build.ts:14</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L14">scripts/build.ts:14</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2429,7 +2507,7 @@
 					<div class="tsd-signature tsd-kind-icon">node<wbr>Dev<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L36">scripts/build.ts:36</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L36">scripts/build.ts:36</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
@@ -2438,7 +2516,7 @@
 						<div class="tsd-signature tsd-kind-icon">global<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;carrot&quot;</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L42">scripts/build.ts:42</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L42">scripts/build.ts:42</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2448,7 +2526,7 @@
 						<div class="tsd-signature tsd-kind-icon">minify<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> = false</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L39">scripts/build.ts:39</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L39">scripts/build.ts:39</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2458,7 +2536,7 @@
 						<div class="tsd-signature tsd-kind-icon">out<wbr>Dir<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = path.resolve(__dirname, &#x27;../dist/dev&#x27;)</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L37">scripts/build.ts:37</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L37">scripts/build.ts:37</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2468,7 +2546,7 @@
 						<div class="tsd-signature tsd-kind-icon">out<wbr>File<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = path.resolve(__dirname, &#x27;../dist/dev/index.js&#x27;)</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L38">scripts/build.ts:38</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L38">scripts/build.ts:38</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2478,7 +2556,7 @@
 						<div class="tsd-signature tsd-kind-icon">target<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"node"</span><span class="tsd-signature-symbol"> = &quot;node&quot;</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L41">scripts/build.ts:41</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L41">scripts/build.ts:41</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2488,7 +2566,7 @@
 						<div class="tsd-signature tsd-kind-icon">watch<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> = true</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L40">scripts/build.ts:40</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L40">scripts/build.ts:40</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2499,7 +2577,7 @@
 					<div class="tsd-signature tsd-kind-icon">node<wbr>Production<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L28">scripts/build.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L28">scripts/build.ts:28</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-object-literal">
@@ -2508,7 +2586,7 @@
 						<div class="tsd-signature tsd-kind-icon">global<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &quot;carrot&quot;</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L34">scripts/build.ts:34</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L34">scripts/build.ts:34</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2518,7 +2596,7 @@
 						<div class="tsd-signature tsd-kind-icon">minify<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">true</span><span class="tsd-signature-symbol"> = true</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L31">scripts/build.ts:31</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L31">scripts/build.ts:31</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2528,7 +2606,7 @@
 						<div class="tsd-signature tsd-kind-icon">out<wbr>Dir<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = path.resolve(__dirname, &#x27;../dist/production&#x27;)</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L29">scripts/build.ts:29</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L29">scripts/build.ts:29</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2538,7 +2616,7 @@
 						<div class="tsd-signature tsd-kind-icon">out<wbr>File<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = path.resolve(__dirname, &#x27;../dist/production/index.min.js&#x27;)</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L30">scripts/build.ts:30</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L30">scripts/build.ts:30</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2548,7 +2626,7 @@
 						<div class="tsd-signature tsd-kind-icon">target<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">"node"</span><span class="tsd-signature-symbol"> = &quot;node&quot;</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L33">scripts/build.ts:33</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L33">scripts/build.ts:33</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2558,7 +2636,7 @@
 						<div class="tsd-signature tsd-kind-icon">watch<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">false</span><span class="tsd-signature-symbol"> = false</span></div>
 						<aside class="tsd-sources">
 							<ul>
-								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/scripts/build.ts#L32">scripts/build.ts:32</a></li>
+								<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/scripts/build.ts#L32">scripts/build.ts:32</a></li>
 							</ul>
 						</aside>
 					</section>
@@ -2569,7 +2647,7 @@
 					<div class="tsd-signature tsd-kind-icon">was<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/test/units/architecture/ConnectionTest.ts#L7">test/units/architecture/ConnectionTest.ts:7</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/test/units/architecture/ConnectionTest.ts#L7">test/units/architecture/ConnectionTest.ts:7</a></li>
 						</ul>
 					</aside>
 					<section class="tsd-panel tsd-member tsd-kind-function tsd-parent-kind-object-literal">
@@ -2582,7 +2660,7 @@
 							<li class="tsd-description">
 								<aside class="tsd-sources">
 									<ul>
-										<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/test/units/architecture/ConnectionTest.ts#L8">test/units/architecture/ConnectionTest.ts:8</a></li>
+										<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/test/units/architecture/ConnectionTest.ts#L8">test/units/architecture/ConnectionTest.ts:8</a></li>
 									</ul>
 								</aside>
 								<h4 class="tsd-parameters-title">Parameters</h4>
@@ -2619,6 +2697,9 @@
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/connection.html" class="tsd-kind-icon">Connection</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/layer.html" class="tsd-kind-icon">Layer</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/mutation.html" class="tsd-kind-icon">Mutation</a>

@@ -125,14 +125,14 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Global<wbr>Min<wbr>Pooling1DLayer<span class="tsd-signature-symbol">(</span>outputSize<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>activation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="globalminpooling1dlayer.html" class="tsd-signature-type">GlobalMinPooling1DLayer</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Global<wbr>Min<wbr>Pooling1DLayer<span class="tsd-signature-symbol">(</span>outputSize<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>activation<span class="tsd-signature-symbol">?: </span><a href="../globals.html#activationtype" class="tsd-signature-type">activationType</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="globalminpooling1dlayer.html" class="tsd-signature-type">GlobalMinPooling1DLayer</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="minpooling1dlayer.html">MinPooling1DLayer</a>.<a href="minpooling1dlayer.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer.ts#L6">src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer.ts:6</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer.ts#L7">src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer.ts:7</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -141,10 +141,10 @@
 									<h5>outputSize: <span class="tsd-signature-type">number</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <span class="tsd-signature-symbol">{ </span>activation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = {}</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <span class="tsd-signature-symbol">{ </span>activation<span class="tsd-signature-symbol">?: </span><a href="../globals.html#activationtype" class="tsd-signature-type">activationType</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = {}</span></h5>
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter">
-											<h5><span class="tsd-flag ts-flagOptional">Optional</span> activation<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">(</span>x<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, derivative<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol"> =&gt; </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span></h5>
+											<h5><span class="tsd-flag ts-flagOptional">Optional</span> activation<span class="tsd-signature-symbol">?: </span><a href="../globals.html#activationtype" class="tsd-signature-type">activationType</a></h5>
 											<div class="tsd-comment tsd-typography">
 												<div class="lead">
 													<p>The activation type for the output nodes of this layer.</p>
@@ -163,12 +163,12 @@
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="connections" class="tsd-anchor"></a>
-					<h3>connections</h3>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> connections</h3>
 					<div class="tsd-signature tsd-kind-icon">connections<span class="tsd-signature-symbol">:</span> <a href="connection.html" class="tsd-signature-type">Connection</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#connections">connections</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/Layer.ts#L29">src/architecture/Layers/Layer.ts:29</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/architecture/Layers/Layer.ts#L29">src/architecture/Layers/Layer.ts:29</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -179,12 +179,12 @@
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="gates" class="tsd-anchor"></a>
-					<h3>gates</h3>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> gates</h3>
 					<div class="tsd-signature tsd-kind-icon">gates<span class="tsd-signature-symbol">:</span> <a href="connection.html" class="tsd-signature-type">Connection</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#gates">gates</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/Layer.ts#L33">src/architecture/Layers/Layer.ts:33</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/architecture/Layers/Layer.ts#L33">src/architecture/Layers/Layer.ts:33</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -195,12 +195,12 @@
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="inputnodes" class="tsd-anchor"></a>
-					<h3>input<wbr>Nodes</h3>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> input<wbr>Nodes</h3>
 					<div class="tsd-signature tsd-kind-icon">input<wbr>Nodes<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><a href="node.html" class="tsd-signature-type">Node</a><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#inputnodes">inputNodes</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/Layer.ts#L17">src/architecture/Layers/Layer.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/architecture/Layers/Layer.ts#L17">src/architecture/Layers/Layer.ts:17</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -211,12 +211,12 @@
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="nodes" class="tsd-anchor"></a>
-					<h3>nodes</h3>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> nodes</h3>
 					<div class="tsd-signature tsd-kind-icon">nodes<span class="tsd-signature-symbol">:</span> <a href="node.html" class="tsd-signature-type">Node</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#nodes">nodes</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/Layer.ts#L25">src/architecture/Layers/Layer.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/architecture/Layers/Layer.ts#L25">src/architecture/Layers/Layer.ts:25</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -232,7 +232,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#outputnodes">outputNodes</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/Layer.ts#L21">src/architecture/Layers/Layer.ts:21</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/architecture/Layers/Layer.ts#L21">src/architecture/Layers/Layer.ts:21</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -243,12 +243,12 @@
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited">
 					<a name="outputsize" class="tsd-anchor"></a>
-					<h3>output<wbr>Size</h3>
+					<h3><span class="tsd-flag ts-flagReadonly">Readonly</span> output<wbr>Size</h3>
 					<div class="tsd-signature tsd-kind-icon">output<wbr>Size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#outputsize">outputSize</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/Layer.ts#L13">src/architecture/Layers/Layer.ts:13</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/architecture/Layers/Layer.ts#L13">src/architecture/Layers/Layer.ts:13</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -272,7 +272,7 @@
 								<p>Inherited from <a href="poolinglayer.html">PoolingLayer</a>.<a href="poolinglayer.html#connectiontypeisallowed">connectionTypeisAllowed</a></p>
 								<p>Overrides <a href="layer.html">Layer</a>.<a href="layer.html#connectiontypeisallowed">connectionTypeisAllowed</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/PoolingLayers/PoolingLayer.ts#L28">src/architecture/Layers/PoolingLayers/PoolingLayer.ts:28</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/architecture/Layers/PoolingLayers/PoolingLayer.ts#L28">src/architecture/Layers/PoolingLayers/PoolingLayer.ts:28</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -306,7 +306,7 @@
 								<p>Inherited from <a href="poolinglayer.html">PoolingLayer</a>.<a href="poolinglayer.html#getdefaultincomingconnectiontype">getDefaultIncomingConnectionType</a></p>
 								<p>Overrides <a href="layer.html">Layer</a>.<a href="layer.html#getdefaultincomingconnectiontype">getDefaultIncomingConnectionType</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/PoolingLayers/PoolingLayer.ts#L17">src/architecture/Layers/PoolingLayers/PoolingLayer.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/architecture/Layers/PoolingLayers/PoolingLayer.ts#L17">src/architecture/Layers/PoolingLayers/PoolingLayer.ts:17</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -330,7 +330,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#connect">connect</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/Layer.ts#L55">src/architecture/Layers/Layer.ts:55</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/architecture/Layers/Layer.ts#L55">src/architecture/Layers/Layer.ts:55</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -381,7 +381,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#gate">gate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/b31096c/src/architecture/Layers/Layer.ts#L102">src/architecture/Layers/Layer.ts:102</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/f331033/src/architecture/Layers/Layer.ts#L102">src/architecture/Layers/Layer.ts:102</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">

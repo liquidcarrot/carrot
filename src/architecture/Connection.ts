@@ -20,19 +20,17 @@ export class Connection {
     /**
      * Connection origin node (neuron)
      */
-    public from: Node;
+    public readonly from: Node;
     /**
      * Connection destination node (neuron)
      */
-    public to: Node;
+    public readonly to: Node;
+
     /**
-     * xTraceNodes
+     * X Trace
      */
-    public xTraceNodes: Node[];
-    /**
-     * xTraceValues
-     */
-    public xTraceValues: number[];
+    public xTrace: Map<Node, number>;
+
     /**
      * The node gating this connection
      */
@@ -54,8 +52,7 @@ export class Connection {
         this.eligibility = 0;
         this.deltaWeightsPrevious = 0;
         this.deltaWeightsTotal = 0;
-        this.xTraceNodes = [];
-        this.xTraceValues = [];
+        this.xTrace = new Map<Node, number>();
 
         if (gateNode) {
             this.gateNode = gateNode;

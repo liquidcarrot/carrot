@@ -1,6 +1,8 @@
 import {PoolNodeType} from "../../enums/NodeType";
 import {PoolNodeJSON} from "../../interfaces/NodeJSON";
 import {avg, getOrDefault, maxValueIndex, minValueIndex, sum} from "../../methods/Utils";
+import {Connection} from "../Connection";
+import {Node} from "../Node";
 import {ConstantNode} from "./ConstantNode";
 
 /**
@@ -12,14 +14,14 @@ export class PoolNode extends ConstantNode {
      */
     private poolingType: PoolNodeType;
     /**
-     * The used input neuron index
+     * The used input neuron
      */
-    private receivingIndex: number;
+    private receivingNode: Node | null;
 
     constructor(poolingType: PoolNodeType = PoolNodeType.MAX_POOLING) {
         super();
         this.poolingType = poolingType;
-        this.receivingIndex = -1;
+        this.receivingNode = null;
     }
 
     /**
@@ -45,16 +47,19 @@ export class PoolNode extends ConstantNode {
      * @returns A neuron's output value
      */
     public activate(): number {
-        const incomingStates: number[] = this.incoming.map(conn => conn.from.activation * conn.weight * conn.gain);
+        const connections: Connection[] = Array.from(this.incoming);
+        const incomingStates: number[] = connections.map(conn => conn.from.activation * conn.weight * conn.gain);
 
         if (this.poolingType === PoolNodeType.MAX_POOLING) {
-            this.receivingIndex = maxValueIndex(incomingStates);
-            this.state = incomingStates[this.receivingIndex];
+            const index: number = maxValueIndex(incomingStates);
+            this.receivingNode = connections[index].from;
+            this.state = incomingStates[index];
         } else if (this.poolingType === PoolNodeType.AVG_POOLING) {
             this.state = avg(incomingStates);
         } else if (this.poolingType === PoolNodeType.MIN_POOLING) {
-            this.receivingIndex = minValueIndex(incomingStates);
-            this.state = incomingStates[this.receivingIndex];
+            const index: number = minValueIndex(incomingStates);
+            this.receivingNode = connections[index].from;
+            this.state = incomingStates[index];
         } else {
             throw new ReferenceError("No valid pooling type! Type: " + this.poolingType);
         }
@@ -98,31 +103,31 @@ export class PoolNode extends ConstantNode {
         options.rate = getOrDefault(options.rate, 0.3);
         options.update = getOrDefault(options.update, true);
 
-        const connectionsStates: number[] = this.outgoing.map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
+        const connectionsStates: number[] = Array.from(this.outgoing).map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
         this.errorResponsibility = this.errorProjected = sum(connectionsStates) * this.derivativeState;
         if (this.poolingType === PoolNodeType.AVG_POOLING) {
-            for (const connection of this.incoming) {
+            this.incoming.forEach(connection => {
                 // calculate gradient
                 let gradient: number = this.errorProjected * connection.eligibility;
-                for (let i: number = 0; i < connection.xTraceNodes.length; i++) {
-                    gradient += connection.xTraceNodes[i].errorResponsibility * connection.xTraceValues[i];
-                }
+                connection.xTrace.forEach((value, key) => {
+                    gradient += key.errorResponsibility * value;
+                });
 
-                connection.deltaWeightsTotal += options.rate * gradient * this.mask;
+                connection.deltaWeightsTotal += (options.rate ?? 0.3) * gradient * this.mask;
                 if (options.update) {
-                    connection.deltaWeightsTotal += options.momentum * connection.deltaWeightsPrevious;
+                    connection.deltaWeightsTotal += (options.momentum ?? 0) * connection.deltaWeightsPrevious;
                     connection.weight += connection.deltaWeightsTotal;
                     connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
                     connection.deltaWeightsTotal = 0;
                 }
-            }
+            });
         } else {
             // TODO: don't think that this is correct
             // Passing only the connections that were used for getting the min or max
-            for (let i: number = 0; i < this.incoming.length; i++) {
-                this.incoming[i].weight = this.receivingIndex === i ? 1 : 0;
-                this.incoming[i].gain = this.receivingIndex === i ? 1 : 0;
-            }
+            this.incoming.forEach(conn => {
+                conn.weight = this.receivingNode === conn.from ? 1 : 0;
+                conn.gain = this.receivingNode === conn.from ? 1 : 0;
+            });
         }
     }
 

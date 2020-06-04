@@ -2,6 +2,7 @@ import {Connection} from "../architecture/Connection";
 import {Network} from "../architecture/Network";
 import {Node} from "../architecture/Node";
 import {NodeType} from "../enums/NodeType";
+import {activationType} from "./Activation";
 import {pickRandom, randBoolean, randDouble} from "./Utils";
 
 /**
@@ -35,7 +36,7 @@ abstract class Mutation {
         /**
          * All allowed activations.
          */
-        allowedActivations?: ((x: number, derivative: boolean) => number)[]
+        allowedActivations?: activationType[]
     }): void;
 }
 
@@ -50,7 +51,7 @@ class AddNodeMutation extends Mutation {
     /**
      * Should choose a random activation for a new node?
      */
-    public randomActivation: boolean;
+    public readonly randomActivation: boolean;
 
     /**
      * Constructs a AddNodeMutation object
@@ -67,14 +68,14 @@ class AddNodeMutation extends Mutation {
      * @param network The network which gets mutated
      * @param options
      */
-    public mutate(network: Network, options?: {
+    public mutate(network: Network, options: {
         /**
          * Maximum amount of nodes.
          */
         maxNodes?: number
-    }): void {
+    } = {}): void {
         // check if max nodes is already reached
-        if (options !== undefined && options.maxNodes !== undefined && network.nodes.length >= options.maxNodes) {
+        if (options.maxNodes !== undefined && network.nodes.length >= options.maxNodes) {
             return;
         }
         // create a new hidden node
@@ -83,7 +84,7 @@ class AddNodeMutation extends Mutation {
             node.mutateActivation(); // choose random activation
         }
         // take a random connection
-        const connection: Connection = pickRandom(network.connections);
+        const connection: Connection = pickRandom(Array.from(network.connections));
         const from: Node = connection.from;
         const to: Node = connection.to;
         network.disconnect(from, to); // disconnect it
@@ -117,7 +118,7 @@ class SubNodeMutation extends Mutation {
     /**
      * Keep gates or remove them too ?
      */
-    public keepGates: boolean;
+    public readonly keepGates: boolean;
 
     constructor(keepGates: boolean = true) {
         super();
@@ -149,14 +150,14 @@ class AddConnectionMutation extends Mutation {
      * @param network The network which gets mutated
      * @param options
      */
-    public mutate(network: Network, options?: {
+    public mutate(network: Network, options: {
         /**
          * Maximum allowed connections.
          */
         maxConnections?: number;
-    }): void {
+    } = {}): void {
         // check if max connections is already reached
-        if (options !== undefined && options.maxConnections !== undefined && network.connections.length >= options.maxConnections) {
+        if (options.maxConnections !== undefined && network.connections.size >= options.maxConnections) {
             return;
         }
         const possible: Node[][] = [];
@@ -190,9 +191,9 @@ class SubConnectionMutation extends Mutation {
      * @param network The network which gets mutated
      */
     public mutate(network: Network): void {
-        const possible: Connection[] = network.connections
-            .filter(conn => conn.from.outgoing.length > 1) // do not deactivate a neuron
-            .filter(conn => conn.to.incoming.length > 1) // do not deactivate a neuron
+        const possible: Connection[] = Array.from(network.connections)
+            .filter(conn => conn.from.outgoing.size > 1) // do not deactivate a neuron
+            .filter(conn => conn.to.incoming.size > 1) // do not deactivate a neuron
             .filter(conn => network.nodes.indexOf(conn.to) > network.nodes.indexOf(conn.from)); // look for forward pointing connections
         if (possible.length > 0) {
             const randomConnection: Connection = pickRandom(possible); // pick a random connection from the filtered array
@@ -213,11 +214,11 @@ class ModWeightMutation extends Mutation {
     /**
      * The minimum weight.
      */
-    public min: number;
+    public readonly min: number;
     /**
      * The maximum weight.
      */
-    public max: number;
+    public readonly max: number;
 
     /**
      * Constructs a ModWeightMutation object
@@ -237,7 +238,7 @@ class ModWeightMutation extends Mutation {
      */
     public mutate(network: Network): void {
         // pick random connection and mutate it's weight
-        pickRandom(network.connections).weight += randDouble(this.min, this.max);
+        pickRandom(Array.from(network.connections)).weight += randDouble(this.min, this.max);
     }
 }
 
@@ -253,11 +254,11 @@ class ModBiasMutation extends Mutation {
     /**
      * The minimum bias.
      */
-    public min: number;
+    public readonly min: number;
     /**
      * The maximum bias.
      */
-    public max: number;
+    public readonly max: number;
 
     /**
      * Constructs a ModBiasMutation object
@@ -292,7 +293,7 @@ class ModActivationMutation extends Mutation {
     /**
      * Can the output be mutated?
      */
-    public mutateOutput: boolean;
+    public readonly mutateOutput: boolean;
 
     /**
      * Constructs a ModActivationMutation object
@@ -309,17 +310,17 @@ class ModActivationMutation extends Mutation {
      * @param network The network which gets mutated
      * @param options
      */
-    public mutate(network: Network, options?: {
+    public mutate(network: Network, options: {
         /**
          * All allowed activations.
          */
-        allowedActivations?: ((x: number, derivative: boolean) => number)[]
-    }): void {
+        allowedActivations?: activationType[]
+    } = {}): void {
         const possible: Node[] = this.mutateOutput
             ? network.nodes.filter(node => !node.isInputNode()) // hidden and output nodes
             : network.nodes.filter(node => node.isHiddenNode()); // hidden nodes
         if (possible.length > 0) {
-            pickRandom(possible).mutateActivation(options?.allowedActivations); // mutate the activation of the node
+            pickRandom(possible).mutateActivation(options.allowedActivations); // mutate the activation of the node
         }
     }
 }
@@ -358,7 +359,7 @@ class SubSelfConnectionMutation extends Mutation {
      * @param network The network which gets mutated
      */
     public mutate(network: Network): void {
-        const possible: Connection[] = network.connections.filter(conn => conn.from === conn.to);
+        const possible: Connection[] = Array.from(network.connections).filter(conn => conn.from === conn.to);
         if (possible.length > 0) {
             const randomConnection: Connection = pickRandom(possible);
             network.disconnect(randomConnection.from, randomConnection.to);
@@ -378,19 +379,19 @@ class AddGateMutation extends Mutation {
      * @param network The network which gets mutated
      * @param options
      */
-    public mutate(network: Network, options?: {
+    public mutate(network: Network, options: {
         /**
          * Maximum allowed gates.
          */
         maxGates?: number
-    }): void {
+    } = {}): void {
         // check if max gates isn't reached already
-        if (options !== undefined && options.maxGates !== undefined && network.gates.length >= options.maxGates) {
+        if (options.maxGates !== undefined && network.gates.length >= options.maxGates) {
             return;
         }
 
         // use only connections that aren't already gated
-        const possible: Connection[] = network.connections.filter(conn => conn.gateNode === null);
+        const possible: Connection[] = Array.from(network.connections).filter(conn => conn.gateNode === null);
         if (possible.length > 0) {
             const node: Node = pickRandom(network.nodes.filter(node => !node.isInputNode())); // hidden or output node
             const connection: Connection = pickRandom(possible); // random connection from filtered array
@@ -459,9 +460,9 @@ class SubBackConnectionMutation extends Mutation {
      * @param network The network which gets mutated
      */
     public mutate(network: Network): void {
-        const possible: Connection[] = network.connections
-            .filter(conn => conn.from.outgoing.length > 1)
-            .filter(conn => conn.to.incoming.length > 1)
+        const possible: Connection[] = Array.from(network.connections)
+            .filter(conn => conn.from.outgoing.size > 1)
+            .filter(conn => conn.to.incoming.size > 1)
             .filter(conn => network.nodes.indexOf(conn.from) > network.nodes.indexOf(conn.to));
         if (possible.length > 0) {
             const randomConnection: Connection = pickRandom(possible);
@@ -481,7 +482,7 @@ class SwapNodesMutation extends Mutation {
     /**
      * Can the output be mutated?
      */
-    public mutateOutput: boolean;
+    public readonly mutateOutput: boolean;
 
     /**
      * Constructs a SwapNodeMutation object
@@ -509,7 +510,7 @@ class SwapNodesMutation extends Mutation {
 
             // change there parameters
             const biasTemp: number = node1.bias;
-            const squashTemp: ((x: number, derivative: boolean) => number) = node1.squash;
+            const squashTemp: activationType = node1.squash;
 
             node1.bias = node2.bias;
             node1.squash = node2.squash;

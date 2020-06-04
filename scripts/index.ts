@@ -1,5 +1,6 @@
 import {Architect} from "../src/architecture/Architect";
 import {Connection} from "../src/architecture/Connection";
+import {ActivationLayer} from "../src/architecture/Layers/CoreLayers/ActivationLayer";
 import {DenseLayer} from "../src/architecture/Layers/CoreLayers/DenseLayer";
 import {DropoutLayer} from "../src/architecture/Layers/CoreLayers/DropoutLayer";
 import {InputLayer} from "../src/architecture/Layers/CoreLayers/InputLayer";
@@ -14,8 +15,10 @@ import {MaxPooling1DLayer} from "../src/architecture/Layers/PoolingLayers/MaxPoo
 import {MinPooling1DLayer} from "../src/architecture/Layers/PoolingLayers/MinPooling1DLayer";
 import {PoolingLayer} from "../src/architecture/Layers/PoolingLayers/PoolingLayer";
 import {GRULayer} from "../src/architecture/Layers/RecurrentLayers/GRULayer";
+import {HopfieldLayer} from "../src/architecture/Layers/RecurrentLayers/HopfieldLayer";
 import {LSTMLayer} from "../src/architecture/Layers/RecurrentLayers/LSTMLayer";
 import {MemoryLayer} from "../src/architecture/Layers/RecurrentLayers/MemoryLayer";
+import {RNNLayer} from "../src/architecture/Layers/RecurrentLayers/RNNLayer";
 import {Network} from "../src/architecture/Network";
 import {Node} from "../src/architecture/Node";
 import {ConstantNode} from "../src/architecture/Nodes/ConstantNode";
@@ -30,8 +33,36 @@ import {EvolveOptions} from "../src/interfaces/EvolveOptions";
 import {NetworkJSON} from "../src/interfaces/NetworkJSON";
 import {DropoutNodeJSON, NodeJSON, PoolNodeJSON} from "../src/interfaces/NodeJSON";
 import {TrainOptions} from "../src/interfaces/TrainOptions";
-import {ALL_ACTIVATIONS} from "../src/methods/Activation";
-import {ALL_LOSSES} from "../src/methods/Loss";
+import {
+    AbsoluteActivation,
+    ALL_ACTIVATIONS,
+    BentIdentityActivation,
+    BipolarActivation,
+    BipolarSigmoidActivation,
+    GaussianActivation,
+    HardTanhActivation,
+    IdentityActivation,
+    InverseActivation,
+    LogisticActivation,
+    MISHActivation,
+    RELUActivation,
+    SELUActivation,
+    SinusoidActivation,
+    SoftSignActivation,
+    StepActivation,
+    TanhActivation
+} from "../src/methods/Activation";
+import {
+    ALL_LOSSES,
+    BinaryLoss,
+    HINGELoss,
+    MAELoss,
+    MAPELoss,
+    MBELoss,
+    MSELoss,
+    MSLELoss,
+    WAPELoss
+} from "../src/methods/Loss";
 import {
     AddBackConnectionMutation,
     AddConnectionMutation,
@@ -86,6 +117,9 @@ export {
     GlobalMinPooling1DLayer,
     GlobalMaxPooling1DLayer,
     PoolingLayer,
+    ActivationLayer,
+    HopfieldLayer,
+    RNNLayer,
     GRULayer,
     LSTMLayer,
     MemoryLayer,
@@ -111,7 +145,31 @@ export {
     DropoutNodeJSON,
     TrainOptions,
     ALL_ACTIVATIONS,
+    LogisticActivation,
+    TanhActivation,
+    IdentityActivation,
+    StepActivation,
+    RELUActivation,
+    SoftSignActivation,
+    SinusoidActivation,
+    GaussianActivation,
+    BentIdentityActivation,
+    BipolarActivation,
+    BipolarSigmoidActivation,
+    HardTanhActivation,
+    AbsoluteActivation,
+    InverseActivation,
+    SELUActivation,
+    MISHActivation,
     ALL_LOSSES,
+    MSELoss,
+    MBELoss,
+    BinaryLoss,
+    MAELoss,
+    MAPELoss,
+    WAPELoss,
+    MSLELoss,
+    HINGELoss,
     ALL_MUTATIONS,
     FEEDFORWARD_MUTATIONS,
     NO_STRUCTURE_MUTATIONS,

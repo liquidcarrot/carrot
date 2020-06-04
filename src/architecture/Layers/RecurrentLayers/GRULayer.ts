@@ -1,7 +1,7 @@
 import {ConnectionType} from "../../../enums/ConnectionType";
 import {GatingType} from "../../../enums/GatingType";
 import {NodeType} from "../../../enums/NodeType";
-import {LogisticActivation, TanhActivation} from "../../../methods/Activation";
+import {activationType, LogisticActivation, TanhActivation} from "../../../methods/Activation";
 import {Connection} from "../../Connection";
 import {Node} from "../../Node";
 import {Layer} from "../Layer";
@@ -14,7 +14,7 @@ export class GRULayer extends Layer {
         /**
          * The activation type for the output nodes of this layer.
          */
-        activation?: ((x: number, derivative: boolean) => number)
+        activation?: activationType
     } = {}) {
         super(outputSize);
         const updateGate: Node[] = [];
