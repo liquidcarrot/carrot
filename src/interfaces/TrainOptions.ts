@@ -8,7 +8,7 @@ export interface TrainOptions {
     /**
      * A data of input values and ideal output values to train the network with
      */
-    dataset: {
+    readonly dataset: {
         /**
          * The input values
          */
@@ -25,7 +25,7 @@ export interface TrainOptions {
     /**
      * Sets the [learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10) of the backpropagation process
      */
-    rate?: number;
+    readonly rate?: number;
     /**
      * The [options.loss function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
      */
@@ -41,7 +41,7 @@ export interface TrainOptions {
     /**
      * When set to true, will shuffle the training data every iterationNumber. Good option to use if the network is performing worse in [cross validation](https://artint.info/html/ArtInt_189.html) than in the real training data.
      */
-    shuffle?: boolean;
+    readonly shuffle?: boolean;
     /**
      * [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html). Adds a fraction of the previous weight update to the current one.
      */
@@ -53,27 +53,27 @@ export interface TrainOptions {
     /**
      * If set to true, will clear the network after every activation. This is useful for training LSTM's, more importantly for time series prediction.
      */
-    clear?: boolean;
+    readonly clear?: boolean;
     /**
      * You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
      */
-    schedule?: {
+    readonly schedule?: {
         /**
          * You can schedule tasks to happen every n iterations. Paired with `options.schedule.function`
          */
-        iterations: number,
+        readonly iterations: number,
         /**
          * A function to run every n iterations as data by `options.schedule.iterations`. Passed as an object with a "function" property that contains the function to run.
          *
          * @param error the current network error
          * @param iteration the current iteration count
          */
-        function: (error: number, iteration: number) => undefined
+        readonly function: (error: number, iteration: number) => undefined
     };
     /**
      * Sets the amount of test cases that should be assigned to cross validation. If data to 0.4, 40% of the given data will be used for cross validation.
      */
-    crossValidateTestSize?: number;
+    readonly crossValidateTestSize?: number;
     /**
      * If set to n, outputs training status every n iterations. Setting `log` to 1 will log the status every iteration_number
      */
