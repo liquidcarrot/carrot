@@ -89,20 +89,21 @@ export class DropoutNode extends ConstantNode {
         if (this.incoming.size !== 1) {
             throw new RangeError("Dropout node should have exactly one incoming connection!");
         }
-        const incomingConnection: Connection = Array.from(this.incoming)[0];
+        const connection: Connection = Array.from(this.incoming)[0];
 
         // calculate gradient
         if (!this.droppedOut) {
-            let gradient: number = this.errorProjected * incomingConnection.eligibility;
-            for (let i: number = 0; i < incomingConnection.xTraceNodes.length; i++) {
-                gradient += incomingConnection.xTraceNodes[i].errorResponsibility * incomingConnection.xTraceValues[i];
-            }
+            let gradient: number = this.errorProjected * connection.eligibility;
+
+            connection.xTrace.forEach((value, key) => {
+                gradient += key.errorResponsibility * value;
+            });
 
             if (options.update) {
-                incomingConnection.deltaWeightsTotal += options.rate * gradient * this.mask + options.momentum * incomingConnection.deltaWeightsPrevious;
-                incomingConnection.weight += incomingConnection.deltaWeightsTotal;
-                incomingConnection.deltaWeightsPrevious = incomingConnection.deltaWeightsTotal;
-                incomingConnection.deltaWeightsTotal = 0;
+                connection.deltaWeightsTotal += options.rate * gradient * this.mask + options.momentum * connection.deltaWeightsPrevious;
+                connection.weight += connection.deltaWeightsTotal;
+                connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
+                connection.deltaWeightsTotal = 0;
             }
         }
     }

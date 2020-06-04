@@ -116,9 +116,9 @@ export class NoiseNode extends ConstantNode {
         this.incoming.forEach(connection => {
             // calculate gradient
             let gradient: number = this.errorProjected * connection.eligibility;
-            for (let i: number = 0; i < connection.xTraceNodes.length; i++) {
-                gradient += connection.xTraceNodes[i].errorResponsibility * connection.xTraceValues[i];
-            }
+            connection.xTrace.forEach((value, key) => {
+                gradient += key.errorResponsibility * value;
+            });
 
             connection.deltaWeightsTotal += (options.rate ?? 0.3) * gradient * this.mask;
             if (options.update) {

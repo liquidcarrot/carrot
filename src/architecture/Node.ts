@@ -138,8 +138,7 @@ export class Node {
     public clear(): void {
         this.incoming.forEach(connection => {
             connection.eligibility = 0;
-            connection.xTraceNodes = [];
-            connection.xTraceValues = [];
+            connection.xTrace.clear();
         });
 
         this.gated.forEach(conn => conn.gain = 0);
@@ -342,9 +341,7 @@ export class Node {
         this.incoming.forEach(connection => {
             // calculate gradient
             let gradient: number = this.errorProjected * connection.eligibility;
-            for (let j: number = 0; j < connection.xTraceNodes.length; j++) {
-                gradient += connection.xTraceNodes[j].errorResponsibility * connection.xTraceValues[j];
-            }
+            connection.xTrace.forEach((value, key) => gradient += key.errorResponsibility * value);
 
 
             connection.deltaWeightsTotal += (options.rate ?? 0.3) * gradient * this.mask;
@@ -429,13 +426,10 @@ export class Node {
                     const node: Node = nodes[i];
                     const influence: number = influences[i];
 
-                    const index: number = connection.xTraceNodes.indexOf(node);
-
-                    if (index > -1) {
-                        connection.xTraceValues[index] = node.selfConnection.gain * node.selfConnection.weight * connection.xTraceValues[index] + this.derivativeState * connection.eligibility * influence;
+                    if (connection.xTrace.has(node)) {
+                        connection.xTrace.set(node, node.selfConnection.gain * node.selfConnection.weight * (connection.xTrace.get(node) ?? 0) + this.derivativeState * connection.eligibility * influence);
                     } else {
-                        connection.xTraceNodes.push(node);
-                        connection.xTraceValues.push(this.derivativeState * connection.eligibility * influence);
+                        connection.xTrace.set(node, this.derivativeState * connection.eligibility * influence);
                     }
                 }
             });
