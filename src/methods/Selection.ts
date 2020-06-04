@@ -63,7 +63,7 @@ class PowerSelection extends Selection {
     /**
      * Probability of picking better networks.
      */
-    public power: number;
+    public readonly power: number;
 
     /**
      * Constructs a power selection.
@@ -94,11 +94,11 @@ class TournamentSelection extends Selection {
     /**
      * The size of a tournament.
      */
-    public size: number;
+    public readonly size: number;
     /**
      * The probability of just picking the best network.
      */
-    public probability: number;
+    public readonly probability: number;
 
     /**
      * Constructs a tournament selection.
