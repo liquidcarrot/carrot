@@ -51,7 +51,7 @@ class AddNodeMutation extends Mutation {
     /**
      * Should choose a random activation for a new node?
      */
-    public randomActivation: boolean;
+    public readonly randomActivation: boolean;
 
     /**
      * Constructs a AddNodeMutation object
@@ -118,7 +118,7 @@ class SubNodeMutation extends Mutation {
     /**
      * Keep gates or remove them too ?
      */
-    public keepGates: boolean;
+    public readonly keepGates: boolean;
 
     constructor(keepGates: boolean = true) {
         super();
@@ -214,11 +214,11 @@ class ModWeightMutation extends Mutation {
     /**
      * The minimum weight.
      */
-    public min: number;
+    public readonly min: number;
     /**
      * The maximum weight.
      */
-    public max: number;
+    public readonly max: number;
 
     /**
      * Constructs a ModWeightMutation object
@@ -254,11 +254,11 @@ class ModBiasMutation extends Mutation {
     /**
      * The minimum bias.
      */
-    public min: number;
+    public readonly min: number;
     /**
      * The maximum bias.
      */
-    public max: number;
+    public readonly max: number;
 
     /**
      * Constructs a ModBiasMutation object
@@ -293,7 +293,7 @@ class ModActivationMutation extends Mutation {
     /**
      * Can the output be mutated?
      */
-    public mutateOutput: boolean;
+    public readonly mutateOutput: boolean;
 
     /**
      * Constructs a ModActivationMutation object
@@ -482,7 +482,7 @@ class SwapNodesMutation extends Mutation {
     /**
      * Can the output be mutated?
      */
-    public mutateOutput: boolean;
+    public readonly mutateOutput: boolean;
 
     /**
      * Constructs a SwapNodeMutation object
