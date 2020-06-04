@@ -1427,8 +1427,7 @@ function () {
     this.eligibility = 0;
     this.deltaWeightsPrevious = 0;
     this.deltaWeightsTotal = 0;
-    this.xTraceNodes = [];
-    this.xTraceValues = [];
+    this.xTrace = new Map();
 
     if (gateNode) {
       this.gateNode = gateNode;
@@ -1561,8 +1560,7 @@ function () {
   Node.prototype.clear = function () {
     this.incoming.forEach(function (connection) {
       connection.eligibility = 0;
-      connection.xTraceNodes = [];
-      connection.xTraceValues = [];
+      connection.xTrace.clear();
     });
     this.gated.forEach(function (conn) {
       return conn.gain = 0;
@@ -1804,11 +1802,9 @@ function () {
 
 
       var gradient = _this.errorProjected * connection.eligibility;
-
-      for (var j = 0; j < connection.xTraceNodes.length; j++) {
-        gradient += connection.xTraceNodes[j].errorResponsibility * connection.xTraceValues[j];
-      }
-
+      connection.xTrace.forEach(function (value, key) {
+        return gradient += key.errorResponsibility * value;
+      });
       connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * _this.mask;
 
       if (options.update) {
@@ -1887,18 +1883,18 @@ function () {
       }); // Forwarding 'xTrace' (to incoming connections)
 
       this.incoming.forEach(function (connection) {
+        var _a;
+
         connection.eligibility = _this.selfConnection.gain * _this.selfConnection.weight * connection.eligibility + connection.from.activation * connection.gain;
 
         for (var i = 0; i < nodes_1.length; i++) {
           var node = nodes_1[i];
           var influence = influences_1[i];
-          var index = connection.xTraceNodes.indexOf(node);
 
-          if (index > -1) {
-            connection.xTraceValues[index] = node.selfConnection.gain * node.selfConnection.weight * connection.xTraceValues[index] + _this.derivativeState * connection.eligibility * influence;
+          if (connection.xTrace.has(node)) {
+            connection.xTrace.set(node, node.selfConnection.gain * node.selfConnection.weight * ((_a = connection.xTrace.get(node)) !== null && _a !== void 0 ? _a : 0) + _this.derivativeState * connection.eligibility * influence);
           } else {
-            connection.xTraceNodes.push(node);
-            connection.xTraceValues.push(_this.derivativeState * connection.eligibility * influence);
+            connection.xTrace.set(node, _this.derivativeState * connection.eligibility * influence);
           }
         }
       });
@@ -2441,11 +2437,9 @@ function (_super) {
 
 
       var gradient = _this.errorProjected * connection.eligibility;
-
-      for (var i = 0; i < connection.xTraceNodes.length; i++) {
-        gradient += connection.xTraceNodes[i].errorResponsibility * connection.xTraceValues[i];
-      }
-
+      connection.xTrace.forEach(function (value, key) {
+        gradient += key.errorResponsibility * value;
+      });
       connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * _this.mask;
 
       if (options.update) {
@@ -3355,7 +3349,7 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
 var __generator = this && this.__generator || function (thisArg, body) {
   var _ = {
     label: 0,
-    sent: function () {
+    sent: function sent() {
       if (t[0] & 1) throw t[1];
       return t[1];
     },
@@ -3383,74 +3377,76 @@ var __generator = this && this.__generator || function (thisArg, body) {
   function step(op) {
     if (f) throw new TypeError("Generator is already executing.");
 
-    while (_) try {
-      if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-      if (y = 0, t) op = [op[0] & 2, t.value];
+    while (_) {
+      try {
+        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+        if (y = 0, t) op = [op[0] & 2, t.value];
 
-      switch (op[0]) {
-        case 0:
-        case 1:
-          t = op;
-          break;
-
-        case 4:
-          _.label++;
-          return {
-            value: op[1],
-            done: false
-          };
-
-        case 5:
-          _.label++;
-          y = op[1];
-          op = [0];
-          continue;
-
-        case 7:
-          op = _.ops.pop();
-
-          _.trys.pop();
-
-          continue;
-
-        default:
-          if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-            _ = 0;
-            continue;
-          }
-
-          if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-            _.label = op[1];
-            break;
-          }
-
-          if (op[0] === 6 && _.label < t[1]) {
-            _.label = t[1];
+        switch (op[0]) {
+          case 0:
+          case 1:
             t = op;
             break;
-          }
 
-          if (t && _.label < t[2]) {
-            _.label = t[2];
+          case 4:
+            _.label++;
+            return {
+              value: op[1],
+              done: false
+            };
 
-            _.ops.push(op);
+          case 5:
+            _.label++;
+            y = op[1];
+            op = [0];
+            continue;
 
-            break;
-          }
+          case 7:
+            op = _.ops.pop();
 
-          if (t[2]) _.ops.pop();
+            _.trys.pop();
 
-          _.trys.pop();
+            continue;
 
-          continue;
+          default:
+            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+              _ = 0;
+              continue;
+            }
+
+            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+              _.label = op[1];
+              break;
+            }
+
+            if (op[0] === 6 && _.label < t[1]) {
+              _.label = t[1];
+              t = op;
+              break;
+            }
+
+            if (t && _.label < t[2]) {
+              _.label = t[2];
+
+              _.ops.push(op);
+
+              break;
+            }
+
+            if (t[2]) _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+        }
+
+        op = body.call(thisArg, _);
+      } catch (e) {
+        op = [6, e];
+        y = 0;
+      } finally {
+        f = t = 0;
       }
-
-      op = body.call(thisArg, _);
-    } catch (e) {
-      op = [6, e];
-      y = 0;
-    } finally {
-      f = t = 0;
     }
 
     if (op[0] & 5) throw op[1];
@@ -5077,7 +5073,227 @@ function () {
 }();
 
 exports.Architect = Architect;
-},{"./Layers/CoreLayers/InputLayer":"../src/architecture/Layers/CoreLayers/InputLayer.js","./Layers/CoreLayers/OutputLayer":"../src/architecture/Layers/CoreLayers/OutputLayer.js","./Layers/Layer":"../src/architecture/Layers/Layer.js","./Network":"../src/architecture/Network.js"}],"../src/architecture/Layers/CoreLayers/DenseLayer.js":[function(require,module,exports) {
+},{"./Layers/CoreLayers/InputLayer":"../src/architecture/Layers/CoreLayers/InputLayer.js","./Layers/CoreLayers/OutputLayer":"../src/architecture/Layers/CoreLayers/OutputLayer.js","./Layers/Layer":"../src/architecture/Layers/Layer.js","./Network":"../src/architecture/Network.js"}],"../src/architecture/Nodes/ActivationNode.js":[function(require,module,exports) {
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var _extendStatics = function extendStatics(d, b) {
+    _extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) {
+        if (b.hasOwnProperty(p)) d[p] = b[p];
+      }
+    };
+
+    return _extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    _extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ActivationNode = void 0;
+
+var Utils_1 = require("../../methods/Utils");
+
+var ConstantNode_1 = require("./ConstantNode");
+/**
+ * Activation node
+ */
+
+
+var ActivationNode =
+/** @class */
+function (_super) {
+  __extends(ActivationNode, _super);
+
+  function ActivationNode() {
+    return _super.call(this) || this;
+  }
+  /**
+   * Actives the node.
+   *
+   * When a neuron activates, it computes its state from all its input connections and 'squashes' it using its activation function, and returns the output (activation).
+   *
+   * You can also provide the activation (a float between 0 and 1) as a parameter, which is useful for neurons in the input layer.
+   *
+   * @returns A neuron's output value
+   */
+
+
+  ActivationNode.prototype.activate = function () {
+    this.old = this.state;
+    var incomingStates = Array.from(this.incoming).map(function (conn) {
+      return conn.from.activation * conn.weight * conn.gain;
+    });
+
+    if (incomingStates.length !== 1) {
+      throw new ReferenceError("Only 1 incoming connections is allowed!");
+    }
+
+    this.state = incomingStates[0];
+    this.activation = this.squash(this.state, false) * this.mask;
+    this.derivativeState = this.squash(this.state, true);
+    return this.activation;
+  };
+  /**
+   * Backpropagate the error (a.k.a. learn).
+   *
+   * After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating. [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
+   *
+   * If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
+   *
+   * @param target The target value (i.e. "the value the network SHOULD have given")
+   * @param options More options for propagation
+   */
+
+
+  ActivationNode.prototype.propagate = function (target, options) {
+    var _this = this;
+
+    options.momentum = Utils_1.getOrDefault(options.momentum, 0);
+    options.rate = Utils_1.getOrDefault(options.rate, 0.3);
+    options.update = Utils_1.getOrDefault(options.update, true);
+    var connectionsStates = Array.from(this.outgoing).map(function (conn) {
+      return conn.to.errorResponsibility * conn.weight * conn.gain;
+    });
+    this.errorResponsibility = this.errorProjected = Utils_1.sum(connectionsStates) * this.derivativeState;
+    this.incoming.forEach(function (connection) {
+      var _a, _b; // calculate gradient
+
+
+      var gradient = _this.errorProjected * connection.eligibility;
+      connection.xTrace.forEach(function (value, key) {
+        gradient += key.errorResponsibility * value;
+      });
+      connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * _this.mask;
+
+      if (options.update) {
+        connection.deltaWeightsTotal += ((_b = options.momentum) !== null && _b !== void 0 ? _b : 0) * connection.deltaWeightsPrevious;
+        connection.weight += connection.deltaWeightsTotal;
+        connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
+        connection.deltaWeightsTotal = 0;
+      }
+    });
+  };
+
+  return ActivationNode;
+}(ConstantNode_1.ConstantNode);
+
+exports.ActivationNode = ActivationNode;
+},{"../../methods/Utils":"../src/methods/Utils.js","./ConstantNode":"../src/architecture/Nodes/ConstantNode.js"}],"../src/architecture/Layers/CoreLayers/ActivationLayer.js":[function(require,module,exports) {
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ActivationLayer = void 0;
+
+var ConnectionType_1 = require("../../../enums/ConnectionType");
+
+var Activation_1 = require("../../../methods/Activation");
+
+var ActivationNode_1 = require("../../Nodes/ActivationNode");
+
+var Layer_1 = require("../Layer");
+/**
+ * Activation layer
+ */
+
+
+var ActivationLayer =
+/** @class */
+function (_super) {
+  __extends(ActivationLayer, _super);
+
+  function ActivationLayer(outputSize, options) {
+    var _a;
+
+    if (options === void 0) {
+      options = {};
+    }
+
+    var _b;
+
+    var _this = _super.call(this, outputSize) || this;
+
+    var activation = (_b = options.activation) !== null && _b !== void 0 ? _b : Activation_1.LogisticActivation;
+
+    for (var i = 0; i < outputSize; i++) {
+      _this.inputNodes.add(new ActivationNode_1.ActivationNode().setActivationType(activation));
+    }
+
+    _this.outputNodes = _this.inputNodes;
+
+    (_a = _this.nodes).push.apply(_a, Array.from(_this.inputNodes));
+
+    return _this;
+  }
+  /**
+   * Checks if a given connection type is allowed on this layer.
+   *
+   * @param type the type to check
+   *
+   * @return Is this connection type allowed?
+   */
+
+
+  ActivationLayer.prototype.connectionTypeisAllowed = function (type) {
+    return type === ConnectionType_1.ConnectionType.ONE_TO_ONE;
+  };
+  /**
+   * Gets the default connection type for a incoming connection to this layer.
+   *
+   * @returns the default incoming connection
+   */
+
+
+  ActivationLayer.prototype.getDefaultIncomingConnectionType = function () {
+    return ConnectionType_1.ConnectionType.ONE_TO_ONE;
+  };
+
+  return ActivationLayer;
+}(Layer_1.Layer);
+
+exports.ActivationLayer = ActivationLayer;
+},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Nodes/ActivationNode":"../src/architecture/Nodes/ActivationNode.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/CoreLayers/DenseLayer.js":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -5296,20 +5512,19 @@ function (_super) {
       throw new RangeError("Dropout node should have exactly one incoming connection!");
     }
 
-    var incomingConnection = Array.from(this.incoming)[0]; // calculate gradient
+    var connection = Array.from(this.incoming)[0]; // calculate gradient
 
     if (!this.droppedOut) {
-      var gradient = this.errorProjected * incomingConnection.eligibility;
-
-      for (var i = 0; i < incomingConnection.xTraceNodes.length; i++) {
-        gradient += incomingConnection.xTraceNodes[i].errorResponsibility * incomingConnection.xTraceValues[i];
-      }
+      var gradient_1 = this.errorProjected * connection.eligibility;
+      connection.xTrace.forEach(function (value, key) {
+        gradient_1 += key.errorResponsibility * value;
+      });
 
       if (options.update) {
-        incomingConnection.deltaWeightsTotal += options.rate * gradient * this.mask + options.momentum * incomingConnection.deltaWeightsPrevious;
-        incomingConnection.weight += incomingConnection.deltaWeightsTotal;
-        incomingConnection.deltaWeightsPrevious = incomingConnection.deltaWeightsTotal;
-        incomingConnection.deltaWeightsTotal = 0;
+        connection.deltaWeightsTotal += options.rate * gradient_1 * this.mask + options.momentum * connection.deltaWeightsPrevious;
+        connection.weight += connection.deltaWeightsTotal;
+        connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
+        connection.deltaWeightsTotal = 0;
       }
     }
   };
@@ -5596,11 +5811,9 @@ function (_super) {
 
 
         var gradient = _this.errorProjected * connection.eligibility;
-
-        for (var i = 0; i < connection.xTraceNodes.length; i++) {
-          gradient += connection.xTraceNodes[i].errorResponsibility * connection.xTraceValues[i];
-        }
-
+        connection.xTrace.forEach(function (value, key) {
+          gradient += key.errorResponsibility * value;
+        });
         connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * _this.mask;
 
         if (options.update) {
@@ -6267,7 +6480,106 @@ function (_super) {
 }(Layer_1.Layer);
 
 exports.GRULayer = GRULayer;
-},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/GatingType":"../src/enums/GatingType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/RecurrentLayers/LSTMLayer.js":[function(require,module,exports) {
+},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/GatingType":"../src/enums/GatingType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/RecurrentLayers/HopfieldLayer.js":[function(require,module,exports) {
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.HopfieldLayer = void 0;
+
+var ConnectionType_1 = require("../../../enums/ConnectionType");
+
+var NodeType_1 = require("../../../enums/NodeType");
+
+var Activation_1 = require("../../../methods/Activation");
+
+var Node_1 = require("../../Node");
+
+var Layer_1 = require("../Layer");
+/**
+ * Hopfield layer
+ */
+
+
+var HopfieldLayer =
+/** @class */
+function (_super) {
+  __extends(HopfieldLayer, _super);
+
+  function HopfieldLayer(outputSize) {
+    var _a, _b, _c, _d;
+
+    var _this = _super.call(this, outputSize) || this;
+
+    for (var i = 0; i < outputSize; i++) {
+      _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
+
+      _this.outputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setActivationType(Activation_1.StepActivation));
+    }
+
+    (_a = _this.connections).push.apply(_a, Layer_1.Layer.connect(_this.inputNodes, _this.outputNodes, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+
+    (_b = _this.connections).push.apply(_b, Layer_1.Layer.connect(_this.outputNodes, _this.inputNodes, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+
+    (_c = _this.nodes).push.apply(_c, Array.from(_this.inputNodes));
+
+    (_d = _this.nodes).push.apply(_d, Array.from(_this.outputNodes));
+
+    return _this;
+  }
+  /**
+   * Checks if a given connection type is allowed on this layer.
+   *
+   * @param type the type to check
+   *
+   * @return Is this connection type allowed?
+   */
+
+
+  HopfieldLayer.prototype.connectionTypeisAllowed = function (type) {
+    return true;
+  };
+  /**
+   * Gets the default connection type for a incoming connection to this layer.
+   *
+   * @returns the default incoming connection
+   */
+
+
+  HopfieldLayer.prototype.getDefaultIncomingConnectionType = function () {
+    return ConnectionType_1.ConnectionType.ALL_TO_ALL;
+  };
+
+  return HopfieldLayer;
+}(Layer_1.Layer);
+
+exports.HopfieldLayer = HopfieldLayer;
+},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/RecurrentLayers/LSTMLayer.js":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -6549,13 +6861,115 @@ function (_super) {
 }(Layer_1.Layer);
 
 exports.MemoryLayer = MemoryLayer;
+},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/RecurrentLayers/RNNLayer.js":[function(require,module,exports) {
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.RNNLayer = void 0;
+
+var ConnectionType_1 = require("../../../enums/ConnectionType");
+
+var NodeType_1 = require("../../../enums/NodeType");
+
+var Activation_1 = require("../../../methods/Activation");
+
+var Node_1 = require("../../Node");
+
+var Layer_1 = require("../Layer");
+/**
+ * RNN layer
+ */
+
+
+var RNNLayer =
+/** @class */
+function (_super) {
+  __extends(RNNLayer, _super);
+
+  function RNNLayer(outputSize, options) {
+    var _a, _b;
+
+    if (options === void 0) {
+      options = {};
+    }
+
+    var _c;
+
+    var _this = _super.call(this, outputSize) || this;
+
+    for (var i = 0; i < outputSize; i++) {
+      _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setActivationType((_c = options.activation) !== null && _c !== void 0 ? _c : Activation_1.LogisticActivation));
+    }
+
+    _this.outputNodes = _this.inputNodes;
+
+    (_a = _this.nodes).push.apply(_a, Array.from(_this.inputNodes)); // Adding self connections
+
+
+    (_b = _this.connections).push.apply(_b, Layer_1.Layer.connect(_this.nodes, _this.nodes, ConnectionType_1.ConnectionType.ONE_TO_ONE));
+
+    return _this;
+  }
+  /**
+   * Checks if a given connection type is allowed on this layer.
+   *
+   * @param type the type to check
+   *
+   * @return Is this connection type allowed?
+   */
+
+
+  RNNLayer.prototype.connectionTypeisAllowed = function (type) {
+    return true;
+  };
+  /**
+   * Gets the default connection type for a incoming connection to this layer.
+   *
+   * @returns the default incoming connection
+   */
+
+
+  RNNLayer.prototype.getDefaultIncomingConnectionType = function () {
+    return ConnectionType_1.ConnectionType.ALL_TO_ALL;
+  };
+
+  return RNNLayer;
+}(Layer_1.Layer);
+
+exports.RNNLayer = RNNLayer;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.generateGaussian = exports.avg = exports.sum = exports.min = exports.minValueIndex = exports.maxValueIndex = exports.max = exports.shuffle = exports.getOrDefault = exports.removeFromArray = exports.randBoolean = exports.randDouble = exports.randInt = exports.pickRandom = exports.TournamentSelection = exports.PowerSelection = exports.FitnessProportionateSelection = exports.Selection = exports.InverseRate = exports.ExponentialRate = exports.StepRate = exports.FixedRate = exports.Rate = exports.SwapNodesMutation = exports.SubBackConnectionMutation = exports.AddBackConnectionMutation = exports.SubSelfConnectionMutation = exports.AddSelfConnectionMutation = exports.SubGateMutation = exports.AddGateMutation = exports.ModActivationMutation = exports.ModBiasMutation = exports.ModWeightMutation = exports.SubConnectionMutation = exports.AddConnectionMutation = exports.SubNodeMutation = exports.AddNodeMutation = exports.Mutation = exports.ONLY_STRUCTURE = exports.NO_STRUCTURE_MUTATIONS = exports.FEEDFORWARD_MUTATIONS = exports.ALL_MUTATIONS = exports.HINGELoss = exports.MSLELoss = exports.WAPELoss = exports.MAPELoss = exports.MAELoss = exports.BinaryLoss = exports.MBELoss = exports.MSELoss = exports.ALL_LOSSES = exports.MISHActivation = exports.SELUActivation = exports.InverseActivation = exports.AbsoluteActivation = exports.HardTanhActivation = exports.BipolarSigmoidActivation = exports.BipolarActivation = exports.BentIdentityActivation = exports.GaussianActivation = exports.SinusoidActivation = exports.SoftSignActivation = exports.RELUActivation = exports.StepActivation = exports.IdentityActivation = exports.TanhActivation = exports.LogisticActivation = exports.ALL_ACTIVATIONS = exports.NoiseNodeType = exports.PoolNodeType = exports.NodeType = exports.GatingType = exports.ConnectionType = exports.Node = exports.Network = exports.Connection = exports.Architect = exports.PoolNode = exports.NoiseNode = exports.DropoutNode = exports.ConstantNode = exports.Layer = exports.MemoryLayer = exports.LSTMLayer = exports.GRULayer = exports.PoolingLayer = exports.GlobalMaxPooling1DLayer = exports.GlobalMinPooling1DLayer = exports.GlobalAvgPooling1DLayer = exports.MaxPooling1DLayer = exports.MinPooling1DLayer = exports.AvgPooling1DLayer = exports.NoiseLayer = exports.OutputLayer = exports.InputLayer = exports.DropoutLayer = exports.DenseLayer = void 0;
+exports.generateGaussian = exports.avg = exports.sum = exports.min = exports.minValueIndex = exports.maxValueIndex = exports.max = exports.shuffle = exports.getOrDefault = exports.removeFromArray = exports.randBoolean = exports.randDouble = exports.randInt = exports.pickRandom = exports.TournamentSelection = exports.PowerSelection = exports.FitnessProportionateSelection = exports.Selection = exports.InverseRate = exports.ExponentialRate = exports.StepRate = exports.FixedRate = exports.Rate = exports.SwapNodesMutation = exports.SubBackConnectionMutation = exports.AddBackConnectionMutation = exports.SubSelfConnectionMutation = exports.AddSelfConnectionMutation = exports.SubGateMutation = exports.AddGateMutation = exports.ModActivationMutation = exports.ModBiasMutation = exports.ModWeightMutation = exports.SubConnectionMutation = exports.AddConnectionMutation = exports.SubNodeMutation = exports.AddNodeMutation = exports.Mutation = exports.ONLY_STRUCTURE = exports.NO_STRUCTURE_MUTATIONS = exports.FEEDFORWARD_MUTATIONS = exports.ALL_MUTATIONS = exports.HINGELoss = exports.MSLELoss = exports.WAPELoss = exports.MAPELoss = exports.MAELoss = exports.BinaryLoss = exports.MBELoss = exports.MSELoss = exports.ALL_LOSSES = exports.MISHActivation = exports.SELUActivation = exports.InverseActivation = exports.AbsoluteActivation = exports.HardTanhActivation = exports.BipolarSigmoidActivation = exports.BipolarActivation = exports.BentIdentityActivation = exports.GaussianActivation = exports.SinusoidActivation = exports.SoftSignActivation = exports.RELUActivation = exports.StepActivation = exports.IdentityActivation = exports.TanhActivation = exports.LogisticActivation = exports.ALL_ACTIVATIONS = exports.NoiseNodeType = exports.PoolNodeType = exports.NodeType = exports.GatingType = exports.ConnectionType = exports.Node = exports.Network = exports.Connection = exports.Architect = exports.PoolNode = exports.NoiseNode = exports.DropoutNode = exports.ConstantNode = exports.Layer = exports.MemoryLayer = exports.LSTMLayer = exports.GRULayer = exports.RNNLayer = exports.HopfieldLayer = exports.ActivationLayer = exports.PoolingLayer = exports.GlobalMaxPooling1DLayer = exports.GlobalMinPooling1DLayer = exports.GlobalAvgPooling1DLayer = exports.MaxPooling1DLayer = exports.MinPooling1DLayer = exports.AvgPooling1DLayer = exports.NoiseLayer = exports.OutputLayer = exports.InputLayer = exports.DropoutLayer = exports.DenseLayer = void 0;
 
 var Architect_1 = require("../src/architecture/Architect");
 
@@ -6572,6 +6986,15 @@ Object.defineProperty(exports, "Connection", {
   enumerable: true,
   get: function () {
     return Connection_1.Connection;
+  }
+});
+
+var ActivationLayer_1 = require("../src/architecture/Layers/CoreLayers/ActivationLayer");
+
+Object.defineProperty(exports, "ActivationLayer", {
+  enumerable: true,
+  get: function () {
+    return ActivationLayer_1.ActivationLayer;
   }
 });
 
@@ -6701,6 +7124,15 @@ Object.defineProperty(exports, "GRULayer", {
   }
 });
 
+var HopfieldLayer_1 = require("../src/architecture/Layers/RecurrentLayers/HopfieldLayer");
+
+Object.defineProperty(exports, "HopfieldLayer", {
+  enumerable: true,
+  get: function () {
+    return HopfieldLayer_1.HopfieldLayer;
+  }
+});
+
 var LSTMLayer_1 = require("../src/architecture/Layers/RecurrentLayers/LSTMLayer");
 
 Object.defineProperty(exports, "LSTMLayer", {
@@ -6716,6 +7148,15 @@ Object.defineProperty(exports, "MemoryLayer", {
   enumerable: true,
   get: function () {
     return MemoryLayer_1.MemoryLayer;
+  }
+});
+
+var RNNLayer_1 = require("../src/architecture/Layers/RecurrentLayers/RNNLayer");
+
+Object.defineProperty(exports, "RNNLayer", {
+  enumerable: true,
+  get: function () {
+    return RNNLayer_1.RNNLayer;
   }
 });
 
@@ -7237,7 +7678,7 @@ Object.defineProperty(exports, "sum", {
     return Utils_1.sum;
   }
 });
-},{"../src/architecture/Architect":"../src/architecture/Architect.js","../src/architecture/Connection":"../src/architecture/Connection.js","../src/architecture/Layers/CoreLayers/DenseLayer":"../src/architecture/Layers/CoreLayers/DenseLayer.js","../src/architecture/Layers/CoreLayers/DropoutLayer":"../src/architecture/Layers/CoreLayers/DropoutLayer.js","../src/architecture/Layers/CoreLayers/InputLayer":"../src/architecture/Layers/CoreLayers/InputLayer.js","../src/architecture/Layers/CoreLayers/OutputLayer":"../src/architecture/Layers/CoreLayers/OutputLayer.js","../src/architecture/Layers/Layer":"../src/architecture/Layers/Layer.js","../src/architecture/Layers/NoiseLayers/NoiseLayer":"../src/architecture/Layers/NoiseLayers/NoiseLayer.js","../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer":"../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/MinPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MinPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js","../src/architecture/Layers/RecurrentLayers/GRULayer":"../src/architecture/Layers/RecurrentLayers/GRULayer.js","../src/architecture/Layers/RecurrentLayers/LSTMLayer":"../src/architecture/Layers/RecurrentLayers/LSTMLayer.js","../src/architecture/Layers/RecurrentLayers/MemoryLayer":"../src/architecture/Layers/RecurrentLayers/MemoryLayer.js","../src/architecture/Network":"../src/architecture/Network.js","../src/architecture/Node":"../src/architecture/Node.js","../src/architecture/Nodes/ConstantNode":"../src/architecture/Nodes/ConstantNode.js","../src/architecture/Nodes/DropoutNode":"../src/architecture/Nodes/DropoutNode.js","../src/architecture/Nodes/NoiseNode":"../src/architecture/Nodes/NoiseNode.js","../src/architecture/Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","../src/enums/ConnectionType":"../src/enums/ConnectionType.js","../src/enums/GatingType":"../src/enums/GatingType.js","../src/enums/NodeType":"../src/enums/NodeType.js","../src/methods/Activation":"../src/methods/Activation.js","../src/methods/Loss":"../src/methods/Loss.js","../src/methods/Mutation":"../src/methods/Mutation.js","../src/methods/Rate":"../src/methods/Rate.js","../src/methods/Selection":"../src/methods/Selection.js","../src/methods/Utils":"../src/methods/Utils.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"../src/architecture/Architect":"../src/architecture/Architect.js","../src/architecture/Connection":"../src/architecture/Connection.js","../src/architecture/Layers/CoreLayers/ActivationLayer":"../src/architecture/Layers/CoreLayers/ActivationLayer.js","../src/architecture/Layers/CoreLayers/DenseLayer":"../src/architecture/Layers/CoreLayers/DenseLayer.js","../src/architecture/Layers/CoreLayers/DropoutLayer":"../src/architecture/Layers/CoreLayers/DropoutLayer.js","../src/architecture/Layers/CoreLayers/InputLayer":"../src/architecture/Layers/CoreLayers/InputLayer.js","../src/architecture/Layers/CoreLayers/OutputLayer":"../src/architecture/Layers/CoreLayers/OutputLayer.js","../src/architecture/Layers/Layer":"../src/architecture/Layers/Layer.js","../src/architecture/Layers/NoiseLayers/NoiseLayer":"../src/architecture/Layers/NoiseLayers/NoiseLayer.js","../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer":"../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/MinPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MinPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js","../src/architecture/Layers/RecurrentLayers/GRULayer":"../src/architecture/Layers/RecurrentLayers/GRULayer.js","../src/architecture/Layers/RecurrentLayers/HopfieldLayer":"../src/architecture/Layers/RecurrentLayers/HopfieldLayer.js","../src/architecture/Layers/RecurrentLayers/LSTMLayer":"../src/architecture/Layers/RecurrentLayers/LSTMLayer.js","../src/architecture/Layers/RecurrentLayers/MemoryLayer":"../src/architecture/Layers/RecurrentLayers/MemoryLayer.js","../src/architecture/Layers/RecurrentLayers/RNNLayer":"../src/architecture/Layers/RecurrentLayers/RNNLayer.js","../src/architecture/Network":"../src/architecture/Network.js","../src/architecture/Node":"../src/architecture/Node.js","../src/architecture/Nodes/ConstantNode":"../src/architecture/Nodes/ConstantNode.js","../src/architecture/Nodes/DropoutNode":"../src/architecture/Nodes/DropoutNode.js","../src/architecture/Nodes/NoiseNode":"../src/architecture/Nodes/NoiseNode.js","../src/architecture/Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","../src/enums/ConnectionType":"../src/enums/ConnectionType.js","../src/enums/GatingType":"../src/enums/GatingType.js","../src/enums/NodeType":"../src/enums/NodeType.js","../src/methods/Activation":"../src/methods/Activation.js","../src/methods/Loss":"../src/methods/Loss.js","../src/methods/Mutation":"../src/methods/Mutation.js","../src/methods/Rate":"../src/methods/Rate.js","../src/methods/Selection":"../src/methods/Selection.js","../src/methods/Utils":"../src/methods/Utils.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -7265,7 +7706,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "40161" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "43631" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
