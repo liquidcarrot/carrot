@@ -20,11 +20,11 @@ export class Connection {
     /**
      * Connection origin node (neuron)
      */
-    public from: Node;
+    public readonly from: Node;
     /**
      * Connection destination node (neuron)
      */
-    public to: Node;
+    public readonly to: Node;
     /**
      * xTraceNodes
      */
