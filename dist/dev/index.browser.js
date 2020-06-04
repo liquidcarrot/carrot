@@ -118,39 +118,3189 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   return newRequire;
 })({"../src/enums/ConnectionType.js":[function(require,module,exports) {
-"use strict";var O;Object.defineProperty(exports,"__esModule",{value:!0}),exports.ConnectionType=void 0,function(O){O[O.NO_CONNECTION=0]="NO_CONNECTION",O[O.ALL_TO_ALL=1]="ALL_TO_ALL",O[O.ONE_TO_ONE=2]="ONE_TO_ONE",O[O.POOLING=3]="POOLING"}(O=exports.ConnectionType||(exports.ConnectionType={}));
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ConnectionType = void 0;
+/**
+ * The type of a connection.
+ */
+
+var ConnectionType;
+
+(function (ConnectionType) {
+  /**
+   * No connection used for exceptions.
+   */
+  ConnectionType[ConnectionType["NO_CONNECTION"] = 0] = "NO_CONNECTION";
+  /**
+   * Connect all input to all output nodes
+   */
+
+  ConnectionType[ConnectionType["ALL_TO_ALL"] = 1] = "ALL_TO_ALL";
+  /**
+   * Connect one input to one output node
+   */
+
+  ConnectionType[ConnectionType["ONE_TO_ONE"] = 2] = "ONE_TO_ONE";
+  /**
+   * Connect with pooling
+   */
+
+  ConnectionType[ConnectionType["POOLING"] = 3] = "POOLING";
+})(ConnectionType = exports.ConnectionType || (exports.ConnectionType = {}));
 },{}],"../src/enums/NodeType.js":[function(require,module,exports) {
-"use strict";var e,o,N;Object.defineProperty(exports,"__esModule",{value:!0}),exports.NoiseNodeType=exports.PoolNodeType=exports.NodeType=void 0,function(e){e[e.INPUT=0]="INPUT",e[e.HIDDEN=1]="HIDDEN",e[e.OUTPUT=2]="OUTPUT"}(e=exports.NodeType||(exports.NodeType={})),function(e){e[e.MAX_POOLING=0]="MAX_POOLING",e[e.AVG_POOLING=1]="AVG_POOLING",e[e.MIN_POOLING=2]="MIN_POOLING"}(o=exports.PoolNodeType||(exports.PoolNodeType={})),function(e){e[e.GAUSSIAN_NOISE=0]="GAUSSIAN_NOISE"}(N=exports.NoiseNodeType||(exports.NoiseNodeType={}));
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.NoiseNodeType = exports.PoolNodeType = exports.NodeType = void 0;
+/**
+ * The type of node.
+ */
+
+var NodeType;
+
+(function (NodeType) {
+  /**
+   * Node is an input node.
+   */
+  NodeType[NodeType["INPUT"] = 0] = "INPUT";
+  /**
+   * Node is a hidden node.
+   */
+
+  NodeType[NodeType["HIDDEN"] = 1] = "HIDDEN";
+  /**
+   * Node is a output node.
+   */
+
+  NodeType[NodeType["OUTPUT"] = 2] = "OUTPUT";
+})(NodeType = exports.NodeType || (exports.NodeType = {}));
+/**
+ * The type of pool node.
+ */
+
+
+var PoolNodeType;
+
+(function (PoolNodeType) {
+  /**
+   * Maximum pooling node.
+   */
+  PoolNodeType[PoolNodeType["MAX_POOLING"] = 0] = "MAX_POOLING";
+  /**
+   * Average pooling node.
+   */
+
+  PoolNodeType[PoolNodeType["AVG_POOLING"] = 1] = "AVG_POOLING";
+  /**
+   * Minimum pooling node.
+   */
+
+  PoolNodeType[PoolNodeType["MIN_POOLING"] = 2] = "MIN_POOLING";
+})(PoolNodeType = exports.PoolNodeType || (exports.PoolNodeType = {}));
+/**
+ * The type of noise node.
+ */
+
+
+var NoiseNodeType;
+
+(function (NoiseNodeType) {
+  /**
+   * Gaussian noise node
+   */
+  NoiseNodeType[NoiseNodeType["GAUSSIAN_NOISE"] = 0] = "GAUSSIAN_NOISE";
+})(NoiseNodeType = exports.NoiseNodeType || (exports.NoiseNodeType = {}));
 },{}],"../src/methods/Activation.js":[function(require,module,exports) {
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.ALL_ACTIVATIONS=exports.MISHActivation=exports.SELUActivation=exports.InverseActivation=exports.AbsoluteActivation=exports.HardTanhActivation=exports.BipolarSigmoidActivation=exports.BipolarActivation=exports.BentIdentityActivation=exports.GaussianActivation=exports.SinusoidActivation=exports.SoftSignActivation=exports.RELUActivation=exports.StepActivation=exports.IdentityActivation=exports.TanhActivation=exports.LogisticActivation=void 0,exports.LogisticActivation=function(t,i){return i?exports.LogisticActivation(t,!1)*(1-exports.LogisticActivation(t,!1)):1/(1+Math.exp(-t))},exports.TanhActivation=function(t,i){return i?1-Math.pow(exports.TanhActivation(t,!1),2):Math.tanh(t)},exports.IdentityActivation=function(t,i){return i?1:t},exports.StepActivation=function(t,i){return i?0:t<0?0:1},exports.RELUActivation=function(t,i){return i?t<=0?0:1:t>0?t:0},exports.SoftSignActivation=function(t,i){return i?t/((1+Math.abs(t))*(1+Math.abs(t))):t/(1+Math.abs(t))},exports.SinusoidActivation=function(t,i){return i?Math.cos(t):Math.sin(t)},exports.GaussianActivation=function(t,i){return i?-2*t*exports.GaussianActivation(t,!1):Math.exp(-t*t)},exports.BentIdentityActivation=function(t,i){return i?t/(2*Math.sqrt(t*t+1))+1:(Math.sqrt(t*t+1)-1)/2+t},exports.BipolarActivation=function(t,i){return i?0:t>0?1:-1},exports.BipolarSigmoidActivation=function(t,i){return i?2*Math.exp(-t)/((1+Math.exp(-t))*(1+Math.exp(-t))):2/(1+Math.exp(-t))-1},exports.HardTanhActivation=function(t,i){return i?Math.abs(t)<1?1:0:Math.max(-1,Math.min(1,t))},exports.AbsoluteActivation=function(t,i){return i?t<0?-1:1:Math.abs(t)},exports.InverseActivation=function(t,i){return i?-1:1-t},exports.SELUActivation=function(t,i){var o=1.6732632423543772,n=1.0507009873554805;return i?t>0?n:o*Math.exp(t)*n:t>0?t*n:(o*Math.exp(t)-o)*n},exports.MISHActivation=function(t,i){var o=Math.exp(t);if(i){var n=2*o+o*o+2;return o*(o*o*o+4*(o*o+t*o+t+1)+6*o)/(n*n)}return t*Math.tanh(Math.log(1+o))},exports.ALL_ACTIVATIONS={LogisticActivation:exports.LogisticActivation,TanhActivation:exports.TanhActivation,IdentityActivation:exports.IdentityActivation,StepActivation:exports.StepActivation,RELUActivation:exports.RELUActivation,SoftSignActivation:exports.SoftSignActivation,SinusoidActivation:exports.SinusoidActivation,GaussianActivation:exports.GaussianActivation,BentIdentityActivation:exports.BentIdentityActivation,BipolarActivation:exports.BipolarActivation,BipolarSigmoidActivation:exports.BipolarSigmoidActivation,HardTanhActivation:exports.HardTanhActivation,AbsoluteActivation:exports.AbsoluteActivation,InverseActivation:exports.InverseActivation,SELUActivation:exports.SELUActivation,MISHActivation:exports.MISHActivation};
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ALL_ACTIVATIONS = exports.MISHActivation = exports.SELUActivation = exports.InverseActivation = exports.AbsoluteActivation = exports.HardTanhActivation = exports.BipolarSigmoidActivation = exports.BipolarActivation = exports.BentIdentityActivation = exports.GaussianActivation = exports.SinusoidActivation = exports.SoftSignActivation = exports.RELUActivation = exports.StepActivation = exports.IdentityActivation = exports.TanhActivation = exports.LogisticActivation = void 0;
+
+exports.LogisticActivation = function (x, derivative) {
+  if (!derivative) {
+    return 1 / (1 + Math.exp(-x));
+  } else {
+    return exports.LogisticActivation(x, false) * (1 - exports.LogisticActivation(x, false));
+  }
+};
+
+exports.TanhActivation = function (x, derivative) {
+  if (!derivative) {
+    return Math.tanh(x);
+  } else {
+    return 1 - Math.pow(exports.TanhActivation(x, false), 2);
+  }
+};
+
+exports.IdentityActivation = function (x, derivative) {
+  if (!derivative) {
+    return x;
+  } else {
+    return 1;
+  }
+};
+
+exports.StepActivation = function (x, derivative) {
+  if (!derivative) {
+    return x < 0 ? 0 : 1;
+  } else {
+    return 0;
+  }
+};
+
+exports.RELUActivation = function (x, derivative) {
+  if (!derivative) {
+    return x > 0 ? x : 0;
+  } else {
+    return x <= 0 ? 0 : 1;
+  }
+};
+
+exports.SoftSignActivation = function (x, derivative) {
+  if (!derivative) {
+    return x / (1 + Math.abs(x));
+  } else {
+    return x / ((1 + Math.abs(x)) * (1 + Math.abs(x)));
+  }
+};
+
+exports.SinusoidActivation = function (x, derivative) {
+  if (!derivative) {
+    return Math.sin(x);
+  } else {
+    return Math.cos(x);
+  }
+};
+
+exports.GaussianActivation = function (x, derivative) {
+  if (!derivative) {
+    return Math.exp(-x * x);
+  } else {
+    return -2 * x * exports.GaussianActivation(x, false);
+  }
+};
+
+exports.BentIdentityActivation = function (x, derivative) {
+  if (!derivative) {
+    return (Math.sqrt(x * x + 1) - 1) / 2 + x;
+  } else {
+    return x / (2 * Math.sqrt(x * x + 1)) + 1;
+  }
+};
+
+exports.BipolarActivation = function (x, derivative) {
+  if (!derivative) {
+    return x > 0 ? 1 : -1;
+  } else {
+    return 0;
+  }
+};
+
+exports.BipolarSigmoidActivation = function (x, derivative) {
+  if (!derivative) {
+    return 2 / (1 + Math.exp(-x)) - 1;
+  } else {
+    return 2 * Math.exp(-x) / ((1 + Math.exp(-x)) * (1 + Math.exp(-x)));
+  }
+};
+
+exports.HardTanhActivation = function (x, derivative) {
+  if (!derivative) {
+    return Math.max(-1, Math.min(1, x));
+  } else {
+    return Math.abs(x) < 1 ? 1 : 0;
+  }
+};
+
+exports.AbsoluteActivation = function (x, derivative) {
+  if (!derivative) {
+    return Math.abs(x);
+  } else {
+    return x < 0 ? -1 : 1;
+  }
+};
+
+exports.InverseActivation = function (x, derivative) {
+  if (!derivative) {
+    return 1 - x;
+  } else {
+    return -1;
+  }
+};
+
+exports.SELUActivation = function (x, derivative) {
+  var alpha = 1.6732632423543772848170429916717; // this is bad
+
+  var scale = 1.0507009873554804934193349852946; // this is bad
+
+  if (!derivative) {
+    if (x > 0) {
+      return x * scale;
+    } else {
+      return (alpha * Math.exp(x) - alpha) * scale;
+    }
+  } else {
+    if (x > 0) {
+      return scale;
+    } else {
+      return alpha * Math.exp(x) * scale;
+    }
+  }
+};
+
+exports.MISHActivation = function (x, derivative) {
+  var ex = Math.exp(x);
+
+  if (derivative) {
+    var w = ex * ex * ex + 4 * (ex * ex + x * ex + x + 1) + 6 * ex;
+    var d = 2 * ex + ex * ex + 2;
+    return ex * w / (d * d);
+  } else {
+    return x * Math.tanh(Math.log(1 + ex));
+  }
+};
+
+exports.ALL_ACTIVATIONS = {
+  LogisticActivation: exports.LogisticActivation,
+  TanhActivation: exports.TanhActivation,
+  IdentityActivation: exports.IdentityActivation,
+  StepActivation: exports.StepActivation,
+  RELUActivation: exports.RELUActivation,
+  SoftSignActivation: exports.SoftSignActivation,
+  SinusoidActivation: exports.SinusoidActivation,
+  GaussianActivation: exports.GaussianActivation,
+  BentIdentityActivation: exports.BentIdentityActivation,
+  BipolarActivation: exports.BipolarActivation,
+  BipolarSigmoidActivation: exports.BipolarSigmoidActivation,
+  HardTanhActivation: exports.HardTanhActivation,
+  AbsoluteActivation: exports.AbsoluteActivation,
+  InverseActivation: exports.InverseActivation,
+  SELUActivation: exports.SELUActivation,
+  MISHActivation: exports.MISHActivation
+};
 },{}],"../src/methods/Utils.js":[function(require,module,exports) {
-"use strict";function r(r){if(0===r.length)throw new RangeError("Cannot pick from an empty array");return r[e(0,r.length)]}function e(r,e){return Math.floor(Math.random()*(e-r)+r)}function n(r,e){return Math.random()*(e-r)+r}function t(){return Math.random()>=.5}function o(r,e){var n=r.indexOf(e);return-1!==n&&(r.splice(n,1),!0)}function a(r,e){return null!=r?r:e}function u(r){for(var n=r.length;n>0;){var t=e(0,n),o=r[--n];r[n]=r[t],r[t]=o}return r}function s(r){for(var e=r[0],n=1;n<r.length;n++)r[n]>e&&(e=r[n]);return e}function x(r){for(var e=r[0],n=0,t=1;t<r.length;t++)r[t]>e&&(e=r[t],n=t);return n}function p(r){for(var e=r[0],n=0,t=1;t<r.length;t++)r[t]<e&&(e=r[t],n=t);return n}function f(r){for(var e=r[0],n=1;n<r.length;n++)r[n]<e&&(e=r[n]);return e}function i(r){return l(r)/r.length}function l(r){for(var e=0,n=0,t=r;n<t.length;n++){e+=t[n]}return e}function d(r,e){void 0===r&&(r=0),void 0===e&&(e=2);for(var n=0,t=0;t<10;t++)n+=Math.random();return e*n/10+r-.5*e}Object.defineProperty(exports,"__esModule",{value:!0}),exports.generateGaussian=exports.avg=exports.sum=exports.min=exports.minValueIndex=exports.maxValueIndex=exports.max=exports.shuffle=exports.getOrDefault=exports.removeFromArray=exports.randBoolean=exports.randDouble=exports.randInt=exports.pickRandom=void 0,exports.pickRandom=r,exports.randInt=e,exports.randDouble=n,exports.randBoolean=t,exports.removeFromArray=o,exports.getOrDefault=a,exports.shuffle=u,exports.max=s,exports.maxValueIndex=x,exports.minValueIndex=p,exports.min=f,exports.avg=i,exports.sum=l,exports.generateGaussian=d;
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.generateGaussian = exports.avg = exports.sum = exports.min = exports.minValueIndex = exports.maxValueIndex = exports.max = exports.shuffle = exports.getOrDefault = exports.removeFromArray = exports.randBoolean = exports.randDouble = exports.randInt = exports.pickRandom = void 0;
+/**
+ * Returns an random element from the given array.
+ *
+ * @param arr the array to pick from
+ * @returns the random picked element
+ */
+
+function pickRandom(arr) {
+  if (arr.length === 0) {
+    throw new RangeError("Cannot pick from an empty array");
+  }
+
+  return arr[randInt(0, arr.length)];
+}
+
+exports.pickRandom = pickRandom;
+/**
+ * Returns a random integer in the range [min,max)
+ *
+ * @param min bound
+ * @param max bound
+ * @returns random integer in [min,max)
+ */
+
+function randInt(min, max) {
+  return Math.floor(Math.random() * (max - min) + min);
+}
+
+exports.randInt = randInt;
+/**
+ * Returns a random double in the range [min,max)
+ *
+ * @param min bound
+ * @param max bound
+ * @returns random double in [min,max)
+ */
+
+function randDouble(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+exports.randDouble = randDouble;
+/**
+ * Returns a random boolean
+ *
+ * @returns random boolean
+ */
+
+function randBoolean() {
+  return Math.random() >= 0.5;
+}
+
+exports.randBoolean = randBoolean;
+/**
+ * Removes an element from an array.
+ *
+ * @param arr the array
+ * @param elem the element which will be removed
+ * @returns false -> element does not exists on array; true -> element removed from array
+ */
+
+function removeFromArray(arr, elem) {
+  var index = arr.indexOf(elem);
+
+  if (index === -1) {
+    return false;
+  } else {
+    arr.splice(index, 1);
+    return true;
+  }
+}
+
+exports.removeFromArray = removeFromArray;
+/**
+ * Checks a given value. If value is undefined return the default value.
+ *
+ * @param value to check
+ * @param defaultValue to return if value is undefined
+ * @returns value if defined otherwise defaultValue
+ */
+
+function getOrDefault(value, defaultValue) {
+  return value !== null && value !== void 0 ? value : defaultValue;
+}
+
+exports.getOrDefault = getOrDefault;
+/**
+ * Shuffles an array
+ * @param array the array
+ * @returns the shuffled array
+ */
+
+function shuffle(array) {
+  var counter = array.length; // While there are elements in the array
+
+  while (counter > 0) {
+    // Pick a random index
+    var index = randInt(0, counter); // Decrease counter by 1
+
+    counter--; // And swap the last element with it
+
+    var temp = array[counter];
+    array[counter] = array[index];
+    array[index] = temp;
+  }
+
+  return array;
+}
+
+exports.shuffle = shuffle;
+/**
+ * Finds the maximum value of an number array
+ *
+ * @param array
+ */
+
+function max(array) {
+  var maxValue = array[0];
+
+  for (var i = 1; i < array.length; i++) {
+    if (array[i] > maxValue) {
+      maxValue = array[i];
+    }
+  }
+
+  return maxValue;
+}
+
+exports.max = max;
+/**
+ * Finds the maximum value index of an number array
+ *
+ * @param array
+ */
+
+function maxValueIndex(array) {
+  var maxValue = array[0];
+  var maxValueIndex = 0;
+
+  for (var i = 1; i < array.length; i++) {
+    if (array[i] > maxValue) {
+      maxValue = array[i];
+      maxValueIndex = i;
+    }
+  }
+
+  return maxValueIndex;
+}
+
+exports.maxValueIndex = maxValueIndex;
+/**
+ * Finds the minimum value index of an number array
+ *
+ * @param array
+ */
+
+function minValueIndex(array) {
+  var minValue = array[0];
+  var minValueIndex = 0;
+
+  for (var i = 1; i < array.length; i++) {
+    if (array[i] < minValue) {
+      minValue = array[i];
+      minValueIndex = i;
+    }
+  }
+
+  return minValueIndex;
+}
+
+exports.minValueIndex = minValueIndex;
+/**
+ * Finds the minimum value of an number array
+ *
+ * @param array
+ */
+
+function min(array) {
+  var minValue = array[0];
+
+  for (var i = 1; i < array.length; i++) {
+    if (array[i] < minValue) {
+      minValue = array[i];
+    }
+  }
+
+  return minValue;
+}
+
+exports.min = min;
+/**
+ * Calculates the average value of an array
+ *
+ * @param array
+ */
+
+function avg(array) {
+  return sum(array) / array.length;
+}
+
+exports.avg = avg;
+/**
+ * Calculates the sum of all values of an array
+ *
+ * @param array
+ */
+
+function sum(array) {
+  var sum = 0;
+
+  for (var _i = 0, array_1 = array; _i < array_1.length; _i++) {
+    var value = array_1[_i];
+    sum += value;
+  }
+
+  return sum;
+}
+
+exports.sum = sum;
+/**
+ * Generates a random number with the gaussian distribution.
+ *
+ * @see https://en.wikipedia.org/wiki/Normal_distribution
+ *
+ * @param mean the mean value
+ * @param deviation the standard deviation
+ */
+
+function generateGaussian(mean, deviation) {
+  if (mean === void 0) {
+    mean = 0;
+  }
+
+  if (deviation === void 0) {
+    deviation = 2;
+  }
+
+  var sum = 0;
+  var numSamples = 10;
+
+  for (var i = 0; i < numSamples; i++) {
+    sum += Math.random();
+  }
+
+  return deviation * sum / numSamples + mean - 0.5 * deviation;
+}
+
+exports.generateGaussian = generateGaussian;
 },{}],"../src/methods/Mutation.js":[function(require,module,exports) {
-"use strict";var t=this&&this.__extends||function(){var t=function(n,o){return(t=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,n){t.__proto__=n}||function(t,n){for(var o in n)n.hasOwnProperty(o)&&(t[o]=n[o])})(n,o)};return function(n,o){function e(){this.constructor=n}t(n,o),n.prototype=null===o?Object.create(o):(e.prototype=o.prototype,new e)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.SwapNodesMutation=exports.SubBackConnectionMutation=exports.AddBackConnectionMutation=exports.SubSelfConnectionMutation=exports.AddSelfConnectionMutation=exports.SubGateMutation=exports.AddGateMutation=exports.ModActivationMutation=exports.ModBiasMutation=exports.ModWeightMutation=exports.SubConnectionMutation=exports.AddConnectionMutation=exports.SubNodeMutation=exports.AddNodeMutation=exports.Mutation=exports.ONLY_STRUCTURE=exports.NO_STRUCTURE_MUTATIONS=exports.FEEDFORWARD_MUTATIONS=exports.ALL_MUTATIONS=void 0;var n=require("../architecture/Node"),o=require("../enums/NodeType"),e=require("./Utils"),i=function(){return function(){}}();exports.Mutation=i;var r=function(i){function r(t){void 0===t&&(t=!0);var n=i.call(this)||this;return n.randomActivation=t,n}return t(r,i),r.prototype.mutate=function(t,i){if(!(void 0!==i&&void 0!==i.maxNodes&&t.nodes.length>=i.maxNodes)){var r=new n.Node(o.NodeType.HIDDEN);this.randomActivation&&r.mutateActivation();var u=e.pickRandom(t.connections),a=u.from,c=u.to;t.disconnect(a,c);var s=Math.max(t.inputSize,1+t.nodes.indexOf(a));t.nodes.splice(s,0,r);var d=t.connect(a,r,1),p=t.connect(r,c,u.weight);null!=u.gateNode&&(e.randBoolean()?t.addGate(u.gateNode,d):t.addGate(u.gateNode,p))}},r}(i);exports.AddNodeMutation=r;var u=function(n){function o(t){void 0===t&&(t=!0);var o=n.call(this)||this;return o.keepGates=t,o}return t(o,n),o.prototype.mutate=function(t){var n=t.nodes.filter(function(t){return void 0!==t&&t.isHiddenNode()});n.length>0&&t.removeNode(e.pickRandom(n),this.keepGates)},o}(i);exports.SubNodeMutation=u;var a=function(n){function o(){return null!==n&&n.apply(this,arguments)||this}return t(o,n),o.prototype.mutate=function(t,n){if(!(void 0!==n&&void 0!==n.maxConnections&&t.connections.length>=n.maxConnections)){for(var o=[],i=0;i<t.nodes.length-t.outputSize;i++)for(var r=t.nodes[i],u=Math.max(i+1,t.inputSize);u<t.nodes.length;u++){var a=t.nodes[u];r.isProjectingTo(a)||o.push([r,a])}if(o.length>0){var c=e.pickRandom(o);t.connect(c[0],c[1])}}},o}(i);exports.AddConnectionMutation=a;var c=function(n){function o(){return null!==n&&n.apply(this,arguments)||this}return t(o,n),o.prototype.mutate=function(t){var n=t.connections.filter(function(t){return t.from.outgoing.length>1}).filter(function(t){return t.to.incoming.length>1}).filter(function(n){return t.nodes.indexOf(n.to)>t.nodes.indexOf(n.from)});if(n.length>0){var o=e.pickRandom(n);t.disconnect(o.from,o.to)}},o}(i);exports.SubConnectionMutation=c;var s=function(n){function o(t,o){void 0===t&&(t=-1),void 0===o&&(o=1);var e=n.call(this)||this;return e.min=t,e.max=o,e}return t(o,n),o.prototype.mutate=function(t){e.pickRandom(t.connections).weight+=e.randDouble(this.min,this.max)},o}(i);exports.ModWeightMutation=s;var d=function(n){function o(t,o){void 0===t&&(t=-1),void 0===o&&(o=1);var e=n.call(this)||this;return e.min=t,e.max=o,e}return t(o,n),o.prototype.mutate=function(t){e.pickRandom(t.nodes.filter(function(t){return!t.isInputNode()})).mutateBias(this)},o}(i);exports.ModBiasMutation=d;var p=function(n){function o(t){void 0===t&&(t=!1);var o=n.call(this)||this;return o.mutateOutput=t,o}return t(o,n),o.prototype.mutate=function(t,n){var o=this.mutateOutput?t.nodes.filter(function(t){return!t.isInputNode()}):t.nodes.filter(function(t){return t.isHiddenNode()});o.length>0&&e.pickRandom(o).mutateActivation(null==n?void 0:n.allowedActivations)},o}(i);exports.ModActivationMutation=p;var f=function(n){function o(){return null!==n&&n.apply(this,arguments)||this}return t(o,n),o.prototype.mutate=function(t){var n=t.nodes.filter(function(t){return!t.isInputNode()}).filter(function(t){return 0===t.selfConnection.weight});if(n.length>0){var o=e.pickRandom(n);t.connect(o,o)}},o}(i);exports.AddSelfConnectionMutation=f;var l=function(n){function o(){return null!==n&&n.apply(this,arguments)||this}return t(o,n),o.prototype.mutate=function(t){var n=t.connections.filter(function(t){return t.from===t.to});if(n.length>0){var o=e.pickRandom(n);t.disconnect(o.from,o.to)}},o}(i);exports.SubSelfConnectionMutation=l;var v=function(n){function o(){return null!==n&&n.apply(this,arguments)||this}return t(o,n),o.prototype.mutate=function(t,n){if(!(void 0!==n&&void 0!==n.maxGates&&t.gates.length>=n.maxGates)){var o=t.connections.filter(function(t){return null===t.gateNode});if(o.length>0){var i=e.pickRandom(t.nodes.filter(function(t){return!t.isInputNode()})),r=e.pickRandom(o);t.addGate(i,r)}}},o}(i);exports.AddGateMutation=v;var h=function(n){function o(){return null!==n&&n.apply(this,arguments)||this}return t(o,n),o.prototype.mutate=function(t){t.gates.length>0&&t.removeGate(e.pickRandom(t.gates))},o}(i);exports.SubGateMutation=h;var m=function(n){function o(){return null!==n&&n.apply(this,arguments)||this}return t(o,n),o.prototype.mutate=function(t){for(var n=[],o=t.inputSize;o<t.nodes.length;o++)for(var i=t.nodes[o],r=t.inputSize;r<o;r++){var u=t.nodes[r];i.isProjectingTo(u)||n.push([i,u])}if(n.length>0){var a=e.pickRandom(n);t.connect(a[0],a[1])}},o}(i);exports.AddBackConnectionMutation=m;var x=function(n){function o(){return null!==n&&n.apply(this,arguments)||this}return t(o,n),o.prototype.mutate=function(t){var n=t.connections.filter(function(t){return t.from.outgoing.length>1}).filter(function(t){return t.to.incoming.length>1}).filter(function(n){return t.nodes.indexOf(n.from)>t.nodes.indexOf(n.to)});if(n.length>0){var o=e.pickRandom(n);t.disconnect(o.from,o.to)}},o}(i);exports.SubBackConnectionMutation=x;var w=function(n){function o(t){void 0===t&&(t=!1);var o=n.call(this)||this;return o.mutateOutput=t,o}return t(o,n),o.prototype.mutate=function(t){var n=this.mutateOutput?t.nodes.filter(function(t){return void 0!==t&&!t.isInputNode()}):t.nodes.filter(function(t){return void 0!==t&&t.isHiddenNode()});if(n.length>=2){var o=e.pickRandom(n),i=e.pickRandom(n.filter(function(t){return t!==o})),r=o.bias,u=o.squash;o.bias=i.bias,o.squash=i.squash,i.bias=r,i.squash=u}},o}(i);exports.SwapNodesMutation=w;var M=[new r,new u,new a,new c,new s,new d,new p,new v,new h,new f,new l,new m,new x,new w];exports.ALL_MUTATIONS=M;var g=[new r,new u,new a,new c,new s,new d,new p,new w];exports.FEEDFORWARD_MUTATIONS=g;var N=[new s,new d,new p];exports.NO_STRUCTURE_MUTATIONS=N;var y=[new r,new u,new a,new c,new v,new h,new f,new l,new m,new x,new w];exports.ONLY_STRUCTURE=y;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.SwapNodesMutation = exports.SubBackConnectionMutation = exports.AddBackConnectionMutation = exports.SubSelfConnectionMutation = exports.AddSelfConnectionMutation = exports.SubGateMutation = exports.AddGateMutation = exports.ModActivationMutation = exports.ModBiasMutation = exports.ModWeightMutation = exports.SubConnectionMutation = exports.AddConnectionMutation = exports.SubNodeMutation = exports.AddNodeMutation = exports.Mutation = exports.ONLY_STRUCTURE = exports.NO_STRUCTURE_MUTATIONS = exports.FEEDFORWARD_MUTATIONS = exports.ALL_MUTATIONS = void 0;
+
+var Node_1 = require("../architecture/Node");
+
+var NodeType_1 = require("../enums/NodeType");
+
+var Utils_1 = require("./Utils");
+/**
+ *
+ * Genetic algorithm mutation methods. Creates variations (mutations) in neural networks which are then selected for better performance.
+ *
+ * @see {@link https://en.wikipedia.org/wiki/mutation_(genetic_algorithm)|Mutation (genetic algorithms) on Wikipedia}
+ * @see {@link https://en.wikipedia.org/wiki/Genetic_algorithm#Selection|Selection (genetic algorithms) on Wikipedia}
+ *
+ */
+
+
+var Mutation =
+/** @class */
+function () {
+  function Mutation() {}
+
+  return Mutation;
+}();
+
+exports.Mutation = Mutation;
+/**
+ * Add node mutation.
+ *
+ * Adds a hidden node to the network.
+ *
+ * @prop {boolean} randomActivation=true If enabled, sets a random activation function on the newly created node
+ */
+
+var AddNodeMutation =
+/** @class */
+function (_super) {
+  __extends(AddNodeMutation, _super);
+  /**
+   * Constructs a AddNodeMutation object
+   * @param randomActivation Should choose a random activation for a new node?
+   */
+
+
+  function AddNodeMutation(randomActivation) {
+    if (randomActivation === void 0) {
+      randomActivation = true;
+    }
+
+    var _this = _super.call(this) || this;
+
+    _this.randomActivation = randomActivation;
+    return _this;
+  }
+  /**
+   * Mutates the network.
+   *
+   * @param network The network which gets mutated
+   * @param options
+   */
+
+
+  AddNodeMutation.prototype.mutate = function (network, options) {
+    // check if max nodes is already reached
+    if (options !== undefined && options.maxNodes !== undefined && network.nodes.length >= options.maxNodes) {
+      return;
+    } // create a new hidden node
+
+
+    var node = new Node_1.Node(NodeType_1.NodeType.HIDDEN);
+
+    if (this.randomActivation) {
+      node.mutateActivation(); // choose random activation
+    } // take a random connection
+
+
+    var connection = Utils_1.pickRandom(Array.from(network.connections));
+    var from = connection.from;
+    var to = connection.to;
+    network.disconnect(from, to); // disconnect it
+    // put the node in between the connection
+
+    var minBound = Math.max(network.inputSize, 1 + network.nodes.indexOf(from));
+    network.nodes.splice(minBound, 0, node);
+    var newConnection1 = network.connect(from, node, 1);
+    var newConnection2 = network.connect(node, to, connection.weight);
+
+    if (connection.gateNode != null) {
+      // if connection had a gate node
+      // choose randomly which new connection should get this gate node
+      if (Utils_1.randBoolean()) {
+        network.addGate(connection.gateNode, newConnection1);
+      } else {
+        network.addGate(connection.gateNode, newConnection2);
+      }
+    }
+  };
+
+  return AddNodeMutation;
+}(Mutation);
+
+exports.AddNodeMutation = AddNodeMutation;
+/**
+ * Sub node mutation.
+ *
+ * Removes a random node from the network.
+ *
+ * @prop keepGates=true Ensures replacement node has gated connections if the removed node did.
+ */
+
+var SubNodeMutation =
+/** @class */
+function (_super) {
+  __extends(SubNodeMutation, _super);
+
+  function SubNodeMutation(keepGates) {
+    if (keepGates === void 0) {
+      keepGates = true;
+    }
+
+    var _this = _super.call(this) || this;
+
+    _this.keepGates = keepGates;
+    return _this;
+  }
+  /**
+   * Mutates the network.
+   *
+   * @param network The network which gets mutated
+   */
+
+
+  SubNodeMutation.prototype.mutate = function (network) {
+    var possible = network.nodes.filter(function (node) {
+      return node !== undefined && node.isHiddenNode();
+    }); // hidden nodes
+
+    if (possible.length > 0) {
+      network.removeNode(Utils_1.pickRandom(possible), this.keepGates); // remove a random node from the filtered array
+    }
+  };
+
+  return SubNodeMutation;
+}(Mutation);
+
+exports.SubNodeMutation = SubNodeMutation;
+/**
+ * Add connections mutation.
+ *
+ * Adds a connection to the network.
+ */
+
+var AddConnectionMutation =
+/** @class */
+function (_super) {
+  __extends(AddConnectionMutation, _super);
+
+  function AddConnectionMutation() {
+    return _super !== null && _super.apply(this, arguments) || this;
+  }
+  /**
+   * Mutates the network.
+   *
+   * @param network The network which gets mutated
+   * @param options
+   */
+
+
+  AddConnectionMutation.prototype.mutate = function (network, options) {
+    // check if max connections is already reached
+    if (options !== undefined && options.maxConnections !== undefined && network.connections.size >= options.maxConnections) {
+      return;
+    }
+
+    var possible = [];
+
+    for (var i = 0; i < network.nodes.length - network.outputSize; i++) {
+      var from = network.nodes[i];
+
+      for (var j = Math.max(i + 1, network.inputSize); j < network.nodes.length; j++) {
+        var to = network.nodes[j];
+
+        if (!from.isProjectingTo(to)) {
+          possible.push([from, to]);
+        }
+      }
+    }
+
+    if (possible.length > 0) {
+      var pair = Utils_1.pickRandom(possible);
+      network.connect(pair[0], pair[1]);
+    }
+  };
+
+  return AddConnectionMutation;
+}(Mutation);
+
+exports.AddConnectionMutation = AddConnectionMutation;
+/**
+ * Sub connection mutation.
+ *
+ * Removes a random connection from the network.
+ */
+
+var SubConnectionMutation =
+/** @class */
+function (_super) {
+  __extends(SubConnectionMutation, _super);
+
+  function SubConnectionMutation() {
+    return _super !== null && _super.apply(this, arguments) || this;
+  }
+  /**
+   * Mutates the network.
+   *
+   * @param network The network which gets mutated
+   */
+
+
+  SubConnectionMutation.prototype.mutate = function (network) {
+    var possible = Array.from(network.connections).filter(function (conn) {
+      return conn.from.outgoing.size > 1;
+    }) // do not deactivate a neuron
+    .filter(function (conn) {
+      return conn.to.incoming.size > 1;
+    }) // do not deactivate a neuron
+    .filter(function (conn) {
+      return network.nodes.indexOf(conn.to) > network.nodes.indexOf(conn.from);
+    }); // look for forward pointing connections
+
+    if (possible.length > 0) {
+      var randomConnection = Utils_1.pickRandom(possible); // pick a random connection from the filtered array
+
+      network.disconnect(randomConnection.from, randomConnection.to); // remove the connection from the network
+    }
+  };
+
+  return SubConnectionMutation;
+}(Mutation);
+
+exports.SubConnectionMutation = SubConnectionMutation;
+/**
+ * Mod weight mutation.
+ *
+ * Modifies the weight of a random connection.
+ *
+ * @prop {number} min=-1 lower bound for weight modification
+ * @prop {number} max=1 higher bound for weight modification
+ */
+
+var ModWeightMutation =
+/** @class */
+function (_super) {
+  __extends(ModWeightMutation, _super);
+  /**
+   * Constructs a ModWeightMutation object
+   * @param min The minimum weight.
+   * @param max The maximum weight.
+   */
+
+
+  function ModWeightMutation(min, max) {
+    if (min === void 0) {
+      min = -1;
+    }
+
+    if (max === void 0) {
+      max = 1;
+    }
+
+    var _this = _super.call(this) || this;
+
+    _this.min = min;
+    _this.max = max;
+    return _this;
+  }
+  /**
+   * Mutates the network.
+   *
+   * @param network The network which gets mutated
+   */
+
+
+  ModWeightMutation.prototype.mutate = function (network) {
+    // pick random connection and mutate it's weight
+    Utils_1.pickRandom(Array.from(network.connections)).weight += Utils_1.randDouble(this.min, this.max);
+  };
+
+  return ModWeightMutation;
+}(Mutation);
+
+exports.ModWeightMutation = ModWeightMutation;
+/**
+ * Mod bias mutation.
+ *
+ * Modifies the bias value of a random hidden or output node
+ *
+ * @prop {number} min=-1 lower bound for modification of a neuron's bias
+ * @prop {number} max=1 higher bound for modification of a neuron's bias
+ */
+
+var ModBiasMutation =
+/** @class */
+function (_super) {
+  __extends(ModBiasMutation, _super);
+  /**
+   * Constructs a ModBiasMutation object
+   * @param min The minimum bias.
+   * @param max The maximum bias.
+   */
+
+
+  function ModBiasMutation(min, max) {
+    if (min === void 0) {
+      min = -1;
+    }
+
+    if (max === void 0) {
+      max = 1;
+    }
+
+    var _this = _super.call(this) || this;
+
+    _this.min = min;
+    _this.max = max;
+    return _this;
+  }
+  /**
+   * Mutates the network.
+   *
+   * @param network The network which gets mutated
+   */
+
+
+  ModBiasMutation.prototype.mutate = function (network) {
+    Utils_1.pickRandom(network.nodes.filter(function (node) {
+      return !node.isInputNode();
+    })) // pick random hidden or output node
+    .mutateBias(this); // mutate it's bias
+  };
+
+  return ModBiasMutation;
+}(Mutation);
+
+exports.ModBiasMutation = ModBiasMutation;
+/**
+ * Mod activation mutation.
+ *
+ * Modifies the activation function of a random node
+ *
+ * @prop {boolean} mutateOutput=false Change activation function of network output neurons. Enable this to let the network experiment with its output.
+ */
+
+var ModActivationMutation =
+/** @class */
+function (_super) {
+  __extends(ModActivationMutation, _super);
+  /**
+   * Constructs a ModActivationMutation object
+   * @param mutateOutput Can the output be mutated?
+   */
+
+
+  function ModActivationMutation(mutateOutput) {
+    if (mutateOutput === void 0) {
+      mutateOutput = false;
+    }
+
+    var _this = _super.call(this) || this;
+
+    _this.mutateOutput = mutateOutput;
+    return _this;
+  }
+  /**
+   * Mutates the network.
+   *
+   * @param network The network which gets mutated
+   * @param options
+   */
+
+
+  ModActivationMutation.prototype.mutate = function (network, options) {
+    var possible = this.mutateOutput ? network.nodes.filter(function (node) {
+      return !node.isInputNode();
+    }) // hidden and output nodes
+    : network.nodes.filter(function (node) {
+      return node.isHiddenNode();
+    }); // hidden nodes
+
+    if (possible.length > 0) {
+      Utils_1.pickRandom(possible).mutateActivation(options === null || options === void 0 ? void 0 : options.allowedActivations); // mutate the activation of the node
+    }
+  };
+
+  return ModActivationMutation;
+}(Mutation);
+
+exports.ModActivationMutation = ModActivationMutation;
+/**
+ * Add self connection.
+ *
+ * Adds a connection from a node to itself.
+ */
+
+var AddSelfConnectionMutation =
+/** @class */
+function (_super) {
+  __extends(AddSelfConnectionMutation, _super);
+
+  function AddSelfConnectionMutation() {
+    return _super !== null && _super.apply(this, arguments) || this;
+  }
+  /**
+   * Mutates the network.
+   *
+   * @param network The network which gets mutated
+   */
+
+
+  AddSelfConnectionMutation.prototype.mutate = function (network) {
+    var possible = network.nodes.filter(function (node) {
+      return !node.isInputNode();
+    }) // no input nodes
+    .filter(function (node) {
+      return node.selfConnection.weight === 0;
+    }); // only nodes that doesn't have an self connection already
+
+    if (possible.length > 0) {
+      var node = Utils_1.pickRandom(possible); // pick a random node from the filtered array
+
+      network.connect(node, node); // connection the node to itself
+    }
+  };
+
+  return AddSelfConnectionMutation;
+}(Mutation);
+
+exports.AddSelfConnectionMutation = AddSelfConnectionMutation;
+/**
+ * Sub self connection.
+ *
+ * Removes a connection from a node to itself.
+ */
+
+var SubSelfConnectionMutation =
+/** @class */
+function (_super) {
+  __extends(SubSelfConnectionMutation, _super);
+
+  function SubSelfConnectionMutation() {
+    return _super !== null && _super.apply(this, arguments) || this;
+  }
+  /**
+   * Mutates the network.
+   *
+   * @param network The network which gets mutated
+   */
+
+
+  SubSelfConnectionMutation.prototype.mutate = function (network) {
+    var possible = Array.from(network.connections).filter(function (conn) {
+      return conn.from === conn.to;
+    });
+
+    if (possible.length > 0) {
+      var randomConnection = Utils_1.pickRandom(possible);
+      network.disconnect(randomConnection.from, randomConnection.to);
+    }
+  };
+
+  return SubSelfConnectionMutation;
+}(Mutation);
+
+exports.SubSelfConnectionMutation = SubSelfConnectionMutation;
+/**
+ * Add gate mutation.
+ *
+ * Adds a gate to the network.
+ */
+
+var AddGateMutation =
+/** @class */
+function (_super) {
+  __extends(AddGateMutation, _super);
+
+  function AddGateMutation() {
+    return _super !== null && _super.apply(this, arguments) || this;
+  }
+  /**
+   * Mutates the network.
+   *
+   * @param network The network which gets mutated
+   * @param options
+   */
+
+
+  AddGateMutation.prototype.mutate = function (network, options) {
+    // check if max gates isn't reached already
+    if (options !== undefined && options.maxGates !== undefined && network.gates.length >= options.maxGates) {
+      return;
+    } // use only connections that aren't already gated
+
+
+    var possible = Array.from(network.connections).filter(function (conn) {
+      return conn.gateNode === null;
+    });
+
+    if (possible.length > 0) {
+      var node = Utils_1.pickRandom(network.nodes.filter(function (node) {
+        return !node.isInputNode();
+      })); // hidden or output node
+
+      var connection = Utils_1.pickRandom(possible); // random connection from filtered array
+
+      network.addGate(node, connection); // use the node to gate the connection
+    }
+  };
+
+  return AddGateMutation;
+}(Mutation);
+
+exports.AddGateMutation = AddGateMutation;
+/**
+ * Sub gate mutation.
+ *
+ * Removes a gate from the network.
+ */
+
+var SubGateMutation =
+/** @class */
+function (_super) {
+  __extends(SubGateMutation, _super);
+
+  function SubGateMutation() {
+    return _super !== null && _super.apply(this, arguments) || this;
+  }
+  /**
+   * Mutates the network.
+   *
+   * @param network The network which gets mutated
+   */
+
+
+  SubGateMutation.prototype.mutate = function (network) {
+    if (network.gates.length > 0) {
+      network.removeGate(Utils_1.pickRandom(network.gates));
+    }
+  };
+
+  return SubGateMutation;
+}(Mutation);
+
+exports.SubGateMutation = SubGateMutation;
+/**
+ * Add back connection mutation.
+ *
+ * Adds a backward pointing connection to the network.
+ */
+
+var AddBackConnectionMutation =
+/** @class */
+function (_super) {
+  __extends(AddBackConnectionMutation, _super);
+
+  function AddBackConnectionMutation() {
+    return _super !== null && _super.apply(this, arguments) || this;
+  }
+  /**
+   * Mutates the network.
+   *
+   * @param network The network which gets mutated
+   */
+
+
+  AddBackConnectionMutation.prototype.mutate = function (network) {
+    var possible = [];
+
+    for (var i = network.inputSize; i < network.nodes.length; i++) {
+      var from = network.nodes[i];
+
+      for (var j = network.inputSize; j < i; j++) {
+        var to = network.nodes[j];
+
+        if (!from.isProjectingTo(to)) {
+          possible.push([from, to]);
+        }
+      }
+    }
+
+    if (possible.length > 0) {
+      var pair = Utils_1.pickRandom(possible);
+      network.connect(pair[0], pair[1]);
+    }
+  };
+
+  return AddBackConnectionMutation;
+}(Mutation);
+
+exports.AddBackConnectionMutation = AddBackConnectionMutation;
+/**
+ * Sub back connection mutation.
+ *
+ * Removes a backward pointing connection to the network.
+ */
+
+var SubBackConnectionMutation =
+/** @class */
+function (_super) {
+  __extends(SubBackConnectionMutation, _super);
+
+  function SubBackConnectionMutation() {
+    return _super !== null && _super.apply(this, arguments) || this;
+  }
+  /**
+   * Mutates the network.
+   *
+   * @param network The network which gets mutated
+   */
+
+
+  SubBackConnectionMutation.prototype.mutate = function (network) {
+    var possible = Array.from(network.connections).filter(function (conn) {
+      return conn.from.outgoing.size > 1;
+    }).filter(function (conn) {
+      return conn.to.incoming.size > 1;
+    }).filter(function (conn) {
+      return network.nodes.indexOf(conn.from) > network.nodes.indexOf(conn.to);
+    });
+
+    if (possible.length > 0) {
+      var randomConnection = Utils_1.pickRandom(possible);
+      network.disconnect(randomConnection.from, randomConnection.to);
+    }
+  };
+
+  return SubBackConnectionMutation;
+}(Mutation);
+
+exports.SubBackConnectionMutation = SubBackConnectionMutation;
+/**
+ * Swap nodes mutation.
+ *
+ * Swaps the values of two randomly picked nodes.
+ *
+ * @prop {boolean} mutateOutput=false Swap bias and activation function of network output neurons too. Disable this to keep output of a neural network normalized.
+ */
+
+var SwapNodesMutation =
+/** @class */
+function (_super) {
+  __extends(SwapNodesMutation, _super);
+  /**
+   * Constructs a SwapNodeMutation object
+   * @param mutateOutput Can the output be mutated?
+   */
+
+
+  function SwapNodesMutation(mutateOutput) {
+    if (mutateOutput === void 0) {
+      mutateOutput = false;
+    }
+
+    var _this = _super.call(this) || this;
+
+    _this.mutateOutput = mutateOutput;
+    return _this;
+  }
+  /**
+   * Mutates the network.
+   *
+   * @param network The network which gets mutated
+   */
+
+
+  SwapNodesMutation.prototype.mutate = function (network) {
+    var possible = this.mutateOutput ? network.nodes.filter(function (node) {
+      return node !== undefined && !node.isInputNode();
+    }) // hidden or output nodes
+    : network.nodes.filter(function (node) {
+      return node !== undefined && node.isHiddenNode();
+    }); // only hidden nodes
+
+    if (possible.length >= 2) {
+      // select two different nodes from the filtered array
+      var node1_1 = Utils_1.pickRandom(possible);
+      var node2 = Utils_1.pickRandom(possible.filter(function (node) {
+        return node !== node1_1;
+      })); // change there parameters
+
+      var biasTemp = node1_1.bias;
+      var squashTemp = node1_1.squash;
+      node1_1.bias = node2.bias;
+      node1_1.squash = node2.squash;
+      node2.bias = biasTemp;
+      node2.squash = squashTemp;
+    }
+  };
+
+  return SwapNodesMutation;
+}(Mutation);
+
+exports.SwapNodesMutation = SwapNodesMutation;
+/**
+ * Array of all mutation methods
+ */
+
+var ALL_MUTATIONS = [new AddNodeMutation(), new SubNodeMutation(), new AddConnectionMutation(), new SubConnectionMutation(), new ModWeightMutation(), new ModBiasMutation(), new ModActivationMutation(), new AddGateMutation(), new SubGateMutation(), new AddSelfConnectionMutation(), new SubSelfConnectionMutation(), new AddBackConnectionMutation(), new SubBackConnectionMutation(), new SwapNodesMutation()];
+exports.ALL_MUTATIONS = ALL_MUTATIONS;
+/**
+ * Array of all feed forward mutation methods
+ */
+
+var FEEDFORWARD_MUTATIONS = [new AddNodeMutation(), new SubNodeMutation(), new AddConnectionMutation(), new SubConnectionMutation(), new ModWeightMutation(), new ModBiasMutation(), new ModActivationMutation(), new SwapNodesMutation()];
+exports.FEEDFORWARD_MUTATIONS = FEEDFORWARD_MUTATIONS;
+var NO_STRUCTURE_MUTATIONS = [new ModWeightMutation(), new ModBiasMutation(), new ModActivationMutation()];
+exports.NO_STRUCTURE_MUTATIONS = NO_STRUCTURE_MUTATIONS;
+var ONLY_STRUCTURE = [new AddNodeMutation(), new SubNodeMutation(), new AddConnectionMutation(), new SubConnectionMutation(), new AddGateMutation(), new SubGateMutation(), new AddSelfConnectionMutation(), new SubSelfConnectionMutation(), new AddBackConnectionMutation(), new SubBackConnectionMutation(), new SwapNodesMutation()];
+exports.ONLY_STRUCTURE = ONLY_STRUCTURE;
 },{"../architecture/Node":"../src/architecture/Node.js","../enums/NodeType":"../src/enums/NodeType.js","./Utils":"../src/methods/Utils.js"}],"../src/architecture/Connection.js":[function(require,module,exports) {
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.Connection=void 0;var t=function(){function t(t,e,i,o){this.from=t,this.to=e,this.weight=null!=i?i:0,this.gain=1,this.eligibility=0,this.deltaWeightsPrevious=0,this.deltaWeightsTotal=0,this.xTraceNodes=[],this.xTraceValues=[],o?(this.gateNode=o,o.addGate(this)):this.gateNode=null}return t.innovationID=function(t,e){return.5*(t+e)*(t+e+1)+e},t.prototype.toJSON=function(){return{fromIndex:this.from.index,toIndex:this.to.index,gateNodeIndex:null===this.gateNode?null:this.gateNode.index,weight:this.weight}},t}();exports.Connection=t;
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Connection = void 0;
+/**
+ * A connection instance describes the connection between two nodes.
+ */
+
+var Connection =
+/** @class */
+function () {
+  function Connection(from, to, weight, gateNode) {
+    this.from = from;
+    this.to = to;
+    this.weight = weight !== null && weight !== void 0 ? weight : 0;
+    this.gain = 1;
+    this.eligibility = 0;
+    this.deltaWeightsPrevious = 0;
+    this.deltaWeightsTotal = 0;
+    this.xTraceNodes = [];
+    this.xTraceValues = [];
+
+    if (gateNode) {
+      this.gateNode = gateNode;
+      gateNode.addGate(this);
+    } else {
+      this.gateNode = null;
+    }
+  }
+  /**
+   * Returns an innovation ID
+   *
+   * @see {@link https://en.wikipedia.org/wiki/Pairing_function (Cantor pairing function)|Pairing function (Cantor pairing function)}
+   *
+   * @param a - A [natural number](https://en.wikipedia.org/wiki/Natural_number), which is an integer greater than or equal to zero
+   * @param b - A [natural number](https://en.wikipedia.org/wiki/Natural_number), which is an integer greater than or equal to zero
+   *
+   * @return An Integer that uniquely represents a pair of Integers
+   */
+
+
+  Connection.innovationID = function (a, b) {
+    return 1 / 2 * (a + b) * (a + b + 1) + b;
+  };
+  /**
+   * Returns the connection as a JSON
+   *
+   * @return Connection as a JSON
+   */
+
+
+  Connection.prototype.toJSON = function () {
+    return {
+      fromIndex: this.from.index,
+      toIndex: this.to.index,
+      gateNodeIndex: this.gateNode === null ? null : this.gateNode.index,
+      weight: this.weight
+    };
+  };
+
+  return Connection;
+}();
+
+exports.Connection = Connection;
 },{}],"../src/architecture/Node.js":[function(require,module,exports) {
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.Node=void 0;var t=require("../enums/NodeType"),i=require("../methods/Activation"),e=require("../methods/Mutation"),o=require("../methods/Utils"),s=require("./Connection"),n=function(){function n(e){void 0===e&&(e=t.NodeType.HIDDEN),this.type=e,this.bias=o.randDouble(-1,1),this.squash=i.LogisticActivation,this.activation=0,this.derivativeState=1,this.state=0,this.old=0,this.mask=1,this.deltaBiasPrevious=0,this.deltaBiasTotal=0,this.incoming=[],this.outgoing=[],this.gated=[],this.selfConnection=new s.Connection(this,this,0),this.errorResponsibility=0,this.errorProjected=0,this.errorGated=0,this.index=NaN}return n.prototype.fromJSON=function(t){var e,s,n,r;return this.bias=null!==(e=t.bias)&&void 0!==e?e:o.randDouble(-1,1),this.type=t.type,this.squash=null!==(s=t.squash)&&void 0!==s?s:i.LogisticActivation,this.mask=null!==(n=t.mask)&&void 0!==n?n:1,this.index=null!==(r=t.index)&&void 0!==r?r:NaN,this},n.prototype.clear=function(){for(var t=0,i=this.incoming;t<i.length;t++){var e=i[t];e.eligibility=0,e.xTraceNodes=[],e.xTraceValues=[]}this.gated.forEach(function(t){return t.gain=0}),this.errorResponsibility=this.errorProjected=this.errorGated=0,this.old=this.state=this.activation=0},n.prototype.mutateBias=function(t){void 0===t&&(t=new e.ModBiasMutation),this.bias+=o.randDouble(t.min,t.max)},n.prototype.mutateActivation=function(t){var e=this;void 0===t&&(t=Object.values(i.ALL_ACTIVATIONS));var s=t.filter(function(t){return t!==e.squash});s.length>0&&(this.squash=o.pickRandom(s))},n.prototype.isProjectedBy=function(t){return t===this?0!==this.selfConnection.weight:this.incoming.map(function(t){return t.from}).includes(t)},n.prototype.isProjectingTo=function(t){return t===this?0!==this.selfConnection.weight:this.outgoing.map(function(t){return t.to}).includes(t)},n.prototype.addGate=function(t){this.gated.push(t),t.gateNode=this},n.prototype.removeGate=function(t){o.removeFromArray(this.gated,t),t.gateNode=null,t.gain=1},n.prototype.connect=function(t,i,e){if(void 0===i&&(i=1),void 0===e&&(e=!1),t===this)return this.selfConnection.weight=i,this.selfConnection;if(this.isProjectingTo(t))throw new ReferenceError("Their is already a connection!");var o=new s.Connection(this,t,i);return this.outgoing.push(o),t.incoming.push(o),e&&t.connect(this),o},n.prototype.disconnect=function(t,i){if(void 0===i&&(i=!1),t===this)return this.selfConnection.weight=0,this.selfConnection;var e=this.outgoing.filter(function(i){return i.to===t});if(0===e.length)throw new Error("No Connection found");var s=e[0];return o.removeFromArray(this.outgoing,s),o.removeFromArray(s.to.incoming,s),void 0!==s.gateNode&&null!=s.gateNode&&s.gateNode.removeGate(s),i&&t.disconnect(this),s},n.prototype.propagate=function(t,i){if(void 0===i&&(i={}),i.momentum=o.getOrDefault(i.momentum,0),i.rate=o.getOrDefault(i.rate,.3),i.update=o.getOrDefault(i.update,!0),void 0!==t&&Number.isFinite(t))this.errorResponsibility=this.errorProjected=t-this.activation;else{this.errorProjected=0;for(var e=0,s=this.outgoing;e<s.length;e++){var n=s[e];this.errorProjected+=n.to.errorResponsibility*n.weight*n.gain}this.errorProjected*=this.derivativeState,this.errorGated=0;for(var r=0,a=this.gated;r<a.length;r++){var h=void 0;h=(n=a[r]).to.selfConnection.gateNode===this?n.to.old+n.weight*n.from.activation:n.weight*n.from.activation,this.errorGated+=n.to.errorResponsibility*h}this.errorGated*=this.derivativeState,this.errorResponsibility=this.errorProjected+this.errorGated}for(var u=0,c=this.incoming;u<c.length;u++){n=c[u];for(var d=this.errorProjected*n.eligibility,l=0;l<n.xTraceNodes.length;l++)d+=n.xTraceNodes[l].errorResponsibility*n.xTraceValues[l];n.deltaWeightsTotal+=i.rate*d*this.mask,i.update&&(n.deltaWeightsTotal+=i.momentum*n.deltaWeightsPrevious,n.weight+=n.deltaWeightsTotal,n.deltaWeightsPrevious=n.deltaWeightsTotal,n.deltaWeightsTotal=0)}this.deltaBiasTotal+=i.rate*this.errorResponsibility,i.update&&(this.deltaBiasTotal+=i.momentum*this.deltaBiasPrevious,this.bias+=this.deltaBiasTotal,this.deltaBiasPrevious=this.deltaBiasTotal,this.deltaBiasTotal=0)},n.prototype.activate=function(t,i){var e=this;if(void 0===i&&(i=!0),void 0!==t)return this.activation=t;if(this.isInputNode())throw new ReferenceError("There is no input given to an input node!");if(i){this.old=this.state,this.state=this.selfConnection.gain*this.selfConnection.weight*this.state+this.bias,this.incoming.forEach(function(t){e.state+=t.from.activation*t.weight*t.gain}),this.activation=this.squash(this.state,!1)*this.mask,this.derivativeState=this.squash(this.state,!0);var o=[],s=[];this.gated.forEach(function(t){t.gain=e.activation;var i=o.indexOf(t.to);i>-1?s[i]+=t.weight*t.from.activation:(o.push(t.to),t.to.selfConnection.gateNode===e?s.push(t.weight*t.from.activation+t.to.old):s.push(t.weight*t.from.activation))});for(var n=0,r=this.incoming;n<r.length;n++){(g=r[n]).eligibility=this.selfConnection.gain*this.selfConnection.weight*g.eligibility+g.from.activation*g.gain;for(var a=0;a<o.length;a++){var h=o[a],u=s[a],c=g.xTraceNodes.indexOf(h);c>-1?g.xTraceValues[c]=h.selfConnection.gain*h.selfConnection.weight*g.xTraceValues[c]+this.derivativeState*g.eligibility*u:(g.xTraceNodes.push(h),g.xTraceValues.push(this.derivativeState*g.eligibility*u))}}return this.activation}if(this.isInputNode())return this.activation=0;this.state=this.selfConnection.gain*this.selfConnection.weight*this.state+this.bias;for(var d=0,l=this.incoming;d<l.length;d++){var g=l[d];this.state+=g.from.activation*g.weight*g.gain}this.activation=this.squash(this.state,!1);for(var v=0,f=this.gated;v<f.length;v++){(g=f[v]).gain=this.activation}return this.activation},n.prototype.toJSON=function(){return{bias:this.bias,type:this.type,squash:this.squash,mask:this.mask,index:this.index}},n.prototype.isInputNode=function(){return this.type===t.NodeType.INPUT},n.prototype.isHiddenNode=function(){return this.type===t.NodeType.HIDDEN},n.prototype.isOutputNode=function(){return this.type===t.NodeType.OUTPUT},n.prototype.setBias=function(t){return this.bias=t,this},n.prototype.setActivationType=function(t){return this.squash=t,this},n}();exports.Node=n;
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Node = void 0;
+
+var NodeType_1 = require("../enums/NodeType");
+
+var Activation_1 = require("../methods/Activation");
+
+var Mutation_1 = require("../methods/Mutation");
+
+var Utils_1 = require("../methods/Utils");
+
+var Connection_1 = require("./Connection");
+/**
+ * Creates a new neuron/node
+ *
+ * Neurons are the basic unit of the neural network. They can be connected together, or used to gate connections between other neurons. A Neuron can perform basically 4 operations: form connections, gate connections, activate and [propagate](https://www.youtube.com/watch?v=Ilg3gGewQ5U).
+ *
+ * For more information check:
+ * - [BecomingHuman](https://becominghuman.ai/what-is-an-artificial-neuron-8b2e421ce42e)
+ * - [Wikipedia](https://en.wikipedia.org/wiki/Artificial_neuron)
+ * - [Neataptic](https://wagenaartje.github.io/neataptic/docs/architecture/node/)
+ * - [Synaptic](https://github.com/cazala/synaptic/wiki/Neural-Networks-101)
+ * - [Keras](https://keras.io/backend/#bias_add)
+ */
+
+
+var Node =
+/** @class */
+function () {
+  function Node(type) {
+    if (type === void 0) {
+      type = NodeType_1.NodeType.HIDDEN;
+    }
+
+    this.type = type;
+    this.bias = Utils_1.randDouble(-1, 1);
+    this.squash = Activation_1.LogisticActivation;
+    this.activation = 0;
+    this.derivativeState = 1;
+    this.state = 0;
+    this.old = 0;
+    this.mask = 1;
+    this.deltaBiasPrevious = 0;
+    this.deltaBiasTotal = 0;
+    this.incoming = new Set();
+    this.outgoing = new Set();
+    this.gated = new Set();
+    this.selfConnection = new Connection_1.Connection(this, this, 0);
+    this.errorResponsibility = 0;
+    this.errorProjected = 0;
+    this.errorGated = 0;
+    this.index = NaN;
+  }
+  /**
+   * Convert a json object to a node
+   *
+   * @param json A node represented as a JSON object
+   *
+   * @returns itself
+   *
+   */
+
+
+  Node.prototype.fromJSON = function (json) {
+    var _a, _b, _c, _d;
+
+    this.bias = (_a = json.bias) !== null && _a !== void 0 ? _a : Utils_1.randDouble(-1, 1);
+    this.type = json.type;
+    this.squash = (_b = json.squash) !== null && _b !== void 0 ? _b : Activation_1.LogisticActivation;
+    this.mask = (_c = json.mask) !== null && _c !== void 0 ? _c : 1;
+    this.index = (_d = json.index) !== null && _d !== void 0 ? _d : NaN;
+    return this;
+  };
+  /**
+   * Clears this node's state information - _i.e. resets node and its connections to "factory settings"_
+   *
+   * `node.clear()` is useful for predicting time series.
+   *
+   */
+
+
+  Node.prototype.clear = function () {
+    this.incoming.forEach(function (connection) {
+      connection.eligibility = 0;
+      connection.xTraceNodes = [];
+      connection.xTraceValues = [];
+    });
+    this.gated.forEach(function (conn) {
+      return conn.gain = 0;
+    });
+    this.errorResponsibility = this.errorProjected = this.errorGated = 0;
+    this.old = this.state = this.activation = 0;
+  };
+  /**
+   * Mutates the node's bias
+   *
+   * @param method The method is needed for the min and max value of the node's bias otherwise a range of [-1,1] is chosen
+   *
+   */
+
+
+  Node.prototype.mutateBias = function (method) {
+    if (method === void 0) {
+      method = new Mutation_1.ModBiasMutation();
+    }
+
+    this.bias += Utils_1.randDouble(method.min, method.max); // add a random value in range [min,max)
+  };
+  /**
+   * Mutates the node's activation function
+   */
+
+
+  Node.prototype.mutateActivation = function (allowedActivations) {
+    var _this = this;
+
+    if (allowedActivations === void 0) {
+      allowedActivations = Object.values(Activation_1.ALL_ACTIVATIONS);
+    } // pick a random activation from allowed activations except the current activation
+
+
+    var possible = allowedActivations.filter(function (activation) {
+      return activation !== _this.squash;
+    });
+
+    if (possible.length > 0) {
+      this.squash = Utils_1.pickRandom(possible);
+    }
+  };
+  /**
+   * Checks if the given node(s) are have outgoing connections to this node
+   *
+   * @param node Checks if `node(s)` have outgoing connections into this node
+   *
+   * @return Returns true, if every node(s) has an outgoing connection into this node
+   */
+
+
+  Node.prototype.isProjectedBy = function (node) {
+    if (node === this) {
+      // self connection
+      return this.selfConnection.weight !== 0; // is projected, if weight of self connection is unequal 0
+    } else {
+      return Array.from(this.incoming).map(function (conn) {
+        return conn.from;
+      }).includes(node); // check every incoming connection for node
+    }
+  };
+  /**
+   * Checks if this node has an outgoing connection(s) into the given node(s)
+   *
+   * @param node Checks if this node has outgoing connection(s) into `node(s)`
+   *
+   * @returns Returns true, if this node has an outgoing connection into every node(s)
+   */
+
+
+  Node.prototype.isProjectingTo = function (node) {
+    if (node === this) {
+      // self connection
+      return this.selfConnection.weight !== 0; // is projected, if weight of self connection is unequal 0
+    } else {
+      return Array.from(this.outgoing).map(function (conn) {
+        return conn.to;
+      }).includes(node); // check every outgoing connection for node
+    }
+  };
+  /**
+   * This node gates (influences) the given connection
+   *
+   * @param connection Connection to be gated (influenced) by a neuron
+   */
+
+
+  Node.prototype.addGate = function (connection) {
+    this.gated.add(connection);
+    connection.gateNode = this;
+  };
+  /**
+   * Stops this node from gating (manipulating) the given connection(s)
+   *
+   * @param connection Connections to remove gate - _i.e. remove this node from_
+   */
+
+
+  Node.prototype.removeGate = function (connection) {
+    this.gated.delete(connection);
+    connection.gateNode = null;
+    connection.gain = 1;
+  };
+  /**
+   * Connects this node to the given node(s)
+   *
+   * @param target Node(s) to project connection(s) to
+   * @param weight Initial connection(s) [weight](https://en.wikipedia.org/wiki/Synaptic_weight)
+   * @param twoSided If `true` connect nodes to each other
+   */
+
+
+  Node.prototype.connect = function (target, weight, twoSided) {
+    if (weight === void 0) {
+      weight = 1;
+    }
+
+    if (twoSided === void 0) {
+      twoSided = false;
+    }
+
+    if (target === this) {
+      // self connection
+      this.selfConnection.weight = weight;
+      return this.selfConnection;
+    } else if (this.isProjectingTo(target)) {
+      throw new ReferenceError("Their is already a connection!"); // already connected
+    } else {
+      var connection = new Connection_1.Connection(this, target, weight); // create new connection
+      // add it to the arrays
+
+      this.outgoing.add(connection);
+      target.incoming.add(connection);
+
+      if (twoSided) {
+        target.connect(this); // connect in the other direction
+      }
+
+      return connection;
+    }
+  };
+  /**
+   * Disconnects this node from the given node(s)
+   *
+   * @param node Node(s) to remove connection(s) to
+   * @param twoSided=false If `true` disconnects nodes from each other (i.e. both sides)
+   */
+
+
+  Node.prototype.disconnect = function (node, twoSided) {
+    if (twoSided === void 0) {
+      twoSided = false;
+    }
+
+    if (node === this) {
+      // self connection
+      this.selfConnection.weight = 0; // set weight to 0
+
+      return this.selfConnection;
+    }
+
+    var connections = Array.from(this.outgoing).filter(function (conn) {
+      return conn.to === node;
+    });
+
+    if (connections.length === 0) {
+      throw new Error("No Connection found");
+    }
+
+    var connection = connections[0]; // remove it from the arrays
+
+    this.outgoing.delete(connection);
+    connection.to.incoming.delete(connection);
+
+    if (connection.gateNode !== undefined && connection.gateNode != null) {
+      connection.gateNode.removeGate(connection); // if connection is gated -> remove gate
+    }
+
+    if (twoSided) {
+      node.disconnect(this); // disconnect the other direction
+    }
+
+    return connection;
+  };
+  /**
+   * Backpropagate the error (a.k.a. learn).
+   *
+   * After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating. [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
+   *
+   * If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
+   *
+   * @param target The target value (i.e. "the value the network SHOULD have given")
+   * @param options More options for propagation
+   *
+   * @see [Regularization Neataptic](https://wagenaartje.github.io/neataptic/docs/methods/regularization/)
+   * @see [What is backpropagation | YouTube](https://www.youtube.com/watch?v=Ilg3gGewQ5U)
+   */
+
+
+  Node.prototype.propagate = function (target, options) {
+    var _this = this;
+
+    if (options === void 0) {
+      options = {};
+    }
+
+    options.momentum = Utils_1.getOrDefault(options.momentum, 0);
+    options.rate = Utils_1.getOrDefault(options.rate, 0.3);
+    options.update = Utils_1.getOrDefault(options.update, true);
+
+    if (target !== undefined && Number.isFinite(target)) {
+      this.errorResponsibility = this.errorProjected = target - this.activation;
+    } else {
+      this.errorProjected = 0;
+      this.outgoing.forEach(function (connection) {
+        _this.errorProjected += connection.to.errorResponsibility * connection.weight * connection.gain;
+      });
+      this.errorProjected *= this.derivativeState;
+      this.errorGated = 0;
+      this.gated.forEach(function (connection) {
+        var influence;
+
+        if (connection.to.selfConnection.gateNode === _this) {
+          // self connection is gated with this node
+          influence = connection.to.old + connection.weight * connection.from.activation;
+        } else {
+          influence = connection.weight * connection.from.activation;
+        }
+
+        _this.errorGated += connection.to.errorResponsibility * influence;
+      });
+      this.errorGated *= this.derivativeState;
+      this.errorResponsibility = this.errorProjected + this.errorGated;
+    }
+
+    this.incoming.forEach(function (connection) {
+      var _a, _b; // calculate gradient
+
+
+      var gradient = _this.errorProjected * connection.eligibility;
+
+      for (var j = 0; j < connection.xTraceNodes.length; j++) {
+        gradient += connection.xTraceNodes[j].errorResponsibility * connection.xTraceValues[j];
+      }
+
+      connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * _this.mask;
+
+      if (options.update) {
+        connection.deltaWeightsTotal += ((_b = options.momentum) !== null && _b !== void 0 ? _b : 0) * connection.deltaWeightsPrevious;
+        connection.weight += connection.deltaWeightsTotal;
+        connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
+        connection.deltaWeightsTotal = 0;
+      }
+    });
+    this.deltaBiasTotal += options.rate * this.errorResponsibility;
+
+    if (options.update) {
+      this.deltaBiasTotal += options.momentum * this.deltaBiasPrevious;
+      this.bias += this.deltaBiasTotal;
+      this.deltaBiasPrevious = this.deltaBiasTotal;
+      this.deltaBiasTotal = 0;
+    }
+  };
+  /**
+   * Actives the node.
+   *
+   * When a neuron activates, it computes its state from all its input connections and 'squashes' it using its activation function, and returns the output (activation).
+   *
+   * You can also provide the activation (a float between 0 and 1) as a parameter, which is useful for neurons in the input layer.
+   *
+   * @param [input] Environment signal (i.e. optional numerical value passed to the network as input)  - _should only be passed in input neurons_
+   * @param [trace] Controls whether traces are created when activation happens (a trace is meta information left behind for different uses, e.g. backpropagation).
+   *
+   * @returns A neuron's ['Squashed'](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) output value
+   */
+
+
+  Node.prototype.activate = function (input, trace) {
+    var _this = this;
+
+    if (trace === void 0) {
+      trace = true;
+    }
+
+    if (input !== undefined) {
+      return this.activation = input;
+    } else if (this.isInputNode()) {
+      throw new ReferenceError("There is no input given to an input node!");
+    }
+
+    if (trace) {
+      this.old = this.state;
+      this.state = this.selfConnection.gain * this.selfConnection.weight * this.state + this.bias;
+      this.incoming.forEach(function (conn) {
+        _this.state += conn.from.activation * conn.weight * conn.gain;
+      });
+      this.activation = this.squash(this.state, false) * this.mask;
+      this.derivativeState = this.squash(this.state, true); // store traces
+
+      var nodes_1 = [];
+      var influences_1 = []; // Adjust 'gain' (to gated connections) & Build traces
+
+      this.gated.forEach(function (connection) {
+        connection.gain = _this.activation; // Build traces
+
+        var index = nodes_1.indexOf(connection.to);
+
+        if (index > -1) {
+          // Node & influence exist
+          influences_1[index] += connection.weight * connection.from.activation;
+        } else {
+          // Add node & corresponding influence
+          nodes_1.push(connection.to);
+
+          if (connection.to.selfConnection.gateNode === _this) {
+            influences_1.push(connection.weight * connection.from.activation + connection.to.old);
+          } else {
+            influences_1.push(connection.weight * connection.from.activation);
+          }
+        }
+      }); // Forwarding 'xTrace' (to incoming connections)
+
+      this.incoming.forEach(function (connection) {
+        connection.eligibility = _this.selfConnection.gain * _this.selfConnection.weight * connection.eligibility + connection.from.activation * connection.gain;
+
+        for (var i = 0; i < nodes_1.length; i++) {
+          var node = nodes_1[i];
+          var influence = influences_1[i];
+          var index = connection.xTraceNodes.indexOf(node);
+
+          if (index > -1) {
+            connection.xTraceValues[index] = node.selfConnection.gain * node.selfConnection.weight * connection.xTraceValues[index] + _this.derivativeState * connection.eligibility * influence;
+          } else {
+            connection.xTraceNodes.push(node);
+            connection.xTraceValues.push(_this.derivativeState * connection.eligibility * influence);
+          }
+        }
+      });
+      return this.activation;
+    } else {
+      if (this.isInputNode()) return this.activation = 0;
+      this.state = this.selfConnection.gain * this.selfConnection.weight * this.state + this.bias;
+      this.incoming.forEach(function (connection) {
+        return _this.state += connection.from.activation * connection.weight * connection.gain;
+      });
+      this.activation = this.squash(this.state, false); // Adjust gain
+
+      this.gated.forEach(function (connection) {
+        return connection.gain = _this.activation;
+      });
+      return this.activation;
+    }
+  };
+  /**
+   * Converts the node to a json object that can later be converted back
+   *
+   * @returns A node representing json object
+   */
+
+
+  Node.prototype.toJSON = function () {
+    return {
+      bias: this.bias,
+      type: this.type,
+      squash: this.squash,
+      mask: this.mask,
+      index: this.index
+    };
+  };
+  /**
+   * Is this a input Node?
+   */
+
+
+  Node.prototype.isInputNode = function () {
+    return this.type === NodeType_1.NodeType.INPUT;
+  };
+  /**
+   * Is this a hidden Node?
+   */
+
+
+  Node.prototype.isHiddenNode = function () {
+    return this.type === NodeType_1.NodeType.HIDDEN;
+  };
+  /**
+   * Is this a output Node?
+   */
+
+
+  Node.prototype.isOutputNode = function () {
+    return this.type === NodeType_1.NodeType.OUTPUT;
+  };
+  /**
+   * Set bias.
+   *
+   * @param bias the new bias value
+   */
+
+
+  Node.prototype.setBias = function (bias) {
+    this.bias = bias;
+    return this;
+  };
+  /**
+   * Set activation type
+   *
+   * @param activation the new activation type
+   */
+
+
+  Node.prototype.setActivationType = function (activation) {
+    this.squash = activation;
+    return this;
+  };
+
+  return Node;
+}();
+
+exports.Node = Node;
 },{"../enums/NodeType":"../src/enums/NodeType.js","../methods/Activation":"../src/methods/Activation.js","../methods/Mutation":"../src/methods/Mutation.js","../methods/Utils":"../src/methods/Utils.js","./Connection":"../src/architecture/Connection.js"}],"../src/enums/GatingType.js":[function(require,module,exports) {
-"use strict";var e;Object.defineProperty(exports,"__esModule",{value:!0}),exports.GatingType=void 0,function(e){e[e.INPUT=0]="INPUT",e[e.SELF=1]="SELF",e[e.OUTPUT=2]="OUTPUT"}(e=exports.GatingType||(exports.GatingType={}));
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.GatingType = void 0;
+/**
+ * The type of gating.
+ */
+
+var GatingType;
+
+(function (GatingType) {
+  /**
+   * Gate incoming connections.
+   */
+  GatingType[GatingType["INPUT"] = 0] = "INPUT";
+  /**
+   * Gate self connections.
+   */
+
+  GatingType[GatingType["SELF"] = 1] = "SELF";
+  /**
+   * Gate outgoing connections.
+   */
+
+  GatingType[GatingType["OUTPUT"] = 2] = "OUTPUT";
+})(GatingType = exports.GatingType || (exports.GatingType = {}));
 },{}],"../src/architecture/Layers/Layer.js":[function(require,module,exports) {
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.Layer=void 0;var n=require("../../enums/ConnectionType"),e=require("../../enums/GatingType"),t=function(){function t(n){this.outputSize=n,this.nodes=[],this.inputNodes=new Set,this.outputNodes=new Set,this.connections=[],this.gates=[]}return t.connect=function(e,o,r,i){if(void 0===r&&(r=n.ConnectionType.ALL_TO_ALL),void 0===i&&(i=1),r===n.ConnectionType.NO_CONNECTION)throw new ReferenceError("Cannot connect with 'NO_CONNECTION' connection type");var c=Array.from(e instanceof t?e.outputNodes:e),u=Array.from(o instanceof t?o.inputNodes:o);if(0===u.length)throw new ReferenceError("Target from has no input nodes!");if(0===c.length)throw new ReferenceError("This from has no output nodes!");var a=[];if(r===n.ConnectionType.ALL_TO_ALL)c.forEach(function(n){u.forEach(function(e){a.push(n.connect(e,i))})});else if(r===n.ConnectionType.ONE_TO_ONE){if(c.length!==u.length)throw new RangeError("Can't connect one to one! Number of output nodes from are unequal number of incoming nodes from next layer!");for(var f=0;f<c.length;f++)a.push(c[f].connect(u[f],i))}else if(r===n.ConnectionType.POOLING){var s=u.length/c.length;a.push.apply(a,c.map(function(n,e){return n.connect(u[Math.floor(e*s)],i)}))}return a},t.gate=function(n,t,o){var r=[];switch(o){case e.GatingType.INPUT:for(var i=Array.from(new Set(t.map(function(n){return n.to}))),c=function(e){var o=i[e],c=n[e%n.length];o.incoming.filter(function(n){return t.includes(n)}).forEach(function(n){c.addGate(n),r.push(n)})},u=0;u<i.length;u++)c(u);break;case e.GatingType.SELF:var a=Array.from(new Set(t.map(function(n){return n.from})));for(u=0;u<a.length;u++)t.includes(a[u].selfConnection)&&(n[u%n.length].addGate(a[u].selfConnection),r.push(a[u].selfConnection));break;case e.GatingType.OUTPUT:a=Array.from(new Set(t.map(function(n){return n.from})));var f=function(e){var o=a[e],i=n[e%n.length];o.outgoing.filter(function(n){return t.includes(n)}).forEach(function(n){i.addGate(n),r.push(n)})};for(u=0;u<a.length;u++)f(u)}return r},t}();exports.Layer=t;
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Layer = void 0;
+
+var ConnectionType_1 = require("../../enums/ConnectionType");
+
+var GatingType_1 = require("../../enums/GatingType");
+/**
+ * Parent class for layers.
+ */
+
+
+var Layer =
+/** @class */
+function () {
+  function Layer(outputSize) {
+    this.outputSize = outputSize;
+    this.nodes = [];
+    this.inputNodes = new Set();
+    this.outputNodes = new Set();
+    this.connections = [];
+    this.gates = [];
+  }
+  /**
+   * Connect two Layers or sets of Nodes.
+   *
+   * @param from origin Nodes / Layer
+   * @param to destination Nodes / Layer
+   * @param connectionType The type of connection
+   * @param weight the initial weights for all new connections
+   *
+   * @returns all created connections
+   */
+
+
+  Layer.connect = function (from, to, connectionType, weight) {
+    if (connectionType === void 0) {
+      connectionType = ConnectionType_1.ConnectionType.ALL_TO_ALL;
+    }
+
+    if (weight === void 0) {
+      weight = 1;
+    }
+
+    if (connectionType === ConnectionType_1.ConnectionType.NO_CONNECTION) {
+      throw new ReferenceError("Cannot connect with 'NO_CONNECTION' connection type");
+    }
+
+    var fromNodes = Array.from(from instanceof Layer ? from.outputNodes : from);
+    var toNodes = Array.from(to instanceof Layer ? to.inputNodes : to);
+
+    if (toNodes.length === 0) {
+      throw new ReferenceError("Target from has no input nodes!");
+    }
+
+    if (fromNodes.length === 0) {
+      throw new ReferenceError("This from has no output nodes!");
+    }
+
+    var connections = [];
+
+    if (connectionType === ConnectionType_1.ConnectionType.ALL_TO_ALL) {
+      fromNodes.forEach(function (fromNode) {
+        toNodes.forEach(function (toNode) {
+          connections.push(fromNode.connect(toNode, weight)); // connect every "from node" to every "to node"
+        });
+      });
+    } else if (connectionType === ConnectionType_1.ConnectionType.ONE_TO_ONE) {
+      if (fromNodes.length !== toNodes.length) {
+        throw new RangeError("Can't connect one to one! Number of output nodes from are unequal number of incoming nodes from next layer!");
+      }
+
+      for (var i = 0; i < fromNodes.length; i++) {
+        connections.push(fromNodes[i].connect(toNodes[i], weight)); // connect every nodes with same indices
+      }
+    } else if (connectionType === ConnectionType_1.ConnectionType.POOLING) {
+      // connect the same amount of input nodes to every output node
+      // every input node has only one connection available
+      var ratio_1 = toNodes.length / fromNodes.length;
+      connections.push.apply(connections, fromNodes.map(function (node, index) {
+        return node.connect(toNodes[Math.floor(index * ratio_1)], weight);
+      }));
+    }
+
+    return connections;
+  };
+  /**
+   * Gate nodes and connections.
+   *
+   * @param nodes the nodes which function as gateNodes
+   * @param connections the connections which will be gated
+   * @param gateType The type of gating
+   *
+   * @returns all gated connections
+   */
+
+
+  Layer.gate = function (nodes, connections, gateType) {
+    var gatedConnections = [];
+
+    switch (gateType) {
+      case GatingType_1.GatingType.INPUT:
+        {
+          // gate incoming connections
+          var toNodes = Array.from(new Set(connections.map(function (conn) {
+            return conn.to;
+          })));
+
+          var _loop_1 = function (i) {
+            var node = toNodes[i];
+            var gateNode = nodes[i % nodes.length];
+            node.incoming.forEach(function (conn) {
+              if (connections.includes(conn)) {
+                gateNode.addGate(conn);
+                gatedConnections.push(conn);
+              }
+            });
+          };
+
+          for (var i = 0; i < toNodes.length; i++) {
+            _loop_1(i);
+          }
+
+          break;
+        }
+
+      case GatingType_1.GatingType.SELF:
+        {
+          // gate self connections
+          var fromNodes = Array.from(new Set(connections.map(function (conn) {
+            return conn.from;
+          })));
+
+          for (var i = 0; i < fromNodes.length; i++) {
+            if (connections.includes(fromNodes[i].selfConnection)) {
+              nodes[i % nodes.length].addGate(fromNodes[i].selfConnection);
+              gatedConnections.push(fromNodes[i].selfConnection);
+            }
+          }
+
+          break;
+        }
+
+      case GatingType_1.GatingType.OUTPUT:
+        {
+          // gate outgoing connections
+          var fromNodes = Array.from(new Set(connections.map(function (conn) {
+            return conn.from;
+          })));
+
+          var _loop_2 = function (i) {
+            var node = fromNodes[i];
+            var gateNode = nodes[i % nodes.length];
+            node.outgoing.forEach(function (conn) {
+              if (connections.includes(conn)) {
+                gateNode.addGate(conn);
+                gatedConnections.push(conn);
+              }
+            });
+          };
+
+          for (var i = 0; i < fromNodes.length; i++) {
+            _loop_2(i);
+          }
+
+          break;
+        }
+    }
+
+    return gatedConnections;
+  };
+
+  return Layer;
+}();
+
+exports.Layer = Layer;
 },{"../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../enums/GatingType":"../src/enums/GatingType.js"}],"../src/architecture/Nodes/ConstantNode.js":[function(require,module,exports) {
-"use strict";var t=this&&this.__extends||function(){var t=function(e,o){return(t=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var o in e)e.hasOwnProperty(o)&&(t[o]=e[o])})(e,o)};return function(e,o){function n(){this.constructor=e}t(e,o),e.prototype=null===o?Object.create(o):(n.prototype=o.prototype,new n)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.ConstantNode=void 0;var e=require("../../enums/NodeType"),o=require("../../methods/Activation"),n=require("../Node"),r=function(n){function r(){var t=n.call(this,e.NodeType.HIDDEN)||this;return t.bias=1,t}return t(r,n),r.prototype.fromJSON=function(t){var e,n;return this.index=null!==(e=t.index)&&void 0!==e?e:-1,this.squash=null!==(n=t.squash)&&void 0!==n?n:o.IdentityActivation,this},r.prototype.toJSON=function(){return{index:this.index,squash:this.squash}},r.prototype.mutateBias=function(){throw new ReferenceError("Cannot mutate a pool node!")},r.prototype.mutateActivation=function(){throw new ReferenceError("Cannot mutate a pool node!")},r.prototype.addGate=function(){throw new ReferenceError("A pool node can't gate a connection!")},r.prototype.removeGate=function(){throw new ReferenceError("A pool node can't gate a connection!")},r.prototype.setBias=function(){throw new ReferenceError("Cannot set the bias of a pool node!")},r}(n.Node);exports.ConstantNode=r;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ConstantNode = void 0;
+
+var NodeType_1 = require("../../enums/NodeType");
+
+var Activation_1 = require("../../methods/Activation");
+
+var Node_1 = require("../Node");
+/**
+ * Constant node
+ */
+
+
+var ConstantNode =
+/** @class */
+function (_super) {
+  __extends(ConstantNode, _super);
+
+  function ConstantNode() {
+    var _this = _super.call(this, NodeType_1.NodeType.HIDDEN) || this;
+
+    _this.bias = 1;
+    return _this;
+  }
+  /**
+   * Create a constant node from json object.
+   *
+   * @param json the json object representing the node
+   *
+   * @returns the created node
+   */
+
+
+  ConstantNode.prototype.fromJSON = function (json) {
+    var _a, _b;
+
+    this.index = (_a = json.index) !== null && _a !== void 0 ? _a : -1;
+    this.squash = (_b = json.squash) !== null && _b !== void 0 ? _b : Activation_1.IdentityActivation;
+    return this;
+  };
+  /**
+   * Convert this node into a json object.
+   *
+   * @returns the json object representing this node
+   */
+
+
+  ConstantNode.prototype.toJSON = function () {
+    return {
+      index: this.index,
+      squash: this.squash
+    };
+  };
+  /**
+   * Bias mutations aren't allowed for a constant node.
+   */
+
+
+  ConstantNode.prototype.mutateBias = function () {
+    throw new ReferenceError("Cannot mutate a pool node!");
+  };
+  /**
+   * Activation mutations aren't allowed for a constant node.
+   */
+
+
+  ConstantNode.prototype.mutateActivation = function () {
+    throw new ReferenceError("Cannot mutate a pool node!");
+  };
+  /**
+   * Constant nodes can't gate a connection.
+   */
+
+
+  ConstantNode.prototype.addGate = function () {
+    throw new ReferenceError("A pool node can't gate a connection!");
+  };
+  /**
+   * Constant nodes can't gate a connection.
+   */
+
+
+  ConstantNode.prototype.removeGate = function () {
+    throw new ReferenceError("A pool node can't gate a connection!");
+  };
+  /**
+   * Can't set the bias of a constant node.
+   */
+
+
+  ConstantNode.prototype.setBias = function () {
+    throw new ReferenceError("Cannot set the bias of a pool node!");
+  };
+
+  return ConstantNode;
+}(Node_1.Node);
+
+exports.ConstantNode = ConstantNode;
 },{"../../enums/NodeType":"../src/enums/NodeType.js","../../methods/Activation":"../src/methods/Activation.js","../Node":"../src/architecture/Node.js"}],"../src/architecture/Nodes/NoiseNode.js":[function(require,module,exports) {
-"use strict";var t=this&&this.__extends||function(){var t=function(e,i){return(t=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var i in e)e.hasOwnProperty(i)&&(t[i]=e[i])})(e,i)};return function(e,i){function o(){this.constructor=e}t(e,i),e.prototype=null===i?Object.create(i):(o.prototype=i.prototype,new o)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.NoiseNode=void 0;var e=require("../../enums/NodeType"),i=require("../../methods/Utils"),o=require("./ConstantNode"),r=function(o){function r(t){void 0===t&&(t={});var r=o.call(this)||this;return r.noiseType=i.getOrDefault(t.noiseType,e.NoiseNodeType.GAUSSIAN_NOISE),r.options=t,r}return t(r,o),r.prototype.activate=function(){var t,o,r,s;this.old=this.state;var a=this.incoming.map(function(t){return t.from.activation*t.weight*t.gain});switch(this.noiseType){case e.NoiseNodeType.GAUSSIAN_NOISE:this.state=i.avg(a)+i.generateGaussian(null!==(o=null===(t=this.options.gaussian)||void 0===t?void 0:t.mean)&&void 0!==o?o:0,null!==(s=null===(r=this.options.gaussian)||void 0===r?void 0:r.deviation)&&void 0!==s?s:2);break;default:throw new ReferenceError("Cannot activate this noise type!")}return this.activation=this.squash(this.state,!1)*this.mask,this.derivativeState=this.squash(this.state,!0),this.activation},r.prototype.propagate=function(t,e){void 0===e&&(e={}),e.momentum=i.getOrDefault(e.momentum,0),e.rate=i.getOrDefault(e.rate,.3),e.update=i.getOrDefault(e.update,!0);var o=this.outgoing.map(function(t){return t.to.errorResponsibility*t.weight*t.gain});this.errorResponsibility=this.errorProjected=i.sum(o)*this.derivativeState;for(var r=0,s=this.incoming;r<s.length;r++){for(var a=s[r],n=this.errorProjected*a.eligibility,u=0;u<a.xTraceNodes.length;u++)n+=a.xTraceNodes[u].errorResponsibility*a.xTraceValues[u];a.deltaWeightsTotal+=e.rate*n*this.mask,e.update&&(a.deltaWeightsTotal+=e.momentum*a.deltaWeightsPrevious,a.weight+=a.deltaWeightsTotal,a.deltaWeightsPrevious=a.deltaWeightsTotal,a.deltaWeightsTotal=0)}},r}(o.ConstantNode);exports.NoiseNode=r;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.NoiseNode = void 0;
+
+var NodeType_1 = require("../../enums/NodeType");
+
+var Utils_1 = require("../../methods/Utils");
+
+var ConstantNode_1 = require("./ConstantNode");
+/**
+ * Noise node
+ */
+
+
+var NoiseNode =
+/** @class */
+function (_super) {
+  __extends(NoiseNode, _super);
+
+  function NoiseNode(options) {
+    if (options === void 0) {
+      options = {};
+    }
+
+    var _this = _super.call(this) || this;
+
+    _this.noiseType = Utils_1.getOrDefault(options.noiseType, NodeType_1.NoiseNodeType.GAUSSIAN_NOISE);
+    _this.options = options;
+    return _this;
+  }
+  /**
+   * Actives the node.
+   *
+   * When a neuron activates, it computes its state from all its input connections and 'squashes' it using its activation function, and returns the output (activation).
+   *
+   * You can also provide the activation (a float between 0 and 1) as a parameter, which is useful for neurons in the input layer.
+   *
+   * @returns A neuron's output value
+   */
+
+
+  NoiseNode.prototype.activate = function () {
+    var _a, _b, _c, _d;
+
+    this.old = this.state;
+    var incomingStates = Array.from(this.incoming).map(function (conn) {
+      return conn.from.activation * conn.weight * conn.gain;
+    });
+
+    switch (this.noiseType) {
+      case NodeType_1.NoiseNodeType.GAUSSIAN_NOISE:
+        this.state = Utils_1.avg(incomingStates) + Utils_1.generateGaussian((_b = (_a = this.options.gaussian) === null || _a === void 0 ? void 0 : _a.mean) !== null && _b !== void 0 ? _b : 0, (_d = (_c = this.options.gaussian) === null || _c === void 0 ? void 0 : _c.deviation) !== null && _d !== void 0 ? _d : 2);
+        break;
+
+      default:
+        throw new ReferenceError("Cannot activate this noise type!");
+    }
+
+    this.activation = this.squash(this.state, false) * this.mask;
+    this.derivativeState = this.squash(this.state, true);
+    return this.activation;
+  };
+  /**
+   * Backpropagate the error (a.k.a. learn).
+   *
+   * After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating. [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
+   *
+   * If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
+   *
+   * @param target The target value (i.e. "the value the network SHOULD have given")
+   * @param options More options for propagation
+   */
+
+
+  NoiseNode.prototype.propagate = function (target, options) {
+    var _this = this;
+
+    if (options === void 0) {
+      options = {};
+    }
+
+    options.momentum = Utils_1.getOrDefault(options.momentum, 0);
+    options.rate = Utils_1.getOrDefault(options.rate, 0.3);
+    options.update = Utils_1.getOrDefault(options.update, true);
+    var connectionsStates = Array.from(this.outgoing).map(function (conn) {
+      return conn.to.errorResponsibility * conn.weight * conn.gain;
+    });
+    this.errorResponsibility = this.errorProjected = Utils_1.sum(connectionsStates) * this.derivativeState;
+    this.incoming.forEach(function (connection) {
+      var _a, _b; // calculate gradient
+
+
+      var gradient = _this.errorProjected * connection.eligibility;
+
+      for (var i = 0; i < connection.xTraceNodes.length; i++) {
+        gradient += connection.xTraceNodes[i].errorResponsibility * connection.xTraceValues[i];
+      }
+
+      connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * _this.mask;
+
+      if (options.update) {
+        connection.deltaWeightsTotal += ((_b = options.momentum) !== null && _b !== void 0 ? _b : 0) * connection.deltaWeightsPrevious;
+        connection.weight += connection.deltaWeightsTotal;
+        connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
+        connection.deltaWeightsTotal = 0;
+      }
+    });
+  };
+
+  return NoiseNode;
+}(ConstantNode_1.ConstantNode);
+
+exports.NoiseNode = NoiseNode;
 },{"../../enums/NodeType":"../src/enums/NodeType.js","../../methods/Utils":"../src/methods/Utils.js","./ConstantNode":"../src/architecture/Nodes/ConstantNode.js"}],"../src/architecture/Layers/NoiseLayers/NoiseLayer.js":[function(require,module,exports) {
-"use strict";var e=this&&this.__extends||function(){var e=function(o,t){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,o){e.__proto__=o}||function(e,o){for(var t in o)o.hasOwnProperty(t)&&(e[t]=o[t])})(o,t)};return function(o,t){function n(){this.constructor=o}e(o,t),o.prototype=null===t?Object.create(t):(n.prototype=t.prototype,new n)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.NoiseLayer=void 0;var o=require("../../../enums/ConnectionType"),t=require("../../../enums/NodeType"),n=require("../../../methods/Activation"),r=require("../../Nodes/NoiseNode"),i=require("../Layer"),u=function(i){function u(e,o){var u,s;void 0===o&&(o={});for(var p=i.call(this,e)||this,c=null!==(s=o.activation)&&void 0!==s?s:n.IdentityActivation,a=0;a<e;a++)p.inputNodes.add(new r.NoiseNode({noiseType:t.NoiseNodeType.GAUSSIAN_NOISE,gaussian:o}).setActivationType(c));return p.outputNodes=p.inputNodes,(u=p.nodes).push.apply(u,Array.from(p.inputNodes)),p}return e(u,i),u.prototype.getDefaultIncomingConnectionType=function(){return o.ConnectionType.ONE_TO_ONE},u.prototype.connectionTypeisAllowed=function(e){return e===o.ConnectionType.ONE_TO_ONE},u}(i.Layer);exports.NoiseLayer=u;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.NoiseLayer = void 0;
+
+var ConnectionType_1 = require("../../../enums/ConnectionType");
+
+var NodeType_1 = require("../../../enums/NodeType");
+
+var Activation_1 = require("../../../methods/Activation");
+
+var NoiseNode_1 = require("../../Nodes/NoiseNode");
+
+var Layer_1 = require("../Layer");
+/**
+ * Noise layer
+ */
+
+
+var NoiseLayer =
+/** @class */
+function (_super) {
+  __extends(NoiseLayer, _super);
+
+  function NoiseLayer(outputSize, options) {
+    var _a;
+
+    if (options === void 0) {
+      options = {};
+    }
+
+    var _b;
+
+    var _this = _super.call(this, outputSize) || this;
+
+    var activation = (_b = options.activation) !== null && _b !== void 0 ? _b : Activation_1.IdentityActivation;
+
+    for (var i = 0; i < outputSize; i++) {
+      _this.inputNodes.add(new NoiseNode_1.NoiseNode({
+        noiseType: NodeType_1.NoiseNodeType.GAUSSIAN_NOISE,
+        gaussian: options
+      }).setActivationType(activation));
+    }
+
+    _this.outputNodes = _this.inputNodes;
+
+    (_a = _this.nodes).push.apply(_a, Array.from(_this.inputNodes));
+
+    return _this;
+  }
+  /**
+   * Gets the default connection type for a incoming connection to this layer.
+   *
+   * @returns the default incoming connection
+   */
+
+
+  NoiseLayer.prototype.getDefaultIncomingConnectionType = function () {
+    return ConnectionType_1.ConnectionType.ONE_TO_ONE;
+  };
+  /**
+   * Checks if a given connection type is allowed on this layer.
+   *
+   * @param type the type to check
+   *
+   * @return Is this connection type allowed?
+   */
+
+
+  NoiseLayer.prototype.connectionTypeisAllowed = function (type) {
+    return type === ConnectionType_1.ConnectionType.ONE_TO_ONE;
+  };
+
+  return NoiseLayer;
+}(Layer_1.Layer);
+
+exports.NoiseLayer = NoiseLayer;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Nodes/NoiseNode":"../src/architecture/Nodes/NoiseNode.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/CoreLayers/InputLayer.js":[function(require,module,exports) {
-"use strict";var e=this&&this.__extends||function(){var e=function(o,n){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,o){e.__proto__=o}||function(e,o){for(var n in o)o.hasOwnProperty(n)&&(e[n]=o[n])})(o,n)};return function(o,n){function t(){this.constructor=o}e(o,n),o.prototype=null===n?Object.create(n):(t.prototype=n.prototype,new t)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.InputLayer=void 0;var o=require("../../../enums/ConnectionType"),n=require("../../../enums/NodeType"),t=require("../../Node"),r=require("../Layer"),i=require("../NoiseLayers/NoiseLayer"),u=function(u){function c(e,o){var c,p;void 0===o&&(o={});for(var s=u.call(this,e)||this,a=0;a<e;a++){var y=new t.Node(n.NodeType.INPUT);s.nodes.push(y)}if(o.noise){var N=new i.NoiseLayer(null!==(p=o.noise)&&void 0!==p?p:n.NoiseNodeType.GAUSSIAN_NOISE);N.outputNodes.forEach(function(e){return s.outputNodes.add(e)}),(c=s.connections).push.apply(c,r.Layer.connect(s.nodes,N,N.getDefaultIncomingConnectionType()))}else s.nodes.forEach(function(e){return s.outputNodes.add(e)});return s}return e(c,u),c.prototype.getDefaultIncomingConnectionType=function(){return o.ConnectionType.NO_CONNECTION},c.prototype.connectionTypeisAllowed=function(e){return e===o.ConnectionType.NO_CONNECTION},c}(r.Layer);exports.InputLayer=u;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.InputLayer = void 0;
+
+var ConnectionType_1 = require("../../../enums/ConnectionType");
+
+var NodeType_1 = require("../../../enums/NodeType");
+
+var Node_1 = require("../../Node");
+
+var Layer_1 = require("../Layer");
+
+var NoiseLayer_1 = require("../NoiseLayers/NoiseLayer");
+/**
+ * Input layer
+ */
+
+
+var InputLayer =
+/** @class */
+function (_super) {
+  __extends(InputLayer, _super);
+
+  function InputLayer(outputSize, options) {
+    var _a;
+
+    if (options === void 0) {
+      options = {};
+    }
+
+    var _b;
+
+    var _this = _super.call(this, outputSize) || this;
+
+    for (var i = 0; i < outputSize; i++) {
+      var node = new Node_1.Node(NodeType_1.NodeType.INPUT);
+
+      _this.nodes.push(node);
+    }
+
+    if (options.noise) {
+      var noiseLayer = new NoiseLayer_1.NoiseLayer((_b = options.noise) !== null && _b !== void 0 ? _b : NodeType_1.NoiseNodeType.GAUSSIAN_NOISE);
+      noiseLayer.outputNodes.forEach(function (node) {
+        return _this.outputNodes.add(node);
+      });
+
+      (_a = _this.connections).push.apply(_a, Layer_1.Layer.connect(_this.nodes, noiseLayer, noiseLayer.getDefaultIncomingConnectionType()));
+    } else {
+      _this.nodes.forEach(function (node) {
+        return _this.outputNodes.add(node);
+      });
+    }
+
+    return _this;
+  }
+  /**
+   * Gets the default connection type for a incoming connection to this layer.
+   *
+   * @returns the default incoming connection
+   */
+
+
+  InputLayer.prototype.getDefaultIncomingConnectionType = function () {
+    return ConnectionType_1.ConnectionType.NO_CONNECTION;
+  };
+  /**
+   * Checks if a given connection type is allowed on this layer.
+   *
+   * @param type the type to check
+   *
+   * @return Is this connection type allowed?
+   */
+
+
+  InputLayer.prototype.connectionTypeisAllowed = function (type) {
+    return type === ConnectionType_1.ConnectionType.NO_CONNECTION;
+  };
+
+  return InputLayer;
+}(Layer_1.Layer);
+
+exports.InputLayer = InputLayer;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js","../NoiseLayers/NoiseLayer":"../src/architecture/Layers/NoiseLayers/NoiseLayer.js"}],"../src/architecture/Layers/CoreLayers/OutputLayer.js":[function(require,module,exports) {
-"use strict";var t=this&&this.__extends||function(){var t=function(e,o){return(t=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var o in e)e.hasOwnProperty(o)&&(t[o]=e[o])})(e,o)};return function(e,o){function n(){this.constructor=e}t(e,o),e.prototype=null===o?Object.create(o):(n.prototype=o.prototype,new n)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.OutputLayer=void 0;var e=require("../../../enums/ConnectionType"),o=require("../../../enums/NodeType"),n=require("../../../methods/Activation"),r=require("../../Node"),i=require("../Layer"),u=function(i){function u(t,e){var u,c;void 0===e&&(e={});for(var p=i.call(this,t)||this,a=null!==(c=e.activation)&&void 0!==c?c:n.IdentityActivation,s=0;s<t;s++)p.inputNodes.add(new r.Node(o.NodeType.OUTPUT).setActivationType(a));return(u=p.nodes).push.apply(u,Array.from(p.inputNodes)),p}return t(u,i),u.prototype.connect=function(){throw new ReferenceError("Could not connect an OutputLayer!")},u.prototype.connectionTypeisAllowed=function(t){return!0},u.prototype.getDefaultIncomingConnectionType=function(){return e.ConnectionType.ALL_TO_ALL},u}(i.Layer);exports.OutputLayer=u;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.OutputLayer = void 0;
+
+var ConnectionType_1 = require("../../../enums/ConnectionType");
+
+var NodeType_1 = require("../../../enums/NodeType");
+
+var Activation_1 = require("../../../methods/Activation");
+
+var Node_1 = require("../../Node");
+
+var Layer_1 = require("../Layer");
+/**
+ * Output layer
+ */
+
+
+var OutputLayer =
+/** @class */
+function (_super) {
+  __extends(OutputLayer, _super);
+
+  function OutputLayer(outputSize, options) {
+    var _a;
+
+    if (options === void 0) {
+      options = {};
+    }
+
+    var _b;
+
+    var _this = _super.call(this, outputSize) || this;
+
+    var activation = (_b = options.activation) !== null && _b !== void 0 ? _b : Activation_1.IdentityActivation;
+
+    for (var i = 0; i < outputSize; i++) {
+      _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.OUTPUT).setActivationType(activation));
+    }
+
+    (_a = _this.nodes).push.apply(_a, Array.from(_this.inputNodes));
+
+    return _this;
+  }
+  /**
+   * A outgoing connection is not allowed for an output layer!
+   */
+
+
+  OutputLayer.prototype.connect = function () {
+    throw new ReferenceError("Could not connect an OutputLayer!");
+  };
+  /**
+   * Checks if a given connection type is allowed on this layer.
+   *
+   * @param type the type to check
+   *
+   * @return Is this connection type allowed?
+   */
+
+
+  OutputLayer.prototype.connectionTypeisAllowed = function (type) {
+    return true;
+  };
+  /**
+   * Gets the default connection type for a incoming connection to this layer.
+   *
+   * @returns the default incoming connection
+   */
+
+
+  OutputLayer.prototype.getDefaultIncomingConnectionType = function () {
+    return ConnectionType_1.ConnectionType.ALL_TO_ALL;
+  };
+
+  return OutputLayer;
+}(Layer_1.Layer);
+
+exports.OutputLayer = OutputLayer;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/methods/Loss.js":[function(require,module,exports) {
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.ALL_LOSSES=exports.HINGELoss=exports.MSLELoss=exports.WAPELoss=exports.MAPELoss=exports.MAELoss=exports.BinaryLoss=exports.MBELoss=exports.MSELoss=void 0,exports.MSELoss=function(s,o){var t=0;return o.forEach(function(o,r){t+=Math.pow(s[r]-o,2)}),t/o.length},exports.MBELoss=function(s,o){var t=0;return o.forEach(function(o,r){t+=s[r]-o}),t/o.length},exports.BinaryLoss=function(s,o){var t=0;return o.forEach(function(o,r){t+=Math.round(2*s[r])!==Math.round(2*o)?1:0}),t/o.length},exports.MAELoss=function(s,o){var t=0;return o.forEach(function(o,r){t+=Math.abs(s[r]-o)}),t/o.length},exports.MAPELoss=function(s,o){var t=0;return o.forEach(function(o,r){t+=Math.abs((o-s[r])/Math.max(s[r],1e-15))}),t/o.length},exports.WAPELoss=function(s,o){for(var t=0,r=0,e=0;e<o.length;e++)t+=Math.abs(s[e]-o[e]),r+=s[e];return t/r},exports.MSLELoss=function(s,o){var t=0;return o.forEach(function(o,r){t+=Math.log(Math.max(s[r],1e-15))-Math.log(Math.max(o,1e-15))}),t/o.length},exports.HINGELoss=function(s,o){var t=0;return o.forEach(function(o,r){t+=Math.max(0,1-o*s[r])}),t/o.length},exports.ALL_LOSSES={MSELoss:exports.MSELoss,MBELoss:exports.MBELoss,BinaryLoss:exports.BinaryLoss,MAELoss:exports.MAELoss,MAPELoss:exports.MAPELoss,WAPELoss:exports.WAPELoss,MSLELoss:exports.MSLELoss,HINGELoss:exports.HINGELoss};
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ALL_LOSSES = exports.HINGELoss = exports.MSLELoss = exports.WAPELoss = exports.MAPELoss = exports.MAELoss = exports.BinaryLoss = exports.MBELoss = exports.MSELoss = void 0;
+
+exports.MSELoss = function (targets, outputs) {
+  var error = 0;
+  outputs.forEach(function (value, index) {
+    error += Math.pow(targets[index] - value, 2);
+  });
+  return error / outputs.length;
+};
+
+exports.MBELoss = function (targets, outputs) {
+  var error = 0;
+  outputs.forEach(function (value, index) {
+    error += targets[index] - value;
+  });
+  return error / outputs.length;
+};
+
+exports.BinaryLoss = function (targets, outputs) {
+  var error = 0;
+  outputs.forEach(function (value, index) {
+    error += Math.round(targets[index] * 2) !== Math.round(value * 2) ? 1 : 0;
+  });
+  return error / outputs.length;
+};
+
+exports.MAELoss = function (targets, outputs) {
+  var error = 0;
+  outputs.forEach(function (value, index) {
+    error += Math.abs(targets[index] - value);
+  });
+  return error / outputs.length;
+};
+
+exports.MAPELoss = function (targets, outputs) {
+  var error = 0;
+  outputs.forEach(function (value, index) {
+    error += Math.abs((value - targets[index]) / Math.max(targets[index], 1e-15));
+  });
+  return error / outputs.length;
+};
+
+exports.WAPELoss = function (targets, outputs) {
+  var error = 0;
+  var sum = 0;
+
+  for (var i = 0; i < outputs.length; i++) {
+    error += Math.abs(targets[i] - outputs[i]);
+    sum += targets[i];
+  }
+
+  return error / sum;
+};
+
+exports.MSLELoss = function (targets, outputs) {
+  var error = 0;
+  outputs.forEach(function (value, index) {
+    error += Math.log(Math.max(targets[index], 1e-15)) - Math.log(Math.max(value, 1e-15));
+  });
+  return error / outputs.length;
+};
+
+exports.HINGELoss = function (targets, outputs) {
+  var error = 0;
+  outputs.forEach(function (value, index) {
+    error += Math.max(0, 1 - value * targets[index]);
+  });
+  return error / outputs.length;
+};
+
+exports.ALL_LOSSES = {
+  MSELoss: exports.MSELoss,
+  MBELoss: exports.MBELoss,
+  BinaryLoss: exports.BinaryLoss,
+  MAELoss: exports.MAELoss,
+  MAPELoss: exports.MAPELoss,
+  WAPELoss: exports.WAPELoss,
+  MSLELoss: exports.MSLELoss,
+  HINGELoss: exports.HINGELoss
+};
 },{}],"../src/methods/Rate.js":[function(require,module,exports) {
-"use strict";var t=this&&this.__extends||function(){var t=function(e,r){return(t=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var r in e)e.hasOwnProperty(r)&&(t[r]=e[r])})(e,r)};return function(e,r){function o(){this.constructor=e}t(e,r),e.prototype=null===r?Object.create(r):(o.prototype=r.prototype,new o)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.InverseRate=exports.ExponentialRate=exports.StepRate=exports.FixedRate=exports.Rate=void 0;var e=function(){return function(t){this.baseRate=t}}();exports.Rate=e;var r=function(e){function r(){return null!==e&&e.apply(this,arguments)||this}return t(r,e),r.prototype.calc=function(t){return this.baseRate},r}(e);exports.FixedRate=r;var o=function(e){function r(t,r,o){void 0===r&&(r=.9),void 0===o&&(o=100);var n=e.call(this,t)||this;return n.gamma=r,n.stepSize=o,n}return t(r,e),r.prototype.calc=function(t){return this.baseRate*Math.pow(this.gamma,Math.floor(t/this.stepSize))},r}(e);exports.StepRate=o;var n=function(e){function r(t,r){void 0===r&&(r=.999);var o=e.call(this,t)||this;return o.gamma=r,o}return t(r,e),r.prototype.calc=function(t){return this.baseRate*Math.pow(this.gamma,t)},r}(e);exports.ExponentialRate=n;var a=function(e){function r(t,r,o){void 0===r&&(r=.001),void 0===o&&(o=2);var n=e.call(this,t)||this;return n.gamma=r,n.power=o,n}return t(r,e),r.prototype.calc=function(t){return this.baseRate*Math.pow(1+this.gamma*t,-this.power)},r}(e);exports.InverseRate=a;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.InverseRate = exports.ExponentialRate = exports.StepRate = exports.FixedRate = exports.Rate = void 0;
+/**
+ * Built-in learning rate policies, which allow for a dynamic learning rate during neural network training.
+ *
+ * @see [Learning rates and how-to improve performance](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
+ * @see [Learning rate policy](https://stackoverflow.com/questions/30033096/what-is-lr-policy-in-caffe/30045244)
+ *
+ */
+
+var Rate =
+/** @class */
+function () {
+  /**
+   * Constructs a rate policy
+   * @param baseRate the rate at first iteration
+   */
+  function Rate(baseRate) {
+    this.baseRate = baseRate;
+  }
+
+  return Rate;
+}();
+
+exports.Rate = Rate;
+/**
+ * Fixed Learning Rate
+ *
+ * Default rate policy. Using this will make learning rate static (no change). Useful as a way to update a previous rate policy.
+ */
+
+var FixedRate =
+/** @class */
+function (_super) {
+  __extends(FixedRate, _super);
+
+  function FixedRate() {
+    return _super !== null && _super.apply(this, arguments) || this;
+  }
+  /**
+   * Calculates the current training rate.
+   *
+   * @param iteration count
+   * @returns the current training rate
+   */
+
+
+  FixedRate.prototype.calc = function (iteration) {
+    return this.baseRate;
+  };
+
+  return FixedRate;
+}(Rate);
+
+exports.FixedRate = FixedRate;
+/**
+ * Step Learning Rate
+ *
+ * The learning rate will decrease (i.e. 'step down') every `stepSize` iterations.
+ */
+
+var StepRate =
+/** @class */
+function (_super) {
+  __extends(StepRate, _super);
+  /**
+   * Constructs a step rate policy.
+   *
+   * @param baseRate the rate at first iteration
+   * @param gamma=0.9 Learning rate retention per step; - _0 < `gamma` < 1_ - _large `gamma` CAN cause networks to never converge, low `gamma` CAN cause networks to converge too quickly_
+   * @param stepSize=100 Learning rate is updated every `step_size` iterations
+   */
+
+
+  function StepRate(baseRate, gamma, stepSize) {
+    if (gamma === void 0) {
+      gamma = 0.9;
+    }
+
+    if (stepSize === void 0) {
+      stepSize = 100;
+    }
+
+    var _this = _super.call(this, baseRate) || this;
+
+    _this.gamma = gamma;
+    _this.stepSize = stepSize;
+    return _this;
+  }
+  /**
+   * Calculates the current training rate.
+   *
+   * @param iteration count
+   * @returns the current training rate
+   */
+
+
+  StepRate.prototype.calc = function (iteration) {
+    return this.baseRate * Math.pow(this.gamma, Math.floor(iteration / this.stepSize));
+  };
+
+  return StepRate;
+}(Rate);
+
+exports.StepRate = StepRate;
+/**
+ * Exponential Learning Rate
+ *
+ * The learning rate will exponentially decrease.
+ *
+ * The rate at `iteration` is calculated as: `rate = base_rate * Math.pow(gamma, iteration)`
+ */
+
+var ExponentialRate =
+/** @class */
+function (_super) {
+  __extends(ExponentialRate, _super);
+  /**
+   * Constructs a step rate policy.
+   *
+   * @param baseRate the rate at first iteration
+   * @param gamma=0.9 Learning rate retention per step; - _0 < `gamma` < 1_ - _large `gamma` CAN cause networks to never converge, low `gamma` CAN cause networks to converge too quickly_
+   */
+
+
+  function ExponentialRate(baseRate, gamma) {
+    if (gamma === void 0) {
+      gamma = 0.999;
+    }
+
+    var _this = _super.call(this, baseRate) || this;
+
+    _this.gamma = gamma;
+    return _this;
+  }
+  /**
+   * Calculates the current training rate.
+   *
+   * @param iteration count
+   * @returns the current training rate
+   */
+
+
+  ExponentialRate.prototype.calc = function (iteration) {
+    return this.baseRate * Math.pow(this.gamma, iteration);
+  };
+
+  return ExponentialRate;
+}(Rate);
+
+exports.ExponentialRate = ExponentialRate;
+/**
+ * Inverse Exponential Learning Rate
+ *
+ * The learning rate will exponentially decrease.
+ *
+ * The rate at `iteration` is calculated as: `rate = baseRate * Math.pow(1 + gamma * iteration, -power)`
+ */
+
+var InverseRate =
+/** @class */
+function (_super) {
+  __extends(InverseRate, _super);
+  /**
+   * Constructs a step rate policy.
+   *
+   * @param baseRate the rate at first iteration
+   * @param gamma=0.001 Learning rate decay per iteration; - _0 < `gamma` < 1_ - _large `gamma` CAN cause networks to converge too quickly and stop learning, low `gamma` CAN cause networks to converge to learn VERY slowly_
+   * @param power=2 Decay rate per iteration - _0 < `power`_ - _large `power` CAN cause networks to stop learning quickly, low `power` CAN cause networks to learn VERY slowly_
+   */
+
+
+  function InverseRate(baseRate, gamma, power) {
+    if (gamma === void 0) {
+      gamma = 0.001;
+    }
+
+    if (power === void 0) {
+      power = 2;
+    }
+
+    var _this = _super.call(this, baseRate) || this;
+
+    _this.gamma = gamma;
+    _this.power = power;
+    return _this;
+  }
+  /**
+   * Calculates the current training rate.
+   *
+   * @param iteration count
+   * @returns the current training rate
+   */
+
+
+  InverseRate.prototype.calc = function (iteration) {
+    return this.baseRate * Math.pow(1 + this.gamma * iteration, -this.power);
+  };
+
+  return InverseRate;
+}(Rate);
+
+exports.InverseRate = InverseRate;
 },{}],"../src/methods/Selection.js":[function(require,module,exports) {
-"use strict";var t=this&&this.__extends||function(){var t=function(e,o){return(t=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var o in e)e.hasOwnProperty(o)&&(t[o]=e[o])})(e,o)};return function(e,o){function r(){this.constructor=e}t(e,o),e.prototype=null===o?Object.create(o):(r.prototype=o.prototype,new r)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.TournamentSelection=exports.PowerSelection=exports.FitnessProportionateSelection=exports.Selection=void 0;var e=require("./Utils"),o=function(){return function(){}}();exports.Selection=o;var r=function(o){function r(){return null!==o&&o.apply(this,arguments)||this}return t(r,o),r.prototype.select=function(t){for(var o,r,n,i=0,s=0,c=0,u=t;c<u.length;c++){var a=u[c];s=Math.min(null!==(o=a.score)&&void 0!==o?o:s,s),i+=null!==(r=a.score)&&void 0!==r?r:0}i+=(s=Math.abs(s))*t.length;for(var l=e.randDouble(0,i),p=0,h=0,f=t;h<f.length;h++){if(l<(p+=(null!==(n=(a=f[h]).score)&&void 0!==n?n:0)+s))return a}return e.pickRandom(t)},r}(o);exports.FitnessProportionateSelection=r;var n=function(e){function o(t){void 0===t&&(t=4);var o=e.call(this)||this;return o.power=t,o}return t(o,e),o.prototype.select=function(t){return t[Math.floor(Math.pow(Math.random(),this.power)*t.length)]},o}(o);exports.PowerSelection=n;var i=function(o){function r(t,e){void 0===t&&(t=5),void 0===e&&(e=.5);var r=o.call(this)||this;return r.size=t,r.probability=e,r}return t(r,o),r.prototype.select=function(t){if(this.size>t.length)throw new Error("Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size");for(var o=[],r=0;r<this.size;r++)o.push(e.pickRandom(t));o.sort(function(t,e){return void 0===e.score||void 0===t.score?0:e.score-t.score});for(r=0;r<this.size;r++)if(Math.random()<this.probability||r===this.size-1)return o[r];return e.pickRandom(t)},r}(o);exports.TournamentSelection=i;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.TournamentSelection = exports.PowerSelection = exports.FitnessProportionateSelection = exports.Selection = void 0;
+
+var Utils_1 = require("./Utils");
+/**
+ * Genetic Algorithm Selection Methods (Genetic Operator)
+ *
+ * @see [Genetic Algorithm - Selection]{@link https://en.wikipedia.org/wiki/Selection_(genetic_algorithm)}
+ *
+ */
+
+
+var Selection =
+/** @class */
+function () {
+  function Selection() {}
+
+  return Selection;
+}();
+
+exports.Selection = Selection;
+/**
+ * Fitness proportionate selection
+ *
+ * [Fitness Proportionate / Roulette Wheel Selection on Wikipedia](https://en.wikipedia.org/wiki/Fitness_proportionate_selection)
+ */
+
+var FitnessProportionateSelection =
+/** @class */
+function (_super) {
+  __extends(FitnessProportionateSelection, _super);
+
+  function FitnessProportionateSelection() {
+    return _super !== null && _super.apply(this, arguments) || this;
+  }
+  /**
+   * Selects a genome from the population according to the Selection method.
+   *
+   * @param population the pool of networks
+   * @returns the selected genome
+   */
+
+
+  FitnessProportionateSelection.prototype.select = function (population) {
+    var _a, _b, _c;
+
+    var totalFitness = 0;
+    var minimalFitness = 0;
+
+    for (var _i = 0, population_1 = population; _i < population_1.length; _i++) {
+      var genome = population_1[_i];
+      minimalFitness = Math.min((_a = genome.score) !== null && _a !== void 0 ? _a : minimalFitness, minimalFitness);
+      totalFitness += (_b = genome.score) !== null && _b !== void 0 ? _b : 0;
+    }
+
+    minimalFitness = Math.abs(minimalFitness);
+    totalFitness += minimalFitness * population.length;
+    var random = Utils_1.randDouble(0, totalFitness);
+    var value = 0;
+
+    for (var _d = 0, population_2 = population; _d < population_2.length; _d++) {
+      var genome = population_2[_d];
+      value += ((_c = genome.score) !== null && _c !== void 0 ? _c : 0) + minimalFitness;
+
+      if (random < value) {
+        return genome;
+      }
+    }
+
+    return Utils_1.pickRandom(population);
+  };
+
+  return FitnessProportionateSelection;
+}(Selection);
+
+exports.FitnessProportionateSelection = FitnessProportionateSelection;
+/**
+ * Power selection
+ *
+ * A random decimal value between 0 and 1 will be generated (e.g. 0.5) then this value will get an exponential value (power, default is 4). So 0.5**4 = 0.0625. This is converted into an index for the array of the current population, sorted from fittest to worst.
+ */
+
+var PowerSelection =
+/** @class */
+function (_super) {
+  __extends(PowerSelection, _super);
+  /**
+   * Constructs a power selection.
+   * @param power Probability of picking better networks.
+   */
+
+
+  function PowerSelection(power) {
+    if (power === void 0) {
+      power = 4;
+    }
+
+    var _this = _super.call(this) || this;
+
+    _this.power = power;
+    return _this;
+  }
+  /**
+   * Selects a genome from the population according to the Selection method.
+   *
+   * @param population the pool of networks
+   * @returns the selected genome
+   */
+
+
+  PowerSelection.prototype.select = function (population) {
+    return population[Math.floor(Math.pow(Math.random(), this.power) * population.length)];
+  };
+
+  return PowerSelection;
+}(Selection);
+
+exports.PowerSelection = PowerSelection;
+/**
+ * Tournament selection
+ *
+ * [Tournament Selection on Wikipedia](https://en.wikipedia.org/wiki/Tournament_selection)
+ */
+
+var TournamentSelection =
+/** @class */
+function (_super) {
+  __extends(TournamentSelection, _super);
+  /**
+   * Constructs a tournament selection.
+   * @param size the size of a tournament
+   * @param probability Selects the best individual (when probability = 1).
+   */
+
+
+  function TournamentSelection(size, probability) {
+    if (size === void 0) {
+      size = 5;
+    }
+
+    if (probability === void 0) {
+      probability = 0.5;
+    }
+
+    var _this = _super.call(this) || this;
+
+    _this.size = size;
+    _this.probability = probability;
+    return _this;
+  }
+  /**
+   * Selects a genome from the population according to the Selection method.
+   *
+   * @param population the pool of networks
+   * @returns the selected genome
+   */
+
+
+  TournamentSelection.prototype.select = function (population) {
+    if (this.size > population.length) {
+      throw new Error("Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size");
+    } // Create a tournament
+
+
+    var individuals = [];
+
+    for (var i = 0; i < this.size; i++) {
+      individuals.push(Utils_1.pickRandom(population));
+    } // Sort the tournament individuals by score
+
+
+    individuals.sort(function (a, b) {
+      return b.score === undefined || a.score === undefined ? 0 : b.score - a.score;
+    }); // Select an individual
+
+    for (var i = 0; i < this.size; i++) {
+      if (Math.random() < this.probability || i === this.size - 1) {
+        return individuals[i];
+      }
+    }
+
+    return Utils_1.pickRandom(population);
+  };
+
+  return TournamentSelection;
+}(Selection);
+
+exports.TournamentSelection = TournamentSelection;
 },{"./Utils":"../src/methods/Utils.js"}],"../src/NEAT.js":[function(require,module,exports) {
 "use strict";
 
@@ -391,7 +3541,7 @@ function () {
     var _this = this;
 
     var allowed = this.mutations.filter(function (method) {
-      return method.constructor.name !== Mutation_1.AddNodeMutation.constructor.name || network.nodes.length < _this.maxNodes || method.constructor.name !== Mutation_1.AddConnectionMutation.constructor.name || network.connections.length < _this.maxConnections || method.constructor.name !== Mutation_1.AddGateMutation.constructor.name || network.gates.length < _this.maxGates;
+      return method.constructor.name !== Mutation_1.AddNodeMutation.constructor.name || network.nodes.length < _this.maxNodes || method.constructor.name !== Mutation_1.AddConnectionMutation.constructor.name || network.connections.size < _this.maxConnections || method.constructor.name !== Mutation_1.AddGateMutation.constructor.name || network.gates.length < _this.maxGates;
     });
     network.mutate(Utils_1.pickRandom(allowed), {
       allowedActivations: this.activations
@@ -652,39 +3802,3427 @@ function () {
 
 exports.NEAT = NEAT;
 },{"./architecture/Network":"../src/architecture/Network.js","./methods/Activation":"../src/methods/Activation.js","./methods/Mutation":"../src/methods/Mutation.js","./methods/Selection":"../src/methods/Selection.js","./methods/Utils":"../src/methods/Utils.js"}],"../src/architecture/Network.js":[function(require,module,exports) {
-"use strict";var t=this&&this.__assign||function(){return(t=Object.assign||function(t){for(var e,n=1,o=arguments.length;n<o;n++)for(var r in e=arguments[n])Object.prototype.hasOwnProperty.call(e,r)&&(t[r]=e[r]);return t}).apply(this,arguments)},e=this&&this.__awaiter||function(t,e,n,o){return new(n||(n=Promise))(function(r,i){function s(t){try{u(o.next(t))}catch(e){i(e)}}function a(t){try{u(o.throw(t))}catch(e){i(e)}}function u(t){var e;t.done?r(t.value):(e=t.value,e instanceof n?e:new n(function(t){t(e)})).then(s,a)}u((o=o.apply(t,e||[])).next())})},n=this&&this.__generator||function(t,e){var n,o,r,i,s={label:0,sent:function(){if(1&r[0])throw r[1];return r[1]},trys:[],ops:[]};return i={next:a(0),throw:a(1),return:a(2)},"function"==typeof Symbol&&(i[Symbol.iterator]=function(){return this}),i;function a(i){return function(a){return function(i){if(n)throw new TypeError("Generator is already executing.");for(;s;)try{if(n=1,o&&(r=2&i[0]?o.return:i[0]?o.throw||((r=o.return)&&r.call(o),0):o.next)&&!(r=r.call(o,i[1])).done)return r;switch(o=0,r&&(i=[2&i[0],r.value]),i[0]){case 0:case 1:r=i;break;case 4:return s.label++,{value:i[1],done:!1};case 5:s.label++,o=i[1],i=[0];continue;case 7:i=s.ops.pop(),s.trys.pop();continue;default:if(!(r=(r=s.trys).length>0&&r[r.length-1])&&(6===i[0]||2===i[0])){s=0;continue}if(3===i[0]&&(!r||i[1]>r[0]&&i[1]<r[3])){s.label=i[1];break}if(6===i[0]&&s.label<r[1]){s.label=r[1],r=i;break}if(r&&s.label<r[2]){s.label=r[2],s.ops.push(i);break}r[2]&&s.ops.pop(),s.trys.pop();continue}i=e.call(t,s)}catch(a){i=[6,a],o=0}finally{n=r=0}if(5&i[0])throw i[1];return{value:i[0]?i[1]:void 0,done:!0}}([i,a])}}},o=this&&this.__importDefault||function(t){return t&&t.__esModule?t:{default:t}};Object.defineProperty(exports,"__esModule",{value:!0}),exports.Network=void 0;var r=o(require("os")),i=require("threads"),s=require("threads/dist");require("threads/register");var a=require("../enums/NodeType"),u=require("../methods/Loss"),c=require("../methods/Mutation"),d=require("../methods/Rate"),h=require("../methods/Utils"),l=require("../NEAT"),f=require("./Connection"),p=require("./Node"),g=function(){function o(t,e){this.inputSize=t,this.outputSize=e,this.nodes=[],this.connections=[],this.gates=[],this.score=void 0;for(var n=0;n<t;n++)this.nodes.push(new p.Node(a.NodeType.INPUT));for(n=0;n<e;n++)this.nodes.push(new p.Node(a.NodeType.OUTPUT));for(n=0;n<this.inputSize;n++)for(var o=this.inputSize;o<this.outputSize+this.inputSize;o++){var r=(Math.random()-.5)*this.inputSize*Math.sqrt(2/this.inputSize);this.connect(this.nodes[n],this.nodes[o],r)}}return o.fromJSON=function(t){var e=new o(t.inputSize,t.outputSize);return e.nodes=[],e.connections=[],t.nodes.map(function(t){return(new p.Node).fromJSON(t)}).forEach(function(t){return e.nodes[t.index]=t}),t.connections.forEach(function(t){var n=e.connect(e.nodes[t.fromIndex],e.nodes[t.toIndex],t.weight);null!=t.gateNodeIndex&&e.addGate(e.nodes[t.gateNodeIndex],n)}),e},o.crossOver=function(t,e,n){var r,i;if(t.inputSize!==e.inputSize||t.outputSize!==e.outputSize)throw new Error("Networks don`t have the same input/output size!");var s=new o(t.inputSize,t.outputSize);s.connections=[],s.nodes=[];var u,c=null!==(r=t.score)&&void 0!==r?r:0,d=null!==(i=e.score)&&void 0!==i?i:0;if(n||c===d){var l=Math.max(t.nodes.length,e.nodes.length),g=Math.min(t.nodes.length,e.nodes.length);u=h.randInt(g,l+1)}else u=c>d?t.nodes.length:e.nodes.length;for(var v=t.inputSize,m=t.outputSize,w=0;w<t.nodes.length;w++)t.nodes[w].index=w;for(w=0;w<e.nodes.length;w++)e.nodes[w].index=w;for(w=0;w<u;w++){var S=void 0,N=null;if(w<v){N=a.NodeType.INPUT;for(var y=h.randBoolean()?t:e,z=-1,O=-1;z<w;){if(O++>=y.nodes.length)throw RangeError("something is wrong with the size of the input");y.nodes[O].isInputNode()&&z++}S=y.nodes[O]}else if(w<v+m){N=a.NodeType.OUTPUT;y=h.randBoolean()?t:e;var E=-1;for(O=-1;E<w-v;){if(++O>=y.nodes.length)throw RangeError("something is wrong with the size of the output");y.nodes[O].isOutputNode()&&E++}S=y.nodes[O]}else{N=a.NodeType.HIDDEN;y=void 0;y=w>=t.nodes.length?e:w>=e.nodes.length?t:h.randBoolean()?t:e,S=h.pickRandom(y.nodes)}var b=new p.Node(N);b.bias=S.bias,b.squash=S.squash,s.nodes.push(b)}var x=[],D=[];t.connections.forEach(function(t){x[f.Connection.innovationID(t.from.index,t.to.index)]=t.toJSON()}),e.connections.forEach(function(t){D[f.Connection.innovationID(t.from.index,t.to.index)]=t.toJSON()});var I=[],T=Object.keys(x),R=Object.keys(D);for(w=T.length-1;w>=0;w--)void 0!==D[parseInt(T[w])]?(I.push(h.randBoolean()?x[parseInt(T[w])]:D[parseInt(T[w])]),D[parseInt(T[w])]=void 0):(c>=d||n)&&I.push(x[parseInt(T[w])]);return(d>=c||n)&&R.map(function(t){return parseInt(t)}).map(function(t){return D[t]}).filter(function(t){return void 0!==t}).forEach(function(t){return I.push(t)}),I.forEach(function(t){if(void 0!==t&&t.toIndex<u&&t.fromIndex<u){var e=s.nodes[t.fromIndex],n=s.nodes[t.toIndex],o=s.connect(e,n,t.weight);null!==t.gateNodeIndex&&t.gateNodeIndex<u&&s.addGate(s.nodes[t.gateNodeIndex],o)}}),s},o.prototype.copy=function(){return o.fromJSON(this.toJSON())},o.prototype.connect=function(t,e,n){void 0===n&&(n=0);var o=t.connect(e,n);return this.connections.push(o),o},o.prototype.activate=function(t,e){if(void 0===e&&(e={}),t.length!==this.inputSize)throw new RangeError("Input size of dataset is different to network input size!");return e.dropoutRate=h.getOrDefault(e.dropoutRate,0),e.trace=h.getOrDefault(e.trace,!0),this.nodes.filter(function(t){return t.isInputNode()}).forEach(function(n,o){return n.activate(t[o],e.trace)}),this.nodes.filter(function(t){return t.isHiddenNode()}).forEach(function(t){e.dropoutRate&&(t.mask=Math.random()>=e.dropoutRate?1:0),t.activate(void 0,e.trace)}),this.nodes.filter(function(t){return t.isOutputNode()}).map(function(t){return t.activate(void 0,e.trace)})},o.prototype.propagate=function(t,e){if(void 0===e&&(e={}),e.rate=h.getOrDefault(e.rate,.3),e.momentum=h.getOrDefault(e.momentum,0),e.update=h.getOrDefault(e.update,!1),t.length!==this.outputSize)throw new Error("Output target length should match network output length");this.nodes.filter(function(t){return t.isOutputNode()}).forEach(function(n,o){return n.propagate(t[o],e)});for(var n=this.nodes.length-1;n>=0;n--)this.nodes[n].isHiddenNode()&&this.nodes[n].propagate(void 0,e);this.nodes.filter(function(t){return t.isInputNode()}).forEach(function(t){return t.propagate(void 0,e)})},o.prototype.clear=function(){this.nodes.forEach(function(t){return t.clear()})},o.prototype.disconnect=function(t,e){var n=this;return this.connections.filter(function(e){return e.from===t}).filter(function(t){return t.to===e}).forEach(function(t){null!==t.gateNode&&n.removeGate(t),h.removeFromArray(n.connections,t)}),t.disconnect(e)},o.prototype.addGate=function(t,e){if(-1===this.nodes.indexOf(t))throw new ReferenceError("This node is not part of the network!");null==e.gateNode&&(t.addGate(e),this.gates.push(e))},o.prototype.removeGate=function(t){if(!this.gates.includes(t))throw new Error("This connection is not gated!");h.removeFromArray(this.gates,t),null!=t.gateNode&&t.gateNode.removeGate(t)},o.prototype.removeNode=function(t,e){var n=this;if(void 0===e&&(e=(new c.SubNodeMutation).keepGates),!this.nodes.includes(t))throw new ReferenceError("This node does not exist in the network!");this.disconnect(t,t);for(var o=[],r=[],i=[],s=[],a=t.incoming.length-1;a>=0;a--){var u=t.incoming[a];e&&null!==u.gateNode&&u.gateNode!==t&&r.push(u.gateNode),o.push(u.from),this.disconnect(u.from,t)}for(a=t.outgoing.length-1;a>=0;a--){u=t.outgoing[a];e&&null!==u.gateNode&&u.gateNode!==t&&r.push(u.gateNode),i.push(u.to),this.disconnect(t,u.to)}for(o.forEach(function(t){i.forEach(function(e){t.isProjectingTo(e)||s.push(n.connect(t,e))})});r.length>0&&s.length>0;){var d=r.shift();if(void 0!==d){u=h.pickRandom(s);this.addGate(d,u),h.removeFromArray(s,u)}}for(a=t.gated.length-1;a>=0;a--)this.removeGate(t.gated[a]);h.removeFromArray(this.nodes,t)},o.prototype.mutate=function(t,e){t.mutate(this,e)},o.prototype.mutateRandom=function(t,e){void 0===t&&(t=c.ALL_MUTATIONS),void 0===e&&(e={}),0!==t.length&&this.mutate(h.pickRandom(t),e)},o.prototype.train=function(e){var n;if(!e.dataset||e.dataset[0].input.length!==this.inputSize||e.dataset[0].output.length!==this.outputSize)throw new Error("Dataset input/output size should be same as network input/output size!");e.iterations=h.getOrDefault(e.iterations,-1),e.error=h.getOrDefault(e.error,-1),e.loss=h.getOrDefault(e.loss,u.MSELoss),e.dropout=h.getOrDefault(e.dropout,0),e.momentum=h.getOrDefault(e.momentum,0),e.batchSize=Math.min(e.dataset.length,h.getOrDefault(e.batchSize,e.dataset.length));var o=h.getOrDefault(e.rate,.3);e.ratePolicy=h.getOrDefault(e.ratePolicy,new d.FixedRate(o)),e.log=h.getOrDefault(e.log,NaN);var r,i,s,a,c=Date.now();if(e.iterations<=0&&e.error<=0)throw new Error("At least one of the following options must be specified: error, iterations");e.crossValidateTestSize&&e.crossValidateTestSize>0?(r=Math.ceil((1-e.crossValidateTestSize)*e.dataset.length),i=e.dataset.slice(0,r),s=e.dataset.slice(r)):(i=e.dataset,s=[]);for(var l=0,f=1;f>e.error&&(e.iterations<=0||l<e.iterations);){l++,a=e.ratePolicy.calc(l);var p=this.trainEpoch(t(t({},e),{dataset:i,trainingRate:a}));if(!Number.isFinite(p))throw new RangeError;e.clear&&this.clear(),e.crossValidateTestSize?(f=this.test(s,e.loss),e.clear&&this.clear()):f=p,null!==(n=e.shuffle)&&void 0!==n&&n&&h.shuffle(e.dataset),e.log>0&&l%e.log==0&&console.log("iteration number",l,"error",f,"training rate",a),e.schedule&&l%e.schedule.iterations==0&&e.schedule.function(f,l)}return e.clear&&this.clear(),{error:f,iterations:l,time:Date.now()-c}},o.prototype.test=function(t,e){void 0===e&&(e=u.MSELoss);for(var n=0,o=0,r=t;o<r.length;o++){var i=r[o],s=i.input;n+=e(i.output,this.activate(s,{trace:!1}))}return n/t.length},o.prototype.toJSON=function(){for(var t={nodes:[],connections:[],inputSize:this.inputSize,outputSize:this.outputSize},e=0;e<this.nodes.length;e++)this.nodes[e].index=e;return this.nodes.forEach(function(e){t.nodes.push(e.toJSON()),0!==e.selfConnection.weight&&t.connections.push(e.selfConnection.toJSON())}),this.connections.map(function(t){return t.toJSON()}).forEach(function(e){return t.connections.push(e)}),t},o.prototype.evolve=function(t){var o,a,c,d,f;return void 0===t&&(t={}),e(this,void 0,void 0,function(){var p,g,v,m,w,S,N,y,z,O;return n(this,function(E){switch(E.label){case 0:if(!t.fitnessFunction&&t.dataset&&(t.dataset[0].input.length!==this.inputSize||t.dataset[0].output.length!==this.outputSize))throw new Error("Dataset input/output size should be same as network input/output size!");p=0,void 0===t.iterations&&void 0===t.error?(t.iterations=1e3,p=.05):t.iterations?p=-1:t.error&&(p=t.error,t.iterations=0),t.growth=h.getOrDefault(t.growth,1e-4),t.loss=h.getOrDefault(t.loss,u.MSELoss),t.maxNodes=h.getOrDefault(t.maxNodes,1/0),t.maxConnections=h.getOrDefault(t.maxConnections,1/0),t.maxGates=h.getOrDefault(t.maxGates,1/0),t.input=this.inputSize,t.output=this.outputSize,g=Date.now(),t.fitnessFunction||(m=JSON.stringify(t.dataset),w=Object.values(u.ALL_LOSSES).indexOf(null!==(o=t.loss)&&void 0!==o?o:u.MSELoss),v=s.Pool(function(){return i.spawn(new i.Worker("../multithreading/Worker"))},null!==(a=t.threads)&&void 0!==a?a:r.default.cpus().length),t.fitnessFunction=function(o){return e(this,void 0,void 0,function(){var r,i,s,a,u=this;return n(this,function(c){switch(c.label){case 0:for(r=function(o){v.queue(function(r){return e(u,void 0,void 0,function(){var e,i;return n(this,function(n){switch(n.label){case 0:if(void 0===o)throw new ReferenceError;return e=o,[4,r(m,JSON.stringify(o.toJSON()),w)];case 1:if(e.score=-n.sent(),!Number.isFinite(o.score))throw new RangeError;return o.score-=(null!==(i=t.growth)&&void 0!==i?i:1e-4)*(o.nodes.length-o.inputSize-o.outputSize+o.connections.length+o.gates.length),[2]}})})})},i=0,s=o;i<s.length;i++)a=s[i],r(a);return[4,v.completed()];case 1:return c.sent(),[2]}})})}),t.template=this,S=new l.NEAT(t),E.label=1;case 1:return[4,S.evolve()];case 2:if(!(O=E.sent()).score)throw new ReferenceError;N=O.score+t.growth*(O.nodes.length+O.connections.length+O.gates.length-O.inputSize-O.outputSize),(!y||O.score>y)&&(y=O.score,z=O),(null!==(c=t.log)&&void 0!==c?c:0)>0&&S.generation%(null!==(d=t.log)&&void 0!==d?d:0)==0&&console.log("iteration",S.generation,"fitness",O.score,"error",-N),t.schedule&&S.generation%t.schedule.iterations==0&&t.schedule.function(O.score,-N,S.generation),E.label=3;case 3:if(N<-p&&(0===t.iterations||S.generation<(null!==(f=t.iterations)&&void 0!==f?f:0)))return[3,1];E.label=4;case 4:return void 0!==z&&(this.nodes=z.nodes,this.connections=z.connections,this.gates=z.gates,t.clear&&this.clear()),v?[4,v.terminate()]:[3,6];case 5:E.sent(),E.label=6;case 6:return[2,{error:-N,iterations:S.generation,time:Date.now()-g}]}})})},o.prototype.trainEpoch=function(t){for(var e,n,o,r=0,i=0;i<t.dataset.length;i++){var s=t.dataset[i].input,a=t.dataset[i].output,c=(i+1)%(null!==(e=t.batchSize)&&void 0!==e?e:t.dataset.length)==0||i+1===t.dataset.length,d=this.activate(s,{dropoutRate:null!==(n=t.dropoutRate)&&void 0!==n?n:.5});this.propagate(a,{rate:t.trainingRate,momentum:t.momentum,update:c}),r+=(null!==(o=t.loss)&&void 0!==o?o:u.MSELoss)(a,d)}return r/t.dataset.length},o}();exports.Network=g;
+"use strict";
+
+var __assign = this && this.__assign || function () {
+  __assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+    }
+
+    return t;
+  };
+
+  return __assign.apply(this, arguments);
+};
+
+var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
+  function adopt(value) {
+    return value instanceof P ? value : new P(function (resolve) {
+      resolve(value);
+    });
+  }
+
+  return new (P || (P = Promise))(function (resolve, reject) {
+    function fulfilled(value) {
+      try {
+        step(generator.next(value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function rejected(value) {
+      try {
+        step(generator["throw"](value));
+      } catch (e) {
+        reject(e);
+      }
+    }
+
+    function step(result) {
+      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
+    }
+
+    step((generator = generator.apply(thisArg, _arguments || [])).next());
+  });
+};
+
+var __generator = this && this.__generator || function (thisArg, body) {
+  var _ = {
+    label: 0,
+    sent: function () {
+      if (t[0] & 1) throw t[1];
+      return t[1];
+    },
+    trys: [],
+    ops: []
+  },
+      f,
+      y,
+      t,
+      g;
+  return g = {
+    next: verb(0),
+    "throw": verb(1),
+    "return": verb(2)
+  }, typeof Symbol === "function" && (g[Symbol.iterator] = function () {
+    return this;
+  }), g;
+
+  function verb(n) {
+    return function (v) {
+      return step([n, v]);
+    };
+  }
+
+  function step(op) {
+    if (f) throw new TypeError("Generator is already executing.");
+
+    while (_) try {
+      if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+      if (y = 0, t) op = [op[0] & 2, t.value];
+
+      switch (op[0]) {
+        case 0:
+        case 1:
+          t = op;
+          break;
+
+        case 4:
+          _.label++;
+          return {
+            value: op[1],
+            done: false
+          };
+
+        case 5:
+          _.label++;
+          y = op[1];
+          op = [0];
+          continue;
+
+        case 7:
+          op = _.ops.pop();
+
+          _.trys.pop();
+
+          continue;
+
+        default:
+          if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+            _ = 0;
+            continue;
+          }
+
+          if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+            _.label = op[1];
+            break;
+          }
+
+          if (op[0] === 6 && _.label < t[1]) {
+            _.label = t[1];
+            t = op;
+            break;
+          }
+
+          if (t && _.label < t[2]) {
+            _.label = t[2];
+
+            _.ops.push(op);
+
+            break;
+          }
+
+          if (t[2]) _.ops.pop();
+
+          _.trys.pop();
+
+          continue;
+      }
+
+      op = body.call(thisArg, _);
+    } catch (e) {
+      op = [6, e];
+      y = 0;
+    } finally {
+      f = t = 0;
+    }
+
+    if (op[0] & 5) throw op[1];
+    return {
+      value: op[0] ? op[1] : void 0,
+      done: true
+    };
+  }
+};
+
+var __importDefault = this && this.__importDefault || function (mod) {
+  return mod && mod.__esModule ? mod : {
+    "default": mod
+  };
+};
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Network = void 0;
+
+var os_1 = __importDefault(require("os"));
+
+var threads_1 = require("threads");
+
+var dist_1 = require("threads/dist");
+
+require("threads/register");
+
+var NodeType_1 = require("../enums/NodeType");
+
+var Loss_1 = require("../methods/Loss");
+
+var Mutation_1 = require("../methods/Mutation");
+
+var Rate_1 = require("../methods/Rate");
+
+var Utils_1 = require("../methods/Utils");
+
+var NEAT_1 = require("../NEAT");
+
+var Connection_1 = require("./Connection");
+
+var Node_1 = require("./Node");
+/**
+ * Create a neural network
+ *
+ * Networks are easy to create, all you need to specify is an `input` and an `output` size.
+ *
+ * @constructs Network
+ *
+ * @param {number} inputSize Size of input layer AKA neurons in input layer
+ * @param {number} outputSize Size of output layer AKA neurons in output layer
+ *
+ * @prop {number} inputSize Size of input layer AKA neurons in input layer
+ * @prop {number} outputSize Size of output layer AKA neurons in output layer
+ * @prop {Array<Node>} nodes Nodes currently within the network
+ * @prop {Array<Node>} gates Gates within the network
+ * @prop {Array<Connection>} connections Connections within the network
+ */
+
+
+var Network =
+/** @class */
+function () {
+  function Network(inputSize, outputSize) {
+    this.inputSize = inputSize;
+    this.outputSize = outputSize;
+    this.nodes = [];
+    this.connections = new Set();
+    this.gates = [];
+    this.score = undefined; // Create input and output nodes
+
+    for (var i = 0; i < inputSize; i++) {
+      this.nodes.push(new Node_1.Node(NodeType_1.NodeType.INPUT));
+    }
+
+    for (var i = 0; i < outputSize; i++) {
+      this.nodes.push(new Node_1.Node(NodeType_1.NodeType.OUTPUT));
+    } // Connect input and output nodes
+
+
+    for (var i = 0; i < this.inputSize; i++) {
+      for (var j = this.inputSize; j < this.outputSize + this.inputSize; j++) {
+        // https://stats.stackexchange.com/a/248040/147931
+        var weight = (Math.random() - 0.5) * this.inputSize * Math.sqrt(2 / this.inputSize);
+        this.connect(this.nodes[i], this.nodes[j], weight);
+      }
+    }
+  }
+  /**
+   * Convert a json object to a network
+   *
+   * @param {{input:{number},output:{number},dropout:{number},nodes:Array<object>,connections:Array<object>}} json A network represented as a json object
+   *
+   * @returns {Network} Network A reconstructed network
+   *
+   */
+
+
+  Network.fromJSON = function (json) {
+    var network = new Network(json.inputSize, json.outputSize);
+    network.nodes = [];
+    network.connections.clear();
+    json.nodes.map(function (nodeJSON) {
+      return new Node_1.Node().fromJSON(nodeJSON);
+    }).forEach(function (node) {
+      return network.nodes[node.index] = node;
+    });
+    json.connections.forEach(function (jsonConnection) {
+      var connection = network.connect(network.nodes[jsonConnection.fromIndex], network.nodes[jsonConnection.toIndex], jsonConnection.weight);
+
+      if (jsonConnection.gateNodeIndex != null) {
+        network.addGate(network.nodes[jsonConnection.gateNodeIndex], connection);
+      }
+    });
+    return network;
+  };
+  /**
+   * Create an offspring from two parent networks.
+   *
+   * Networks are not required to have the same size, however input and output size should be the same!
+   *
+   * @todo Add custom [crossover](crossover) method customization
+   *
+   * @param {Network} network1 First parent network
+   * @param {Network} network2 Second parent network
+   * @param {boolean} [equal] Flag to indicate equally fit Networks
+   *
+   * @returns {Network} New network created from mixing parent networks
+   */
+
+
+  Network.crossOver = function (network1, network2, equal) {
+    var _a, _b;
+
+    if (network1.inputSize !== network2.inputSize || network1.outputSize !== network2.outputSize) {
+      throw new Error("Networks don`t have the same input/output size!");
+    } // Initialise offspring
+
+
+    var offspring = new Network(network1.inputSize, network1.outputSize);
+    offspring.connections.clear(); // clear
+
+    offspring.nodes = []; // clear
+    // Save scores and create a copy
+
+    var score1 = (_a = network1.score) !== null && _a !== void 0 ? _a : 0;
+    var score2 = (_b = network2.score) !== null && _b !== void 0 ? _b : 0; // Determine offspring node size
+
+    var offspringSize;
+
+    if (equal || score1 === score2) {
+      var max = Math.max(network1.nodes.length, network2.nodes.length);
+      var min = Math.min(network1.nodes.length, network2.nodes.length);
+      offspringSize = Utils_1.randInt(min, max + 1); // [min,max]
+    } else if (score1 > score2) {
+      offspringSize = network1.nodes.length;
+    } else {
+      offspringSize = network2.nodes.length;
+    }
+
+    var inputSize = network1.inputSize;
+    var outputSize = network1.outputSize; // set node indices
+
+    for (var i = 0; i < network1.nodes.length; i++) {
+      network1.nodes[i].index = i;
+    } // set node indices
+
+
+    for (var i = 0; i < network2.nodes.length; i++) {
+      network2.nodes[i].index = i;
+    } // Assign nodes from parents to offspring
+
+
+    for (var i = 0; i < offspringSize; i++) {
+      var chosenNode = void 0;
+      var chosenNodeType = null; // decide what type of node is needed first check for input and output nodes and fill up with hidden nodes
+
+      if (i < inputSize) {
+        // pick input node
+        chosenNodeType = NodeType_1.NodeType.INPUT;
+        var sourceNetwork = Utils_1.randBoolean() ? network1 : network2;
+        var inputNumber = -1;
+        var j = -1;
+
+        while (inputNumber < i) {
+          if (j++ >= sourceNetwork.nodes.length) {
+            throw RangeError('something is wrong with the size of the input');
+          }
+
+          if (sourceNetwork.nodes[j].isInputNode()) {
+            inputNumber++;
+          }
+        }
+
+        chosenNode = sourceNetwork.nodes[j];
+      } else if (i < inputSize + outputSize) {
+        // pick output node
+        chosenNodeType = NodeType_1.NodeType.OUTPUT;
+        var sourceNetwork = Utils_1.randBoolean() ? network1 : network2;
+        var outputNumber = -1;
+        var j = -1;
+
+        while (outputNumber < i - inputSize) {
+          j++;
+
+          if (j >= sourceNetwork.nodes.length) {
+            throw RangeError('something is wrong with the size of the output');
+          }
+
+          if (sourceNetwork.nodes[j].isOutputNode()) {
+            outputNumber++;
+          }
+        }
+
+        chosenNode = sourceNetwork.nodes[j];
+      } else {
+        // pick hidden node
+        chosenNodeType = NodeType_1.NodeType.HIDDEN;
+        var sourceNetwork = void 0;
+
+        if (i >= network1.nodes.length) {
+          sourceNetwork = network2;
+        } else if (i >= network2.nodes.length) {
+          sourceNetwork = network1;
+        } else {
+          sourceNetwork = Utils_1.randBoolean() ? network1 : network2;
+        }
+
+        chosenNode = Utils_1.pickRandom(sourceNetwork.nodes);
+      }
+
+      var newNode = new Node_1.Node(chosenNodeType);
+      newNode.bias = chosenNode.bias;
+      newNode.squash = chosenNode.squash;
+      offspring.nodes.push(newNode);
+    } // Create arrays of connection genes
+
+
+    var n1connections = [];
+    var n2connections = []; // Add the connections of network 1
+
+    network1.connections.forEach(function (connection) {
+      n1connections[Connection_1.Connection.innovationID(connection.from.index, connection.to.index)] = connection.toJSON();
+    }); // Add the connections of network 2
+
+    network2.connections.forEach(function (connection) {
+      n2connections[Connection_1.Connection.innovationID(connection.from.index, connection.to.index)] = connection.toJSON();
+    }); // Split common conn genes from disjoint or excess conn genes
+
+    var connections = [];
+    var keys1 = Object.keys(n1connections);
+    var keys2 = Object.keys(n2connections);
+
+    for (var i = keys1.length - 1; i >= 0; i--) {
+      if (n2connections[parseInt(keys1[i])] !== undefined) {
+        connections.push(Utils_1.randBoolean() ? n1connections[parseInt(keys1[i])] : n2connections[parseInt(keys1[i])]);
+        n2connections[parseInt(keys1[i])] = undefined;
+      } else if (score1 >= score2 || equal) {
+        connections.push(n1connections[parseInt(keys1[i])]);
+      }
+    } // Excess/disjoint gene
+
+
+    if (score2 >= score1 || equal) {
+      keys2.map(function (key) {
+        return parseInt(key);
+      }) // convert to numbers
+      .map(function (key) {
+        return n2connections[key];
+      }) // get the connection
+      .filter(function (conn) {
+        return conn !== undefined;
+      }) // filter out undefined connections
+      .forEach(function (conn) {
+        return connections.push(conn);
+      }); // add the filtered connections
+    } // Add common conn genes uniformly
+
+
+    connections.forEach(function (connectionJSON) {
+      if (connectionJSON !== undefined && connectionJSON.toIndex < offspringSize && connectionJSON.fromIndex < offspringSize) {
+        var from = offspring.nodes[connectionJSON.fromIndex];
+        var to = offspring.nodes[connectionJSON.toIndex];
+        var connection = offspring.connect(from, to, connectionJSON.weight);
+
+        if (connectionJSON.gateNodeIndex !== null && connectionJSON.gateNodeIndex < offspringSize) {
+          offspring.addGate(offspring.nodes[connectionJSON.gateNodeIndex], connection);
+        }
+      }
+    });
+    return offspring;
+  };
+  /**
+   * Returns a copy of Network.
+   *
+   * @returns {Network} Returns an identical network
+   */
+
+
+  Network.prototype.copy = function () {
+    return Network.fromJSON(this.toJSON());
+  };
+  /**
+   * Connects a Node to another Node or Group in the network
+   *
+   * @param {Node} from The source Node
+   * @param {Node} to The destination Node or Group
+   * @param {number} [weight=0] An initial weight for the connections to be formed
+   *
+   * @returns {Connection[]} An array of the formed connections
+   */
+
+
+  Network.prototype.connect = function (from, to, weight) {
+    if (weight === void 0) {
+      weight = 0;
+    }
+
+    var connection = from.connect(to, weight); // run node-level connect
+
+    this.connections.add(connection); // add it to the array
+
+    return connection;
+  };
+  /**
+   * Activates the network
+   *
+   * It will activate all the nodes in activation order and produce an output.
+   *
+   * @param {number[]} [input] Input values to activate nodes with
+   * @param options
+   * @returns {number[]} Squashed output values
+   */
+
+
+  Network.prototype.activate = function (input, options) {
+    if (options === void 0) {
+      options = {};
+    }
+
+    if (input.length !== this.inputSize) {
+      throw new RangeError("Input size of dataset is different to network input size!");
+    } // get default value if no value is given
+
+
+    options.dropoutRate = Utils_1.getOrDefault(options.dropoutRate, 0);
+    options.trace = Utils_1.getOrDefault(options.trace, true);
+    this.nodes.filter(function (node) {
+      return node.isInputNode();
+    }) // only input nodes
+    .forEach(function (node, index) {
+      return node.activate(input[index], options.trace);
+    }); // activate them with the input
+
+    this.nodes.filter(function (node) {
+      return node.isHiddenNode();
+    }) // only hidden nodes
+    .forEach(function (node) {
+      if (options.dropoutRate) {
+        node.mask = Math.random() >= options.dropoutRate ? 1 : 0;
+      }
+
+      node.activate(undefined, options.trace); // activate them
+    });
+    return this.nodes.filter(function (node) {
+      return node.isOutputNode();
+    }) // only output nodes
+    .map(function (node) {
+      return node.activate(undefined, options.trace);
+    }); // map them to there activation value will give the network's output
+  };
+  /**
+   * Backpropagate the network
+   *
+   * This function allows you to teach the network. If you want to do more complex training, use the `network.train()` function.
+   *
+   * @param {number[]} target Ideal values of the previous activate. Will use the difference to improve the weights
+   * @param options More option for propagation
+   */
+
+
+  Network.prototype.propagate = function (target, options) {
+    if (options === void 0) {
+      options = {};
+    } // get default value if value isn't given
+
+
+    options.rate = Utils_1.getOrDefault(options.rate, 0.3);
+    options.momentum = Utils_1.getOrDefault(options.momentum, 0);
+    options.update = Utils_1.getOrDefault(options.update, false);
+
+    if (target.length !== this.outputSize) {
+      throw new Error("Output target length should match network output length");
+    } // Backpropagation: output -> hidden -> input
+    // propagate through the output nodes
+
+
+    this.nodes.filter(function (node) {
+      return node.isOutputNode();
+    }) // only output nodes
+    .forEach(function (node, index) {
+      return node.propagate(target[index], options);
+    }); // propagate
+    // propagate backwards through the hidden nodes
+
+    for (var i = this.nodes.length - 1; i >= 0; i--) {
+      if (this.nodes[i].isHiddenNode()) {
+        // only hidden nodes
+        this.nodes[i].propagate(undefined, options);
+      }
+    } // propagate through the input nodes
+
+
+    this.nodes.filter(function (node) {
+      return node.isInputNode();
+    }) // only input nodes
+    .forEach(function (node) {
+      return node.propagate(undefined, options);
+    }); // propagate
+  };
+  /**
+   * Clear the context of the network
+   */
+
+
+  Network.prototype.clear = function () {
+    this.nodes.forEach(function (node) {
+      return node.clear();
+    });
+  };
+  /**
+   * Removes the connection of the `from` node to the `to` node
+   *
+   * @param {Node} from Source node
+   * @param {Node} to Destination node
+   */
+
+
+  Network.prototype.disconnect = function (from, to) {
+    var _this = this; // remove the connection network-level
+
+
+    this.connections.forEach(function (conn) {
+      if (conn.from === from && conn.to === to) {
+        if (conn.gateNode !== null) {
+          _this.removeGate(conn); // remove possible gate
+
+        }
+
+        _this.connections.delete(conn); // remove connection from array
+
+      }
+    }); // disconnect node-level
+
+    return from.disconnect(to);
+  };
+  /**
+   * Makes a network node gate a connection
+   *
+   * @param {Node} node Gating node
+   * @param {Connection} connection Connection to gate with node
+   */
+
+
+  Network.prototype.addGate = function (node, connection) {
+    if (this.nodes.indexOf(node) === -1) {
+      throw new ReferenceError("This node is not part of the network!");
+    } else if (connection.gateNode != null) {
+      return;
+    }
+
+    node.addGate(connection);
+    this.gates.push(connection);
+  };
+  /**
+   * Remove the gate of a connection.
+   *
+   * @param {Connection} connection Connection to remove gate from
+   */
+
+
+  Network.prototype.removeGate = function (connection) {
+    if (!this.gates.includes(connection)) {
+      throw new Error("This connection is not gated!");
+    }
+
+    Utils_1.removeFromArray(this.gates, connection);
+
+    if (connection.gateNode != null) {
+      connection.gateNode.removeGate(connection);
+    }
+  };
+  /**
+   * Removes a node from a network, all its connections will be redirected. If it gates a connection, the gate will be removed.
+   *
+   * @param {Node} node Node to remove from the network
+   * @param keepGates
+   */
+
+
+  Network.prototype.removeNode = function (node, keepGates) {
+    var _this = this;
+
+    if (keepGates === void 0) {
+      keepGates = new Mutation_1.SubNodeMutation().keepGates;
+    }
+
+    if (!this.nodes.includes(node)) {
+      throw new ReferenceError("This node does not exist in the network!");
+    }
+
+    this.disconnect(node, node); // remove self connection
+
+    var inputs = []; // keep track
+
+    var gates = []; // keep track
+
+    var outputs = []; // keep track
+
+    var connections = []; // keep track
+    // read all inputs from node and keep track of the nodes that gate the incoming connection
+
+    node.incoming.forEach(function (connection) {
+      if (keepGates && connection.gateNode !== null && connection.gateNode !== node) {
+        gates.push(connection.gateNode);
+      }
+
+      inputs.push(connection.from);
+
+      _this.disconnect(connection.from, node);
+    }); // read all outputs from node and keep track of the nodes that gate the outgoing connection
+
+    node.outgoing.forEach(function (connection) {
+      if (keepGates && connection.gateNode !== null && connection.gateNode !== node) {
+        gates.push(connection.gateNode);
+      }
+
+      outputs.push(connection.to);
+
+      _this.disconnect(node, connection.to);
+    }); // add all connections the node has
+
+    inputs.forEach(function (input) {
+      outputs.forEach(function (output) {
+        if (!input.isProjectingTo(output)) {
+          connections.push(_this.connect(input, output));
+        }
+      });
+    }); // as long as there are gates and connections
+
+    while (gates.length > 0 && connections.length > 0) {
+      var gate = gates.shift(); // take a gate node and remove it from the array
+
+      if (gate === undefined) {
+        continue;
+      }
+
+      var connection = Utils_1.pickRandom(connections); // take a random connection
+
+      this.addGate(gate, connection); // gate the connection with the gate node
+
+      Utils_1.removeFromArray(connections, connection); // remove the connection from the array
+    } // remove every gate the node has
+
+
+    node.gated.forEach(this.removeGate);
+    Utils_1.removeFromArray(this.nodes, node); // remove the node from the nodes array
+  };
+  /**
+   * Mutates the network with the given method.
+   *
+   * @param {Mutation} method [Mutation method](mutation)
+   * @param {object} options
+   * @param {number} [options.maxNodes]
+   * @param {number} [options.maxConnections]
+   * @param {number} [options.maxGates] Maximum amount of Gates a network can grow to
+   */
+
+
+  Network.prototype.mutate = function (method, options) {
+    method.mutate(this, options);
+  };
+  /**
+   * Selects a random mutation method and returns a mutated copy of the network. Warning! Mutates network directly.
+   *
+   * @param {Mutation[]} [allowedMethods=methods.mutation.ALL] An array of [Mutation methods](mutation) to automatically pick from
+   * @param {object} options
+   * @param {number} [options.maxNodes] Maximum amount of [Nodes](node) a network can grow to
+   * @param {number} [options.maxConnections] Maximum amount of [Connections](connection) a network can grow to
+   * @param {number} [options.maxGates] Maximum amount of Gates a network can grow to
+   */
+
+
+  Network.prototype.mutateRandom = function (allowedMethods, options) {
+    if (allowedMethods === void 0) {
+      allowedMethods = Mutation_1.ALL_MUTATIONS;
+    }
+
+    if (options === void 0) {
+      options = {};
+    }
+
+    if (allowedMethods.length === 0) {
+      return;
+    } // mutate the network with a random allowed mutation
+
+
+    this.mutate(Utils_1.pickRandom(allowedMethods), options);
+  };
+  /**
+   * Train the given data to this network
+   *
+   * @param {TrainOptions} options Options used to train network
+   *
+   * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance
+   */
+
+
+  Network.prototype.train = function (options) {
+    var _a;
+
+    if (!options.dataset || options.dataset[0].input.length !== this.inputSize || options.dataset[0].output.length !== this.outputSize) {
+      throw new Error("Dataset input/output size should be same as network input/output size!");
+    } // Use the default values, if no value is given
+
+
+    options.iterations = Utils_1.getOrDefault(options.iterations, -1);
+    options.error = Utils_1.getOrDefault(options.error, -1);
+    options.loss = Utils_1.getOrDefault(options.loss, Loss_1.MSELoss);
+    options.dropout = Utils_1.getOrDefault(options.dropout, 0);
+    options.momentum = Utils_1.getOrDefault(options.momentum, 0);
+    options.batchSize = Math.min(options.dataset.length, Utils_1.getOrDefault(options.batchSize, options.dataset.length));
+    var baseRate = Utils_1.getOrDefault(options.rate, 0.3);
+    options.ratePolicy = Utils_1.getOrDefault(options.ratePolicy, new Rate_1.FixedRate(baseRate));
+    options.log = Utils_1.getOrDefault(options.log, NaN);
+    var start = Date.now();
+
+    if (options.iterations <= 0 && options.error <= 0) {
+      throw new Error("At least one of the following options must be specified: error, iterations");
+    } // Split into trainingSet and testSet if cross validation is enabled
+
+
+    var trainingSetSize;
+    var trainingSet;
+    var testSet;
+
+    if (options.crossValidateTestSize && options.crossValidateTestSize > 0) {
+      trainingSetSize = Math.ceil((1 - options.crossValidateTestSize) * options.dataset.length);
+      trainingSet = options.dataset.slice(0, trainingSetSize);
+      testSet = options.dataset.slice(trainingSetSize);
+    } else {
+      trainingSet = options.dataset;
+      testSet = [];
+    }
+
+    var currentTrainingRate;
+    var iterationCount = 0;
+    var error = 1; // train until the target error is reached or the target iterations are reached
+
+    while (error > options.error && (options.iterations <= 0 || iterationCount < options.iterations)) {
+      iterationCount++; // update the rate according to the rate policy
+
+      currentTrainingRate = options.ratePolicy.calc(iterationCount); // train a single epoch
+
+      var trainError = this.trainEpoch(__assign(__assign({}, options), {
+        dataset: trainingSet,
+        trainingRate: currentTrainingRate
+      }));
+
+      if (!Number.isFinite(trainError)) {
+        throw new RangeError();
+      }
+
+      if (options.clear) {
+        this.clear();
+      } // Run test with the testSet, if cross validation is enabled
+
+
+      if (options.crossValidateTestSize) {
+        error = this.test(testSet, options.loss);
+
+        if (options.clear) {
+          this.clear();
+        }
+      } else {
+        error = trainError;
+      }
+
+      if ((_a = options.shuffle) !== null && _a !== void 0 ? _a : false) {
+        Utils_1.shuffle(options.dataset);
+      }
+
+      if (options.log > 0 && iterationCount % options.log === 0) {
+        console.log("iteration number", iterationCount, "error", error, "training rate", currentTrainingRate);
+      }
+
+      if (options.schedule && iterationCount % options.schedule.iterations === 0) {
+        options.schedule.function(error, iterationCount);
+      }
+    }
+
+    if (options.clear) {
+      this.clear();
+    }
+
+    return {
+      error: error,
+      iterations: iterationCount,
+      time: Date.now() - start
+    };
+  };
+  /**
+   * Tests a set and returns the error and elapsed time
+   *
+   * @param {Array<{input:number[],output:number[]}>} dataset A set of input values and ideal output values to test the network against
+   * @param {lossType} [loss=MSELoss] The [loss function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
+   *
+   * @returns {number} A summary object of the network's performance
+   */
+
+
+  Network.prototype.test = function (dataset, loss) {
+    if (loss === void 0) {
+      loss = Loss_1.MSELoss;
+    }
+
+    var error = 0;
+
+    for (var _i = 0, dataset_1 = dataset; _i < dataset_1.length; _i++) {
+      var entry = dataset_1[_i];
+      var input = entry.input;
+      var target = entry.output;
+      var output = this.activate(input, {
+        trace: false
+      });
+      error += loss(target, output);
+    }
+
+    return error / dataset.length;
+  };
+  /**
+   * Convert the network to a json object
+   *
+   * @returns {NetworkJSON} The network represented as a json object
+   */
+
+
+  Network.prototype.toJSON = function () {
+    var json = {
+      nodes: [],
+      connections: [],
+      inputSize: this.inputSize,
+      outputSize: this.outputSize
+    }; // set node indices
+
+    for (var i = 0; i < this.nodes.length; i++) {
+      this.nodes[i].index = i;
+    } // convert all nodes to json and add the to the json object
+
+
+    this.nodes.forEach(function (node) {
+      json.nodes.push(node.toJSON());
+
+      if (node.selfConnection.weight !== 0) {
+        // if there is a self connection
+        // add it to the json object
+        json.connections.push(node.selfConnection.toJSON());
+      }
+    });
+    this.connections.forEach(function (conn) {
+      json.connections.push(conn.toJSON());
+    });
+    return json;
+  };
+  /**
+   * Evolves the network to reach a lower error on a dataset using the [NEAT algorithm](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf)
+   *
+   * If both `iterations` and `error` options are unset, evolve will default to `iterations` as an end condition.
+   *
+   * @param {object} [options] Configuration options
+   *
+   * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance. <br /> Properties include: `error` - error of the best genome, `iterations` - generations used to evolve networks, `time` - clock time elapsed while evolving
+   */
+
+
+  Network.prototype.evolve = function (options) {
+    var _a, _b, _c, _d, _e;
+
+    if (options === void 0) {
+      options = {};
+    }
+
+    return __awaiter(this, void 0, void 0, function () {
+      var targetError, start, workerPool, serializedDataSet_1, lossIndex_1, neat, error, bestFitness, bestGenome, fittest;
+      return __generator(this, function (_f) {
+        switch (_f.label) {
+          case 0:
+            if (!options.fitnessFunction && options.dataset && (options.dataset[0].input.length !== this.inputSize || options.dataset[0].output.length !== this.outputSize)) {
+              throw new Error("Dataset input/output size should be same as network input/output size!");
+            }
+
+            targetError = 0;
+
+            if (typeof options.iterations === "undefined" && typeof options.error === "undefined") {
+              options.iterations = 1000;
+              targetError = 0.05;
+            } else if (options.iterations) {
+              targetError = -1; // run until iterations
+            } else if (options.error) {
+              targetError = options.error;
+              options.iterations = 0; // run until error
+            } // set options to default if necessary
+
+
+            options.growth = Utils_1.getOrDefault(options.growth, 0.0001);
+            options.loss = Utils_1.getOrDefault(options.loss, Loss_1.MSELoss);
+            options.maxNodes = Utils_1.getOrDefault(options.maxNodes, Infinity);
+            options.maxConnections = Utils_1.getOrDefault(options.maxConnections, Infinity);
+            options.maxGates = Utils_1.getOrDefault(options.maxGates, Infinity);
+            options.input = this.inputSize;
+            options.output = this.outputSize;
+            start = Date.now();
+
+            if (!options.fitnessFunction) {
+              serializedDataSet_1 = JSON.stringify(options.dataset);
+              lossIndex_1 = Object.values(Loss_1.ALL_LOSSES).indexOf((_a = options.loss) !== null && _a !== void 0 ? _a : Loss_1.MSELoss); // init a pool of workers
+
+              workerPool = dist_1.Pool(function () {
+                return threads_1.spawn(new threads_1.Worker("../multithreading/Worker"));
+              }, (_b = options.threads) !== null && _b !== void 0 ? _b : os_1.default.cpus().length);
+
+              options.fitnessFunction = function (population) {
+                return __awaiter(this, void 0, void 0, function () {
+                  var _loop_1, _i, population_1, genome;
+
+                  var _this = this;
+
+                  return __generator(this, function (_a) {
+                    switch (_a.label) {
+                      case 0:
+                        _loop_1 = function (genome) {
+                          // add a task to the workerPool's queue
+                          workerPool.queue(function (test) {
+                            return __awaiter(_this, void 0, void 0, function () {
+                              var _a;
+
+                              var _b;
+
+                              return __generator(this, function (_c) {
+                                switch (_c.label) {
+                                  case 0:
+                                    if (genome === undefined) {
+                                      throw new ReferenceError();
+                                    } // test the genome
+
+
+                                    _a = genome;
+                                    return [4
+                                    /*yield*/
+                                    , test(serializedDataSet_1, JSON.stringify(genome.toJSON()), lossIndex_1)];
+
+                                  case 1:
+                                    // test the genome
+                                    _a.score = -_c.sent();
+
+                                    if (!Number.isFinite(genome.score)) {
+                                      throw new RangeError();
+                                    } // subtract growth value
+
+
+                                    genome.score -= ((_b = options.growth) !== null && _b !== void 0 ? _b : 0.0001) * (genome.nodes.length - genome.inputSize - genome.outputSize + genome.connections.size + genome.gates.length);
+                                    return [2
+                                    /*return*/
+                                    ];
+                                }
+                              });
+                            });
+                          });
+                        };
+
+                        for (_i = 0, population_1 = population; _i < population_1.length; _i++) {
+                          genome = population_1[_i];
+
+                          _loop_1(genome);
+                        }
+
+                        return [4
+                        /*yield*/
+                        , workerPool.completed()];
+
+                      case 1:
+                        _a.sent(); // wait until every task is done
+
+
+                        return [2
+                        /*return*/
+                        ];
+                    }
+                  });
+                });
+              };
+            }
+
+            options.template = this; // set this network as template for first generation
+
+            neat = new NEAT_1.NEAT(options);
+            _f.label = 1;
+
+          case 1:
+            return [4
+            /*yield*/
+            , neat.evolve()];
+
+          case 2:
+            fittest = _f.sent();
+
+            if (!fittest.score) {
+              throw new ReferenceError();
+            } // add the growth value back to get the real error
+
+
+            error = fittest.score + options.growth * (fittest.nodes.length + fittest.connections.size + fittest.gates.length - fittest.inputSize - fittest.outputSize);
+
+            if (!bestFitness || fittest.score > bestFitness) {
+              bestFitness = fittest.score;
+              bestGenome = fittest;
+            }
+
+            if (((_c = options.log) !== null && _c !== void 0 ? _c : 0) > 0 && neat.generation % ((_d = options.log) !== null && _d !== void 0 ? _d : 0) === 0) {
+              console.log("iteration", neat.generation, "fitness", fittest.score, "error", -error);
+            }
+
+            if (options.schedule && neat.generation % options.schedule.iterations === 0) {
+              options.schedule.function(fittest.score, -error, neat.generation);
+            }
+
+            _f.label = 3;
+
+          case 3:
+            if (error < -targetError && (options.iterations === 0 || neat.generation < ((_e = options.iterations) !== null && _e !== void 0 ? _e : 0))) return [3
+            /*break*/
+            , 1];
+            _f.label = 4;
+
+          case 4:
+            if (bestGenome !== undefined) {
+              // set this network to the fittest from NEAT
+              this.nodes = bestGenome.nodes;
+              this.connections = bestGenome.connections;
+              this.gates = bestGenome.gates;
+
+              if (options.clear) {
+                this.clear();
+              }
+            }
+
+            if (!workerPool) return [3
+            /*break*/
+            , 6];
+            return [4
+            /*yield*/
+            , workerPool.terminate()];
+
+          case 5:
+            _f.sent(); // stop all processes
+
+
+            _f.label = 6;
+
+          case 6:
+            return [2
+            /*return*/
+            , {
+              error: -error,
+              iterations: neat.generation,
+              time: Date.now() - start
+            }];
+        }
+      });
+    });
+  };
+  /**
+   * Performs one training epoch and returns the error - this is a private function used in `self.train`
+   *
+   * @private
+   *
+   * @returns {number}
+   */
+
+
+  Network.prototype.trainEpoch = function (options) {
+    var _a, _b, _c;
+
+    var errorSum = 0;
+
+    for (var i = 0; i < options.dataset.length; i++) {
+      var input = options.dataset[i].input;
+      var correctOutput = options.dataset[i].output;
+      var update = (i + 1) % ((_a = options.batchSize) !== null && _a !== void 0 ? _a : options.dataset.length) === 0 || i + 1 === options.dataset.length;
+      var output = this.activate(input, {
+        dropoutRate: (_b = options.dropoutRate) !== null && _b !== void 0 ? _b : 0.5
+      });
+      this.propagate(correctOutput, {
+        rate: options.trainingRate,
+        momentum: options.momentum,
+        update: update
+      });
+      errorSum += ((_c = options.loss) !== null && _c !== void 0 ? _c : Loss_1.MSELoss)(correctOutput, output);
+    }
+
+    return errorSum / options.dataset.length;
+  };
+
+  return Network;
+}();
+
+exports.Network = Network;
 },{"../enums/NodeType":"../src/enums/NodeType.js","../methods/Loss":"../src/methods/Loss.js","../methods/Mutation":"../src/methods/Mutation.js","../methods/Rate":"../src/methods/Rate.js","../methods/Utils":"../src/methods/Utils.js","../NEAT":"../src/NEAT.js","./Connection":"../src/architecture/Connection.js","./Node":"../src/architecture/Node.js"}],"../src/architecture/Architect.js":[function(require,module,exports) {
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.Architect=void 0;var e=require("./Layers/CoreLayers/InputLayer"),r=require("./Layers/CoreLayers/OutputLayer"),t=require("./Layers/Layer"),n=require("./Network"),s=function(){function s(){this.layers=[]}return s.prototype.addLayer=function(e,r){var t=null!=r?r:e.getDefaultIncomingConnectionType();if(!e.connectionTypeisAllowed(t))throw new ReferenceError("Connection type "+t+" is not allowed at layer "+e.constructor.name);return this.layers.push({layer:e,incomingConnectionType:t}),this},s.prototype.buildModel=function(){var s,a,o,y,l;if(!(this.layers[0].layer instanceof e.InputLayer))throw new ReferenceError("First layer has to be a InputLayer! Currently is: "+this.layers[0].layer.constructor.name);if(!(this.layers[this.layers.length-1].layer instanceof r.OutputLayer))throw new ReferenceError("Last layer has to be a OutputLayer! Currently is: "+this.layers[this.layers.length-1].layer.constructor.name);var i=this.layers[0].layer.nodes.length,h=this.layers[this.layers.length-1].layer.nodes.length,c=new n.Network(i,h);c.nodes=[],c.connections=[];for(var u=0;u<this.layers.length-1;u++)(s=c.connections).push.apply(s,t.Layer.connect(this.layers[u].layer,this.layers[u+1].layer,this.layers[u+1].incomingConnectionType)),(a=c.nodes).push.apply(a,this.layers[u].layer.nodes),(o=c.connections).push.apply(o,this.layers[u].layer.connections),(y=c.gates).push.apply(y,this.layers[u].layer.gates);return(l=c.nodes).push.apply(l,this.layers[this.layers.length-1].layer.nodes),c},s}();exports.Architect=s;
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Architect = void 0;
+
+var InputLayer_1 = require("./Layers/CoreLayers/InputLayer");
+
+var OutputLayer_1 = require("./Layers/CoreLayers/OutputLayer");
+
+var Layer_1 = require("./Layers/Layer");
+
+var Network_1 = require("./Network");
+/**
+ * Architect constructs multilayer networks with various types of layers.
+ */
+
+
+var Architect =
+/** @class */
+function () {
+  function Architect() {
+    this.layers = [];
+  }
+  /**
+   * Adds a layer to the architect.
+   *
+   * @param layer The layer
+   * @param incomingConnectionType The incoming connection to this layer
+   * @returns this object to function as builder class
+   */
+
+
+  Architect.prototype.addLayer = function (layer, incomingConnectionType) {
+    var connectionType = incomingConnectionType !== null && incomingConnectionType !== void 0 ? incomingConnectionType : layer.getDefaultIncomingConnectionType();
+
+    if (!layer.connectionTypeisAllowed(connectionType)) {
+      throw new ReferenceError("Connection type " + connectionType + " is not allowed at layer " + layer.constructor.name);
+    }
+
+    this.layers.push({
+      layer: layer,
+      incomingConnectionType: connectionType
+    });
+    return this; // function as builder class
+  };
+  /**
+   * Build the network from the layers added to the architect.
+   *
+   * @returns the constructed network
+   */
+
+
+  Architect.prototype.buildModel = function () {
+    var _a, _b, _c;
+
+    if (!(this.layers[0].layer instanceof InputLayer_1.InputLayer)) {
+      throw new ReferenceError("First layer has to be a InputLayer! Currently is: " + this.layers[0].layer.constructor.name);
+    }
+
+    if (!(this.layers[this.layers.length - 1].layer instanceof OutputLayer_1.OutputLayer)) {
+      throw new ReferenceError("Last layer has to be a OutputLayer! Currently is: " + this.layers[this.layers.length - 1].layer.constructor.name);
+    }
+
+    var inputSize = this.layers[0].layer.nodes.length;
+    var outputSize = this.layers[this.layers.length - 1].layer.nodes.length;
+    var network = new Network_1.Network(inputSize, outputSize);
+    network.nodes = [];
+    network.connections.clear();
+
+    for (var i = 0; i < this.layers.length - 1; i++) {
+      Layer_1.Layer.connect(this.layers[i].layer, this.layers[i + 1].layer, this.layers[i + 1].incomingConnectionType).forEach(function (conn) {
+        return network.connections.add(conn);
+      });
+
+      (_a = network.nodes).push.apply(_a, this.layers[i].layer.nodes);
+
+      this.layers[i].layer.connections.forEach(function (conn) {
+        return network.connections.add(conn);
+      });
+
+      (_b = network.gates).push.apply(_b, this.layers[i].layer.gates);
+    }
+
+    (_c = network.nodes).push.apply(_c, this.layers[this.layers.length - 1].layer.nodes);
+
+    return network;
+  };
+
+  return Architect;
+}();
+
+exports.Architect = Architect;
 },{"./Layers/CoreLayers/InputLayer":"../src/architecture/Layers/CoreLayers/InputLayer.js","./Layers/CoreLayers/OutputLayer":"../src/architecture/Layers/CoreLayers/OutputLayer.js","./Layers/Layer":"../src/architecture/Layers/Layer.js","./Network":"../src/architecture/Network.js"}],"../src/architecture/Layers/CoreLayers/DenseLayer.js":[function(require,module,exports) {
-"use strict";var e=this&&this.__extends||function(){var e=function(t,o){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,t){e.__proto__=t}||function(e,t){for(var o in t)t.hasOwnProperty(o)&&(e[o]=t[o])})(t,o)};return function(t,o){function n(){this.constructor=t}e(t,o),t.prototype=null===o?Object.create(o):(n.prototype=o.prototype,new n)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.DenseLayer=void 0;var t=require("../../../enums/ConnectionType"),o=require("../../../enums/NodeType"),n=require("../../../methods/Activation"),r=require("../../Node"),i=require("../Layer"),u=function(i){function u(e,t){var u,p;void 0===t&&(t={});for(var c=i.call(this,e)||this,s=null!==(p=t.activationType)&&void 0!==p?p:n.LogisticActivation,a=0;a<e;a++)c.inputNodes.add(new r.Node(o.NodeType.HIDDEN).setActivationType(s));return c.outputNodes=c.inputNodes,(u=c.nodes).push.apply(u,Array.from(c.inputNodes)),c}return e(u,i),u.prototype.connectionTypeisAllowed=function(e){return!0},u.prototype.getDefaultIncomingConnectionType=function(){return t.ConnectionType.ALL_TO_ALL},u}(i.Layer);exports.DenseLayer=u;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.DenseLayer = void 0;
+
+var ConnectionType_1 = require("../../../enums/ConnectionType");
+
+var NodeType_1 = require("../../../enums/NodeType");
+
+var Activation_1 = require("../../../methods/Activation");
+
+var Node_1 = require("../../Node");
+
+var Layer_1 = require("../Layer");
+/**
+ * Dense layer
+ */
+
+
+var DenseLayer =
+/** @class */
+function (_super) {
+  __extends(DenseLayer, _super);
+
+  function DenseLayer(outputSize, options) {
+    var _a;
+
+    if (options === void 0) {
+      options = {};
+    }
+
+    var _b;
+
+    var _this = _super.call(this, outputSize) || this;
+
+    var activation = (_b = options.activationType) !== null && _b !== void 0 ? _b : Activation_1.LogisticActivation;
+
+    for (var i = 0; i < outputSize; i++) {
+      _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setActivationType(activation));
+    }
+
+    _this.outputNodes = _this.inputNodes;
+
+    (_a = _this.nodes).push.apply(_a, Array.from(_this.inputNodes));
+
+    return _this;
+  }
+  /**
+   * Checks if a given connection type is allowed on this layer.
+   *
+   * @param type the type to check
+   *
+   * @return Is this connection type allowed?
+   */
+
+
+  DenseLayer.prototype.connectionTypeisAllowed = function (type) {
+    return true;
+  };
+  /**
+   * Gets the default connection type for a incoming connection to this layer.
+   *
+   * @returns the default incoming connection
+   */
+
+
+  DenseLayer.prototype.getDefaultIncomingConnectionType = function () {
+    return ConnectionType_1.ConnectionType.ALL_TO_ALL;
+  };
+
+  return DenseLayer;
+}(Layer_1.Layer);
+
+exports.DenseLayer = DenseLayer;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Nodes/DropoutNode.js":[function(require,module,exports) {
-"use strict";var t=this&&this.__extends||function(){var t=function(o,e){return(t=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,o){t.__proto__=o}||function(t,o){for(var e in o)o.hasOwnProperty(e)&&(t[e]=o[e])})(o,e)};return function(o,e){function i(){this.constructor=o}t(o,e),o.prototype=null===e?Object.create(e):(i.prototype=e.prototype,new i)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.DropoutNode=void 0;var o=require("../../methods/Utils"),e=require("./ConstantNode"),i=function(e){function i(t){var o=e.call(this)||this;return o.probability=t,o.droppedOut=!1,o}return t(i,e),i.prototype.activate=function(){var t=this;if(1!==this.incoming.length)throw new RangeError("Dropout node should have exactly one incoming connection!");var e=this.incoming[0];return o.randDouble(0,1)<this.probability?(this.droppedOut=!0,this.state=0):(this.droppedOut=!1,this.state=e.from.activation*e.weight*e.gain,this.state*=1/(1-this.probability)),this.activation=this.squash(this.state,!1)*this.mask,this.gated.forEach(function(o){return o.gain=t.activation}),this.activation},i.prototype.propagate=function(t,e){void 0===e&&(e={}),e.momentum=o.getOrDefault(e.momentum,0),e.rate=o.getOrDefault(e.rate,.3),e.update=o.getOrDefault(e.update,!0);var i=this.outgoing.map(function(t){return t.to.errorResponsibility*t.weight*t.gain});if(this.errorResponsibility=this.errorProjected=o.sum(i)/(1-this.probability),1!==this.incoming.length)throw new RangeError("Dropout node should have exactly one incoming connection!");var r=this.incoming[0];if(!this.droppedOut){for(var n=this.errorProjected*r.eligibility,a=0;a<r.xTraceNodes.length;a++)n+=r.xTraceNodes[a].errorResponsibility*r.xTraceValues[a];e.update&&(r.deltaWeightsTotal+=e.rate*n*this.mask+e.momentum*r.deltaWeightsPrevious,r.weight+=r.deltaWeightsTotal,r.deltaWeightsPrevious=r.deltaWeightsTotal,r.deltaWeightsTotal=0)}},i.prototype.fromJSON=function(t){return e.prototype.fromJSON.call(this,t),this.probability=t.probability,this},i.prototype.toJSON=function(){return Object.assign(e.prototype.toJSON.call(this),{probability:this.probability})},i}(e.ConstantNode);exports.DropoutNode=i;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.DropoutNode = void 0;
+
+var Utils_1 = require("../../methods/Utils");
+
+var ConstantNode_1 = require("./ConstantNode");
+/**
+ * Dropout node
+ */
+
+
+var DropoutNode =
+/** @class */
+function (_super) {
+  __extends(DropoutNode, _super);
+
+  function DropoutNode(probability) {
+    var _this = _super.call(this) || this;
+
+    _this.probability = probability;
+    _this.droppedOut = false;
+    return _this;
+  }
+  /**
+   * Actives the node.
+   *
+   * When a neuron activates, it computes its state from all its input connections and 'squashes' it using its activation function, and returns the output (activation).
+   *
+   * You can also provide the activation (a float between 0 and 1) as a parameter, which is useful for neurons in the input layer.
+   *
+   * @returns A neuron's output value
+   */
+
+
+  DropoutNode.prototype.activate = function () {
+    var _this = this;
+
+    if (this.incoming.size !== 1) {
+      throw new RangeError("Dropout node should have exactly one incoming connection!");
+    }
+
+    var incomingConnection = Array.from(this.incoming)[0]; // https://stats.stackexchange.com/a/219240
+
+    if (Utils_1.randDouble(0, 1) < this.probability) {
+      // DROPOUT
+      this.droppedOut = true;
+      this.state = 0;
+    } else {
+      this.droppedOut = false;
+      this.state = incomingConnection.from.activation * incomingConnection.weight * incomingConnection.gain;
+      this.state *= 1 / (1 - this.probability);
+    }
+
+    this.activation = this.squash(this.state, false) * this.mask; // Adjust gain
+
+    this.gated.forEach(function (conn) {
+      return conn.gain = _this.activation;
+    });
+    return this.activation;
+  };
+  /**
+   * Backpropagate the error (a.k.a. learn).
+   *
+   * After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating. [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
+   *
+   * If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
+   *
+   * @param target The target value (i.e. "the value the network SHOULD have given")
+   * @param options More options for propagation
+   */
+
+
+  DropoutNode.prototype.propagate = function (target, options) {
+    if (options === void 0) {
+      options = {};
+    }
+
+    options.momentum = Utils_1.getOrDefault(options.momentum, 0);
+    options.rate = Utils_1.getOrDefault(options.rate, 0.3);
+    options.update = Utils_1.getOrDefault(options.update, true);
+    var connectionsStates = Array.from(this.outgoing).map(function (conn) {
+      return conn.to.errorResponsibility * conn.weight * conn.gain;
+    });
+    this.errorResponsibility = this.errorProjected = Utils_1.sum(connectionsStates) / (1 - this.probability);
+
+    if (this.incoming.size !== 1) {
+      throw new RangeError("Dropout node should have exactly one incoming connection!");
+    }
+
+    var incomingConnection = Array.from(this.incoming)[0]; // calculate gradient
+
+    if (!this.droppedOut) {
+      var gradient = this.errorProjected * incomingConnection.eligibility;
+
+      for (var i = 0; i < incomingConnection.xTraceNodes.length; i++) {
+        gradient += incomingConnection.xTraceNodes[i].errorResponsibility * incomingConnection.xTraceValues[i];
+      }
+
+      if (options.update) {
+        incomingConnection.deltaWeightsTotal += options.rate * gradient * this.mask + options.momentum * incomingConnection.deltaWeightsPrevious;
+        incomingConnection.weight += incomingConnection.deltaWeightsTotal;
+        incomingConnection.deltaWeightsPrevious = incomingConnection.deltaWeightsTotal;
+        incomingConnection.deltaWeightsTotal = 0;
+      }
+    }
+  };
+  /**
+   * Create a constant node from json object.
+   *
+   * @param json the json object representing the node
+   *
+   * @returns the created node
+   */
+
+
+  DropoutNode.prototype.fromJSON = function (json) {
+    _super.prototype.fromJSON.call(this, json);
+
+    this.probability = json.probability;
+    return this;
+  };
+  /**
+   * Convert this node into a json object.
+   *
+   * @returns the json object representing this node
+   */
+
+
+  DropoutNode.prototype.toJSON = function () {
+    return Object.assign(_super.prototype.toJSON.call(this), {
+      probability: this.probability
+    });
+  };
+
+  return DropoutNode;
+}(ConstantNode_1.ConstantNode);
+
+exports.DropoutNode = DropoutNode;
 },{"../../methods/Utils":"../src/methods/Utils.js","./ConstantNode":"../src/architecture/Nodes/ConstantNode.js"}],"../src/architecture/Layers/CoreLayers/DropoutLayer.js":[function(require,module,exports) {
-"use strict";var t=this&&this.__extends||function(){var t=function(o,e){return(t=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,o){t.__proto__=o}||function(t,o){for(var e in o)o.hasOwnProperty(e)&&(t[e]=o[e])})(o,e)};return function(o,e){function n(){this.constructor=o}t(o,e),o.prototype=null===e?Object.create(e):(n.prototype=e.prototype,new n)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.DropoutLayer=void 0;var o=require("../../../enums/ConnectionType"),e=require("../../../methods/Activation"),n=require("../../Nodes/DropoutNode"),r=require("../Layer"),i=function(r){function i(t,o){var i,u,p;void 0===o&&(o={});for(var c=r.call(this,t)||this,s=null!==(u=o.activation)&&void 0!==u?u:e.IdentityActivation,a=null!==(p=o.probability)&&void 0!==p?p:.1,y=0;y<t;y++)c.inputNodes.add(new n.DropoutNode(a).setActivationType(s));return c.outputNodes=c.inputNodes,(i=c.nodes).push.apply(i,Array.from(c.inputNodes)),c}return t(i,r),i.prototype.getDefaultIncomingConnectionType=function(){return o.ConnectionType.ONE_TO_ONE},i.prototype.connectionTypeisAllowed=function(t){return t===o.ConnectionType.ONE_TO_ONE},i}(r.Layer);exports.DropoutLayer=i;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.DropoutLayer = void 0;
+
+var ConnectionType_1 = require("../../../enums/ConnectionType");
+
+var Activation_1 = require("../../../methods/Activation");
+
+var DropoutNode_1 = require("../../Nodes/DropoutNode");
+
+var Layer_1 = require("../Layer");
+/**
+ * Dropout layer
+ */
+
+
+var DropoutLayer =
+/** @class */
+function (_super) {
+  __extends(DropoutLayer, _super);
+
+  function DropoutLayer(outputSize, options) {
+    var _a;
+
+    if (options === void 0) {
+      options = {};
+    }
+
+    var _b, _c;
+
+    var _this = _super.call(this, outputSize) || this;
+
+    var activation = (_b = options.activation) !== null && _b !== void 0 ? _b : Activation_1.IdentityActivation;
+    var probability = (_c = options.probability) !== null && _c !== void 0 ? _c : 0.1;
+
+    for (var i = 0; i < outputSize; i++) {
+      _this.inputNodes.add(new DropoutNode_1.DropoutNode(probability).setActivationType(activation));
+    }
+
+    _this.outputNodes = _this.inputNodes;
+
+    (_a = _this.nodes).push.apply(_a, Array.from(_this.inputNodes));
+
+    return _this;
+  }
+  /**
+   * Gets the default connection type for a incoming connection to this layer.
+   *
+   * @returns the default incoming connection
+   */
+
+
+  DropoutLayer.prototype.getDefaultIncomingConnectionType = function () {
+    return ConnectionType_1.ConnectionType.ONE_TO_ONE;
+  };
+  /**
+   * Checks if a given connection type is allowed on this layer.
+   *
+   * @param type the type to check
+   *
+   * @return Is this connection type allowed?
+   */
+
+
+  DropoutLayer.prototype.connectionTypeisAllowed = function (type) {
+    return type === ConnectionType_1.ConnectionType.ONE_TO_ONE;
+  };
+
+  return DropoutLayer;
+}(Layer_1.Layer);
+
+exports.DropoutLayer = DropoutLayer;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Nodes/DropoutNode":"../src/architecture/Nodes/DropoutNode.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Nodes/PoolNode.js":[function(require,module,exports) {
-"use strict";var t=this&&this.__extends||function(){var t=function(e,i){return(t=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var i in e)e.hasOwnProperty(i)&&(t[i]=e[i])})(e,i)};return function(e,i){function o(){this.constructor=e}t(e,i),e.prototype=null===i?Object.create(i):(o.prototype=i.prototype,new o)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.PoolNode=void 0;var e=require("../../enums/NodeType"),i=require("../../methods/Utils"),o=require("./ConstantNode"),n=function(o){function n(t){void 0===t&&(t=e.PoolNodeType.MAX_POOLING);var i=o.call(this)||this;return i.poolingType=t,i.receivingIndex=-1,i}return t(n,o),n.prototype.fromJSON=function(t){return o.prototype.fromJSON.call(this,t),this.poolingType=t.poolType,this},n.prototype.activate=function(){var t=this,o=this.incoming.map(function(t){return t.from.activation*t.weight*t.gain});if(this.poolingType===e.PoolNodeType.MAX_POOLING)this.receivingIndex=i.maxValueIndex(o),this.state=o[this.receivingIndex];else if(this.poolingType===e.PoolNodeType.AVG_POOLING)this.state=i.avg(o);else{if(this.poolingType!==e.PoolNodeType.MIN_POOLING)throw new ReferenceError("No valid pooling type! Type: "+this.poolingType);this.receivingIndex=i.minValueIndex(o),this.state=o[this.receivingIndex]}return this.activation=this.squash(this.state,!1)*this.mask,this.poolingType===e.PoolNodeType.AVG_POOLING&&(this.derivativeState=this.squash(this.state,!0)),this.gated.forEach(function(e){return e.gain=t.activation}),this.activation},n.prototype.propagate=function(t,o){void 0===o&&(o={}),o.momentum=i.getOrDefault(o.momentum,0),o.rate=i.getOrDefault(o.rate,.3),o.update=i.getOrDefault(o.update,!0);var n=this.outgoing.map(function(t){return t.to.errorResponsibility*t.weight*t.gain});if(this.errorResponsibility=this.errorProjected=i.sum(n)*this.derivativeState,this.poolingType===e.PoolNodeType.AVG_POOLING)for(var r=0,s=this.incoming;r<s.length;r++){for(var a=s[r],p=this.errorProjected*a.eligibility,h=0;h<a.xTraceNodes.length;h++)p+=a.xTraceNodes[h].errorResponsibility*a.xTraceValues[h];a.deltaWeightsTotal+=o.rate*p*this.mask,o.update&&(a.deltaWeightsTotal+=o.momentum*a.deltaWeightsPrevious,a.weight+=a.deltaWeightsTotal,a.deltaWeightsPrevious=a.deltaWeightsTotal,a.deltaWeightsTotal=0)}else for(h=0;h<this.incoming.length;h++)this.incoming[h].weight=this.receivingIndex===h?1:0,this.incoming[h].gain=this.receivingIndex===h?1:0},n.prototype.toJSON=function(){return Object.assign(o.prototype.toJSON.call(this),{poolType:this.poolingType})},n}(o.ConstantNode);exports.PoolNode=n;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.PoolNode = void 0;
+
+var NodeType_1 = require("../../enums/NodeType");
+
+var Utils_1 = require("../../methods/Utils");
+
+var ConstantNode_1 = require("./ConstantNode");
+/**
+ * Pool node
+ */
+
+
+var PoolNode =
+/** @class */
+function (_super) {
+  __extends(PoolNode, _super);
+
+  function PoolNode(poolingType) {
+    if (poolingType === void 0) {
+      poolingType = NodeType_1.PoolNodeType.MAX_POOLING;
+    }
+
+    var _this = _super.call(this) || this;
+
+    _this.poolingType = poolingType;
+    _this.receivingNode = null;
+    return _this;
+  }
+  /**
+   * Create a constant node from json object.
+   *
+   * @param json the json object representing the node
+   *
+   * @returns the created node
+   */
+
+
+  PoolNode.prototype.fromJSON = function (json) {
+    _super.prototype.fromJSON.call(this, json);
+
+    this.poolingType = json.poolType;
+    return this;
+  };
+  /**
+   * Actives the node.
+   *
+   * When a neuron activates, it computes its state from all its input connections and 'squashes' it using its activation function, and returns the output (activation).
+   *
+   * You can also provide the activation (a float between 0 and 1) as a parameter, which is useful for neurons in the input layer.
+   *
+   * @returns A neuron's output value
+   */
+
+
+  PoolNode.prototype.activate = function () {
+    var _this = this;
+
+    var connections = Array.from(this.incoming);
+    var incomingStates = connections.map(function (conn) {
+      return conn.from.activation * conn.weight * conn.gain;
+    });
+
+    if (this.poolingType === NodeType_1.PoolNodeType.MAX_POOLING) {
+      var index = Utils_1.maxValueIndex(incomingStates);
+      this.receivingNode = connections[index].from;
+      this.state = incomingStates[index];
+    } else if (this.poolingType === NodeType_1.PoolNodeType.AVG_POOLING) {
+      this.state = Utils_1.avg(incomingStates);
+    } else if (this.poolingType === NodeType_1.PoolNodeType.MIN_POOLING) {
+      var index = Utils_1.minValueIndex(incomingStates);
+      this.receivingNode = connections[index].from;
+      this.state = incomingStates[index];
+    } else {
+      throw new ReferenceError("No valid pooling type! Type: " + this.poolingType);
+    }
+
+    this.activation = this.squash(this.state, false) * this.mask;
+
+    if (this.poolingType === NodeType_1.PoolNodeType.AVG_POOLING) {
+      this.derivativeState = this.squash(this.state, true);
+    } // Adjust gain
+
+
+    this.gated.forEach(function (conn) {
+      return conn.gain = _this.activation;
+    });
+    return this.activation;
+  };
+  /**
+   * Backpropagate the error (a.k.a. learn).
+   *
+   * After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating. [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
+   *
+   * If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
+   *
+   * @param target The target value (i.e. "the value the network SHOULD have given")
+   * @param options More options for propagation
+   */
+
+
+  PoolNode.prototype.propagate = function (target, options) {
+    var _this = this;
+
+    if (options === void 0) {
+      options = {};
+    }
+
+    options.momentum = Utils_1.getOrDefault(options.momentum, 0);
+    options.rate = Utils_1.getOrDefault(options.rate, 0.3);
+    options.update = Utils_1.getOrDefault(options.update, true);
+    var connectionsStates = Array.from(this.outgoing).map(function (conn) {
+      return conn.to.errorResponsibility * conn.weight * conn.gain;
+    });
+    this.errorResponsibility = this.errorProjected = Utils_1.sum(connectionsStates) * this.derivativeState;
+
+    if (this.poolingType === NodeType_1.PoolNodeType.AVG_POOLING) {
+      this.incoming.forEach(function (connection) {
+        var _a, _b; // calculate gradient
+
+
+        var gradient = _this.errorProjected * connection.eligibility;
+
+        for (var i = 0; i < connection.xTraceNodes.length; i++) {
+          gradient += connection.xTraceNodes[i].errorResponsibility * connection.xTraceValues[i];
+        }
+
+        connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * _this.mask;
+
+        if (options.update) {
+          connection.deltaWeightsTotal += ((_b = options.momentum) !== null && _b !== void 0 ? _b : 0) * connection.deltaWeightsPrevious;
+          connection.weight += connection.deltaWeightsTotal;
+          connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
+          connection.deltaWeightsTotal = 0;
+        }
+      });
+    } else {
+      // TODO: don't think that this is correct
+      // Passing only the connections that were used for getting the min or max
+      this.incoming.forEach(function (conn) {
+        conn.weight = _this.receivingNode === conn.from ? 1 : 0;
+        conn.gain = _this.receivingNode === conn.from ? 1 : 0;
+      });
+    }
+  };
+  /**
+   * Convert this node into a json object.
+   *
+   * @returns the json object representing this node
+   */
+
+
+  PoolNode.prototype.toJSON = function () {
+    return Object.assign(_super.prototype.toJSON.call(this), {
+      poolType: this.poolingType
+    });
+  };
+
+  return PoolNode;
+}(ConstantNode_1.ConstantNode);
+
+exports.PoolNode = PoolNode;
 },{"../../enums/NodeType":"../src/enums/NodeType.js","../../methods/Utils":"../src/methods/Utils.js","./ConstantNode":"../src/architecture/Nodes/ConstantNode.js"}],"../src/architecture/Layers/PoolingLayers/PoolingLayer.js":[function(require,module,exports) {
-"use strict";var t=this&&this.__extends||function(){var t=function(e,n){return(t=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var n in e)e.hasOwnProperty(n)&&(t[n]=e[n])})(e,n)};return function(e,n){function o(){this.constructor=e}t(e,n),e.prototype=null===n?Object.create(n):(o.prototype=n.prototype,new o)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.PoolingLayer=void 0;var e=require("../../../enums/ConnectionType"),n=require("../Layer"),o=function(n){function o(t){return n.call(this,t)||this}return t(o,n),o.prototype.getDefaultIncomingConnectionType=function(){return e.ConnectionType.POOLING},o.prototype.connectionTypeisAllowed=function(t){return!0},o}(n.Layer);exports.PoolingLayer=o;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.PoolingLayer = void 0;
+
+var ConnectionType_1 = require("../../../enums/ConnectionType");
+
+var Layer_1 = require("../Layer");
+/**
+ * Parent class for all pooling layers
+ */
+
+
+var PoolingLayer =
+/** @class */
+function (_super) {
+  __extends(PoolingLayer, _super);
+
+  function PoolingLayer(outputSize) {
+    return _super.call(this, outputSize) || this;
+  }
+  /**
+   * Gets the default connection type for a incoming connection to this layer.
+   *
+   * @returns the default incoming connection
+   */
+
+
+  PoolingLayer.prototype.getDefaultIncomingConnectionType = function () {
+    return ConnectionType_1.ConnectionType.POOLING;
+  };
+  /**
+   * Checks if a given connection type is allowed on this layer.
+   *
+   * @param type the type to check
+   *
+   * @return Is this connection type allowed?
+   */
+
+
+  PoolingLayer.prototype.connectionTypeisAllowed = function (type) {
+    return true;
+  };
+
+  return PoolingLayer;
+}(Layer_1.Layer);
+
+exports.PoolingLayer = PoolingLayer;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer.js":[function(require,module,exports) {
-"use strict";var o=this&&this.__extends||function(){var o=function(t,e){return(o=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(o,t){o.__proto__=t}||function(o,t){for(var e in t)t.hasOwnProperty(e)&&(o[e]=t[e])})(t,e)};return function(t,e){function r(){this.constructor=t}o(t,e),t.prototype=null===e?Object.create(e):(r.prototype=e.prototype,new r)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.AvgPooling1DLayer=void 0;var t=require("../../../enums/NodeType"),e=require("../../../methods/Activation"),r=require("../../Nodes/PoolNode"),n=require("./PoolingLayer"),i=function(n){function i(o,i){var u,s;void 0===i&&(i={});for(var a=n.call(this,o)||this,p=null!==(s=i.activation)&&void 0!==s?s:e.IdentityActivation,c=0;c<o;c++)a.inputNodes.add(new r.PoolNode(t.PoolNodeType.AVG_POOLING).setActivationType(p));return a.outputNodes=a.inputNodes,(u=a.nodes).push.apply(u,Array.from(a.inputNodes)),a}return o(i,n),i}(n.PoolingLayer);exports.AvgPooling1DLayer=i;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.AvgPooling1DLayer = void 0;
+
+var NodeType_1 = require("../../../enums/NodeType");
+
+var Activation_1 = require("../../../methods/Activation");
+
+var PoolNode_1 = require("../../Nodes/PoolNode");
+
+var PoolingLayer_1 = require("./PoolingLayer");
+/**
+ * Average pooling layer 1D
+ */
+
+
+var AvgPooling1DLayer =
+/** @class */
+function (_super) {
+  __extends(AvgPooling1DLayer, _super);
+
+  function AvgPooling1DLayer(outputSize, options) {
+    var _a;
+
+    if (options === void 0) {
+      options = {};
+    }
+
+    var _b;
+
+    var _this = _super.call(this, outputSize) || this;
+
+    var activationType = (_b = options.activation) !== null && _b !== void 0 ? _b : Activation_1.IdentityActivation;
+
+    for (var i = 0; i < outputSize; i++) {
+      _this.inputNodes.add(new PoolNode_1.PoolNode(NodeType_1.PoolNodeType.AVG_POOLING).setActivationType(activationType));
+    }
+
+    _this.outputNodes = _this.inputNodes;
+
+    (_a = _this.nodes).push.apply(_a, Array.from(_this.inputNodes));
+
+    return _this;
+  }
+
+  return AvgPooling1DLayer;
+}(PoolingLayer_1.PoolingLayer);
+
+exports.AvgPooling1DLayer = AvgPooling1DLayer;
 },{"../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","./PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js"}],"../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer.js":[function(require,module,exports) {
-"use strict";var t=this&&this.__extends||function(){var t=function(o,r){return(t=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,o){t.__proto__=o}||function(t,o){for(var r in o)o.hasOwnProperty(r)&&(t[r]=o[r])})(o,r)};return function(o,r){function e(){this.constructor=o}t(o,r),o.prototype=null===r?Object.create(r):(e.prototype=r.prototype,new e)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.GlobalAvgPooling1DLayer=void 0;var o=require("./AvgPooling1DLayer"),r=function(o){function r(t,r){return void 0===r&&(r={}),o.call(this,1,r)||this}return t(r,o),r}(o.AvgPooling1DLayer);exports.GlobalAvgPooling1DLayer=r;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.GlobalAvgPooling1DLayer = void 0;
+
+var AvgPooling1DLayer_1 = require("./AvgPooling1DLayer");
+/**
+ * Global average pooling layer 1D
+ */
+
+
+var GlobalAvgPooling1DLayer =
+/** @class */
+function (_super) {
+  __extends(GlobalAvgPooling1DLayer, _super);
+
+  function GlobalAvgPooling1DLayer(outputSize, options) {
+    if (options === void 0) {
+      options = {};
+    }
+
+    return _super.call(this, 1, options) || this;
+  }
+
+  return GlobalAvgPooling1DLayer;
+}(AvgPooling1DLayer_1.AvgPooling1DLayer);
+
+exports.GlobalAvgPooling1DLayer = GlobalAvgPooling1DLayer;
 },{"./AvgPooling1DLayer":"../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer.js"}],"../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer.js":[function(require,module,exports) {
-"use strict";var o=this&&this.__extends||function(){var o=function(t,e){return(o=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(o,t){o.__proto__=t}||function(o,t){for(var e in t)t.hasOwnProperty(e)&&(o[e]=t[e])})(t,e)};return function(t,e){function r(){this.constructor=t}o(t,e),t.prototype=null===e?Object.create(e):(r.prototype=e.prototype,new r)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.MaxPooling1DLayer=void 0;var t=require("../../../enums/NodeType"),e=require("../../../methods/Activation"),r=require("../../Nodes/PoolNode"),n=require("./PoolingLayer"),i=function(n){function i(o,i){var u,a;void 0===i&&(i={});for(var s=n.call(this,o)||this,p=null!==(a=i.activation)&&void 0!==a?a:e.IdentityActivation,c=0;c<o;c++)s.inputNodes.add(new r.PoolNode(t.PoolNodeType.MAX_POOLING).setActivationType(p));return s.outputNodes=s.inputNodes,(u=s.nodes).push.apply(u,Array.from(s.inputNodes)),s}return o(i,n),i}(n.PoolingLayer);exports.MaxPooling1DLayer=i;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.MaxPooling1DLayer = void 0;
+
+var NodeType_1 = require("../../../enums/NodeType");
+
+var Activation_1 = require("../../../methods/Activation");
+
+var PoolNode_1 = require("../../Nodes/PoolNode");
+
+var PoolingLayer_1 = require("./PoolingLayer");
+/**
+ * Maximum pooling layer 1D
+ */
+
+
+var MaxPooling1DLayer =
+/** @class */
+function (_super) {
+  __extends(MaxPooling1DLayer, _super);
+
+  function MaxPooling1DLayer(outputSize, options) {
+    var _a;
+
+    if (options === void 0) {
+      options = {};
+    }
+
+    var _b;
+
+    var _this = _super.call(this, outputSize) || this;
+
+    var activationType = (_b = options.activation) !== null && _b !== void 0 ? _b : Activation_1.IdentityActivation;
+
+    for (var i = 0; i < outputSize; i++) {
+      _this.inputNodes.add(new PoolNode_1.PoolNode(NodeType_1.PoolNodeType.MAX_POOLING).setActivationType(activationType));
+    }
+
+    _this.outputNodes = _this.inputNodes;
+
+    (_a = _this.nodes).push.apply(_a, Array.from(_this.inputNodes));
+
+    return _this;
+  }
+
+  return MaxPooling1DLayer;
+}(PoolingLayer_1.PoolingLayer);
+
+exports.MaxPooling1DLayer = MaxPooling1DLayer;
 },{"../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","./PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js"}],"../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer.js":[function(require,module,exports) {
-"use strict";var t=this&&this.__extends||function(){var t=function(o,r){return(t=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,o){t.__proto__=o}||function(t,o){for(var r in o)o.hasOwnProperty(r)&&(t[r]=o[r])})(o,r)};return function(o,r){function e(){this.constructor=o}t(o,r),o.prototype=null===r?Object.create(r):(e.prototype=r.prototype,new e)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.GlobalMaxPooling1DLayer=void 0;var o=require("./MaxPooling1DLayer"),r=function(o){function r(t,r){return void 0===r&&(r={}),o.call(this,1,r)||this}return t(r,o),r}(o.MaxPooling1DLayer);exports.GlobalMaxPooling1DLayer=r;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.GlobalMaxPooling1DLayer = void 0;
+
+var MaxPooling1DLayer_1 = require("./MaxPooling1DLayer");
+/**
+ * Global maximum pooling layer 1D
+ */
+
+
+var GlobalMaxPooling1DLayer =
+/** @class */
+function (_super) {
+  __extends(GlobalMaxPooling1DLayer, _super);
+
+  function GlobalMaxPooling1DLayer(outputSize, options) {
+    if (options === void 0) {
+      options = {};
+    }
+
+    return _super.call(this, 1, options) || this;
+  }
+
+  return GlobalMaxPooling1DLayer;
+}(MaxPooling1DLayer_1.MaxPooling1DLayer);
+
+exports.GlobalMaxPooling1DLayer = GlobalMaxPooling1DLayer;
 },{"./MaxPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer.js"}],"../src/architecture/Layers/PoolingLayers/MinPooling1DLayer.js":[function(require,module,exports) {
-"use strict";var o=this&&this.__extends||function(){var o=function(t,e){return(o=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(o,t){o.__proto__=t}||function(o,t){for(var e in t)t.hasOwnProperty(e)&&(o[e]=t[e])})(t,e)};return function(t,e){function r(){this.constructor=t}o(t,e),t.prototype=null===e?Object.create(e):(r.prototype=e.prototype,new r)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.MinPooling1DLayer=void 0;var t=require("../../../enums/NodeType"),e=require("../../../methods/Activation"),r=require("../../Nodes/PoolNode"),n=require("./PoolingLayer"),i=function(n){function i(o,i){var u,s;void 0===i&&(i={});for(var a=n.call(this,o)||this,p=null!==(s=i.activation)&&void 0!==s?s:e.IdentityActivation,c=0;c<o;c++)a.inputNodes.add(new r.PoolNode(t.PoolNodeType.MIN_POOLING).setActivationType(p));return a.outputNodes=a.inputNodes,(u=a.nodes).push.apply(u,Array.from(a.inputNodes)),a}return o(i,n),i}(n.PoolingLayer);exports.MinPooling1DLayer=i;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.MinPooling1DLayer = void 0;
+
+var NodeType_1 = require("../../../enums/NodeType");
+
+var Activation_1 = require("../../../methods/Activation");
+
+var PoolNode_1 = require("../../Nodes/PoolNode");
+
+var PoolingLayer_1 = require("./PoolingLayer");
+/**
+ * Minimum pooling layer 1D
+ */
+
+
+var MinPooling1DLayer =
+/** @class */
+function (_super) {
+  __extends(MinPooling1DLayer, _super);
+
+  function MinPooling1DLayer(outputSize, options) {
+    var _a;
+
+    if (options === void 0) {
+      options = {};
+    }
+
+    var _b;
+
+    var _this = _super.call(this, outputSize) || this;
+
+    var activationType = (_b = options.activation) !== null && _b !== void 0 ? _b : Activation_1.IdentityActivation;
+
+    for (var i = 0; i < outputSize; i++) {
+      _this.inputNodes.add(new PoolNode_1.PoolNode(NodeType_1.PoolNodeType.MIN_POOLING).setActivationType(activationType));
+    }
+
+    _this.outputNodes = _this.inputNodes;
+
+    (_a = _this.nodes).push.apply(_a, Array.from(_this.inputNodes));
+
+    return _this;
+  }
+
+  return MinPooling1DLayer;
+}(PoolingLayer_1.PoolingLayer);
+
+exports.MinPooling1DLayer = MinPooling1DLayer;
 },{"../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","./PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js"}],"../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer.js":[function(require,module,exports) {
-"use strict";var t=this&&this.__extends||function(){var t=function(o,r){return(t=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,o){t.__proto__=o}||function(t,o){for(var r in o)o.hasOwnProperty(r)&&(t[r]=o[r])})(o,r)};return function(o,r){function n(){this.constructor=o}t(o,r),o.prototype=null===r?Object.create(r):(n.prototype=r.prototype,new n)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.GlobalMinPooling1DLayer=void 0;var o=require("./MinPooling1DLayer"),r=function(o){function r(t,r){return void 0===r&&(r={}),o.call(this,1,r)||this}return t(r,o),r}(o.MinPooling1DLayer);exports.GlobalMinPooling1DLayer=r;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.GlobalMinPooling1DLayer = void 0;
+
+var MinPooling1DLayer_1 = require("./MinPooling1DLayer");
+/**
+ * Global minimum pooling layer 1D
+ */
+
+
+var GlobalMinPooling1DLayer =
+/** @class */
+function (_super) {
+  __extends(GlobalMinPooling1DLayer, _super);
+
+  function GlobalMinPooling1DLayer(outputSize, options) {
+    if (options === void 0) {
+      options = {};
+    }
+
+    return _super.call(this, 1, options) || this;
+  }
+
+  return GlobalMinPooling1DLayer;
+}(MinPooling1DLayer_1.MinPooling1DLayer);
+
+exports.GlobalMinPooling1DLayer = GlobalMinPooling1DLayer;
 },{"./MinPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MinPooling1DLayer.js"}],"../src/architecture/Layers/RecurrentLayers/GRULayer.js":[function(require,module,exports) {
-"use strict";var e=this&&this.__extends||function(){var e=function(n,o){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,n){e.__proto__=n}||function(e,n){for(var o in n)n.hasOwnProperty(o)&&(e[o]=n[o])})(n,o)};return function(n,o){function t(){this.constructor=n}e(n,o),n.prototype=null===o?Object.create(o):(t.prototype=o.prototype,new t)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.GRULayer=void 0;var n=require("../../../enums/ConnectionType"),o=require("../../../enums/GatingType"),t=require("../../../enums/NodeType"),p=require("../../../methods/Activation"),s=require("../../Node"),i=require("../Layer"),c=function(c){function a(e,a){var r,u,y,L,T,d,N,h,_,l,A,O,v,f,g,D,C,E,w,I;void 0===a&&(a={});for(var U=c.call(this,e)||this,m=[],q=[],H=[],G=[],P=[],x=0;x<e;x++)U.inputNodes.add(new s.Node(t.NodeType.HIDDEN)),m.push(new s.Node(t.NodeType.HIDDEN).setBias(1)),q.push(new s.Node(t.NodeType.HIDDEN).setBias(0).setActivationType(p.LogisticActivation)),H.push(new s.Node(t.NodeType.HIDDEN).setBias(0)),G.push(new s.Node(t.NodeType.HIDDEN).setActivationType(p.TanhActivation)),P.push(new s.Node(t.NodeType.HIDDEN).setBias(0).setActivationType(p.LogisticActivation)),U.outputNodes.add(new s.Node(t.NodeType.HIDDEN));(r=U.connections).push.apply(r,i.Layer.connect(U.inputNodes,m,n.ConnectionType.ALL_TO_ALL)),(u=U.connections).push.apply(u,i.Layer.connect(U.inputNodes,H,n.ConnectionType.ALL_TO_ALL)),(y=U.connections).push.apply(y,i.Layer.connect(U.inputNodes,G,n.ConnectionType.ALL_TO_ALL)),(L=U.connections).push.apply(L,i.Layer.connect(P,m,n.ConnectionType.ALL_TO_ALL)),(T=U.connections).push.apply(T,i.Layer.connect(m,q,n.ConnectionType.ONE_TO_ONE,1)),(d=U.connections).push.apply(d,i.Layer.connect(P,H,n.ConnectionType.ALL_TO_ALL));var B=i.Layer.connect(P,G,n.ConnectionType.ALL_TO_ALL);(N=U.connections).push.apply(N,B),(h=U.gates).push.apply(h,i.Layer.gate(H,B,o.GatingType.OUTPUT));var b=i.Layer.connect(P,U.outputNodes,n.ConnectionType.ALL_TO_ALL),j=i.Layer.connect(G,U.outputNodes,n.ConnectionType.ALL_TO_ALL);return(_=U.connections).push.apply(_,b),(l=U.connections).push.apply(l,j),(A=U.gates).push.apply(A,i.Layer.gate(m,b,o.GatingType.OUTPUT)),(O=U.gates).push.apply(O,i.Layer.gate(q,j,o.GatingType.OUTPUT)),(v=U.connections).push.apply(v,i.Layer.connect(U.outputNodes,P,n.ConnectionType.ONE_TO_ONE,1)),(f=U.nodes).push.apply(f,Array.from(U.inputNodes)),(g=U.nodes).push.apply(g,m),(D=U.nodes).push.apply(D,q),(C=U.nodes).push.apply(C,H),(E=U.nodes).push.apply(E,G),(w=U.nodes).push.apply(w,Array.from(U.outputNodes)),(I=U.nodes).push.apply(I,P),U.outputNodes.forEach(function(e){var n;return e.squash=null!==(n=a.activation)&&void 0!==n?n:p.LogisticActivation}),U}return e(a,c),a.prototype.connectionTypeisAllowed=function(e){return!0},a.prototype.getDefaultIncomingConnectionType=function(){return n.ConnectionType.ALL_TO_ALL},a}(i.Layer);exports.GRULayer=c;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.GRULayer = void 0;
+
+var ConnectionType_1 = require("../../../enums/ConnectionType");
+
+var GatingType_1 = require("../../../enums/GatingType");
+
+var NodeType_1 = require("../../../enums/NodeType");
+
+var Activation_1 = require("../../../methods/Activation");
+
+var Node_1 = require("../../Node");
+
+var Layer_1 = require("../Layer");
+/**
+ * GRU layer
+ */
+
+
+var GRULayer =
+/** @class */
+function (_super) {
+  __extends(GRULayer, _super);
+
+  function GRULayer(outputSize, options) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v;
+
+    if (options === void 0) {
+      options = {};
+    }
+
+    var _this = _super.call(this, outputSize) || this;
+
+    var updateGate = [];
+    var inverseUpdateGate = [];
+    var resetGate = [];
+    var memoryCell = [];
+    var previousOutput = [];
+
+    for (var i = 0; i < outputSize; i++) {
+      _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
+
+      updateGate.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(1));
+      inverseUpdateGate.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(0).setActivationType(Activation_1.LogisticActivation));
+      resetGate.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(0));
+      memoryCell.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setActivationType(Activation_1.TanhActivation));
+      previousOutput.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(0).setActivationType(Activation_1.LogisticActivation));
+
+      _this.outputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
+    }
+
+    (_a = _this.connections).push.apply(_a, Layer_1.Layer.connect(_this.inputNodes, updateGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+
+    (_b = _this.connections).push.apply(_b, Layer_1.Layer.connect(_this.inputNodes, resetGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+
+    (_c = _this.connections).push.apply(_c, Layer_1.Layer.connect(_this.inputNodes, memoryCell, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+
+    (_d = _this.connections).push.apply(_d, Layer_1.Layer.connect(previousOutput, updateGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+
+    (_e = _this.connections).push.apply(_e, Layer_1.Layer.connect(updateGate, inverseUpdateGate, ConnectionType_1.ConnectionType.ONE_TO_ONE, 1));
+
+    (_f = _this.connections).push.apply(_f, Layer_1.Layer.connect(previousOutput, resetGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+
+    var reset = Layer_1.Layer.connect(previousOutput, memoryCell, ConnectionType_1.ConnectionType.ALL_TO_ALL);
+
+    (_g = _this.connections).push.apply(_g, reset);
+
+    (_h = _this.gates).push.apply(_h, Layer_1.Layer.gate(resetGate, reset, GatingType_1.GatingType.OUTPUT));
+
+    var update = Layer_1.Layer.connect(previousOutput, _this.outputNodes, ConnectionType_1.ConnectionType.ALL_TO_ALL);
+    var inverseUpdate = Layer_1.Layer.connect(memoryCell, _this.outputNodes, ConnectionType_1.ConnectionType.ALL_TO_ALL);
+
+    (_j = _this.connections).push.apply(_j, update);
+
+    (_k = _this.connections).push.apply(_k, inverseUpdate);
+
+    (_l = _this.gates).push.apply(_l, Layer_1.Layer.gate(updateGate, update, GatingType_1.GatingType.OUTPUT));
+
+    (_m = _this.gates).push.apply(_m, Layer_1.Layer.gate(inverseUpdateGate, inverseUpdate, GatingType_1.GatingType.OUTPUT));
+
+    (_o = _this.connections).push.apply(_o, Layer_1.Layer.connect(_this.outputNodes, previousOutput, ConnectionType_1.ConnectionType.ONE_TO_ONE, 1));
+
+    (_p = _this.nodes).push.apply(_p, Array.from(_this.inputNodes));
+
+    (_q = _this.nodes).push.apply(_q, updateGate);
+
+    (_r = _this.nodes).push.apply(_r, inverseUpdateGate);
+
+    (_s = _this.nodes).push.apply(_s, resetGate);
+
+    (_t = _this.nodes).push.apply(_t, memoryCell);
+
+    (_u = _this.nodes).push.apply(_u, Array.from(_this.outputNodes));
+
+    (_v = _this.nodes).push.apply(_v, previousOutput);
+
+    _this.outputNodes.forEach(function (node) {
+      var _a;
+
+      return node.squash = (_a = options.activation) !== null && _a !== void 0 ? _a : Activation_1.LogisticActivation;
+    });
+
+    return _this;
+  }
+  /**
+   * Checks if a given connection type is allowed on this layer.
+   *
+   * @param type the type to check
+   *
+   * @return Is this connection type allowed?
+   */
+
+
+  GRULayer.prototype.connectionTypeisAllowed = function (type) {
+    return true;
+  };
+  /**
+   * Gets the default connection type for a incoming connection to this layer.
+   *
+   * @returns the default incoming connection
+   */
+
+
+  GRULayer.prototype.getDefaultIncomingConnectionType = function () {
+    return ConnectionType_1.ConnectionType.ALL_TO_ALL;
+  };
+
+  return GRULayer;
+}(Layer_1.Layer);
+
+exports.GRULayer = GRULayer;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/GatingType":"../src/enums/GatingType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/RecurrentLayers/LSTMLayer.js":[function(require,module,exports) {
-"use strict";var e=this&&this.__extends||function(){var e=function(n,o){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,n){e.__proto__=n}||function(e,n){for(var o in n)n.hasOwnProperty(o)&&(e[o]=n[o])})(n,o)};return function(n,o){function t(){this.constructor=n}e(n,o),n.prototype=null===o?Object.create(o):(t.prototype=o.prototype,new t)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.LSTMLayer=void 0;var n=require("../../../enums/ConnectionType"),o=require("../../../enums/GatingType"),t=require("../../../enums/NodeType"),p=require("../../../methods/Activation"),r=require("../../Node"),s=require("../Layer"),c=function(c){function i(e,i){var a,u,y,L,d,T,N,h,_,l,A,f,v,O,g,D,C,E;void 0===i&&(i={});for(var w=c.call(this,e)||this,I=[],m=[],q=[],H=[],P=0;P<e;P++)w.inputNodes.add(new r.Node(t.NodeType.HIDDEN)),I.push(new r.Node(t.NodeType.HIDDEN).setBias(1)),m.push(new r.Node(t.NodeType.HIDDEN).setBias(1).setActivationType(p.LogisticActivation)),q.push(new r.Node(t.NodeType.HIDDEN)),H.push(new r.Node(t.NodeType.HIDDEN).setBias(1)),w.outputNodes.add(new r.Node(t.NodeType.HIDDEN));(a=w.connections).push.apply(a,s.Layer.connect(q,I,n.ConnectionType.ALL_TO_ALL)),(u=w.connections).push.apply(u,s.Layer.connect(q,m,n.ConnectionType.ALL_TO_ALL)),(y=w.connections).push.apply(y,s.Layer.connect(q,H,n.ConnectionType.ALL_TO_ALL));var x=s.Layer.connect(q,q,n.ConnectionType.ONE_TO_ONE),G=s.Layer.connect(q,w.outputNodes,n.ConnectionType.ALL_TO_ALL);(L=w.connections).push.apply(L,x),(d=w.connections).push.apply(d,G),(T=w.connections).push.apply(T,s.Layer.connect(w.inputNodes,q,n.ConnectionType.ALL_TO_ALL)),(N=w.connections).push.apply(N,s.Layer.connect(w.inputNodes,H,n.ConnectionType.ALL_TO_ALL)),(h=w.connections).push.apply(h,s.Layer.connect(w.inputNodes,m,n.ConnectionType.ALL_TO_ALL));var b=s.Layer.connect(w.inputNodes,I,n.ConnectionType.ALL_TO_ALL);return(_=w.connections).push.apply(_,b),(l=w.gates).push.apply(l,s.Layer.gate(m,x,o.GatingType.SELF)),(A=w.gates).push.apply(A,s.Layer.gate(H,G,o.GatingType.OUTPUT)),(f=w.gates).push.apply(f,s.Layer.gate(I,b,o.GatingType.INPUT)),(v=w.nodes).push.apply(v,Array.from(w.inputNodes)),(O=w.nodes).push.apply(O,I),(g=w.nodes).push.apply(g,m),(D=w.nodes).push.apply(D,q),(C=w.nodes).push.apply(C,H),(E=w.nodes).push.apply(E,Array.from(w.outputNodes)),w.outputNodes.forEach(function(e){var n;return e.squash=null!==(n=i.activation)&&void 0!==n?n:p.TanhActivation}),w}return e(i,c),i.prototype.connectionTypeisAllowed=function(e){return!0},i.prototype.getDefaultIncomingConnectionType=function(){return n.ConnectionType.ALL_TO_ALL},i}(s.Layer);exports.LSTMLayer=c;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.LSTMLayer = void 0;
+
+var ConnectionType_1 = require("../../../enums/ConnectionType");
+
+var GatingType_1 = require("../../../enums/GatingType");
+
+var NodeType_1 = require("../../../enums/NodeType");
+
+var Activation_1 = require("../../../methods/Activation");
+
+var Node_1 = require("../../Node");
+
+var Layer_1 = require("../Layer");
+/**
+ * LSTM layer
+ */
+
+
+var LSTMLayer =
+/** @class */
+function (_super) {
+  __extends(LSTMLayer, _super);
+
+  function LSTMLayer(outputSize, options) {
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t;
+
+    if (options === void 0) {
+      options = {};
+    }
+
+    var _this = _super.call(this, outputSize) || this;
+
+    var inputGate = [];
+    var forgetGate = [];
+    var memoryCell = [];
+    var outputGate = [];
+
+    for (var i = 0; i < outputSize; i++) {
+      _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
+
+      inputGate.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(1));
+      forgetGate.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(1).setActivationType(Activation_1.LogisticActivation));
+      memoryCell.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
+      outputGate.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(1));
+
+      _this.outputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
+    }
+
+    (_a = _this.connections).push.apply(_a, Layer_1.Layer.connect(memoryCell, inputGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+
+    (_b = _this.connections).push.apply(_b, Layer_1.Layer.connect(memoryCell, forgetGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+
+    (_c = _this.connections).push.apply(_c, Layer_1.Layer.connect(memoryCell, outputGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+
+    var forgetGateConnections = Layer_1.Layer.connect(memoryCell, memoryCell, ConnectionType_1.ConnectionType.ONE_TO_ONE);
+    var outputGateConnections = Layer_1.Layer.connect(memoryCell, _this.outputNodes, ConnectionType_1.ConnectionType.ALL_TO_ALL);
+
+    (_d = _this.connections).push.apply(_d, forgetGateConnections);
+
+    (_e = _this.connections).push.apply(_e, outputGateConnections);
+
+    (_f = _this.connections).push.apply(_f, Layer_1.Layer.connect(_this.inputNodes, memoryCell, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+
+    (_g = _this.connections).push.apply(_g, Layer_1.Layer.connect(_this.inputNodes, outputGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+
+    (_h = _this.connections).push.apply(_h, Layer_1.Layer.connect(_this.inputNodes, forgetGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+
+    var inputGateConnections = Layer_1.Layer.connect(_this.inputNodes, inputGate, ConnectionType_1.ConnectionType.ALL_TO_ALL);
+
+    (_j = _this.connections).push.apply(_j, inputGateConnections);
+
+    (_k = _this.gates).push.apply(_k, Layer_1.Layer.gate(forgetGate, forgetGateConnections, GatingType_1.GatingType.SELF));
+
+    (_l = _this.gates).push.apply(_l, Layer_1.Layer.gate(outputGate, outputGateConnections, GatingType_1.GatingType.OUTPUT));
+
+    (_m = _this.gates).push.apply(_m, Layer_1.Layer.gate(inputGate, inputGateConnections, GatingType_1.GatingType.INPUT));
+
+    (_o = _this.nodes).push.apply(_o, Array.from(_this.inputNodes));
+
+    (_p = _this.nodes).push.apply(_p, inputGate);
+
+    (_q = _this.nodes).push.apply(_q, forgetGate);
+
+    (_r = _this.nodes).push.apply(_r, memoryCell);
+
+    (_s = _this.nodes).push.apply(_s, outputGate);
+
+    (_t = _this.nodes).push.apply(_t, Array.from(_this.outputNodes));
+
+    _this.outputNodes.forEach(function (node) {
+      var _a;
+
+      return node.squash = (_a = options.activation) !== null && _a !== void 0 ? _a : Activation_1.TanhActivation;
+    });
+
+    return _this;
+  }
+  /**
+   * Checks if a given connection type is allowed on this layer.
+   *
+   * @param type the type to check
+   *
+   * @return Is this connection type allowed?
+   */
+
+
+  LSTMLayer.prototype.connectionTypeisAllowed = function (type) {
+    return true;
+  };
+  /**
+   * Gets the default connection type for a incoming connection to this layer.
+   *
+   * @returns the default incoming connection
+   */
+
+
+  LSTMLayer.prototype.getDefaultIncomingConnectionType = function () {
+    return ConnectionType_1.ConnectionType.ALL_TO_ALL;
+  };
+
+  return LSTMLayer;
+}(Layer_1.Layer);
+
+exports.LSTMLayer = LSTMLayer;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/GatingType":"../src/enums/GatingType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/RecurrentLayers/MemoryLayer.js":[function(require,module,exports) {
-"use strict";var e=this&&this.__extends||function(){var e=function(o,t){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,o){e.__proto__=o}||function(e,o){for(var t in o)o.hasOwnProperty(t)&&(e[t]=o[t])})(o,t)};return function(o,t){function n(){this.constructor=o}e(o,t),o.prototype=null===t?Object.create(t):(n.prototype=t.prototype,new n)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.MemoryLayer=void 0;var o=require("../../../enums/ConnectionType"),t=require("../../../enums/NodeType"),n=require("../../../methods/Activation"),r=require("../../Node"),i=require("../Layer"),u=function(u){function p(e,p){var a,s,c,y;void 0===p&&(p={});for(var d=u.call(this,e)||this,f=0;f<e;f++)d.inputNodes.add(new r.Node(t.NodeType.HIDDEN));var v=Array.from(d.inputNodes),l=[];for(f=0;f<(null!==(y=p.memorySize)&&void 0!==y?y:1);f++){for(var h=[],_=0;_<e;_++){var N=new r.Node(t.NodeType.HIDDEN);N.squash=n.IdentityActivation,N.bias=0,h.push(N)}(a=d.connections).push.apply(a,i.Layer.connect(v,h,o.ConnectionType.ONE_TO_ONE)),l.push.apply(l,h),v=h}return(s=d.nodes).push.apply(s,Array.from(d.inputNodes)),(c=d.nodes).push.apply(c,l.reverse()),v.forEach(function(e){return d.outputNodes.add(e)}),d.outputNodes.forEach(function(e){var o;return e.squash=null!==(o=p.activation)&&void 0!==o?o:n.LogisticActivation}),d}return e(p,u),p.prototype.connectionTypeisAllowed=function(e){return!0},p.prototype.getDefaultIncomingConnectionType=function(){return o.ConnectionType.ALL_TO_ALL},p}(i.Layer);exports.MemoryLayer=u;
+"use strict";
+
+var __extends = this && this.__extends || function () {
+  var extendStatics = function (d, b) {
+    extendStatics = Object.setPrototypeOf || {
+      __proto__: []
+    } instanceof Array && function (d, b) {
+      d.__proto__ = b;
+    } || function (d, b) {
+      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    };
+
+    return extendStatics(d, b);
+  };
+
+  return function (d, b) {
+    extendStatics(d, b);
+
+    function __() {
+      this.constructor = d;
+    }
+
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  };
+}();
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.MemoryLayer = void 0;
+
+var ConnectionType_1 = require("../../../enums/ConnectionType");
+
+var NodeType_1 = require("../../../enums/NodeType");
+
+var Activation_1 = require("../../../methods/Activation");
+
+var Node_1 = require("../../Node");
+
+var Layer_1 = require("../Layer");
+/**
+ * Memory layer
+ */
+
+
+var MemoryLayer =
+/** @class */
+function (_super) {
+  __extends(MemoryLayer, _super);
+
+  function MemoryLayer(outputSize, options) {
+    var _a, _b, _c;
+
+    if (options === void 0) {
+      options = {};
+    }
+
+    var _d;
+
+    var _this = _super.call(this, outputSize) || this;
+
+    for (var i = 0; i < outputSize; i++) {
+      _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
+    }
+
+    var prevNodes = Array.from(_this.inputNodes);
+    var nodes = [];
+
+    for (var i = 0; i < ((_d = options.memorySize) !== null && _d !== void 0 ? _d : 1); i++) {
+      var block = [];
+
+      for (var j = 0; j < outputSize; j++) {
+        var node = new Node_1.Node(NodeType_1.NodeType.HIDDEN);
+        node.squash = Activation_1.IdentityActivation;
+        node.bias = 0;
+        block.push(node);
+      }
+
+      (_a = _this.connections).push.apply(_a, Layer_1.Layer.connect(prevNodes, block, ConnectionType_1.ConnectionType.ONE_TO_ONE));
+
+      nodes.push.apply(nodes, block);
+      prevNodes = block;
+    }
+
+    (_b = _this.nodes).push.apply(_b, Array.from(_this.inputNodes));
+
+    (_c = _this.nodes).push.apply(_c, nodes.reverse());
+
+    prevNodes.forEach(function (node) {
+      return _this.outputNodes.add(node);
+    });
+
+    _this.outputNodes.forEach(function (node) {
+      var _a;
+
+      return node.squash = (_a = options.activation) !== null && _a !== void 0 ? _a : Activation_1.LogisticActivation;
+    });
+
+    return _this;
+  }
+  /**
+   * Checks if a given connection type is allowed on this layer.
+   *
+   * @param type the type to check
+   *
+   * @return Is this connection type allowed?
+   */
+
+
+  MemoryLayer.prototype.connectionTypeisAllowed = function (type) {
+    return true;
+  };
+  /**
+   * Gets the default connection type for a incoming connection to this layer.
+   *
+   * @returns the default incoming connection
+   */
+
+
+  MemoryLayer.prototype.getDefaultIncomingConnectionType = function () {
+    return ConnectionType_1.ConnectionType.ALL_TO_ALL;
+  };
+
+  return MemoryLayer;
+}(Layer_1.Layer);
+
+exports.MemoryLayer = MemoryLayer;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"index.js":[function(require,module,exports) {
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.generateGaussian=exports.avg=exports.sum=exports.min=exports.minValueIndex=exports.maxValueIndex=exports.max=exports.shuffle=exports.getOrDefault=exports.removeFromArray=exports.randBoolean=exports.randDouble=exports.randInt=exports.pickRandom=exports.TournamentSelection=exports.PowerSelection=exports.FitnessProportionateSelection=exports.Selection=exports.InverseRate=exports.ExponentialRate=exports.StepRate=exports.FixedRate=exports.Rate=exports.SwapNodesMutation=exports.SubBackConnectionMutation=exports.AddBackConnectionMutation=exports.SubSelfConnectionMutation=exports.AddSelfConnectionMutation=exports.SubGateMutation=exports.AddGateMutation=exports.ModActivationMutation=exports.ModBiasMutation=exports.ModWeightMutation=exports.SubConnectionMutation=exports.AddConnectionMutation=exports.SubNodeMutation=exports.AddNodeMutation=exports.Mutation=exports.ONLY_STRUCTURE=exports.NO_STRUCTURE_MUTATIONS=exports.FEEDFORWARD_MUTATIONS=exports.ALL_MUTATIONS=exports.HINGELoss=exports.MSLELoss=exports.WAPELoss=exports.MAPELoss=exports.MAELoss=exports.BinaryLoss=exports.MBELoss=exports.MSELoss=exports.ALL_LOSSES=exports.MISHActivation=exports.SELUActivation=exports.InverseActivation=exports.AbsoluteActivation=exports.HardTanhActivation=exports.BipolarSigmoidActivation=exports.BipolarActivation=exports.BentIdentityActivation=exports.GaussianActivation=exports.SinusoidActivation=exports.SoftSignActivation=exports.RELUActivation=exports.StepActivation=exports.IdentityActivation=exports.TanhActivation=exports.LogisticActivation=exports.ALL_ACTIVATIONS=exports.NoiseNodeType=exports.PoolNodeType=exports.NodeType=exports.GatingType=exports.ConnectionType=exports.Node=exports.Network=exports.Connection=exports.Architect=exports.PoolNode=exports.NoiseNode=exports.DropoutNode=exports.ConstantNode=exports.Layer=exports.MemoryLayer=exports.LSTMLayer=exports.GRULayer=exports.PoolingLayer=exports.GlobalMaxPooling1DLayer=exports.GlobalMinPooling1DLayer=exports.GlobalAvgPooling1DLayer=exports.MaxPooling1DLayer=exports.MinPooling1DLayer=exports.AvgPooling1DLayer=exports.NoiseLayer=exports.OutputLayer=exports.InputLayer=exports.DropoutLayer=exports.DenseLayer=void 0;var e=require("../src/architecture/Architect");Object.defineProperty(exports,"Architect",{enumerable:!0,get:function(){return e.Architect}});var t=require("../src/architecture/Connection");Object.defineProperty(exports,"Connection",{enumerable:!0,get:function(){return t.Connection}});var r=require("../src/architecture/Layers/CoreLayers/DenseLayer");Object.defineProperty(exports,"DenseLayer",{enumerable:!0,get:function(){return r.DenseLayer}});var o=require("../src/architecture/Layers/CoreLayers/DropoutLayer");Object.defineProperty(exports,"DropoutLayer",{enumerable:!0,get:function(){return o.DropoutLayer}});var n=require("../src/architecture/Layers/CoreLayers/InputLayer");Object.defineProperty(exports,"InputLayer",{enumerable:!0,get:function(){return n.InputLayer}});var i=require("../src/architecture/Layers/CoreLayers/OutputLayer");Object.defineProperty(exports,"OutputLayer",{enumerable:!0,get:function(){return i.OutputLayer}});var a=require("../src/architecture/Layers/Layer");Object.defineProperty(exports,"Layer",{enumerable:!0,get:function(){return a.Layer}});var u=require("../src/architecture/Layers/NoiseLayers/NoiseLayer");Object.defineProperty(exports,"NoiseLayer",{enumerable:!0,get:function(){return u.NoiseLayer}});var c=require("../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer");Object.defineProperty(exports,"AvgPooling1DLayer",{enumerable:!0,get:function(){return c.AvgPooling1DLayer}});var s=require("../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer");Object.defineProperty(exports,"GlobalAvgPooling1DLayer",{enumerable:!0,get:function(){return s.GlobalAvgPooling1DLayer}});var p=require("../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer");Object.defineProperty(exports,"GlobalMaxPooling1DLayer",{enumerable:!0,get:function(){return p.GlobalMaxPooling1DLayer}});var b=require("../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer");Object.defineProperty(exports,"GlobalMinPooling1DLayer",{enumerable:!0,get:function(){return b.GlobalMinPooling1DLayer}});var y=require("../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer");Object.defineProperty(exports,"MaxPooling1DLayer",{enumerable:!0,get:function(){return y.MaxPooling1DLayer}});var d=require("../src/architecture/Layers/PoolingLayers/MinPooling1DLayer");Object.defineProperty(exports,"MinPooling1DLayer",{enumerable:!0,get:function(){return d.MinPooling1DLayer}});var x=require("../src/architecture/Layers/PoolingLayers/PoolingLayer");Object.defineProperty(exports,"PoolingLayer",{enumerable:!0,get:function(){return x.PoolingLayer}});var l=require("../src/architecture/Layers/RecurrentLayers/GRULayer");Object.defineProperty(exports,"GRULayer",{enumerable:!0,get:function(){return l.GRULayer}});var f=require("../src/architecture/Layers/RecurrentLayers/LSTMLayer");Object.defineProperty(exports,"LSTMLayer",{enumerable:!0,get:function(){return f.LSTMLayer}});var g=require("../src/architecture/Layers/RecurrentLayers/MemoryLayer");Object.defineProperty(exports,"MemoryLayer",{enumerable:!0,get:function(){return g.MemoryLayer}});var L=require("../src/architecture/Network");Object.defineProperty(exports,"Network",{enumerable:!0,get:function(){return L.Network}});var P=require("../src/architecture/Node");Object.defineProperty(exports,"Node",{enumerable:!0,get:function(){return P.Node}});var m=require("../src/architecture/Nodes/ConstantNode");Object.defineProperty(exports,"ConstantNode",{enumerable:!0,get:function(){return m.ConstantNode}});var O=require("../src/architecture/Nodes/DropoutNode");Object.defineProperty(exports,"DropoutNode",{enumerable:!0,get:function(){return O.DropoutNode}});var A=require("../src/architecture/Nodes/NoiseNode");Object.defineProperty(exports,"NoiseNode",{enumerable:!0,get:function(){return A.NoiseNode}});var v=require("../src/architecture/Nodes/PoolNode");Object.defineProperty(exports,"PoolNode",{enumerable:!0,get:function(){return v.PoolNode}});var M=require("../src/enums/ConnectionType");Object.defineProperty(exports,"ConnectionType",{enumerable:!0,get:function(){return M.ConnectionType}});var j=require("../src/enums/GatingType");Object.defineProperty(exports,"GatingType",{enumerable:!0,get:function(){return j.GatingType}});var S=require("../src/enums/NodeType");Object.defineProperty(exports,"NodeType",{enumerable:!0,get:function(){return S.NodeType}}),Object.defineProperty(exports,"NoiseNodeType",{enumerable:!0,get:function(){return S.NoiseNodeType}}),Object.defineProperty(exports,"PoolNodeType",{enumerable:!0,get:function(){return S.PoolNodeType}});var N=require("../src/methods/Activation");Object.defineProperty(exports,"AbsoluteActivation",{enumerable:!0,get:function(){return N.AbsoluteActivation}}),Object.defineProperty(exports,"ALL_ACTIVATIONS",{enumerable:!0,get:function(){return N.ALL_ACTIVATIONS}}),Object.defineProperty(exports,"BentIdentityActivation",{enumerable:!0,get:function(){return N.BentIdentityActivation}}),Object.defineProperty(exports,"BipolarActivation",{enumerable:!0,get:function(){return N.BipolarActivation}}),Object.defineProperty(exports,"BipolarSigmoidActivation",{enumerable:!0,get:function(){return N.BipolarSigmoidActivation}}),Object.defineProperty(exports,"GaussianActivation",{enumerable:!0,get:function(){return N.GaussianActivation}}),Object.defineProperty(exports,"HardTanhActivation",{enumerable:!0,get:function(){return N.HardTanhActivation}}),Object.defineProperty(exports,"IdentityActivation",{enumerable:!0,get:function(){return N.IdentityActivation}}),Object.defineProperty(exports,"InverseActivation",{enumerable:!0,get:function(){return N.InverseActivation}}),Object.defineProperty(exports,"LogisticActivation",{enumerable:!0,get:function(){return N.LogisticActivation}}),Object.defineProperty(exports,"MISHActivation",{enumerable:!0,get:function(){return N.MISHActivation}}),Object.defineProperty(exports,"RELUActivation",{enumerable:!0,get:function(){return N.RELUActivation}}),Object.defineProperty(exports,"SELUActivation",{enumerable:!0,get:function(){return N.SELUActivation}}),Object.defineProperty(exports,"SinusoidActivation",{enumerable:!0,get:function(){return N.SinusoidActivation}}),Object.defineProperty(exports,"SoftSignActivation",{enumerable:!0,get:function(){return N.SoftSignActivation}}),Object.defineProperty(exports,"StepActivation",{enumerable:!0,get:function(){return N.StepActivation}}),Object.defineProperty(exports,"TanhActivation",{enumerable:!0,get:function(){return N.TanhActivation}});var T=require("../src/methods/Loss");Object.defineProperty(exports,"ALL_LOSSES",{enumerable:!0,get:function(){return T.ALL_LOSSES}}),Object.defineProperty(exports,"BinaryLoss",{enumerable:!0,get:function(){return T.BinaryLoss}}),Object.defineProperty(exports,"HINGELoss",{enumerable:!0,get:function(){return T.HINGELoss}}),Object.defineProperty(exports,"MAELoss",{enumerable:!0,get:function(){return T.MAELoss}}),Object.defineProperty(exports,"MAPELoss",{enumerable:!0,get:function(){return T.MAPELoss}}),Object.defineProperty(exports,"MBELoss",{enumerable:!0,get:function(){return T.MBELoss}}),Object.defineProperty(exports,"MSELoss",{enumerable:!0,get:function(){return T.MSELoss}}),Object.defineProperty(exports,"MSLELoss",{enumerable:!0,get:function(){return T.MSLELoss}}),Object.defineProperty(exports,"WAPELoss",{enumerable:!0,get:function(){return T.WAPELoss}});var D=require("../src/methods/Mutation");Object.defineProperty(exports,"AddBackConnectionMutation",{enumerable:!0,get:function(){return D.AddBackConnectionMutation}}),Object.defineProperty(exports,"AddConnectionMutation",{enumerable:!0,get:function(){return D.AddConnectionMutation}}),Object.defineProperty(exports,"AddGateMutation",{enumerable:!0,get:function(){return D.AddGateMutation}}),Object.defineProperty(exports,"AddNodeMutation",{enumerable:!0,get:function(){return D.AddNodeMutation}}),Object.defineProperty(exports,"AddSelfConnectionMutation",{enumerable:!0,get:function(){return D.AddSelfConnectionMutation}}),Object.defineProperty(exports,"ALL_MUTATIONS",{enumerable:!0,get:function(){return D.ALL_MUTATIONS}}),Object.defineProperty(exports,"FEEDFORWARD_MUTATIONS",{enumerable:!0,get:function(){return D.FEEDFORWARD_MUTATIONS}}),Object.defineProperty(exports,"ModActivationMutation",{enumerable:!0,get:function(){return D.ModActivationMutation}}),Object.defineProperty(exports,"ModBiasMutation",{enumerable:!0,get:function(){return D.ModBiasMutation}}),Object.defineProperty(exports,"ModWeightMutation",{enumerable:!0,get:function(){return D.ModWeightMutation}}),Object.defineProperty(exports,"Mutation",{enumerable:!0,get:function(){return D.Mutation}}),Object.defineProperty(exports,"NO_STRUCTURE_MUTATIONS",{enumerable:!0,get:function(){return D.NO_STRUCTURE_MUTATIONS}}),Object.defineProperty(exports,"ONLY_STRUCTURE",{enumerable:!0,get:function(){return D.ONLY_STRUCTURE}}),Object.defineProperty(exports,"SubBackConnectionMutation",{enumerable:!0,get:function(){return D.SubBackConnectionMutation}}),Object.defineProperty(exports,"SubConnectionMutation",{enumerable:!0,get:function(){return D.SubConnectionMutation}}),Object.defineProperty(exports,"SubGateMutation",{enumerable:!0,get:function(){return D.SubGateMutation}}),Object.defineProperty(exports,"SubNodeMutation",{enumerable:!0,get:function(){return D.SubNodeMutation}}),Object.defineProperty(exports,"SubSelfConnectionMutation",{enumerable:!0,get:function(){return D.SubSelfConnectionMutation}}),Object.defineProperty(exports,"SwapNodesMutation",{enumerable:!0,get:function(){return D.SwapNodesMutation}});var R=require("../src/methods/Rate");Object.defineProperty(exports,"ExponentialRate",{enumerable:!0,get:function(){return R.ExponentialRate}}),Object.defineProperty(exports,"FixedRate",{enumerable:!0,get:function(){return R.FixedRate}}),Object.defineProperty(exports,"InverseRate",{enumerable:!0,get:function(){return R.InverseRate}}),Object.defineProperty(exports,"Rate",{enumerable:!0,get:function(){return R.Rate}}),Object.defineProperty(exports,"StepRate",{enumerable:!0,get:function(){return R.StepRate}});var h=require("../src/methods/Selection");Object.defineProperty(exports,"FitnessProportionateSelection",{enumerable:!0,get:function(){return h.FitnessProportionateSelection}}),Object.defineProperty(exports,"PowerSelection",{enumerable:!0,get:function(){return h.PowerSelection}}),Object.defineProperty(exports,"Selection",{enumerable:!0,get:function(){return h.Selection}}),Object.defineProperty(exports,"TournamentSelection",{enumerable:!0,get:function(){return h.TournamentSelection}});var I=require("../src/methods/Utils");Object.defineProperty(exports,"avg",{enumerable:!0,get:function(){return I.avg}}),Object.defineProperty(exports,"generateGaussian",{enumerable:!0,get:function(){return I.generateGaussian}}),Object.defineProperty(exports,"getOrDefault",{enumerable:!0,get:function(){return I.getOrDefault}}),Object.defineProperty(exports,"max",{enumerable:!0,get:function(){return I.max}}),Object.defineProperty(exports,"maxValueIndex",{enumerable:!0,get:function(){return I.maxValueIndex}}),Object.defineProperty(exports,"min",{enumerable:!0,get:function(){return I.min}}),Object.defineProperty(exports,"minValueIndex",{enumerable:!0,get:function(){return I.minValueIndex}}),Object.defineProperty(exports,"pickRandom",{enumerable:!0,get:function(){return I.pickRandom}}),Object.defineProperty(exports,"randBoolean",{enumerable:!0,get:function(){return I.randBoolean}}),Object.defineProperty(exports,"randDouble",{enumerable:!0,get:function(){return I.randDouble}}),Object.defineProperty(exports,"randInt",{enumerable:!0,get:function(){return I.randInt}}),Object.defineProperty(exports,"removeFromArray",{enumerable:!0,get:function(){return I.removeFromArray}}),Object.defineProperty(exports,"shuffle",{enumerable:!0,get:function(){return I.shuffle}}),Object.defineProperty(exports,"sum",{enumerable:!0,get:function(){return I.sum}});
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.generateGaussian = exports.avg = exports.sum = exports.min = exports.minValueIndex = exports.maxValueIndex = exports.max = exports.shuffle = exports.getOrDefault = exports.removeFromArray = exports.randBoolean = exports.randDouble = exports.randInt = exports.pickRandom = exports.TournamentSelection = exports.PowerSelection = exports.FitnessProportionateSelection = exports.Selection = exports.InverseRate = exports.ExponentialRate = exports.StepRate = exports.FixedRate = exports.Rate = exports.SwapNodesMutation = exports.SubBackConnectionMutation = exports.AddBackConnectionMutation = exports.SubSelfConnectionMutation = exports.AddSelfConnectionMutation = exports.SubGateMutation = exports.AddGateMutation = exports.ModActivationMutation = exports.ModBiasMutation = exports.ModWeightMutation = exports.SubConnectionMutation = exports.AddConnectionMutation = exports.SubNodeMutation = exports.AddNodeMutation = exports.Mutation = exports.ONLY_STRUCTURE = exports.NO_STRUCTURE_MUTATIONS = exports.FEEDFORWARD_MUTATIONS = exports.ALL_MUTATIONS = exports.HINGELoss = exports.MSLELoss = exports.WAPELoss = exports.MAPELoss = exports.MAELoss = exports.BinaryLoss = exports.MBELoss = exports.MSELoss = exports.ALL_LOSSES = exports.MISHActivation = exports.SELUActivation = exports.InverseActivation = exports.AbsoluteActivation = exports.HardTanhActivation = exports.BipolarSigmoidActivation = exports.BipolarActivation = exports.BentIdentityActivation = exports.GaussianActivation = exports.SinusoidActivation = exports.SoftSignActivation = exports.RELUActivation = exports.StepActivation = exports.IdentityActivation = exports.TanhActivation = exports.LogisticActivation = exports.ALL_ACTIVATIONS = exports.NoiseNodeType = exports.PoolNodeType = exports.NodeType = exports.GatingType = exports.ConnectionType = exports.Node = exports.Network = exports.Connection = exports.Architect = exports.PoolNode = exports.NoiseNode = exports.DropoutNode = exports.ConstantNode = exports.Layer = exports.MemoryLayer = exports.LSTMLayer = exports.GRULayer = exports.PoolingLayer = exports.GlobalMaxPooling1DLayer = exports.GlobalMinPooling1DLayer = exports.GlobalAvgPooling1DLayer = exports.MaxPooling1DLayer = exports.MinPooling1DLayer = exports.AvgPooling1DLayer = exports.NoiseLayer = exports.OutputLayer = exports.InputLayer = exports.DropoutLayer = exports.DenseLayer = void 0;
+
+var Architect_1 = require("../src/architecture/Architect");
+
+Object.defineProperty(exports, "Architect", {
+  enumerable: true,
+  get: function () {
+    return Architect_1.Architect;
+  }
+});
+
+var Connection_1 = require("../src/architecture/Connection");
+
+Object.defineProperty(exports, "Connection", {
+  enumerable: true,
+  get: function () {
+    return Connection_1.Connection;
+  }
+});
+
+var DenseLayer_1 = require("../src/architecture/Layers/CoreLayers/DenseLayer");
+
+Object.defineProperty(exports, "DenseLayer", {
+  enumerable: true,
+  get: function () {
+    return DenseLayer_1.DenseLayer;
+  }
+});
+
+var DropoutLayer_1 = require("../src/architecture/Layers/CoreLayers/DropoutLayer");
+
+Object.defineProperty(exports, "DropoutLayer", {
+  enumerable: true,
+  get: function () {
+    return DropoutLayer_1.DropoutLayer;
+  }
+});
+
+var InputLayer_1 = require("../src/architecture/Layers/CoreLayers/InputLayer");
+
+Object.defineProperty(exports, "InputLayer", {
+  enumerable: true,
+  get: function () {
+    return InputLayer_1.InputLayer;
+  }
+});
+
+var OutputLayer_1 = require("../src/architecture/Layers/CoreLayers/OutputLayer");
+
+Object.defineProperty(exports, "OutputLayer", {
+  enumerable: true,
+  get: function () {
+    return OutputLayer_1.OutputLayer;
+  }
+});
+
+var Layer_1 = require("../src/architecture/Layers/Layer");
+
+Object.defineProperty(exports, "Layer", {
+  enumerable: true,
+  get: function () {
+    return Layer_1.Layer;
+  }
+});
+
+var NoiseLayer_1 = require("../src/architecture/Layers/NoiseLayers/NoiseLayer");
+
+Object.defineProperty(exports, "NoiseLayer", {
+  enumerable: true,
+  get: function () {
+    return NoiseLayer_1.NoiseLayer;
+  }
+});
+
+var AvgPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer");
+
+Object.defineProperty(exports, "AvgPooling1DLayer", {
+  enumerable: true,
+  get: function () {
+    return AvgPooling1DLayer_1.AvgPooling1DLayer;
+  }
+});
+
+var GlobalAvgPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer");
+
+Object.defineProperty(exports, "GlobalAvgPooling1DLayer", {
+  enumerable: true,
+  get: function () {
+    return GlobalAvgPooling1DLayer_1.GlobalAvgPooling1DLayer;
+  }
+});
+
+var GlobalMaxPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer");
+
+Object.defineProperty(exports, "GlobalMaxPooling1DLayer", {
+  enumerable: true,
+  get: function () {
+    return GlobalMaxPooling1DLayer_1.GlobalMaxPooling1DLayer;
+  }
+});
+
+var GlobalMinPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer");
+
+Object.defineProperty(exports, "GlobalMinPooling1DLayer", {
+  enumerable: true,
+  get: function () {
+    return GlobalMinPooling1DLayer_1.GlobalMinPooling1DLayer;
+  }
+});
+
+var MaxPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer");
+
+Object.defineProperty(exports, "MaxPooling1DLayer", {
+  enumerable: true,
+  get: function () {
+    return MaxPooling1DLayer_1.MaxPooling1DLayer;
+  }
+});
+
+var MinPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/MinPooling1DLayer");
+
+Object.defineProperty(exports, "MinPooling1DLayer", {
+  enumerable: true,
+  get: function () {
+    return MinPooling1DLayer_1.MinPooling1DLayer;
+  }
+});
+
+var PoolingLayer_1 = require("../src/architecture/Layers/PoolingLayers/PoolingLayer");
+
+Object.defineProperty(exports, "PoolingLayer", {
+  enumerable: true,
+  get: function () {
+    return PoolingLayer_1.PoolingLayer;
+  }
+});
+
+var GRULayer_1 = require("../src/architecture/Layers/RecurrentLayers/GRULayer");
+
+Object.defineProperty(exports, "GRULayer", {
+  enumerable: true,
+  get: function () {
+    return GRULayer_1.GRULayer;
+  }
+});
+
+var LSTMLayer_1 = require("../src/architecture/Layers/RecurrentLayers/LSTMLayer");
+
+Object.defineProperty(exports, "LSTMLayer", {
+  enumerable: true,
+  get: function () {
+    return LSTMLayer_1.LSTMLayer;
+  }
+});
+
+var MemoryLayer_1 = require("../src/architecture/Layers/RecurrentLayers/MemoryLayer");
+
+Object.defineProperty(exports, "MemoryLayer", {
+  enumerable: true,
+  get: function () {
+    return MemoryLayer_1.MemoryLayer;
+  }
+});
+
+var Network_1 = require("../src/architecture/Network");
+
+Object.defineProperty(exports, "Network", {
+  enumerable: true,
+  get: function () {
+    return Network_1.Network;
+  }
+});
+
+var Node_1 = require("../src/architecture/Node");
+
+Object.defineProperty(exports, "Node", {
+  enumerable: true,
+  get: function () {
+    return Node_1.Node;
+  }
+});
+
+var ConstantNode_1 = require("../src/architecture/Nodes/ConstantNode");
+
+Object.defineProperty(exports, "ConstantNode", {
+  enumerable: true,
+  get: function () {
+    return ConstantNode_1.ConstantNode;
+  }
+});
+
+var DropoutNode_1 = require("../src/architecture/Nodes/DropoutNode");
+
+Object.defineProperty(exports, "DropoutNode", {
+  enumerable: true,
+  get: function () {
+    return DropoutNode_1.DropoutNode;
+  }
+});
+
+var NoiseNode_1 = require("../src/architecture/Nodes/NoiseNode");
+
+Object.defineProperty(exports, "NoiseNode", {
+  enumerable: true,
+  get: function () {
+    return NoiseNode_1.NoiseNode;
+  }
+});
+
+var PoolNode_1 = require("../src/architecture/Nodes/PoolNode");
+
+Object.defineProperty(exports, "PoolNode", {
+  enumerable: true,
+  get: function () {
+    return PoolNode_1.PoolNode;
+  }
+});
+
+var ConnectionType_1 = require("../src/enums/ConnectionType");
+
+Object.defineProperty(exports, "ConnectionType", {
+  enumerable: true,
+  get: function () {
+    return ConnectionType_1.ConnectionType;
+  }
+});
+
+var GatingType_1 = require("../src/enums/GatingType");
+
+Object.defineProperty(exports, "GatingType", {
+  enumerable: true,
+  get: function () {
+    return GatingType_1.GatingType;
+  }
+});
+
+var NodeType_1 = require("../src/enums/NodeType");
+
+Object.defineProperty(exports, "NodeType", {
+  enumerable: true,
+  get: function () {
+    return NodeType_1.NodeType;
+  }
+});
+Object.defineProperty(exports, "NoiseNodeType", {
+  enumerable: true,
+  get: function () {
+    return NodeType_1.NoiseNodeType;
+  }
+});
+Object.defineProperty(exports, "PoolNodeType", {
+  enumerable: true,
+  get: function () {
+    return NodeType_1.PoolNodeType;
+  }
+});
+
+var Activation_1 = require("../src/methods/Activation");
+
+Object.defineProperty(exports, "AbsoluteActivation", {
+  enumerable: true,
+  get: function () {
+    return Activation_1.AbsoluteActivation;
+  }
+});
+Object.defineProperty(exports, "ALL_ACTIVATIONS", {
+  enumerable: true,
+  get: function () {
+    return Activation_1.ALL_ACTIVATIONS;
+  }
+});
+Object.defineProperty(exports, "BentIdentityActivation", {
+  enumerable: true,
+  get: function () {
+    return Activation_1.BentIdentityActivation;
+  }
+});
+Object.defineProperty(exports, "BipolarActivation", {
+  enumerable: true,
+  get: function () {
+    return Activation_1.BipolarActivation;
+  }
+});
+Object.defineProperty(exports, "BipolarSigmoidActivation", {
+  enumerable: true,
+  get: function () {
+    return Activation_1.BipolarSigmoidActivation;
+  }
+});
+Object.defineProperty(exports, "GaussianActivation", {
+  enumerable: true,
+  get: function () {
+    return Activation_1.GaussianActivation;
+  }
+});
+Object.defineProperty(exports, "HardTanhActivation", {
+  enumerable: true,
+  get: function () {
+    return Activation_1.HardTanhActivation;
+  }
+});
+Object.defineProperty(exports, "IdentityActivation", {
+  enumerable: true,
+  get: function () {
+    return Activation_1.IdentityActivation;
+  }
+});
+Object.defineProperty(exports, "InverseActivation", {
+  enumerable: true,
+  get: function () {
+    return Activation_1.InverseActivation;
+  }
+});
+Object.defineProperty(exports, "LogisticActivation", {
+  enumerable: true,
+  get: function () {
+    return Activation_1.LogisticActivation;
+  }
+});
+Object.defineProperty(exports, "MISHActivation", {
+  enumerable: true,
+  get: function () {
+    return Activation_1.MISHActivation;
+  }
+});
+Object.defineProperty(exports, "RELUActivation", {
+  enumerable: true,
+  get: function () {
+    return Activation_1.RELUActivation;
+  }
+});
+Object.defineProperty(exports, "SELUActivation", {
+  enumerable: true,
+  get: function () {
+    return Activation_1.SELUActivation;
+  }
+});
+Object.defineProperty(exports, "SinusoidActivation", {
+  enumerable: true,
+  get: function () {
+    return Activation_1.SinusoidActivation;
+  }
+});
+Object.defineProperty(exports, "SoftSignActivation", {
+  enumerable: true,
+  get: function () {
+    return Activation_1.SoftSignActivation;
+  }
+});
+Object.defineProperty(exports, "StepActivation", {
+  enumerable: true,
+  get: function () {
+    return Activation_1.StepActivation;
+  }
+});
+Object.defineProperty(exports, "TanhActivation", {
+  enumerable: true,
+  get: function () {
+    return Activation_1.TanhActivation;
+  }
+});
+
+var Loss_1 = require("../src/methods/Loss");
+
+Object.defineProperty(exports, "ALL_LOSSES", {
+  enumerable: true,
+  get: function () {
+    return Loss_1.ALL_LOSSES;
+  }
+});
+Object.defineProperty(exports, "BinaryLoss", {
+  enumerable: true,
+  get: function () {
+    return Loss_1.BinaryLoss;
+  }
+});
+Object.defineProperty(exports, "HINGELoss", {
+  enumerable: true,
+  get: function () {
+    return Loss_1.HINGELoss;
+  }
+});
+Object.defineProperty(exports, "MAELoss", {
+  enumerable: true,
+  get: function () {
+    return Loss_1.MAELoss;
+  }
+});
+Object.defineProperty(exports, "MAPELoss", {
+  enumerable: true,
+  get: function () {
+    return Loss_1.MAPELoss;
+  }
+});
+Object.defineProperty(exports, "MBELoss", {
+  enumerable: true,
+  get: function () {
+    return Loss_1.MBELoss;
+  }
+});
+Object.defineProperty(exports, "MSELoss", {
+  enumerable: true,
+  get: function () {
+    return Loss_1.MSELoss;
+  }
+});
+Object.defineProperty(exports, "MSLELoss", {
+  enumerable: true,
+  get: function () {
+    return Loss_1.MSLELoss;
+  }
+});
+Object.defineProperty(exports, "WAPELoss", {
+  enumerable: true,
+  get: function () {
+    return Loss_1.WAPELoss;
+  }
+});
+
+var Mutation_1 = require("../src/methods/Mutation");
+
+Object.defineProperty(exports, "AddBackConnectionMutation", {
+  enumerable: true,
+  get: function () {
+    return Mutation_1.AddBackConnectionMutation;
+  }
+});
+Object.defineProperty(exports, "AddConnectionMutation", {
+  enumerable: true,
+  get: function () {
+    return Mutation_1.AddConnectionMutation;
+  }
+});
+Object.defineProperty(exports, "AddGateMutation", {
+  enumerable: true,
+  get: function () {
+    return Mutation_1.AddGateMutation;
+  }
+});
+Object.defineProperty(exports, "AddNodeMutation", {
+  enumerable: true,
+  get: function () {
+    return Mutation_1.AddNodeMutation;
+  }
+});
+Object.defineProperty(exports, "AddSelfConnectionMutation", {
+  enumerable: true,
+  get: function () {
+    return Mutation_1.AddSelfConnectionMutation;
+  }
+});
+Object.defineProperty(exports, "ALL_MUTATIONS", {
+  enumerable: true,
+  get: function () {
+    return Mutation_1.ALL_MUTATIONS;
+  }
+});
+Object.defineProperty(exports, "FEEDFORWARD_MUTATIONS", {
+  enumerable: true,
+  get: function () {
+    return Mutation_1.FEEDFORWARD_MUTATIONS;
+  }
+});
+Object.defineProperty(exports, "ModActivationMutation", {
+  enumerable: true,
+  get: function () {
+    return Mutation_1.ModActivationMutation;
+  }
+});
+Object.defineProperty(exports, "ModBiasMutation", {
+  enumerable: true,
+  get: function () {
+    return Mutation_1.ModBiasMutation;
+  }
+});
+Object.defineProperty(exports, "ModWeightMutation", {
+  enumerable: true,
+  get: function () {
+    return Mutation_1.ModWeightMutation;
+  }
+});
+Object.defineProperty(exports, "Mutation", {
+  enumerable: true,
+  get: function () {
+    return Mutation_1.Mutation;
+  }
+});
+Object.defineProperty(exports, "NO_STRUCTURE_MUTATIONS", {
+  enumerable: true,
+  get: function () {
+    return Mutation_1.NO_STRUCTURE_MUTATIONS;
+  }
+});
+Object.defineProperty(exports, "ONLY_STRUCTURE", {
+  enumerable: true,
+  get: function () {
+    return Mutation_1.ONLY_STRUCTURE;
+  }
+});
+Object.defineProperty(exports, "SubBackConnectionMutation", {
+  enumerable: true,
+  get: function () {
+    return Mutation_1.SubBackConnectionMutation;
+  }
+});
+Object.defineProperty(exports, "SubConnectionMutation", {
+  enumerable: true,
+  get: function () {
+    return Mutation_1.SubConnectionMutation;
+  }
+});
+Object.defineProperty(exports, "SubGateMutation", {
+  enumerable: true,
+  get: function () {
+    return Mutation_1.SubGateMutation;
+  }
+});
+Object.defineProperty(exports, "SubNodeMutation", {
+  enumerable: true,
+  get: function () {
+    return Mutation_1.SubNodeMutation;
+  }
+});
+Object.defineProperty(exports, "SubSelfConnectionMutation", {
+  enumerable: true,
+  get: function () {
+    return Mutation_1.SubSelfConnectionMutation;
+  }
+});
+Object.defineProperty(exports, "SwapNodesMutation", {
+  enumerable: true,
+  get: function () {
+    return Mutation_1.SwapNodesMutation;
+  }
+});
+
+var Rate_1 = require("../src/methods/Rate");
+
+Object.defineProperty(exports, "ExponentialRate", {
+  enumerable: true,
+  get: function () {
+    return Rate_1.ExponentialRate;
+  }
+});
+Object.defineProperty(exports, "FixedRate", {
+  enumerable: true,
+  get: function () {
+    return Rate_1.FixedRate;
+  }
+});
+Object.defineProperty(exports, "InverseRate", {
+  enumerable: true,
+  get: function () {
+    return Rate_1.InverseRate;
+  }
+});
+Object.defineProperty(exports, "Rate", {
+  enumerable: true,
+  get: function () {
+    return Rate_1.Rate;
+  }
+});
+Object.defineProperty(exports, "StepRate", {
+  enumerable: true,
+  get: function () {
+    return Rate_1.StepRate;
+  }
+});
+
+var Selection_1 = require("../src/methods/Selection");
+
+Object.defineProperty(exports, "FitnessProportionateSelection", {
+  enumerable: true,
+  get: function () {
+    return Selection_1.FitnessProportionateSelection;
+  }
+});
+Object.defineProperty(exports, "PowerSelection", {
+  enumerable: true,
+  get: function () {
+    return Selection_1.PowerSelection;
+  }
+});
+Object.defineProperty(exports, "Selection", {
+  enumerable: true,
+  get: function () {
+    return Selection_1.Selection;
+  }
+});
+Object.defineProperty(exports, "TournamentSelection", {
+  enumerable: true,
+  get: function () {
+    return Selection_1.TournamentSelection;
+  }
+});
+
+var Utils_1 = require("../src/methods/Utils");
+
+Object.defineProperty(exports, "avg", {
+  enumerable: true,
+  get: function () {
+    return Utils_1.avg;
+  }
+});
+Object.defineProperty(exports, "generateGaussian", {
+  enumerable: true,
+  get: function () {
+    return Utils_1.generateGaussian;
+  }
+});
+Object.defineProperty(exports, "getOrDefault", {
+  enumerable: true,
+  get: function () {
+    return Utils_1.getOrDefault;
+  }
+});
+Object.defineProperty(exports, "max", {
+  enumerable: true,
+  get: function () {
+    return Utils_1.max;
+  }
+});
+Object.defineProperty(exports, "maxValueIndex", {
+  enumerable: true,
+  get: function () {
+    return Utils_1.maxValueIndex;
+  }
+});
+Object.defineProperty(exports, "min", {
+  enumerable: true,
+  get: function () {
+    return Utils_1.min;
+  }
+});
+Object.defineProperty(exports, "minValueIndex", {
+  enumerable: true,
+  get: function () {
+    return Utils_1.minValueIndex;
+  }
+});
+Object.defineProperty(exports, "pickRandom", {
+  enumerable: true,
+  get: function () {
+    return Utils_1.pickRandom;
+  }
+});
+Object.defineProperty(exports, "randBoolean", {
+  enumerable: true,
+  get: function () {
+    return Utils_1.randBoolean;
+  }
+});
+Object.defineProperty(exports, "randDouble", {
+  enumerable: true,
+  get: function () {
+    return Utils_1.randDouble;
+  }
+});
+Object.defineProperty(exports, "randInt", {
+  enumerable: true,
+  get: function () {
+    return Utils_1.randInt;
+  }
+});
+Object.defineProperty(exports, "removeFromArray", {
+  enumerable: true,
+  get: function () {
+    return Utils_1.removeFromArray;
+  }
+});
+Object.defineProperty(exports, "shuffle", {
+  enumerable: true,
+  get: function () {
+    return Utils_1.shuffle;
+  }
+});
+Object.defineProperty(exports, "sum", {
+  enumerable: true,
+  get: function () {
+    return Utils_1.sum;
+  }
+});
 },{"../src/architecture/Architect":"../src/architecture/Architect.js","../src/architecture/Connection":"../src/architecture/Connection.js","../src/architecture/Layers/CoreLayers/DenseLayer":"../src/architecture/Layers/CoreLayers/DenseLayer.js","../src/architecture/Layers/CoreLayers/DropoutLayer":"../src/architecture/Layers/CoreLayers/DropoutLayer.js","../src/architecture/Layers/CoreLayers/InputLayer":"../src/architecture/Layers/CoreLayers/InputLayer.js","../src/architecture/Layers/CoreLayers/OutputLayer":"../src/architecture/Layers/CoreLayers/OutputLayer.js","../src/architecture/Layers/Layer":"../src/architecture/Layers/Layer.js","../src/architecture/Layers/NoiseLayers/NoiseLayer":"../src/architecture/Layers/NoiseLayers/NoiseLayer.js","../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer":"../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/MinPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MinPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js","../src/architecture/Layers/RecurrentLayers/GRULayer":"../src/architecture/Layers/RecurrentLayers/GRULayer.js","../src/architecture/Layers/RecurrentLayers/LSTMLayer":"../src/architecture/Layers/RecurrentLayers/LSTMLayer.js","../src/architecture/Layers/RecurrentLayers/MemoryLayer":"../src/architecture/Layers/RecurrentLayers/MemoryLayer.js","../src/architecture/Network":"../src/architecture/Network.js","../src/architecture/Node":"../src/architecture/Node.js","../src/architecture/Nodes/ConstantNode":"../src/architecture/Nodes/ConstantNode.js","../src/architecture/Nodes/DropoutNode":"../src/architecture/Nodes/DropoutNode.js","../src/architecture/Nodes/NoiseNode":"../src/architecture/Nodes/NoiseNode.js","../src/architecture/Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","../src/enums/ConnectionType":"../src/enums/ConnectionType.js","../src/enums/GatingType":"../src/enums/GatingType.js","../src/enums/NodeType":"../src/enums/NodeType.js","../src/methods/Activation":"../src/methods/Activation.js","../src/methods/Loss":"../src/methods/Loss.js","../src/methods/Mutation":"../src/methods/Mutation.js","../src/methods/Rate":"../src/methods/Rate.js","../src/methods/Selection":"../src/methods/Selection.js","../src/methods/Utils":"../src/methods/Utils.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -713,7 +7251,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "44111" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "44591" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
