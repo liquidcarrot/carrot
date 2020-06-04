@@ -37,11 +37,11 @@ export class Network {
     /**
      * The input size of this network.
      */
-    public inputSize: number;
+    public readonly inputSize: number;
     /**
      * The output size of this network.
      */
-    public outputSize: number;
+    public readonly outputSize: number;
     /**
      * The nodes inside this network. Stored in activation order.
      */
