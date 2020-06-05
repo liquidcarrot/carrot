@@ -40,7 +40,7 @@ export class NEAT {
     /**
      * Population size of each generation.
      */
-    private readonly populationSize: number;
+    private populationSize: number;
     /**
      * Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
      */
@@ -351,5 +351,14 @@ export class NEAT {
             .map(genome => genome.score)
             .forEach(val => score += val ?? 0);
         return score / this.population.length;
+    }
+
+    /**
+     * Replace the whole population with the new genomes
+     * @param genomes the genomes which replace the population
+     */
+    public replacePopulation(genomes: Network[]): void {
+        this.population = genomes;
+        this.populationSize = genomes.length;
     }
 }
