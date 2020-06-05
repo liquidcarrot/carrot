@@ -386,7 +386,7 @@ class AddGateMutation extends Mutation {
         maxGates?: number
     } = {}): void {
         // check if max gates isn't reached already
-        if (options.maxGates !== undefined && network.gates.length >= options.maxGates) {
+        if (options.maxGates !== undefined && network.gates.size >= options.maxGates) {
             return;
         }
 
@@ -413,8 +413,8 @@ class SubGateMutation extends Mutation {
      * @param network The network which gets mutated
      */
     public mutate(network: Network): void {
-        if (network.gates.length > 0) {
-            network.removeGate(pickRandom(network.gates));
+        if (network.gates.size > 0) {
+            network.removeGate(pickRandom(Array.from(network.gates)));
         }
     }
 }

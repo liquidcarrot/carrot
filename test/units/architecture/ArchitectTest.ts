@@ -31,7 +31,7 @@ describe("ArchitectTest", () => {
 
         expect(network.nodes.length).to.be.equal(10 + layerSizes[0] + layerSizes[1] + layerSizes[2] + 2);
         expect(network.connections.size).to.be.equal(10 * layerSizes[0] + layerSizes[0] * layerSizes[1] + layerSizes[1] * layerSizes[2] + layerSizes[2] * 2);
-        expect(network.gates.length).to.be.equal(0);
+        expect(network.gates.size).to.be.equal(0);
 
         const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELUActivation).length;
         expect(numNodesWithRELU).to.be.equal(layerSizes[0] + layerSizes[1] + layerSizes[2]);
@@ -51,7 +51,7 @@ describe("ArchitectTest", () => {
 
         expect(network.nodes.length).to.be.equal(10 + 10 + layerSize + 2);
         expect(network.connections.size).to.be.equal(10 * 10 + 10 + layerSize * 2);
-        expect(network.gates.length).to.be.equal(0);
+        expect(network.gates.size).to.be.equal(0);
 
         const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELUActivation).length;
         expect(numNodesWithRELU).to.be.equal(10 + 2);
@@ -81,7 +81,7 @@ describe("ArchitectTest", () => {
 
         expect(network.nodes.length).to.be.equal(10 + 10 + outputSize * (memorySize + 1) + 20 + 10 + 2);
         expect(network.connections.size).to.be.equal(10 * 10 + 10 * outputSize + memorySize * outputSize + outputSize * 20 + 20 * 10 + 10 * 2);
-        expect(network.gates.length).to.be.equal(0);
+        expect(network.gates.size).to.be.equal(0);
 
         const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELUActivation).length;
         expect(numNodesWithRELU).to.be.equal(10 + outputSize + 20 + 10);
@@ -102,7 +102,7 @@ describe("ArchitectTest", () => {
 
         expect(network.nodes.length).to.be.equal(10 + 10 + outputSize + 2 + 2);
         expect(network.connections.size).to.be.equal(10 * 10 + 10 * outputSize + outputSize + outputSize * 2 + 2 * 2);
-        expect(network.gates.length).to.be.equal(0);
+        expect(network.gates.size).to.be.equal(0);
 
         const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELUActivation).length;
         expect(numNodesWithRELU).to.be.equal(outputSize);
@@ -128,7 +128,7 @@ describe("ArchitectTest", () => {
         // GRUSize * 2 (LSTM -> output)
         expect(network.connections.size).to.be.equal(10 * GRUSize + GRUSize * GRUSize * 8 + 2 * GRUSize + GRUSize * 2);
 
-        expect(network.gates.length).to.be.equal(3 * GRUSize * GRUSize);
+        expect(network.gates.size).to.be.equal(3 * GRUSize * GRUSize);
 
         const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELUActivation).length;
         expect(numNodesWithRELU).to.be.equal(GRUSize);
@@ -154,7 +154,7 @@ describe("ArchitectTest", () => {
         // LSTMSize * 2 (LSTM -> output)
         expect(network.connections.size).to.be.equal(10 * LSTMSize + LSTMSize * LSTMSize * 8 + LSTMSize + LSTMSize * 2);
 
-        expect(network.gates.length).to.be.equal(2 * LSTMSize * LSTMSize + LSTMSize);
+        expect(network.gates.size).to.be.equal(2 * LSTMSize * LSTMSize + LSTMSize);
 
         const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELUActivation).length;
         expect(numNodesWithRELU).to.be.equal(LSTMSize);
@@ -189,7 +189,7 @@ describe("ArchitectTest", () => {
         // HopfieldSize * 2 (LSTM -> output)
         expect(network.connections.size).to.be.equal(10 * HopfieldSize + HopfieldSize * HopfieldSize * 2 + HopfieldSize * 2);
 
-        expect(network.gates.length).to.be.equal(0);
+        expect(network.gates.size).to.be.equal(0);
 
         const numNodesWithSTEP: number = network.nodes.filter(node => node.squash === StepActivation).length;
         expect(numNodesWithSTEP).to.be.equal(HopfieldSize);

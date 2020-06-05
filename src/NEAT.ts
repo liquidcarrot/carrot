@@ -183,7 +183,7 @@ export class NEAT {
             return (
                 method.constructor.name !== AddNodeMutation.constructor.name || network.nodes.length < this.maxNodes ||
                 method.constructor.name !== AddConnectionMutation.constructor.name || network.connections.size < this.maxConnections ||
-                method.constructor.name !== AddGateMutation.constructor.name || network.gates.length < this.maxGates
+                method.constructor.name !== AddGateMutation.constructor.name || network.gates.size < this.maxGates
             );
         });
         network.mutate(pickRandom(allowed), {allowedActivations: this.activations});

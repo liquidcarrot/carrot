@@ -53,7 +53,7 @@ export class Network {
     /**
      * The gates inside this network.
      */
-    public gates: Connection[];
+    public gates: Set<Connection>;
     /**
      * The score of this network for evolution.
      */
@@ -65,7 +65,7 @@ export class Network {
 
         this.nodes = [];
         this.connections = new Set<Connection>();
-        this.gates = [];
+        this.gates = new Set<Connection>();
         this.score = undefined;
 
         // Create input and output nodes
@@ -436,7 +436,7 @@ export class Network {
             return;
         }
         node.addGate(connection);
-        this.gates.push(connection);
+        this.gates.add(connection);
     }
 
     /**
@@ -445,10 +445,10 @@ export class Network {
      * @param {Connection} connection Connection to remove gate from
      */
     public removeGate(connection: Connection): void {
-        if (!this.gates.includes(connection)) {
+        if (!this.gates.has(connection)) {
             throw new Error(`This connection is not gated!`);
         }
-        removeFromArray(this.gates, connection);
+        this.gates.delete(connection);
         if (connection.gateNode != null) {
             connection.gateNode.removeGate(connection);
         }
@@ -861,7 +861,7 @@ export class Network {
                             - genome.inputSize
                             - genome.outputSize
                             + genome.connections.size
-                            + genome.gates.length
+                            + genome.gates.size
                         );
                     });
                 }
@@ -874,8 +874,8 @@ export class Network {
         const neat: NEAT = new NEAT(options);
 
         let error: number;
-        let bestFitness: number | undefined;
-        let bestGenome: Network | undefined;
+        let bestFitness: number = 0;
+        let bestGenome: Network = this;
 
         // run until error goal is reached or iteration goal is reached
         do {
@@ -889,12 +889,12 @@ export class Network {
             error = fittest.score + options.growth * (
                 fittest.nodes.length
                 + fittest.connections.size
-                + fittest.gates.length
+                + fittest.gates.size
                 - fittest.inputSize
                 - fittest.outputSize
             );
 
-            if (!bestFitness || fittest.score > bestFitness) {
+            if (neat.generation === 1 || fittest.score > bestFitness) {
                 bestFitness = fittest.score;
                 bestGenome = fittest;
             }
