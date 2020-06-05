@@ -1,5 +1,5 @@
 import {Network} from "../architecture/Network";
-import {pickRandom, randDouble} from "./Utils";
+import {pickRandom, randDouble} from "../utils/Utils";
 
 /**
  * Genetic Algorithm Selection Methods (Genetic Operator)

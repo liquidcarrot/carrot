@@ -1,6 +1,6 @@
 import {PoolNodeType} from "../../enums/NodeType";
 import {PoolNodeJSON} from "../../interfaces/NodeJSON";
-import {avg, getOrDefault, maxValueIndex, minValueIndex, sum} from "../../methods/Utils";
+import {avg, getOrDefault, maxValueIndex, minValueIndex, sum} from "../../utils/Utils";
 import {Connection} from "../Connection";
 import {Node} from "../Node";
 import {ConstantNode} from "./ConstantNode";

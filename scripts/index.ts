@@ -101,7 +101,7 @@ import {
     removeFromArray,
     shuffle,
     sum
-} from "../src/methods/Utils";
+} from "../src/utils/Utils";
 
 // TODO this could be more beautiful and also dynamic
 export {

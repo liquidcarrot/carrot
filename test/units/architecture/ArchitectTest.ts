@@ -13,7 +13,7 @@ import {Network} from "../../../src/architecture/Network";
 import {Node} from "../../../src/architecture/Node";
 import {PoolNode} from "../../../src/architecture/Nodes/PoolNode";
 import {IdentityActivation, LogisticActivation, RELUActivation, StepActivation} from "../../../src/methods/Activation";
-import {randInt} from "../../../src/methods/Utils";
+import {randInt} from "../../../src/utils/Utils";
 
 describe("ArchitectTest", () => {
     it("Build Multilayer-Perceptron", () => {

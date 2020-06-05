@@ -12,8 +12,8 @@ import {activationType} from "../methods/Activation";
 import {ALL_LOSSES, lossType, MSELoss} from "../methods/Loss";
 import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
 import {FixedRate} from "../methods/Rate";
-import {getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../methods/Utils";
 import {NEAT} from "../NEAT";
+import {getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../utils/Utils";
 import {Connection} from "./Connection";
 import {Node} from "./Node";
 

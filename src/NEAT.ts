@@ -9,7 +9,7 @@ import {
     Mutation
 } from "./methods/Mutation";
 import {FitnessProportionateSelection, Selection} from "./methods/Selection";
-import {getOrDefault, pickRandom} from "./methods/Utils";
+import {getOrDefault, pickRandom} from "./utils/Utils";
 
 /**
  * Runs the NEAT algorithm on group of neural networks.

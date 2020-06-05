@@ -2,8 +2,8 @@ import {Connection} from "../architecture/Connection";
 import {Network} from "../architecture/Network";
 import {Node} from "../architecture/Node";
 import {NodeType} from "../enums/NodeType";
+import {pickRandom, randBoolean, randDouble} from "../utils/Utils";
 import {activationType} from "./Activation";
-import {pickRandom, randBoolean, randDouble} from "./Utils";
 
 /**
  *

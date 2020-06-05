@@ -3,7 +3,7 @@ import {Connection} from "../../../src/architecture/Connection";
 import {Network} from "../../../src/architecture/Network";
 import {Node} from "../../../src/architecture/Node";
 import {AddConnectionMutation, AddGateMutation, AddNodeMutation, SubGateMutation} from "../../../src/methods/Mutation";
-import {randInt} from "../../../src/methods/Utils";
+import {randInt} from "../../../src/utils/Utils";
 
 describe('Network', () => {
     function createTestNetwork(): Network {

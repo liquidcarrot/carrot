@@ -2,7 +2,7 @@ import {NodeType} from "../enums/NodeType";
 import {NodeJSON} from "../interfaces/NodeJSON";
 import {activationType, ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
 import {ModBiasMutation} from "../methods/Mutation";
-import {getOrDefault, pickRandom, randDouble} from "../methods/Utils";
+import {getOrDefault, pickRandom, randDouble} from "../utils/Utils";
 import {Connection} from "./Connection";
 
 /**

@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import {ALL_LOSSES} from "../../../src/methods/Loss";
-import {randDouble} from "../../../src/methods/Utils";
+import {randDouble} from "../../../src/utils/Utils";
 
 describe("Loss", () => {
     Object.values(ALL_LOSSES).forEach(loss => {

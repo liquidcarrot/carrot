@@ -17,7 +17,7 @@ import {
     StepActivation,
     TanhActivation
 } from "../../../src/methods/Activation";
-import {randDouble} from "../../../src/methods/Utils";
+import {randDouble} from "../../../src/utils/Utils";
 
 describe("Activation", () => {
     describe("LogisticActivation", () => {

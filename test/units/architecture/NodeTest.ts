@@ -5,7 +5,7 @@ import {NodeType} from "../../../src/enums/NodeType";
 import {NodeJSON} from "../../../src/interfaces/NodeJSON";
 import {activationType} from "../../../src/methods/Activation";
 import {ModBiasMutation} from "../../../src/methods/Mutation";
-import {randDouble, randInt} from "../../../src/methods/Utils";
+import {randDouble, randInt} from "../../../src/utils/Utils";
 
 describe("Node", function (): void {
     describe("node.connect()", function (): void {
