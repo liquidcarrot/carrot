@@ -119,9 +119,8 @@
 					<li><a href="https://liquidcarrot.github.io/carrot">Simple docs</a> &amp; <a href="https://liquidcarrot.io/example.flappy-bird/">interactive examples</a></li>
 					<li><strong>Neuro-evolution</strong> &amp; population based training</li>
 					<li>Multi-threading &amp; GPU (coming soon)</li>
-					<li>Preconfigured GRU, LSTM, NARX Networks</li>
-					<li>Mutable Neurons, Layers, Groups, and Networks</li>
-					<li>SVG Network Visualizations using D3.js</li>
+					<li>Complete customizable Networks with various types of layers</li>
+					<li>Mutable Neurons, Connections, Layers, and Networks</li>
 				</ul>
 				<a href="#demos" id="demos" style="color: inherit; text-decoration: none;">
 					<h2>Demos</h2>
@@ -148,68 +147,47 @@
 				<p>This is a simple <strong>perceptron</strong>:</p>
 				<p><img src="http://www.codeproject.com/KB/dotnet/predictor/network.jpg" alt="perceptron">.</p>
 				<p>How to build it with Carrot:</p>
-				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> { architect } = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@liquid-carrot/carrot'</span>);
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> architect = <span class="hljs-keyword">new</span> Architect();
 
-<span class="hljs-comment">// The example Perceptron you see above with 4 inputs, 5 hidden, and 1 output neuron</span>
-<span class="hljs-keyword">let</span> simplePerceptron = <span class="hljs-keyword">new</span> architect.Perceptron(<span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">1</span>);</code></pre>
-				<p>Building networks is easy with <strong>6</strong> built-in networks</p>
-				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> { architect } = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@liquid-carrot/carrot'</span>);
+architect.addLayer(<span class="hljs-keyword">new</span> InputLayer(<span class="hljs-number">5</span>));
+architect.addLayer(<span class="hljs-keyword">new</span> DenseLayer(<span class="hljs-number">10</span>, {<span class="hljs-attr">activationType</span>: RELUActivation}));
+architect.addLayer(<span class="hljs-keyword">new</span> DenseLayer(<span class="hljs-number">20</span>, {<span class="hljs-attr">activationType</span>: RELUActivation}));
+architect.addLayer(<span class="hljs-keyword">new</span> DenseLayer(<span class="hljs-number">10</span>, {<span class="hljs-attr">activationType</span>: RELUActivation}));
+architect.addLayer(<span class="hljs-keyword">new</span> OutputLayer(<span class="hljs-number">5</span>));
 
-<span class="hljs-keyword">let</span> LSTM = <span class="hljs-keyword">new</span> architect.LSTM(<span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">1</span>);
+<span class="hljs-keyword">const</span> network = architect.buildModel();</code></pre>
+				<p>Building networks is easy with <strong>17</strong> built-in layers
+				You can combine them as you need.</p>
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> architect = <span class="hljs-keyword">new</span> Architect();
 
-<span class="hljs-comment">// Add as many hidden layers as needed</span>
-<span class="hljs-keyword">let</span> Perceptron = <span class="hljs-keyword">new</span> architect.Perceptron(<span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">20</span>, <span class="hljs-number">5</span>, <span class="hljs-number">10</span>, <span class="hljs-number">1</span>);</code></pre>
-				<p>Building custom network architectures</p>
-				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> architect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@liquid-carrot/carrot'</span>).architect
-<span class="hljs-keyword">let</span> Layer = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@liquid-carrot/carrot'</span>).Layer
+architect.addLayer(<span class="hljs-keyword">new</span> InputLayer(<span class="hljs-number">10</span>));
+architect.addLayer(<span class="hljs-keyword">new</span> DenseLayer(<span class="hljs-number">10</span>, {<span class="hljs-attr">activationType</span>: RELUActivation}));
+architect.addLayer(<span class="hljs-keyword">new</span> MaxPooling1DLayer(<span class="hljs-number">5</span>, {<span class="hljs-attr">activation</span>: IdentityActivation}));
+architect.addLayer(<span class="hljs-keyword">new</span> OutputLayer(<span class="hljs-number">2</span>, {<span class="hljs-attr">activation</span>: RELUActivation}));
 
-<span class="hljs-keyword">let</span> input = <span class="hljs-keyword">new</span> Layer.Dense(<span class="hljs-number">1</span>);
-<span class="hljs-keyword">let</span> hidden1 = <span class="hljs-keyword">new</span> Layer.LSTM(<span class="hljs-number">5</span>);
-<span class="hljs-keyword">let</span> hidden2 = <span class="hljs-keyword">new</span> Layer.GRU(<span class="hljs-number">1</span>);
-<span class="hljs-keyword">let</span> output = <span class="hljs-keyword">new</span> Layer.Dense(<span class="hljs-number">1</span>);
-
-<span class="hljs-comment">// connect however you want</span>
-input.connect(hidden1);
-hidden1.connect(hidden2);
-hidden2.connect(output);
-
-<span class="hljs-keyword">let</span> network = architect.Construct([input, hidden1, hidden2, output]);</code></pre>
+<span class="hljs-keyword">const</span> network = architect.buildModel();</code></pre>
 				<p>Networks also shape <strong>themselves</strong> with neuro-evolution</p>
-				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> { Network, methods } = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@liquid-carrot/carrot'</span>);
+				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> XOR = [
+    {<span class="hljs-attr">input</span>: [<span class="hljs-number">0</span>, <span class="hljs-number">0</span>], <span class="hljs-attr">output</span>: [<span class="hljs-number">0</span>]},
+    {<span class="hljs-attr">input</span>: [<span class="hljs-number">0</span>, <span class="hljs-number">1</span>], <span class="hljs-attr">output</span>: [<span class="hljs-number">1</span>]},
+    {<span class="hljs-attr">input</span>: [<span class="hljs-number">1</span>, <span class="hljs-number">0</span>], <span class="hljs-attr">output</span>: [<span class="hljs-number">1</span>]},
+    {<span class="hljs-attr">input</span>: [<span class="hljs-number">1</span>, <span class="hljs-number">1</span>], <span class="hljs-attr">output</span>: [<span class="hljs-number">0</span>]}
+];
 
 <span class="hljs-comment">// this network learns the XOR gate (through neuro-evolution)</span>
-<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">execute</span> (<span class="hljs-params"></span>) </span>{
-  <span class="hljs-comment">// no hidden layers...</span>
-   <span class="hljs-keyword">var</span> network = <span class="hljs-keyword">new</span> Network(<span class="hljs-number">2</span>,<span class="hljs-number">1</span>);
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">execute</span>(<span class="hljs-params"></span>): <span class="hljs-title">Promise</span>&lt;<span class="hljs-title">void</span>&gt; </span>{
+    <span class="hljs-keyword">this</span>.timeout(<span class="hljs-number">20000</span>);
 
-   <span class="hljs-comment">// XOR dataset</span>
-   <span class="hljs-keyword">var</span> trainingSet = [
-       { <span class="hljs-attr">input</span>: [<span class="hljs-number">0</span>,<span class="hljs-number">0</span>], <span class="hljs-attr">output</span>: [<span class="hljs-number">0</span>] },
-       { <span class="hljs-attr">input</span>: [<span class="hljs-number">0</span>,<span class="hljs-number">1</span>], <span class="hljs-attr">output</span>: [<span class="hljs-number">1</span>] },
-       { <span class="hljs-attr">input</span>: [<span class="hljs-number">1</span>,<span class="hljs-number">0</span>], <span class="hljs-attr">output</span>: [<span class="hljs-number">1</span>] },
-       { <span class="hljs-attr">input</span>: [<span class="hljs-number">1</span>,<span class="hljs-number">1</span>], <span class="hljs-attr">output</span>: [<span class="hljs-number">0</span>] }
-   ];
+    <span class="hljs-keyword">const</span> network: Network = <span class="hljs-keyword">new</span> Network(<span class="hljs-number">2</span>, <span class="hljs-number">1</span>);
 
-   <span class="hljs-keyword">await</span> network.evolve(trainingSet, {
-       <span class="hljs-attr">mutation</span>: methods.mutation.FFW,
-       <span class="hljs-attr">equal</span>: <span class="hljs-literal">true</span>,
-       <span class="hljs-attr">error</span>: <span class="hljs-number">0.05</span>,
-       <span class="hljs-attr">elitism</span>: <span class="hljs-number">5</span>,
-       <span class="hljs-attr">mutation_rate</span>: <span class="hljs-number">0.5</span>
-   });
+    <span class="hljs-keyword">const</span> initial: number = network.test(XOR);
+    <span class="hljs-keyword">await</span> network.evolve({<span class="hljs-attr">iterations</span>: <span class="hljs-number">50</span>, <span class="hljs-attr">dataset</span>: XOR});
+    <span class="hljs-keyword">const</span> final: number = network.test(XOR);
 
-   <span class="hljs-comment">// and it works!</span>
-   network.activate([<span class="hljs-number">0</span>,<span class="hljs-number">0</span>]); <span class="hljs-comment">// 0.2413</span>
-   network.activate([<span class="hljs-number">0</span>,<span class="hljs-number">1</span>]); <span class="hljs-comment">// 1.0000</span>
-   network.activate([<span class="hljs-number">1</span>,<span class="hljs-number">0</span>]); <span class="hljs-comment">// 0.7663</span>
-   network.activate([<span class="hljs-number">1</span>,<span class="hljs-number">1</span>]); <span class="hljs-comment">// 0.008</span>
+    expect(final).to.be.at.most(initial);
 }
 
 execute();</code></pre>
-				<p>Build vanilla neural networks</p>
-				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> Network = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@liquid-carrot/carrot'</span>).Network
-
-<span class="hljs-keyword">let</span> network = <span class="hljs-keyword">new</span> Network([<span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">1</span>]) <span class="hljs-comment">// Builds a neural network with 5 neurons: 2 + 2 + 1</span></code></pre>
 				<p>Or implement custom algorithms with neuron-level control</p>
 				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> Node = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@liquid-carrot/carrot'</span>).Node
 
