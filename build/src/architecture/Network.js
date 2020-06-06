@@ -680,7 +680,7 @@ var Network = /** @class */ (function () {
                             serializedDataSet_1 = JSON.stringify(options.dataset);
                             lossIndex_1 = Object.values(Loss_1.ALL_LOSSES).indexOf((_a = options.loss) !== null && _a !== void 0 ? _a : Loss_1.MSELoss);
                             // init a pool of workers
-                            workerPool = dist_1.Pool(function () { return threads_1.spawn(new threads_1.Worker("../multithreading/Worker")); }, (_b = options.threads) !== null && _b !== void 0 ? _b : os_1.default.cpus().length);
+                            workerPool = dist_1.Pool(function () { return threads_1.spawn(new threads_1.Worker("../multithreading/TestWorker")); }, (_b = options.threads) !== null && _b !== void 0 ? _b : os_1.default.cpus().length);
                             options.fitnessFunction = function (population) {
                                 return __awaiter(this, void 0, void 0, function () {
                                     var _loop_1, _i, population_1, genome;

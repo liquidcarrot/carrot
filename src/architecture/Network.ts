@@ -1,7 +1,6 @@
 import os from "os";
 import {spawn, Worker} from "threads";
 import {Pool} from "threads/dist";
-import {WorkerFunction} from "threads/dist/types/worker";
 import "threads/register";
 import {NodeType} from "../enums/NodeType";
 import {ConnectionJSON} from "../interfaces/ConnectionJSON";
@@ -12,6 +11,7 @@ import {activationType} from "../methods/Activation";
 import {ALL_LOSSES, lossType, MSELoss} from "../methods/Loss";
 import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
 import {FixedRate} from "../methods/Rate";
+import {TestWorker} from "../multithreading/TestWorker";
 import {NEAT} from "../NEAT";
 import {getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../utils/Utils";
 import {Connection} from "./Connection";
@@ -839,13 +839,13 @@ export class Network {
             const serializedDataSet: string = JSON.stringify(options.dataset);
             const lossIndex: number = Object.values(ALL_LOSSES).indexOf(options.loss ?? MSELoss);
             // init a pool of workers
-            workerPool = Pool(() => spawn(new Worker("../multithreading/Worker")), options.threads ?? os.cpus().length);
+            workerPool = Pool(() => spawn<TestWorker>(new Worker("../multithreading/TestWorker")), options.threads ?? os.cpus().length);
 
             options.fitnessFunction = async function (population: Network[]): Promise<void> {
                 for (const genome of population) {
                     // add a task to the workerPool's queue
 
-                    workerPool.queue(async (test: WorkerFunction) => {
+                    workerPool.queue(async (test: TestWorker) => {
                         if (genome === undefined) {
                             throw new ReferenceError();
                         }
