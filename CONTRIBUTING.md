@@ -16,28 +16,31 @@ Project Bylaws (TBD). Come join us!
 ## File Structure
 
 ```
-.__ assets/
-|__ config/
+|__ .github/
+|__ build/
 |__ dist/
+|__ docs/
+|__ images/
 |__ scripts/
 |__ src/
 |__ test/
-|__ util/
 ```
 
-**`assets/`:** holds common images (e.g. logo) and videos (e.g. demo) used throughout the repo.
+**`.github/`:** holds all github relevant files (also the CI pipeline).
 
-**`config/`:** holds configuration files for different DevOps tools (e.g. JSDoc).
+**`build/`:** holds all the compiled typescript files.
 
 **`dist/`:** holds compiled distribution & production version of the code base.
+
+**`docs/`:** holds the documentation of carrot
+
+**`images/`:** holds some images for the documentation and readme
 
 **`scripts/`:** holds DevOps scripts (e.g. build, test, etc.) used to create and maintain the repo.
 
 **`src/`:** holds all the source code.
 
 **`test/`:** holds all the unit & integration tests for the repo.
-
-**`util/`:** holds all the ancillary non-vendor modules (i.e. not `node_modules`; custom built) and scripts used to create the repo
 
 ## Building
 
@@ -46,10 +49,8 @@ Distribution and production code is bundled using [`parcel`](parceljs.org). Scri
 ### File Sub-Structure `scripts/`
 
 ```
-.__ src.build.js
-|__ tests.build.js
-|__ docs.build.js
-|__ ...
+.__ build.ts
+.__ index.ts
 ```
 
 ### Running Build Scripts
@@ -60,21 +61,11 @@ Distribution and production code is bundled using [`parcel`](parceljs.org). Scri
 npm run build:src
 ```
 
-Runs `scripts/src.build.js` and creates/updates four files in `dist/`:
-* `dist/index.js`: _compiled for Node.js development_
-* `dist/index.min.js`: _compiled for Node.js production_
-* `dist/index.browser.js`: _compiled for Browser development_
-* `dist/index.browser.min.js`: _compiled for Browser production_
-
-
-**Build Test Suite**
-
-```
-npm run build:tests
-```
-
-Runs `scripts/tests.build.js` and bundles all Mocha & Chai unit/integration tests into `test/browser.js` for browser-side unit/integration testing with Mocha.
-
+Runs `scripts/build.ts` and creates/updates four files in `dist/`:
+* `dist/dev/index.js`: _compiled for Node.js development_
+* `dist/production/index.min.js`: _compiled for Node.js production_
+* `dist/dev/index.browser.js`: _compiled for Browser development_
+* `dist/production/index.browser.min.js`: _compiled for Browser production_
 
 **Generating Documentation**
 
@@ -82,7 +73,7 @@ Runs `scripts/tests.build.js` and bundles all Mocha & Chai unit/integration test
 npm run build:docs
 ```
 
-Runs `scripts/docs.build.js` and generates publicly available documentation as HTML files in the `docs/` and Markdown in `DOCUMENTATION.md` using [`jsdoc`](https://www.npmjs.com/package/jsdoc) and [`jsdoc2md`](https://www.npmjs.com/package/jsdoc-to-markdown), respectively.
+Runs `typedoc --options typedoc.json` and generates publicly available documentation as HTML files in the `docs/` and Markdown in `DOCUMENTATION.md` using [`jsdoc`](https://www.npmjs.com/package/jsdoc) and [`jsdoc2md`](https://www.npmjs.com/package/jsdoc-to-markdown), respectively.
 
 **[DEPRECATED] Bundling Source Code w/ Webpack**
 
