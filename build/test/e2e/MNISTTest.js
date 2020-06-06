@@ -44,7 +44,7 @@ var Network_1 = require("../../src/architecture/Network");
 var Activation_1 = require("../../src/methods/Activation");
 var Loss_1 = require("../../src/methods/Loss");
 var Mutation_1 = require("../../src/methods/Mutation");
-describe('MNIST', function () {
+describe.skip('MNIST', function () {
     it("evolve mnist", function () {
         return __awaiter(this, void 0, void 0, function () {
             var set, trainingSet, net, errorBefore, options, errorAfter;
