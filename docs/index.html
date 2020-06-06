@@ -1,0 +1,419 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Carrot - v0.4.0</title>
+	<meta name="description" content="Documentation for Carrot - v0.4.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">Carrot - v0.4.0</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1>Carrot - v0.4.0</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<p align="center">
+					<img src="https://raw.githubusercontent.com/liquidcarrot/carrot/master/images/carrot-logo_readme.png" alt="Carrot Logo" width="600px"/>
+				</p>
+				<p align="center">
+					<a href="https://github.com/raimannma/carrot/actions">
+						<img src="https://github.com/raimannma/carrot/workflows/Node.js%20CI/badge.svg?branch=master">
+					</a>
+					<a href="https://gitter.im/carrot-ai/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badgee&utm_content=badge">
+						<img src="https://badges.gitter.im/Join%20Chat.svg"
+						alt="Join the chat at https://gitter.im/carrot-ai/community">
+					</a>
+					<a href="/LICENSE">
+						<img src="https://img.shields.io/badge/License-MIT-blue.svg"
+						alt="Carrot's License">
+					</a>
+					<a href="https://github.com/liquidcarrot/carrot/issues">
+						<img src="https://img.shields.io/badge/Made%20with%20%E2%99%A5%20by-Liquid%20Carrot-ff1414.svg"
+						alt="Made with love">
+					</a>
+				</p>
+				<h4>Top Sponsors</h4>
+				<table>
+					<thead>
+						<tr>
+							<th>
+								<p align="center">Solinfra</p>
+								<a href="https://www.solinfra.io/" alt="Solinfra"><img src="https://avatars0.githubusercontent.com/u/53709700?s=400&u=5d4523af8b372ed3be43c23bb8ed1003f2f234a4&v=4" alt="D-Nice Profile Pitcure" width="50px" /></a>
+							</th>
+						</tr>
+					</thead>
+				</table>
+				<p>
+					Carrot is an architecture-free neural network library built around neuroevolution
+				</p>
+				<p>
+					Why / when should I use this?
+					<p> Whenever you have a problem that you:</p>
+					<ul>
+						<li>Don&#39;t know how-to solve</li>
+						<li>Don&#39;t want to design a custom network for</li>
+						<li>Want to discover the ideal neural-network structure for</li>
+					</ul>
+					<p>You can use Carrot&#39;s ability to <strong>design networks of arbitrary complexity by itself</strong> to solve whatever problem you have. If you want to see Carrot designing a neural-network to play flappy-bird <a href="https://liquidcarrot.io/example.flappy-bird/">check here</a></p>
+				</p>
+				<p>For Documentation, visit <a href="https://liquidcarrot.github.io/carrot">here</a></p>
+				<a href="#key-features" id="key-features" style="color: inherit; text-decoration: none;">
+					<h2>Key Features</h2>
+				</a>
+				<ul>
+					<li><a href="https://liquidcarrot.github.io/carrot">Simple docs</a> &amp; <a href="https://liquidcarrot.io/example.flappy-bird/">interactive examples</a></li>
+					<li><strong>Neuro-evolution</strong> &amp; population based training</li>
+					<li>Multi-threading &amp; GPU (coming soon)</li>
+					<li>Preconfigured GRU, LSTM, NARX Networks</li>
+					<li>Mutable Neurons, Layers, Groups, and Networks</li>
+					<li>SVG Network Visualizations using D3.js</li>
+				</ul>
+				<a href="#demos" id="demos" style="color: inherit; text-decoration: none;">
+					<h2>Demos</h2>
+				</a>
+				<p><img src="https://raw.githubusercontent.com/liquidcarrot/carrot/master/images/flappy-bird-demo.gif" alt="flappy bird neuro-evolution demo">
+					<br>
+				<a href="https://liquidcarrot.io/example.flappy-bird/" title="flappy bird playground">Flappy bird neuro-evolution</a></p>
+				<a href="#install" id="install" style="color: inherit; text-decoration: none;">
+					<h2>Install</h2>
+				</a>
+				<pre><code class="language-bash">$ npm i @liquid-carrot/carrot</code></pre>
+				<p>Carrot files are hosted by JSDelivr</p>
+				<p>For prototyping or learning, use the latest version here:</p>
+				<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://cdn.jsdelivr.net/npm/@liquid-carrot/carrot/dist/carrot.umd2.min.js"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
+				<p>For production, link to a specific version number to avoid unexpected breakage from newer versions:</p>
+				<pre><code class="language-html"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"https://cdn.jsdelivr.net/npm/@liquid-carrot/carrot@0.3.17/dist/carrot.umd2.min.js"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
+				<a href="#getting-started" id="getting-started" style="color: inherit; text-decoration: none;">
+					<h2>Getting Started</h2>
+				</a>
+				<p>💡 Want to be super knowledgeable about neuro-evolution in a few minutes?</p>
+				<p>Check out <a href="https://www.oreilly.com/radar/neuroevolution-a-different-kind-of-deep-learning/" title="Neuro-evolution based deep learning">this article</a> by the creator of NEAT, Kenneth Stanley</p>
+				<p>💡 Curious about how neural-networks can understand speech and video?</p>
+				<p>Check out <a href="https://www.youtube.com/watch?v=LHXXI4-IEns">this video on Recurrent Neural Networks</a>, from <a href="https://github.com/LearnedVector">@LearnedVector</a>, on YouTube</p>
+				<p>This is a simple <strong>perceptron</strong>:</p>
+				<p><img src="http://www.codeproject.com/KB/dotnet/predictor/network.jpg" alt="perceptron">.</p>
+				<p>How to build it with Carrot:</p>
+				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> { architect } = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@liquid-carrot/carrot'</span>);
+
+<span class="hljs-comment">// The example Perceptron you see above with 4 inputs, 5 hidden, and 1 output neuron</span>
+<span class="hljs-keyword">let</span> simplePerceptron = <span class="hljs-keyword">new</span> architect.Perceptron(<span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">1</span>);</code></pre>
+				<p>Building networks is easy with <strong>6</strong> built-in networks</p>
+				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> { architect } = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@liquid-carrot/carrot'</span>);
+
+<span class="hljs-keyword">let</span> LSTM = <span class="hljs-keyword">new</span> architect.LSTM(<span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">1</span>);
+
+<span class="hljs-comment">// Add as many hidden layers as needed</span>
+<span class="hljs-keyword">let</span> Perceptron = <span class="hljs-keyword">new</span> architect.Perceptron(<span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">20</span>, <span class="hljs-number">5</span>, <span class="hljs-number">10</span>, <span class="hljs-number">1</span>);</code></pre>
+				<p>Building custom network architectures</p>
+				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> architect = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@liquid-carrot/carrot'</span>).architect
+<span class="hljs-keyword">let</span> Layer = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@liquid-carrot/carrot'</span>).Layer
+
+<span class="hljs-keyword">let</span> input = <span class="hljs-keyword">new</span> Layer.Dense(<span class="hljs-number">1</span>);
+<span class="hljs-keyword">let</span> hidden1 = <span class="hljs-keyword">new</span> Layer.LSTM(<span class="hljs-number">5</span>);
+<span class="hljs-keyword">let</span> hidden2 = <span class="hljs-keyword">new</span> Layer.GRU(<span class="hljs-number">1</span>);
+<span class="hljs-keyword">let</span> output = <span class="hljs-keyword">new</span> Layer.Dense(<span class="hljs-number">1</span>);
+
+<span class="hljs-comment">// connect however you want</span>
+input.connect(hidden1);
+hidden1.connect(hidden2);
+hidden2.connect(output);
+
+<span class="hljs-keyword">let</span> network = architect.Construct([input, hidden1, hidden2, output]);</code></pre>
+				<p>Networks also shape <strong>themselves</strong> with neuro-evolution</p>
+				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> { Network, methods } = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@liquid-carrot/carrot'</span>);
+
+<span class="hljs-comment">// this network learns the XOR gate (through neuro-evolution)</span>
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">execute</span> (<span class="hljs-params"></span>) </span>{
+  <span class="hljs-comment">// no hidden layers...</span>
+   <span class="hljs-keyword">var</span> network = <span class="hljs-keyword">new</span> Network(<span class="hljs-number">2</span>,<span class="hljs-number">1</span>);
+
+   <span class="hljs-comment">// XOR dataset</span>
+   <span class="hljs-keyword">var</span> trainingSet = [
+       { <span class="hljs-attr">input</span>: [<span class="hljs-number">0</span>,<span class="hljs-number">0</span>], <span class="hljs-attr">output</span>: [<span class="hljs-number">0</span>] },
+       { <span class="hljs-attr">input</span>: [<span class="hljs-number">0</span>,<span class="hljs-number">1</span>], <span class="hljs-attr">output</span>: [<span class="hljs-number">1</span>] },
+       { <span class="hljs-attr">input</span>: [<span class="hljs-number">1</span>,<span class="hljs-number">0</span>], <span class="hljs-attr">output</span>: [<span class="hljs-number">1</span>] },
+       { <span class="hljs-attr">input</span>: [<span class="hljs-number">1</span>,<span class="hljs-number">1</span>], <span class="hljs-attr">output</span>: [<span class="hljs-number">0</span>] }
+   ];
+
+   <span class="hljs-keyword">await</span> network.evolve(trainingSet, {
+       <span class="hljs-attr">mutation</span>: methods.mutation.FFW,
+       <span class="hljs-attr">equal</span>: <span class="hljs-literal">true</span>,
+       <span class="hljs-attr">error</span>: <span class="hljs-number">0.05</span>,
+       <span class="hljs-attr">elitism</span>: <span class="hljs-number">5</span>,
+       <span class="hljs-attr">mutation_rate</span>: <span class="hljs-number">0.5</span>
+   });
+
+   <span class="hljs-comment">// and it works!</span>
+   network.activate([<span class="hljs-number">0</span>,<span class="hljs-number">0</span>]); <span class="hljs-comment">// 0.2413</span>
+   network.activate([<span class="hljs-number">0</span>,<span class="hljs-number">1</span>]); <span class="hljs-comment">// 1.0000</span>
+   network.activate([<span class="hljs-number">1</span>,<span class="hljs-number">0</span>]); <span class="hljs-comment">// 0.7663</span>
+   network.activate([<span class="hljs-number">1</span>,<span class="hljs-number">1</span>]); <span class="hljs-comment">// 0.008</span>
+}
+
+execute();</code></pre>
+				<p>Build vanilla neural networks</p>
+				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> Network = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@liquid-carrot/carrot'</span>).Network
+
+<span class="hljs-keyword">let</span> network = <span class="hljs-keyword">new</span> Network([<span class="hljs-number">2</span>, <span class="hljs-number">2</span>, <span class="hljs-number">1</span>]) <span class="hljs-comment">// Builds a neural network with 5 neurons: 2 + 2 + 1</span></code></pre>
+				<p>Or implement custom algorithms with neuron-level control</p>
+				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> Node = <span class="hljs-built_in">require</span>(<span class="hljs-string">'@liquid-carrot/carrot'</span>).Node
+
+<span class="hljs-keyword">let</span> A = <span class="hljs-keyword">new</span> Node() <span class="hljs-comment">// neuron</span>
+<span class="hljs-keyword">let</span> B = <span class="hljs-keyword">new</span> Node() <span class="hljs-comment">// neuron</span>
+
+A.connect(B)
+A.activate(<span class="hljs-number">0.5</span>)
+<span class="hljs-built_in">console</span>.log(B.activate())</code></pre>
+				<a href="#try-with" id="try-with" style="color: inherit; text-decoration: none;">
+					<h2>Try with</h2>
+				</a>
+				<a href="#data-sets" id="data-sets" style="color: inherit; text-decoration: none;">
+					<h4>Data Sets</h4>
+				</a>
+				<ul>
+					<li><input disabled="" type="checkbox"> <a href="https://www.npmjs.com/package/mnist">MNIST</a></li>
+				</ul>
+				<a href="#contributors-✨" id="contributors-✨" style="color: inherit; text-decoration: none;">
+					<h2>Contributors ✨</h2>
+				</a>
+				<p>This project exists thanks to all the people who contribute. We can&#39;t do it without you! 🙇</p>
+				<p>Thanks goes to these wonderful people (<a href="https://allcontributors.org/docs/en/emoji-key">emoji key</a>):</p>
+				<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+				<!-- prettier-ignore-start -->
+				<!-- markdownlint-disable -->
+				<table>
+					<tr>
+						<td align="center"><a href="https://liquidcarrot.io/"><img src="https://avatars3.githubusercontent.com/u/21148993?v=4" width="100px;" alt=""/><br /><sub><b>Luis Carbonell</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=luiscarbonell" title="Code">💻</a> <a href="#ideas-luiscarbonell" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/liquidcarrot/carrot/pulls?q=is%3Apr+reviewed-by%3Aluiscarbonell" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/liquidcarrot/carrot/commits?author=luiscarbonell" title="Documentation">📖</a></td>
+						<td align="center"><a href="http://liquidcarrot.io"><img src="https://avatars2.githubusercontent.com/u/23618650?v=4" width="100px;" alt=""/><br /><sub><b>Christian Echevarria</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=christianechevarria" title="Code">💻</a> <a href="https://github.com/liquidcarrot/carrot/commits?author=christianechevarria" title="Documentation">📖</a> <a href="#infra-christianechevarria" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
+						<td align="center"><a href="https://github.com/dan-ryan"><img src="https://avatars1.githubusercontent.com/u/775672?v=4" width="100px;" alt=""/><br /><sub><b>Daniel Ryan</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/issues?q=author%3Adan-ryan" title="Bug reports">🐛</a> <a href="https://github.com/liquidcarrot/carrot/pulls?q=is%3Apr+reviewed-by%3Adan-ryan" title="Reviewed Pull Requests">👀</a></td>
+						<td align="center"><a href="https://github.com/IviieMtz"><img src="https://avatars0.githubusercontent.com/u/50965172?v=4" width="100px;" alt=""/><br /><sub><b>IviieMtz</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=IviieMtz" title="Tests">⚠️</a></td>
+						<td align="center"><a href="https://github.com/nicszerman"><img src="https://avatars3.githubusercontent.com/u/14032356?v=4" width="100px;" alt=""/><br /><sub><b>Nicholas Szerman</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/commits?author=nicszerman" title="Code">💻</a></td>
+						<td align="center"><a href="http://www.threeceemedia.com"><img src="https://avatars3.githubusercontent.com/u/1046501?v=4" width="100px;" alt=""/><br /><sub><b>tracy collins</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/issues?q=author%3Atracycollins" title="Bug reports">🐛</a></td>
+						<td align="center"><a href="https://github.com/raimannma"><img src="https://avatars3.githubusercontent.com/u/26171511?v=4" width="100px;" alt=""/><br /><sub><b>Manuel Raimann</b></sub></a><br /><a href="https://github.com/liquidcarrot/carrot/issues?q=author%3Araimannma" title="Bug reports">🐛</a> <a href="https://github.com/liquidcarrot/carrot/commits?author=raimannma" title="Code">💻</a> <a href="#ideas-raimannma" title="Ideas, Planning, & Feedback">🤔</a></td>
+					</tr>
+				</table>
+				<!-- markdownlint-enable -->
+				<!-- prettier-ignore-end -->
+				<!-- ALL-CONTRIBUTORS-LIST:END -->
+				<p>This project follows the <a href="https://github.com/all-contributors/all-contributors">all-contributors</a> specification. Contributions of any kind welcome!</p>
+				<a href="#💬-contributing" id="💬-contributing" style="color: inherit; text-decoration: none;">
+					<h2>💬 Contributing</h2>
+				</a>
+				<p><a href="https://github.com/liquidcarrot/carrot/issues"><img src="https://img.shields.io/github/issues/liquidcarrot/carrot.svg" alt="Carrot&#39;s GitHub Issues"></a></p>
+				<p>Your contributions are always welcome! Please have a look at the <a href="https://github.com/liquidcarrot/carrot/blob/master/CONTRIBUTING.md">contribution guidelines</a> first. 🎉</p>
+				<p>To build a community welcome to all, Carrot follows the <a href="https://github.com/liquidcarrot/carrot/blob/master/CODE_OF_CONDUCT.md">Contributor Covenant</a> Code of Conduct.</p>
+				<p>And finally, a big thank you to all of you for supporting! 🤗</p>
+				<details><summary><strong>Planned Features</strong></summary>
+					* [ ] Performance Enhancements
+					* [ ] GPU Acceleration
+					* [ ] Tests
+					* [ ] Benchmarks
+					* [ ] Matrix Multiplications
+					* [ ] Tests
+					* [ ] Benchmarks
+					* [ ] Clustering | Multi-Threading
+					* [ ] Tests
+					* [ ] Benchmarks
+					* [ ] Syntax Support
+					* [ ] Callbacks
+					* [ ] Promises
+					* [ ] Streaming
+					* [ ] Async/Await
+					* [ ] Math Support
+					* [ ] Big Numbers
+					* [ ] Small Numbers
+				</details>
+				<a href="#patrons" id="patrons" style="color: inherit; text-decoration: none;">
+					<h2>Patrons</h2>
+				</a>
+				<p><a href="https://www.patreon.com/liquidcarrot"><img src="https://img.shields.io/endpoint.svg?color=blue&label=patrons&logo=patrons&url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fliquidcarrot" alt="Carrot&#39;s Patrons"></a></p>
+				<table>
+					<thead>
+						<tr>
+							<th>Silver Patrons</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td align="center">
+								<a href="https://www.solinfra.io/" alt="Solinfra"><img src="https://avatars0.githubusercontent.com/u/53709700?s=400&u=5d4523af8b372ed3be43c23bb8ed1003f2f234a4&v=4" alt="D-Nice Profile Pitcure" width="150px" /></a>
+								<br>
+								<strong>Solinfra</strong>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<table>
+					<thead>
+						<tr>
+							<th>Bronze Patrons</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td align="center">
+								<a href="https://github.com/kappaxbeta" alt="Kappaxbeta on Github"><img src="https://avatars2.githubusercontent.com/u/7612464?s=460&v=4" alt="Kappaxbeta's Profile Pitcure" width="125px" /></a>
+								<br>
+								<strong>Kappaxbeta</strong>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<table>
+					<thead>
+						<tr>
+							<th>Patrons</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								<a href="http://dollarbizclub.com/" alt="DollarBizClub"><img src="http://dollarbizclub.com/css/img/red400.png" alt="DollarBizClub Logo" width="100px" /></a>
+								<br>
+								<strong>DollarBizClub</strong>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<p><a href="https://www.patreon.com/liquidcarrot"><img src="https://c5.patreon.com/external/logo/become_a_patron_button.png" alt="Become a Patron"></a></p>
+				<a href="#acknowledgements" id="acknowledgements" style="color: inherit; text-decoration: none;">
+					<h2>Acknowledgements</h2>
+				</a>
+				<p>A special thanks to:</p>
+				<p><a href="https://github.com/wagenaartje">@wagenaartje</a> for <a href="https://github.com/wagenaartje/neataptic/">Neataptic</a> which was the starting point for this project</p>
+				<p><a href="https://github.com/cazala">@cazala</a> for <a href="https://github.com/cazala/synaptic/">Synaptic</a> which pioneered architecture free neural networks in javascript and was the starting point for Neataptic</p>
+				<p><a href="https://github.com/robertleeplummerjr">@robertleeplummerjr</a> for <a href="https://github.com/gpujs/gpu.js">GPU.js</a> which makes using GPU in JS easy and <a href="https://github.com/BrainJS/brain.js">Brain.js</a> which has inspired Carrot&#39;s development</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-class">
+						<a href="classes/architect.html" class="tsd-kind-icon">Architect</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/connection.html" class="tsd-kind-icon">Connection</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/layer.html" class="tsd-kind-icon">Layer</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/mutation.html" class="tsd-kind-icon">Mutation</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/neat.html" class="tsd-kind-icon">NEAT</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/network.html" class="tsd-kind-icon">Network</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/node.html" class="tsd-kind-icon">Node</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/rate.html" class="tsd-kind-icon">Rate</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/selection.html" class="tsd-kind-icon">Selection</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>
