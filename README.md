@@ -6,6 +6,9 @@
     <a href="https://github.com/raimannma/carrot/actions">
      <img src="https://github.com/raimannma/carrot/workflows/Node.js%20CI/badge.svg?branch=master">
     </a>
+    <a href="https://deepscan.io/dashboard#view=project&tid=9592&pid=12128&bid=184224">
+        <img src="https://deepscan.io/api/teams/9592/projects/12128/branches/184224/badge/grade.svg" alt="DeepScan grade">
+    </a>
     <a href="https://gitter.im/carrot-ai/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badgee&utm_content=badge">
         <img src="https://badges.gitter.im/Join%20Chat.svg"
              alt="Join the chat at https://gitter.im/carrot-ai/community">
