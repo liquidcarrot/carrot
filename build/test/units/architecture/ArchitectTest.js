@@ -143,6 +143,7 @@ describe("ArchitectTest", function () {
         chai_1.expect(numNodesWithSTEP).to.be.equal(HopfieldSize);
     });
     it("Train Perceptron", function () {
+        this.timeout(5000);
         var architect = new Architect_1.Architect();
         architect.addLayer(new InputLayer_1.InputLayer(2));
         architect.addLayer(new DenseLayer_1.DenseLayer(5, { activationType: Activation_1.RELUActivation }));
@@ -166,6 +167,7 @@ describe("ArchitectTest", function () {
         chai_1.expect(error).to.be.at.most(errorBefore);
     });
     it("Train RNN network", function () {
+        this.timeout(5000);
         var architect = new Architect_1.Architect();
         architect.addLayer(new InputLayer_1.InputLayer(1));
         architect.addLayer(new RNNLayer_1.RNNLayer(2, { activation: Activation_1.RELUActivation }));
@@ -190,6 +192,7 @@ describe("ArchitectTest", function () {
         chai_1.expect(error).to.be.at.most(errorBefore);
     });
     it("Train LSTM network", function () {
+        this.timeout(5000);
         var architect = new Architect_1.Architect();
         architect.addLayer(new InputLayer_1.InputLayer(1));
         architect.addLayer(new LSTMLayer_1.LSTMLayer(2, { activation: Activation_1.RELUActivation }));
@@ -215,6 +218,7 @@ describe("ArchitectTest", function () {
         chai_1.expect(error).to.be.at.most(errorBefore);
     });
     it('Train GRU network', function () {
+        this.timeout(5000);
         var architect = new Architect_1.Architect();
         architect.addLayer(new InputLayer_1.InputLayer(1));
         architect.addLayer(new GRULayer_1.GRULayer(2, { activation: Activation_1.RELUActivation }));

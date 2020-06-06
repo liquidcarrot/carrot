@@ -195,7 +195,8 @@ describe("ArchitectTest", () => {
         expect(numNodesWithSTEP).to.be.equal(HopfieldSize);
     });
 
-    it("Train Perceptron", () => {
+    it("Train Perceptron", function () {
+        this.timeout(5000);
         const architect: Architect = new Architect();
 
         architect.addLayer(new InputLayer(2));
@@ -225,7 +226,8 @@ describe("ArchitectTest", () => {
         expect(error).to.be.at.most(errorBefore);
     });
 
-    it("Train RNN network", () => {
+    it("Train RNN network", function () {
+        this.timeout(5000);
         const architect: Architect = new Architect();
 
         architect.addLayer(new InputLayer(1));
@@ -257,7 +259,8 @@ describe("ArchitectTest", () => {
         expect(error).to.be.at.most(errorBefore);
     });
 
-    it("Train LSTM network", () => {
+    it("Train LSTM network", function () {
+        this.timeout(5000);
         const architect: Architect = new Architect();
 
         architect.addLayer(new InputLayer(1));
@@ -289,7 +292,8 @@ describe("ArchitectTest", () => {
         expect(error).to.be.at.most(errorBefore);
     });
 
-    it('Train GRU network', () => {
+    it('Train GRU network', function () {
+        this.timeout(5000);
         const architect: Architect = new Architect();
 
         architect.addLayer(new InputLayer(1));
