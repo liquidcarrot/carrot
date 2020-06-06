@@ -3365,7 +3365,7 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
 var __generator = this && this.__generator || function (thisArg, body) {
   var _ = {
     label: 0,
-    sent: function () {
+    sent: function sent() {
       if (t[0] & 1) throw t[1];
       return t[1];
     },
@@ -3393,74 +3393,76 @@ var __generator = this && this.__generator || function (thisArg, body) {
   function step(op) {
     if (f) throw new TypeError("Generator is already executing.");
 
-    while (_) try {
-      if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-      if (y = 0, t) op = [op[0] & 2, t.value];
+    while (_) {
+      try {
+        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+        if (y = 0, t) op = [op[0] & 2, t.value];
 
-      switch (op[0]) {
-        case 0:
-        case 1:
-          t = op;
-          break;
-
-        case 4:
-          _.label++;
-          return {
-            value: op[1],
-            done: false
-          };
-
-        case 5:
-          _.label++;
-          y = op[1];
-          op = [0];
-          continue;
-
-        case 7:
-          op = _.ops.pop();
-
-          _.trys.pop();
-
-          continue;
-
-        default:
-          if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-            _ = 0;
-            continue;
-          }
-
-          if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-            _.label = op[1];
-            break;
-          }
-
-          if (op[0] === 6 && _.label < t[1]) {
-            _.label = t[1];
+        switch (op[0]) {
+          case 0:
+          case 1:
             t = op;
             break;
-          }
 
-          if (t && _.label < t[2]) {
-            _.label = t[2];
+          case 4:
+            _.label++;
+            return {
+              value: op[1],
+              done: false
+            };
 
-            _.ops.push(op);
+          case 5:
+            _.label++;
+            y = op[1];
+            op = [0];
+            continue;
 
-            break;
-          }
+          case 7:
+            op = _.ops.pop();
 
-          if (t[2]) _.ops.pop();
+            _.trys.pop();
 
-          _.trys.pop();
+            continue;
 
-          continue;
+          default:
+            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
+              _ = 0;
+              continue;
+            }
+
+            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
+              _.label = op[1];
+              break;
+            }
+
+            if (op[0] === 6 && _.label < t[1]) {
+              _.label = t[1];
+              t = op;
+              break;
+            }
+
+            if (t && _.label < t[2]) {
+              _.label = t[2];
+
+              _.ops.push(op);
+
+              break;
+            }
+
+            if (t[2]) _.ops.pop();
+
+            _.trys.pop();
+
+            continue;
+        }
+
+        op = body.call(thisArg, _);
+      } catch (e) {
+        op = [6, e];
+        y = 0;
+      } finally {
+        f = t = 0;
       }
-
-      op = body.call(thisArg, _);
-    } catch (e) {
-      op = [6, e];
-      y = 0;
-    } finally {
-      f = t = 0;
     }
 
     if (op[0] & 5) throw op[1];
@@ -4813,7 +4815,7 @@ function () {
               lossIndex_1 = Object.values(Loss_1.ALL_LOSSES).indexOf((_a = options.loss) !== null && _a !== void 0 ? _a : Loss_1.MSELoss); // init a pool of workers
 
               workerPool = dist_1.Pool(function () {
-                return threads_1.spawn(new threads_1.Worker("../multithreading/Worker"));
+                return threads_1.spawn(new threads_1.Worker("../multithreading/TestWorker"));
               }, (_b = options.threads) !== null && _b !== void 0 ? _b : os_1.default.cpus().length);
 
               options.fitnessFunction = function (population) {
@@ -5104,20 +5106,22 @@ exports.Architect = Architect;
 "use strict";
 
 var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
+  var _extendStatics = function extendStatics(d, b) {
+    _extendStatics = Object.setPrototypeOf || {
       __proto__: []
     } instanceof Array && function (d, b) {
       d.__proto__ = b;
     } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+      for (var p in b) {
+        if (b.hasOwnProperty(p)) d[p] = b[p];
+      }
     };
 
-    return extendStatics(d, b);
+    return _extendStatics(d, b);
   };
 
   return function (d, b) {
-    extendStatics(d, b);
+    _extendStatics(d, b);
 
     function __() {
       this.constructor = d;
@@ -7000,7 +7004,7 @@ var Architect_1 = require("../src/architecture/Architect");
 
 Object.defineProperty(exports, "Architect", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Architect_1.Architect;
   }
 });
@@ -7009,7 +7013,7 @@ var Connection_1 = require("../src/architecture/Connection");
 
 Object.defineProperty(exports, "Connection", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Connection_1.Connection;
   }
 });
@@ -7018,7 +7022,7 @@ var ActivationLayer_1 = require("../src/architecture/Layers/CoreLayers/Activatio
 
 Object.defineProperty(exports, "ActivationLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return ActivationLayer_1.ActivationLayer;
   }
 });
@@ -7027,7 +7031,7 @@ var DenseLayer_1 = require("../src/architecture/Layers/CoreLayers/DenseLayer");
 
 Object.defineProperty(exports, "DenseLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return DenseLayer_1.DenseLayer;
   }
 });
@@ -7036,7 +7040,7 @@ var DropoutLayer_1 = require("../src/architecture/Layers/CoreLayers/DropoutLayer
 
 Object.defineProperty(exports, "DropoutLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return DropoutLayer_1.DropoutLayer;
   }
 });
@@ -7045,7 +7049,7 @@ var InputLayer_1 = require("../src/architecture/Layers/CoreLayers/InputLayer");
 
 Object.defineProperty(exports, "InputLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return InputLayer_1.InputLayer;
   }
 });
@@ -7054,7 +7058,7 @@ var OutputLayer_1 = require("../src/architecture/Layers/CoreLayers/OutputLayer")
 
 Object.defineProperty(exports, "OutputLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return OutputLayer_1.OutputLayer;
   }
 });
@@ -7063,7 +7067,7 @@ var Layer_1 = require("../src/architecture/Layers/Layer");
 
 Object.defineProperty(exports, "Layer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Layer_1.Layer;
   }
 });
@@ -7072,7 +7076,7 @@ var NoiseLayer_1 = require("../src/architecture/Layers/NoiseLayers/NoiseLayer");
 
 Object.defineProperty(exports, "NoiseLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return NoiseLayer_1.NoiseLayer;
   }
 });
@@ -7081,7 +7085,7 @@ var AvgPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/AvgP
 
 Object.defineProperty(exports, "AvgPooling1DLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return AvgPooling1DLayer_1.AvgPooling1DLayer;
   }
 });
@@ -7090,7 +7094,7 @@ var GlobalAvgPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayer
 
 Object.defineProperty(exports, "GlobalAvgPooling1DLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return GlobalAvgPooling1DLayer_1.GlobalAvgPooling1DLayer;
   }
 });
@@ -7099,7 +7103,7 @@ var GlobalMaxPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayer
 
 Object.defineProperty(exports, "GlobalMaxPooling1DLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return GlobalMaxPooling1DLayer_1.GlobalMaxPooling1DLayer;
   }
 });
@@ -7108,7 +7112,7 @@ var GlobalMinPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayer
 
 Object.defineProperty(exports, "GlobalMinPooling1DLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return GlobalMinPooling1DLayer_1.GlobalMinPooling1DLayer;
   }
 });
@@ -7117,7 +7121,7 @@ var MaxPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/MaxP
 
 Object.defineProperty(exports, "MaxPooling1DLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return MaxPooling1DLayer_1.MaxPooling1DLayer;
   }
 });
@@ -7126,7 +7130,7 @@ var MinPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/MinP
 
 Object.defineProperty(exports, "MinPooling1DLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return MinPooling1DLayer_1.MinPooling1DLayer;
   }
 });
@@ -7135,7 +7139,7 @@ var PoolingLayer_1 = require("../src/architecture/Layers/PoolingLayers/PoolingLa
 
 Object.defineProperty(exports, "PoolingLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return PoolingLayer_1.PoolingLayer;
   }
 });
@@ -7144,7 +7148,7 @@ var GRULayer_1 = require("../src/architecture/Layers/RecurrentLayers/GRULayer");
 
 Object.defineProperty(exports, "GRULayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return GRULayer_1.GRULayer;
   }
 });
@@ -7153,7 +7157,7 @@ var HopfieldLayer_1 = require("../src/architecture/Layers/RecurrentLayers/Hopfie
 
 Object.defineProperty(exports, "HopfieldLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return HopfieldLayer_1.HopfieldLayer;
   }
 });
@@ -7162,7 +7166,7 @@ var LSTMLayer_1 = require("../src/architecture/Layers/RecurrentLayers/LSTMLayer"
 
 Object.defineProperty(exports, "LSTMLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return LSTMLayer_1.LSTMLayer;
   }
 });
@@ -7171,7 +7175,7 @@ var MemoryLayer_1 = require("../src/architecture/Layers/RecurrentLayers/MemoryLa
 
 Object.defineProperty(exports, "MemoryLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return MemoryLayer_1.MemoryLayer;
   }
 });
@@ -7180,7 +7184,7 @@ var RNNLayer_1 = require("../src/architecture/Layers/RecurrentLayers/RNNLayer");
 
 Object.defineProperty(exports, "RNNLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return RNNLayer_1.RNNLayer;
   }
 });
@@ -7189,7 +7193,7 @@ var Network_1 = require("../src/architecture/Network");
 
 Object.defineProperty(exports, "Network", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Network_1.Network;
   }
 });
@@ -7198,7 +7202,7 @@ var Node_1 = require("../src/architecture/Node");
 
 Object.defineProperty(exports, "Node", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Node_1.Node;
   }
 });
@@ -7207,7 +7211,7 @@ var ConstantNode_1 = require("../src/architecture/Nodes/ConstantNode");
 
 Object.defineProperty(exports, "ConstantNode", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return ConstantNode_1.ConstantNode;
   }
 });
@@ -7216,7 +7220,7 @@ var DropoutNode_1 = require("../src/architecture/Nodes/DropoutNode");
 
 Object.defineProperty(exports, "DropoutNode", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return DropoutNode_1.DropoutNode;
   }
 });
@@ -7225,7 +7229,7 @@ var NoiseNode_1 = require("../src/architecture/Nodes/NoiseNode");
 
 Object.defineProperty(exports, "NoiseNode", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return NoiseNode_1.NoiseNode;
   }
 });
@@ -7234,7 +7238,7 @@ var PoolNode_1 = require("../src/architecture/Nodes/PoolNode");
 
 Object.defineProperty(exports, "PoolNode", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return PoolNode_1.PoolNode;
   }
 });
@@ -7243,7 +7247,7 @@ var ConnectionType_1 = require("../src/enums/ConnectionType");
 
 Object.defineProperty(exports, "ConnectionType", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return ConnectionType_1.ConnectionType;
   }
 });
@@ -7252,7 +7256,7 @@ var GatingType_1 = require("../src/enums/GatingType");
 
 Object.defineProperty(exports, "GatingType", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return GatingType_1.GatingType;
   }
 });
@@ -7261,19 +7265,19 @@ var NodeType_1 = require("../src/enums/NodeType");
 
 Object.defineProperty(exports, "NodeType", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return NodeType_1.NodeType;
   }
 });
 Object.defineProperty(exports, "NoiseNodeType", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return NodeType_1.NoiseNodeType;
   }
 });
 Object.defineProperty(exports, "PoolNodeType", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return NodeType_1.PoolNodeType;
   }
 });
@@ -7282,103 +7286,103 @@ var Activation_1 = require("../src/methods/Activation");
 
 Object.defineProperty(exports, "AbsoluteActivation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Activation_1.AbsoluteActivation;
   }
 });
 Object.defineProperty(exports, "ALL_ACTIVATIONS", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Activation_1.ALL_ACTIVATIONS;
   }
 });
 Object.defineProperty(exports, "BentIdentityActivation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Activation_1.BentIdentityActivation;
   }
 });
 Object.defineProperty(exports, "BipolarActivation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Activation_1.BipolarActivation;
   }
 });
 Object.defineProperty(exports, "BipolarSigmoidActivation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Activation_1.BipolarSigmoidActivation;
   }
 });
 Object.defineProperty(exports, "GaussianActivation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Activation_1.GaussianActivation;
   }
 });
 Object.defineProperty(exports, "HardTanhActivation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Activation_1.HardTanhActivation;
   }
 });
 Object.defineProperty(exports, "IdentityActivation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Activation_1.IdentityActivation;
   }
 });
 Object.defineProperty(exports, "InverseActivation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Activation_1.InverseActivation;
   }
 });
 Object.defineProperty(exports, "LogisticActivation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Activation_1.LogisticActivation;
   }
 });
 Object.defineProperty(exports, "MISHActivation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Activation_1.MISHActivation;
   }
 });
 Object.defineProperty(exports, "RELUActivation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Activation_1.RELUActivation;
   }
 });
 Object.defineProperty(exports, "SELUActivation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Activation_1.SELUActivation;
   }
 });
 Object.defineProperty(exports, "SinusoidActivation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Activation_1.SinusoidActivation;
   }
 });
 Object.defineProperty(exports, "SoftSignActivation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Activation_1.SoftSignActivation;
   }
 });
 Object.defineProperty(exports, "StepActivation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Activation_1.StepActivation;
   }
 });
 Object.defineProperty(exports, "TanhActivation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Activation_1.TanhActivation;
   }
 });
@@ -7387,55 +7391,55 @@ var Loss_1 = require("../src/methods/Loss");
 
 Object.defineProperty(exports, "ALL_LOSSES", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Loss_1.ALL_LOSSES;
   }
 });
 Object.defineProperty(exports, "BinaryLoss", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Loss_1.BinaryLoss;
   }
 });
 Object.defineProperty(exports, "HINGELoss", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Loss_1.HINGELoss;
   }
 });
 Object.defineProperty(exports, "MAELoss", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Loss_1.MAELoss;
   }
 });
 Object.defineProperty(exports, "MAPELoss", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Loss_1.MAPELoss;
   }
 });
 Object.defineProperty(exports, "MBELoss", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Loss_1.MBELoss;
   }
 });
 Object.defineProperty(exports, "MSELoss", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Loss_1.MSELoss;
   }
 });
 Object.defineProperty(exports, "MSLELoss", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Loss_1.MSLELoss;
   }
 });
 Object.defineProperty(exports, "WAPELoss", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Loss_1.WAPELoss;
   }
 });
@@ -7444,115 +7448,115 @@ var Mutation_1 = require("../src/methods/Mutation");
 
 Object.defineProperty(exports, "AddBackConnectionMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.AddBackConnectionMutation;
   }
 });
 Object.defineProperty(exports, "AddConnectionMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.AddConnectionMutation;
   }
 });
 Object.defineProperty(exports, "AddGateMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.AddGateMutation;
   }
 });
 Object.defineProperty(exports, "AddNodeMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.AddNodeMutation;
   }
 });
 Object.defineProperty(exports, "AddSelfConnectionMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.AddSelfConnectionMutation;
   }
 });
 Object.defineProperty(exports, "ALL_MUTATIONS", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.ALL_MUTATIONS;
   }
 });
 Object.defineProperty(exports, "FEEDFORWARD_MUTATIONS", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.FEEDFORWARD_MUTATIONS;
   }
 });
 Object.defineProperty(exports, "ModActivationMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.ModActivationMutation;
   }
 });
 Object.defineProperty(exports, "ModBiasMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.ModBiasMutation;
   }
 });
 Object.defineProperty(exports, "ModWeightMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.ModWeightMutation;
   }
 });
 Object.defineProperty(exports, "Mutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.Mutation;
   }
 });
 Object.defineProperty(exports, "NO_STRUCTURE_MUTATIONS", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.NO_STRUCTURE_MUTATIONS;
   }
 });
 Object.defineProperty(exports, "ONLY_STRUCTURE", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.ONLY_STRUCTURE;
   }
 });
 Object.defineProperty(exports, "SubBackConnectionMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.SubBackConnectionMutation;
   }
 });
 Object.defineProperty(exports, "SubConnectionMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.SubConnectionMutation;
   }
 });
 Object.defineProperty(exports, "SubGateMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.SubGateMutation;
   }
 });
 Object.defineProperty(exports, "SubNodeMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.SubNodeMutation;
   }
 });
 Object.defineProperty(exports, "SubSelfConnectionMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.SubSelfConnectionMutation;
   }
 });
 Object.defineProperty(exports, "SwapNodesMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.SwapNodesMutation;
   }
 });
@@ -7561,31 +7565,31 @@ var Rate_1 = require("../src/methods/Rate");
 
 Object.defineProperty(exports, "ExponentialRate", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Rate_1.ExponentialRate;
   }
 });
 Object.defineProperty(exports, "FixedRate", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Rate_1.FixedRate;
   }
 });
 Object.defineProperty(exports, "InverseRate", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Rate_1.InverseRate;
   }
 });
 Object.defineProperty(exports, "Rate", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Rate_1.Rate;
   }
 });
 Object.defineProperty(exports, "StepRate", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Rate_1.StepRate;
   }
 });
@@ -7594,25 +7598,25 @@ var Selection_1 = require("../src/methods/Selection");
 
 Object.defineProperty(exports, "FitnessProportionateSelection", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Selection_1.FitnessProportionateSelection;
   }
 });
 Object.defineProperty(exports, "PowerSelection", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Selection_1.PowerSelection;
   }
 });
 Object.defineProperty(exports, "Selection", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Selection_1.Selection;
   }
 });
 Object.defineProperty(exports, "TournamentSelection", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Selection_1.TournamentSelection;
   }
 });
@@ -7621,89 +7625,90 @@ var Utils_1 = require("../src/utils/Utils");
 
 Object.defineProperty(exports, "avg", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.avg;
   }
 });
 Object.defineProperty(exports, "generateGaussian", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.generateGaussian;
   }
 });
 Object.defineProperty(exports, "getOrDefault", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.getOrDefault;
   }
 });
 Object.defineProperty(exports, "max", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.max;
   }
 });
 Object.defineProperty(exports, "maxValueIndex", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.maxValueIndex;
   }
 });
 Object.defineProperty(exports, "min", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.min;
   }
 });
 Object.defineProperty(exports, "minValueIndex", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.minValueIndex;
   }
 });
 Object.defineProperty(exports, "pickRandom", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.pickRandom;
   }
 });
 Object.defineProperty(exports, "randBoolean", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.randBoolean;
   }
 });
 Object.defineProperty(exports, "randDouble", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.randDouble;
   }
 });
 Object.defineProperty(exports, "randInt", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.randInt;
   }
 });
 Object.defineProperty(exports, "removeFromArray", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.removeFromArray;
   }
 });
 Object.defineProperty(exports, "shuffle", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.shuffle;
   }
 });
 Object.defineProperty(exports, "sum", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.sum;
   }
 });
 },{"../src/architecture/Architect":"../src/architecture/Architect.js","../src/architecture/Connection":"../src/architecture/Connection.js","../src/architecture/Layers/CoreLayers/ActivationLayer":"../src/architecture/Layers/CoreLayers/ActivationLayer.js","../src/architecture/Layers/CoreLayers/DenseLayer":"../src/architecture/Layers/CoreLayers/DenseLayer.js","../src/architecture/Layers/CoreLayers/DropoutLayer":"../src/architecture/Layers/CoreLayers/DropoutLayer.js","../src/architecture/Layers/CoreLayers/InputLayer":"../src/architecture/Layers/CoreLayers/InputLayer.js","../src/architecture/Layers/CoreLayers/OutputLayer":"../src/architecture/Layers/CoreLayers/OutputLayer.js","../src/architecture/Layers/Layer":"../src/architecture/Layers/Layer.js","../src/architecture/Layers/NoiseLayers/NoiseLayer":"../src/architecture/Layers/NoiseLayers/NoiseLayer.js","../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer":"../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/MinPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MinPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js","../src/architecture/Layers/RecurrentLayers/GRULayer":"../src/architecture/Layers/RecurrentLayers/GRULayer.js","../src/architecture/Layers/RecurrentLayers/HopfieldLayer":"../src/architecture/Layers/RecurrentLayers/HopfieldLayer.js","../src/architecture/Layers/RecurrentLayers/LSTMLayer":"../src/architecture/Layers/RecurrentLayers/LSTMLayer.js","../src/architecture/Layers/RecurrentLayers/MemoryLayer":"../src/architecture/Layers/RecurrentLayers/MemoryLayer.js","../src/architecture/Layers/RecurrentLayers/RNNLayer":"../src/architecture/Layers/RecurrentLayers/RNNLayer.js","../src/architecture/Network":"../src/architecture/Network.js","../src/architecture/Node":"../src/architecture/Node.js","../src/architecture/Nodes/ConstantNode":"../src/architecture/Nodes/ConstantNode.js","../src/architecture/Nodes/DropoutNode":"../src/architecture/Nodes/DropoutNode.js","../src/architecture/Nodes/NoiseNode":"../src/architecture/Nodes/NoiseNode.js","../src/architecture/Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","../src/enums/ConnectionType":"../src/enums/ConnectionType.js","../src/enums/GatingType":"../src/enums/GatingType.js","../src/enums/NodeType":"../src/enums/NodeType.js","../src/methods/Activation":"../src/methods/Activation.js","../src/methods/Loss":"../src/methods/Loss.js","../src/methods/Mutation":"../src/methods/Mutation.js","../src/methods/Rate":"../src/methods/Rate.js","../src/methods/Selection":"../src/methods/Selection.js","../src/utils/Utils":"../src/utils/Utils.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
 
@@ -7728,9 +7733,9 @@ var checkedAssets, assetsToAccept;
 var parent = module.bundle.parent;
 
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
-  var hostname = process.env.HMR_HOSTNAME || location.hostname;
+  var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + process.env.HMR_PORT + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "32897" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
