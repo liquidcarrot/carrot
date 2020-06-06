@@ -75,7 +75,7 @@ function getOrDefault<T>(value: T | undefined, defaultValue: T): T {
  * @param array the array
  * @returns the shuffled array
  */
-function shuffle<T>(array: T[]): T[] {
+function shuffle<T>(array: T[]): void {
     let counter: number = array.length;
 
     // While there are elements in the array
@@ -91,8 +91,6 @@ function shuffle<T>(array: T[]): T[] {
         array[counter] = array[index];
         array[index] = temp;
     }
-
-    return array;
 }
 
 /**
@@ -101,6 +99,9 @@ function shuffle<T>(array: T[]): T[] {
  * @param array
  */
 function max(array: number[]): number {
+    if (array.length === 0) {
+        throw new RangeError();
+    }
     let maxValue: number = array[0];
     for (let i: number = 1; i < array.length; i++) {
         if (array[i] > maxValue) {
@@ -116,6 +117,9 @@ function max(array: number[]): number {
  * @param array
  */
 function maxValueIndex(array: number[]): number {
+    if (array.length === 0) {
+        throw new RangeError();
+    }
     let maxValue: number = array[0];
     let maxValueIndex: number = 0;
     for (let i: number = 1; i < array.length; i++) {
@@ -133,6 +137,9 @@ function maxValueIndex(array: number[]): number {
  * @param array
  */
 function minValueIndex(array: number[]): number {
+    if (array.length === 0) {
+        throw new RangeError();
+    }
     let minValue: number = array[0];
     let minValueIndex: number = 0;
     for (let i: number = 1; i < array.length; i++) {
@@ -150,6 +157,9 @@ function minValueIndex(array: number[]): number {
  * @param array
  */
 function min(array: number[]): number {
+    if (array.length === 0) {
+        throw new RangeError();
+    }
     let minValue: number = array[0];
     for (let i: number = 1; i < array.length; i++) {
         if (array[i] < minValue) {
@@ -174,6 +184,9 @@ function avg(array: number[]): number {
  * @param array
  */
 function sum(array: number[]): number {
+    if (array.length === 0) {
+        throw new RangeError();
+    }
     let sum: number = 0;
     for (const value of array) {
         sum += value;
