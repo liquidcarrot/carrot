@@ -69,6 +69,3 @@ typings/
 # IDE configuration files
 .codetasty/
 .idea/
-
-# TS Build
-build/
