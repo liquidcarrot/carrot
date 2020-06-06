@@ -6,7 +6,7 @@
     "./test",
     "./scripts"
   ],
-  "out": "docs/4.0/",
+  "out": "docs/",
   "mode": "file",
   "tsconfig": "./tsconfig.json",
   "includeVersion": true,
