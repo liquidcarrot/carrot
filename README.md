@@ -107,11 +107,9 @@ How to build it with Carrot:
 ```javascript
 const architect = new Architect();
 
-architect.addLayer(new InputLayer(5));
-architect.addLayer(new DenseLayer(10, {activationType: RELUActivation}));
-architect.addLayer(new DenseLayer(20, {activationType: RELUActivation}));
-architect.addLayer(new DenseLayer(10, {activationType: RELUActivation}));
-architect.addLayer(new OutputLayer(5));
+architect.addLayer(new InputLayer(4));
+architect.addLayer(new DenseLayer(5, {activationType: RELUActivation}));
+architect.addLayer(new OutputLayer(1));
 
 const network = architect.buildModel();
 ```
