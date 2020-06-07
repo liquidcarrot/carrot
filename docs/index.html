@@ -149,11 +149,9 @@
 				<p>How to build it with Carrot:</p>
 				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> architect = <span class="hljs-keyword">new</span> Architect();
 
-architect.addLayer(<span class="hljs-keyword">new</span> InputLayer(<span class="hljs-number">5</span>));
-architect.addLayer(<span class="hljs-keyword">new</span> DenseLayer(<span class="hljs-number">10</span>, {<span class="hljs-attr">activationType</span>: RELUActivation}));
-architect.addLayer(<span class="hljs-keyword">new</span> DenseLayer(<span class="hljs-number">20</span>, {<span class="hljs-attr">activationType</span>: RELUActivation}));
-architect.addLayer(<span class="hljs-keyword">new</span> DenseLayer(<span class="hljs-number">10</span>, {<span class="hljs-attr">activationType</span>: RELUActivation}));
-architect.addLayer(<span class="hljs-keyword">new</span> OutputLayer(<span class="hljs-number">5</span>));
+architect.addLayer(<span class="hljs-keyword">new</span> InputLayer(<span class="hljs-number">4</span>));
+architect.addLayer(<span class="hljs-keyword">new</span> DenseLayer(<span class="hljs-number">5</span>, {<span class="hljs-attr">activationType</span>: RELUActivation}));
+architect.addLayer(<span class="hljs-keyword">new</span> OutputLayer(<span class="hljs-number">1</span>));
 
 <span class="hljs-keyword">const</span> network = architect.buildModel();</code></pre>
 				<p>Building networks is easy with <strong>17</strong> built-in layers
