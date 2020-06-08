@@ -72,11 +72,6 @@
 						<p>Mod activation mutation.</p>
 					</div>
 					<p>Modifies the activation function of a random node</p>
-					<dl class="tsd-comment-tags">
-						<dt>prop</dt>
-						<dd><p>{boolean} mutateOutput=false Change activation function of network output neurons. Enable this to let the network experiment with its output.</p>
-						</dd>
-					</dl>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -129,7 +124,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/13221c5/src/methods/Mutation.ts#L296">src/methods/Mutation.ts:296</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/afd5b1a/src/methods/Mutation.ts#L290">src/methods/Mutation.ts:290</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -161,12 +156,12 @@
 					<div class="tsd-signature tsd-kind-icon">mutate<wbr>Output<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/13221c5/src/methods/Mutation.ts#L296">src/methods/Mutation.ts:296</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/afd5b1a/src/methods/Mutation.ts#L290">src/methods/Mutation.ts:290</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Can the output be mutated?</p>
+							<p>Change activation function of network output neurons. Enable this to let the network experiment with its output.</p>
 						</div>
 					</div>
 				</section>
@@ -184,13 +179,18 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="mutation.html">Mutation</a>.<a href="mutation.html#mutate">mutate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/13221c5/src/methods/Mutation.ts#L313">src/methods/Mutation.ts:313</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/afd5b1a/src/methods/Mutation.ts#L308">src/methods/Mutation.ts:308</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Mutates the network.</p>
 								</div>
+								<dl class="tsd-comment-tags">
+									<dt>time</dt>
+									<dd><p>O(n)</p>
+									</dd>
+								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
@@ -202,8 +202,6 @@
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <span class="tsd-signature-symbol">{ </span>allowedActivations<span class="tsd-signature-symbol">?: </span><a href="../globals.html#activationtype" class="tsd-signature-type">activationType</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = {}</span></h5>
-									<div class="tsd-comment tsd-typography">
-									</div>
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter">
 											<h5><span class="tsd-flag ts-flagOptional">Optional</span> allowed<wbr>Activations<span class="tsd-signature-symbol">?: </span><a href="../globals.html#activationtype" class="tsd-signature-type">activationType</a><span class="tsd-signature-symbol">[]</span></h5>

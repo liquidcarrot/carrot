@@ -69,15 +69,6 @@ var Node_1 = require("./Node");
  * Networks are easy to create, all you need to specify is an `input` and an `output` size.
  *
  * @constructs Network
- *
- * @param {number} inputSize Size of input layer AKA neurons in input layer
- * @param {number} outputSize Size of output layer AKA neurons in output layer
- *
- * @prop {number} inputSize Size of input layer AKA neurons in input layer
- * @prop {number} outputSize Size of output layer AKA neurons in output layer
- * @prop {Array<Node>} nodes Nodes currently within the network
- * @prop {Array<Node>} gates Gates within the network
- * @prop {Array<Connection>} connections Connections within the network
  */
 var Network = /** @class */ (function () {
     function Network(inputSize, outputSize) {
@@ -107,15 +98,17 @@ var Network = /** @class */ (function () {
      * Convert a json object to a network
      *
      * @param {{input:{number},output:{number},dropout:{number},nodes:Array<object>,connections:Array<object>}} json A network represented as a json object
+     * @time O(n&sup2;)
      *
      * @returns {Network} Network A reconstructed network
-     *
      */
     Network.fromJSON = function (json) {
         var network = new Network(json.inputSize, json.outputSize);
         network.nodes = [];
         network.connections.clear();
-        json.nodes.map(function (nodeJSON) { return new Node_1.Node().fromJSON(nodeJSON); }).forEach(function (node) { return network.nodes[node.index] = node; });
+        json.nodes
+            .map(function (nodeJSON) { return new Node_1.Node().fromJSON(nodeJSON); })
+            .forEach(function (node) { return network.nodes[node.index] = node; });
         json.connections.forEach(function (jsonConnection) {
             var connection = network.connect(network.nodes[jsonConnection.fromIndex], network.nodes[jsonConnection.toIndex], jsonConnection.weight);
             if (jsonConnection.gateNodeIndex != null) {
@@ -134,6 +127,7 @@ var Network = /** @class */ (function () {
      * @param {Network} network1 First parent network
      * @param {Network} network2 Second parent network
      * @param {boolean} [equal] Flag to indicate equally fit Networks
+     * @time O(n&sup2;)
      *
      * @returns {Network} New network created from mixing parent networks
      */
@@ -274,7 +268,7 @@ var Network = /** @class */ (function () {
     };
     /**
      * Returns a copy of Network.
-     *
+     * @time O(n&sup2;)
      * @returns {Network} Returns an identical network
      */
     Network.prototype.copy = function () {
@@ -286,6 +280,7 @@ var Network = /** @class */ (function () {
      * @param {Node} from The source Node
      * @param {Node} to The destination Node or Group
      * @param {number} [weight=0] An initial weight for the connections to be formed
+     * @time O(n)
      *
      * @returns {Connection[]} An array of the formed connections
      */
@@ -302,6 +297,7 @@ var Network = /** @class */ (function () {
      *
      * @param {number[]} [input] Input values to activate nodes with
      * @param options
+     * @time O(n&sup3;)
      * @returns {number[]} Squashed output values
      */
     Network.prototype.activate = function (input, options) {
@@ -334,6 +330,7 @@ var Network = /** @class */ (function () {
      *
      * @param {number[]} target Ideal values of the previous activate. Will use the difference to improve the weights
      * @param options More option for propagation
+     * @time O(n&sup3;)
      */
     Network.prototype.propagate = function (target, options) {
         if (options === void 0) { options = {}; }
@@ -362,6 +359,7 @@ var Network = /** @class */ (function () {
     };
     /**
      * Clear the context of the network
+     * @time O(n&sup3;)
      */
     Network.prototype.clear = function () {
         this.nodes.forEach(function (node) { return node.clear(); });
@@ -371,6 +369,7 @@ var Network = /** @class */ (function () {
      *
      * @param {Node} from Source node
      * @param {Node} to Destination node
+     * @time O(n)
      */
     Network.prototype.disconnect = function (from, to) {
         var _this = this;
@@ -391,6 +390,7 @@ var Network = /** @class */ (function () {
      *
      * @param {Node} node Gating node
      * @param {Connection} connection Connection to gate with node
+     * @time O(n)
      */
     Network.prototype.addGate = function (node, connection) {
         if (this.nodes.indexOf(node) === -1) {
@@ -406,6 +406,7 @@ var Network = /** @class */ (function () {
      * Remove the gate of a connection.
      *
      * @param {Connection} connection Connection to remove gate from
+     * @time O(1)
      */
     Network.prototype.removeGate = function (connection) {
         if (!this.gates.has(connection)) {
@@ -421,6 +422,7 @@ var Network = /** @class */ (function () {
      *
      * @param {Node} node Node to remove from the network
      * @param keepGates
+     * @time O(&sup3;)
      */
     Network.prototype.removeNode = function (node, keepGates) {
         var _this = this;
@@ -479,6 +481,7 @@ var Network = /** @class */ (function () {
      * @param {number} [options.maxNodes]
      * @param {number} [options.maxConnections]
      * @param {number} [options.maxGates] Maximum amount of Gates a network can grow to
+     * @time O(n&sup3;)
      */
     Network.prototype.mutate = function (method, options) {
         method.mutate(this, options);
@@ -491,6 +494,7 @@ var Network = /** @class */ (function () {
      * @param {number} [options.maxNodes] Maximum amount of [Nodes](node) a network can grow to
      * @param {number} [options.maxConnections] Maximum amount of [Connections](connection) a network can grow to
      * @param {number} [options.maxGates] Maximum amount of Gates a network can grow to
+     * @time O(n&sup3;)
      */
     Network.prototype.mutateRandom = function (allowedMethods, options) {
         if (allowedMethods === void 0) { allowedMethods = Mutation_1.ALL_MUTATIONS; }
@@ -505,6 +509,7 @@ var Network = /** @class */ (function () {
      * Train the given data to this network
      *
      * @param {TrainOptions} options Options used to train network
+     * @time O(n&sup5;)
      *
      * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance
      */
@@ -590,6 +595,7 @@ var Network = /** @class */ (function () {
      *
      * @param {Array<{input:number[],output:number[]}>} dataset A set of input values and ideal output values to test the network against
      * @param {lossType} [loss=MSELoss] The [loss function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
+     * @time O(n&sup4;)
      *
      * @returns {number} A summary object of the network's performance
      */
@@ -608,6 +614,7 @@ var Network = /** @class */ (function () {
     /**
      * Convert the network to a json object
      *
+     * @time O(n)
      * @returns {NetworkJSON} The network represented as a json object
      */
     Network.prototype.toJSON = function () {
@@ -641,6 +648,7 @@ var Network = /** @class */ (function () {
      * If both `iterations` and `error` options are unset, evolve will default to `iterations` as an end condition.
      *
      * @param {object} [options] Configuration options
+     * @time O(n * time for fitness function + n&sup2; * time for adjust genome + n&sup6;)
      *
      * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance. <br /> Properties include: `error` - error of the best genome, `iterations` - generations used to evolve networks, `time` - clock time elapsed while evolving
      */
@@ -791,6 +799,7 @@ var Network = /** @class */ (function () {
      * Performs one training epoch and returns the error - this is a private function used in `self.train`
      *
      * @private
+     * @time O(n&sup4;)
      *
      * @returns {number}
      */

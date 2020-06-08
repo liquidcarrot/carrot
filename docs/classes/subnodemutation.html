@@ -72,11 +72,6 @@
 						<p>Sub node mutation.</p>
 					</div>
 					<p>Removes a random node from the network.</p>
-					<dl class="tsd-comment-tags">
-						<dt>prop</dt>
-						<dd><p>keepGates=true Ensures replacement node has gated connections if the removed node did.</p>
-						</dd>
-					</dl>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -129,7 +124,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/13221c5/src/methods/Mutation.ts#L121">src/methods/Mutation.ts:121</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/afd5b1a/src/methods/Mutation.ts#L118">src/methods/Mutation.ts:118</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -151,12 +146,12 @@
 					<div class="tsd-signature tsd-kind-icon">keep<wbr>Gates<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/13221c5/src/methods/Mutation.ts#L121">src/methods/Mutation.ts:121</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/afd5b1a/src/methods/Mutation.ts#L118">src/methods/Mutation.ts:118</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>Keep gates or remove them too ?</p>
+							<p>Ensures replacement node has gated connections if the removed node did.</p>
 						</div>
 					</div>
 				</section>
@@ -174,13 +169,18 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="mutation.html">Mutation</a>.<a href="mutation.html#mutate">mutate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/13221c5/src/methods/Mutation.ts#L133">src/methods/Mutation.ts:133</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/afd5b1a/src/methods/Mutation.ts#L131">src/methods/Mutation.ts:131</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Mutates the network.</p>
 								</div>
+								<dl class="tsd-comment-tags">
+									<dt>time</dt>
+									<dd><p>O(n&sup3;)</p>
+									</dd>
+								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">

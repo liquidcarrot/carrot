@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ALL_LOSSES = exports.HINGELoss = exports.MSLELoss = exports.WAPELoss = exports.MAPELoss = exports.MAELoss = exports.BinaryLoss = exports.MBELoss = exports.MSELoss = void 0;
+var Utils_1 = require("../utils/Utils");
 exports.MSELoss = function (targets, outputs) {
     var error = 0;
     outputs.forEach((function (value, index) {
@@ -38,12 +39,10 @@ exports.MAPELoss = function (targets, outputs) {
 };
 exports.WAPELoss = function (targets, outputs) {
     var error = 0;
-    var sum = 0;
-    for (var i = 0; i < outputs.length; i++) {
-        error += Math.abs(targets[i] - outputs[i]);
-        sum += targets[i];
-    }
-    return error / sum;
+    outputs.forEach((function (value, index) {
+        error += Math.abs(targets[index] - value);
+    }));
+    return error / Utils_1.sum(targets);
 };
 exports.MSLELoss = function (targets, outputs) {
     var error = 0;

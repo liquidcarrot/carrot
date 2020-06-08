@@ -44,9 +44,9 @@ var Node = /** @class */ (function () {
      * Convert a json object to a node
      *
      * @param json A node represented as a JSON object
+     * @time O(1)
      *
      * @returns itself
-     *
      */
     Node.prototype.fromJSON = function (json) {
         var _a, _b, _c, _d;
@@ -61,7 +61,7 @@ var Node = /** @class */ (function () {
      * Clears this node's state information - _i.e. resets node and its connections to "factory settings"_
      *
      * `node.clear()` is useful for predicting time series.
-     *
+     * @time O(n&sup2;)
      */
     Node.prototype.clear = function () {
         this.incoming.forEach(function (connection) {
@@ -76,7 +76,7 @@ var Node = /** @class */ (function () {
      * Mutates the node's bias
      *
      * @param method The method is needed for the min and max value of the node's bias otherwise a range of [-1,1] is chosen
-     *
+     * @time O(1)
      */
     Node.prototype.mutateBias = function (method) {
         if (method === void 0) { method = new Mutation_1.ModBiasMutation(); }
@@ -84,6 +84,7 @@ var Node = /** @class */ (function () {
     };
     /**
      * Mutates the node's activation function
+     * @time O(n)
      */
     Node.prototype.mutateActivation = function (allowedActivations) {
         var _this = this;
@@ -98,6 +99,7 @@ var Node = /** @class */ (function () {
      * Checks if the given node(s) are have outgoing connections to this node
      *
      * @param node Checks if `node(s)` have outgoing connections into this node
+     * @time O(n)
      *
      * @return Returns true, if every node(s) has an outgoing connection into this node
      */
@@ -113,6 +115,7 @@ var Node = /** @class */ (function () {
      * Checks if this node has an outgoing connection(s) into the given node(s)
      *
      * @param node Checks if this node has outgoing connection(s) into `node(s)`
+     * @time O(n)
      *
      * @returns Returns true, if this node has an outgoing connection into every node(s)
      */
@@ -128,6 +131,7 @@ var Node = /** @class */ (function () {
      * This node gates (influences) the given connection
      *
      * @param connection Connection to be gated (influenced) by a neuron
+     * @time O(1)
      */
     Node.prototype.addGate = function (connection) {
         this.gated.add(connection);
@@ -137,6 +141,7 @@ var Node = /** @class */ (function () {
      * Stops this node from gating (manipulating) the given connection(s)
      *
      * @param connection Connections to remove gate - _i.e. remove this node from_
+     * @time O(1)
      */
     Node.prototype.removeGate = function (connection) {
         this.gated.delete(connection);
@@ -149,6 +154,7 @@ var Node = /** @class */ (function () {
      * @param target Node(s) to project connection(s) to
      * @param weight Initial connection(s) [weight](https://en.wikipedia.org/wiki/Synaptic_weight)
      * @param twoSided If `true` connect nodes to each other
+     * @time O(n)
      */
     Node.prototype.connect = function (target, weight, twoSided) {
         if (weight === void 0) { weight = 1; }
@@ -176,6 +182,7 @@ var Node = /** @class */ (function () {
      *
      * @param node Node(s) to remove connection(s) to
      * @param twoSided=false If `true` disconnects nodes from each other (i.e. both sides)
+     * @time O(n)
      */
     Node.prototype.disconnect = function (node, twoSided) {
         if (twoSided === void 0) { twoSided = false; }
@@ -208,6 +215,7 @@ var Node = /** @class */ (function () {
      *
      * @param target The target value (i.e. "the value the network SHOULD have given")
      * @param options More options for propagation
+     * @time O(n&sup2;)
      *
      * @see [Regularization Neataptic](https://wagenaartje.github.io/neataptic/docs/methods/regularization/)
      * @see [What is backpropagation | YouTube](https://www.youtube.com/watch?v=Ilg3gGewQ5U)
@@ -271,6 +279,7 @@ var Node = /** @class */ (function () {
      *
      * @param [input] Environment signal (i.e. optional numerical value passed to the network as input)  - _should only be passed in input neurons_
      * @param [trace] Controls whether traces are created when activation happens (a trace is meta information left behind for different uses, e.g. backpropagation).
+     * @time O(n&sup2;)
      *
      * @returns A neuron's ['Squashed'](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) output value
      */
@@ -343,6 +352,7 @@ var Node = /** @class */ (function () {
     /**
      * Converts the node to a json object that can later be converted back
      *
+     * @time O(1)
      * @returns A node representing json object
      */
     Node.prototype.toJSON = function () {
@@ -356,18 +366,21 @@ var Node = /** @class */ (function () {
     };
     /**
      * Is this a input Node?
+     * @time O(1)
      */
     Node.prototype.isInputNode = function () {
         return this.type === NodeType_1.NodeType.INPUT;
     };
     /**
      * Is this a hidden Node?
+     * @time O(1)
      */
     Node.prototype.isHiddenNode = function () {
         return this.type === NodeType_1.NodeType.HIDDEN;
     };
     /**
      * Is this a output Node?
+     * @time O(1)
      */
     Node.prototype.isOutputNode = function () {
         return this.type === NodeType_1.NodeType.OUTPUT;
@@ -376,6 +389,7 @@ var Node = /** @class */ (function () {
      * Set bias.
      *
      * @param bias the new bias value
+     * @time O(1)
      */
     Node.prototype.setBias = function (bias) {
         this.bias = bias;
@@ -385,6 +399,7 @@ var Node = /** @class */ (function () {
      * Set activation type
      *
      * @param activation the new activation type
+     * @time O(1)
      */
     Node.prototype.setActivationType = function (activation) {
         this.squash = activation;

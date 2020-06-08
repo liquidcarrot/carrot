@@ -72,14 +72,6 @@
 						<p>Mod weight mutation.</p>
 					</div>
 					<p>Modifies the weight of a random connection.</p>
-					<dl class="tsd-comment-tags">
-						<dt>prop</dt>
-						<dd><p>{number} min=-1 lower bound for weight modification</p>
-						</dd>
-						<dt>prop</dt>
-						<dd><p>{number} max=1 higher bound for weight modification</p>
-						</dd>
-					</dl>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -133,7 +125,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/13221c5/src/methods/Mutation.ts#L221">src/methods/Mutation.ts:221</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/afd5b1a/src/methods/Mutation.ts#L218">src/methods/Mutation.ts:218</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -173,12 +165,12 @@
 					<div class="tsd-signature tsd-kind-icon">max<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/13221c5/src/methods/Mutation.ts#L221">src/methods/Mutation.ts:221</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/afd5b1a/src/methods/Mutation.ts#L218">src/methods/Mutation.ts:218</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The maximum weight.</p>
+							<p>higher bound for weight modification</p>
 						</div>
 					</div>
 				</section>
@@ -188,12 +180,12 @@
 					<div class="tsd-signature tsd-kind-icon">min<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/13221c5/src/methods/Mutation.ts#L217">src/methods/Mutation.ts:217</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/afd5b1a/src/methods/Mutation.ts#L214">src/methods/Mutation.ts:214</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The minimum weight.</p>
+							<p>lower bound for weight modification</p>
 						</div>
 					</div>
 				</section>
@@ -211,13 +203,18 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="mutation.html">Mutation</a>.<a href="mutation.html#mutate">mutate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/13221c5/src/methods/Mutation.ts#L239">src/methods/Mutation.ts:239</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/afd5b1a/src/methods/Mutation.ts#L237">src/methods/Mutation.ts:237</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Mutates the network.</p>
 								</div>
+								<dl class="tsd-comment-tags">
+									<dt>time</dt>
+									<dd><p>O(1)</p>
+									</dd>
+								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">

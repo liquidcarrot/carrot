@@ -19,7 +19,6 @@ var Utils_1 = require("../utils/Utils");
  * Genetic Algorithm Selection Methods (Genetic Operator)
  *
  * @see [Genetic Algorithm - Selection]{@link https://en.wikipedia.org/wiki/Selection_(genetic_algorithm)}
- *
  */
 var Selection = /** @class */ (function () {
     function Selection() {
@@ -41,6 +40,7 @@ var FitnessProportionateSelection = /** @class */ (function (_super) {
      * Selects a genome from the population according to the Selection method.
      *
      * @param population the pool of networks
+     * @time O(n)
      * @returns the selected genome
      */
     FitnessProportionateSelection.prototype.select = function (population) {
@@ -89,6 +89,7 @@ var PowerSelection = /** @class */ (function (_super) {
      * Selects a genome from the population according to the Selection method.
      *
      * @param population the pool of networks
+     * @time O(1)
      * @returns the selected genome
      */
     PowerSelection.prototype.select = function (population) {
@@ -121,6 +122,7 @@ var TournamentSelection = /** @class */ (function (_super) {
      * Selects a genome from the population according to the Selection method.
      *
      * @param population the pool of networks
+     * @time O(n)
      * @returns the selected genome
      */
     TournamentSelection.prototype.select = function (population) {

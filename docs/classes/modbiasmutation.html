@@ -72,14 +72,6 @@
 						<p>Mod bias mutation.</p>
 					</div>
 					<p>Modifies the bias value of a random hidden or output node</p>
-					<dl class="tsd-comment-tags">
-						<dt>prop</dt>
-						<dd><p>{number} min=-1 lower bound for modification of a neuron&#39;s bias</p>
-						</dd>
-						<dt>prop</dt>
-						<dd><p>{number} max=1 higher bound for modification of a neuron&#39;s bias</p>
-						</dd>
-					</dl>
 				</div>
 			</section>
 			<section class="tsd-panel tsd-hierarchy">
@@ -133,7 +125,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/13221c5/src/methods/Mutation.ts#L261">src/methods/Mutation.ts:261</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/afd5b1a/src/methods/Mutation.ts#L256">src/methods/Mutation.ts:256</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -173,12 +165,12 @@
 					<div class="tsd-signature tsd-kind-icon">max<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/13221c5/src/methods/Mutation.ts#L261">src/methods/Mutation.ts:261</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/afd5b1a/src/methods/Mutation.ts#L256">src/methods/Mutation.ts:256</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The maximum bias.</p>
+							<p>higher bound for modification of a neuron&#39;s bias</p>
 						</div>
 					</div>
 				</section>
@@ -188,12 +180,12 @@
 					<div class="tsd-signature tsd-kind-icon">min<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/13221c5/src/methods/Mutation.ts#L257">src/methods/Mutation.ts:257</a></li>
+							<li>Defined in <a href="https://github.com/raimannma/carrot/blob/afd5b1a/src/methods/Mutation.ts#L252">src/methods/Mutation.ts:252</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
-							<p>The minimum bias.</p>
+							<p>lower bound for modification of a neuron&#39;s bias</p>
 						</div>
 					</div>
 				</section>
@@ -211,13 +203,18 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="mutation.html">Mutation</a>.<a href="mutation.html#mutate">mutate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/13221c5/src/methods/Mutation.ts#L279">src/methods/Mutation.ts:279</a></li>
+									<li>Defined in <a href="https://github.com/raimannma/carrot/blob/afd5b1a/src/methods/Mutation.ts#L275">src/methods/Mutation.ts:275</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
 									<p>Mutates the network.</p>
 								</div>
+								<dl class="tsd-comment-tags">
+									<dt>time</dt>
+									<dd><p>O(n)</p>
+									</dd>
+								</dl>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
