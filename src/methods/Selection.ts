@@ -11,6 +11,7 @@ abstract class Selection {
      * Selects a genome from the population according to the Selection method.
      *
      * @param population the pool of networks
+     * @time O(n)
      * @returns the selected genome
      */
     public abstract select(population: Network[]): Network;

@@ -23,6 +23,7 @@ abstract class Rate {
      * Calculates the current training rate.
      *
      * @param iteration count
+     * @time O(1)
      * @returns the current training rate
      */
     public abstract calc(iteration: number): number;

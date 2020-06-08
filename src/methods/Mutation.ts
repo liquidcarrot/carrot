@@ -11,7 +11,6 @@ import {activationType} from "./Activation";
  *
  * @see {@link https://en.wikipedia.org/wiki/mutation_(genetic_algorithm)|Mutation (genetic algorithms) on Wikipedia}
  * @see {@link https://en.wikipedia.org/wiki/Genetic_algorithm#Selection|Selection (genetic algorithms) on Wikipedia}
- * @time O(n&sup3;)
  */
 abstract class Mutation {
     /**
@@ -19,6 +18,7 @@ abstract class Mutation {
      *
      * @param network the network to mutate
      * @param options you can set the max amount of nodes, connections and gates
+     * @time O(n&sup3;)
      */
     public abstract mutate(network: Network, options?: {
         /**
