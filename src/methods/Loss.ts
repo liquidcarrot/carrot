@@ -1,3 +1,5 @@
+import {sum} from "../utils/Utils";
+
 export type lossType = (targets: number[], outputs: number[]) => number;
 
 export const MSELoss: lossType = function (targets: number[], outputs: number[]): number {
@@ -37,12 +39,10 @@ export const MAPELoss: lossType = function (targets: number[], outputs: number[]
 };
 export const WAPELoss: lossType = function (targets: number[], outputs: number[]): number {
     let error: number = 0;
-    let sum: number = 0;
-    for (let i: number = 0; i < outputs.length; i++) {
-        error += Math.abs(targets[i] - outputs[i]);
-        sum += targets[i];
-    }
-    return error / sum;
+    outputs.forEach(((value, index) => {
+        error += Math.abs(targets[index] - value);
+    }));
+    return error / sum(targets);
 };
 export const MSLELoss: lossType = function (targets: number[], outputs: number[]): number {
     let error: number = 0;
@@ -66,6 +66,7 @@ export const ALL_LOSSES: {
      *
      * @param targets Ideal value
      * @param outputs Actual values
+     * @time O(n)
      *
      * @return [Mean squared error](https://medium.freecodecamp.org/machine-learning-mean-squared-error-regression-line-c7dde9a26b93)
      */
@@ -75,6 +76,7 @@ export const ALL_LOSSES: {
      *
      * @param targets Ideal value
      * @param outputs Actual values
+     * @time O(n)
      *
      * @return misses The amount of times targets value was missed
      */
@@ -84,6 +86,7 @@ export const ALL_LOSSES: {
      *
      * @param targets Ideal value
      * @param outputs Actual values
+     * @time O(n)
      *
      * @return - [Mean squared logarithmic error](https://peltarion.com/knowledge-center/documentation/modeling-view/build-an-ai-model/loss-functions/mean-squared-logarithmic-error)
      */
@@ -93,12 +96,9 @@ export const ALL_LOSSES: {
      *
      * @param targets Ideal value
      * @param outputs Actual values
+     * @time O(n)
      *
      * @return [Mean bias error](https://towardsdatascience.com/common-loss-functions-in-machine-learning-46af0ffc4d23)
-     *
-     * @example
-     * let myNetwork = new Network(5, 5);
-     * myNetwork.train(trainingData, { loss: new MSELoss() });
      */
     MBELoss: lossType;
     /**
@@ -106,6 +106,7 @@ export const ALL_LOSSES: {
      *
      * @param targets Ideal value
      * @param outputs Actual values
+     * @time O(n)
      *
      * @return - [Weighted absolute percentage error](https://help.sap.com/doc/saphelp_nw70/7.0.31/en-US/76/487053bbe77c1ee10000000a174cb4/content.htm?no_cache=true)
      */
@@ -115,6 +116,7 @@ export const ALL_LOSSES: {
      *
      * @param targets Ideal value
      * @param outputs Actual values
+     * @time O(n)
      *
      * @return - [Hinge loss](https://towardsdatascience.com/support-vector-machines-intuitive-understanding-part-1-3fb049df4ba1)
      */
@@ -124,6 +126,7 @@ export const ALL_LOSSES: {
      *
      * @param targets Ideal value
      * @param outputs Actual values
+     * @time O(n)
      *
      * @return [Mean absolute error](https://en.wikipedia.org/wiki/Mean_absolute_error)
      */
@@ -133,6 +136,7 @@ export const ALL_LOSSES: {
      *
      * @param targets Ideal value
      * @param outputs Actual values
+     * @time O(n)
      *
      * @return [Mean absolute percentage error](https://en.wikipedia.org/wiki/Mean_absolute_percentage_error)
      */
