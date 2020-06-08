@@ -5,6 +5,7 @@ exports.generateGaussian = exports.avg = exports.sum = exports.min = exports.min
  * Returns an random element from the given array.
  *
  * @param arr the array to pick from
+ * @time O(1)
  * @returns the random picked element
  */
 function pickRandom(arr) {
@@ -19,6 +20,7 @@ exports.pickRandom = pickRandom;
  *
  * @param min bound
  * @param max bound
+ * @time O(1)
  * @returns random integer in [min,max)
  */
 function randInt(min, max) {
@@ -30,6 +32,7 @@ exports.randInt = randInt;
  *
  * @param min bound
  * @param max bound
+ * @time O(1)
  * @returns random double in [min,max)
  */
 function randDouble(min, max) {
@@ -40,6 +43,7 @@ exports.randDouble = randDouble;
  * Returns a random boolean
  *
  * @returns random boolean
+ * @time O(1)
  */
 function randBoolean() {
     return Math.random() >= 0.5;
@@ -50,6 +54,7 @@ exports.randBoolean = randBoolean;
  *
  * @param arr the array
  * @param elem the element which will be removed
+ * @time O(n)
  * @returns false -> element does not exists on array; true -> element removed from array
  */
 function removeFromArray(arr, elem) {
@@ -69,6 +74,7 @@ exports.removeFromArray = removeFromArray;
  * @param value to check
  * @param defaultValue to return if value is undefined
  * @returns value if defined otherwise defaultValue
+ * @time O(1)
  */
 function getOrDefault(value, defaultValue) {
     return value !== null && value !== void 0 ? value : defaultValue;
@@ -78,15 +84,13 @@ exports.getOrDefault = getOrDefault;
  * Shuffles an array
  * @param array the array
  * @returns the shuffled array
+ * @time O(n)
  */
 function shuffle(array) {
-    var counter = array.length;
     // While there are elements in the array
-    while (counter > 0) {
+    for (var counter = array.length - 1; counter > 0; counter--) {
         // Pick a random index
         var index = randInt(0, counter);
-        // Decrease counter by 1
-        counter--;
         // And swap the last element with it
         var temp = array[counter];
         array[counter] = array[index];
@@ -98,6 +102,7 @@ exports.shuffle = shuffle;
  * Finds the maximum value of an number array
  *
  * @param array
+ * @time O(n)
  */
 function max(array) {
     if (array.length === 0) {
@@ -116,6 +121,7 @@ exports.max = max;
  * Finds the maximum value index of an number array
  *
  * @param array
+ * @time O(n)
  */
 function maxValueIndex(array) {
     if (array.length === 0) {
@@ -136,6 +142,7 @@ exports.maxValueIndex = maxValueIndex;
  * Finds the minimum value index of an number array
  *
  * @param array
+ * @time O(n)
  */
 function minValueIndex(array) {
     if (array.length === 0) {
@@ -156,6 +163,7 @@ exports.minValueIndex = minValueIndex;
  * Finds the minimum value of an number array
  *
  * @param array
+ * @time O(n)
  */
 function min(array) {
     if (array.length === 0) {
@@ -174,6 +182,7 @@ exports.min = min;
  * Calculates the average value of an array
  *
  * @param array
+ * @time O(n)
  */
 function avg(array) {
     return sum(array) / array.length;
@@ -183,6 +192,7 @@ exports.avg = avg;
  * Calculates the sum of all values of an array
  *
  * @param array
+ * @time O(n)
  */
 function sum(array) {
     if (array.length === 0) {
@@ -203,6 +213,7 @@ exports.sum = sum;
  *
  * @param mean the mean value
  * @param deviation the standard deviation
+ * @time O(1)
  */
 function generateGaussian(mean, deviation) {
     if (mean === void 0) { mean = 0; }

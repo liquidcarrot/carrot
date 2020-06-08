@@ -52,6 +52,7 @@ var NEAT = /** @class */ (function () {
      * Constructs a NEAT object.
      *
      * @param options
+     * @time O(n)
      */
     function NEAT(options) {
         if (!options.fitnessFunction) {
@@ -92,6 +93,7 @@ var NEAT = /** @class */ (function () {
      *
      * @param pickGenome Pick a network from the population which gets adjusted or removed
      * @param adjustGenome Adjust the picked network
+     * @time O(n * time for adjust genome)
      */
     NEAT.prototype.filterGenome = function (pickGenome, adjustGenome) {
         var _this = this;
@@ -105,6 +107,7 @@ var NEAT = /** @class */ (function () {
      * Mutate a network with a random mutation from the allowed array.
      *
      * @param network The network which will be mutated.
+     * @time O(n&sup3;)
      */
     NEAT.prototype.mutateRandom = function (network) {
         var _this = this;
@@ -121,6 +124,7 @@ var NEAT = /** @class */ (function () {
      * @param {function} [pickGenome] A custom selection function to pick out unwanted genomes. Accepts a network as a parameter and returns true for selection.
      * @param {function} [adjustGenome=self.template] Accepts a network, modifies it, and returns it. Used to modify unwanted genomes returned by `pickGenome` and reincorporate them into the population. If left unset, unwanted genomes will be replaced with the template Network. Will only run when pickGenome is defined.
      *
+     * @time O(time for fitness function + n * time for adjust genome + n&sup5;)
      * @returns {Network} Fittest network
      */
     NEAT.prototype.evolve = function (pickGenome, adjustGenome) {
@@ -184,6 +188,7 @@ var NEAT = /** @class */ (function () {
     /**
      * Selects two genomes from the population with `getParent()`, and returns the offspring from those parents. NOTE: Population MUST be sorted
      *
+     * @time O(n + time for crossover)
      * @returns {Network} Child network
      */
     NEAT.prototype.getOffspring = function () {
@@ -199,6 +204,7 @@ var NEAT = /** @class */ (function () {
      * Mutates the given (or current) population
      *
      * @param {Mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
+     * @time O(n&sup5;)
      */
     NEAT.prototype.mutate = function (method) {
         var _this = this;
@@ -219,6 +225,7 @@ var NEAT = /** @class */ (function () {
     /**
      * Evaluates the current population, basically sets their `.score` property
      *
+     * @time O(n&sup3; + time for fitness function)
      * @return {Network} Fittest Network
      */
     NEAT.prototype.evaluate = function () {
@@ -241,6 +248,8 @@ var NEAT = /** @class */ (function () {
     };
     /**
      * Sorts the population by score (descending)
+     * @time O(n)
+     * @todo implement a quicksort algorithm in utils
      */
     NEAT.prototype.sort = function () {
         this.population.sort(function (a, b) {
@@ -250,6 +259,7 @@ var NEAT = /** @class */ (function () {
     /**
      * Returns the fittest genome of the current population
      *
+     * @time O(n + time for fitness function)
      * @returns {Network} Current population's fittest genome
      */
     NEAT.prototype.getFittest = function () {
@@ -272,6 +282,7 @@ var NEAT = /** @class */ (function () {
     /**
      * Returns the average fitness of the current population
      *
+     * @time O(n + time for fitness function)
      * @returns {number} Average fitness of the current population
      */
     NEAT.prototype.getAverage = function () {
@@ -298,6 +309,7 @@ var NEAT = /** @class */ (function () {
     /**
      * Replace the whole population with the new genomes
      * @param genomes the genomes which replace the population
+     * @time O(1)
      */
     NEAT.prototype.replacePopulation = function (genomes) {
         this.population = genomes;
