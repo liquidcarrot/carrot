@@ -135,6 +135,7 @@ export const ALL_ACTIVATIONS: {
      *
      * @param x Input values to activation function
      * @param derivative Flag to select derivative function
+     * @time O(1)
      */
     SoftSignActivation: activationType;
     /**
@@ -142,6 +143,7 @@ export const ALL_ACTIVATIONS: {
      *
      * @param x Input value(s) to activation function
      * @param derivative Flag to select derivative function
+     * @time O(1)
      */
     LogisticActivation: activationType;
     /**
@@ -149,6 +151,7 @@ export const ALL_ACTIVATIONS: {
      *
      * @param x Input values to activation function
      * @param derivative Flag to select derivative function
+     * @time O(1)
      */
     SinusoidActivation: activationType;
     /**
@@ -156,6 +159,7 @@ export const ALL_ACTIVATIONS: {
      *
      * @param x Input values to activation function
      * @param derivative Flag to select derivative function
+     * @time O(1)
      */
     StepActivation: activationType;
     /**
@@ -165,6 +169,7 @@ export const ALL_ACTIVATIONS: {
      *
      * @param x Input values to activation function
      * @param derivative Flag to select derivative function
+     * @time O(1)
      */
     IdentityActivation: activationType;
     /**
@@ -174,6 +179,7 @@ export const ALL_ACTIVATIONS: {
      *
      * @param x Input values to activation function
      * @param derivative Flag to select derivative function
+     * @time O(1)
      */
     AbsoluteActivation: activationType;
     /**
@@ -181,6 +187,7 @@ export const ALL_ACTIVATIONS: {
      *
      * @param x Input values to activation function
      * @param derivative Flag to select derivative function
+     * @time O(1)
      */
     GaussianActivation: activationType;
     /**
@@ -192,6 +199,7 @@ export const ALL_ACTIVATIONS: {
      *
      * @param x Input value to activation function
      * @param derivative Flag to select derivative function
+     * @time O(1)
      */
     SELUActivation: activationType;
     /**
@@ -199,6 +207,7 @@ export const ALL_ACTIVATIONS: {
      *
      * @param x Input values to activation function
      * @param derivative Flag to select derivative function
+     * @time O(1)
      */
     RELUActivation: activationType;
     /**
@@ -206,6 +215,7 @@ export const ALL_ACTIVATIONS: {
      *
      * @param  x Input values to activation function
      * @param derivative Flag to select derivative function
+     * @time O(1)
      */
     BipolarSigmoidActivation: activationType;
     /**
@@ -213,6 +223,7 @@ export const ALL_ACTIVATIONS: {
      *
      * @param x Input values to activation function
      * @param derivative Flag to select derivative function
+     * @time O(1)
      */
     BentIdentityActivation: activationType;
     /**
@@ -220,6 +231,7 @@ export const ALL_ACTIVATIONS: {
      *
      * @param x Input value to activation function
      * @param derivative Flag to select derivative function
+     * @time O(1)
      */
     TanhActivation: activationType;
     /**
@@ -227,6 +239,7 @@ export const ALL_ACTIVATIONS: {
      *
      * @param x Input values to activation function
      * @param derivative Flag to select derivative function
+     * @time O(1)
      */
     InverseActivation: activationType;
     /**
@@ -234,6 +247,7 @@ export const ALL_ACTIVATIONS: {
      *
      * @param x Input values to activation function
      * @param derivative Flag to select derivative function
+     * @time O(1)
      */
     HardTanhActivation: activationType;
     /**
@@ -243,6 +257,7 @@ export const ALL_ACTIVATIONS: {
      *
      * @param x Input value to activation function
      * @param derivative Flag to select derivative function
+     * @time O(1)
      */
     MISHActivation: activationType;
     /**
@@ -250,6 +265,7 @@ export const ALL_ACTIVATIONS: {
      *
      * @param x Input value to activation function
      * @param derivative Flag to select derivative function
+     * @time O(1)
      */
     BipolarActivation: activationType;
 } = {
