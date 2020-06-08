@@ -2645,8 +2645,6 @@ function (_super) {
       options = {};
     }
 
-    var _b;
-
     var _this = _super.call(this, outputSize) || this;
 
     for (var i = 0; i < outputSize; i++) {
@@ -2656,7 +2654,7 @@ function (_super) {
     }
 
     if (options.noise) {
-      var noiseLayer = new NoiseLayer_1.NoiseLayer((_b = options.noise) !== null && _b !== void 0 ? _b : NodeType_1.NoiseNodeType.GAUSSIAN_NOISE);
+      var noiseLayer = new NoiseLayer_1.NoiseLayer(options.noise);
       noiseLayer.outputNodes.forEach(function (node) {
         return _this.outputNodes.add(node);
       });
@@ -7770,7 +7768,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "42039" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "43505" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
