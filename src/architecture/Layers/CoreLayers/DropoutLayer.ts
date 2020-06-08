@@ -1,5 +1,5 @@
+import {ActivationType, Identitiy} from "activations/build/src";
 import {ConnectionType} from "../../../enums/ConnectionType";
-import {activationType, IdentityActivation} from "../../../methods/Activation";
 import {DropoutNode} from "../../Nodes/DropoutNode";
 import {Layer} from "../Layer";
 
@@ -11,7 +11,7 @@ export class DropoutLayer extends Layer {
         /**
          * The activation type for the output nodes of this layer.
          */
-        activation?: activationType,
+        activation?: ActivationType,
         /**
          * The dropout probability
          */
@@ -19,7 +19,7 @@ export class DropoutLayer extends Layer {
     } = {}) {
         super(outputSize);
 
-        const activation: activationType = options.activation ?? IdentityActivation;
+        const activation: ActivationType = options.activation ?? Identitiy;
         const probability: number = options.probability ?? 0.1;
 
         for (let i: number = 0; i < outputSize; i++) {

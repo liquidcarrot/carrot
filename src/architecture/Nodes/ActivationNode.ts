@@ -1,4 +1,4 @@
-import {getOrDefault, sum} from "../../methods/Utils";
+import {getOrDefault, sum} from "../../utils/Utils";
 import {ConstantNode} from "./ConstantNode";
 
 /**

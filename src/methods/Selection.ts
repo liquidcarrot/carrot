@@ -1,17 +1,17 @@
 import {Network} from "../architecture/Network";
-import {pickRandom, randDouble} from "./Utils";
+import {pickRandom, randDouble} from "../utils/Utils";
 
 /**
  * Genetic Algorithm Selection Methods (Genetic Operator)
  *
  * @see [Genetic Algorithm - Selection]{@link https://en.wikipedia.org/wiki/Selection_(genetic_algorithm)}
- *
  */
 abstract class Selection {
     /**
      * Selects a genome from the population according to the Selection method.
      *
      * @param population the pool of networks
+     * @time O(n)
      * @returns the selected genome
      */
     public abstract select(population: Network[]): Network;
@@ -27,6 +27,7 @@ class FitnessProportionateSelection extends Selection {
      * Selects a genome from the population according to the Selection method.
      *
      * @param population the pool of networks
+     * @time O(n)
      * @returns the selected genome
      */
     public select(population: Network[]): Network {
@@ -78,6 +79,7 @@ class PowerSelection extends Selection {
      * Selects a genome from the population according to the Selection method.
      *
      * @param population the pool of networks
+     * @time O(1)
      * @returns the selected genome
      */
     public select(population: Network[]): Network {
@@ -115,6 +117,7 @@ class TournamentSelection extends Selection {
      * Selects a genome from the population according to the Selection method.
      *
      * @param population the pool of networks
+     * @time O(n)
      * @returns the selected genome
      */
     public select(population: Network[]): Network {

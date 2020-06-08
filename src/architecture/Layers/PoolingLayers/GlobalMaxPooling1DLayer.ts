@@ -1,4 +1,4 @@
-import {activationType} from "../../../methods/Activation";
+import {ActivationType} from "activations/build/src";
 import {MaxPooling1DLayer} from "./MaxPooling1DLayer";
 
 /**
@@ -9,7 +9,7 @@ export class GlobalMaxPooling1DLayer extends MaxPooling1DLayer {
         /**
          * The activation type for the output nodes of this layer.
          */
-        activation?: activationType
+        activation?: ActivationType
     } = {}) {
         super(1, options);
     }

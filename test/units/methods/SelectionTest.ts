@@ -1,7 +1,7 @@
 import {expect} from "chai";
 import {Network} from "../../../src/architecture/Network";
 import {FitnessProportionateSelection, PowerSelection, TournamentSelection} from "../../../src/methods/Selection";
-import {randDouble, randInt} from "../../../src/methods/Utils";
+import {randDouble, randInt} from "../../../src/utils/Utils";
 
 describe("selection", () => {
     describe("TournamentSelection", () => {

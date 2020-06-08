@@ -1,6 +1,6 @@
 import {expect} from "chai";
 import {ExponentialRate, FixedRate, InverseRate, StepRate} from "../../../src/methods/Rate";
-import {randInt} from "../../../src/methods/Utils";
+import {randInt} from "../../../src/utils/Utils";
 
 describe("Rate", () => {
     it('FixedRate', () => {

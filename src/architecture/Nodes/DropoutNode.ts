@@ -1,5 +1,5 @@
 import {DropoutNodeJSON} from "../../interfaces/NodeJSON";
-import {getOrDefault, randDouble, sum} from "../../methods/Utils";
+import {getOrDefault, randDouble, sum} from "../../utils/Utils";
 import {Connection} from "../Connection";
 import {ConstantNode} from "./ConstantNode";
 

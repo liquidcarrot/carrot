@@ -1,5 +1,5 @@
+import {ActivationType, Identitiy} from "activations/build/src";
 import {PoolNodeType} from "../../../enums/NodeType";
-import {activationType, IdentityActivation} from "../../../methods/Activation";
 import {PoolNode} from "../../Nodes/PoolNode";
 import {PoolingLayer} from "./PoolingLayer";
 
@@ -11,11 +11,11 @@ export class MinPooling1DLayer extends PoolingLayer {
         /**
          * The activation type for the output nodes of this layer.
          */
-        activation?: activationType
+        activation?: ActivationType
     } = {}) {
         super(outputSize);
 
-        const activationType: activationType = options.activation ?? IdentityActivation;
+        const activationType: ActivationType = options.activation ?? Identitiy;
 
         for (let i: number = 0; i < outputSize; i++) {
             this.inputNodes.add(new PoolNode(PoolNodeType.MIN_POOLING).setActivationType(activationType));

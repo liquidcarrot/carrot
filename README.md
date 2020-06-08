@@ -6,6 +6,9 @@
     <a href="https://github.com/raimannma/carrot/actions">
      <img src="https://github.com/raimannma/carrot/workflows/Node.js%20CI/badge.svg?branch=master">
     </a>
+    <a href="https://deepscan.io/dashboard#view=project&tid=9592&pid=12128&bid=184224">
+        <img src="https://deepscan.io/api/teams/9592/projects/12128/branches/184224/badge/grade.svg" alt="DeepScan grade">
+    </a>
     <a href="https://gitter.im/carrot-ai/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badgee&utm_content=badge">
         <img src="https://badges.gitter.im/Join%20Chat.svg"
              alt="Join the chat at https://gitter.im/carrot-ai/community">
@@ -56,9 +59,8 @@ For Documentation, visit [here](https://liquidcarrot.github.io/carrot)
 - [Simple docs](https://liquidcarrot.github.io/carrot) & [interactive examples](https://liquidcarrot.io/example.flappy-bird/)
 - **Neuro-evolution** & population based training
 - Multi-threading & GPU (coming soon)
-- Preconfigured GRU, LSTM, NARX Networks
-- Mutable Neurons, Layers, Groups, and Networks
-- SVG Network Visualizations using D3.js
+- Complete customizable Networks with various types of layers
+- Mutable Neurons, Connections, Layers, and Networks
 
 ## Demos
 ![flappy bird neuro-evolution demo](https://raw.githubusercontent.com/liquidcarrot/carrot/master/images/flappy-bird-demo.gif)
@@ -103,84 +105,53 @@ This is a simple **perceptron**:
 How to build it with Carrot:
 
 ```javascript
-let { architect } = require('@liquid-carrot/carrot');
+const architect = new Architect();
 
-// The example Perceptron you see above with 4 inputs, 5 hidden, and 1 output neuron
-let simplePerceptron = new architect.Perceptron(4, 5, 1);
+architect.addLayer(new InputLayer(4));
+architect.addLayer(new DenseLayer(5, {activationType: RELUActivation}));
+architect.addLayer(new OutputLayer(1));
+
+const network = architect.buildModel();
 ```
 
-Building networks is easy with **6** built-in networks
+Building networks is easy with **17** built-in layers
+You can combine them as you need.
 
 ```javascript
-let { architect } = require('@liquid-carrot/carrot');
+const architect = new Architect();
 
-let LSTM = new architect.LSTM(4, 5, 1);
+architect.addLayer(new InputLayer(10));
+architect.addLayer(new DenseLayer(10, {activationType: RELUActivation}));
+architect.addLayer(new MaxPooling1DLayer(5, {activation: IdentityActivation}));
+architect.addLayer(new OutputLayer(2, {activation: RELUActivation}));
 
-// Add as many hidden layers as needed
-let Perceptron = new architect.Perceptron(4, 5, 20, 5, 10, 1);
-```
-
-Building custom network architectures
-
-```javascript
-let architect = require('@liquid-carrot/carrot').architect
-let Layer = require('@liquid-carrot/carrot').Layer
-
-let input = new Layer.Dense(1);
-let hidden1 = new Layer.LSTM(5);
-let hidden2 = new Layer.GRU(1);
-let output = new Layer.Dense(1);
-
-// connect however you want
-input.connect(hidden1);
-hidden1.connect(hidden2);
-hidden2.connect(output);
-
-let network = architect.Construct([input, hidden1, hidden2, output]);
+const network = architect.buildModel();
 ```
 
 Networks also shape **themselves** with neuro-evolution
 
 ```javascript
-let { Network, methods } = require('@liquid-carrot/carrot');
+const XOR = [
+    {input: [0, 0], output: [0]},
+    {input: [0, 1], output: [1]},
+    {input: [1, 0], output: [1]},
+    {input: [1, 1], output: [0]}
+];
 
 // this network learns the XOR gate (through neuro-evolution)
-async function execute () {
-  // no hidden layers...
-   var network = new Network(2,1);
-
-   // XOR dataset
-   var trainingSet = [
-       { input: [0,0], output: [0] },
-       { input: [0,1], output: [1] },
-       { input: [1,0], output: [1] },
-       { input: [1,1], output: [0] }
-   ];
-
-   await network.evolve(trainingSet, {
-       mutation: methods.mutation.FFW,
-       equal: true,
-       error: 0.05,
-       elitism: 5,
-       mutation_rate: 0.5
-   });
-
-   // and it works!
-   network.activate([0,0]); // 0.2413
-   network.activate([0,1]); // 1.0000
-   network.activate([1,0]); // 0.7663
-   network.activate([1,1]); // 0.008
+async function execute(): Promise<void> {
+    this.timeout(20000);
+    
+    const network: Network = new Network(2, 1);
+    
+    const initial: number = network.test(XOR);
+    await network.evolve({iterations: 50, dataset: XOR});
+    const final: number = network.test(XOR);
+    
+    expect(final).to.be.at.most(initial);
 }
 
 execute();
-```
-
-Build vanilla neural networks
-
-```javascript
-let Network = require('@liquid-carrot/carrot').Network
-
-let network = new Network([2, 2, 1]) // Builds a neural network with 5 neurons: 2 + 2 + 1
 ```
 
 Or implement custom algorithms with neuron-level control

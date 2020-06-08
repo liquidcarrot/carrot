@@ -34,25 +34,6 @@ import {NetworkJSON} from "../src/interfaces/NetworkJSON";
 import {DropoutNodeJSON, NodeJSON, PoolNodeJSON} from "../src/interfaces/NodeJSON";
 import {TrainOptions} from "../src/interfaces/TrainOptions";
 import {
-    AbsoluteActivation,
-    ALL_ACTIVATIONS,
-    BentIdentityActivation,
-    BipolarActivation,
-    BipolarSigmoidActivation,
-    GaussianActivation,
-    HardTanhActivation,
-    IdentityActivation,
-    InverseActivation,
-    LogisticActivation,
-    MISHActivation,
-    RELUActivation,
-    SELUActivation,
-    SinusoidActivation,
-    SoftSignActivation,
-    StepActivation,
-    TanhActivation
-} from "../src/methods/Activation";
-import {
     ALL_LOSSES,
     BinaryLoss,
     HINGELoss,
@@ -101,7 +82,7 @@ import {
     removeFromArray,
     shuffle,
     sum
-} from "../src/methods/Utils";
+} from "../src/utils/Utils";
 
 // TODO this could be more beautiful and also dynamic
 export {
@@ -144,23 +125,6 @@ export {
     PoolNodeJSON,
     DropoutNodeJSON,
     TrainOptions,
-    ALL_ACTIVATIONS,
-    LogisticActivation,
-    TanhActivation,
-    IdentityActivation,
-    StepActivation,
-    RELUActivation,
-    SoftSignActivation,
-    SinusoidActivation,
-    GaussianActivation,
-    BentIdentityActivation,
-    BipolarActivation,
-    BipolarSigmoidActivation,
-    HardTanhActivation,
-    AbsoluteActivation,
-    InverseActivation,
-    SELUActivation,
-    MISHActivation,
     ALL_LOSSES,
     MSELoss,
     MBELoss,

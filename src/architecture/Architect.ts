@@ -76,7 +76,7 @@ export class Architect {
 
             network.nodes.push(...this.layers[i].layer.nodes);
             this.layers[i].layer.connections.forEach(conn => network.connections.add(conn));
-            network.gates.push(...this.layers[i].layer.gates);
+            this.layers[i].layer.gates.forEach(conn => network.gates.add(conn));
         }
         network.nodes.push(...this.layers[this.layers.length - 1].layer.nodes);
         return network;

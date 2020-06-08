@@ -46,4 +46,6 @@ Promise.all([
     runBuild(browserDev),
     runBuild(nodeProduction),
     runBuild(nodeDev)
-]).then(() => process.exit(0));
+])
+    .then(() => process.exit(0))
+    .catch(() => process.exit(1));

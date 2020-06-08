@@ -3,7 +3,7 @@ import {Connection} from "../../../src/architecture/Connection";
 import {Network} from "../../../src/architecture/Network";
 import {Node} from "../../../src/architecture/Node";
 import {AddConnectionMutation, AddGateMutation, AddNodeMutation, SubGateMutation} from "../../../src/methods/Mutation";
-import {randInt} from "../../../src/methods/Utils";
+import {randInt} from "../../../src/utils/Utils";
 
 describe('Network', () => {
     function createTestNetwork(): Network {
@@ -160,7 +160,7 @@ describe('Network', () => {
             const node: Node = testNetwork.nodes.filter(node => !nodesBefore.includes(node))[0];
             const connection: Connection = node.connect(testNetwork.nodes[20]);
 
-            const beforeNumberOfGates: number = testNetwork.gates.length;
+            const beforeNumberOfGates: number = testNetwork.gates.size;
             testNetwork.addGate(node, connection);
             expect(testNetwork.gates).to.be.of.length(beforeNumberOfGates + 1);
             expect(connection.gateNode).to.eql(node);
@@ -188,11 +188,11 @@ describe('Network', () => {
                 testNetwork.mutate(new AddGateMutation());
             }
 
-            const gatesBefore: number = testNetwork.gates.length;
+            const gatesBefore: number = testNetwork.gates.size;
 
             testNetwork.mutate(new SubGateMutation());
 
-            expect(testNetwork.gates.length).to.be.equal(gatesBefore - 1);
+            expect(testNetwork.gates.size).to.be.equal(gatesBefore - 1);
         });
     });
 

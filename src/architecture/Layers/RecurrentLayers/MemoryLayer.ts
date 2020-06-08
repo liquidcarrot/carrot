@@ -1,6 +1,6 @@
+import {ActivationType, Identitiy, Logistic} from "activations/build/src";
 import {ConnectionType} from "../../../enums/ConnectionType";
 import {NodeType} from "../../../enums/NodeType";
-import {activationType, IdentityActivation, LogisticActivation} from "../../../methods/Activation";
 import {Node} from "../../Node";
 import {Layer} from "../Layer";
 
@@ -12,7 +12,7 @@ export class MemoryLayer extends Layer {
         /**
          * The activation type for the output nodes of this layer.
          */
-        activation?: activationType,
+        activation?: ActivationType,
         /**
          * The size of the memory.
          */
@@ -30,7 +30,7 @@ export class MemoryLayer extends Layer {
             const block: Node[] = [];
             for (let j: number = 0; j < outputSize; j++) {
                 const node: Node = new Node(NodeType.HIDDEN);
-                node.squash = IdentityActivation;
+                node.squash = Identitiy;
                 node.bias = 0;
                 block.push(node);
             }
@@ -44,7 +44,7 @@ export class MemoryLayer extends Layer {
         this.nodes.push(...(nodes.reverse()));
         prevNodes.forEach(node => this.outputNodes.add(node));
 
-        this.outputNodes.forEach(node => node.squash = options.activation ?? LogisticActivation);
+        this.outputNodes.forEach(node => node.squash = options.activation ?? Logistic);
     }
 
     /**
