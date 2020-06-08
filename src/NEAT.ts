@@ -120,6 +120,7 @@ export class NEAT {
      * Constructs a NEAT object.
      *
      * @param options
+     * @time O(n)
      */
     constructor(options: EvolveOptions) {
         if (!options.fitnessFunction) {
@@ -164,6 +165,7 @@ export class NEAT {
      *
      * @param pickGenome Pick a network from the population which gets adjusted or removed
      * @param adjustGenome Adjust the picked network
+     * @time O(n * time for adjust genome)
      */
     public filterGenome(pickGenome: (genome: Network) => boolean, adjustGenome: ((genome: Network) => Network) | undefined): Network[] {
         return this.population
@@ -177,6 +179,7 @@ export class NEAT {
      * Mutate a network with a random mutation from the allowed array.
      *
      * @param network The network which will be mutated.
+     * @time O(time for mutation)
      */
     public mutateRandom(network: Network): void {
         const allowed: Mutation[] = this.mutations.filter(method => {
@@ -195,6 +198,7 @@ export class NEAT {
      * @param {function} [pickGenome] A custom selection function to pick out unwanted genomes. Accepts a network as a parameter and returns true for selection.
      * @param {function} [adjustGenome=self.template] Accepts a network, modifies it, and returns it. Used to modify unwanted genomes returned by `pickGenome` and reincorporate them into the population. If left unset, unwanted genomes will be replaced with the template Network. Will only run when pickGenome is defined.
      *
+     * @time O(time for fitness function + n * time for adjust genome + n&sup2;)
      * @returns {Network} Fittest network
      */
     public async evolve(pickGenome?: ((genome: Network) => boolean) | undefined, adjustGenome?: ((genome: Network) => Network) | undefined): Promise<Network> {
@@ -263,6 +267,7 @@ export class NEAT {
     /**
      * Selects two genomes from the population with `getParent()`, and returns the offspring from those parents. NOTE: Population MUST be sorted
      *
+     * @time O(n + time for crossover)
      * @returns {Network} Child network
      */
     public getOffspring(): Network {
@@ -281,6 +286,7 @@ export class NEAT {
      * Mutates the given (or current) population
      *
      * @param {Mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
+     * @time O(n&sup2; * time for mutation)
      */
     public mutate(method?: Mutation | undefined): void {
         // Elitist genomes should not be included
@@ -300,6 +306,7 @@ export class NEAT {
     /**
      * Evaluates the current population, basically sets their `.score` property
      *
+     * @time O(n&sup3; + time for fitness function)
      * @return {Network} Fittest Network
      */
     public async evaluate(): Promise<Network> {
@@ -316,6 +323,8 @@ export class NEAT {
 
     /**
      * Sorts the population by score (descending)
+     * @time O(n)
+     * @todo implement a quicksort algorithm in utils
      */
     public sort(): void {
         this.population.sort((a: Network, b: Network) => {
@@ -326,6 +335,7 @@ export class NEAT {
     /**
      * Returns the fittest genome of the current population
      *
+     * @time O(n + time for fitness function)
      * @returns {Network} Current population's fittest genome
      */
     public async getFittest(): Promise<Network> {
@@ -340,6 +350,7 @@ export class NEAT {
     /**
      * Returns the average fitness of the current population
      *
+     * @time O(n + time for fitness function)
      * @returns {number} Average fitness of the current population
      */
     public async getAverage(): Promise<number> {
@@ -356,6 +367,7 @@ export class NEAT {
     /**
      * Replace the whole population with the new genomes
      * @param genomes the genomes which replace the population
+     * @time O(1)
      */
     public replacePopulation(genomes: Network[]): void {
         this.population = genomes;

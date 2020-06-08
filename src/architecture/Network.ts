@@ -389,6 +389,7 @@ export class Network {
 
     /**
      * Clear the context of the network
+     * @time O(n&sup3;)
      */
     public clear(): void {
         this.nodes.forEach(node => node.clear());

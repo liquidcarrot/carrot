@@ -133,7 +133,7 @@ export class Node {
      * Clears this node's state information - _i.e. resets node and its connections to "factory settings"_
      *
      * `node.clear()` is useful for predicting time series.
-     *
+     * @time O(n&sup2;)
      */
     public clear(): void {
         this.incoming.forEach(connection => {
