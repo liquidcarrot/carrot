@@ -5,7 +5,6 @@ import {pickRandom, randDouble} from "../utils/Utils";
  * Genetic Algorithm Selection Methods (Genetic Operator)
  *
  * @see [Genetic Algorithm - Selection]{@link https://en.wikipedia.org/wiki/Selection_(genetic_algorithm)}
- *
  */
 abstract class Selection {
     /**

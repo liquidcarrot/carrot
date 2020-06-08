@@ -8,7 +8,7 @@ import {IdentityActivation, RELUActivation} from "../../src/methods/Activation";
 import {BinaryLoss} from "../../src/methods/Loss";
 import {FEEDFORWARD_MUTATIONS} from "../../src/methods/Mutation";
 
-describe('MNIST', () => {
+describe.skip('MNIST', () => {
     it("evolve mnist", async function (): Promise<void> {
         this.timeout(0);
 

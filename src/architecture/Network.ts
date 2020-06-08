@@ -23,15 +23,6 @@ import {Node} from "./Node";
  * Networks are easy to create, all you need to specify is an `input` and an `output` size.
  *
  * @constructs Network
- *
- * @param {number} inputSize Size of input layer AKA neurons in input layer
- * @param {number} outputSize Size of output layer AKA neurons in output layer
- *
- * @prop {number} inputSize Size of input layer AKA neurons in input layer
- * @prop {number} outputSize Size of output layer AKA neurons in output layer
- * @prop {Array<Node>} nodes Nodes currently within the network
- * @prop {Array<Node>} gates Gates within the network
- * @prop {Array<Connection>} connections Connections within the network
  */
 export class Network {
     /**
