@@ -216,176 +216,6 @@ var NoiseNodeType;
    */
   NoiseNodeType[NoiseNodeType["GAUSSIAN_NOISE"] = 0] = "GAUSSIAN_NOISE";
 })(NoiseNodeType = exports.NoiseNodeType || (exports.NoiseNodeType = {}));
-},{}],"../src/methods/Activation.js":[function(require,module,exports) {
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.ALL_ACTIVATIONS = exports.MISHActivation = exports.SELUActivation = exports.InverseActivation = exports.AbsoluteActivation = exports.HardTanhActivation = exports.BipolarSigmoidActivation = exports.BipolarActivation = exports.BentIdentityActivation = exports.GaussianActivation = exports.SinusoidActivation = exports.SoftSignActivation = exports.RELUActivation = exports.StepActivation = exports.IdentityActivation = exports.TanhActivation = exports.LogisticActivation = void 0;
-
-exports.LogisticActivation = function (x, derivative) {
-  if (!derivative) {
-    return 1 / (1 + Math.exp(-x));
-  } else {
-    return exports.LogisticActivation(x, false) * (1 - exports.LogisticActivation(x, false));
-  }
-};
-
-exports.TanhActivation = function (x, derivative) {
-  if (!derivative) {
-    return Math.tanh(x);
-  } else {
-    return 1 - Math.pow(exports.TanhActivation(x, false), 2);
-  }
-};
-
-exports.IdentityActivation = function (x, derivative) {
-  if (!derivative) {
-    return x;
-  } else {
-    return 1;
-  }
-};
-
-exports.StepActivation = function (x, derivative) {
-  if (!derivative) {
-    return x < 0 ? 0 : 1;
-  } else {
-    return 0;
-  }
-};
-
-exports.RELUActivation = function (x, derivative) {
-  if (!derivative) {
-    return x > 0 ? x : 0;
-  } else {
-    return x <= 0 ? 0 : 1;
-  }
-};
-
-exports.SoftSignActivation = function (x, derivative) {
-  if (!derivative) {
-    return x / (1 + Math.abs(x));
-  } else {
-    return x / ((1 + Math.abs(x)) * (1 + Math.abs(x)));
-  }
-};
-
-exports.SinusoidActivation = function (x, derivative) {
-  if (!derivative) {
-    return Math.sin(x);
-  } else {
-    return Math.cos(x);
-  }
-};
-
-exports.GaussianActivation = function (x, derivative) {
-  if (!derivative) {
-    return Math.exp(-x * x);
-  } else {
-    return -2 * x * exports.GaussianActivation(x, false);
-  }
-};
-
-exports.BentIdentityActivation = function (x, derivative) {
-  if (!derivative) {
-    return (Math.sqrt(x * x + 1) - 1) / 2 + x;
-  } else {
-    return x / (2 * Math.sqrt(x * x + 1)) + 1;
-  }
-};
-
-exports.BipolarActivation = function (x, derivative) {
-  if (!derivative) {
-    return x > 0 ? 1 : -1;
-  } else {
-    return 0;
-  }
-};
-
-exports.BipolarSigmoidActivation = function (x, derivative) {
-  if (!derivative) {
-    return 2 / (1 + Math.exp(-x)) - 1;
-  } else {
-    return 2 * Math.exp(-x) / ((1 + Math.exp(-x)) * (1 + Math.exp(-x)));
-  }
-};
-
-exports.HardTanhActivation = function (x, derivative) {
-  if (!derivative) {
-    return Math.max(-1, Math.min(1, x));
-  } else {
-    return Math.abs(x) < 1 ? 1 : 0;
-  }
-};
-
-exports.AbsoluteActivation = function (x, derivative) {
-  if (!derivative) {
-    return Math.abs(x);
-  } else {
-    return x < 0 ? -1 : 1;
-  }
-};
-
-exports.InverseActivation = function (x, derivative) {
-  if (!derivative) {
-    return 1 - x;
-  } else {
-    return -1;
-  }
-};
-
-exports.SELUActivation = function (x, derivative) {
-  var alpha = 1.6732632423543772848170429916717; // this is bad
-
-  var scale = 1.0507009873554804934193349852946; // this is bad
-
-  if (!derivative) {
-    if (x > 0) {
-      return x * scale;
-    } else {
-      return (alpha * Math.exp(x) - alpha) * scale;
-    }
-  } else {
-    if (x > 0) {
-      return scale;
-    } else {
-      return alpha * Math.exp(x) * scale;
-    }
-  }
-};
-
-exports.MISHActivation = function (x, derivative) {
-  var ex = Math.exp(x);
-
-  if (derivative) {
-    var w = ex * ex * ex + 4 * (ex * ex + x * ex + x + 1) + 6 * ex;
-    var d = 2 * ex + ex * ex + 2;
-    return ex * w / (d * d);
-  } else {
-    return x * Math.tanh(Math.log(1 + ex));
-  }
-};
-
-exports.ALL_ACTIVATIONS = {
-  LogisticActivation: exports.LogisticActivation,
-  TanhActivation: exports.TanhActivation,
-  IdentityActivation: exports.IdentityActivation,
-  StepActivation: exports.StepActivation,
-  RELUActivation: exports.RELUActivation,
-  SoftSignActivation: exports.SoftSignActivation,
-  SinusoidActivation: exports.SinusoidActivation,
-  GaussianActivation: exports.GaussianActivation,
-  BentIdentityActivation: exports.BentIdentityActivation,
-  BipolarActivation: exports.BipolarActivation,
-  BipolarSigmoidActivation: exports.BipolarSigmoidActivation,
-  HardTanhActivation: exports.HardTanhActivation,
-  AbsoluteActivation: exports.AbsoluteActivation,
-  InverseActivation: exports.InverseActivation,
-  SELUActivation: exports.SELUActivation,
-  MISHActivation: exports.MISHActivation
-};
 },{}],"../src/utils/Utils.js":[function(require,module,exports) {
 "use strict";
 
@@ -1509,9 +1339,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Node = void 0;
 
-var NodeType_1 = require("../enums/NodeType");
+var src_1 = require("activations/build/src");
 
-var Activation_1 = require("../methods/Activation");
+var NodeType_1 = require("../enums/NodeType");
 
 var Mutation_1 = require("../methods/Mutation");
 
@@ -1542,7 +1372,7 @@ function () {
 
     this.type = type;
     this.bias = Utils_1.randDouble(-1, 1);
-    this.squash = Activation_1.LogisticActivation;
+    this.squash = src_1.Logistic;
     this.activation = 0;
     this.derivativeState = 1;
     this.state = 0;
@@ -1574,7 +1404,7 @@ function () {
 
     this.bias = (_a = json.bias) !== null && _a !== void 0 ? _a : Utils_1.randDouble(-1, 1);
     this.type = json.type;
-    this.squash = (_b = json.squash) !== null && _b !== void 0 ? _b : Activation_1.LogisticActivation;
+    this.squash = (_b = json.squash) !== null && _b !== void 0 ? _b : src_1.Logistic;
     this.mask = (_c = json.mask) !== null && _c !== void 0 ? _c : 1;
     this.index = (_d = json.index) !== null && _d !== void 0 ? _d : NaN;
     return this;
@@ -1623,7 +1453,7 @@ function () {
     var _this = this;
 
     if (allowedActivations === void 0) {
-      allowedActivations = Object.values(Activation_1.ALL_ACTIVATIONS);
+      allowedActivations = Object.values(src_1.ALL_ACTIVATIONS);
     } // pick a random activation from allowed activations except the current activation
 
 
@@ -2025,7 +1855,7 @@ function () {
 }();
 
 exports.Node = Node;
-},{"../enums/NodeType":"../src/enums/NodeType.js","../methods/Activation":"../src/methods/Activation.js","../methods/Mutation":"../src/methods/Mutation.js","../utils/Utils":"../src/utils/Utils.js","./Connection":"../src/architecture/Connection.js"}],"../src/enums/GatingType.js":[function(require,module,exports) {
+},{"../enums/NodeType":"../src/enums/NodeType.js","../methods/Mutation":"../src/methods/Mutation.js","../utils/Utils":"../src/utils/Utils.js","./Connection":"../src/architecture/Connection.js"}],"../src/enums/GatingType.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2266,9 +2096,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.ConstantNode = void 0;
 
-var NodeType_1 = require("../../enums/NodeType");
+var src_1 = require("activations/build/src");
 
-var Activation_1 = require("../../methods/Activation");
+var NodeType_1 = require("../../enums/NodeType");
 
 var Node_1 = require("../Node");
 /**
@@ -2300,7 +2130,7 @@ function (_super) {
     var _a, _b;
 
     this.index = (_a = json.index) !== null && _a !== void 0 ? _a : -1;
-    this.squash = (_b = json.squash) !== null && _b !== void 0 ? _b : Activation_1.IdentityActivation;
+    this.squash = (_b = json.squash) !== null && _b !== void 0 ? _b : src_1.Identitiy;
     return this;
   };
   /**
@@ -2361,7 +2191,7 @@ function (_super) {
 }(Node_1.Node);
 
 exports.ConstantNode = ConstantNode;
-},{"../../enums/NodeType":"../src/enums/NodeType.js","../../methods/Activation":"../src/methods/Activation.js","../Node":"../src/architecture/Node.js"}],"../src/architecture/Nodes/NoiseNode.js":[function(require,module,exports) {
+},{"../../enums/NodeType":"../src/enums/NodeType.js","../Node":"../src/architecture/Node.js"}],"../src/architecture/Nodes/NoiseNode.js":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -2532,11 +2362,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.NoiseLayer = void 0;
 
+var src_1 = require("activations/build/src");
+
 var ConnectionType_1 = require("../../../enums/ConnectionType");
 
 var NodeType_1 = require("../../../enums/NodeType");
-
-var Activation_1 = require("../../../methods/Activation");
 
 var NoiseNode_1 = require("../../Nodes/NoiseNode");
 
@@ -2562,7 +2392,7 @@ function (_super) {
 
     var _this = _super.call(this, outputSize) || this;
 
-    var activation = (_b = options.activation) !== null && _b !== void 0 ? _b : Activation_1.IdentityActivation;
+    var activation = (_b = options.activation) !== null && _b !== void 0 ? _b : src_1.Identitiy;
 
     for (var i = 0; i < outputSize; i++) {
       _this.inputNodes.add(new NoiseNode_1.NoiseNode({
@@ -2604,7 +2434,7 @@ function (_super) {
 }(Layer_1.Layer);
 
 exports.NoiseLayer = NoiseLayer;
-},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Nodes/NoiseNode":"../src/architecture/Nodes/NoiseNode.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/CoreLayers/InputLayer.js":[function(require,module,exports) {
+},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Nodes/NoiseNode":"../src/architecture/Nodes/NoiseNode.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/CoreLayers/InputLayer.js":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -2744,11 +2574,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.OutputLayer = void 0;
 
+var src_1 = require("activations/build/src");
+
 var ConnectionType_1 = require("../../../enums/ConnectionType");
 
 var NodeType_1 = require("../../../enums/NodeType");
-
-var Activation_1 = require("../../../methods/Activation");
 
 var Node_1 = require("../../Node");
 
@@ -2774,7 +2604,7 @@ function (_super) {
 
     var _this = _super.call(this, outputSize) || this;
 
-    var activation = (_b = options.activation) !== null && _b !== void 0 ? _b : Activation_1.IdentityActivation;
+    var activation = (_b = options.activation) !== null && _b !== void 0 ? _b : src_1.Identitiy;
 
     for (var i = 0; i < outputSize; i++) {
       _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.OUTPUT).setActivationType(activation));
@@ -2819,7 +2649,7 @@ function (_super) {
 }(Layer_1.Layer);
 
 exports.OutputLayer = OutputLayer;
-},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/methods/Loss.js":[function(require,module,exports) {
+},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/methods/Loss.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3139,6 +2969,286 @@ function (_super) {
 }(Rate);
 
 exports.InverseRate = InverseRate;
+},{}],"../../node_modules/activations/build/src/index.js":[function(require,module,exports) {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ALL_ACTIVATIONS = exports.GAUSSIAN = exports.Sinc = exports.Sinusiod = exports.SiLU = exports.BentIdentity = exports.SoftPlus = exports.LeakyRELU = exports.RELU = exports.SoftSign = exports.ArSinH = exports.ArcTan = exports.SQNL = exports.TANH = exports.Logistic = exports.BinaryStep = exports.Identitiy = void 0;
+/**
+ * The Identity activation function.
+ * @see Identity function {@link https://en.wikipedia.org/wiki/Identity_function}
+ * @param x the input value
+ * @param derivative calculate the derivative
+ */
+const Identitiy = (x, derivative = false) => !derivative ? x : 1;
+exports.Identitiy = Identitiy;
+/**
+ * The Binary-Step activation function.
+ * @see Binary Step function {@link https://en.wikipedia.org/wiki/Heaviside_step_function}
+ * @param x the input value
+ * @param derivative calculate the derivative
+ */
+const BinaryStep = (x, derivative = false) => {
+    if (!derivative) {
+        return x < 0 ? 0 : 1;
+    }
+    else {
+        return 0;
+    }
+};
+exports.BinaryStep = BinaryStep;
+/**
+ * The Logistic activation function.
+ * @see Logistic function {@link https://en.wikipedia.org/wiki/Logistic_function}
+ * @param x the input value
+ * @param derivative calculate the derivative
+ */
+const Logistic = (x, derivative = false) => {
+    const negativeEX = Math.exp(-x);
+    if (!derivative) {
+        return 1 / (1 + negativeEX);
+    }
+    else {
+        return 1 / (1 + negativeEX) * (1 - 1 / (1 + negativeEX));
+    }
+};
+exports.Logistic = Logistic;
+/**
+ * The TANH activation function.
+ * @see TanH function {@link https://en.wikipedia.org/wiki/Hyperbolic_function#Hyperbolic_tangent}
+ * @param x the input value
+ * @param derivative calculate the derivative
+ */
+const TANH = (x, derivative = false) => {
+    if (!derivative) {
+        return Math.tanh(x);
+    }
+    else {
+        return 1 - Math.pow(Math.tanh(x), 2);
+    }
+};
+exports.TANH = TANH;
+/**
+ * The SQNL activation function.
+ * @see SQNL function {@link https://ieeexplore.ieee.org/document/8489043}
+ * @param x the input value
+ * @param derivative calculate the derivative
+ */
+const SQNL = (x, derivative = false) => {
+    if (!derivative) {
+        if (x > 2) {
+            return 1;
+        }
+        else if (x >= 0) {
+            return x - Math.pow((x / 2), 2);
+        }
+        else if (x >= -2) {
+            return x + Math.pow((x / 2), 2);
+        }
+        else {
+            return -1;
+        }
+    }
+    else {
+        if (x > 2) {
+            return 0;
+        }
+        else if (x >= 0) {
+            return 1 - x / 2;
+        }
+        else if (x >= -2) {
+            return 1 + x / 2;
+        }
+        else {
+            return 0;
+        }
+    }
+};
+exports.SQNL = SQNL;
+/**
+ * The ArcTAN activation function.
+ * @see ArcTAN function {@link https://en.wikipedia.org/wiki/Inverse_trigonometric_functions}
+ * @param x the input value
+ * @param derivative calculate the derivative
+ */
+const ArcTan = (x, derivative = false) => {
+    if (!derivative) {
+        return Math.atan(x);
+    }
+    else {
+        return 1 / (Math.pow(x, 2) + 1);
+    }
+};
+exports.ArcTan = ArcTan;
+/**
+ * The ArSinH activation function.
+ * @see ArSinH function {@link https://en.wikipedia.org/wiki/Inverse_hyperbolic_functions#Inverse_hyperbolic_sine}
+ * @param x the input value
+ * @param derivative calculate the derivative
+ */
+const ArSinH = (x, derivative = false) => {
+    if (!derivative) {
+        return Math.asinh(x);
+    }
+    else {
+        return 1 / Math.pow((Math.pow(x, 2) + 1), (1 / 2));
+    }
+};
+exports.ArSinH = ArSinH;
+/**
+ * The SoftSign activation function.
+ * @see SoftSign function {@link https://sefiks.com/2017/11/10/softsign-as-a-neural-networks-activation-function/}
+ * @param x the input value
+ * @param derivative calculate the derivative
+ */
+const SoftSign = (x, derivative = false) => {
+    if (!derivative) {
+        return x / (1 + Math.abs(x));
+    }
+    else {
+        return 1 / Math.pow((1 + Math.abs(x)), 2);
+    }
+};
+exports.SoftSign = SoftSign;
+/**
+ * The RELU activation function.
+ * @see RELU function {@link https://en.wikipedia.org/wiki/Rectifier_(neural_networks)}
+ * @param x the input value
+ * @param derivative calculate the derivative
+ */
+const RELU = (x, derivative = false) => {
+    if (!derivative) {
+        return x > 0 ? x : 0;
+    }
+    else {
+        return x > 0 ? 1 : 0;
+    }
+};
+exports.RELU = RELU;
+/**
+ * The Leaky RELU activation function.
+ * @see Leaky RELU function {@link https://medium.com/@himanshuxd/activation-functions-sigmoid-relu-leaky-relu-and-softmax-basics-for-neural-networks-and-deep-8d9c70eed91e}
+ * @param x the input value
+ * @param derivative calculate the derivative
+ */
+const LeakyRELU = (x, derivative = false) => {
+    if (!derivative) {
+        return x > 0 ? x : 0.01 * x;
+    }
+    else {
+        return x > 0 ? 1 : 0.01;
+    }
+};
+exports.LeakyRELU = LeakyRELU;
+/**
+ * The SoftPlus activation function.
+ * @see SoftPlus function {@link https://sefiks.com/2017/08/11/softplus-as-a-neural-networks-activation-function/}
+ * @param x the input value
+ * @param derivative calculate the derivative
+ */
+const SoftPlus = (x, derivative = false) => {
+    if (!derivative) {
+        return Math.log(1 + Math.exp(x));
+    }
+    else {
+        return 1 / (1 + Math.exp(-x));
+    }
+};
+exports.SoftPlus = SoftPlus;
+/**
+ * The Bent-Identity activation function.
+ * @see Bent-Identity function {@link https://en.wikipedia.org/wiki/Activation_function}
+ * @param x the input value
+ * @param derivative calculate the derivative
+ */
+const BentIdentity = (x, derivative = false) => {
+    if (!derivative) {
+        return (Math.pow((Math.pow(x, 2) + 1), (1 / 2)) - 1) / 2 + x;
+    }
+    else {
+        return x / (2 * Math.pow((Math.pow(x, 2) + 1), (1 / 2))) + 1;
+    }
+};
+exports.BentIdentity = BentIdentity;
+/**
+ * The SiLU activation function.
+ * @see SiLU function {@link https://arxiv.org/pdf/1702.03118.pdf}
+ * @param x the input value
+ * @param derivative calculate the derivative
+ */
+const SiLU = (x, derivative = false) => {
+    const negativeEX = Math.exp(-x);
+    if (!derivative) {
+        return x / (1 + negativeEX);
+    }
+    else {
+        return (1 + negativeEX + x * negativeEX) / Math.pow((1 + negativeEX), 2);
+    }
+};
+exports.SiLU = SiLU;
+/**
+ * The Sinusoid activation function.
+ * @see Sinusoid function {@link https://en.wikipedia.org/wiki/Sine_wave}
+ * @param x the input value
+ * @param derivative calculate the derivative
+ */
+const Sinusiod = (x, derivative = false) => {
+    if (!derivative) {
+        return Math.sin(x);
+    }
+    else {
+        return Math.cos(x);
+    }
+};
+exports.Sinusiod = Sinusiod;
+/**
+ * The Sinc activation function.
+ * @see Sinc function {@link https://en.wikipedia.org/wiki/Sinc_function}
+ * @param x the input value
+ * @param derivative calculate the derivative
+ */
+const Sinc = (x, derivative = false) => {
+    if (!derivative) {
+        return x === 0 ? 1 : Math.sin(x) / x;
+    }
+    else {
+        return x === 0 ? 0 : Math.cos(x) / x - Math.sin(x) / Math.pow(x, 2);
+    }
+};
+exports.Sinc = Sinc;
+/**
+ * The Gaussian activation function.
+ * @see Gaussian function {@link https://en.wikipedia.org/wiki/Gaussian_function}
+ * @param x the input value
+ * @param derivative calculate the derivative
+ */
+const GAUSSIAN = (x, derivative = false) => {
+    if (!derivative) {
+        return 1 / Math.exp(Math.pow(x, 2));
+    }
+    else {
+        return -2 * x * Math.exp(-(Math.pow(x, 2)));
+    }
+};
+exports.GAUSSIAN = GAUSSIAN;
+exports.ALL_ACTIVATIONS = [
+    Identitiy,
+    BinaryStep,
+    Logistic,
+    TANH,
+    SQNL,
+    ArcTan,
+    ArSinH,
+    SoftSign,
+    RELU,
+    LeakyRELU,
+    SoftPlus,
+    BentIdentity,
+    SiLU,
+    Sinusiod,
+    Sinc,
+    GAUSSIAN
+];
+
 },{}],"../src/methods/Selection.js":[function(require,module,exports) {
 "use strict";
 
@@ -3509,9 +3619,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.NEAT = void 0;
 
-var Network_1 = require("./architecture/Network");
+var src_1 = require("activations/build/src");
 
-var Activation_1 = require("./methods/Activation");
+var Network_1 = require("./architecture/Network");
 
 var Mutation_1 = require("./methods/Mutation");
 
@@ -3560,7 +3670,7 @@ function () {
     this.fitnessFunction = options.fitnessFunction;
     this.selection = Utils_1.getOrDefault(options.selection, new Selection_1.FitnessProportionateSelection());
     this.mutations = Utils_1.getOrDefault(options.mutations, Mutation_1.FEEDFORWARD_MUTATIONS);
-    this.activations = Utils_1.getOrDefault(options.activations, Object.values(Activation_1.ALL_ACTIVATIONS));
+    this.activations = Utils_1.getOrDefault(options.activations, Object.values(src_1.ALL_ACTIVATIONS));
     this.template = Utils_1.getOrDefault(options.template, new Network_1.Network(this.input, this.output));
     this.maxNodes = Utils_1.getOrDefault(options.maxNodes, Infinity);
     this.maxConnections = Utils_1.getOrDefault(options.maxConnections, Infinity);
@@ -3880,7 +3990,7 @@ function () {
 }();
 
 exports.NEAT = NEAT;
-},{"./architecture/Network":"../src/architecture/Network.js","./methods/Activation":"../src/methods/Activation.js","./methods/Mutation":"../src/methods/Mutation.js","./methods/Selection":"../src/methods/Selection.js","./utils/Utils":"../src/utils/Utils.js"}],"../src/architecture/Network.js":[function(require,module,exports) {
+},{"activations/build/src":"../../node_modules/activations/build/src/index.js","./architecture/Network":"../src/architecture/Network.js","./methods/Mutation":"../src/methods/Mutation.js","./methods/Selection":"../src/methods/Selection.js","./utils/Utils":"../src/utils/Utils.js"}],"../src/architecture/Network.js":[function(require,module,exports) {
 "use strict";
 
 var __assign = this && this.__assign || function () {
@@ -5305,9 +5415,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.ActivationLayer = void 0;
 
-var ConnectionType_1 = require("../../../enums/ConnectionType");
+var src_1 = require("activations/build/src");
 
-var Activation_1 = require("../../../methods/Activation");
+var ConnectionType_1 = require("../../../enums/ConnectionType");
 
 var ActivationNode_1 = require("../../Nodes/ActivationNode");
 
@@ -5333,7 +5443,7 @@ function (_super) {
 
     var _this = _super.call(this, outputSize) || this;
 
-    var activation = (_b = options.activation) !== null && _b !== void 0 ? _b : Activation_1.LogisticActivation;
+    var activation = (_b = options.activation) !== null && _b !== void 0 ? _b : src_1.Logistic;
 
     for (var i = 0; i < outputSize; i++) {
       _this.inputNodes.add(new ActivationNode_1.ActivationNode().setActivationType(activation));
@@ -5372,7 +5482,7 @@ function (_super) {
 }(Layer_1.Layer);
 
 exports.ActivationLayer = ActivationLayer;
-},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Nodes/ActivationNode":"../src/architecture/Nodes/ActivationNode.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/CoreLayers/DenseLayer.js":[function(require,module,exports) {
+},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../Nodes/ActivationNode":"../src/architecture/Nodes/ActivationNode.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/CoreLayers/DenseLayer.js":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -5404,11 +5514,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.DenseLayer = void 0;
 
+var src_1 = require("activations/build/src");
+
 var ConnectionType_1 = require("../../../enums/ConnectionType");
 
 var NodeType_1 = require("../../../enums/NodeType");
-
-var Activation_1 = require("../../../methods/Activation");
 
 var Node_1 = require("../../Node");
 
@@ -5434,7 +5544,7 @@ function (_super) {
 
     var _this = _super.call(this, outputSize) || this;
 
-    var activation = (_b = options.activationType) !== null && _b !== void 0 ? _b : Activation_1.LogisticActivation;
+    var activation = (_b = options.activationType) !== null && _b !== void 0 ? _b : src_1.Logistic;
 
     for (var i = 0; i < outputSize; i++) {
       _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setActivationType(activation));
@@ -5473,7 +5583,7 @@ function (_super) {
 }(Layer_1.Layer);
 
 exports.DenseLayer = DenseLayer;
-},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Nodes/DropoutNode.js":[function(require,module,exports) {
+},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Nodes/DropoutNode.js":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -5671,9 +5781,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.DropoutLayer = void 0;
 
-var ConnectionType_1 = require("../../../enums/ConnectionType");
+var src_1 = require("activations/build/src");
 
-var Activation_1 = require("../../../methods/Activation");
+var ConnectionType_1 = require("../../../enums/ConnectionType");
 
 var DropoutNode_1 = require("../../Nodes/DropoutNode");
 
@@ -5699,7 +5809,7 @@ function (_super) {
 
     var _this = _super.call(this, outputSize) || this;
 
-    var activation = (_b = options.activation) !== null && _b !== void 0 ? _b : Activation_1.IdentityActivation;
+    var activation = (_b = options.activation) !== null && _b !== void 0 ? _b : src_1.Identitiy;
     var probability = (_c = options.probability) !== null && _c !== void 0 ? _c : 0.1;
 
     for (var i = 0; i < outputSize; i++) {
@@ -5739,7 +5849,7 @@ function (_super) {
 }(Layer_1.Layer);
 
 exports.DropoutLayer = DropoutLayer;
-},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Nodes/DropoutNode":"../src/architecture/Nodes/DropoutNode.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Nodes/PoolNode.js":[function(require,module,exports) {
+},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../Nodes/DropoutNode":"../src/architecture/Nodes/DropoutNode.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Nodes/PoolNode.js":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -6035,9 +6145,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.AvgPooling1DLayer = void 0;
 
-var NodeType_1 = require("../../../enums/NodeType");
+var src_1 = require("activations/build/src");
 
-var Activation_1 = require("../../../methods/Activation");
+var NodeType_1 = require("../../../enums/NodeType");
 
 var PoolNode_1 = require("../../Nodes/PoolNode");
 
@@ -6063,7 +6173,7 @@ function (_super) {
 
     var _this = _super.call(this, outputSize) || this;
 
-    var activationType = (_b = options.activation) !== null && _b !== void 0 ? _b : Activation_1.IdentityActivation;
+    var activationType = (_b = options.activation) !== null && _b !== void 0 ? _b : src_1.Identitiy;
 
     for (var i = 0; i < outputSize; i++) {
       _this.inputNodes.add(new PoolNode_1.PoolNode(NodeType_1.PoolNodeType.AVG_POOLING).setActivationType(activationType));
@@ -6080,7 +6190,7 @@ function (_super) {
 }(PoolingLayer_1.PoolingLayer);
 
 exports.AvgPooling1DLayer = AvgPooling1DLayer;
-},{"../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","./PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js"}],"../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer.js":[function(require,module,exports) {
+},{"../../../enums/NodeType":"../src/enums/NodeType.js","../../Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","./PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js"}],"../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer.js":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -6167,9 +6277,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.MaxPooling1DLayer = void 0;
 
-var NodeType_1 = require("../../../enums/NodeType");
+var src_1 = require("activations/build/src");
 
-var Activation_1 = require("../../../methods/Activation");
+var NodeType_1 = require("../../../enums/NodeType");
 
 var PoolNode_1 = require("../../Nodes/PoolNode");
 
@@ -6195,7 +6305,7 @@ function (_super) {
 
     var _this = _super.call(this, outputSize) || this;
 
-    var activationType = (_b = options.activation) !== null && _b !== void 0 ? _b : Activation_1.IdentityActivation;
+    var activationType = (_b = options.activation) !== null && _b !== void 0 ? _b : src_1.Identitiy;
 
     for (var i = 0; i < outputSize; i++) {
       _this.inputNodes.add(new PoolNode_1.PoolNode(NodeType_1.PoolNodeType.MAX_POOLING).setActivationType(activationType));
@@ -6212,7 +6322,7 @@ function (_super) {
 }(PoolingLayer_1.PoolingLayer);
 
 exports.MaxPooling1DLayer = MaxPooling1DLayer;
-},{"../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","./PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js"}],"../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer.js":[function(require,module,exports) {
+},{"../../../enums/NodeType":"../src/enums/NodeType.js","../../Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","./PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js"}],"../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer.js":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -6299,9 +6409,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.MinPooling1DLayer = void 0;
 
-var NodeType_1 = require("../../../enums/NodeType");
+var src_1 = require("activations/build/src");
 
-var Activation_1 = require("../../../methods/Activation");
+var NodeType_1 = require("../../../enums/NodeType");
 
 var PoolNode_1 = require("../../Nodes/PoolNode");
 
@@ -6327,7 +6437,7 @@ function (_super) {
 
     var _this = _super.call(this, outputSize) || this;
 
-    var activationType = (_b = options.activation) !== null && _b !== void 0 ? _b : Activation_1.IdentityActivation;
+    var activationType = (_b = options.activation) !== null && _b !== void 0 ? _b : src_1.Identitiy;
 
     for (var i = 0; i < outputSize; i++) {
       _this.inputNodes.add(new PoolNode_1.PoolNode(NodeType_1.PoolNodeType.MIN_POOLING).setActivationType(activationType));
@@ -6344,7 +6454,7 @@ function (_super) {
 }(PoolingLayer_1.PoolingLayer);
 
 exports.MinPooling1DLayer = MinPooling1DLayer;
-},{"../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","./PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js"}],"../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer.js":[function(require,module,exports) {
+},{"../../../enums/NodeType":"../src/enums/NodeType.js","../../Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","./PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js"}],"../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer.js":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -6431,13 +6541,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.GRULayer = void 0;
 
+var src_1 = require("activations/build/src");
+
 var ConnectionType_1 = require("../../../enums/ConnectionType");
 
 var GatingType_1 = require("../../../enums/GatingType");
 
 var NodeType_1 = require("../../../enums/NodeType");
-
-var Activation_1 = require("../../../methods/Activation");
 
 var Node_1 = require("../../Node");
 
@@ -6471,10 +6581,10 @@ function (_super) {
       _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
 
       updateGate.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(1));
-      inverseUpdateGate.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(0).setActivationType(Activation_1.LogisticActivation));
+      inverseUpdateGate.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(0).setActivationType(src_1.Logistic));
       resetGate.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(0));
-      memoryCell.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setActivationType(Activation_1.TanhActivation));
-      previousOutput.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(0).setActivationType(Activation_1.LogisticActivation));
+      memoryCell.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setActivationType(src_1.TANH));
+      previousOutput.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(0).setActivationType(src_1.Logistic));
 
       _this.outputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
     }
@@ -6527,7 +6637,7 @@ function (_super) {
     _this.outputNodes.forEach(function (node) {
       var _a;
 
-      return node.squash = (_a = options.activation) !== null && _a !== void 0 ? _a : Activation_1.LogisticActivation;
+      return node.squash = (_a = options.activation) !== null && _a !== void 0 ? _a : src_1.Logistic;
     });
 
     return _this;
@@ -6559,7 +6669,7 @@ function (_super) {
 }(Layer_1.Layer);
 
 exports.GRULayer = GRULayer;
-},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/GatingType":"../src/enums/GatingType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/RecurrentLayers/HopfieldLayer.js":[function(require,module,exports) {
+},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/GatingType":"../src/enums/GatingType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/RecurrentLayers/HopfieldLayer.js":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -6591,11 +6701,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.HopfieldLayer = void 0;
 
+var src_1 = require("activations/build/src");
+
 var ConnectionType_1 = require("../../../enums/ConnectionType");
 
 var NodeType_1 = require("../../../enums/NodeType");
-
-var Activation_1 = require("../../../methods/Activation");
 
 var Node_1 = require("../../Node");
 
@@ -6618,7 +6728,7 @@ function (_super) {
     for (var i = 0; i < outputSize; i++) {
       _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
 
-      _this.outputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setActivationType(Activation_1.StepActivation));
+      _this.outputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setActivationType(src_1.BinaryStep));
     }
 
     (_a = _this.connections).push.apply(_a, Layer_1.Layer.connect(_this.inputNodes, _this.outputNodes, ConnectionType_1.ConnectionType.ALL_TO_ALL));
@@ -6658,7 +6768,7 @@ function (_super) {
 }(Layer_1.Layer);
 
 exports.HopfieldLayer = HopfieldLayer;
-},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/RecurrentLayers/LSTMLayer.js":[function(require,module,exports) {
+},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/RecurrentLayers/LSTMLayer.js":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -6690,13 +6800,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.LSTMLayer = void 0;
 
+var src_1 = require("activations/build/src");
+
 var ConnectionType_1 = require("../../../enums/ConnectionType");
 
 var GatingType_1 = require("../../../enums/GatingType");
 
 var NodeType_1 = require("../../../enums/NodeType");
-
-var Activation_1 = require("../../../methods/Activation");
 
 var Node_1 = require("../../Node");
 
@@ -6729,7 +6839,7 @@ function (_super) {
       _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
 
       inputGate.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(1));
-      forgetGate.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(1).setActivationType(Activation_1.LogisticActivation));
+      forgetGate.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(1).setActivationType(src_1.Logistic));
       memoryCell.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
       outputGate.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(1));
 
@@ -6780,7 +6890,7 @@ function (_super) {
     _this.outputNodes.forEach(function (node) {
       var _a;
 
-      return node.squash = (_a = options.activation) !== null && _a !== void 0 ? _a : Activation_1.TanhActivation;
+      return node.squash = (_a = options.activation) !== null && _a !== void 0 ? _a : src_1.TANH;
     });
 
     return _this;
@@ -6812,7 +6922,7 @@ function (_super) {
 }(Layer_1.Layer);
 
 exports.LSTMLayer = LSTMLayer;
-},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/GatingType":"../src/enums/GatingType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/RecurrentLayers/MemoryLayer.js":[function(require,module,exports) {
+},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/GatingType":"../src/enums/GatingType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/RecurrentLayers/MemoryLayer.js":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -6844,11 +6954,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.MemoryLayer = void 0;
 
+var src_1 = require("activations/build/src");
+
 var ConnectionType_1 = require("../../../enums/ConnectionType");
 
 var NodeType_1 = require("../../../enums/NodeType");
-
-var Activation_1 = require("../../../methods/Activation");
 
 var Node_1 = require("../../Node");
 
@@ -6886,7 +6996,7 @@ function (_super) {
 
       for (var j = 0; j < outputSize; j++) {
         var node = new Node_1.Node(NodeType_1.NodeType.HIDDEN);
-        node.squash = Activation_1.IdentityActivation;
+        node.squash = src_1.Identitiy;
         node.bias = 0;
         block.push(node);
       }
@@ -6908,7 +7018,7 @@ function (_super) {
     _this.outputNodes.forEach(function (node) {
       var _a;
 
-      return node.squash = (_a = options.activation) !== null && _a !== void 0 ? _a : Activation_1.LogisticActivation;
+      return node.squash = (_a = options.activation) !== null && _a !== void 0 ? _a : src_1.Logistic;
     });
 
     return _this;
@@ -6940,7 +7050,7 @@ function (_super) {
 }(Layer_1.Layer);
 
 exports.MemoryLayer = MemoryLayer;
-},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/RecurrentLayers/RNNLayer.js":[function(require,module,exports) {
+},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/RecurrentLayers/RNNLayer.js":[function(require,module,exports) {
 "use strict";
 
 var __extends = this && this.__extends || function () {
@@ -6972,11 +7082,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.RNNLayer = void 0;
 
+var src_1 = require("activations/build/src");
+
 var ConnectionType_1 = require("../../../enums/ConnectionType");
 
 var NodeType_1 = require("../../../enums/NodeType");
-
-var Activation_1 = require("../../../methods/Activation");
 
 var Node_1 = require("../../Node");
 
@@ -7003,7 +7113,7 @@ function (_super) {
     var _this = _super.call(this, outputSize) || this;
 
     for (var i = 0; i < outputSize; i++) {
-      _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setActivationType((_c = options.activation) !== null && _c !== void 0 ? _c : Activation_1.LogisticActivation));
+      _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setActivationType((_c = options.activation) !== null && _c !== void 0 ? _c : src_1.Logistic));
     }
 
     _this.outputNodes = _this.inputNodes;
@@ -7042,13 +7152,13 @@ function (_super) {
 }(Layer_1.Layer);
 
 exports.RNNLayer = RNNLayer;
-},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../../methods/Activation":"../src/methods/Activation.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"index.js":[function(require,module,exports) {
+},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"index.js":[function(require,module,exports) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.generateGaussian = exports.avg = exports.sum = exports.min = exports.minValueIndex = exports.maxValueIndex = exports.max = exports.shuffle = exports.getOrDefault = exports.removeFromArray = exports.randBoolean = exports.randDouble = exports.randInt = exports.pickRandom = exports.TournamentSelection = exports.PowerSelection = exports.FitnessProportionateSelection = exports.Selection = exports.InverseRate = exports.ExponentialRate = exports.StepRate = exports.FixedRate = exports.Rate = exports.SwapNodesMutation = exports.SubBackConnectionMutation = exports.AddBackConnectionMutation = exports.SubSelfConnectionMutation = exports.AddSelfConnectionMutation = exports.SubGateMutation = exports.AddGateMutation = exports.ModActivationMutation = exports.ModBiasMutation = exports.ModWeightMutation = exports.SubConnectionMutation = exports.AddConnectionMutation = exports.SubNodeMutation = exports.AddNodeMutation = exports.Mutation = exports.ONLY_STRUCTURE = exports.NO_STRUCTURE_MUTATIONS = exports.FEEDFORWARD_MUTATIONS = exports.ALL_MUTATIONS = exports.HINGELoss = exports.MSLELoss = exports.WAPELoss = exports.MAPELoss = exports.MAELoss = exports.BinaryLoss = exports.MBELoss = exports.MSELoss = exports.ALL_LOSSES = exports.MISHActivation = exports.SELUActivation = exports.InverseActivation = exports.AbsoluteActivation = exports.HardTanhActivation = exports.BipolarSigmoidActivation = exports.BipolarActivation = exports.BentIdentityActivation = exports.GaussianActivation = exports.SinusoidActivation = exports.SoftSignActivation = exports.RELUActivation = exports.StepActivation = exports.IdentityActivation = exports.TanhActivation = exports.LogisticActivation = exports.ALL_ACTIVATIONS = exports.NoiseNodeType = exports.PoolNodeType = exports.NodeType = exports.GatingType = exports.ConnectionType = exports.Node = exports.Network = exports.Connection = exports.Architect = exports.PoolNode = exports.NoiseNode = exports.DropoutNode = exports.ConstantNode = exports.Layer = exports.MemoryLayer = exports.LSTMLayer = exports.GRULayer = exports.RNNLayer = exports.HopfieldLayer = exports.ActivationLayer = exports.PoolingLayer = exports.GlobalMaxPooling1DLayer = exports.GlobalMinPooling1DLayer = exports.GlobalAvgPooling1DLayer = exports.MaxPooling1DLayer = exports.MinPooling1DLayer = exports.AvgPooling1DLayer = exports.NoiseLayer = exports.OutputLayer = exports.InputLayer = exports.DropoutLayer = exports.DenseLayer = void 0;
+exports.generateGaussian = exports.avg = exports.sum = exports.min = exports.minValueIndex = exports.maxValueIndex = exports.max = exports.shuffle = exports.getOrDefault = exports.removeFromArray = exports.randBoolean = exports.randDouble = exports.randInt = exports.pickRandom = exports.TournamentSelection = exports.PowerSelection = exports.FitnessProportionateSelection = exports.Selection = exports.InverseRate = exports.ExponentialRate = exports.StepRate = exports.FixedRate = exports.Rate = exports.SwapNodesMutation = exports.SubBackConnectionMutation = exports.AddBackConnectionMutation = exports.SubSelfConnectionMutation = exports.AddSelfConnectionMutation = exports.SubGateMutation = exports.AddGateMutation = exports.ModActivationMutation = exports.ModBiasMutation = exports.ModWeightMutation = exports.SubConnectionMutation = exports.AddConnectionMutation = exports.SubNodeMutation = exports.AddNodeMutation = exports.Mutation = exports.ONLY_STRUCTURE = exports.NO_STRUCTURE_MUTATIONS = exports.FEEDFORWARD_MUTATIONS = exports.ALL_MUTATIONS = exports.HINGELoss = exports.MSLELoss = exports.WAPELoss = exports.MAPELoss = exports.MAELoss = exports.BinaryLoss = exports.MBELoss = exports.MSELoss = exports.ALL_LOSSES = exports.NoiseNodeType = exports.PoolNodeType = exports.NodeType = exports.GatingType = exports.ConnectionType = exports.Node = exports.Network = exports.Connection = exports.Architect = exports.PoolNode = exports.NoiseNode = exports.DropoutNode = exports.ConstantNode = exports.Layer = exports.MemoryLayer = exports.LSTMLayer = exports.GRULayer = exports.RNNLayer = exports.HopfieldLayer = exports.ActivationLayer = exports.PoolingLayer = exports.GlobalMaxPooling1DLayer = exports.GlobalMinPooling1DLayer = exports.GlobalAvgPooling1DLayer = exports.MaxPooling1DLayer = exports.MinPooling1DLayer = exports.AvgPooling1DLayer = exports.NoiseLayer = exports.OutputLayer = exports.InputLayer = exports.DropoutLayer = exports.DenseLayer = void 0;
 
 var Architect_1 = require("../src/architecture/Architect");
 
@@ -7329,111 +7439,6 @@ Object.defineProperty(exports, "PoolNodeType", {
   enumerable: true,
   get: function () {
     return NodeType_1.PoolNodeType;
-  }
-});
-
-var Activation_1 = require("../src/methods/Activation");
-
-Object.defineProperty(exports, "AbsoluteActivation", {
-  enumerable: true,
-  get: function () {
-    return Activation_1.AbsoluteActivation;
-  }
-});
-Object.defineProperty(exports, "ALL_ACTIVATIONS", {
-  enumerable: true,
-  get: function () {
-    return Activation_1.ALL_ACTIVATIONS;
-  }
-});
-Object.defineProperty(exports, "BentIdentityActivation", {
-  enumerable: true,
-  get: function () {
-    return Activation_1.BentIdentityActivation;
-  }
-});
-Object.defineProperty(exports, "BipolarActivation", {
-  enumerable: true,
-  get: function () {
-    return Activation_1.BipolarActivation;
-  }
-});
-Object.defineProperty(exports, "BipolarSigmoidActivation", {
-  enumerable: true,
-  get: function () {
-    return Activation_1.BipolarSigmoidActivation;
-  }
-});
-Object.defineProperty(exports, "GaussianActivation", {
-  enumerable: true,
-  get: function () {
-    return Activation_1.GaussianActivation;
-  }
-});
-Object.defineProperty(exports, "HardTanhActivation", {
-  enumerable: true,
-  get: function () {
-    return Activation_1.HardTanhActivation;
-  }
-});
-Object.defineProperty(exports, "IdentityActivation", {
-  enumerable: true,
-  get: function () {
-    return Activation_1.IdentityActivation;
-  }
-});
-Object.defineProperty(exports, "InverseActivation", {
-  enumerable: true,
-  get: function () {
-    return Activation_1.InverseActivation;
-  }
-});
-Object.defineProperty(exports, "LogisticActivation", {
-  enumerable: true,
-  get: function () {
-    return Activation_1.LogisticActivation;
-  }
-});
-Object.defineProperty(exports, "MISHActivation", {
-  enumerable: true,
-  get: function () {
-    return Activation_1.MISHActivation;
-  }
-});
-Object.defineProperty(exports, "RELUActivation", {
-  enumerable: true,
-  get: function () {
-    return Activation_1.RELUActivation;
-  }
-});
-Object.defineProperty(exports, "SELUActivation", {
-  enumerable: true,
-  get: function () {
-    return Activation_1.SELUActivation;
-  }
-});
-Object.defineProperty(exports, "SinusoidActivation", {
-  enumerable: true,
-  get: function () {
-    return Activation_1.SinusoidActivation;
-  }
-});
-Object.defineProperty(exports, "SoftSignActivation", {
-  enumerable: true,
-  get: function () {
-    return Activation_1.SoftSignActivation;
-  }
-});
-Object.defineProperty(exports, "StepActivation", {
-  enumerable: true,
-  get: function () {
-    return Activation_1.StepActivation;
-  }
-});
-Object.defineProperty(exports, "TanhActivation", {
-  enumerable: true,
-  get: function () {
-    return Activation_1.TanhActivation;
   }
 });
 
@@ -7757,7 +7762,7 @@ Object.defineProperty(exports, "sum", {
     return Utils_1.sum;
   }
 });
-},{"../src/architecture/Architect":"../src/architecture/Architect.js","../src/architecture/Connection":"../src/architecture/Connection.js","../src/architecture/Layers/CoreLayers/ActivationLayer":"../src/architecture/Layers/CoreLayers/ActivationLayer.js","../src/architecture/Layers/CoreLayers/DenseLayer":"../src/architecture/Layers/CoreLayers/DenseLayer.js","../src/architecture/Layers/CoreLayers/DropoutLayer":"../src/architecture/Layers/CoreLayers/DropoutLayer.js","../src/architecture/Layers/CoreLayers/InputLayer":"../src/architecture/Layers/CoreLayers/InputLayer.js","../src/architecture/Layers/CoreLayers/OutputLayer":"../src/architecture/Layers/CoreLayers/OutputLayer.js","../src/architecture/Layers/Layer":"../src/architecture/Layers/Layer.js","../src/architecture/Layers/NoiseLayers/NoiseLayer":"../src/architecture/Layers/NoiseLayers/NoiseLayer.js","../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer":"../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/MinPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MinPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js","../src/architecture/Layers/RecurrentLayers/GRULayer":"../src/architecture/Layers/RecurrentLayers/GRULayer.js","../src/architecture/Layers/RecurrentLayers/HopfieldLayer":"../src/architecture/Layers/RecurrentLayers/HopfieldLayer.js","../src/architecture/Layers/RecurrentLayers/LSTMLayer":"../src/architecture/Layers/RecurrentLayers/LSTMLayer.js","../src/architecture/Layers/RecurrentLayers/MemoryLayer":"../src/architecture/Layers/RecurrentLayers/MemoryLayer.js","../src/architecture/Layers/RecurrentLayers/RNNLayer":"../src/architecture/Layers/RecurrentLayers/RNNLayer.js","../src/architecture/Network":"../src/architecture/Network.js","../src/architecture/Node":"../src/architecture/Node.js","../src/architecture/Nodes/ConstantNode":"../src/architecture/Nodes/ConstantNode.js","../src/architecture/Nodes/DropoutNode":"../src/architecture/Nodes/DropoutNode.js","../src/architecture/Nodes/NoiseNode":"../src/architecture/Nodes/NoiseNode.js","../src/architecture/Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","../src/enums/ConnectionType":"../src/enums/ConnectionType.js","../src/enums/GatingType":"../src/enums/GatingType.js","../src/enums/NodeType":"../src/enums/NodeType.js","../src/methods/Activation":"../src/methods/Activation.js","../src/methods/Loss":"../src/methods/Loss.js","../src/methods/Mutation":"../src/methods/Mutation.js","../src/methods/Rate":"../src/methods/Rate.js","../src/methods/Selection":"../src/methods/Selection.js","../src/utils/Utils":"../src/utils/Utils.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+},{"../src/architecture/Architect":"../src/architecture/Architect.js","../src/architecture/Connection":"../src/architecture/Connection.js","../src/architecture/Layers/CoreLayers/ActivationLayer":"../src/architecture/Layers/CoreLayers/ActivationLayer.js","../src/architecture/Layers/CoreLayers/DenseLayer":"../src/architecture/Layers/CoreLayers/DenseLayer.js","../src/architecture/Layers/CoreLayers/DropoutLayer":"../src/architecture/Layers/CoreLayers/DropoutLayer.js","../src/architecture/Layers/CoreLayers/InputLayer":"../src/architecture/Layers/CoreLayers/InputLayer.js","../src/architecture/Layers/CoreLayers/OutputLayer":"../src/architecture/Layers/CoreLayers/OutputLayer.js","../src/architecture/Layers/Layer":"../src/architecture/Layers/Layer.js","../src/architecture/Layers/NoiseLayers/NoiseLayer":"../src/architecture/Layers/NoiseLayers/NoiseLayer.js","../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer":"../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/MinPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MinPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js","../src/architecture/Layers/RecurrentLayers/GRULayer":"../src/architecture/Layers/RecurrentLayers/GRULayer.js","../src/architecture/Layers/RecurrentLayers/HopfieldLayer":"../src/architecture/Layers/RecurrentLayers/HopfieldLayer.js","../src/architecture/Layers/RecurrentLayers/LSTMLayer":"../src/architecture/Layers/RecurrentLayers/LSTMLayer.js","../src/architecture/Layers/RecurrentLayers/MemoryLayer":"../src/architecture/Layers/RecurrentLayers/MemoryLayer.js","../src/architecture/Layers/RecurrentLayers/RNNLayer":"../src/architecture/Layers/RecurrentLayers/RNNLayer.js","../src/architecture/Network":"../src/architecture/Network.js","../src/architecture/Node":"../src/architecture/Node.js","../src/architecture/Nodes/ConstantNode":"../src/architecture/Nodes/ConstantNode.js","../src/architecture/Nodes/DropoutNode":"../src/architecture/Nodes/DropoutNode.js","../src/architecture/Nodes/NoiseNode":"../src/architecture/Nodes/NoiseNode.js","../src/architecture/Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","../src/enums/ConnectionType":"../src/enums/ConnectionType.js","../src/enums/GatingType":"../src/enums/GatingType.js","../src/enums/NodeType":"../src/enums/NodeType.js","../src/methods/Loss":"../src/methods/Loss.js","../src/methods/Mutation":"../src/methods/Mutation.js","../src/methods/Rate":"../src/methods/Rate.js","../src/methods/Selection":"../src/methods/Selection.js","../src/utils/Utils":"../src/utils/Utils.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -7785,7 +7790,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "34047" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "36071" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
