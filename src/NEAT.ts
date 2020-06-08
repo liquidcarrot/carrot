@@ -198,7 +198,7 @@ export class NEAT {
      * @param {function} [pickGenome] A custom selection function to pick out unwanted genomes. Accepts a network as a parameter and returns true for selection.
      * @param {function} [adjustGenome=self.template] Accepts a network, modifies it, and returns it. Used to modify unwanted genomes returned by `pickGenome` and reincorporate them into the population. If left unset, unwanted genomes will be replaced with the template Network. Will only run when pickGenome is defined.
      *
-     * @time O(time for fitness function + n * time for adjust genome + n&sup2;)
+     * @time O(time for fitness function + n * time for adjust genome + n&sup2; + n&sup2; * time for mutation + n&sup3;)
      * @returns {Network} Fittest network
      */
     public async evolve(pickGenome?: ((genome: Network) => boolean) | undefined, adjustGenome?: ((genome: Network) => Network) | undefined): Promise<Network> {
