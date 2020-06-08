@@ -179,7 +179,7 @@ export class NEAT {
      * Mutate a network with a random mutation from the allowed array.
      *
      * @param network The network which will be mutated.
-     * @time O(time for mutation)
+     * @time O(n&sup3;)
      */
     public mutateRandom(network: Network): void {
         const allowed: Mutation[] = this.mutations.filter(method => {
@@ -198,7 +198,7 @@ export class NEAT {
      * @param {function} [pickGenome] A custom selection function to pick out unwanted genomes. Accepts a network as a parameter and returns true for selection.
      * @param {function} [adjustGenome=self.template] Accepts a network, modifies it, and returns it. Used to modify unwanted genomes returned by `pickGenome` and reincorporate them into the population. If left unset, unwanted genomes will be replaced with the template Network. Will only run when pickGenome is defined.
      *
-     * @time O(time for fitness function + n * time for adjust genome + n&sup2; + n&sup2; * time for mutation + n&sup3;)
+     * @time O(time for fitness function + n * time for adjust genome + n&sup5;)
      * @returns {Network} Fittest network
      */
     public async evolve(pickGenome?: ((genome: Network) => boolean) | undefined, adjustGenome?: ((genome: Network) => Network) | undefined): Promise<Network> {
@@ -286,7 +286,7 @@ export class NEAT {
      * Mutates the given (or current) population
      *
      * @param {Mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
-     * @time O(n&sup2; * time for mutation)
+     * @time O(n&sup5;)
      */
     public mutate(method?: Mutation | undefined): void {
         // Elitist genomes should not be included

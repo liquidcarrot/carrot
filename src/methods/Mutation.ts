@@ -11,7 +11,7 @@ import {activationType} from "./Activation";
  *
  * @see {@link https://en.wikipedia.org/wiki/mutation_(genetic_algorithm)|Mutation (genetic algorithms) on Wikipedia}
  * @see {@link https://en.wikipedia.org/wiki/Genetic_algorithm#Selection|Selection (genetic algorithms) on Wikipedia}
- *
+ * @time O(n&sup3;)
  */
 abstract class Mutation {
     /**

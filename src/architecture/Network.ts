@@ -527,7 +527,7 @@ export class Network {
      * @param {number} [options.maxNodes]
      * @param {number} [options.maxConnections]
      * @param {number} [options.maxGates] Maximum amount of Gates a network can grow to
-     * @time O(time for mutation)
+     * @time O(n&sup3;)
      */
     public mutate(method: Mutation, options?: {
         /**
@@ -558,7 +558,7 @@ export class Network {
      * @param {number} [options.maxNodes] Maximum amount of [Nodes](node) a network can grow to
      * @param {number} [options.maxConnections] Maximum amount of [Connections](connection) a network can grow to
      * @param {number} [options.maxGates] Maximum amount of Gates a network can grow to
-     * @time O(time for mutation)
+     * @time O(n&sup3;)
      */
     public mutateRandom(allowedMethods: Mutation[] = ALL_MUTATIONS, options: {
         /**
@@ -792,7 +792,7 @@ export class Network {
      * If both `iterations` and `error` options are unset, evolve will default to `iterations` as an end condition.
      *
      * @param {object} [options] Configuration options
-     * @time O(n * time for fitness function + n&sup2; * time for adjust genome + n&sup3; + n&sup3; * time for mutation)
+     * @time O(n * time for fitness function + n&sup2; * time for adjust genome + n&sup6;)
      *
      * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance. <br /> Properties include: `error` - error of the best genome, `iterations` - generations used to evolve networks, `time` - clock time elapsed while evolving
      */
