@@ -23,6 +23,7 @@ var Utils_1 = require("../utils/Utils");
  *
  * @see {@link https://en.wikipedia.org/wiki/mutation_(genetic_algorithm)|Mutation (genetic algorithms) on Wikipedia}
  * @see {@link https://en.wikipedia.org/wiki/Genetic_algorithm#Selection|Selection (genetic algorithms) on Wikipedia}
+ *
  */
 var Mutation = /** @class */ (function () {
     function Mutation() {
@@ -34,6 +35,8 @@ exports.Mutation = Mutation;
  * Add node mutation.
  *
  * Adds a hidden node to the network.
+ *
+ * @prop {boolean} randomActivation=true If enabled, sets a random activation function on the newly created node
  */
 var AddNodeMutation = /** @class */ (function (_super) {
     __extends(AddNodeMutation, _super);
@@ -52,7 +55,6 @@ var AddNodeMutation = /** @class */ (function (_super) {
      *
      * @param network The network which gets mutated
      * @param options
-     * @time O(n)
      */
     AddNodeMutation.prototype.mutate = function (network, options) {
         if (options === void 0) { options = {}; }
@@ -93,6 +95,8 @@ exports.AddNodeMutation = AddNodeMutation;
  * Sub node mutation.
  *
  * Removes a random node from the network.
+ *
+ * @prop keepGates=true Ensures replacement node has gated connections if the removed node did.
  */
 var SubNodeMutation = /** @class */ (function (_super) {
     __extends(SubNodeMutation, _super);
@@ -106,7 +110,6 @@ var SubNodeMutation = /** @class */ (function (_super) {
      * Mutates the network.
      *
      * @param network The network which gets mutated
-     * @time O(n&sup3;)
      */
     SubNodeMutation.prototype.mutate = function (network) {
         var possible = network.nodes.filter(function (node) { return node !== undefined && node.isHiddenNode(); }); // hidden nodes
@@ -132,7 +135,6 @@ var AddConnectionMutation = /** @class */ (function (_super) {
      *
      * @param network The network which gets mutated
      * @param options
-     * @time O(n&sup3;)
      */
     AddConnectionMutation.prototype.mutate = function (network, options) {
         if (options === void 0) { options = {}; }
@@ -172,7 +174,6 @@ var SubConnectionMutation = /** @class */ (function (_super) {
      * Mutates the network.
      *
      * @param network The network which gets mutated
-     * @time O(n&sup2;)
      */
     SubConnectionMutation.prototype.mutate = function (network) {
         var possible = Array.from(network.connections)
@@ -191,6 +192,9 @@ exports.SubConnectionMutation = SubConnectionMutation;
  * Mod weight mutation.
  *
  * Modifies the weight of a random connection.
+ *
+ * @prop {number} min=-1 lower bound for weight modification
+ * @prop {number} max=1 higher bound for weight modification
  */
 var ModWeightMutation = /** @class */ (function (_super) {
     __extends(ModWeightMutation, _super);
@@ -211,7 +215,6 @@ var ModWeightMutation = /** @class */ (function (_super) {
      * Mutates the network.
      *
      * @param network The network which gets mutated
-     * @time O(1)
      */
     ModWeightMutation.prototype.mutate = function (network) {
         // pick random connection and mutate it's weight
@@ -224,6 +227,9 @@ exports.ModWeightMutation = ModWeightMutation;
  * Mod bias mutation.
  *
  * Modifies the bias value of a random hidden or output node
+ *
+ * @prop {number} min=-1 lower bound for modification of a neuron's bias
+ * @prop {number} max=1 higher bound for modification of a neuron's bias
  */
 var ModBiasMutation = /** @class */ (function (_super) {
     __extends(ModBiasMutation, _super);
@@ -244,7 +250,6 @@ var ModBiasMutation = /** @class */ (function (_super) {
      * Mutates the network.
      *
      * @param network The network which gets mutated
-     * @time O(n)
      */
     ModBiasMutation.prototype.mutate = function (network) {
         Utils_1.pickRandom(network.nodes.filter(function (node) { return !node.isInputNode(); })) // pick random hidden or output node
@@ -257,6 +262,8 @@ exports.ModBiasMutation = ModBiasMutation;
  * Mod activation mutation.
  *
  * Modifies the activation function of a random node
+ *
+ * @prop {boolean} mutateOutput=false Change activation function of network output neurons. Enable this to let the network experiment with its output.
  */
 var ModActivationMutation = /** @class */ (function (_super) {
     __extends(ModActivationMutation, _super);
@@ -275,7 +282,6 @@ var ModActivationMutation = /** @class */ (function (_super) {
      *
      * @param network The network which gets mutated
      * @param options
-     * @time O(n)
      */
     ModActivationMutation.prototype.mutate = function (network, options) {
         if (options === void 0) { options = {}; }
@@ -303,7 +309,6 @@ var AddSelfConnectionMutation = /** @class */ (function (_super) {
      * Mutates the network.
      *
      * @param network The network which gets mutated
-     * @time O(n)
      */
     AddSelfConnectionMutation.prototype.mutate = function (network) {
         var possible = network.nodes
@@ -331,7 +336,6 @@ var SubSelfConnectionMutation = /** @class */ (function (_super) {
      * Mutates the network.
      *
      * @param network The network which gets mutated
-     * @time O(n)
      */
     SubSelfConnectionMutation.prototype.mutate = function (network) {
         var possible = Array.from(network.connections).filter(function (conn) { return conn.from === conn.to; });
@@ -358,7 +362,6 @@ var AddGateMutation = /** @class */ (function (_super) {
      *
      * @param network The network which gets mutated
      * @param options
-     * @time O(n)
      */
     AddGateMutation.prototype.mutate = function (network, options) {
         if (options === void 0) { options = {}; }
@@ -391,7 +394,6 @@ var SubGateMutation = /** @class */ (function (_super) {
      * Mutates the network.
      *
      * @param network The network which gets mutated
-     * @time O(1)
      */
     SubGateMutation.prototype.mutate = function (network) {
         if (network.gates.size > 0) {
@@ -415,7 +417,6 @@ var AddBackConnectionMutation = /** @class */ (function (_super) {
      * Mutates the network.
      *
      * @param network The network which gets mutated
-     * @time O(n&sup3;)
      */
     AddBackConnectionMutation.prototype.mutate = function (network) {
         var possible = [];
@@ -450,7 +451,6 @@ var SubBackConnectionMutation = /** @class */ (function (_super) {
      * Mutates the network.
      *
      * @param network The network which gets mutated
-     * @time O(n&sup2;)
      */
     SubBackConnectionMutation.prototype.mutate = function (network) {
         var possible = Array.from(network.connections)
@@ -469,6 +469,8 @@ exports.SubBackConnectionMutation = SubBackConnectionMutation;
  * Swap nodes mutation.
  *
  * Swaps the values of two randomly picked nodes.
+ *
+ * @prop {boolean} mutateOutput=false Swap bias and activation function of network output neurons too. Disable this to keep output of a neural network normalized.
  */
 var SwapNodesMutation = /** @class */ (function (_super) {
     __extends(SwapNodesMutation, _super);
@@ -486,7 +488,6 @@ var SwapNodesMutation = /** @class */ (function (_super) {
      * Mutates the network.
      *
      * @param network The network which gets mutated
-     * @time O(n)
      */
     SwapNodesMutation.prototype.mutate = function (network) {
         var possible = this.mutateOutput
