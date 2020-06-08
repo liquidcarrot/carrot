@@ -1,6 +1,6 @@
+import {Identitiy} from "activations/build/src";
 import {NodeType} from "../../enums/NodeType";
 import {NodeJSON} from "../../interfaces/NodeJSON";
-import {IdentityActivation} from "../../methods/Activation";
 import {Node} from "../Node";
 
 /**
@@ -22,7 +22,7 @@ export abstract class ConstantNode extends Node {
      */
     public fromJSON(json: NodeJSON): Node {
         this.index = json.index ?? -1;
-        this.squash = json.squash ?? IdentityActivation;
+        this.squash = json.squash ?? Identitiy;
         return this;
     }
 

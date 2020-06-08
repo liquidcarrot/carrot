@@ -1,10 +1,10 @@
 // @ts-ignore
 // tslint:disable-next-line:no-any
 const mnist: any = require("mnist");
+import {Identitiy, RELU} from "activations/build/src";
 import {expect} from "chai";
 import {Network} from "../../src/architecture/Network";
 import {EvolveOptions} from "../../src/interfaces/EvolveOptions";
-import {IdentityActivation, RELUActivation} from "../../src/methods/Activation";
 import {BinaryLoss} from "../../src/methods/Loss";
 import {FEEDFORWARD_MUTATIONS} from "../../src/methods/Mutation";
 
@@ -60,7 +60,7 @@ describe.skip('MNIST', () => {
             populationSize: 20,
             elitism: 1,
             mutations: FEEDFORWARD_MUTATIONS,
-            activations: [RELUActivation, IdentityActivation],
+            activations: [RELU, Identitiy],
             mutationAmount: 10,
             mutationRate: 0.4,
             iterations: 30,

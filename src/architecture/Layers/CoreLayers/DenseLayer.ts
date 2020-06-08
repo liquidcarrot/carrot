@@ -1,6 +1,6 @@
+import {ActivationType, Logistic} from "activations/build/src";
 import {ConnectionType} from "../../../enums/ConnectionType";
 import {NodeType} from "../../../enums/NodeType";
-import {activationType, LogisticActivation} from "../../../methods/Activation";
 import {Node} from "../../Node";
 import {Layer} from "../Layer";
 
@@ -12,11 +12,11 @@ export class DenseLayer extends Layer {
         /**
          * The activation type for the output nodes of this layer.
          */
-        activationType?: activationType
+        activationType?: ActivationType
     } = {}) {
         super(outputSize);
 
-        const activation: activationType = options.activationType ?? LogisticActivation;
+        const activation: ActivationType = options.activationType ?? Logistic;
 
         for (let i: number = 0; i < outputSize; i++) {
             this.inputNodes.add(new Node(NodeType.HIDDEN).setActivationType(activation));

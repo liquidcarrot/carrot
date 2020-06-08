@@ -1,6 +1,6 @@
+import {ActivationType, ALL_ACTIVATIONS, Logistic} from "activations/build/src";
 import {NodeType} from "../enums/NodeType";
 import {NodeJSON} from "../interfaces/NodeJSON";
-import {activationType, ALL_ACTIVATIONS, LogisticActivation} from "../methods/Activation";
 import {ModBiasMutation} from "../methods/Mutation";
 import {getOrDefault, pickRandom, randDouble} from "../utils/Utils";
 import {Connection} from "./Connection";
@@ -49,7 +49,7 @@ export class Node {
     /**
      * [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0)
      */
-    public squash: activationType;
+    public squash: ActivationType;
     /**
      * index
      */
@@ -94,7 +94,7 @@ export class Node {
     constructor(type: NodeType = NodeType.HIDDEN) {
         this.type = type;
         this.bias = randDouble(-1, 1);
-        this.squash = LogisticActivation;
+        this.squash = Logistic;
         this.activation = 0;
         this.derivativeState = 1;
         this.state = 0;
@@ -123,7 +123,7 @@ export class Node {
     public fromJSON(json: NodeJSON): Node {
         this.bias = json.bias ?? randDouble(-1, 1);
         this.type = json.type as NodeType;
-        this.squash = json.squash ?? LogisticActivation;
+        this.squash = json.squash ?? Logistic;
         this.mask = json.mask ?? 1;
         this.index = json.index ?? NaN;
         return this;
@@ -161,9 +161,9 @@ export class Node {
      * Mutates the node's activation function
      * @time O(n)
      */
-    public mutateActivation(allowedActivations: activationType[] = Object.values(ALL_ACTIVATIONS)): void {
+    public mutateActivation(allowedActivations: ActivationType[] = Object.values(ALL_ACTIVATIONS)): void {
         // pick a random activation from allowed activations except the current activation
-        const possible: activationType[] = allowedActivations.filter(activation => activation !== this.squash);
+        const possible: ActivationType[] = allowedActivations.filter(activation => activation !== this.squash);
         if (possible.length > 0) {
             this.squash = pickRandom(possible);
         }
@@ -517,7 +517,7 @@ export class Node {
      * @param activation the new activation type
      * @time O(1)
      */
-    public setActivationType(activation: activationType): Node {
+    public setActivationType(activation: ActivationType): Node {
         this.squash = activation;
         return this;
     }

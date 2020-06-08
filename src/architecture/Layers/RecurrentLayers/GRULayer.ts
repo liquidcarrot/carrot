@@ -1,7 +1,7 @@
+import {ActivationType, Logistic, TANH} from "activations/build/src";
 import {ConnectionType} from "../../../enums/ConnectionType";
 import {GatingType} from "../../../enums/GatingType";
 import {NodeType} from "../../../enums/NodeType";
-import {activationType, LogisticActivation, TanhActivation} from "../../../methods/Activation";
 import {Connection} from "../../Connection";
 import {Node} from "../../Node";
 import {Layer} from "../Layer";
@@ -14,7 +14,7 @@ export class GRULayer extends Layer {
         /**
          * The activation type for the output nodes of this layer.
          */
-        activation?: activationType
+        activation?: ActivationType
     } = {}) {
         super(outputSize);
         const updateGate: Node[] = [];
@@ -26,10 +26,10 @@ export class GRULayer extends Layer {
         for (let i: number = 0; i < outputSize; i++) {
             this.inputNodes.add(new Node(NodeType.HIDDEN));
             updateGate.push(new Node(NodeType.HIDDEN).setBias(1));
-            inverseUpdateGate.push(new Node(NodeType.HIDDEN).setBias(0).setActivationType(LogisticActivation));
+            inverseUpdateGate.push(new Node(NodeType.HIDDEN).setBias(0).setActivationType(Logistic));
             resetGate.push(new Node(NodeType.HIDDEN).setBias(0));
-            memoryCell.push(new Node(NodeType.HIDDEN).setActivationType(TanhActivation));
-            previousOutput.push(new Node(NodeType.HIDDEN).setBias(0).setActivationType(LogisticActivation));
+            memoryCell.push(new Node(NodeType.HIDDEN).setActivationType(TANH));
+            previousOutput.push(new Node(NodeType.HIDDEN).setBias(0).setActivationType(Logistic));
             this.outputNodes.add(new Node(NodeType.HIDDEN));
         }
 
@@ -66,7 +66,7 @@ export class GRULayer extends Layer {
         this.nodes.push(...Array.from(this.outputNodes));
         this.nodes.push(...previousOutput);
 
-        this.outputNodes.forEach(node => node.squash = options.activation ?? LogisticActivation);
+        this.outputNodes.forEach(node => node.squash = options.activation ?? Logistic);
     }
 
     /**

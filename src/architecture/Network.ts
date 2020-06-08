@@ -1,3 +1,4 @@
+import {ActivationType} from "activations/build/src";
 import os from "os";
 import {spawn, Worker} from "threads";
 import {Pool} from "threads/dist";
@@ -7,7 +8,6 @@ import {ConnectionJSON} from "../interfaces/ConnectionJSON";
 import {EvolveOptions} from "../interfaces/EvolveOptions";
 import {NetworkJSON} from "../interfaces/NetworkJSON";
 import {TrainOptions} from "../interfaces/TrainOptions";
-import {activationType} from "../methods/Activation";
 import {ALL_LOSSES, lossType, MSELoss} from "../methods/Loss";
 import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
 import {FixedRate} from "../methods/Rate";
@@ -545,7 +545,7 @@ export class Network {
         /**
          * All allowed activations
          */
-        allowedActivations?: activationType[]
+        allowedActivations?: ActivationType[]
     }): void {
         method.mutate(this, options);
     }
@@ -576,7 +576,7 @@ export class Network {
         /**
          * All allowed activations
          */
-        allowedActivations?: activationType[]
+        allowedActivations?: ActivationType[]
     } = {}): void {
         if (allowedMethods.length === 0) {
             return;

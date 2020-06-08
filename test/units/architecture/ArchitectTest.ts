@@ -1,3 +1,4 @@
+import {BinaryStep, Identitiy, Logistic, RELU} from "activations/build/src";
 import {expect} from "chai";
 import {Architect} from "../../../src/architecture/Architect";
 import {DenseLayer} from "../../../src/architecture/Layers/CoreLayers/DenseLayer";
@@ -12,7 +13,6 @@ import {RNNLayer} from "../../../src/architecture/Layers/RecurrentLayers/RNNLaye
 import {Network} from "../../../src/architecture/Network";
 import {Node} from "../../../src/architecture/Node";
 import {PoolNode} from "../../../src/architecture/Nodes/PoolNode";
-import {IdentityActivation, LogisticActivation, RELUActivation, StepActivation} from "../../../src/methods/Activation";
 import {randInt} from "../../../src/utils/Utils";
 
 describe("ArchitectTest", () => {
@@ -22,9 +22,9 @@ describe("ArchitectTest", () => {
         const architect: Architect = new Architect();
 
         architect.addLayer(new InputLayer(10));
-        architect.addLayer(new DenseLayer(layerSizes[0], {activationType: RELUActivation}));
-        architect.addLayer(new DenseLayer(layerSizes[1], {activationType: RELUActivation}));
-        architect.addLayer(new DenseLayer(layerSizes[2], {activationType: RELUActivation}));
+        architect.addLayer(new DenseLayer(layerSizes[0], {activationType: RELU}));
+        architect.addLayer(new DenseLayer(layerSizes[1], {activationType: RELU}));
+        architect.addLayer(new DenseLayer(layerSizes[2], {activationType: RELU}));
         architect.addLayer(new OutputLayer(2));
 
         const network: Network = architect.buildModel();
@@ -33,7 +33,7 @@ describe("ArchitectTest", () => {
         expect(network.connections.size).to.be.equal(10 * layerSizes[0] + layerSizes[0] * layerSizes[1] + layerSizes[1] * layerSizes[2] + layerSizes[2] * 2);
         expect(network.gates.size).to.be.equal(0);
 
-        const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELUActivation).length;
+        const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELU).length;
         expect(numNodesWithRELU).to.be.equal(layerSizes[0] + layerSizes[1] + layerSizes[2]);
     });
 
@@ -43,9 +43,9 @@ describe("ArchitectTest", () => {
         const architect: Architect = new Architect();
 
         architect.addLayer(new InputLayer(10));
-        architect.addLayer(new DenseLayer(10, {activationType: RELUActivation}));
-        architect.addLayer(new MaxPooling1DLayer(layerSize, {activation: IdentityActivation}));
-        architect.addLayer(new OutputLayer(2, {activation: RELUActivation}));
+        architect.addLayer(new DenseLayer(10, {activationType: RELU}));
+        architect.addLayer(new MaxPooling1DLayer(layerSize, {activation: Identitiy}));
+        architect.addLayer(new OutputLayer(2, {activation: RELU}));
 
         const network: Network = architect.buildModel();
 
@@ -53,14 +53,14 @@ describe("ArchitectTest", () => {
         expect(network.connections.size).to.be.equal(10 * 10 + 10 + layerSize * 2);
         expect(network.gates.size).to.be.equal(0);
 
-        const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELUActivation).length;
+        const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELU).length;
         expect(numNodesWithRELU).to.be.equal(10 + 2);
 
         const poolNodes: Node[] = network.nodes.filter(node => node instanceof PoolNode);
         expect(poolNodes.length).to.be.equal(layerSize);
         poolNodes.forEach(node => expect(node.bias).to.be.equal(1));
 
-        const numNodesWithIdentity: number = network.nodes.filter(node => node.squash === IdentityActivation).length;
+        const numNodesWithIdentity: number = network.nodes.filter(node => node.squash === Identitiy).length;
         expect(numNodesWithIdentity).to.be.equal(layerSize);
     });
 
@@ -71,10 +71,10 @@ describe("ArchitectTest", () => {
         const architect: Architect = new Architect();
 
         architect.addLayer(new InputLayer(10));
-        architect.addLayer(new DenseLayer(10, {activationType: RELUActivation}));
-        architect.addLayer(new MemoryLayer(outputSize, {memorySize, activation: RELUActivation}));
-        architect.addLayer(new DenseLayer(20, {activationType: RELUActivation}));
-        architect.addLayer(new DenseLayer(10, {activationType: RELUActivation}));
+        architect.addLayer(new DenseLayer(10, {activationType: RELU}));
+        architect.addLayer(new MemoryLayer(outputSize, {memorySize, activation: RELU}));
+        architect.addLayer(new DenseLayer(20, {activationType: RELU}));
+        architect.addLayer(new DenseLayer(10, {activationType: RELU}));
         architect.addLayer(new OutputLayer(2));
 
         const network: Network = architect.buildModel();
@@ -83,7 +83,7 @@ describe("ArchitectTest", () => {
         expect(network.connections.size).to.be.equal(10 * 10 + 10 * outputSize + memorySize * outputSize + outputSize * 20 + 20 * 10 + 10 * 2);
         expect(network.gates.size).to.be.equal(0);
 
-        const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELUActivation).length;
+        const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELU).length;
         expect(numNodesWithRELU).to.be.equal(10 + outputSize + 20 + 10);
     });
 
@@ -93,9 +93,9 @@ describe("ArchitectTest", () => {
         const architect: Architect = new Architect();
 
         architect.addLayer(new InputLayer(10));
-        architect.addLayer(new DenseLayer(10, {activationType: LogisticActivation}));
-        architect.addLayer(new RNNLayer(outputSize, {activation: RELUActivation}));
-        architect.addLayer(new DenseLayer(2, {activationType: LogisticActivation}));
+        architect.addLayer(new DenseLayer(10, {activationType: Logistic}));
+        architect.addLayer(new RNNLayer(outputSize, {activation: RELU}));
+        architect.addLayer(new DenseLayer(2, {activationType: Logistic}));
         architect.addLayer(new OutputLayer(2));
 
         const network: Network = architect.buildModel();
@@ -104,7 +104,7 @@ describe("ArchitectTest", () => {
         expect(network.connections.size).to.be.equal(10 * 10 + 10 * outputSize + outputSize + outputSize * 2 + 2 * 2);
         expect(network.gates.size).to.be.equal(0);
 
-        const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELUActivation).length;
+        const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELU).length;
         expect(numNodesWithRELU).to.be.equal(outputSize);
     });
 
@@ -115,7 +115,7 @@ describe("ArchitectTest", () => {
 
         architect.addLayer(new InputLayer(10));
 
-        architect.addLayer(new GRULayer(GRUSize, {activation: RELUActivation}));
+        architect.addLayer(new GRULayer(GRUSize, {activation: RELU}));
 
         architect.addLayer(new OutputLayer(2));
 
@@ -130,7 +130,7 @@ describe("ArchitectTest", () => {
 
         expect(network.gates.size).to.be.equal(3 * GRUSize * GRUSize);
 
-        const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELUActivation).length;
+        const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELU).length;
         expect(numNodesWithRELU).to.be.equal(GRUSize);
     });
 
@@ -141,7 +141,7 @@ describe("ArchitectTest", () => {
 
         architect.addLayer(new InputLayer(10));
 
-        architect.addLayer(new LSTMLayer(LSTMSize, {activation: RELUActivation}));
+        architect.addLayer(new LSTMLayer(LSTMSize, {activation: RELU}));
 
         architect.addLayer(new OutputLayer(2));
 
@@ -156,7 +156,7 @@ describe("ArchitectTest", () => {
 
         expect(network.gates.size).to.be.equal(2 * LSTMSize * LSTMSize + LSTMSize);
 
-        const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELUActivation).length;
+        const numNodesWithRELU: number = network.nodes.filter(node => node.squash === RELU).length;
         expect(numNodesWithRELU).to.be.equal(LSTMSize);
     });
 
@@ -191,7 +191,7 @@ describe("ArchitectTest", () => {
 
         expect(network.gates.size).to.be.equal(0);
 
-        const numNodesWithSTEP: number = network.nodes.filter(node => node.squash === StepActivation).length;
+        const numNodesWithSTEP: number = network.nodes.filter(node => node.squash === BinaryStep).length;
         expect(numNodesWithSTEP).to.be.equal(HopfieldSize);
     });
 
@@ -200,7 +200,7 @@ describe("ArchitectTest", () => {
         const architect: Architect = new Architect();
 
         architect.addLayer(new InputLayer(2));
-        architect.addLayer(new DenseLayer(5, {activationType: RELUActivation}));
+        architect.addLayer(new DenseLayer(5, {activationType: RELU}));
         architect.addLayer(new OutputLayer(1));
 
         const network: Network = architect.buildModel();
@@ -231,7 +231,7 @@ describe("ArchitectTest", () => {
         const architect: Architect = new Architect();
 
         architect.addLayer(new InputLayer(1));
-        architect.addLayer(new RNNLayer(2, {activation: RELUActivation}));
+        architect.addLayer(new RNNLayer(2, {activation: RELU}));
         architect.addLayer(new OutputLayer(1));
 
         const network: Network = architect.buildModel();
@@ -264,8 +264,8 @@ describe("ArchitectTest", () => {
         const architect: Architect = new Architect();
 
         architect.addLayer(new InputLayer(1));
-        architect.addLayer(new LSTMLayer(2, {activation: RELUActivation}));
-        architect.addLayer(new LSTMLayer(2, {activation: RELUActivation}));
+        architect.addLayer(new LSTMLayer(2, {activation: RELU}));
+        architect.addLayer(new LSTMLayer(2, {activation: RELU}));
         architect.addLayer(new OutputLayer(1));
 
         const network: Network = architect.buildModel();
@@ -297,7 +297,7 @@ describe("ArchitectTest", () => {
         const architect: Architect = new Architect();
 
         architect.addLayer(new InputLayer(1));
-        architect.addLayer(new GRULayer(2, {activation: RELUActivation}));
+        architect.addLayer(new GRULayer(2, {activation: RELU}));
         architect.addLayer(new OutputLayer(1));
 
         const network: Network = architect.buildModel();
