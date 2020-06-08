@@ -69,6 +69,7 @@ export class Connection {
      *
      * @param a - A [natural number](https://en.wikipedia.org/wiki/Natural_number), which is an integer greater than or equal to zero
      * @param b - A [natural number](https://en.wikipedia.org/wiki/Natural_number), which is an integer greater than or equal to zero
+     * @time O(1)
      *
      * @return An Integer that uniquely represents a pair of Integers
      */
@@ -78,6 +79,7 @@ export class Connection {
 
     /**
      * Returns the connection as a JSON
+     * @time O(1)
      *
      * @return Connection as a JSON
      */

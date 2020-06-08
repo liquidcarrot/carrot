@@ -11,7 +11,6 @@ import {activationType} from "./Activation";
  *
  * @see {@link https://en.wikipedia.org/wiki/mutation_(genetic_algorithm)|Mutation (genetic algorithms) on Wikipedia}
  * @see {@link https://en.wikipedia.org/wiki/Genetic_algorithm#Selection|Selection (genetic algorithms) on Wikipedia}
- *
  */
 abstract class Mutation {
     /**
@@ -19,6 +18,7 @@ abstract class Mutation {
      *
      * @param network the network to mutate
      * @param options you can set the max amount of nodes, connections and gates
+     * @time O(n&sup3;)
      */
     public abstract mutate(network: Network, options?: {
         /**
@@ -44,12 +44,10 @@ abstract class Mutation {
  * Add node mutation.
  *
  * Adds a hidden node to the network.
- *
- * @prop {boolean} randomActivation=true If enabled, sets a random activation function on the newly created node
  */
 class AddNodeMutation extends Mutation {
     /**
-     * Should choose a random activation for a new node?
+     * If enabled, sets a random activation function on the newly created node
      */
     public readonly randomActivation: boolean;
 
@@ -67,6 +65,7 @@ class AddNodeMutation extends Mutation {
      *
      * @param network The network which gets mutated
      * @param options
+     * @time O(n)
      */
     public mutate(network: Network, options: {
         /**
@@ -111,12 +110,10 @@ class AddNodeMutation extends Mutation {
  * Sub node mutation.
  *
  * Removes a random node from the network.
- *
- * @prop keepGates=true Ensures replacement node has gated connections if the removed node did.
  */
 class SubNodeMutation extends Mutation {
     /**
-     * Keep gates or remove them too ?
+     * Ensures replacement node has gated connections if the removed node did.
      */
     public readonly keepGates: boolean;
 
@@ -129,6 +126,7 @@ class SubNodeMutation extends Mutation {
      * Mutates the network.
      *
      * @param network The network which gets mutated
+     * @time O(n&sup3;)
      */
     public mutate(network: Network): void {
         const possible: Node[] = network.nodes.filter(node => node !== undefined && node.isHiddenNode()); // hidden nodes
@@ -149,6 +147,7 @@ class AddConnectionMutation extends Mutation {
      *
      * @param network The network which gets mutated
      * @param options
+     * @time O(n&sup3;)
      */
     public mutate(network: Network, options: {
         /**
@@ -189,6 +188,7 @@ class SubConnectionMutation extends Mutation {
      * Mutates the network.
      *
      * @param network The network which gets mutated
+     * @time O(n&sup2;)
      */
     public mutate(network: Network): void {
         const possible: Connection[] = Array.from(network.connections)
@@ -206,17 +206,14 @@ class SubConnectionMutation extends Mutation {
  * Mod weight mutation.
  *
  * Modifies the weight of a random connection.
- *
- * @prop {number} min=-1 lower bound for weight modification
- * @prop {number} max=1 higher bound for weight modification
  */
 class ModWeightMutation extends Mutation {
     /**
-     * The minimum weight.
+     * lower bound for weight modification
      */
     public readonly min: number;
     /**
-     * The maximum weight.
+     * higher bound for weight modification
      */
     public readonly max: number;
 
@@ -235,6 +232,7 @@ class ModWeightMutation extends Mutation {
      * Mutates the network.
      *
      * @param network The network which gets mutated
+     * @time O(1)
      */
     public mutate(network: Network): void {
         // pick random connection and mutate it's weight
@@ -246,17 +244,14 @@ class ModWeightMutation extends Mutation {
  * Mod bias mutation.
  *
  * Modifies the bias value of a random hidden or output node
- *
- * @prop {number} min=-1 lower bound for modification of a neuron's bias
- * @prop {number} max=1 higher bound for modification of a neuron's bias
  */
 class ModBiasMutation extends Mutation {
     /**
-     * The minimum bias.
+     * lower bound for modification of a neuron's bias
      */
     public readonly min: number;
     /**
-     * The maximum bias.
+     * higher bound for modification of a neuron's bias
      */
     public readonly max: number;
 
@@ -275,6 +270,7 @@ class ModBiasMutation extends Mutation {
      * Mutates the network.
      *
      * @param network The network which gets mutated
+     * @time O(n)
      */
     public mutate(network: Network): void {
         pickRandom(network.nodes.filter(node => !node.isInputNode())) // pick random hidden or output node
@@ -286,12 +282,10 @@ class ModBiasMutation extends Mutation {
  * Mod activation mutation.
  *
  * Modifies the activation function of a random node
- *
- * @prop {boolean} mutateOutput=false Change activation function of network output neurons. Enable this to let the network experiment with its output.
  */
 class ModActivationMutation extends Mutation {
     /**
-     * Can the output be mutated?
+     * Change activation function of network output neurons. Enable this to let the network experiment with its output.
      */
     public readonly mutateOutput: boolean;
 
@@ -309,6 +303,7 @@ class ModActivationMutation extends Mutation {
      *
      * @param network The network which gets mutated
      * @param options
+     * @time O(n)
      */
     public mutate(network: Network, options: {
         /**
@@ -335,6 +330,7 @@ class AddSelfConnectionMutation extends Mutation {
      * Mutates the network.
      *
      * @param network The network which gets mutated
+     * @time O(n)
      */
     public mutate(network: Network): void {
         const possible: Node[] = network.nodes
@@ -357,6 +353,7 @@ class SubSelfConnectionMutation extends Mutation {
      * Mutates the network.
      *
      * @param network The network which gets mutated
+     * @time O(n)
      */
     public mutate(network: Network): void {
         const possible: Connection[] = Array.from(network.connections).filter(conn => conn.from === conn.to);
@@ -378,6 +375,7 @@ class AddGateMutation extends Mutation {
      *
      * @param network The network which gets mutated
      * @param options
+     * @time O(n)
      */
     public mutate(network: Network, options: {
         /**
@@ -411,6 +409,7 @@ class SubGateMutation extends Mutation {
      * Mutates the network.
      *
      * @param network The network which gets mutated
+     * @time O(1)
      */
     public mutate(network: Network): void {
         if (network.gates.size > 0) {
@@ -429,6 +428,7 @@ class AddBackConnectionMutation extends Mutation {
      * Mutates the network.
      *
      * @param network The network which gets mutated
+     * @time O(n&sup3;)
      */
     public mutate(network: Network): void {
         const possible: Node[][] = [];
@@ -458,6 +458,7 @@ class SubBackConnectionMutation extends Mutation {
      * Mutates the network.
      *
      * @param network The network which gets mutated
+     * @time O(n&sup2;)
      */
     public mutate(network: Network): void {
         const possible: Connection[] = Array.from(network.connections)
@@ -475,12 +476,10 @@ class SubBackConnectionMutation extends Mutation {
  * Swap nodes mutation.
  *
  * Swaps the values of two randomly picked nodes.
- *
- * @prop {boolean} mutateOutput=false Swap bias and activation function of network output neurons too. Disable this to keep output of a neural network normalized.
  */
 class SwapNodesMutation extends Mutation {
     /**
-     * Can the output be mutated?
+     * Swap bias and activation function of network output neurons too. Disable this to keep output of a neural network normalized.
      */
     public readonly mutateOutput: boolean;
 
@@ -497,6 +496,7 @@ class SwapNodesMutation extends Mutation {
      * Mutates the network.
      *
      * @param network The network which gets mutated
+     * @time O(n)
      */
     public mutate(network: Network): void {
         const possible: Node[] = this.mutateOutput
