@@ -22,7 +22,7 @@ export class InputLayer extends Layer {
         }
 
         if (options.noise) {
-            const noiseLayer: NoiseLayer = new NoiseLayer(options.noise ?? NoiseNodeType.GAUSSIAN_NOISE);
+            const noiseLayer: NoiseLayer = new NoiseLayer(options.noise);
             noiseLayer.outputNodes.forEach(node => this.outputNodes.add(node));
             this.connections.push(...Layer.connect(this.nodes, noiseLayer, noiseLayer.getDefaultIncomingConnectionType()));
         } else {
