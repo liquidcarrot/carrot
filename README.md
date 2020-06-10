@@ -3,6 +3,9 @@
 </p>
 
 <p align="center">
+    <a href="https://www.npmjs.com/package/@liquid-carrot/carrot">
+     <img src="https://img.shields.io/npm/dm/@liquid-carrot/carrot">
+    </a>
     <a href="https://github.com/raimannma/carrot/actions">
      <img src="https://github.com/raimannma/carrot/workflows/Node.js%20CI/badge.svg?branch=master">
     </a>
