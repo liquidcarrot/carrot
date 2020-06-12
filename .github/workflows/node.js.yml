@@ -47,6 +47,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
+      - run: npm i -g nyc
       - run: npm run build --if-present
       - run: tsc
       - run: nyc npm test
