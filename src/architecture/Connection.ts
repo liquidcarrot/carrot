@@ -91,4 +91,11 @@ export class Connection {
             weight: this.weight
         };
     }
+
+    /**
+     * Get the innovation ID for this connection
+     */
+    public getInnovationID(): number {
+        return Connection.innovationID(this.from.index, this.to.index);
+    }
 }

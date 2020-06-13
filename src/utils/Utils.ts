@@ -5,11 +5,15 @@
  * @time O(1)
  * @returns the random picked element
  */
-function pickRandom<T>(arr: T[]): T {
-    if (arr.length === 0) {
-        throw new RangeError("Cannot pick from an empty array");
+function pickRandom<T>(arr: T[] | Set<T>): T {
+    if (Array.isArray(arr)) {
+        if (arr.length === 0) {
+            throw new RangeError("Cannot pick from an empty array");
+        }
+        return arr[randInt(0, arr.length)];
+    } else {
+        return pickRandom(Array.from(arr));
     }
-    return arr[randInt(0, arr.length)];
 }
 
 /**

@@ -1,6 +1,7 @@
 import {ActivationType} from "activations";
 import {ALL_ACTIVATIONS} from "activations/build/src";
 import {Network} from "./architecture/Network";
+import {Species} from "./architecture/Species";
 import {EvolveOptions} from "./interfaces/EvolveOptions";
 import {
     AddConnectionMutation,
@@ -18,6 +19,14 @@ import {getOrDefault, pickRandom} from "./utils/Utils";
  * @constructs Neat
  */
 export class NEAT {
+    /**
+     * How big could the distance be between two networks in a species
+     */
+    public static SPECIES_THRESHOLD: number = 4;
+    public static C1: number = 1;
+    public static C2: number = 1;
+    public static C3: number = 1;
+    public static SURVIVORS: number = 0.8;
     /**
      * A count of the generations
      */
@@ -42,14 +51,6 @@ export class NEAT {
      * Population size of each generation.
      */
     private populationSize: number;
-    /**
-     * Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
-     */
-    private readonly elitism: number;
-    /**
-     * Number of genomes inserted the original network template (Network(input,output)) per evolution.
-     */
-    private readonly provenance: number;
     /**
      * Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.4.
      */
@@ -100,6 +101,10 @@ export class NEAT {
      */
     private population: Network[];
     /**
+     * species
+     */
+    private species: Set<Species>;
+    /**
      * A set of input values and ideal output values to evaluate a genome's fitness with. Must be included to use `NEAT.evaluate` without passing a dataset.
      */
     private readonly dataset?: {
@@ -141,8 +146,6 @@ export class NEAT {
         this.equal = getOrDefault(options.equal, true);
         this.clear = getOrDefault(options.clear, false);
         this.populationSize = getOrDefault(options.populationSize, 50);
-        this.elitism = getOrDefault(options.elitism, 2);
-        this.provenance = getOrDefault(options.provenance, 0);
         this.mutationRate = getOrDefault(options.mutationRate, 0.6);
         this.mutationAmount = getOrDefault(options.mutationAmount, 5);
         this.fitnessFunction = options.fitnessFunction;
@@ -155,25 +158,11 @@ export class NEAT {
         this.maxConnections = getOrDefault(options.maxConnections, Infinity);
         this.maxGates = getOrDefault(options.maxGates, Infinity);
         this.population = [];
+        this.species = new Set<Species>();
 
         for (let i: number = 0; i < this.populationSize; i++) {
             this.population.push(this.template.copy());
         }
-    }
-
-    /**
-     * Filter genomes from population
-     *
-     * @param pickGenome Pick a network from the population which gets adjusted or removed
-     * @param adjustGenome Adjust the picked network
-     * @time O(n * time for adjust genome)
-     */
-    public filterGenome(pickGenome: (genome: Network) => boolean, adjustGenome: ((genome: Network) => Network) | undefined): Network[] {
-        return this.population
-            .filter(genome => pickGenome(genome))
-            .map(genome => {
-                return adjustGenome ? adjustGenome(genome) : this.template.copy();
-            });
     }
 
     /**
@@ -203,53 +192,21 @@ export class NEAT {
      * @returns {Network} Fittest network
      */
     public async evolve(pickGenome?: ((genome: Network) => boolean) | undefined, adjustGenome?: ((genome: Network) => Network) | undefined): Promise<Network> {
-        // Check if evolve is possible
-        if (this.elitism + this.provenance > this.populationSize) {
-            throw new Error("Can`t evolve! Elitism + provenance exceeds population size!");
-        }
-
-        // Check population for evaluation
-        if (this.population[this.population.length - 1].score === undefined) {
-            await this.evaluate();
-        }
-
-        if (pickGenome) {
-            this.population = this.filterGenome(pickGenome, adjustGenome);
-        }
-
-        // Sort in order of fitness (fittest first)
+        this.genSpecies();
+        await this.evaluate();
         this.sort();
 
-        // Elitism, assumes population is sorted by fitness
-        const elitists: Network[] = [];
-        for (let i: number = 0; i < this.elitism; i++) {
-            elitists.push(this.population[i]);
-        }
+        const killedNetworks: Network[] = this.kill(1 - NEAT.SURVIVORS);
+        this.removeExtinctSpecies();
+        this.reproduce(killedNetworks);
+        this.mutate();
 
-        // Provenance
-        const newPopulation: Network[] = Array(this.provenance).fill(this.template.copy());
-
-        // Breed the next individuals
-        for (let i: number = 0; i < this.populationSize - this.elitism - this.provenance; i++) {
-            newPopulation.push(this.getOffspring());
-        }
-
-        // Replace the old population with the new population
-        this.population = newPopulation;
 
         // Mutate the new population
         this.mutate();
 
-        // Add the elitists
-        this.population.push(...elitists);
-
         // evaluate the population
         await this.evaluate();
-
-        // Check & adjust genomes as needed
-        if (pickGenome) {
-            this.population = this.filterGenome(pickGenome, adjustGenome);
-        }
 
         // Sort in order of fitness (fittest first)
         this.sort();
@@ -263,24 +220,6 @@ export class NEAT {
         this.generation++;
 
         return fittest;
-    }
-
-    /**
-     * Selects two genomes from the population with `getParent()`, and returns the offspring from those parents. NOTE: Population MUST be sorted
-     *
-     * @time O(n + time for crossover)
-     * @returns {Network} Child network
-     */
-    public getOffspring(): Network {
-        this.sort();
-        const parent1: Network | null = this.selection.select(this.population);
-        const parent2: Network | null = this.selection.select(this.population);
-
-        if (parent1 === null || parent2 === null) {
-            throw new ReferenceError("Should not be null!");
-        }
-
-        return Network.crossOver(parent1, parent2, this.equal);
     }
 
     /**
@@ -373,5 +312,52 @@ export class NEAT {
     public replacePopulation(genomes: Network[]): void {
         this.population = genomes;
         this.populationSize = genomes.length;
+    }
+
+    private reproduce(killedNetworks: Network[]): void {
+        const speciesArr: Species[] = Array.from(this.species);
+        for (let i: number = 0; i < killedNetworks.length; i++) {
+            const selectedSpecies: Species = this.selection.select(speciesArr);
+            killedNetworks[i] = selectedSpecies.breed();
+            selectedSpecies.forcePut(killedNetworks[i]);
+        }
+    }
+
+    private removeExtinctSpecies(): void {
+        this.species.forEach(species => {
+            if (species.size() <= 1) {
+                this.species.delete(species);
+            }
+        });
+    }
+
+    private kill(killRate: number): Network[] {
+        const killedGenomes: Network[] = [];
+        this.species.forEach(species => killedGenomes.push(...species.kill(killRate)));
+        return killedGenomes;
+    }
+
+    private genSpecies(): void {
+        this.species.forEach(species => species.reset());
+        this.population.forEach(genome => {
+            let isInSpecies: boolean = false;
+            this.species.forEach(species => {
+                if (species.representative === genome) {
+                    isInSpecies = true;
+                }
+            });
+            if (!isInSpecies) {
+                let found: boolean = false;
+                this.species.forEach(species => {
+                    if (species.put(genome)) {
+                        found = true;
+                        return;
+                    }
+                });
+                if (!found) {
+                    this.species.add(new Species(genome));
+                }
+            }
+        });
     }
 }

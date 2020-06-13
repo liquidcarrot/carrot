@@ -1,4 +1,4 @@
-import {Network} from "../architecture/Network";
+import {Species} from "../architecture/Species";
 import {pickRandom, randDouble} from "../utils/Utils";
 
 /**
@@ -14,7 +14,7 @@ abstract class Selection {
      * @time O(n)
      * @returns the selected genome
      */
-    public abstract select(population: Network[]): Network;
+    public abstract select(population: Species[]): Species;
 }
 
 /**
@@ -30,7 +30,7 @@ class FitnessProportionateSelection extends Selection {
      * @time O(n)
      * @returns the selected genome
      */
-    public select(population: Network[]): Network {
+    public select(population: Species[]): Species {
         let totalFitness: number = 0;
         let minimalFitness: number = 0;
         for (const genome of population) {
@@ -82,7 +82,7 @@ class PowerSelection extends Selection {
      * @time O(1)
      * @returns the selected genome
      */
-    public select(population: Network[]): Network {
+    public select(population: Species[]): Species {
         return population[Math.floor(Math.random() ** this.power * population.length)];
     }
 }
@@ -120,19 +120,20 @@ class TournamentSelection extends Selection {
      * @time O(n)
      * @returns the selected genome
      */
-    public select(population: Network[]): Network {
+    public select(population: Species[]): Species {
         if (this.size > population.length) {
             throw new Error(`Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size`);
         }
 
         // Create a tournament
-        const individuals: Network[] = [];
+        const individuals: Species[] = [];
         for (let i: number = 0; i < this.size; i++) {
             individuals.push(pickRandom(population));
         }
 
+
         // Sort the tournament individuals by score
-        individuals.sort((a: Network, b: Network) => {
+        individuals.sort((a: Species, b: Species) => {
             return b.score === undefined || a.score === undefined ? 0 : b.score - a.score;
         });
 

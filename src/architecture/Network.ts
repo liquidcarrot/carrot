@@ -123,7 +123,7 @@ export class Network {
      *
      * @returns {Network} New network created from mixing parent networks
      */
-    public static crossOver(network1: Network, network2: Network, equal: boolean): Network {
+    public static crossOver(network1: Network, network2: Network, equal: boolean = false): Network {
         if (network1.inputSize !== network2.inputSize || network1.outputSize !== network2.outputSize) {
             throw new Error("Networks don`t have the same input/output size!");
         }
@@ -936,6 +936,87 @@ export class Network {
             iterations: neat.generation,
             time: Date.now() - start,
         };
+    }
+
+    /**
+     * Distance function
+     * @param g2 other network
+     */
+    public distance(g2: Network): number {
+        let g1: Network = this;
+
+        // set node indices
+        for (let i: number = 0; i < g1.nodes.length; i++) {
+            g1.nodes[i].index = i;
+        }
+
+        // set node indices
+        for (let i: number = 0; i < g2.nodes.length; i++) {
+            g2.nodes[i].index = i;
+        }
+
+        let indexG1: number = 0;
+        let indexG2: number = 0;
+
+        let connections1: Connection[] = Array.from(g1.connections).filter(conn => conn !== undefined);
+        let connections2: Connection[] = Array.from(g2.connections).filter(conn => conn !== undefined);
+
+        connections1 = connections1.sort((a: Connection, b: Connection) => {
+            return a.getInnovationID() - b.getInnovationID();
+        });
+
+        connections2 = connections2.sort((a: Connection, b: Connection) => {
+            return a.getInnovationID() - b.getInnovationID();
+        });
+
+        const highestInnovationID1: number = connections1[connections1.length - 1].getInnovationID();
+        const highestInnovationID2: number = connections2[connections2.length - 1].getInnovationID();
+        if (highestInnovationID1 < highestInnovationID2) {
+            const temp: Network = g1;
+            g1 = g2;
+            g2 = temp;
+        }
+
+        let disjointGenes: number = 0;
+        let totalWeightDiff: number = 0;
+        let similarGenes: number = 0;
+
+        while (indexG1 < connections1.length && indexG2 < connections2.length) {
+            const gene1: Connection = connections1[indexG1];
+            const gene2: Connection = connections2[indexG2];
+
+            if (gene1 === undefined || gene2 === undefined) {
+                throw Error("HERE");
+            }
+
+            const in1: number = gene1.getInnovationID();
+            const in2: number = gene2.getInnovationID();
+
+            if (in1 === in2) {
+                // similarGenes
+                indexG1++;
+                indexG2++;
+                totalWeightDiff += Math.abs(gene1.weight - gene2.weight);
+                similarGenes++;
+            } else if (indexG1 > indexG2) {
+                // disjoint of b
+                indexG2++;
+                disjointGenes++;
+            } else {
+                // disjoint of a
+                indexG1++;
+                disjointGenes++;
+            }
+        }
+        totalWeightDiff /= similarGenes;
+        const excessGenes: number = g1.connections.size - indexG1;
+
+        let N: number = Math.max(g1.connections.size, g2.connections.size);
+        if (N < 20) {
+            N = 1;
+        }
+
+        return NEAT.C1 * excessGenes / N + NEAT.C2 * disjointGenes / N + NEAT.C3 * totalWeightDiff;
     }
 
     /**
