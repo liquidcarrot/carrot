@@ -135,7 +135,6 @@ export class NEAT {
      * Constructs a NEAT object.
      *
      * @param options
-     * @time O(n)
      */
     constructor(options: EvolveOptions) {
         if (!options.fitnessFunction) {
@@ -181,7 +180,6 @@ export class NEAT {
      * Mutate a network with a random mutation from the allowed array.
      *
      * @param network The network which will be mutated.
-     * @time O(n&sup3;)
      */
     public mutateRandom(network: Network): void {
         const allowed: Mutation[] = this.mutations.filter(method => {
@@ -197,7 +195,6 @@ export class NEAT {
     /**
      * Evaluates, selects, breeds and mutates population
      *
-     * @time O(time for fitness function + n * time for adjust genome + n&sup5;)
      * @returns {Network} Fittest network
      */
     public async evolve(): Promise<Network> {
@@ -243,7 +240,6 @@ export class NEAT {
      * Mutates the given (or current) population
      *
      * @param {Mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
-     * @time O(n&sup5;)
      */
     public mutate(method?: Mutation | undefined): void {
         // Elitist genomes should not be included
@@ -263,7 +259,6 @@ export class NEAT {
     /**
      * Evaluates the current population, basically sets their `.score` property
      *
-     * @time O(n&sup3; + time for fitness function)
      * @return {Network} Fittest Network
      */
     public async evaluate(): Promise<Network> {
@@ -280,7 +275,6 @@ export class NEAT {
 
     /**
      * Sorts the population by score (descending)
-     * @time O(n)
      * @todo implement a quicksort algorithm in utils
      */
     public sort(): void {
@@ -292,7 +286,6 @@ export class NEAT {
     /**
      * Returns the fittest genome of the current population
      *
-     * @time O(n + time for fitness function)
      * @returns {Network} Current population's fittest genome
      */
     public async getFittest(): Promise<Network> {
@@ -307,7 +300,6 @@ export class NEAT {
     /**
      * Returns the average fitness of the current population
      *
-     * @time O(n + time for fitness function)
      * @returns {number} Average fitness of the current population
      */
     public async getAverage(): Promise<number> {
@@ -324,7 +316,6 @@ export class NEAT {
     /**
      * Replace the whole population with the new genomes
      * @param genomes the genomes which replace the population
-     * @time O(1)
      */
     public replacePopulation(genomes: Network[]): void {
         this.population = genomes;

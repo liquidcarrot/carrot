@@ -2,7 +2,6 @@
  * Returns an random element from the given array.
  *
  * @param arr the array to pick from
- * @time O(1)
  * @returns the random picked element
  */
 function pickRandom<T>(arr: T[] | Set<T>): T {
@@ -21,7 +20,6 @@ function pickRandom<T>(arr: T[] | Set<T>): T {
  *
  * @param min bound
  * @param max bound
- * @time O(1)
  * @returns random integer in [min,max)
  */
 function randInt(min: number, max: number): number {
@@ -33,7 +31,6 @@ function randInt(min: number, max: number): number {
  *
  * @param min bound
  * @param max bound
- * @time O(1)
  * @returns random double in [min,max)
  */
 function randDouble(min: number, max: number): number {
@@ -44,7 +41,6 @@ function randDouble(min: number, max: number): number {
  * Returns a random boolean
  *
  * @returns random boolean
- * @time O(1)
  */
 function randBoolean(): boolean {
     return Math.random() >= 0.5;
@@ -55,7 +51,6 @@ function randBoolean(): boolean {
  *
  * @param arr the array
  * @param elem the element which will be removed
- * @time O(n)
  * @returns false -> element does not exists on array; true -> element removed from array
  */
 function removeFromArray<T>(arr: T[], elem: T): boolean {
@@ -74,7 +69,6 @@ function removeFromArray<T>(arr: T[], elem: T): boolean {
  * @param value to check
  * @param defaultValue to return if value is undefined
  * @returns value if defined otherwise defaultValue
- * @time O(1)
  */
 function getOrDefault<T>(value: T | undefined, defaultValue: T): T {
     return value ?? defaultValue;
@@ -84,7 +78,6 @@ function getOrDefault<T>(value: T | undefined, defaultValue: T): T {
  * Shuffles an array
  * @param array the array
  * @returns the shuffled array
- * @time O(n)
  */
 function shuffle<T>(array: T[]): void {
     // While there are elements in the array
@@ -103,7 +96,6 @@ function shuffle<T>(array: T[]): void {
  * Finds the maximum value of an number array
  *
  * @param array
- * @time O(n)
  */
 function max(array: number[]): number {
     if (array.length === 0) {
@@ -122,7 +114,6 @@ function max(array: number[]): number {
  * Finds the maximum value index of an number array
  *
  * @param array
- * @time O(n)
  */
 function maxValueIndex(array: number[]): number {
     if (array.length === 0) {
@@ -143,7 +134,6 @@ function maxValueIndex(array: number[]): number {
  * Finds the minimum value index of an number array
  *
  * @param array
- * @time O(n)
  */
 function minValueIndex(array: number[]): number {
     if (array.length === 0) {
@@ -164,7 +154,6 @@ function minValueIndex(array: number[]): number {
  * Finds the minimum value of an number array
  *
  * @param array
- * @time O(n)
  */
 function min(array: number[]): number {
     if (array.length === 0) {
@@ -183,7 +172,6 @@ function min(array: number[]): number {
  * Calculates the average value of an array
  *
  * @param array
- * @time O(n)
  */
 function avg(array: number[]): number {
     return sum(array) / array.length;
@@ -193,7 +181,6 @@ function avg(array: number[]): number {
  * Calculates the sum of all values of an array
  *
  * @param array
- * @time O(n)
  */
 function sum(array: number[]): number {
     if (array.length === 0) {
@@ -213,7 +200,6 @@ function sum(array: number[]): number {
  *
  * @param mean the mean value
  * @param deviation the standard deviation
- * @time O(1)
  */
 function generateGaussian(mean: number = 0, deviation: number = 2): number {
     let sum: number = 0;

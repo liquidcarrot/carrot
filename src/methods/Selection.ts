@@ -11,7 +11,6 @@ abstract class Selection {
      * Selects a genome from the population according to the Selection method.
      *
      * @param population the pool of networks
-     * @time O(n)
      * @returns the selected genome
      */
     public abstract select(population: Species[]): Species;
@@ -27,7 +26,6 @@ class FitnessProportionateSelection extends Selection {
      * Selects a genome from the population according to the Selection method.
      *
      * @param population the pool of networks
-     * @time O(n)
      * @returns the selected genome
      */
     public select(population: Species[]): Species {
@@ -79,7 +77,6 @@ class PowerSelection extends Selection {
      * Selects a genome from the population according to the Selection method.
      *
      * @param population the pool of networks
-     * @time O(1)
      * @returns the selected genome
      */
     public select(population: Species[]): Species {
@@ -117,7 +114,6 @@ class TournamentSelection extends Selection {
      * Selects a genome from the population according to the Selection method.
      *
      * @param population the pool of networks
-     * @time O(n)
      * @returns the selected genome
      */
     public select(population: Species[]): Species {
