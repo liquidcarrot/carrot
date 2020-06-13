@@ -2,7 +2,7 @@ import {ActivationType, ALL_ACTIVATIONS, Logistic} from "activations/build/src";
 import {NodeType} from "../enums/NodeType";
 import {NodeJSON} from "../interfaces/NodeJSON";
 import {ModBiasMutation} from "../methods/Mutation";
-import {getOrDefault, pickRandom, randDouble} from "../utils/Utils";
+import {pickRandom, randDouble} from "../utils/Utils";
 import {Connection} from "./Connection";
 
 /**
@@ -303,9 +303,9 @@ export class Node {
          */
         update?: boolean
     } = {}): void {
-        options.momentum = getOrDefault(options.momentum, 0);
-        options.rate = getOrDefault(options.rate, 0.3);
-        options.update = getOrDefault(options.update, true);
+        options.momentum = options.momentum ?? 0;
+        options.rate = options.rate ?? 0.3;
+        options.update = options.update ?? true;
 
         if (target !== undefined && Number.isFinite(target)) {
             this.errorResponsibility = this.errorProjected = target - this.activation;

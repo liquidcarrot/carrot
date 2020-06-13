@@ -71,7 +71,6 @@ import {FitnessProportionateSelection, PowerSelection, Selection, TournamentSele
 import {
     avg,
     generateGaussian,
-    getOrDefault,
     max,
     maxValueIndex,
     min,
@@ -169,7 +168,6 @@ export {
     randDouble,
     randBoolean,
     removeFromArray,
-    getOrDefault,
     shuffle,
     max,
     maxValueIndex,

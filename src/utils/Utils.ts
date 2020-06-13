@@ -64,17 +64,6 @@ function removeFromArray<T>(arr: T[], elem: T): boolean {
 }
 
 /**
- * Checks a given value. If value is undefined return the default value.
- *
- * @param value to check
- * @param defaultValue to return if value is undefined
- * @returns value if defined otherwise defaultValue
- */
-function getOrDefault<T>(value: T | undefined, defaultValue: T): T {
-    return value ?? defaultValue;
-}
-
-/**
  * Shuffles an array
  * @param array the array
  * @returns the shuffled array
@@ -232,7 +221,6 @@ export {
     randDouble,
     randBoolean,
     removeFromArray,
-    getOrDefault,
     shuffle,
     max,
     maxValueIndex,

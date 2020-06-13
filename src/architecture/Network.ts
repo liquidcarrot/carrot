@@ -13,7 +13,7 @@ import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
 import {FixedRate} from "../methods/Rate";
 import {TestWorker} from "../multithreading/TestWorker";
 import {NEAT} from "../NEAT";
-import {getOrDefault, pairing, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../utils/Utils";
+import {pairing, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../utils/Utils";
 import {Connection} from "./Connection";
 import {Node} from "./Node";
 import {Species} from "./Species";
@@ -319,8 +319,8 @@ export class Network {
             throw new RangeError("Input size of dataset is different to network input size!");
         }
         // get default value if no value is given
-        options.dropoutRate = getOrDefault(options.dropoutRate, 0);
-        options.trace = getOrDefault(options.trace, true);
+        options.dropoutRate = options.dropoutRate ?? 0;
+        options.trace = options.trace ?? true;
 
         this.nodes
             .filter(node => node.isInputNode()) // only input nodes
@@ -365,9 +365,9 @@ export class Network {
         update?: boolean
     } = {}): void {
         // get default value if value isn't given
-        options.rate = getOrDefault(options.rate, 0.3);
-        options.momentum = getOrDefault(options.momentum, 0);
-        options.update = getOrDefault(options.update, false);
+        options.rate = options.rate ?? 0.3;
+        options.momentum = options.momentum ?? 0;
+        options.update = options.update ?? false;
 
 
         if (target.length !== this.outputSize) {
@@ -605,15 +605,15 @@ export class Network {
         }
 
         // Use the default values, if no value is given
-        options.iterations = getOrDefault(options.iterations, -1);
-        options.error = getOrDefault(options.error, -1);
-        options.loss = getOrDefault(options.loss, MSELoss);
-        options.dropout = getOrDefault(options.dropout, 0);
-        options.momentum = getOrDefault(options.momentum, 0);
-        options.batchSize = Math.min(options.dataset.length, getOrDefault(options.batchSize, options.dataset.length));
-        const baseRate: number = getOrDefault(options.rate, 0.3);
-        options.ratePolicy = getOrDefault(options.ratePolicy, new FixedRate(baseRate));
-        options.log = getOrDefault(options.log, NaN);
+        options.iterations = options.iterations ?? -1;
+        options.error = options.error ?? -1;
+        options.loss = options.loss ?? MSELoss;
+        options.dropout = options.dropout ?? 0;
+        options.momentum = options.momentum ?? 0;
+        options.batchSize = Math.min(options.dataset.length, options.batchSize ?? options.dataset.length);
+        const baseRate: number = options.rate ?? 0.3;
+        options.ratePolicy = options.ratePolicy ?? new FixedRate(baseRate);
+        options.log = options.log ?? NaN;
 
         const start: number = Date.now();
 
@@ -816,10 +816,10 @@ export class Network {
         }
 
         // set options to default if necessary
-        options.loss = getOrDefault(options.loss, MSELoss);
-        options.maxNodes = getOrDefault(options.maxNodes, Infinity);
-        options.maxConnections = getOrDefault(options.maxConnections, Infinity);
-        options.maxGates = getOrDefault(options.maxGates, Infinity);
+        options.loss = options.loss ?? MSELoss;
+        options.maxNodes = options.maxNodes ?? Infinity;
+        options.maxConnections = options.maxConnections ?? Infinity;
+        options.maxGates = options.maxGates ?? Infinity;
         options.input = this.inputSize;
         options.output = this.outputSize;
 

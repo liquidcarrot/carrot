@@ -12,7 +12,7 @@ import {
     Mutation
 } from "./methods/Mutation";
 import {FitnessProportionateSelection, Selection} from "./methods/Selection";
-import {getOrDefault, pickRandom} from "./utils/Utils";
+import {pickRandom} from "./utils/Utils";
 
 /**
  * Runs the NEAT algorithm on group of neural networks.
@@ -145,29 +145,29 @@ export class NEAT {
         if (options.dataset && options.dataset.length > 0) {
             this.input = options.dataset[0].input.length;
             this.output = options.dataset[0].output.length;
-            this.trainOptions = getOrDefault(options.training, null);
+            this.trainOptions = options.training ?? null;
         } else {
             this.trainOptions = null;
-            this.input = getOrDefault(options.input, 0);
-            this.output = getOrDefault(options.output, 0);
+            this.input = options.input ?? 0;
+            this.output = options.output ?? 0;
         }
 
-        this.generation = getOrDefault(options.generation, 0);
-        this.elitism = getOrDefault(options.elitism, 1);
-        this.equal = getOrDefault(options.equal, true);
-        this.clear = getOrDefault(options.clear, false);
-        this.populationSize = getOrDefault(options.populationSize, 50);
-        this.mutationRate = getOrDefault(options.mutationRate, 0.6);
-        this.mutationAmount = getOrDefault(options.mutationAmount, 5);
+        this.generation = options.generation ?? 0;
+        this.elitism = options.elitism ?? 1;
+        this.equal = options.equal ?? true;
+        this.clear = options.clear ?? false;
+        this.populationSize = options.populationSize ?? 50;
+        this.mutationRate = options.mutationRate ?? 0.6;
+        this.mutationAmount = options.mutationAmount ?? 5;
         this.fitnessFunction = options.fitnessFunction;
 
-        this.selection = getOrDefault(options.selection, new FitnessProportionateSelection());
-        this.mutations = getOrDefault(options.mutations, FEEDFORWARD_MUTATIONS);
-        this.activations = getOrDefault(options.activations, Object.values(ALL_ACTIVATIONS));
-        this.template = getOrDefault(options.template, new Network(this.input, this.output));
-        this.maxNodes = getOrDefault(options.maxNodes, Infinity);
-        this.maxConnections = getOrDefault(options.maxConnections, Infinity);
-        this.maxGates = getOrDefault(options.maxGates, Infinity);
+        this.selection = options.selection ?? new FitnessProportionateSelection();
+        this.mutations = options.mutations ?? FEEDFORWARD_MUTATIONS;
+        this.activations = options.activations ?? Object.values(ALL_ACTIVATIONS);
+        this.template = options.template ?? new Network(this.input, this.output);
+        this.maxNodes = options.maxNodes ?? Infinity;
+        this.maxConnections = options.maxConnections ?? Infinity;
+        this.maxGates = options.maxGates ?? Infinity;
         this.population = [];
         this.species = new Set<Species>();
 

@@ -1,6 +1,6 @@
 import {PoolNodeType} from "../../enums/NodeType";
 import {PoolNodeJSON} from "../../interfaces/NodeJSON";
-import {avg, getOrDefault, maxValueIndex, minValueIndex, sum} from "../../utils/Utils";
+import {avg, maxValueIndex, minValueIndex, sum} from "../../utils/Utils";
 import {Connection} from "../Connection";
 import {Node} from "../Node";
 import {ConstantNode} from "./ConstantNode";
@@ -99,9 +99,9 @@ export class PoolNode extends ConstantNode {
          */
         update?: boolean
     } = {}): void {
-        options.momentum = getOrDefault(options.momentum, 0);
-        options.rate = getOrDefault(options.rate, 0.3);
-        options.update = getOrDefault(options.update, true);
+        options.momentum = options.momentum ?? 0;
+        options.rate = options.rate ?? 0.3;
+        options.update = options.update ?? true;
 
         const connectionsStates: number[] = Array.from(this.outgoing).map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
         this.errorResponsibility = this.errorProjected = sum(connectionsStates) * this.derivativeState;

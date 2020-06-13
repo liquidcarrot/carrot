@@ -1,7 +1,6 @@
 import {expect} from "chai";
 import {
     avg,
-    getOrDefault,
     max,
     maxValueIndex,
     min,
@@ -85,15 +84,6 @@ describe("Utils", () => {
         const len: number = arr.length;
         expect(removeFromArray(arr, arr[2])).to.be.true;
         expect(arr.length).equals(len - 1);
-    });
-
-    it("get or default", () => {
-        expect(getOrDefault(null, 50)).to.be.equals(50);
-        expect(getOrDefault(null, 12)).to.be.equals(12);
-        expect(getOrDefault(23, 50)).to.be.equals(23);
-        expect(getOrDefault(50, 50)).to.be.equals(50);
-        expect(getOrDefault(undefined, 50)).to.be.equals(50);
-        expect(getOrDefault(undefined, 6)).to.be.equals(6);
     });
 
     it("shuffle", () => {
