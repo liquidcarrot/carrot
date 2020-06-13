@@ -132,9 +132,8 @@ var Network = /** @class */ (function () {
      *
      * @returns {Network} New network created from mixing parent networks
      */
-    Network.crossOver = function (network1, network2, equal) {
+    Network.crossOver = function (network1, network2) {
         var _a, _b;
-        if (equal === void 0) { equal = false; }
         if (network1.inputSize !== network2.inputSize || network1.outputSize !== network2.outputSize) {
             throw new Error("Networks don`t have the same input/output size!");
         }
@@ -147,7 +146,7 @@ var Network = /** @class */ (function () {
         var score2 = (_b = network2.score) !== null && _b !== void 0 ? _b : 0;
         // Determine offspring node size
         var offspringSize;
-        if (equal || score1 === score2) {
+        if (score1 === score2) {
             var max = Math.max(network1.nodes.length, network2.nodes.length);
             var min = Math.min(network1.nodes.length, network2.nodes.length);
             offspringSize = Utils_1.randInt(min, max + 1); // [min,max]
@@ -243,12 +242,12 @@ var Network = /** @class */ (function () {
                 connections.push(Utils_1.randBoolean() ? n1connections[parseInt(keys1[i])] : n2connections[parseInt(keys1[i])]);
                 n2connections[parseInt(keys1[i])] = undefined;
             }
-            else if (score1 >= score2 || equal) {
+            else if (score1 >= score2) {
                 connections.push(n1connections[parseInt(keys1[i])]);
             }
         }
         // Excess/disjoint gene
-        if (score2 >= score1 || equal) {
+        if (score2 >= score1) {
             keys2
                 .map(function (key) { return parseInt(key); }) // convert to numbers
                 .map(function (key) { return n2connections[key]; }) // get the connection

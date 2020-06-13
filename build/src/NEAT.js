@@ -70,8 +70,10 @@ var NEAT = /** @class */ (function () {
         if (options.dataset && options.dataset.length > 0) {
             this.input = options.dataset[0].input.length;
             this.output = options.dataset[0].output.length;
+            this.trainOptions = Utils_1.getOrDefault(options.training, null);
         }
         else {
+            this.trainOptions = null;
             this.input = Utils_1.getOrDefault(options.input, 0);
             this.output = Utils_1.getOrDefault(options.output, 0);
         }
@@ -119,18 +121,18 @@ var NEAT = /** @class */ (function () {
      */
     NEAT.prototype.evolve = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var elitists, fittest;
-            var _a;
-            return __generator(this, function (_b) {
-                switch (_b.label) {
+            var elitists, _i, _a, genome, fittest;
+            var _b;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
                         this.genSpecies();
                         if (!(this.population[this.population.length - 1].score === undefined)) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.evaluate()];
                     case 1:
-                        _b.sent();
+                        _c.sent();
                         this.sort();
-                        _b.label = 2;
+                        _c.label = 2;
                     case 2:
                         this.species.forEach(function (species) { return species.evaluateScore(); });
                         this.kill(1 - NEAT.SURVIVORS);
@@ -138,12 +140,18 @@ var NEAT = /** @class */ (function () {
                         this.reproduce();
                         elitists = this.population.splice(0, this.elitism);
                         this.mutate();
-                        (_a = this.population).splice.apply(_a, __spreadArrays([0, 0], elitists));
+                        (_b = this.population).splice.apply(_b, __spreadArrays([0, 0], elitists));
+                        if (this.trainOptions !== null) {
+                            for (_i = 0, _a = this.population; _i < _a.length; _i++) {
+                                genome = _a[_i];
+                                genome.train(this.trainOptions);
+                            }
+                        }
                         // evaluate the population
                         return [4 /*yield*/, this.evaluate()];
                     case 3:
                         // evaluate the population
-                        _b.sent();
+                        _c.sent();
                         // Sort in order of fitness (fittest first)
                         this.sort();
                         fittest = this.population[0].copy();
