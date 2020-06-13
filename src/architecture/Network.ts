@@ -130,7 +130,7 @@ export class Network {
      *
      * @returns {Network} New network created from mixing parent networks
      */
-    public static crossOver(network1: Network, network2: Network, equal: boolean = false): Network {
+    public static crossOver(network1: Network, network2: Network): Network {
         if (network1.inputSize !== network2.inputSize || network1.outputSize !== network2.outputSize) {
             throw new Error("Networks don`t have the same input/output size!");
         }
@@ -146,7 +146,7 @@ export class Network {
 
         // Determine offspring node size
         let offspringSize: number;
-        if (equal || score1 === score2) {
+        if (score1 === score2) {
             const max: number = Math.max(network1.nodes.length, network2.nodes.length);
             const min: number = Math.min(network1.nodes.length, network2.nodes.length);
             offspringSize = randInt(min, max + 1); // [min,max]
@@ -245,13 +245,13 @@ export class Network {
                 connections.push(randBoolean() ? n1connections[parseInt(keys1[i])] : n2connections[parseInt(keys1[i])]);
 
                 n2connections[parseInt(keys1[i])] = undefined;
-            } else if (score1 >= score2 || equal) {
+            } else if (score1 >= score2) {
                 connections.push(n1connections[parseInt(keys1[i])]);
             }
         }
 
         // Excess/disjoint gene
-        if (score2 >= score1 || equal) {
+        if (score2 >= score1) {
             keys2
                 .map(key => parseInt(key))// convert to numbers
                 .map(key => n2connections[key]) // get the connection

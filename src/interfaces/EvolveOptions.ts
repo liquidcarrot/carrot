@@ -3,6 +3,7 @@ import {Network} from "../architecture/Network";
 import {lossType} from "../methods/Loss";
 import {Mutation} from "../methods/Mutation";
 import {Selection} from "../methods/Selection";
+import {TrainOptions} from "./TrainOptions";
 
 /**
  * Options used to evolve network
@@ -37,6 +38,10 @@ export interface EvolveOptions {
      * Num of generations already done.
      */
     generation?: number;
+    /**
+     * training while evolving by passing in options
+     */
+    training?: TrainOptions;
     /**
      * A template network to create the population from.
      */

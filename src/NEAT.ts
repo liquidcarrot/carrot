@@ -3,6 +3,7 @@ import {ALL_ACTIVATIONS} from "activations/build/src";
 import {Network} from "./architecture/Network";
 import {Species} from "./architecture/Species";
 import {EvolveOptions} from "./interfaces/EvolveOptions";
+import {TrainOptions} from "./interfaces/TrainOptions";
 import {
     AddConnectionMutation,
     AddGateMutation,
@@ -125,6 +126,10 @@ export class NEAT {
      * Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
      */
     private readonly elitism: number;
+    /**
+     * Train options used for training in between two evolution steps
+     */
+    private trainOptions: TrainOptions | null;
 
     /**
      * Constructs a NEAT object.
@@ -141,7 +146,9 @@ export class NEAT {
         if (options.dataset && options.dataset.length > 0) {
             this.input = options.dataset[0].input.length;
             this.output = options.dataset[0].output.length;
+            this.trainOptions = getOrDefault(options.training, null);
         } else {
+            this.trainOptions = null;
             this.input = getOrDefault(options.input, 0);
             this.output = getOrDefault(options.output, 0);
         }
@@ -208,6 +215,12 @@ export class NEAT {
         const elitists: Network[] = this.population.splice(0, this.elitism);
         this.mutate();
         this.population.splice(0, 0, ...elitists);
+
+        if (this.trainOptions !== null) {
+            for (const genome of this.population) {
+                genome.train(this.trainOptions);
+            }
+        }
 
         // evaluate the population
         await this.evaluate();
