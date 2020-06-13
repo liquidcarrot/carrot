@@ -211,6 +211,21 @@ function generateGaussian(mean: number = 0, deviation: number = 2): number {
     return deviation * sum / numSamples + mean - 0.5 * deviation;
 }
 
+/**
+ * Pairing two numbers
+ *
+ * @see {@link https://en.wikipedia.org/wiki/Pairing_function (Cantor pairing function)|Pairing function (Cantor pairing function)}
+ *
+ * @param a - A [natural number](https://en.wikipedia.org/wiki/Natural_number), which is an integer greater than or equal to zero
+ * @param b - A [natural number](https://en.wikipedia.org/wiki/Natural_number), which is an integer greater than or equal to zero
+ *
+ * @return An Integer that uniquely represents a pair of Integers
+ */
+function pairing(a: number, b: number): number {
+    return 1 / 2 * (a + b) * (a + b + 1) + b;
+}
+
+
 export {
     pickRandom,
     randInt,
@@ -225,5 +240,6 @@ export {
     min,
     sum,
     avg,
-    generateGaussian
+    generateGaussian,
+    pairing
 };

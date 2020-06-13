@@ -1,4 +1,5 @@
 import {ConnectionJSON} from "../interfaces/ConnectionJSON";
+import {pairing} from "../utils/Utils";
 import {Node} from "./Node";
 
 /**
@@ -63,20 +64,6 @@ export class Connection {
     }
 
     /**
-     * Returns an innovation ID
-     *
-     * @see {@link https://en.wikipedia.org/wiki/Pairing_function (Cantor pairing function)|Pairing function (Cantor pairing function)}
-     *
-     * @param a - A [natural number](https://en.wikipedia.org/wiki/Natural_number), which is an integer greater than or equal to zero
-     * @param b - A [natural number](https://en.wikipedia.org/wiki/Natural_number), which is an integer greater than or equal to zero
-     *
-     * @return An Integer that uniquely represents a pair of Integers
-     */
-    public static innovationID(a: number, b: number): number {
-        return 1 / 2 * (a + b) * (a + b + 1) + b;
-    }
-
-    /**
      * Returns the connection as a JSON
      *
      * @return Connection as a JSON
@@ -94,6 +81,6 @@ export class Connection {
      * Get the innovation ID for this connection
      */
     public getInnovationID(): number {
-        return Connection.innovationID(this.from.index, this.to.index);
+        return pairing(this.from.index, this.to.index);
     }
 }

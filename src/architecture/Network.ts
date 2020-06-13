@@ -13,7 +13,7 @@ import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
 import {FixedRate} from "../methods/Rate";
 import {TestWorker} from "../multithreading/TestWorker";
 import {NEAT} from "../NEAT";
-import {getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../utils/Utils";
+import {getOrDefault, pairing, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../utils/Utils";
 import {Connection} from "./Connection";
 import {Node} from "./Node";
 import {Species} from "./Species";
@@ -227,11 +227,11 @@ export class Network {
 
         // Add the connections of network 1
         network1.connections.forEach(connection => {
-            n1connections[Connection.innovationID(connection.from.index, connection.to.index)] = connection.toJSON();
+            n1connections[pairing(connection.from.index, connection.to.index)] = connection.toJSON();
         });
         // Add the connections of network 2
         network2.connections.forEach(connection => {
-            n2connections[Connection.innovationID(connection.from.index, connection.to.index)] = connection.toJSON();
+            n2connections[pairing(connection.from.index, connection.to.index)] = connection.toJSON();
         });
 
         // Split common conn genes from disjoint or excess conn genes

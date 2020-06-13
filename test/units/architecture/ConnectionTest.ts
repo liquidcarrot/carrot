@@ -2,7 +2,7 @@ import {expect} from "chai";
 import {Connection} from "../../../src/architecture/Connection";
 import {Node} from "../../../src/architecture/Node";
 import {ConnectionJSON} from "../../../src/interfaces/ConnectionJSON";
-import {randDouble, randInt} from "../../../src/utils/Utils";
+import {randDouble} from "../../../src/utils/Utils";
 
 const was: { connected: (connection: Connection, from: Node, to: Node) => void } = {
     connected: (connection: Connection, from: Node, to: Node): void => {
@@ -66,23 +66,6 @@ describe("Connection", function (): void {
 
             expect(json).to.be.an("object");
             expect(json.weight).to.be.a("number");
-        });
-    });
-    describe("Connection.innovationID()", () => {
-        const a: number = randInt(0, 100);
-        const b: number = randInt(0, 100);
-
-        it(`Connection.innovationID(a=${a}, b=${b}) => {number}`, () => {
-            const innovationID: number = Connection.innovationID(a, b);
-            expect(innovationID).to.be.a("number");
-
-            const w: number = Math.floor((Math.sqrt(8 * innovationID + 1) - 1) / 2);
-            const t: number = (w * w + w) / 2;
-            const y: number = innovationID - t;
-            const x: number = w - y;
-
-            expect(a).to.be.equal(x);
-            expect(b).to.be.equal(y);
         });
     });
 });

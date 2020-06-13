@@ -6,6 +6,7 @@ import {
     maxValueIndex,
     min,
     minValueIndex,
+    pairing,
     pickRandom,
     randBoolean,
     randDouble,
@@ -221,5 +222,24 @@ describe("Utils", () => {
         let sumValue: number = 0;
         arr.forEach(elem => sumValue += elem);
         expect(sum(arr)).to.be.equals(sumValue);
+    });
+
+
+    describe("Utils pairing", () => {
+        const a: number = randInt(0, 100);
+        const b: number = randInt(0, 100);
+
+        it(`pairing(a=${a}, b=${b}) => {number}`, () => {
+            const pair: number = pairing(a, b);
+            expect(pair).to.be.a("number");
+
+            const w: number = Math.floor((Math.sqrt(8 * pair + 1) - 1) / 2);
+            const t: number = (w * w + w) / 2;
+            const y: number = pair - t;
+            const x: number = w - y;
+
+            expect(a).to.be.equal(x);
+            expect(b).to.be.equal(y);
+        });
     });
 });
