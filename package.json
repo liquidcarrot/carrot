@@ -19,7 +19,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "tsc && mocha build/test/units --recursive"
+      "pre-commit": "tsc --build --clean && tsc && mocha build/test/units --recursive"
     }
   },
   "repository": {
