@@ -12,8 +12,28 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TournamentSelection = exports.PowerSelection = exports.FitnessProportionateSelection = exports.Selection = void 0;
+var TimSort = __importStar(require("timsort"));
 var Utils_1 = require("../utils/Utils");
 /**
  * Genetic Algorithm Selection Methods (Genetic Operator)
@@ -40,7 +60,6 @@ var FitnessProportionateSelection = /** @class */ (function (_super) {
      * Selects a genome from the population according to the Selection method.
      *
      * @param population the pool of networks
-     * @time O(n)
      * @returns the selected genome
      */
     FitnessProportionateSelection.prototype.select = function (population) {
@@ -89,7 +108,6 @@ var PowerSelection = /** @class */ (function (_super) {
      * Selects a genome from the population according to the Selection method.
      *
      * @param population the pool of networks
-     * @time O(1)
      * @returns the selected genome
      */
     PowerSelection.prototype.select = function (population) {
@@ -122,7 +140,6 @@ var TournamentSelection = /** @class */ (function (_super) {
      * Selects a genome from the population according to the Selection method.
      *
      * @param population the pool of networks
-     * @time O(n)
      * @returns the selected genome
      */
     TournamentSelection.prototype.select = function (population) {
@@ -135,7 +152,7 @@ var TournamentSelection = /** @class */ (function (_super) {
             individuals.push(Utils_1.pickRandom(population));
         }
         // Sort the tournament individuals by score
-        individuals.sort(function (a, b) {
+        TimSort.sort(individuals, function (a, b) {
             return b.score === undefined || a.score === undefined ? 0 : b.score - a.score;
         });
         // Select an individual

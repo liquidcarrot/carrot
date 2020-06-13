@@ -56,9 +56,10 @@ var ActivationNode = /** @class */ (function (_super) {
      */
     ActivationNode.prototype.propagate = function (target, options) {
         var _this = this;
-        options.momentum = Utils_1.getOrDefault(options.momentum, 0);
-        options.rate = Utils_1.getOrDefault(options.rate, 0.3);
-        options.update = Utils_1.getOrDefault(options.update, true);
+        var _a, _b, _c;
+        options.momentum = (_a = options.momentum) !== null && _a !== void 0 ? _a : 0;
+        options.rate = (_b = options.rate) !== null && _b !== void 0 ? _b : 0.3;
+        options.update = (_c = options.update) !== null && _c !== void 0 ? _c : true;
         var connectionsStates = Array.from(this.outgoing).map(function (conn) { return conn.to.errorResponsibility * conn.weight * conn.gain; });
         this.errorResponsibility = this.errorProjected = Utils_1.sum(connectionsStates) * this.derivativeState;
         this.incoming.forEach(function (connection) {

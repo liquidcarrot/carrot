@@ -60,18 +60,4 @@ describe("Connection", function () {
             chai_1.expect(json.weight).to.be.a("number");
         });
     });
-    describe("Connection.innovationID()", function () {
-        var a = Utils_1.randInt(0, 100);
-        var b = Utils_1.randInt(0, 100);
-        it("Connection.innovationID(a=" + a + ", b=" + b + ") => {number}", function () {
-            var innovationID = Connection_1.Connection.innovationID(a, b);
-            chai_1.expect(innovationID).to.be.a("number");
-            var w = Math.floor((Math.sqrt(8 * innovationID + 1) - 1) / 2);
-            var t = (w * w + w) / 2;
-            var y = innovationID - t;
-            var x = w - y;
-            chai_1.expect(a).to.be.equal(x);
-            chai_1.expect(b).to.be.equal(y);
-        });
-    });
 });

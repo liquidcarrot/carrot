@@ -1,4 +1,23 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -45,6 +64,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NEAT = void 0;
 var src_1 = require("activations/build/src");
+var TimSort = __importStar(require("timsort"));
 var Network_1 = require("./architecture/Network");
 var Species_1 = require("./architecture/Species");
 var Mutation_1 = require("./methods/Mutation");
@@ -60,9 +80,9 @@ var NEAT = /** @class */ (function () {
      * Constructs a NEAT object.
      *
      * @param options
-     * @time O(n)
      */
     function NEAT(options) {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s;
         if (!options.fitnessFunction) {
             throw new ReferenceError("No fitness function given!");
         }
@@ -70,28 +90,28 @@ var NEAT = /** @class */ (function () {
         if (options.dataset && options.dataset.length > 0) {
             this.input = options.dataset[0].input.length;
             this.output = options.dataset[0].output.length;
-            this.trainOptions = Utils_1.getOrDefault(options.training, null);
+            this.trainOptions = (_a = options.training) !== null && _a !== void 0 ? _a : null;
         }
         else {
             this.trainOptions = null;
-            this.input = Utils_1.getOrDefault(options.input, 0);
-            this.output = Utils_1.getOrDefault(options.output, 0);
+            this.input = (_b = options.input) !== null && _b !== void 0 ? _b : 0;
+            this.output = (_c = options.output) !== null && _c !== void 0 ? _c : 0;
         }
-        this.generation = Utils_1.getOrDefault(options.generation, 0);
-        this.elitism = Utils_1.getOrDefault(options.elitism, 1);
-        this.equal = Utils_1.getOrDefault(options.equal, true);
-        this.clear = Utils_1.getOrDefault(options.clear, false);
-        this.populationSize = Utils_1.getOrDefault(options.populationSize, 50);
-        this.mutationRate = Utils_1.getOrDefault(options.mutationRate, 0.6);
-        this.mutationAmount = Utils_1.getOrDefault(options.mutationAmount, 5);
+        this.generation = (_d = options.generation) !== null && _d !== void 0 ? _d : 0;
+        this.elitism = (_e = options.elitism) !== null && _e !== void 0 ? _e : 1;
+        this.equal = (_f = options.equal) !== null && _f !== void 0 ? _f : true;
+        this.clear = (_g = options.clear) !== null && _g !== void 0 ? _g : false;
+        this.populationSize = (_h = options.populationSize) !== null && _h !== void 0 ? _h : 50;
+        this.mutationRate = (_j = options.mutationRate) !== null && _j !== void 0 ? _j : 0.6;
+        this.mutationAmount = (_k = options.mutationAmount) !== null && _k !== void 0 ? _k : 5;
         this.fitnessFunction = options.fitnessFunction;
-        this.selection = Utils_1.getOrDefault(options.selection, new Selection_1.FitnessProportionateSelection());
-        this.mutations = Utils_1.getOrDefault(options.mutations, Mutation_1.FEEDFORWARD_MUTATIONS);
-        this.activations = Utils_1.getOrDefault(options.activations, Object.values(src_1.ALL_ACTIVATIONS));
-        this.template = Utils_1.getOrDefault(options.template, new Network_1.Network(this.input, this.output));
-        this.maxNodes = Utils_1.getOrDefault(options.maxNodes, Infinity);
-        this.maxConnections = Utils_1.getOrDefault(options.maxConnections, Infinity);
-        this.maxGates = Utils_1.getOrDefault(options.maxGates, Infinity);
+        this.selection = (_l = options.selection) !== null && _l !== void 0 ? _l : new Selection_1.FitnessProportionateSelection();
+        this.mutations = (_m = options.mutations) !== null && _m !== void 0 ? _m : Mutation_1.FEEDFORWARD_MUTATIONS;
+        this.activations = (_o = options.activations) !== null && _o !== void 0 ? _o : Object.values(src_1.ALL_ACTIVATIONS);
+        this.template = (_p = options.template) !== null && _p !== void 0 ? _p : new Network_1.Network(this.input, this.output);
+        this.maxNodes = (_q = options.maxNodes) !== null && _q !== void 0 ? _q : Infinity;
+        this.maxConnections = (_r = options.maxConnections) !== null && _r !== void 0 ? _r : Infinity;
+        this.maxGates = (_s = options.maxGates) !== null && _s !== void 0 ? _s : Infinity;
         this.population = [];
         this.species = new Set();
         for (var i = 0; i < this.populationSize; i++) {
@@ -102,7 +122,6 @@ var NEAT = /** @class */ (function () {
      * Mutate a network with a random mutation from the allowed array.
      *
      * @param network The network which will be mutated.
-     * @time O(n&sup3;)
      */
     NEAT.prototype.mutateRandom = function (network) {
         var _this = this;
@@ -116,7 +135,6 @@ var NEAT = /** @class */ (function () {
     /**
      * Evaluates, selects, breeds and mutates population
      *
-     * @time O(time for fitness function + n * time for adjust genome + n&sup5;)
      * @returns {Network} Fittest network
      */
     NEAT.prototype.evolve = function () {
@@ -168,7 +186,6 @@ var NEAT = /** @class */ (function () {
      * Mutates the given (or current) population
      *
      * @param {Mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
-     * @time O(n&sup5;)
      */
     NEAT.prototype.mutate = function (method) {
         var _this = this;
@@ -189,7 +206,6 @@ var NEAT = /** @class */ (function () {
     /**
      * Evaluates the current population, basically sets their `.score` property
      *
-     * @time O(n&sup3; + time for fitness function)
      * @return {Network} Fittest Network
      */
     NEAT.prototype.evaluate = function () {
@@ -212,18 +228,16 @@ var NEAT = /** @class */ (function () {
     };
     /**
      * Sorts the population by score (descending)
-     * @time O(n)
      * @todo implement a quicksort algorithm in utils
      */
     NEAT.prototype.sort = function () {
-        this.population.sort(function (a, b) {
+        TimSort.sort(this.population, function (a, b) {
             return a.score === undefined || b.score === undefined ? 0 : b.score - a.score;
         });
     };
     /**
      * Returns the fittest genome of the current population
      *
-     * @time O(n + time for fitness function)
      * @returns {Network} Current population's fittest genome
      */
     NEAT.prototype.getFittest = function () {
@@ -246,7 +260,6 @@ var NEAT = /** @class */ (function () {
     /**
      * Returns the average fitness of the current population
      *
-     * @time O(n + time for fitness function)
      * @returns {number} Average fitness of the current population
      */
     NEAT.prototype.getAverage = function () {
@@ -273,7 +286,6 @@ var NEAT = /** @class */ (function () {
     /**
      * Replace the whole population with the new genomes
      * @param genomes the genomes which replace the population
-     * @time O(1)
      */
     NEAT.prototype.replacePopulation = function (genomes) {
         this.population = genomes;

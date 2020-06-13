@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Connection = void 0;
+var Utils_1 = require("../utils/Utils");
 /**
  * A connection instance describes the connection between two nodes.
  */
@@ -23,22 +24,7 @@ var Connection = /** @class */ (function () {
         }
     }
     /**
-     * Returns an innovation ID
-     *
-     * @see {@link https://en.wikipedia.org/wiki/Pairing_function (Cantor pairing function)|Pairing function (Cantor pairing function)}
-     *
-     * @param a - A [natural number](https://en.wikipedia.org/wiki/Natural_number), which is an integer greater than or equal to zero
-     * @param b - A [natural number](https://en.wikipedia.org/wiki/Natural_number), which is an integer greater than or equal to zero
-     * @time O(1)
-     *
-     * @return An Integer that uniquely represents a pair of Integers
-     */
-    Connection.innovationID = function (a, b) {
-        return 1 / 2 * (a + b) * (a + b + 1) + b;
-    };
-    /**
      * Returns the connection as a JSON
-     * @time O(1)
      *
      * @return Connection as a JSON
      */
@@ -54,7 +40,7 @@ var Connection = /** @class */ (function () {
      * Get the innovation ID for this connection
      */
     Connection.prototype.getInnovationID = function () {
-        return Connection.innovationID(this.from.index, this.to.index);
+        return Utils_1.pairing(this.from.index, this.to.index);
     };
     return Connection;
 }());

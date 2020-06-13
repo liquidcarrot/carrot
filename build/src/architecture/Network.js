@@ -10,6 +10,25 @@ var __assign = (this && this.__assign) || function () {
     };
     return __assign.apply(this, arguments);
 };
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -55,13 +74,13 @@ var os_1 = __importDefault(require("os"));
 var threads_1 = require("threads");
 var dist_1 = require("threads/dist");
 require("threads/register");
+var TimSort = __importStar(require("timsort"));
 var NodeType_1 = require("../enums/NodeType");
 var Loss_1 = require("../methods/Loss");
 var Mutation_1 = require("../methods/Mutation");
 var Rate_1 = require("../methods/Rate");
 var NEAT_1 = require("../NEAT");
 var Utils_1 = require("../utils/Utils");
-var Connection_1 = require("./Connection");
 var Node_1 = require("./Node");
 /**
  * Create a neural network
@@ -99,7 +118,6 @@ var Network = /** @class */ (function () {
      * Convert a json object to a network
      *
      * @param {{input:{number},output:{number},dropout:{number},nodes:Array<object>,connections:Array<object>}} json A network represented as a json object
-     * @time O(n&sup2;)
      *
      * @returns {Network} Network A reconstructed network
      */
@@ -128,7 +146,6 @@ var Network = /** @class */ (function () {
      * @param {Network} network1 First parent network
      * @param {Network} network2 Second parent network
      * @param {boolean} [equal] Flag to indicate equally fit Networks
-     * @time O(n&sup2;)
      *
      * @returns {Network} New network created from mixing parent networks
      */
@@ -227,11 +244,11 @@ var Network = /** @class */ (function () {
         var n2connections = [];
         // Add the connections of network 1
         network1.connections.forEach(function (connection) {
-            n1connections[Connection_1.Connection.innovationID(connection.from.index, connection.to.index)] = connection.toJSON();
+            n1connections[Utils_1.pairing(connection.from.index, connection.to.index)] = connection.toJSON();
         });
         // Add the connections of network 2
         network2.connections.forEach(function (connection) {
-            n2connections[Connection_1.Connection.innovationID(connection.from.index, connection.to.index)] = connection.toJSON();
+            n2connections[Utils_1.pairing(connection.from.index, connection.to.index)] = connection.toJSON();
         });
         // Split common conn genes from disjoint or excess conn genes
         var connections = [];
@@ -269,7 +286,6 @@ var Network = /** @class */ (function () {
     };
     /**
      * Returns a copy of Network.
-     * @time O(n&sup2;)
      * @returns {Network} Returns an identical network
      */
     Network.prototype.copy = function () {
@@ -281,7 +297,6 @@ var Network = /** @class */ (function () {
      * @param {Node} from The source Node
      * @param {Node} to The destination Node or Group
      * @param {number} [weight=0] An initial weight for the connections to be formed
-     * @time O(n)
      *
      * @returns {Connection[]} An array of the formed connections
      */
@@ -298,17 +313,17 @@ var Network = /** @class */ (function () {
      *
      * @param {number[]} [input] Input values to activate nodes with
      * @param options
-     * @time O(n&sup3;)
      * @returns {number[]} Squashed output values
      */
     Network.prototype.activate = function (input, options) {
+        var _a, _b;
         if (options === void 0) { options = {}; }
         if (input.length !== this.inputSize) {
             throw new RangeError("Input size of dataset is different to network input size!");
         }
         // get default value if no value is given
-        options.dropoutRate = Utils_1.getOrDefault(options.dropoutRate, 0);
-        options.trace = Utils_1.getOrDefault(options.trace, true);
+        options.dropoutRate = (_a = options.dropoutRate) !== null && _a !== void 0 ? _a : 0;
+        options.trace = (_b = options.trace) !== null && _b !== void 0 ? _b : true;
         this.nodes
             .filter(function (node) { return node.isInputNode(); }) // only input nodes
             .forEach(function (node, index) { return node.activate(input[index], options.trace); }); // activate them with the input
@@ -331,14 +346,14 @@ var Network = /** @class */ (function () {
      *
      * @param {number[]} target Ideal values of the previous activate. Will use the difference to improve the weights
      * @param options More option for propagation
-     * @time O(n&sup3;)
      */
     Network.prototype.propagate = function (target, options) {
+        var _a, _b, _c;
         if (options === void 0) { options = {}; }
         // get default value if value isn't given
-        options.rate = Utils_1.getOrDefault(options.rate, 0.3);
-        options.momentum = Utils_1.getOrDefault(options.momentum, 0);
-        options.update = Utils_1.getOrDefault(options.update, false);
+        options.rate = (_a = options.rate) !== null && _a !== void 0 ? _a : 0.3;
+        options.momentum = (_b = options.momentum) !== null && _b !== void 0 ? _b : 0;
+        options.update = (_c = options.update) !== null && _c !== void 0 ? _c : false;
         if (target.length !== this.outputSize) {
             throw new Error("Output target length should match network output length");
         }
@@ -360,7 +375,6 @@ var Network = /** @class */ (function () {
     };
     /**
      * Clear the context of the network
-     * @time O(n&sup3;)
      */
     Network.prototype.clear = function () {
         this.nodes.forEach(function (node) { return node.clear(); });
@@ -370,7 +384,6 @@ var Network = /** @class */ (function () {
      *
      * @param {Node} from Source node
      * @param {Node} to Destination node
-     * @time O(n)
      */
     Network.prototype.disconnect = function (from, to) {
         var _this = this;
@@ -391,7 +404,6 @@ var Network = /** @class */ (function () {
      *
      * @param {Node} node Gating node
      * @param {Connection} connection Connection to gate with node
-     * @time O(n)
      */
     Network.prototype.addGate = function (node, connection) {
         if (this.nodes.indexOf(node) === -1) {
@@ -407,7 +419,6 @@ var Network = /** @class */ (function () {
      * Remove the gate of a connection.
      *
      * @param {Connection} connection Connection to remove gate from
-     * @time O(1)
      */
     Network.prototype.removeGate = function (connection) {
         if (!this.gates.has(connection)) {
@@ -423,7 +434,6 @@ var Network = /** @class */ (function () {
      *
      * @param {Node} node Node to remove from the network
      * @param keepGates
-     * @time O(&sup3;)
      */
     Network.prototype.removeNode = function (node, keepGates) {
         var _this = this;
@@ -482,7 +492,6 @@ var Network = /** @class */ (function () {
      * @param {number} [options.maxNodes]
      * @param {number} [options.maxConnections]
      * @param {number} [options.maxGates] Maximum amount of Gates a network can grow to
-     * @time O(n&sup3;)
      */
     Network.prototype.mutate = function (method, options) {
         method.mutate(this, options);
@@ -495,7 +504,6 @@ var Network = /** @class */ (function () {
      * @param {number} [options.maxNodes] Maximum amount of [Nodes](node) a network can grow to
      * @param {number} [options.maxConnections] Maximum amount of [Connections](connection) a network can grow to
      * @param {number} [options.maxGates] Maximum amount of Gates a network can grow to
-     * @time O(n&sup3;)
      */
     Network.prototype.mutateRandom = function (allowedMethods, options) {
         if (allowedMethods === void 0) { allowedMethods = Mutation_1.ALL_MUTATIONS; }
@@ -510,25 +518,24 @@ var Network = /** @class */ (function () {
      * Train the given data to this network
      *
      * @param {TrainOptions} options Options used to train network
-     * @time O(n&sup5;)
      *
      * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance
      */
     Network.prototype.train = function (options) {
-        var _a;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
         if (!options.dataset || options.dataset[0].input.length !== this.inputSize || options.dataset[0].output.length !== this.outputSize) {
             throw new Error("Dataset input/output size should be same as network input/output size!");
         }
         // Use the default values, if no value is given
-        options.iterations = Utils_1.getOrDefault(options.iterations, -1);
-        options.error = Utils_1.getOrDefault(options.error, -1);
-        options.loss = Utils_1.getOrDefault(options.loss, Loss_1.MSELoss);
-        options.dropout = Utils_1.getOrDefault(options.dropout, 0);
-        options.momentum = Utils_1.getOrDefault(options.momentum, 0);
-        options.batchSize = Math.min(options.dataset.length, Utils_1.getOrDefault(options.batchSize, options.dataset.length));
-        var baseRate = Utils_1.getOrDefault(options.rate, 0.3);
-        options.ratePolicy = Utils_1.getOrDefault(options.ratePolicy, new Rate_1.FixedRate(baseRate));
-        options.log = Utils_1.getOrDefault(options.log, NaN);
+        options.iterations = (_a = options.iterations) !== null && _a !== void 0 ? _a : -1;
+        options.error = (_b = options.error) !== null && _b !== void 0 ? _b : -1;
+        options.loss = (_c = options.loss) !== null && _c !== void 0 ? _c : Loss_1.MSELoss;
+        options.dropout = (_d = options.dropout) !== null && _d !== void 0 ? _d : 0;
+        options.momentum = (_e = options.momentum) !== null && _e !== void 0 ? _e : 0;
+        options.batchSize = Math.min(options.dataset.length, (_f = options.batchSize) !== null && _f !== void 0 ? _f : options.dataset.length);
+        var baseRate = (_g = options.rate) !== null && _g !== void 0 ? _g : 0.3;
+        options.ratePolicy = (_h = options.ratePolicy) !== null && _h !== void 0 ? _h : new Rate_1.FixedRate(baseRate);
+        options.log = (_j = options.log) !== null && _j !== void 0 ? _j : NaN;
         var start = Date.now();
         if (options.iterations <= 0 && options.error <= 0) {
             throw new Error("At least one of the following options must be specified: error, iterations");
@@ -572,7 +579,7 @@ var Network = /** @class */ (function () {
             else {
                 error = trainError;
             }
-            if ((_a = options.shuffle) !== null && _a !== void 0 ? _a : false) {
+            if ((_k = options.shuffle) !== null && _k !== void 0 ? _k : false) {
                 Utils_1.shuffle(options.dataset);
             }
             if (options.log > 0 && iterationCount % options.log === 0) {
@@ -596,7 +603,6 @@ var Network = /** @class */ (function () {
      *
      * @param {Array<{input:number[],output:number[]}>} dataset A set of input values and ideal output values to test the network against
      * @param {lossType} [loss=MSELoss] The [loss function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
-     * @time O(n&sup4;)
      *
      * @returns {number} A summary object of the network's performance
      */
@@ -615,7 +621,6 @@ var Network = /** @class */ (function () {
     /**
      * Convert the network to a json object
      *
-     * @time O(n)
      * @returns {NetworkJSON} The network represented as a json object
      */
     Network.prototype.toJSON = function () {
@@ -649,17 +654,16 @@ var Network = /** @class */ (function () {
      * If both `iterations` and `error` options are unset, evolve will default to `iterations` as an end condition.
      *
      * @param {object} [options] Configuration options
-     * @time O(n * time for fitness function + n&sup2; * time for adjust genome + n&sup6;)
      *
      * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance. <br /> Properties include: `error` - error of the best genome, `iterations` - generations used to evolve networks, `time` - clock time elapsed while evolving
      */
     Network.prototype.evolve = function (options) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         if (options === void 0) { options = {}; }
         return __awaiter(this, void 0, void 0, function () {
             var targetError, start, workerPool, serializedDataSet_1, lossIndex_1, neat, error, bestFitness, bestGenome, fittest;
-            return __generator(this, function (_f) {
-                switch (_f.label) {
+            return __generator(this, function (_k) {
+                switch (_k.label) {
                     case 0:
                         if (!options.fitnessFunction && options.dataset && (options.dataset[0].input.length !== this.inputSize || options.dataset[0].output.length !== this.outputSize)) {
                             throw new Error("Dataset input/output size should be same as network input/output size!");
@@ -677,18 +681,18 @@ var Network = /** @class */ (function () {
                             options.iterations = 0; // run until error
                         }
                         // set options to default if necessary
-                        options.loss = Utils_1.getOrDefault(options.loss, Loss_1.MSELoss);
-                        options.maxNodes = Utils_1.getOrDefault(options.maxNodes, Infinity);
-                        options.maxConnections = Utils_1.getOrDefault(options.maxConnections, Infinity);
-                        options.maxGates = Utils_1.getOrDefault(options.maxGates, Infinity);
+                        options.loss = (_a = options.loss) !== null && _a !== void 0 ? _a : Loss_1.MSELoss;
+                        options.maxNodes = (_b = options.maxNodes) !== null && _b !== void 0 ? _b : Infinity;
+                        options.maxConnections = (_c = options.maxConnections) !== null && _c !== void 0 ? _c : Infinity;
+                        options.maxGates = (_d = options.maxGates) !== null && _d !== void 0 ? _d : Infinity;
                         options.input = this.inputSize;
                         options.output = this.outputSize;
                         start = Date.now();
                         if (!options.fitnessFunction) {
                             serializedDataSet_1 = JSON.stringify(options.dataset);
-                            lossIndex_1 = Object.values(Loss_1.ALL_LOSSES).indexOf((_a = options.loss) !== null && _a !== void 0 ? _a : Loss_1.MSELoss);
+                            lossIndex_1 = Object.values(Loss_1.ALL_LOSSES).indexOf((_e = options.loss) !== null && _e !== void 0 ? _e : Loss_1.MSELoss);
                             // init a pool of workers
-                            workerPool = dist_1.Pool(function () { return threads_1.spawn(new threads_1.Worker("../multithreading/TestWorker")); }, (_b = options.threads) !== null && _b !== void 0 ? _b : os_1.default.cpus().length);
+                            workerPool = dist_1.Pool(function () { return threads_1.spawn(new threads_1.Worker("../multithreading/TestWorker")); }, (_f = options.threads) !== null && _f !== void 0 ? _f : os_1.default.cpus().length);
                             options.fitnessFunction = function (population) {
                                 return __awaiter(this, void 0, void 0, function () {
                                     var _loop_1, _i, population_1, genome;
@@ -737,10 +741,10 @@ var Network = /** @class */ (function () {
                         neat = new NEAT_1.NEAT(options);
                         bestFitness = 0;
                         bestGenome = this;
-                        _f.label = 1;
+                        _k.label = 1;
                     case 1: return [4 /*yield*/, neat.evolve()];
                     case 2:
-                        fittest = _f.sent();
+                        fittest = _k.sent();
                         if (!fittest.score) {
                             throw new ReferenceError();
                         }
@@ -749,16 +753,16 @@ var Network = /** @class */ (function () {
                             bestFitness = fittest.score;
                             bestGenome = fittest;
                         }
-                        if (((_c = options.log) !== null && _c !== void 0 ? _c : 0) > 0 && neat.generation % ((_d = options.log) !== null && _d !== void 0 ? _d : 0) === 0) {
+                        if (((_g = options.log) !== null && _g !== void 0 ? _g : 0) > 0 && neat.generation % ((_h = options.log) !== null && _h !== void 0 ? _h : 0) === 0) {
                             console.log("iteration", neat.generation, "error", -error);
                         }
                         if (options.schedule && neat.generation % options.schedule.iterations === 0) {
                             options.schedule.function(fittest.score, -error, neat.generation);
                         }
-                        _f.label = 3;
+                        _k.label = 3;
                     case 3:
-                        if (error < -targetError && (options.iterations === 0 || neat.generation < ((_e = options.iterations) !== null && _e !== void 0 ? _e : 0))) return [3 /*break*/, 1];
-                        _f.label = 4;
+                        if (error < -targetError && (options.iterations === 0 || neat.generation < ((_j = options.iterations) !== null && _j !== void 0 ? _j : 0))) return [3 /*break*/, 1];
+                        _k.label = 4;
                     case 4:
                         if (bestGenome !== undefined) {
                             // set this network to the fittest from NEAT
@@ -772,8 +776,8 @@ var Network = /** @class */ (function () {
                         if (!workerPool) return [3 /*break*/, 6];
                         return [4 /*yield*/, workerPool.terminate()];
                     case 5:
-                        _f.sent(); // stop all processes
-                        _f.label = 6;
+                        _k.sent(); // stop all processes
+                        _k.label = 6;
                     case 6: return [2 /*return*/, {
                             error: -error,
                             iterations: neat.generation,
@@ -801,10 +805,10 @@ var Network = /** @class */ (function () {
         var indexG2 = 0;
         var connections1 = Array.from(g1.connections).filter(function (conn) { return conn !== undefined; });
         var connections2 = Array.from(g2.connections).filter(function (conn) { return conn !== undefined; });
-        connections1 = connections1.sort(function (a, b) {
+        TimSort.sort(connections1, function (a, b) {
             return a.getInnovationID() - b.getInnovationID();
         });
-        connections2 = connections2.sort(function (a, b) {
+        TimSort.sort(connections2, function (a, b) {
             return a.getInnovationID() - b.getInnovationID();
         });
         var highestInnovationID1 = connections1[connections1.length - 1].getInnovationID();
@@ -855,7 +859,6 @@ var Network = /** @class */ (function () {
      * Performs one training epoch and returns the error - this is a private function used in `self.train`
      *
      * @private
-     * @time O(n&sup4;)
      *
      * @returns {number}
      */
