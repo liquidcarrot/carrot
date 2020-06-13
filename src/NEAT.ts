@@ -121,6 +121,10 @@ export class NEAT {
      * Sets allowed activations for evolution, a random activation method will be chosen from the array when activation mutation occurs.
      */
     private readonly activations: ActivationType[];
+    /**
+     * Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
+     */
+    private readonly elitism: number;
 
     /**
      * Constructs a NEAT object.
@@ -143,6 +147,7 @@ export class NEAT {
         }
 
         this.generation = getOrDefault(options.generation, 0);
+        this.elitism = getOrDefault(options.elitism, 1);
         this.equal = getOrDefault(options.equal, true);
         this.clear = getOrDefault(options.clear, false);
         this.populationSize = getOrDefault(options.populationSize, 50);
@@ -192,14 +197,17 @@ export class NEAT {
         this.genSpecies();
         if (this.population[this.population.length - 1].score === undefined) {
             await this.evaluate();
+            this.sort();
         }
         this.species.forEach(species => species.evaluateScore());
-        this.sort();
 
         this.kill(1 - NEAT.SURVIVORS);
         this.removeExtinctSpecies();
         this.reproduce();
+
+        const elitists: Network[] = this.population.splice(0, this.elitism);
         this.mutate();
+        this.population.splice(0, 0, ...elitists);
 
         // evaluate the population
         await this.evaluate();
@@ -311,8 +319,7 @@ export class NEAT {
     }
 
     /**
-     * Reporduce the population, by replacing the killed networks
-     * @param killedNetworks
+     * Reproduce the population, by replacing the killed networks
      * @private
      */
     private reproduce(): void {
