@@ -84,7 +84,7 @@ describe('Logic Gates', function () {
     it('[NOT] Network.train()', function () {
         var network = new Network_1.Network(1, 1);
         var initial = network.test(data.NOT);
-        network.train({ iterations: 50, dataset: data.NOT });
+        network.train({ iterations: 10, dataset: data.NOT });
         var final = network.test(data.NOT);
         chai_1.expect(final).to.be.at.most(initial);
     });
@@ -97,7 +97,7 @@ describe('Logic Gates', function () {
                         this.timeout(20000);
                         network = new Network_1.Network(1, 1);
                         initial = network.test(data.NOT);
-                        return [4 /*yield*/, network.evolve({ iterations: 50, dataset: data.NOT })];
+                        return [4 /*yield*/, network.evolve({ iterations: 10, dataset: data.NOT })];
                     case 1:
                         _a.sent();
                         final = network.test(data.NOT);
@@ -110,7 +110,7 @@ describe('Logic Gates', function () {
     it('[AND] Network.train()', function () {
         var network = new Network_1.Network(2, 1);
         var initial = network.test(data.AND);
-        network.train({ iterations: 50, dataset: data.AND });
+        network.train({ iterations: 10, dataset: data.AND });
         var final = network.test(data.AND);
         chai_1.expect(final).to.be.at.most(initial);
     });
@@ -123,7 +123,7 @@ describe('Logic Gates', function () {
                         this.timeout(20000);
                         network = new Network_1.Network(2, 1);
                         initial = network.test(data.AND);
-                        return [4 /*yield*/, network.evolve({ iterations: 50, dataset: data.AND })];
+                        return [4 /*yield*/, network.evolve({ iterations: 10, dataset: data.AND })];
                     case 1:
                         _a.sent();
                         final = network.test(data.AND);
@@ -136,7 +136,7 @@ describe('Logic Gates', function () {
     it('[OR] Network.train()', function () {
         var network = new Network_1.Network(2, 1);
         var initial = network.test(data.OR);
-        network.train({ iterations: 50, dataset: data.OR });
+        network.train({ iterations: 10, dataset: data.OR });
         var final = network.test(data.OR);
         chai_1.expect(final).to.be.at.most(initial);
     });
@@ -149,7 +149,7 @@ describe('Logic Gates', function () {
                         this.timeout(20000);
                         network = new Network_1.Network(2, 1);
                         initial = network.test(data.OR);
-                        return [4 /*yield*/, network.evolve({ iterations: 50, dataset: data.OR })];
+                        return [4 /*yield*/, network.evolve({ iterations: 10, dataset: data.OR })];
                     case 1:
                         _a.sent();
                         final = network.test(data.OR);
@@ -162,7 +162,7 @@ describe('Logic Gates', function () {
     it('[NAND] Network.train()', function () {
         var network = new Network_1.Network(2, 1);
         var initial = network.test(data.NAND);
-        network.train({ iterations: 50, dataset: data.NAND });
+        network.train({ iterations: 10, dataset: data.NAND });
         var final = network.test(data.NAND);
         chai_1.expect(final).to.be.at.most(initial);
     });
@@ -175,7 +175,7 @@ describe('Logic Gates', function () {
                         this.timeout(20000);
                         network = new Network_1.Network(2, 1);
                         initial = network.test(data.NAND);
-                        return [4 /*yield*/, network.evolve({ iterations: 50, dataset: data.NAND })];
+                        return [4 /*yield*/, network.evolve({ iterations: 10, dataset: data.NAND })];
                     case 1:
                         _a.sent();
                         final = network.test(data.NAND);
@@ -188,7 +188,7 @@ describe('Logic Gates', function () {
     it('[NOR] Network.train()', function () {
         var network = new Network_1.Network(2, 1);
         var initial = network.test(data.NOR);
-        network.train({ iterations: 50, dataset: data.NOR });
+        network.train({ iterations: 10, dataset: data.NOR });
         var final = network.test(data.NOR);
         chai_1.expect(final).to.be.at.most(initial);
     });
@@ -201,7 +201,7 @@ describe('Logic Gates', function () {
                         this.timeout(20000);
                         network = new Network_1.Network(2, 1);
                         initial = network.test(data.NOR);
-                        return [4 /*yield*/, network.evolve({ iterations: 50, dataset: data.NOR })];
+                        return [4 /*yield*/, network.evolve({ iterations: 10, dataset: data.NOR })];
                     case 1:
                         _a.sent();
                         final = network.test(data.NOR);
@@ -214,7 +214,7 @@ describe('Logic Gates', function () {
     it('[XOR] Network.train()', function () {
         var network = new Network_1.Network(2, 1);
         var initial = network.test(data.XOR);
-        network.train({ iterations: 50, dataset: data.XOR });
+        network.train({ iterations: 10, dataset: data.XOR });
         var final = network.test(data.XOR);
         chai_1.expect(final).to.be.at.most(initial);
     });
@@ -227,7 +227,7 @@ describe('Logic Gates', function () {
                         this.timeout(20000);
                         network = new Network_1.Network(2, 1);
                         initial = network.test(data.XOR);
-                        return [4 /*yield*/, network.evolve({ iterations: 50, dataset: data.XOR })];
+                        return [4 /*yield*/, network.evolve({ iterations: 10, dataset: data.XOR })];
                     case 1:
                         _a.sent();
                         final = network.test(data.XOR);
@@ -240,7 +240,7 @@ describe('Logic Gates', function () {
     it('[XNOR] Network.train()', function () {
         var network = new Network_1.Network(2, 1);
         var initial = network.test(data.XNOR);
-        network.train({ iterations: 50, dataset: data.XNOR });
+        network.train({ iterations: 10, dataset: data.XNOR });
         var final = network.test(data.XNOR);
         chai_1.expect(final).to.be.at.most(initial);
     });
@@ -253,7 +253,7 @@ describe('Logic Gates', function () {
                         this.timeout(20000);
                         network = new Network_1.Network(2, 1);
                         initial = network.test(data.XNOR);
-                        return [4 /*yield*/, network.evolve({ iterations: 50, dataset: data.XNOR })];
+                        return [4 /*yield*/, network.evolve({ iterations: 10, dataset: data.XNOR })];
                     case 1:
                         _a.sent();
                         final = network.test(data.XNOR);

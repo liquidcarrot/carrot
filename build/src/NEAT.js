@@ -35,6 +35,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NEAT = void 0;
 var src_1 = require("activations/build/src");
@@ -69,6 +76,7 @@ var NEAT = /** @class */ (function () {
             this.output = Utils_1.getOrDefault(options.output, 0);
         }
         this.generation = Utils_1.getOrDefault(options.generation, 0);
+        this.elitism = Utils_1.getOrDefault(options.elitism, 1);
         this.equal = Utils_1.getOrDefault(options.equal, true);
         this.clear = Utils_1.getOrDefault(options.clear, false);
         this.populationSize = Utils_1.getOrDefault(options.populationSize, 50);
@@ -111,28 +119,31 @@ var NEAT = /** @class */ (function () {
      */
     NEAT.prototype.evolve = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var fittest;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var elitists, fittest;
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
                         this.genSpecies();
                         if (!(this.population[this.population.length - 1].score === undefined)) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.evaluate()];
                     case 1:
-                        _a.sent();
-                        _a.label = 2;
+                        _b.sent();
+                        this.sort();
+                        _b.label = 2;
                     case 2:
                         this.species.forEach(function (species) { return species.evaluateScore(); });
-                        this.sort();
                         this.kill(1 - NEAT.SURVIVORS);
                         this.removeExtinctSpecies();
                         this.reproduce();
+                        elitists = this.population.splice(0, this.elitism);
                         this.mutate();
+                        (_a = this.population).splice.apply(_a, __spreadArrays([0, 0], elitists));
                         // evaluate the population
                         return [4 /*yield*/, this.evaluate()];
                     case 3:
                         // evaluate the population
-                        _a.sent();
+                        _b.sent();
                         // Sort in order of fitness (fittest first)
                         this.sort();
                         fittest = this.population[0].copy();
@@ -261,8 +272,7 @@ var NEAT = /** @class */ (function () {
         this.populationSize = genomes.length;
     };
     /**
-     * Reporduce the population, by replacing the killed networks
-     * @param killedNetworks
+     * Reproduce the population, by replacing the killed networks
      * @private
      */
     NEAT.prototype.reproduce = function () {
