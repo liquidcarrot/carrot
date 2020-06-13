@@ -78,6 +78,7 @@ var Network = /** @class */ (function () {
         this.connections = new Set();
         this.gates = new Set();
         this.score = undefined;
+        this.species = null;
         // Create input and output nodes
         for (var i = 0; i < inputSize; i++) {
             this.nodes.push(new Node_1.Node(NodeType_1.NodeType.INPUT));
@@ -133,6 +134,7 @@ var Network = /** @class */ (function () {
      */
     Network.crossOver = function (network1, network2, equal) {
         var _a, _b;
+        if (equal === void 0) { equal = false; }
         if (network1.inputSize !== network2.inputSize || network1.outputSize !== network2.outputSize) {
             throw new Error("Networks don`t have the same input/output size!");
         }
@@ -676,7 +678,6 @@ var Network = /** @class */ (function () {
                             options.iterations = 0; // run until error
                         }
                         // set options to default if necessary
-                        options.growth = Utils_1.getOrDefault(options.growth, 0.0001);
                         options.loss = Utils_1.getOrDefault(options.loss, Loss_1.MSELoss);
                         options.maxNodes = Utils_1.getOrDefault(options.maxNodes, Infinity);
                         options.maxConnections = Utils_1.getOrDefault(options.maxConnections, Infinity);
@@ -700,9 +701,8 @@ var Network = /** @class */ (function () {
                                                     // add a task to the workerPool's queue
                                                     workerPool.queue(function (test) { return __awaiter(_this, void 0, void 0, function () {
                                                         var _a;
-                                                        var _b;
-                                                        return __generator(this, function (_c) {
-                                                            switch (_c.label) {
+                                                        return __generator(this, function (_b) {
+                                                            switch (_b.label) {
                                                                 case 0:
                                                                     if (genome === undefined) {
                                                                         throw new ReferenceError();
@@ -712,16 +712,10 @@ var Network = /** @class */ (function () {
                                                                     return [4 /*yield*/, test(serializedDataSet_1, JSON.stringify(genome.toJSON()), lossIndex_1)];
                                                                 case 1:
                                                                     // test the genome
-                                                                    _a.score = -(_c.sent());
+                                                                    _a.score = -(_b.sent());
                                                                     if (!Number.isFinite(genome.score)) {
                                                                         throw new RangeError();
                                                                     }
-                                                                    // subtract growth value
-                                                                    genome.score -= ((_b = options.growth) !== null && _b !== void 0 ? _b : 0.0001) * (genome.nodes.length
-                                                                        - genome.inputSize
-                                                                        - genome.outputSize
-                                                                        + genome.connections.size
-                                                                        + genome.gates.size);
                                                                     return [2 /*return*/];
                                                             }
                                                         });
@@ -751,18 +745,13 @@ var Network = /** @class */ (function () {
                         if (!fittest.score) {
                             throw new ReferenceError();
                         }
-                        // add the growth value back to get the real error
-                        error = fittest.score + options.growth * (fittest.nodes.length
-                            + fittest.connections.size
-                            + fittest.gates.size
-                            - fittest.inputSize
-                            - fittest.outputSize);
+                        error = fittest.score;
                         if (neat.generation === 1 || fittest.score > bestFitness) {
                             bestFitness = fittest.score;
                             bestGenome = fittest;
                         }
                         if (((_c = options.log) !== null && _c !== void 0 ? _c : 0) > 0 && neat.generation % ((_d = options.log) !== null && _d !== void 0 ? _d : 0) === 0) {
-                            console.log("iteration", neat.generation, "fitness", fittest.score, "error", -error);
+                            console.log("iteration", neat.generation, "error", -error);
                         }
                         if (options.schedule && neat.generation % options.schedule.iterations === 0) {
                             options.schedule.function(fittest.score, -error, neat.generation);
@@ -794,6 +783,74 @@ var Network = /** @class */ (function () {
                 }
             });
         });
+    };
+    /**
+     * Distance function
+     * @param g2 other network
+     */
+    Network.prototype.distance = function (g2) {
+        var g1 = this;
+        // set node indices
+        for (var i = 0; i < g1.nodes.length; i++) {
+            g1.nodes[i].index = i;
+        }
+        // set node indices
+        for (var i = 0; i < g2.nodes.length; i++) {
+            g2.nodes[i].index = i;
+        }
+        var indexG1 = 0;
+        var indexG2 = 0;
+        var connections1 = Array.from(g1.connections).filter(function (conn) { return conn !== undefined; });
+        var connections2 = Array.from(g2.connections).filter(function (conn) { return conn !== undefined; });
+        connections1 = connections1.sort(function (a, b) {
+            return a.getInnovationID() - b.getInnovationID();
+        });
+        connections2 = connections2.sort(function (a, b) {
+            return a.getInnovationID() - b.getInnovationID();
+        });
+        var highestInnovationID1 = connections1[connections1.length - 1].getInnovationID();
+        var highestInnovationID2 = connections2[connections2.length - 1].getInnovationID();
+        if (highestInnovationID1 < highestInnovationID2) {
+            var temp = g1;
+            g1 = g2;
+            g2 = temp;
+        }
+        var disjointGenes = 0;
+        var totalWeightDiff = 0;
+        var similarGenes = 0;
+        while (indexG1 < connections1.length && indexG2 < connections2.length) {
+            var gene1 = connections1[indexG1];
+            var gene2 = connections2[indexG2];
+            if (gene1 === undefined || gene2 === undefined) {
+                throw Error("HERE");
+            }
+            var in1 = gene1.getInnovationID();
+            var in2 = gene2.getInnovationID();
+            if (in1 === in2) {
+                // similarGenes
+                indexG1++;
+                indexG2++;
+                totalWeightDiff += Math.abs(gene1.weight - gene2.weight);
+                similarGenes++;
+            }
+            else if (indexG1 > indexG2) {
+                // disjoint of b
+                indexG2++;
+                disjointGenes++;
+            }
+            else {
+                // disjoint of a
+                indexG1++;
+                disjointGenes++;
+            }
+        }
+        totalWeightDiff /= similarGenes;
+        var excessGenes = g1.connections.size - indexG1;
+        var N = Math.max(g1.connections.size, g2.connections.size);
+        if (N < 20) {
+            N = 1;
+        }
+        return NEAT_1.NEAT.C1 * excessGenes / N + NEAT_1.NEAT.C2 * disjointGenes / N + NEAT_1.NEAT.C3 * totalWeightDiff;
     };
     /**
      * Performs one training epoch and returns the error - this is a private function used in `self.train`

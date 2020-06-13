@@ -9,10 +9,15 @@ exports.generateGaussian = exports.avg = exports.sum = exports.min = exports.min
  * @returns the random picked element
  */
 function pickRandom(arr) {
-    if (arr.length === 0) {
-        throw new RangeError("Cannot pick from an empty array");
+    if (Array.isArray(arr)) {
+        if (arr.length === 0) {
+            throw new RangeError("Cannot pick from an empty array");
+        }
+        return arr[randInt(0, arr.length)];
     }
-    return arr[randInt(0, arr.length)];
+    else {
+        return pickRandom(Array.from(arr));
+    }
 }
 exports.pickRandom = pickRandom;
 /**

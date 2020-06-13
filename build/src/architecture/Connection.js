@@ -50,6 +50,12 @@ var Connection = /** @class */ (function () {
             weight: this.weight
         };
     };
+    /**
+     * Get the innovation ID for this connection
+     */
+    Connection.prototype.getInnovationID = function () {
+        return Connection.innovationID(this.from.index, this.to.index);
+    };
     return Connection;
 }());
 exports.Connection = Connection;

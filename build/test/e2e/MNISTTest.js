@@ -39,12 +39,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 // @ts-ignore
 // tslint:disable-next-line:no-any
 var mnist = require("mnist");
-var src_1 = require("activations/build/src");
 var chai_1 = require("chai");
 var Network_1 = require("../../src/architecture/Network");
-var Loss_1 = require("../../src/methods/Loss");
 var Mutation_1 = require("../../src/methods/Mutation");
-describe.skip('MNIST', function () {
+describe('MNIST', function () {
     it("evolve mnist", function () {
         return __awaiter(this, void 0, void 0, function () {
             var set, trainingSet, net, errorBefore, options, errorAfter;
@@ -55,22 +53,19 @@ describe.skip('MNIST', function () {
                         set = mnist.set(2000, 0);
                         trainingSet = set.training;
                         net = new Network_1.Network(trainingSet[0].input.length, trainingSet[0].output.length);
-                        errorBefore = net.test(trainingSet, Loss_1.BinaryLoss);
+                        errorBefore = net.test(trainingSet);
                         options = {
                             dataset: trainingSet,
-                            populationSize: 20,
-                            elitism: 1,
+                            populationSize: 50,
                             mutations: Mutation_1.FEEDFORWARD_MUTATIONS,
-                            activations: [src_1.RELU, src_1.Identitiy],
-                            mutationAmount: 10,
+                            mutationAmount: 2,
                             mutationRate: 0.4,
-                            iterations: 30,
-                            loss: Loss_1.BinaryLoss
+                            iterations: 10,
                         };
                         return [4 /*yield*/, net.evolve(options)];
                     case 1:
                         _a.sent();
-                        errorAfter = net.test(trainingSet, Loss_1.BinaryLoss);
+                        errorAfter = net.test(trainingSet);
                         chai_1.expect(Number.isFinite(errorAfter)).to.be.true;
                         chai_1.expect(errorAfter).to.be.at.most(errorBefore);
                         return [2 /*return*/];
