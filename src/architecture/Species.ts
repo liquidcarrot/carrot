@@ -1,5 +1,5 @@
 import {NEAT} from "../NEAT";
-import {pickRandom} from "../utils/Utils";
+import {maxValueIndex, pickRandom} from "../utils/Utils";
 import {Network} from "./Network";
 
 /**
@@ -20,13 +20,14 @@ export class Species {
      * The member networks in this species
      * @private
      */
-    private readonly members: Set<Network>;
+    readonly members: Set<Network>;
 
-    constructor(represent: Network) {
-        this.representative = represent;
+    constructor(representative: Network) {
+        this.representative = representative;
+        this.representative.species = this;
 
         this.members = new Set<Network>();
-        this.members.add(represent);
+        this.members.add(representative);
 
         this.score = 0;
     }
@@ -36,7 +37,7 @@ export class Species {
      * @param network
      */
     public put(network: Network): boolean {
-        if (network.distance(this.representative) < NEAT.SPECIES_THRESHOLD) {
+        if (network.distance(this.representative) < NEAT.SPECIES_DISTANCE_THRESHOLD) {
             this.forcePut(network);
             return true;
         } else {
@@ -49,7 +50,11 @@ export class Species {
      * @param network
      */
     public forcePut(network: Network): void {
+        if (network === undefined) {
+            return;
+        }
         this.members.add(network);
+        network.species = this;
     }
 
     /**
@@ -66,8 +71,10 @@ export class Species {
      */
     public reset(): void {
         this.representative = pickRandom(this.members);
+        this.members.forEach(genome => genome.species = null);
         this.members.clear();
         this.members.add(this.representative);
+        this.representative.species = this;
         this.score = 0;
     }
 
@@ -75,18 +82,17 @@ export class Species {
      * Kill a specific percantage of networks
      * @param percentage
      */
-    public kill(percentage: number): Network[] {
+    public kill(percentage: number): void {
         const arr: Network[] = Array.from(this.members);
         arr.sort((a: Network, b: Network) => {
             return a.score === undefined || b.score === undefined ? 0 : a.score - b.score;
         });
 
-        const killedGenomes: Network[] = [];
-        for (let i: number = 0; i < percentage * this.members.size; i++) {
-            killedGenomes.push(arr[i]);
+        const amount: number = Math.floor(percentage * this.members.size);
+        for (let i: number = 0; i < amount; i++) {
+            this.members.delete(arr[i]);
+            arr[i].species = null;
         }
-        killedGenomes.forEach(genome => this.members.delete(genome));
-        return killedGenomes;
     }
 
     /**
@@ -101,5 +107,10 @@ export class Species {
      */
     public size(): number {
         return this.members.size;
+    }
+
+    public getBest(): Network {
+        const networks: Network[] = Array.from(this.members);
+        return networks[maxValueIndex(networks.map(genome => genome.score ?? -Infinity))];
     }
 }

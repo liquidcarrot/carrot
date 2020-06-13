@@ -22,7 +22,7 @@ export class NEAT {
     /**
      * How big could the distance be between two networks in a species
      */
-    public static SPECIES_THRESHOLD: number = 4;
+    public static SPECIES_DISTANCE_THRESHOLD: number = 3;
     public static C1: number = 1;
     public static C2: number = 1;
     public static C3: number = 1;
@@ -185,24 +185,20 @@ export class NEAT {
     /**
      * Evaluates, selects, breeds and mutates population
      *
-     * @param {function} [pickGenome] A custom selection function to pick out unwanted genomes. Accepts a network as a parameter and returns true for selection.
-     * @param {function} [adjustGenome=self.template] Accepts a network, modifies it, and returns it. Used to modify unwanted genomes returned by `pickGenome` and reincorporate them into the population. If left unset, unwanted genomes will be replaced with the template Network. Will only run when pickGenome is defined.
-     *
      * @time O(time for fitness function + n * time for adjust genome + n&sup5;)
      * @returns {Network} Fittest network
      */
-    public async evolve(pickGenome?: ((genome: Network) => boolean) | undefined, adjustGenome?: ((genome: Network) => Network) | undefined): Promise<Network> {
+    public async evolve(): Promise<Network> {
         this.genSpecies();
-        await this.evaluate();
+        if (this.population[this.population.length - 1].score === undefined) {
+            await this.evaluate();
+        }
+        this.species.forEach(species => species.evaluateScore());
         this.sort();
 
-        const killedNetworks: Network[] = this.kill(1 - NEAT.SURVIVORS);
+        this.kill(1 - NEAT.SURVIVORS);
         this.removeExtinctSpecies();
-        this.reproduce(killedNetworks);
-        this.mutate();
-
-
-        // Mutate the new population
+        this.reproduce();
         this.mutate();
 
         // evaluate the population
@@ -314,49 +310,60 @@ export class NEAT {
         this.populationSize = genomes.length;
     }
 
-    private reproduce(killedNetworks: Network[]): void {
+    /**
+     * Reporduce the population, by replacing the killed networks
+     * @param killedNetworks
+     * @private
+     */
+    private reproduce(): void {
         const speciesArr: Species[] = Array.from(this.species);
-        for (let i: number = 0; i < killedNetworks.length; i++) {
-            const selectedSpecies: Species = this.selection.select(speciesArr);
-            killedNetworks[i] = selectedSpecies.breed();
-            selectedSpecies.forcePut(killedNetworks[i]);
+        for (let i: number = 0; i < this.population.length; i++) {
+            if (this.population[i].species === null) {
+                const selectedSpecies: Species = this.selection.select(speciesArr);
+                this.population[i] = selectedSpecies.breed();
+                selectedSpecies.forcePut(this.population[i]);
+            }
         }
     }
 
+    /**
+     * Remove empty species
+     * @private
+     */
     private removeExtinctSpecies(): void {
-        this.species.forEach(species => {
+        for (const species of Array.from(this.species)) {
             if (species.size() <= 1) {
+                species.members.forEach(member => member.species = null);
                 this.species.delete(species);
             }
-        });
+        }
     }
 
-    private kill(killRate: number): Network[] {
-        const killedGenomes: Network[] = [];
-        this.species.forEach(species => killedGenomes.push(...species.kill(killRate)));
-        return killedGenomes;
+    /**
+     * Kill bad networks
+     * @param killRate
+     * @private
+     */
+    private kill(killRate: number): void {
+        this.species.forEach(species => species.kill(killRate));
     }
 
+    /**
+     * Generate species
+     * @private
+     */
     private genSpecies(): void {
         this.species.forEach(species => species.reset());
-        this.population.forEach(genome => {
-            let isInSpecies: boolean = false;
-            this.species.forEach(species => {
-                if (species.representative === genome) {
-                    isInSpecies = true;
+        this.population.filter(genome => genome.species === null).forEach(genome => {
+            let found: boolean = false;
+            for (const species of Array.from(this.species)) {
+                if (species.put(genome)) {
+                    found = true;
+                    break;
                 }
-            });
-            if (!isInSpecies) {
-                let found: boolean = false;
-                this.species.forEach(species => {
-                    if (species.put(genome)) {
-                        found = true;
-                        return;
-                    }
-                });
-                if (!found) {
-                    this.species.add(new Species(genome));
-                }
+            }
+            if (!found) {
+                this.species.add(new Species(genome));
             }
         });
     }

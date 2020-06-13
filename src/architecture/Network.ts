@@ -16,6 +16,8 @@ import {NEAT} from "../NEAT";
 import {getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../utils/Utils";
 import {Connection} from "./Connection";
 import {Node} from "./Node";
+import {Species} from "./Species";
+
 
 /**
  * Create a neural network
@@ -25,6 +27,10 @@ import {Node} from "./Node";
  * @constructs Network
  */
 export class Network {
+    /**
+     * Species of this network
+     */
+    public species: Species | null;
     /**
      * The input size of this network.
      */
@@ -58,6 +64,7 @@ export class Network {
         this.connections = new Set<Connection>();
         this.gates = new Set<Connection>();
         this.score = undefined;
+        this.species = null;
 
         // Create input and output nodes
         for (let i: number = 0; i < inputSize; i++) {
@@ -826,7 +833,6 @@ export class Network {
         }
 
         // set options to default if necessary
-        options.growth = getOrDefault<number>(options.growth, 0.0001);
         options.loss = getOrDefault(options.loss, MSELoss);
         options.maxNodes = getOrDefault(options.maxNodes, Infinity);
         options.maxConnections = getOrDefault(options.maxConnections, Infinity);
@@ -862,15 +868,6 @@ export class Network {
                         if (!Number.isFinite(genome.score)) {
                             throw new RangeError();
                         }
-
-                        // subtract growth value
-                        genome.score -= (options.growth ?? 0.0001) * (
-                            genome.nodes.length
-                            - genome.inputSize
-                            - genome.outputSize
-                            + genome.connections.size
-                            + genome.gates.size
-                        );
                     });
                 }
 
@@ -893,14 +890,7 @@ export class Network {
                 throw new ReferenceError();
             }
 
-            // add the growth value back to get the real error
-            error = fittest.score + options.growth * (
-                fittest.nodes.length
-                + fittest.connections.size
-                + fittest.gates.size
-                - fittest.inputSize
-                - fittest.outputSize
-            );
+            error = fittest.score;
 
             if (neat.generation === 1 || fittest.score > bestFitness) {
                 bestFitness = fittest.score;
@@ -908,7 +898,7 @@ export class Network {
             }
 
             if ((options.log ?? 0) > 0 && neat.generation % (options.log ?? 0) === 0) {
-                console.log(`iteration`, neat.generation, `fitness`, fittest.score, `error`, -error);
+                console.log(`iteration`, neat.generation, `error`, -error);
             }
 
             if (options.schedule && neat.generation % options.schedule.iterations === 0) {
