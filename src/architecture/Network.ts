@@ -3,6 +3,7 @@ import os from "os";
 import {spawn, Worker} from "threads";
 import {Pool} from "threads/dist";
 import "threads/register";
+import * as TimSort from "timsort";
 import {NodeType} from "../enums/NodeType";
 import {ConnectionJSON} from "../interfaces/ConnectionJSON";
 import {EvolveOptions} from "../interfaces/EvolveOptions";
@@ -931,14 +932,14 @@ export class Network {
         let indexG1: number = 0;
         let indexG2: number = 0;
 
-        let connections1: Connection[] = Array.from(g1.connections).filter(conn => conn !== undefined);
-        let connections2: Connection[] = Array.from(g2.connections).filter(conn => conn !== undefined);
+        const connections1: Connection[] = Array.from(g1.connections).filter(conn => conn !== undefined);
+        const connections2: Connection[] = Array.from(g2.connections).filter(conn => conn !== undefined);
 
-        connections1 = connections1.sort((a: Connection, b: Connection) => {
+        TimSort.sort(connections1, (a: Connection, b: Connection) => {
             return a.getInnovationID() - b.getInnovationID();
         });
 
-        connections2 = connections2.sort((a: Connection, b: Connection) => {
+        TimSort.sort(connections2, (a: Connection, b: Connection) => {
             return a.getInnovationID() - b.getInnovationID();
         });
 

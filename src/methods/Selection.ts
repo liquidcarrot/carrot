@@ -1,3 +1,4 @@
+import * as TimSort from "timsort";
 import {Species} from "../architecture/Species";
 import {pickRandom, randDouble} from "../utils/Utils";
 
@@ -129,7 +130,7 @@ class TournamentSelection extends Selection {
 
 
         // Sort the tournament individuals by score
-        individuals.sort((a: Species, b: Species) => {
+        TimSort.sort(individuals, (a: Species, b: Species) => {
             return b.score === undefined || a.score === undefined ? 0 : b.score - a.score;
         });
 

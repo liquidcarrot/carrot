@@ -1,5 +1,6 @@
 import {ActivationType} from "activations";
 import {ALL_ACTIVATIONS} from "activations/build/src";
+import * as TimSort from "timsort";
 import {Network} from "./architecture/Network";
 import {Species} from "./architecture/Species";
 import {EvolveOptions} from "./interfaces/EvolveOptions";
@@ -278,7 +279,7 @@ export class NEAT {
      * @todo implement a quicksort algorithm in utils
      */
     public sort(): void {
-        this.population.sort((a: Network, b: Network) => {
+        TimSort.sort(this.population, (a: Network, b: Network) => {
             return a.score === undefined || b.score === undefined ? 0 : b.score - a.score;
         });
     }

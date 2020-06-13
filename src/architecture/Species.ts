@@ -1,3 +1,4 @@
+import * as TimSort from "timsort";
 import {NEAT} from "../NEAT";
 import {maxValueIndex, pickRandom} from "../utils/Utils";
 import {Network} from "./Network";
@@ -20,7 +21,7 @@ export class Species {
      * The member networks in this species
      * @private
      */
-    readonly members: Set<Network>;
+    public readonly members: Set<Network>;
 
     constructor(representative: Network) {
         this.representative = representative;
@@ -84,7 +85,7 @@ export class Species {
      */
     public kill(percentage: number): void {
         const arr: Network[] = Array.from(this.members);
-        arr.sort((a: Network, b: Network) => {
+        TimSort.sort(arr, (a: Network, b: Network) => {
             return a.score === undefined || b.score === undefined ? 0 : a.score - b.score;
         });
 
