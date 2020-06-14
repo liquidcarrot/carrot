@@ -147,1839 +147,18 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 "use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.ALL_LOSSES=exports.HINGELoss=exports.MSLELoss=exports.WAPELoss=exports.MAPELoss=exports.MAELoss=exports.BinaryLoss=exports.MBELoss=exports.MSELoss=void 0;var s=require("../utils/Utils");exports.MSELoss=function(s,o){var t=0;return o.forEach(function(o,r){t+=Math.pow(s[r]-o,2)}),t/o.length},exports.MBELoss=function(s,o){var t=0;return o.forEach(function(o,r){t+=s[r]-o}),t/o.length},exports.BinaryLoss=function(s,o){var t=0;return o.forEach(function(o,r){t+=Math.round(2*s[r])!==Math.round(2*o)?1:0}),t/o.length},exports.MAELoss=function(s,o){var t=0;return o.forEach(function(o,r){t+=Math.abs(s[r]-o)}),t/o.length},exports.MAPELoss=function(s,o){var t=0;return o.forEach(function(o,r){t+=Math.abs((o-s[r])/Math.max(s[r],1e-15))}),t/o.length},exports.WAPELoss=function(o,t){var r=0;return t.forEach(function(s,t){r+=Math.abs(o[t]-s)}),r/s.sum(o)},exports.MSLELoss=function(s,o){var t=0;return o.forEach(function(o,r){t+=Math.log(Math.max(s[r],1e-15))-Math.log(Math.max(o,1e-15))}),t/o.length},exports.HINGELoss=function(s,o){var t=0;return o.forEach(function(o,r){t+=Math.max(0,1-o*s[r])}),t/o.length},exports.ALL_LOSSES={MSELoss:exports.MSELoss,MBELoss:exports.MBELoss,BinaryLoss:exports.BinaryLoss,MAELoss:exports.MAELoss,MAPELoss:exports.MAPELoss,WAPELoss:exports.WAPELoss,MSLELoss:exports.MSLELoss,HINGELoss:exports.HINGELoss};
 },{"../utils/Utils":"../src/utils/Utils.js"}],"../src/methods/Rate.js":[function(require,module,exports) {
 "use strict";var t=this&&this.__extends||function(){var t=function(e,r){return(t=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var r in e)e.hasOwnProperty(r)&&(t[r]=e[r])})(e,r)};return function(e,r){function o(){this.constructor=e}t(e,r),e.prototype=null===r?Object.create(r):(o.prototype=r.prototype,new o)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.InverseRate=exports.ExponentialRate=exports.StepRate=exports.FixedRate=exports.Rate=void 0;var e=function(){return function(t){this.baseRate=t}}();exports.Rate=e;var r=function(e){function r(){return null!==e&&e.apply(this,arguments)||this}return t(r,e),r.prototype.calc=function(t){return this.baseRate},r}(e);exports.FixedRate=r;var o=function(e){function r(t,r,o){void 0===r&&(r=.9),void 0===o&&(o=100);var n=e.call(this,t)||this;return n.gamma=r,n.stepSize=o,n}return t(r,e),r.prototype.calc=function(t){return this.baseRate*Math.pow(this.gamma,Math.floor(t/this.stepSize))},r}(e);exports.StepRate=o;var n=function(e){function r(t,r){void 0===r&&(r=.999);var o=e.call(this,t)||this;return o.gamma=r,o}return t(r,e),r.prototype.calc=function(t){return this.baseRate*Math.pow(this.gamma,t)},r}(e);exports.ExponentialRate=n;var a=function(e){function r(t,r,o){void 0===r&&(r=.001),void 0===o&&(o=2);var n=e.call(this,t)||this;return n.gamma=r,n.power=o,n}return t(r,e),r.prototype.calc=function(t){return this.baseRate*Math.pow(1+this.gamma*t,-this.power)},r}(e);exports.InverseRate=a;
-},{}],"../../node_modules/activations/build/src/index.js":[function(require,module,exports) {
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ALL_ACTIVATIONS = exports.GAUSSIAN = exports.Sinc = exports.Sinusiod = exports.SiLU = exports.BentIdentity = exports.SoftPlus = exports.LeakyRELU = exports.RELU = exports.SoftSign = exports.ArSinH = exports.ArcTan = exports.SQNL = exports.TANH = exports.Logistic = exports.BinaryStep = exports.Identitiy = void 0;
-/**
- * The Identity activation function.
- * @see Identity function {@link https://en.wikipedia.org/wiki/Identity_function}
- * @param x the input value
- * @param derivative calculate the derivative
- */
-const Identitiy = (x, derivative = false) => !derivative ? x : 1;
-exports.Identitiy = Identitiy;
-/**
- * The Binary-Step activation function.
- * @see Binary Step function {@link https://en.wikipedia.org/wiki/Heaviside_step_function}
- * @param x the input value
- * @param derivative calculate the derivative
- */
-const BinaryStep = (x, derivative = false) => {
-    if (!derivative) {
-        return x < 0 ? 0 : 1;
-    }
-    else {
-        return 0;
-    }
-};
-exports.BinaryStep = BinaryStep;
-/**
- * The Logistic activation function.
- * @see Logistic function {@link https://en.wikipedia.org/wiki/Logistic_function}
- * @param x the input value
- * @param derivative calculate the derivative
- */
-const Logistic = (x, derivative = false) => {
-    const negativeEX = Math.exp(-x);
-    if (!derivative) {
-        return 1 / (1 + negativeEX);
-    }
-    else {
-        return 1 / (1 + negativeEX) * (1 - 1 / (1 + negativeEX));
-    }
-};
-exports.Logistic = Logistic;
-/**
- * The TANH activation function.
- * @see TanH function {@link https://en.wikipedia.org/wiki/Hyperbolic_function#Hyperbolic_tangent}
- * @param x the input value
- * @param derivative calculate the derivative
- */
-const TANH = (x, derivative = false) => {
-    if (!derivative) {
-        return Math.tanh(x);
-    }
-    else {
-        return 1 - Math.pow(Math.tanh(x), 2);
-    }
-};
-exports.TANH = TANH;
-/**
- * The SQNL activation function.
- * @see SQNL function {@link https://ieeexplore.ieee.org/document/8489043}
- * @param x the input value
- * @param derivative calculate the derivative
- */
-const SQNL = (x, derivative = false) => {
-    if (!derivative) {
-        if (x > 2) {
-            return 1;
-        }
-        else if (x >= 0) {
-            return x - Math.pow((x / 2), 2);
-        }
-        else if (x >= -2) {
-            return x + Math.pow((x / 2), 2);
-        }
-        else {
-            return -1;
-        }
-    }
-    else {
-        if (x > 2) {
-            return 0;
-        }
-        else if (x >= 0) {
-            return 1 - x / 2;
-        }
-        else if (x >= -2) {
-            return 1 + x / 2;
-        }
-        else {
-            return 0;
-        }
-    }
-};
-exports.SQNL = SQNL;
-/**
- * The ArcTAN activation function.
- * @see ArcTAN function {@link https://en.wikipedia.org/wiki/Inverse_trigonometric_functions}
- * @param x the input value
- * @param derivative calculate the derivative
- */
-const ArcTan = (x, derivative = false) => {
-    if (!derivative) {
-        return Math.atan(x);
-    }
-    else {
-        return 1 / (Math.pow(x, 2) + 1);
-    }
-};
-exports.ArcTan = ArcTan;
-/**
- * The ArSinH activation function.
- * @see ArSinH function {@link https://en.wikipedia.org/wiki/Inverse_hyperbolic_functions#Inverse_hyperbolic_sine}
- * @param x the input value
- * @param derivative calculate the derivative
- */
-const ArSinH = (x, derivative = false) => {
-    if (!derivative) {
-        return Math.asinh(x);
-    }
-    else {
-        return 1 / Math.pow((Math.pow(x, 2) + 1), (1 / 2));
-    }
-};
-exports.ArSinH = ArSinH;
-/**
- * The SoftSign activation function.
- * @see SoftSign function {@link https://sefiks.com/2017/11/10/softsign-as-a-neural-networks-activation-function/}
- * @param x the input value
- * @param derivative calculate the derivative
- */
-const SoftSign = (x, derivative = false) => {
-    if (!derivative) {
-        return x / (1 + Math.abs(x));
-    }
-    else {
-        return 1 / Math.pow((1 + Math.abs(x)), 2);
-    }
-};
-exports.SoftSign = SoftSign;
-/**
- * The RELU activation function.
- * @see RELU function {@link https://en.wikipedia.org/wiki/Rectifier_(neural_networks)}
- * @param x the input value
- * @param derivative calculate the derivative
- */
-const RELU = (x, derivative = false) => {
-    if (!derivative) {
-        return x > 0 ? x : 0;
-    }
-    else {
-        return x > 0 ? 1 : 0;
-    }
-};
-exports.RELU = RELU;
-/**
- * The Leaky RELU activation function.
- * @see Leaky RELU function {@link https://medium.com/@himanshuxd/activation-functions-sigmoid-relu-leaky-relu-and-softmax-basics-for-neural-networks-and-deep-8d9c70eed91e}
- * @param x the input value
- * @param derivative calculate the derivative
- */
-const LeakyRELU = (x, derivative = false) => {
-    if (!derivative) {
-        return x > 0 ? x : 0.01 * x;
-    }
-    else {
-        return x > 0 ? 1 : 0.01;
-    }
-};
-exports.LeakyRELU = LeakyRELU;
-/**
- * The SoftPlus activation function.
- * @see SoftPlus function {@link https://sefiks.com/2017/08/11/softplus-as-a-neural-networks-activation-function/}
- * @param x the input value
- * @param derivative calculate the derivative
- */
-const SoftPlus = (x, derivative = false) => {
-    if (!derivative) {
-        return Math.log(1 + Math.exp(x));
-    }
-    else {
-        return 1 / (1 + Math.exp(-x));
-    }
-};
-exports.SoftPlus = SoftPlus;
-/**
- * The Bent-Identity activation function.
- * @see Bent-Identity function {@link https://en.wikipedia.org/wiki/Activation_function}
- * @param x the input value
- * @param derivative calculate the derivative
- */
-const BentIdentity = (x, derivative = false) => {
-    if (!derivative) {
-        return (Math.pow((Math.pow(x, 2) + 1), (1 / 2)) - 1) / 2 + x;
-    }
-    else {
-        return x / (2 * Math.pow((Math.pow(x, 2) + 1), (1 / 2))) + 1;
-    }
-};
-exports.BentIdentity = BentIdentity;
-/**
- * The SiLU activation function.
- * @see SiLU function {@link https://arxiv.org/pdf/1702.03118.pdf}
- * @param x the input value
- * @param derivative calculate the derivative
- */
-const SiLU = (x, derivative = false) => {
-    const negativeEX = Math.exp(-x);
-    if (!derivative) {
-        return x / (1 + negativeEX);
-    }
-    else {
-        return (1 + negativeEX + x * negativeEX) / Math.pow((1 + negativeEX), 2);
-    }
-};
-exports.SiLU = SiLU;
-/**
- * The Sinusoid activation function.
- * @see Sinusoid function {@link https://en.wikipedia.org/wiki/Sine_wave}
- * @param x the input value
- * @param derivative calculate the derivative
- */
-const Sinusiod = (x, derivative = false) => {
-    if (!derivative) {
-        return Math.sin(x);
-    }
-    else {
-        return Math.cos(x);
-    }
-};
-exports.Sinusiod = Sinusiod;
-/**
- * The Sinc activation function.
- * @see Sinc function {@link https://en.wikipedia.org/wiki/Sinc_function}
- * @param x the input value
- * @param derivative calculate the derivative
- */
-const Sinc = (x, derivative = false) => {
-    if (!derivative) {
-        return x === 0 ? 1 : Math.sin(x) / x;
-    }
-    else {
-        return x === 0 ? 0 : Math.cos(x) / x - Math.sin(x) / Math.pow(x, 2);
-    }
-};
-exports.Sinc = Sinc;
-/**
- * The Gaussian activation function.
- * @see Gaussian function {@link https://en.wikipedia.org/wiki/Gaussian_function}
- * @param x the input value
- * @param derivative calculate the derivative
- */
-const GAUSSIAN = (x, derivative = false) => {
-    if (!derivative) {
-        return 1 / Math.exp(Math.pow(x, 2));
-    }
-    else {
-        return -2 * x * Math.exp(-(Math.pow(x, 2)));
-    }
-};
-exports.GAUSSIAN = GAUSSIAN;
-exports.ALL_ACTIVATIONS = [
-    Identitiy,
-    BinaryStep,
-    Logistic,
-    TANH,
-    SQNL,
-    ArcTan,
-    ArSinH,
-    SoftSign,
-    RELU,
-    LeakyRELU,
-    SoftPlus,
-    BentIdentity,
-    SiLU,
-    Sinusiod,
-    Sinc,
-    GAUSSIAN
-];
-
-},{}],"../../node_modules/timsort/build/timsort.js":[function(require,module,exports) {
-var define;
-var global = arguments[3];
-/****
- * The MIT License
- *
- * Copyright (c) 2015 Marco Ziccardi
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- ****/
-(function (global, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define('timsort', ['exports'], factory);
-  } else if (typeof exports !== 'undefined') {
-    factory(exports);
-  } else {
-    var mod = {
-      exports: {}
-    };
-    factory(mod.exports);
-    global.timsort = mod.exports;
-  }
-})(this, function (exports) {
-  'use strict';
-
-  exports.__esModule = true;
-  exports.sort = sort;
-
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError('Cannot call a class as a function');
-    }
-  }
-
-  var DEFAULT_MIN_MERGE = 32;
-
-  var DEFAULT_MIN_GALLOPING = 7;
-
-  var DEFAULT_TMP_STORAGE_LENGTH = 256;
-
-  var POWERS_OF_TEN = [1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9];
-
-  function log10(x) {
-    if (x < 1e5) {
-      if (x < 1e2) {
-        return x < 1e1 ? 0 : 1;
-      }
-
-      if (x < 1e4) {
-        return x < 1e3 ? 2 : 3;
-      }
-
-      return 4;
-    }
-
-    if (x < 1e7) {
-      return x < 1e6 ? 5 : 6;
-    }
-
-    if (x < 1e9) {
-      return x < 1e8 ? 7 : 8;
-    }
-
-    return 9;
-  }
-
-  function alphabeticalCompare(a, b) {
-    if (a === b) {
-      return 0;
-    }
-
-    if (~ ~a === a && ~ ~b === b) {
-      if (a === 0 || b === 0) {
-        return a < b ? -1 : 1;
-      }
-
-      if (a < 0 || b < 0) {
-        if (b >= 0) {
-          return -1;
-        }
-
-        if (a >= 0) {
-          return 1;
-        }
-
-        a = -a;
-        b = -b;
-      }
-
-      var al = log10(a);
-      var bl = log10(b);
-
-      var t = 0;
-
-      if (al < bl) {
-        a *= POWERS_OF_TEN[bl - al - 1];
-        b /= 10;
-        t = -1;
-      } else if (al > bl) {
-        b *= POWERS_OF_TEN[al - bl - 1];
-        a /= 10;
-        t = 1;
-      }
-
-      if (a === b) {
-        return t;
-      }
-
-      return a < b ? -1 : 1;
-    }
-
-    var aStr = String(a);
-    var bStr = String(b);
-
-    if (aStr === bStr) {
-      return 0;
-    }
-
-    return aStr < bStr ? -1 : 1;
-  }
-
-  function minRunLength(n) {
-    var r = 0;
-
-    while (n >= DEFAULT_MIN_MERGE) {
-      r |= n & 1;
-      n >>= 1;
-    }
-
-    return n + r;
-  }
-
-  function makeAscendingRun(array, lo, hi, compare) {
-    var runHi = lo + 1;
-
-    if (runHi === hi) {
-      return 1;
-    }
-
-    if (compare(array[runHi++], array[lo]) < 0) {
-      while (runHi < hi && compare(array[runHi], array[runHi - 1]) < 0) {
-        runHi++;
-      }
-
-      reverseRun(array, lo, runHi);
-    } else {
-      while (runHi < hi && compare(array[runHi], array[runHi - 1]) >= 0) {
-        runHi++;
-      }
-    }
-
-    return runHi - lo;
-  }
-
-  function reverseRun(array, lo, hi) {
-    hi--;
-
-    while (lo < hi) {
-      var t = array[lo];
-      array[lo++] = array[hi];
-      array[hi--] = t;
-    }
-  }
-
-  function binaryInsertionSort(array, lo, hi, start, compare) {
-    if (start === lo) {
-      start++;
-    }
-
-    for (; start < hi; start++) {
-      var pivot = array[start];
-
-      var left = lo;
-      var right = start;
-
-      while (left < right) {
-        var mid = left + right >>> 1;
-
-        if (compare(pivot, array[mid]) < 0) {
-          right = mid;
-        } else {
-          left = mid + 1;
-        }
-      }
-
-      var n = start - left;
-
-      switch (n) {
-        case 3:
-          array[left + 3] = array[left + 2];
-
-        case 2:
-          array[left + 2] = array[left + 1];
-
-        case 1:
-          array[left + 1] = array[left];
-          break;
-        default:
-          while (n > 0) {
-            array[left + n] = array[left + n - 1];
-            n--;
-          }
-      }
-
-      array[left] = pivot;
-    }
-  }
-
-  function gallopLeft(value, array, start, length, hint, compare) {
-    var lastOffset = 0;
-    var maxOffset = 0;
-    var offset = 1;
-
-    if (compare(value, array[start + hint]) > 0) {
-      maxOffset = length - hint;
-
-      while (offset < maxOffset && compare(value, array[start + hint + offset]) > 0) {
-        lastOffset = offset;
-        offset = (offset << 1) + 1;
-
-        if (offset <= 0) {
-          offset = maxOffset;
-        }
-      }
-
-      if (offset > maxOffset) {
-        offset = maxOffset;
-      }
-
-      lastOffset += hint;
-      offset += hint;
-    } else {
-      maxOffset = hint + 1;
-      while (offset < maxOffset && compare(value, array[start + hint - offset]) <= 0) {
-        lastOffset = offset;
-        offset = (offset << 1) + 1;
-
-        if (offset <= 0) {
-          offset = maxOffset;
-        }
-      }
-      if (offset > maxOffset) {
-        offset = maxOffset;
-      }
-
-      var tmp = lastOffset;
-      lastOffset = hint - offset;
-      offset = hint - tmp;
-    }
-
-    lastOffset++;
-    while (lastOffset < offset) {
-      var m = lastOffset + (offset - lastOffset >>> 1);
-
-      if (compare(value, array[start + m]) > 0) {
-        lastOffset = m + 1;
-      } else {
-        offset = m;
-      }
-    }
-    return offset;
-  }
-
-  function gallopRight(value, array, start, length, hint, compare) {
-    var lastOffset = 0;
-    var maxOffset = 0;
-    var offset = 1;
-
-    if (compare(value, array[start + hint]) < 0) {
-      maxOffset = hint + 1;
-
-      while (offset < maxOffset && compare(value, array[start + hint - offset]) < 0) {
-        lastOffset = offset;
-        offset = (offset << 1) + 1;
-
-        if (offset <= 0) {
-          offset = maxOffset;
-        }
-      }
-
-      if (offset > maxOffset) {
-        offset = maxOffset;
-      }
-
-      var tmp = lastOffset;
-      lastOffset = hint - offset;
-      offset = hint - tmp;
-    } else {
-      maxOffset = length - hint;
-
-      while (offset < maxOffset && compare(value, array[start + hint + offset]) >= 0) {
-        lastOffset = offset;
-        offset = (offset << 1) + 1;
-
-        if (offset <= 0) {
-          offset = maxOffset;
-        }
-      }
-
-      if (offset > maxOffset) {
-        offset = maxOffset;
-      }
-
-      lastOffset += hint;
-      offset += hint;
-    }
-
-    lastOffset++;
-
-    while (lastOffset < offset) {
-      var m = lastOffset + (offset - lastOffset >>> 1);
-
-      if (compare(value, array[start + m]) < 0) {
-        offset = m;
-      } else {
-        lastOffset = m + 1;
-      }
-    }
-
-    return offset;
-  }
-
-  var TimSort = (function () {
-    function TimSort(array, compare) {
-      _classCallCheck(this, TimSort);
-
-      this.array = null;
-      this.compare = null;
-      this.minGallop = DEFAULT_MIN_GALLOPING;
-      this.length = 0;
-      this.tmpStorageLength = DEFAULT_TMP_STORAGE_LENGTH;
-      this.stackLength = 0;
-      this.runStart = null;
-      this.runLength = null;
-      this.stackSize = 0;
-
-      this.array = array;
-      this.compare = compare;
-
-      this.length = array.length;
-
-      if (this.length < 2 * DEFAULT_TMP_STORAGE_LENGTH) {
-        this.tmpStorageLength = this.length >>> 1;
-      }
-
-      this.tmp = new Array(this.tmpStorageLength);
-
-      this.stackLength = this.length < 120 ? 5 : this.length < 1542 ? 10 : this.length < 119151 ? 19 : 40;
-
-      this.runStart = new Array(this.stackLength);
-      this.runLength = new Array(this.stackLength);
-    }
-
-    TimSort.prototype.pushRun = function pushRun(runStart, runLength) {
-      this.runStart[this.stackSize] = runStart;
-      this.runLength[this.stackSize] = runLength;
-      this.stackSize += 1;
-    };
-
-    TimSort.prototype.mergeRuns = function mergeRuns() {
-      while (this.stackSize > 1) {
-        var n = this.stackSize - 2;
-
-        if (n >= 1 && this.runLength[n - 1] <= this.runLength[n] + this.runLength[n + 1] || n >= 2 && this.runLength[n - 2] <= this.runLength[n] + this.runLength[n - 1]) {
-
-          if (this.runLength[n - 1] < this.runLength[n + 1]) {
-            n--;
-          }
-        } else if (this.runLength[n] > this.runLength[n + 1]) {
-          break;
-        }
-        this.mergeAt(n);
-      }
-    };
-
-    TimSort.prototype.forceMergeRuns = function forceMergeRuns() {
-      while (this.stackSize > 1) {
-        var n = this.stackSize - 2;
-
-        if (n > 0 && this.runLength[n - 1] < this.runLength[n + 1]) {
-          n--;
-        }
-
-        this.mergeAt(n);
-      }
-    };
-
-    TimSort.prototype.mergeAt = function mergeAt(i) {
-      var compare = this.compare;
-      var array = this.array;
-
-      var start1 = this.runStart[i];
-      var length1 = this.runLength[i];
-      var start2 = this.runStart[i + 1];
-      var length2 = this.runLength[i + 1];
-
-      this.runLength[i] = length1 + length2;
-
-      if (i === this.stackSize - 3) {
-        this.runStart[i + 1] = this.runStart[i + 2];
-        this.runLength[i + 1] = this.runLength[i + 2];
-      }
-
-      this.stackSize--;
-
-      var k = gallopRight(array[start2], array, start1, length1, 0, compare);
-      start1 += k;
-      length1 -= k;
-
-      if (length1 === 0) {
-        return;
-      }
-
-      length2 = gallopLeft(array[start1 + length1 - 1], array, start2, length2, length2 - 1, compare);
-
-      if (length2 === 0) {
-        return;
-      }
-
-      if (length1 <= length2) {
-        this.mergeLow(start1, length1, start2, length2);
-      } else {
-        this.mergeHigh(start1, length1, start2, length2);
-      }
-    };
-
-    TimSort.prototype.mergeLow = function mergeLow(start1, length1, start2, length2) {
-
-      var compare = this.compare;
-      var array = this.array;
-      var tmp = this.tmp;
-      var i = 0;
-
-      for (i = 0; i < length1; i++) {
-        tmp[i] = array[start1 + i];
-      }
-
-      var cursor1 = 0;
-      var cursor2 = start2;
-      var dest = start1;
-
-      array[dest++] = array[cursor2++];
-
-      if (--length2 === 0) {
-        for (i = 0; i < length1; i++) {
-          array[dest + i] = tmp[cursor1 + i];
-        }
-        return;
-      }
-
-      if (length1 === 1) {
-        for (i = 0; i < length2; i++) {
-          array[dest + i] = array[cursor2 + i];
-        }
-        array[dest + length2] = tmp[cursor1];
-        return;
-      }
-
-      var minGallop = this.minGallop;
-
-      while (true) {
-        var count1 = 0;
-        var count2 = 0;
-        var exit = false;
-
-        do {
-          if (compare(array[cursor2], tmp[cursor1]) < 0) {
-            array[dest++] = array[cursor2++];
-            count2++;
-            count1 = 0;
-
-            if (--length2 === 0) {
-              exit = true;
-              break;
-            }
-          } else {
-            array[dest++] = tmp[cursor1++];
-            count1++;
-            count2 = 0;
-            if (--length1 === 1) {
-              exit = true;
-              break;
-            }
-          }
-        } while ((count1 | count2) < minGallop);
-
-        if (exit) {
-          break;
-        }
-
-        do {
-          count1 = gallopRight(array[cursor2], tmp, cursor1, length1, 0, compare);
-
-          if (count1 !== 0) {
-            for (i = 0; i < count1; i++) {
-              array[dest + i] = tmp[cursor1 + i];
-            }
-
-            dest += count1;
-            cursor1 += count1;
-            length1 -= count1;
-            if (length1 <= 1) {
-              exit = true;
-              break;
-            }
-          }
-
-          array[dest++] = array[cursor2++];
-
-          if (--length2 === 0) {
-            exit = true;
-            break;
-          }
-
-          count2 = gallopLeft(tmp[cursor1], array, cursor2, length2, 0, compare);
-
-          if (count2 !== 0) {
-            for (i = 0; i < count2; i++) {
-              array[dest + i] = array[cursor2 + i];
-            }
-
-            dest += count2;
-            cursor2 += count2;
-            length2 -= count2;
-
-            if (length2 === 0) {
-              exit = true;
-              break;
-            }
-          }
-          array[dest++] = tmp[cursor1++];
-
-          if (--length1 === 1) {
-            exit = true;
-            break;
-          }
-
-          minGallop--;
-        } while (count1 >= DEFAULT_MIN_GALLOPING || count2 >= DEFAULT_MIN_GALLOPING);
-
-        if (exit) {
-          break;
-        }
-
-        if (minGallop < 0) {
-          minGallop = 0;
-        }
-
-        minGallop += 2;
-      }
-
-      this.minGallop = minGallop;
-
-      if (minGallop < 1) {
-        this.minGallop = 1;
-      }
-
-      if (length1 === 1) {
-        for (i = 0; i < length2; i++) {
-          array[dest + i] = array[cursor2 + i];
-        }
-        array[dest + length2] = tmp[cursor1];
-      } else if (length1 === 0) {
-        throw new Error('mergeLow preconditions were not respected');
-      } else {
-        for (i = 0; i < length1; i++) {
-          array[dest + i] = tmp[cursor1 + i];
-        }
-      }
-    };
-
-    TimSort.prototype.mergeHigh = function mergeHigh(start1, length1, start2, length2) {
-      var compare = this.compare;
-      var array = this.array;
-      var tmp = this.tmp;
-      var i = 0;
-
-      for (i = 0; i < length2; i++) {
-        tmp[i] = array[start2 + i];
-      }
-
-      var cursor1 = start1 + length1 - 1;
-      var cursor2 = length2 - 1;
-      var dest = start2 + length2 - 1;
-      var customCursor = 0;
-      var customDest = 0;
-
-      array[dest--] = array[cursor1--];
-
-      if (--length1 === 0) {
-        customCursor = dest - (length2 - 1);
-
-        for (i = 0; i < length2; i++) {
-          array[customCursor + i] = tmp[i];
-        }
-
-        return;
-      }
-
-      if (length2 === 1) {
-        dest -= length1;
-        cursor1 -= length1;
-        customDest = dest + 1;
-        customCursor = cursor1 + 1;
-
-        for (i = length1 - 1; i >= 0; i--) {
-          array[customDest + i] = array[customCursor + i];
-        }
-
-        array[dest] = tmp[cursor2];
-        return;
-      }
-
-      var minGallop = this.minGallop;
-
-      while (true) {
-        var count1 = 0;
-        var count2 = 0;
-        var exit = false;
-
-        do {
-          if (compare(tmp[cursor2], array[cursor1]) < 0) {
-            array[dest--] = array[cursor1--];
-            count1++;
-            count2 = 0;
-            if (--length1 === 0) {
-              exit = true;
-              break;
-            }
-          } else {
-            array[dest--] = tmp[cursor2--];
-            count2++;
-            count1 = 0;
-            if (--length2 === 1) {
-              exit = true;
-              break;
-            }
-          }
-        } while ((count1 | count2) < minGallop);
-
-        if (exit) {
-          break;
-        }
-
-        do {
-          count1 = length1 - gallopRight(tmp[cursor2], array, start1, length1, length1 - 1, compare);
-
-          if (count1 !== 0) {
-            dest -= count1;
-            cursor1 -= count1;
-            length1 -= count1;
-            customDest = dest + 1;
-            customCursor = cursor1 + 1;
-
-            for (i = count1 - 1; i >= 0; i--) {
-              array[customDest + i] = array[customCursor + i];
-            }
-
-            if (length1 === 0) {
-              exit = true;
-              break;
-            }
-          }
-
-          array[dest--] = tmp[cursor2--];
-
-          if (--length2 === 1) {
-            exit = true;
-            break;
-          }
-
-          count2 = length2 - gallopLeft(array[cursor1], tmp, 0, length2, length2 - 1, compare);
-
-          if (count2 !== 0) {
-            dest -= count2;
-            cursor2 -= count2;
-            length2 -= count2;
-            customDest = dest + 1;
-            customCursor = cursor2 + 1;
-
-            for (i = 0; i < count2; i++) {
-              array[customDest + i] = tmp[customCursor + i];
-            }
-
-            if (length2 <= 1) {
-              exit = true;
-              break;
-            }
-          }
-
-          array[dest--] = array[cursor1--];
-
-          if (--length1 === 0) {
-            exit = true;
-            break;
-          }
-
-          minGallop--;
-        } while (count1 >= DEFAULT_MIN_GALLOPING || count2 >= DEFAULT_MIN_GALLOPING);
-
-        if (exit) {
-          break;
-        }
-
-        if (minGallop < 0) {
-          minGallop = 0;
-        }
-
-        minGallop += 2;
-      }
-
-      this.minGallop = minGallop;
-
-      if (minGallop < 1) {
-        this.minGallop = 1;
-      }
-
-      if (length2 === 1) {
-        dest -= length1;
-        cursor1 -= length1;
-        customDest = dest + 1;
-        customCursor = cursor1 + 1;
-
-        for (i = length1 - 1; i >= 0; i--) {
-          array[customDest + i] = array[customCursor + i];
-        }
-
-        array[dest] = tmp[cursor2];
-      } else if (length2 === 0) {
-        throw new Error('mergeHigh preconditions were not respected');
-      } else {
-        customCursor = dest - (length2 - 1);
-        for (i = 0; i < length2; i++) {
-          array[customCursor + i] = tmp[i];
-        }
-      }
-    };
-
-    return TimSort;
-  })();
-
-  function sort(array, compare, lo, hi) {
-    if (!Array.isArray(array)) {
-      throw new TypeError('Can only sort arrays');
-    }
-
-    if (!compare) {
-      compare = alphabeticalCompare;
-    } else if (typeof compare !== 'function') {
-      hi = lo;
-      lo = compare;
-      compare = alphabeticalCompare;
-    }
-
-    if (!lo) {
-      lo = 0;
-    }
-    if (!hi) {
-      hi = array.length;
-    }
-
-    var remaining = hi - lo;
-
-    if (remaining < 2) {
-      return;
-    }
-
-    var runLength = 0;
-
-    if (remaining < DEFAULT_MIN_MERGE) {
-      runLength = makeAscendingRun(array, lo, hi, compare);
-      binaryInsertionSort(array, lo, hi, lo + runLength, compare);
-      return;
-    }
-
-    var ts = new TimSort(array, compare);
-
-    var minRun = minRunLength(remaining);
-
-    do {
-      runLength = makeAscendingRun(array, lo, hi, compare);
-      if (runLength < minRun) {
-        var force = remaining;
-        if (force > minRun) {
-          force = minRun;
-        }
-
-        binaryInsertionSort(array, lo, lo + force, lo + runLength, compare);
-        runLength = force;
-      }
-
-      ts.pushRun(lo, runLength);
-      ts.mergeRuns();
-
-      remaining -= runLength;
-      lo += runLength;
-    } while (remaining !== 0);
-
-    ts.forceMergeRuns();
-  }
-});
-
-},{}],"../../node_modules/timsort/index.js":[function(require,module,exports) {
-module.exports = require('./build/timsort.js');
-},{"./build/timsort.js":"../../node_modules/timsort/build/timsort.js"}],"../src/architecture/Species.js":[function(require,module,exports) {
-"use strict";var e=this&&this.__createBinding||(Object.create?function(e,t,r,i){void 0===i&&(i=r),Object.defineProperty(e,i,{enumerable:!0,get:function(){return t[r]}})}:function(e,t,r,i){void 0===i&&(i=r),e[i]=t[r]}),t=this&&this.__setModuleDefault||(Object.create?function(e,t){Object.defineProperty(e,"default",{enumerable:!0,value:t})}:function(e,t){e.default=t}),r=this&&this.__importStar||function(r){if(r&&r.__esModule)return r;var i={};if(null!=r)for(var s in r)Object.hasOwnProperty.call(r,s)&&e(i,r,s);return t(i,r),i};Object.defineProperty(exports,"__esModule",{value:!0}),exports.Species=void 0;var i=r(require("timsort")),s=require("../NEAT"),o=require("../utils/Utils"),n=require("./Network"),c=function(){function e(e){this.representative=e,this.representative.species=this,this.members=new Set,this.members.add(e),this.score=0}return e.prototype.put=function(e){return e.distance(this.representative)<s.NEAT.SPECIES_DISTANCE_THRESHOLD&&(this.forcePut(e),!0)},e.prototype.forcePut=function(e){void 0!==e&&(this.members.add(e),e.species=this)},e.prototype.evaluateScore=function(){var e=0;this.members.forEach(function(t){var r;return e+=null!==(r=t.score)&&void 0!==r?r:0}),this.score=e/this.members.size},e.prototype.reset=function(){this.representative=o.pickRandom(this.members),this.members.forEach(function(e){return e.species=null}),this.members.clear(),this.members.add(this.representative),this.representative.species=this,this.score=0},e.prototype.kill=function(e){var t=Array.from(this.members);i.sort(t,function(e,t){return void 0===e.score||void 0===t.score?0:e.score-t.score});for(var r=Math.floor(e*this.members.size),s=0;s<r;s++)this.members.delete(t[s]),t[s].species=null},e.prototype.breed=function(){return n.Network.crossOver(o.pickRandom(this.members),o.pickRandom(this.members))},e.prototype.size=function(){return this.members.size},e.prototype.getBest=function(){var e=Array.from(this.members);return e[o.maxValueIndex(e.map(function(e){var t;return null!==(t=e.score)&&void 0!==t?t:-1/0}))]},e}();exports.Species=c;
+},{}],"../src/architecture/Species.js":[function(require,module,exports) {
+"use strict";var e=this&&this.__createBinding||(Object.create?function(e,t,r,i){void 0===i&&(i=r),Object.defineProperty(e,i,{enumerable:!0,get:function(){return t[r]}})}:function(e,t,r,i){void 0===i&&(i=r),e[i]=t[r]}),t=this&&this.__setModuleDefault||(Object.create?function(e,t){Object.defineProperty(e,"default",{enumerable:!0,value:t})}:function(e,t){e.default=t}),r=this&&this.__importStar||function(r){if(r&&r.__esModule)return r;var i={};if(null!=r)for(var s in r)"default"!==s&&Object.hasOwnProperty.call(r,s)&&e(i,r,s);return t(i,r),i};Object.defineProperty(exports,"__esModule",{value:!0}),exports.Species=void 0;var i=r(require("timsort")),s=require("../NEAT"),o=require("../utils/Utils"),n=require("./Network"),u=function(){function e(e){this.representative=e,this.representative.species=this,this.members=new Set,this.members.add(e),this.score=0}return e.prototype.put=function(e){return e.distance(this.representative)<s.NEAT.SPECIES_DISTANCE_THRESHOLD&&(this.forcePut(e),!0)},e.prototype.forcePut=function(e){void 0!==e&&(this.members.add(e),e.species=this)},e.prototype.evaluateScore=function(){var e=0;this.members.forEach(function(t){var r;return e+=null!==(r=t.score)&&void 0!==r?r:0}),this.score=e/this.members.size},e.prototype.reset=function(){this.representative=o.pickRandom(this.members),this.members.forEach(function(e){return e.species=null}),this.members.clear(),this.members.add(this.representative),this.representative.species=this,this.score=0},e.prototype.kill=function(e){var t=Array.from(this.members);i.sort(t,function(e,t){return void 0===e.score||void 0===t.score?0:e.score-t.score});for(var r=Math.floor(e*this.members.size),s=0;s<r;s++)this.members.delete(t[s]),t[s].species=null},e.prototype.breed=function(){return n.Network.crossOver(o.pickRandom(this.members),o.pickRandom(this.members))},e.prototype.size=function(){return this.members.size},e.prototype.getBest=function(){var e=Array.from(this.members);return e[o.maxValueIndex(e.map(function(e){var t;return null!==(t=e.score)&&void 0!==t?t:-1/0}))]},e}();exports.Species=u;
 },{"../NEAT":"../src/NEAT.js","../utils/Utils":"../src/utils/Utils.js","./Network":"../src/architecture/Network.js"}],"../src/methods/Selection.js":[function(require,module,exports) {
-"use strict";var t=this&&this.__extends||function(){var t=function(e,r){return(t=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var r in e)e.hasOwnProperty(r)&&(t[r]=e[r])})(e,r)};return function(e,r){function o(){this.constructor=e}t(e,r),e.prototype=null===r?Object.create(r):(o.prototype=r.prototype,new o)}}(),e=this&&this.__createBinding||(Object.create?function(t,e,r,o){void 0===o&&(o=r),Object.defineProperty(t,o,{enumerable:!0,get:function(){return e[r]}})}:function(t,e,r,o){void 0===o&&(o=r),t[o]=e[r]}),r=this&&this.__setModuleDefault||(Object.create?function(t,e){Object.defineProperty(t,"default",{enumerable:!0,value:e})}:function(t,e){t.default=e}),o=this&&this.__importStar||function(t){if(t&&t.__esModule)return t;var o={};if(null!=t)for(var n in t)Object.hasOwnProperty.call(t,n)&&e(o,t,n);return r(o,t),o};Object.defineProperty(exports,"__esModule",{value:!0}),exports.TournamentSelection=exports.PowerSelection=exports.FitnessProportionateSelection=exports.Selection=void 0;var n=o(require("timsort")),i=require("../utils/Utils"),s=function(){return function(){}}();exports.Selection=s;var u=function(e){function r(){return null!==e&&e.apply(this,arguments)||this}return t(r,e),r.prototype.select=function(t){for(var e,r,o,n=0,s=0,u=0,c=t;u<c.length;u++){var a=c[u];s=Math.min(null!==(e=a.score)&&void 0!==e?e:s,s),n+=null!==(r=a.score)&&void 0!==r?r:0}n+=(s=Math.abs(s))*t.length;for(var l=i.randDouble(0,n),p=0,f=0,h=t;f<h.length;f++){if(l<(p+=(null!==(o=(a=h[f]).score)&&void 0!==o?o:0)+s))return a}return i.pickRandom(t)},r}(s);exports.FitnessProportionateSelection=u;var c=function(e){function r(t){void 0===t&&(t=4);var r=e.call(this)||this;return r.power=t,r}return t(r,e),r.prototype.select=function(t){return t[Math.floor(Math.pow(Math.random(),this.power)*t.length)]},r}(s);exports.PowerSelection=c;var a=function(e){function r(t,r){void 0===t&&(t=5),void 0===r&&(r=.5);var o=e.call(this)||this;return o.size=t,o.probability=r,o}return t(r,e),r.prototype.select=function(t){if(this.size>t.length)throw new Error("Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size");for(var e=[],r=0;r<this.size;r++)e.push(i.pickRandom(t));n.sort(e,function(t,e){return void 0===e.score||void 0===t.score?0:e.score-t.score});for(r=0;r<this.size;r++)if(Math.random()<this.probability||r===this.size-1)return e[r];return i.pickRandom(t)},r}(s);exports.TournamentSelection=a;
+"use strict";var t=this&&this.__extends||function(){var t=function(e,r){return(t=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var r in e)e.hasOwnProperty(r)&&(t[r]=e[r])})(e,r)};return function(e,r){function o(){this.constructor=e}t(e,r),e.prototype=null===r?Object.create(r):(o.prototype=r.prototype,new o)}}(),e=this&&this.__createBinding||(Object.create?function(t,e,r,o){void 0===o&&(o=r),Object.defineProperty(t,o,{enumerable:!0,get:function(){return e[r]}})}:function(t,e,r,o){void 0===o&&(o=r),t[o]=e[r]}),r=this&&this.__setModuleDefault||(Object.create?function(t,e){Object.defineProperty(t,"default",{enumerable:!0,value:e})}:function(t,e){t.default=e}),o=this&&this.__importStar||function(t){if(t&&t.__esModule)return t;var o={};if(null!=t)for(var n in t)"default"!==n&&Object.hasOwnProperty.call(t,n)&&e(o,t,n);return r(o,t),o};Object.defineProperty(exports,"__esModule",{value:!0}),exports.TournamentSelection=exports.PowerSelection=exports.FitnessProportionateSelection=exports.Selection=void 0;var n=o(require("timsort")),i=require("../utils/Utils"),s=function(){return function(){}}();exports.Selection=s;var u=function(e){function r(){return null!==e&&e.apply(this,arguments)||this}return t(r,e),r.prototype.select=function(t){for(var e,r,o,n=0,s=0,u=0,c=t;u<c.length;u++){var a=c[u];s=Math.min(null!==(e=a.score)&&void 0!==e?e:s,s),n+=null!==(r=a.score)&&void 0!==r?r:0}n+=(s=Math.abs(s))*t.length;for(var l=i.randDouble(0,n),p=0,f=0,h=t;f<h.length;f++){if(l<(p+=(null!==(o=(a=h[f]).score)&&void 0!==o?o:0)+s))return a}return i.pickRandom(t)},r}(s);exports.FitnessProportionateSelection=u;var c=function(e){function r(t){void 0===t&&(t=4);var r=e.call(this)||this;return r.power=t,r}return t(r,e),r.prototype.select=function(t){return t[Math.floor(Math.pow(Math.random(),this.power)*t.length)]},r}(s);exports.PowerSelection=c;var a=function(e){function r(t,r){void 0===t&&(t=5),void 0===r&&(r=.5);var o=e.call(this)||this;return o.size=t,o.probability=r,o}return t(r,e),r.prototype.select=function(t){if(this.size>t.length)throw new Error("Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size");for(var e=[],r=0;r<this.size;r++)e.push(i.pickRandom(t));n.sort(e,function(t,e){return void 0===e.score||void 0===t.score?0:e.score-t.score});for(r=0;r<this.size;r++)if(Math.random()<this.probability||r===this.size-1)return e[r];return i.pickRandom(t)},r}(s);exports.TournamentSelection=a;
 },{"../utils/Utils":"../src/utils/Utils.js"}],"../src/NEAT.js":[function(require,module,exports) {
-"use strict";
-
-var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
-  if (k2 === undefined) k2 = k;
-  Object.defineProperty(o, k2, {
-    enumerable: true,
-    get: function get() {
-      return m[k];
-    }
-  });
-} : function (o, m, k, k2) {
-  if (k2 === undefined) k2 = k;
-  o[k2] = m[k];
-});
-
-var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
-  Object.defineProperty(o, "default", {
-    enumerable: true,
-    value: v
-  });
-} : function (o, v) {
-  o["default"] = v;
-});
-
-var __importStar = this && this.__importStar || function (mod) {
-  if (mod && mod.__esModule) return mod;
-  var result = {};
-  if (mod != null) for (var k in mod) {
-    if (Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-  }
-
-  __setModuleDefault(result, mod);
-
-  return result;
-};
-
-var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
-  function adopt(value) {
-    return value instanceof P ? value : new P(function (resolve) {
-      resolve(value);
-    });
-  }
-
-  return new (P || (P = Promise))(function (resolve, reject) {
-    function fulfilled(value) {
-      try {
-        step(generator.next(value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function rejected(value) {
-      try {
-        step(generator["throw"](value));
-      } catch (e) {
-        reject(e);
-      }
-    }
-
-    function step(result) {
-      result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected);
-    }
-
-    step((generator = generator.apply(thisArg, _arguments || [])).next());
-  });
-};
-
-var __generator = this && this.__generator || function (thisArg, body) {
-  var _ = {
-    label: 0,
-    sent: function sent() {
-      if (t[0] & 1) throw t[1];
-      return t[1];
-    },
-    trys: [],
-    ops: []
-  },
-      f,
-      y,
-      t,
-      g;
-  return g = {
-    next: verb(0),
-    "throw": verb(1),
-    "return": verb(2)
-  }, typeof Symbol === "function" && (g[Symbol.iterator] = function () {
-    return this;
-  }), g;
-
-  function verb(n) {
-    return function (v) {
-      return step([n, v]);
-    };
-  }
-
-  function step(op) {
-    if (f) throw new TypeError("Generator is already executing.");
-
-    while (_) {
-      try {
-        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-        if (y = 0, t) op = [op[0] & 2, t.value];
-
-        switch (op[0]) {
-          case 0:
-          case 1:
-            t = op;
-            break;
-
-          case 4:
-            _.label++;
-            return {
-              value: op[1],
-              done: false
-            };
-
-          case 5:
-            _.label++;
-            y = op[1];
-            op = [0];
-            continue;
-
-          case 7:
-            op = _.ops.pop();
-
-            _.trys.pop();
-
-            continue;
-
-          default:
-            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-              _ = 0;
-              continue;
-            }
-
-            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-              _.label = op[1];
-              break;
-            }
-
-            if (op[0] === 6 && _.label < t[1]) {
-              _.label = t[1];
-              t = op;
-              break;
-            }
-
-            if (t && _.label < t[2]) {
-              _.label = t[2];
-
-              _.ops.push(op);
-
-              break;
-            }
-
-            if (t[2]) _.ops.pop();
-
-            _.trys.pop();
-
-            continue;
-        }
-
-        op = body.call(thisArg, _);
-      } catch (e) {
-        op = [6, e];
-        y = 0;
-      } finally {
-        f = t = 0;
-      }
-    }
-
-    if (op[0] & 5) throw op[1];
-    return {
-      value: op[0] ? op[1] : void 0,
-      done: true
-    };
-  }
-};
-
-var __spreadArrays = this && this.__spreadArrays || function () {
-  for (var s = 0, i = 0, il = arguments.length; i < il; i++) {
-    s += arguments[i].length;
-  }
-
-  for (var r = Array(s), k = 0, i = 0; i < il; i++) {
-    for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) {
-      r[k] = a[j];
-    }
-  }
-
-  return r;
-};
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.NEAT = void 0;
-
-var src_1 = require("activations/build/src");
-
-var TimSort = __importStar(require("timsort"));
-
-var Network_1 = require("./architecture/Network");
-
-var Species_1 = require("./architecture/Species");
-
-var Mutation_1 = require("./methods/Mutation");
-
-var Selection_1 = require("./methods/Selection");
-
-var Utils_1 = require("./utils/Utils");
-/**
- * Runs the NEAT algorithm on group of neural networks.
- *
- * @constructs Neat
- */
-
-
-var NEAT =
-/** @class */
-function () {
-  /**
-   * Constructs a NEAT object.
-   *
-   * @param options
-   */
-  function NEAT(options) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s;
-
-    if (!options.fitnessFunction) {
-      throw new ReferenceError("No fitness function given!");
-    }
-
-    this.dataset = options.dataset;
-
-    if (options.dataset && options.dataset.length > 0) {
-      this.input = options.dataset[0].input.length;
-      this.output = options.dataset[0].output.length;
-      this.trainOptions = (_a = options.training) !== null && _a !== void 0 ? _a : null;
-    } else {
-      this.trainOptions = null;
-      this.input = (_b = options.input) !== null && _b !== void 0 ? _b : 0;
-      this.output = (_c = options.output) !== null && _c !== void 0 ? _c : 0;
-    }
-
-    this.generation = (_d = options.generation) !== null && _d !== void 0 ? _d : 0;
-    this.elitism = (_e = options.elitism) !== null && _e !== void 0 ? _e : 1;
-    this.equal = (_f = options.equal) !== null && _f !== void 0 ? _f : true;
-    this.clear = (_g = options.clear) !== null && _g !== void 0 ? _g : false;
-    this.populationSize = (_h = options.populationSize) !== null && _h !== void 0 ? _h : 50;
-    this.mutationRate = (_j = options.mutationRate) !== null && _j !== void 0 ? _j : 0.6;
-    this.mutationAmount = (_k = options.mutationAmount) !== null && _k !== void 0 ? _k : 5;
-    this.fitnessFunction = options.fitnessFunction;
-    this.selection = (_l = options.selection) !== null && _l !== void 0 ? _l : new Selection_1.FitnessProportionateSelection();
-    this.mutations = (_m = options.mutations) !== null && _m !== void 0 ? _m : Mutation_1.FEEDFORWARD_MUTATIONS;
-    this.activations = (_o = options.activations) !== null && _o !== void 0 ? _o : Object.values(src_1.ALL_ACTIVATIONS);
-    this.template = (_p = options.template) !== null && _p !== void 0 ? _p : new Network_1.Network(this.input, this.output);
-    this.maxNodes = (_q = options.maxNodes) !== null && _q !== void 0 ? _q : Infinity;
-    this.maxConnections = (_r = options.maxConnections) !== null && _r !== void 0 ? _r : Infinity;
-    this.maxGates = (_s = options.maxGates) !== null && _s !== void 0 ? _s : Infinity;
-    this.population = [];
-    this.species = new Set();
-
-    for (var i = 0; i < this.populationSize; i++) {
-      this.population.push(this.template.copy());
-    }
-  }
-  /**
-   * Mutate a network with a random mutation from the allowed array.
-   *
-   * @param network The network which will be mutated.
-   */
-
-
-  NEAT.prototype.mutateRandom = function (network) {
-    var _this = this;
-
-    var allowed = this.mutations.filter(function (method) {
-      return method.constructor.name !== Mutation_1.AddNodeMutation.constructor.name || network.nodes.length < _this.maxNodes || method.constructor.name !== Mutation_1.AddConnectionMutation.constructor.name || network.connections.size < _this.maxConnections || method.constructor.name !== Mutation_1.AddGateMutation.constructor.name || network.gates.size < _this.maxGates;
-    });
-    network.mutate(Utils_1.pickRandom(allowed), {
-      allowedActivations: this.activations
-    });
-  };
-  /**
-   * Evaluates, selects, breeds and mutates population
-   *
-   * @returns {Network} Fittest network
-   */
-
-
-  NEAT.prototype.evolve = function () {
-    return __awaiter(this, void 0, void 0, function () {
-      var elitists, _i, _a, genome, fittest;
-
-      var _b;
-
-      return __generator(this, function (_c) {
-        switch (_c.label) {
-          case 0:
-            this.genSpecies();
-            if (!(this.population[this.population.length - 1].score === undefined)) return [3
-            /*break*/
-            , 2];
-            return [4
-            /*yield*/
-            , this.evaluate()];
-
-          case 1:
-            _c.sent();
-
-            this.sort();
-            _c.label = 2;
-
-          case 2:
-            this.species.forEach(function (species) {
-              return species.evaluateScore();
-            });
-            this.kill(1 - NEAT.SURVIVORS);
-            this.removeExtinctSpecies();
-            this.reproduce();
-            elitists = this.population.splice(0, this.elitism);
-            this.mutate();
-
-            (_b = this.population).splice.apply(_b, __spreadArrays([0, 0], elitists));
-
-            if (this.trainOptions !== null) {
-              for (_i = 0, _a = this.population; _i < _a.length; _i++) {
-                genome = _a[_i];
-                genome.train(this.trainOptions);
-              }
-            } // evaluate the population
-
-
-            return [4
-            /*yield*/
-            , this.evaluate()];
-
-          case 3:
-            // evaluate the population
-            _c.sent(); // Sort in order of fitness (fittest first)
-
-
-            this.sort();
-            fittest = this.population[0].copy();
-            fittest.score = this.population[0].score; // Reset the scores
-
-            this.population.forEach(function (genome) {
-              return genome.score = undefined;
-            });
-            this.generation++;
-            return [2
-            /*return*/
-            , fittest];
-        }
-      });
-    });
-  };
-  /**
-   * Mutates the given (or current) population
-   *
-   * @param {Mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
-   */
-
-
-  NEAT.prototype.mutate = function (method) {
-    var _this = this; // Elitist genomes should not be included
-
-
-    this.population.filter(function () {
-      return Math.random() <= _this.mutationRate;
-    }).forEach(function (genome) {
-      for (var i = 0; i < _this.mutationAmount; i++) {
-        if (method) {
-          genome.mutate(method);
-        } else {
-          _this.mutateRandom(genome);
-        }
-      }
-    });
-  };
-  /**
-   * Evaluates the current population, basically sets their `.score` property
-   *
-   * @return {Network} Fittest Network
-   */
-
-
-  NEAT.prototype.evaluate = function () {
-    return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            if (this.clear) {
-              this.population.forEach(function (genome) {
-                return genome.clear();
-              });
-            }
-
-            return [4
-            /*yield*/
-            , this.fitnessFunction(this.population, this.dataset)];
-
-          case 1:
-            _a.sent(); // Sort the population in order of fitness
-
-
-            this.sort();
-            return [2
-            /*return*/
-            , this.population[0]];
-        }
-      });
-    });
-  };
-  /**
-   * Sorts the population by score (descending)
-   * @todo implement a quicksort algorithm in utils
-   */
-
-
-  NEAT.prototype.sort = function () {
-    TimSort.sort(this.population, function (a, b) {
-      return a.score === undefined || b.score === undefined ? 0 : b.score - a.score;
-    });
-  };
-  /**
-   * Returns the fittest genome of the current population
-   *
-   * @returns {Network} Current population's fittest genome
-   */
-
-
-  NEAT.prototype.getFittest = function () {
-    return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            if (!(this.population[this.population.length - 1].score === undefined)) return [3
-            /*break*/
-            , 2];
-            return [4
-            /*yield*/
-            , this.evaluate()];
-
-          case 1:
-            _a.sent();
-
-            _a.label = 2;
-
-          case 2:
-            this.sort();
-            return [2
-            /*return*/
-            , this.population[0]];
-        }
-      });
-    });
-  };
-  /**
-   * Returns the average fitness of the current population
-   *
-   * @returns {number} Average fitness of the current population
-   */
-
-
-  NEAT.prototype.getAverage = function () {
-    return __awaiter(this, void 0, void 0, function () {
-      var score;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            if (!(this.population[this.population.length - 1].score === undefined)) return [3
-            /*break*/
-            , 2];
-            return [4
-            /*yield*/
-            , this.evaluate()];
-
-          case 1:
-            _a.sent();
-
-            _a.label = 2;
-
-          case 2:
-            score = 0;
-            this.population.map(function (genome) {
-              return genome.score;
-            }).forEach(function (val) {
-              return score += val !== null && val !== void 0 ? val : 0;
-            });
-            return [2
-            /*return*/
-            , score / this.population.length];
-        }
-      });
-    });
-  };
-  /**
-   * Replace the whole population with the new genomes
-   * @param genomes the genomes which replace the population
-   */
-
-
-  NEAT.prototype.replacePopulation = function (genomes) {
-    this.population = genomes;
-    this.populationSize = genomes.length;
-  };
-  /**
-   * Reproduce the population, by replacing the killed networks
-   * @private
-   */
-
-
-  NEAT.prototype.reproduce = function () {
-    var speciesArr = Array.from(this.species);
-
-    for (var i = 0; i < this.population.length; i++) {
-      if (this.population[i].species === null) {
-        var selectedSpecies = this.selection.select(speciesArr);
-        this.population[i] = selectedSpecies.breed();
-        selectedSpecies.forcePut(this.population[i]);
-      }
-    }
-  };
-  /**
-   * Remove empty species
-   * @private
-   */
-
-
-  NEAT.prototype.removeExtinctSpecies = function () {
-    for (var _i = 0, _a = Array.from(this.species); _i < _a.length; _i++) {
-      var species = _a[_i];
-
-      if (species.size() <= 1) {
-        species.members.forEach(function (member) {
-          return member.species = null;
-        });
-        this.species.delete(species);
-      }
-    }
-  };
-  /**
-   * Kill bad networks
-   * @param killRate
-   * @private
-   */
-
-
-  NEAT.prototype.kill = function (killRate) {
-    this.species.forEach(function (species) {
-      return species.kill(killRate);
-    });
-  };
-  /**
-   * Generate species
-   * @private
-   */
-
-
-  NEAT.prototype.genSpecies = function () {
-    var _this = this;
-
-    this.species.forEach(function (species) {
-      return species.reset();
-    });
-    this.population.filter(function (genome) {
-      return genome.species === null;
-    }).forEach(function (genome) {
-      var found = false;
-
-      for (var _i = 0, _a = Array.from(_this.species); _i < _a.length; _i++) {
-        var species = _a[_i];
-
-        if (species.put(genome)) {
-          found = true;
-          break;
-        }
-      }
-
-      if (!found) {
-        _this.species.add(new Species_1.Species(genome));
-      }
-    });
-  };
-  /**
-   * How big could the distance be between two networks in a species
-   */
-
-
-  NEAT.SPECIES_DISTANCE_THRESHOLD = 3;
-  NEAT.C1 = 1;
-  NEAT.C2 = 1;
-  NEAT.C3 = 1;
-  NEAT.SURVIVORS = 0.8;
-  return NEAT;
-}();
-
-exports.NEAT = NEAT;
-},{"activations/build/src":"../../node_modules/activations/build/src/index.js","timsort":"../../node_modules/timsort/index.js","./architecture/Network":"../src/architecture/Network.js","./architecture/Species":"../src/architecture/Species.js","./methods/Mutation":"../src/methods/Mutation.js","./methods/Selection":"../src/methods/Selection.js","./utils/Utils":"../src/utils/Utils.js"}],"../src/architecture/Network.js":[function(require,module,exports) {
-"use strict";var t=this&&this.__assign||function(){return(t=Object.assign||function(t){for(var e,n=1,o=arguments.length;n<o;n++)for(var i in e=arguments[n])Object.prototype.hasOwnProperty.call(e,i)&&(t[i]=e[i]);return t}).apply(this,arguments)},e=this&&this.__createBinding||(Object.create?function(t,e,n,o){void 0===o&&(o=n),Object.defineProperty(t,o,{enumerable:!0,get:function(){return e[n]}})}:function(t,e,n,o){void 0===o&&(o=n),t[o]=e[n]}),n=this&&this.__setModuleDefault||(Object.create?function(t,e){Object.defineProperty(t,"default",{enumerable:!0,value:e})}:function(t,e){t.default=e}),o=this&&this.__importStar||function(t){if(t&&t.__esModule)return t;var o={};if(null!=t)for(var i in t)Object.hasOwnProperty.call(t,i)&&e(o,t,i);return n(o,t),o},i=this&&this.__awaiter||function(t,e,n,o){return new(n||(n=Promise))(function(i,r){function s(t){try{u(o.next(t))}catch(e){r(e)}}function a(t){try{u(o.throw(t))}catch(e){r(e)}}function u(t){var e;t.done?i(t.value):(e=t.value,e instanceof n?e:new n(function(t){t(e)})).then(s,a)}u((o=o.apply(t,e||[])).next())})},r=this&&this.__generator||function(t,e){var n,o,i,r,s={label:0,sent:function(){if(1&i[0])throw i[1];return i[1]},trys:[],ops:[]};return r={next:a(0),throw:a(1),return:a(2)},"function"==typeof Symbol&&(r[Symbol.iterator]=function(){return this}),r;function a(r){return function(a){return function(r){if(n)throw new TypeError("Generator is already executing.");for(;s;)try{if(n=1,o&&(i=2&r[0]?o.return:r[0]?o.throw||((i=o.return)&&i.call(o),0):o.next)&&!(i=i.call(o,r[1])).done)return i;switch(o=0,i&&(r=[2&r[0],i.value]),r[0]){case 0:case 1:i=r;break;case 4:return s.label++,{value:r[1],done:!1};case 5:s.label++,o=r[1],r=[0];continue;case 7:r=s.ops.pop(),s.trys.pop();continue;default:if(!(i=(i=s.trys).length>0&&i[i.length-1])&&(6===r[0]||2===r[0])){s=0;continue}if(3===r[0]&&(!i||r[1]>i[0]&&r[1]<i[3])){s.label=r[1];break}if(6===r[0]&&s.label<i[1]){s.label=i[1],i=r;break}if(i&&s.label<i[2]){s.label=i[2],s.ops.push(r);break}i[2]&&s.ops.pop(),s.trys.pop();continue}r=e.call(t,s)}catch(a){r=[6,a],o=0}finally{n=i=0}if(5&r[0])throw r[1];return{value:r[0]?r[1]:void 0,done:!0}}([r,a])}}},s=this&&this.__importDefault||function(t){return t&&t.__esModule?t:{default:t}};Object.defineProperty(exports,"__esModule",{value:!0}),exports.Network=void 0;var a=s(require("os")),u=require("threads"),d=require("threads/dist");require("threads/register");var c=o(require("timsort")),l=require("../enums/NodeType"),h=require("../methods/Loss"),f=require("../methods/Mutation"),p=require("../methods/Rate"),v=require("../NEAT"),g=require("../utils/Utils"),m=require("./Node"),w=function(){function e(t,e){this.inputSize=t,this.outputSize=e,this.nodes=[],this.connections=new Set,this.gates=new Set,this.score=void 0,this.species=null;for(var n=0;n<t;n++)this.nodes.push(new m.Node(l.NodeType.INPUT));for(n=0;n<e;n++)this.nodes.push(new m.Node(l.NodeType.OUTPUT));for(n=0;n<this.inputSize;n++)for(var o=this.inputSize;o<this.outputSize+this.inputSize;o++){var i=(Math.random()-.5)*this.inputSize*Math.sqrt(2/this.inputSize);this.connect(this.nodes[n],this.nodes[o],i)}}return e.fromJSON=function(t){var n=new e(t.inputSize,t.outputSize);return n.nodes=[],n.connections.clear(),t.nodes.map(function(t){return(new m.Node).fromJSON(t)}).forEach(function(t){return n.nodes[t.index]=t}),t.connections.forEach(function(t){var e=n.connect(n.nodes[t.fromIndex],n.nodes[t.toIndex],t.weight);null!=t.gateNodeIndex&&n.addGate(n.nodes[t.gateNodeIndex],e)}),n},e.crossOver=function(t,n){var o,i;if(t.inputSize!==n.inputSize||t.outputSize!==n.outputSize)throw new Error("Networks don`t have the same input/output size!");var r=new e(t.inputSize,t.outputSize);r.connections.clear(),r.nodes=[];var s,a=null!==(o=t.score)&&void 0!==o?o:0,u=null!==(i=n.score)&&void 0!==i?i:0;if(a===u){var d=Math.max(t.nodes.length,n.nodes.length),c=Math.min(t.nodes.length,n.nodes.length);s=g.randInt(c,d+1)}else s=a>u?t.nodes.length:n.nodes.length;for(var h=t.inputSize,f=t.outputSize,p=0;p<t.nodes.length;p++)t.nodes[p].index=p;for(p=0;p<n.nodes.length;p++)n.nodes[p].index=p;for(p=0;p<s;p++){var v=void 0,w=null;if(p<h){w=l.NodeType.INPUT;for(var N=g.randBoolean()?t:n,S=-1,y=-1;S<p;){if(y++>=N.nodes.length)throw RangeError("something is wrong with the size of the input");N.nodes[y].isInputNode()&&S++}v=N.nodes[y]}else if(p<h+f){w=l.NodeType.OUTPUT;N=g.randBoolean()?t:n;var E=-1;for(y=-1;E<p-h;){if(++y>=N.nodes.length)throw RangeError("something is wrong with the size of the output");N.nodes[y].isOutputNode()&&E++}v=N.nodes[y]}else{w=l.NodeType.HIDDEN;N=void 0;N=p>=t.nodes.length?n:p>=n.nodes.length?t:g.randBoolean()?t:n,v=g.pickRandom(N.nodes)}var z=new m.Node(w);z.bias=v.bias,z.squash=v.squash,r.nodes.push(z)}var b=[],I=[];t.connections.forEach(function(t){b[g.pairing(t.from.index,t.to.index)]=t.toJSON()}),n.connections.forEach(function(t){I[g.pairing(t.from.index,t.to.index)]=t.toJSON()});var x=[],O=Object.keys(b),T=Object.keys(I);for(p=O.length-1;p>=0;p--)void 0!==I[parseInt(O[p])]?(x.push(g.randBoolean()?b[parseInt(O[p])]:I[parseInt(O[p])]),I[parseInt(O[p])]=void 0):a>=u&&x.push(b[parseInt(O[p])]);return u>=a&&T.map(function(t){return parseInt(t)}).map(function(t){return I[t]}).filter(function(t){return void 0!==t}).forEach(function(t){return x.push(t)}),x.forEach(function(t){if(void 0!==t&&t.toIndex<s&&t.fromIndex<s){var e=r.nodes[t.fromIndex],n=r.nodes[t.toIndex],o=r.connect(e,n,t.weight);null!==t.gateNodeIndex&&t.gateNodeIndex<s&&r.addGate(r.nodes[t.gateNodeIndex],o)}}),r},e.prototype.copy=function(){return e.fromJSON(this.toJSON())},e.prototype.connect=function(t,e,n){void 0===n&&(n=0);var o=t.connect(e,n);return this.connections.add(o),o},e.prototype.activate=function(t,e){var n,o;if(void 0===e&&(e={}),t.length!==this.inputSize)throw new RangeError("Input size of dataset is different to network input size!");return e.dropoutRate=null!==(n=e.dropoutRate)&&void 0!==n?n:0,e.trace=null===(o=e.trace)||void 0===o||o,this.nodes.filter(function(t){return t.isInputNode()}).forEach(function(n,o){return n.activate(t[o],e.trace)}),this.nodes.filter(function(t){return t.isHiddenNode()}).forEach(function(t){e.dropoutRate&&(t.mask=Math.random()>=e.dropoutRate?1:0),t.activate(void 0,e.trace)}),this.nodes.filter(function(t){return t.isOutputNode()}).map(function(t){return t.activate(void 0,e.trace)})},e.prototype.propagate=function(t,e){var n,o,i;if(void 0===e&&(e={}),e.rate=null!==(n=e.rate)&&void 0!==n?n:.3,e.momentum=null!==(o=e.momentum)&&void 0!==o?o:0,e.update=null!==(i=e.update)&&void 0!==i&&i,t.length!==this.outputSize)throw new Error("Output target length should match network output length");this.nodes.filter(function(t){return t.isOutputNode()}).forEach(function(n,o){return n.propagate(t[o],e)});for(var r=this.nodes.length-1;r>=0;r--)this.nodes[r].isHiddenNode()&&this.nodes[r].propagate(void 0,e);this.nodes.filter(function(t){return t.isInputNode()}).forEach(function(t){return t.propagate(void 0,e)})},e.prototype.clear=function(){this.nodes.forEach(function(t){return t.clear()})},e.prototype.disconnect=function(t,e){var n=this;return this.connections.forEach(function(o){o.from===t&&o.to===e&&(null!==o.gateNode&&n.removeGate(o),n.connections.delete(o))}),t.disconnect(e)},e.prototype.addGate=function(t,e){if(-1===this.nodes.indexOf(t))throw new ReferenceError("This node is not part of the network!");null==e.gateNode&&(t.addGate(e),this.gates.add(e))},e.prototype.removeGate=function(t){if(!this.gates.has(t))throw new Error("This connection is not gated!");this.gates.delete(t),null!=t.gateNode&&t.gateNode.removeGate(t)},e.prototype.removeNode=function(t,e){var n=this;if(void 0===e&&(e=(new f.SubNodeMutation).keepGates),!this.nodes.includes(t))throw new ReferenceError("This node does not exist in the network!");this.disconnect(t,t);var o=[],i=[],r=[],s=[];for(t.incoming.forEach(function(r){e&&null!==r.gateNode&&r.gateNode!==t&&i.push(r.gateNode),o.push(r.from),n.disconnect(r.from,t)}),t.outgoing.forEach(function(o){e&&null!==o.gateNode&&o.gateNode!==t&&i.push(o.gateNode),r.push(o.to),n.disconnect(t,o.to)}),o.forEach(function(t){r.forEach(function(e){t.isProjectingTo(e)||s.push(n.connect(t,e))})});i.length>0&&s.length>0;){var a=i.shift();if(void 0!==a){var u=g.pickRandom(s);this.addGate(a,u),g.removeFromArray(s,u)}}t.gated.forEach(this.removeGate),g.removeFromArray(this.nodes,t)},e.prototype.mutate=function(t,e){t.mutate(this,e)},e.prototype.mutateRandom=function(t,e){void 0===t&&(t=f.ALL_MUTATIONS),void 0===e&&(e={}),0!==t.length&&this.mutate(g.pickRandom(t),e)},e.prototype.train=function(e){var n,o,i,r,s,a,u,d,c,l;if(!e.dataset||e.dataset[0].input.length!==this.inputSize||e.dataset[0].output.length!==this.outputSize)throw new Error("Dataset input/output size should be same as network input/output size!");e.iterations=null!==(n=e.iterations)&&void 0!==n?n:-1,e.error=null!==(o=e.error)&&void 0!==o?o:-1,e.loss=null!==(i=e.loss)&&void 0!==i?i:h.MSELoss,e.dropout=null!==(r=e.dropout)&&void 0!==r?r:0,e.momentum=null!==(s=e.momentum)&&void 0!==s?s:0,e.batchSize=Math.min(e.dataset.length,null!==(a=e.batchSize)&&void 0!==a?a:e.dataset.length);var f=null!==(u=e.rate)&&void 0!==u?u:.3;e.ratePolicy=null!==(d=e.ratePolicy)&&void 0!==d?d:new p.FixedRate(f),e.log=null!==(c=e.log)&&void 0!==c?c:NaN;var v,m,w,N,S=Date.now();if(e.iterations<=0&&e.error<=0)throw new Error("At least one of the following options must be specified: error, iterations");e.crossValidateTestSize&&e.crossValidateTestSize>0?(v=Math.ceil((1-e.crossValidateTestSize)*e.dataset.length),m=e.dataset.slice(0,v),w=e.dataset.slice(v)):(m=e.dataset,w=[]);for(var y=0,E=1;E>e.error&&(e.iterations<=0||y<e.iterations);){y++,N=e.ratePolicy.calc(y);var z=this.trainEpoch(t(t({},e),{dataset:m,trainingRate:N}));if(!Number.isFinite(z))throw new RangeError;e.clear&&this.clear(),e.crossValidateTestSize?(E=this.test(w,e.loss),e.clear&&this.clear()):E=z,null!==(l=e.shuffle)&&void 0!==l&&l&&g.shuffle(e.dataset),e.log>0&&y%e.log==0&&console.log("iteration number",y,"error",E,"training rate",N),e.schedule&&y%e.schedule.iterations==0&&e.schedule.function(E,y)}return e.clear&&this.clear(),{error:E,iterations:y,time:Date.now()-S}},e.prototype.test=function(t,e){void 0===e&&(e=h.MSELoss);for(var n=0,o=0,i=t;o<i.length;o++){var r=i[o],s=r.input;n+=e(r.output,this.activate(s,{trace:!1}))}return n/t.length},e.prototype.toJSON=function(){for(var t={nodes:[],connections:[],inputSize:this.inputSize,outputSize:this.outputSize},e=0;e<this.nodes.length;e++)this.nodes[e].index=e;return this.nodes.forEach(function(e){t.nodes.push(e.toJSON()),0!==e.selfConnection.weight&&t.connections.push(e.selfConnection.toJSON())}),this.connections.forEach(function(e){t.connections.push(e.toJSON())}),t},e.prototype.evolve=function(t){var e,n,o,s,c,l,f,p,g;return void 0===t&&(t={}),i(this,void 0,void 0,function(){var m,w,N,S,y,E,z,b,I,x;return r(this,function(O){switch(O.label){case 0:if(!t.fitnessFunction&&t.dataset&&(t.dataset[0].input.length!==this.inputSize||t.dataset[0].output.length!==this.outputSize))throw new Error("Dataset input/output size should be same as network input/output size!");m=0,void 0===t.iterations&&void 0===t.error?(t.iterations=1e3,m=.05):t.iterations?m=-1:t.error&&(m=t.error,t.iterations=0),t.loss=null!==(e=t.loss)&&void 0!==e?e:h.MSELoss,t.maxNodes=null!==(n=t.maxNodes)&&void 0!==n?n:1/0,t.maxConnections=null!==(o=t.maxConnections)&&void 0!==o?o:1/0,t.maxGates=null!==(s=t.maxGates)&&void 0!==s?s:1/0,t.input=this.inputSize,t.output=this.outputSize,w=Date.now(),t.fitnessFunction||(S=JSON.stringify(t.dataset),y=Object.values(h.ALL_LOSSES).indexOf(null!==(c=t.loss)&&void 0!==c?c:h.MSELoss),N=d.Pool(function(){return u.spawn(new u.Worker("../multithreading/TestWorker"))},null!==(l=t.threads)&&void 0!==l?l:a.default.cpus().length),t.fitnessFunction=function(t){return i(this,void 0,void 0,function(){var e,n,o,s,a=this;return r(this,function(u){switch(u.label){case 0:for(e=function(t){N.queue(function(e){return i(a,void 0,void 0,function(){var n;return r(this,function(o){switch(o.label){case 0:if(void 0===t)throw new ReferenceError;return n=t,[4,e(S,JSON.stringify(t.toJSON()),y)];case 1:if(n.score=-o.sent(),!Number.isFinite(t.score))throw new RangeError;return[2]}})})})},n=0,o=t;n<o.length;n++)s=o[n],e(s);return[4,N.completed()];case 1:return u.sent(),[2]}})})}),t.template=this,E=new v.NEAT(t),b=0,I=this,O.label=1;case 1:return[4,E.evolve()];case 2:if(!(x=O.sent()).score)throw new ReferenceError;z=x.score,(1===E.generation||x.score>b)&&(b=x.score,I=x),(null!==(f=t.log)&&void 0!==f?f:0)>0&&E.generation%(null!==(p=t.log)&&void 0!==p?p:0)==0&&console.log("iteration",E.generation,"error",-z),t.schedule&&E.generation%t.schedule.iterations==0&&t.schedule.function(x.score,-z,E.generation),O.label=3;case 3:if(z<-m&&(0===t.iterations||E.generation<(null!==(g=t.iterations)&&void 0!==g?g:0)))return[3,1];O.label=4;case 4:return void 0!==I&&(this.nodes=I.nodes,this.connections=I.connections,this.gates=I.gates,t.clear&&this.clear()),N?[4,N.terminate()]:[3,6];case 5:O.sent(),O.label=6;case 6:return[2,{error:-z,iterations:E.generation,time:Date.now()-w}]}})})},e.prototype.distance=function(t){for(var e=this,n=0;n<e.nodes.length;n++)e.nodes[n].index=n;for(n=0;n<t.nodes.length;n++)t.nodes[n].index=n;var o=0,i=0,r=Array.from(e.connections).filter(function(t){return void 0!==t}),s=Array.from(t.connections).filter(function(t){return void 0!==t});if(c.sort(r,function(t,e){return t.getInnovationID()-e.getInnovationID()}),c.sort(s,function(t,e){return t.getInnovationID()-e.getInnovationID()}),r[r.length-1].getInnovationID()<s[s.length-1].getInnovationID()){var a=e;e=t,t=a}for(var u=0,d=0,l=0;o<r.length&&i<s.length;){var h=r[o],f=s[i];if(void 0===h||void 0===f)throw Error("HERE");h.getInnovationID()===f.getInnovationID()?(o++,i++,d+=Math.abs(h.weight-f.weight),l++):o>i?(i++,u++):(o++,u++)}d/=l;var p=e.connections.size-o,g=Math.max(e.connections.size,t.connections.size);return g<20&&(g=1),v.NEAT.C1*p/g+v.NEAT.C2*u/g+v.NEAT.C3*d},e.prototype.trainEpoch=function(t){for(var e,n,o,i=0,r=0;r<t.dataset.length;r++){var s=t.dataset[r].input,a=t.dataset[r].output,u=(r+1)%(null!==(e=t.batchSize)&&void 0!==e?e:t.dataset.length)==0||r+1===t.dataset.length,d=this.activate(s,{dropoutRate:null!==(n=t.dropoutRate)&&void 0!==n?n:.5});this.propagate(a,{rate:t.trainingRate,momentum:t.momentum,update:u}),i+=(null!==(o=t.loss)&&void 0!==o?o:h.MSELoss)(a,d)}return i/t.dataset.length},e}();exports.Network=w;
+"use strict";var t=this&&this.__createBinding||(Object.create?function(t,e,i,n){void 0===n&&(n=i),Object.defineProperty(t,n,{enumerable:!0,get:function(){return e[i]}})}:function(t,e,i,n){void 0===n&&(n=i),t[n]=e[i]}),e=this&&this.__setModuleDefault||(Object.create?function(t,e){Object.defineProperty(t,"default",{enumerable:!0,value:e})}:function(t,e){t.default=e}),i=this&&this.__importStar||function(i){if(i&&i.__esModule)return i;var n={};if(null!=i)for(var o in i)"default"!==o&&Object.hasOwnProperty.call(i,o)&&t(n,i,o);return e(n,i),n},n=this&&this.__awaiter||function(t,e,i,n){return new(i||(i=Promise))(function(o,r){function s(t){try{a(n.next(t))}catch(e){r(e)}}function u(t){try{a(n.throw(t))}catch(e){r(e)}}function a(t){var e;t.done?o(t.value):(e=t.value,e instanceof i?e:new i(function(t){t(e)})).then(s,u)}a((n=n.apply(t,e||[])).next())})},o=this&&this.__generator||function(t,e){var i,n,o,r,s={label:0,sent:function(){if(1&o[0])throw o[1];return o[1]},trys:[],ops:[]};return r={next:u(0),throw:u(1),return:u(2)},"function"==typeof Symbol&&(r[Symbol.iterator]=function(){return this}),r;function u(r){return function(u){return function(r){if(i)throw new TypeError("Generator is already executing.");for(;s;)try{if(i=1,n&&(o=2&r[0]?n.return:r[0]?n.throw||((o=n.return)&&o.call(n),0):n.next)&&!(o=o.call(n,r[1])).done)return o;switch(n=0,o&&(r=[2&r[0],o.value]),r[0]){case 0:case 1:o=r;break;case 4:return s.label++,{value:r[1],done:!1};case 5:s.label++,n=r[1],r=[0];continue;case 7:r=s.ops.pop(),s.trys.pop();continue;default:if(!(o=(o=s.trys).length>0&&o[o.length-1])&&(6===r[0]||2===r[0])){s=0;continue}if(3===r[0]&&(!o||r[1]>o[0]&&r[1]<o[3])){s.label=r[1];break}if(6===r[0]&&s.label<o[1]){s.label=o[1],o=r;break}if(o&&s.label<o[2]){s.label=o[2],s.ops.push(r);break}o[2]&&s.ops.pop(),s.trys.pop();continue}r=e.call(t,s)}catch(u){r=[6,u],n=0}finally{i=o=0}if(5&r[0])throw r[1];return{value:r[0]?r[1]:void 0,done:!0}}([r,u])}}},r=this&&this.__spreadArrays||function(){for(var t=0,e=0,i=arguments.length;e<i;e++)t+=arguments[e].length;var n=Array(t),o=0;for(e=0;e<i;e++)for(var r=arguments[e],s=0,u=r.length;s<u;s++,o++)n[o]=r[s];return n};Object.defineProperty(exports,"__esModule",{value:!0}),exports.NEAT=void 0;var s=require("activations/build/src"),u=i(require("timsort")),a=require("./architecture/Network"),l=require("./architecture/Species"),c=require("./methods/Mutation"),p=require("./methods/Selection"),h=require("./utils/Utils"),f=function(){function t(t){var e,i,n,o,r,u,l,h,f,d,v,m,y,b,g,S,w;if(!t.fitnessFunction)throw new ReferenceError("No fitness function given!");this.dataset=t.dataset,t.dataset&&t.dataset.length>0?(this.input=t.dataset[0].input.length,this.output=t.dataset[0].output.length,this.trainOptions=null!==(e=t.training)&&void 0!==e?e:null):(this.trainOptions=null,this.input=null!==(i=t.input)&&void 0!==i?i:0,this.output=null!==(n=t.output)&&void 0!==n?n:0),this.generation=null!==(o=t.generation)&&void 0!==o?o:0,this.elitism=null!==(r=t.elitism)&&void 0!==r?r:1,this.equal=null===(u=t.equal)||void 0===u||u,this.clear=null!==(l=t.clear)&&void 0!==l&&l,this.populationSize=null!==(h=t.populationSize)&&void 0!==h?h:50,this.mutationRate=null!==(f=t.mutationRate)&&void 0!==f?f:.6,this.mutationAmount=null!==(d=t.mutationAmount)&&void 0!==d?d:5,this.fitnessFunction=t.fitnessFunction,this.selection=null!==(v=t.selection)&&void 0!==v?v:new p.FitnessProportionateSelection,this.mutations=null!==(m=t.mutations)&&void 0!==m?m:c.FEEDFORWARD_MUTATIONS,this.activations=null!==(y=t.activations)&&void 0!==y?y:Object.values(s.ALL_ACTIVATIONS),this.template=null!==(b=t.template)&&void 0!==b?b:new a.Network(this.input,this.output),this.maxNodes=null!==(g=t.maxNodes)&&void 0!==g?g:1/0,this.maxConnections=null!==(S=t.maxConnections)&&void 0!==S?S:1/0,this.maxGates=null!==(w=t.maxGates)&&void 0!==w?w:1/0,this.population=[],this.species=new Set;for(var A=0;A<this.populationSize;A++)this.population.push(this.template.copy())}return t.prototype.mutateRandom=function(t){var e=this,i=this.mutations.filter(function(i){return i.constructor.name!==c.AddNodeMutation.constructor.name||t.nodes.length<e.maxNodes||i.constructor.name!==c.AddConnectionMutation.constructor.name||t.connections.size<e.maxConnections||i.constructor.name!==c.AddGateMutation.constructor.name||t.gates.size<e.maxGates});t.mutate(h.pickRandom(i),{allowedActivations:this.activations})},t.prototype.evolve=function(){return n(this,void 0,void 0,function(){var e,i,n,s,u;return o(this,function(o){switch(o.label){case 0:return this.genSpecies(),void 0!==this.population[this.population.length-1].score?[3,2]:[4,this.evaluate()];case 1:o.sent(),this.sort(),o.label=2;case 2:if(this.species.forEach(function(t){return t.evaluateScore()}),this.kill(1-t.SURVIVORS),this.removeExtinctSpecies(),this.reproduce(),e=this.population.splice(0,this.elitism),this.mutate(),(u=this.population).splice.apply(u,r([0,0],e)),null!==this.trainOptions)for(i=0,n=this.population;i<n.length;i++)n[i].train(this.trainOptions);return[4,this.evaluate()];case 3:return o.sent(),this.sort(),(s=this.population[0].copy()).score=this.population[0].score,this.population.forEach(function(t){return t.score=void 0}),this.generation++,[2,s]}})})},t.prototype.mutate=function(t){var e=this;this.population.filter(function(){return Math.random()<=e.mutationRate}).forEach(function(i){for(var n=0;n<e.mutationAmount;n++)t?i.mutate(t):e.mutateRandom(i)})},t.prototype.evaluate=function(){return n(this,void 0,void 0,function(){return o(this,function(t){switch(t.label){case 0:return this.clear&&this.population.forEach(function(t){return t.clear()}),[4,this.fitnessFunction(this.population,this.dataset)];case 1:return t.sent(),this.sort(),[2,this.population[0]]}})})},t.prototype.sort=function(){u.sort(this.population,function(t,e){return void 0===t.score||void 0===e.score?0:e.score-t.score})},t.prototype.getFittest=function(){return n(this,void 0,void 0,function(){return o(this,function(t){switch(t.label){case 0:return void 0!==this.population[this.population.length-1].score?[3,2]:[4,this.evaluate()];case 1:t.sent(),t.label=2;case 2:return this.sort(),[2,this.population[0]]}})})},t.prototype.getAverage=function(){return n(this,void 0,void 0,function(){var t;return o(this,function(e){switch(e.label){case 0:return void 0!==this.population[this.population.length-1].score?[3,2]:[4,this.evaluate()];case 1:e.sent(),e.label=2;case 2:return t=0,this.population.map(function(t){return t.score}).forEach(function(e){return t+=null!=e?e:0}),[2,t/this.population.length]}})})},t.prototype.replacePopulation=function(t){this.population=t,this.populationSize=t.length},t.prototype.reproduce=function(){for(var t=Array.from(this.species),e=0;e<this.population.length;e++)if(null===this.population[e].species){var i=this.selection.select(t);this.population[e]=i.breed(),i.forcePut(this.population[e])}},t.prototype.removeExtinctSpecies=function(){for(var t=0,e=Array.from(this.species);t<e.length;t++){var i=e[t];i.size()<=1&&(i.members.forEach(function(t){return t.species=null}),this.species.delete(i))}},t.prototype.kill=function(t){this.species.forEach(function(e){return e.kill(t)})},t.prototype.genSpecies=function(){var t=this;this.species.forEach(function(t){return t.reset()}),this.population.filter(function(t){return null===t.species}).forEach(function(e){for(var i=!1,n=0,o=Array.from(t.species);n<o.length;n++){if(o[n].put(e)){i=!0;break}}i||t.species.add(new l.Species(e))})},t.SPECIES_DISTANCE_THRESHOLD=3,t.C1=1,t.C2=1,t.C3=1,t.SURVIVORS=.8,t}();exports.NEAT=f;
+},{"./architecture/Network":"../src/architecture/Network.js","./architecture/Species":"../src/architecture/Species.js","./methods/Mutation":"../src/methods/Mutation.js","./methods/Selection":"../src/methods/Selection.js","./utils/Utils":"../src/utils/Utils.js"}],"../src/architecture/Network.js":[function(require,module,exports) {
+"use strict";var t=this&&this.__assign||function(){return(t=Object.assign||function(t){for(var e,n=1,o=arguments.length;n<o;n++)for(var i in e=arguments[n])Object.prototype.hasOwnProperty.call(e,i)&&(t[i]=e[i]);return t}).apply(this,arguments)},e=this&&this.__createBinding||(Object.create?function(t,e,n,o){void 0===o&&(o=n),Object.defineProperty(t,o,{enumerable:!0,get:function(){return e[n]}})}:function(t,e,n,o){void 0===o&&(o=n),t[o]=e[n]}),n=this&&this.__setModuleDefault||(Object.create?function(t,e){Object.defineProperty(t,"default",{enumerable:!0,value:e})}:function(t,e){t.default=e}),o=this&&this.__importStar||function(t){if(t&&t.__esModule)return t;var o={};if(null!=t)for(var i in t)"default"!==i&&Object.hasOwnProperty.call(t,i)&&e(o,t,i);return n(o,t),o},i=this&&this.__awaiter||function(t,e,n,o){return new(n||(n=Promise))(function(i,r){function s(t){try{u(o.next(t))}catch(e){r(e)}}function a(t){try{u(o.throw(t))}catch(e){r(e)}}function u(t){var e;t.done?i(t.value):(e=t.value,e instanceof n?e:new n(function(t){t(e)})).then(s,a)}u((o=o.apply(t,e||[])).next())})},r=this&&this.__generator||function(t,e){var n,o,i,r,s={label:0,sent:function(){if(1&i[0])throw i[1];return i[1]},trys:[],ops:[]};return r={next:a(0),throw:a(1),return:a(2)},"function"==typeof Symbol&&(r[Symbol.iterator]=function(){return this}),r;function a(r){return function(a){return function(r){if(n)throw new TypeError("Generator is already executing.");for(;s;)try{if(n=1,o&&(i=2&r[0]?o.return:r[0]?o.throw||((i=o.return)&&i.call(o),0):o.next)&&!(i=i.call(o,r[1])).done)return i;switch(o=0,i&&(r=[2&r[0],i.value]),r[0]){case 0:case 1:i=r;break;case 4:return s.label++,{value:r[1],done:!1};case 5:s.label++,o=r[1],r=[0];continue;case 7:r=s.ops.pop(),s.trys.pop();continue;default:if(!(i=(i=s.trys).length>0&&i[i.length-1])&&(6===r[0]||2===r[0])){s=0;continue}if(3===r[0]&&(!i||r[1]>i[0]&&r[1]<i[3])){s.label=r[1];break}if(6===r[0]&&s.label<i[1]){s.label=i[1],i=r;break}if(i&&s.label<i[2]){s.label=i[2],s.ops.push(r);break}i[2]&&s.ops.pop(),s.trys.pop();continue}r=e.call(t,s)}catch(a){r=[6,a],o=0}finally{n=i=0}if(5&r[0])throw r[1];return{value:r[0]?r[1]:void 0,done:!0}}([r,a])}}},s=this&&this.__importDefault||function(t){return t&&t.__esModule?t:{default:t}};Object.defineProperty(exports,"__esModule",{value:!0}),exports.Network=void 0;var a=s(require("os")),u=require("threads"),d=require("threads/dist");require("threads/register");var c=o(require("timsort")),l=require("../enums/NodeType"),h=require("../methods/Loss"),f=require("../methods/Mutation"),p=require("../methods/Rate"),v=require("../NEAT"),g=require("../utils/Utils"),m=require("./Node"),w=function(){function e(t,e){this.inputSize=t,this.outputSize=e,this.nodes=[],this.connections=new Set,this.gates=new Set,this.score=void 0,this.species=null;for(var n=0;n<t;n++)this.nodes.push(new m.Node(l.NodeType.INPUT));for(n=0;n<e;n++)this.nodes.push(new m.Node(l.NodeType.OUTPUT));for(n=0;n<this.inputSize;n++)for(var o=this.inputSize;o<this.outputSize+this.inputSize;o++){var i=(Math.random()-.5)*this.inputSize*Math.sqrt(2/this.inputSize);this.connect(this.nodes[n],this.nodes[o],i)}}return e.fromJSON=function(t){var n=new e(t.inputSize,t.outputSize);return n.nodes=[],n.connections.clear(),t.nodes.map(function(t){return(new m.Node).fromJSON(t)}).forEach(function(t){return n.nodes[t.index]=t}),t.connections.forEach(function(t){var e=n.connect(n.nodes[t.fromIndex],n.nodes[t.toIndex],t.weight);null!=t.gateNodeIndex&&n.addGate(n.nodes[t.gateNodeIndex],e)}),n},e.crossOver=function(t,n){var o,i;if(t.inputSize!==n.inputSize||t.outputSize!==n.outputSize)throw new Error("Networks don`t have the same input/output size!");var r=new e(t.inputSize,t.outputSize);r.connections.clear(),r.nodes=[];var s,a=null!==(o=t.score)&&void 0!==o?o:0,u=null!==(i=n.score)&&void 0!==i?i:0;if(a===u){var d=Math.max(t.nodes.length,n.nodes.length),c=Math.min(t.nodes.length,n.nodes.length);s=g.randInt(c,d+1)}else s=a>u?t.nodes.length:n.nodes.length;for(var h=t.inputSize,f=t.outputSize,p=0;p<t.nodes.length;p++)t.nodes[p].index=p;for(p=0;p<n.nodes.length;p++)n.nodes[p].index=p;for(p=0;p<s;p++){var v=void 0,w=null;if(p<h){w=l.NodeType.INPUT;for(var N=g.randBoolean()?t:n,S=-1,y=-1;S<p;){if(y++>=N.nodes.length)throw RangeError("something is wrong with the size of the input");N.nodes[y].isInputNode()&&S++}v=N.nodes[y]}else if(p<h+f){w=l.NodeType.OUTPUT;N=g.randBoolean()?t:n;var E=-1;for(y=-1;E<p-h;){if(++y>=N.nodes.length)throw RangeError("something is wrong with the size of the output");N.nodes[y].isOutputNode()&&E++}v=N.nodes[y]}else{w=l.NodeType.HIDDEN;N=void 0;N=p>=t.nodes.length?n:p>=n.nodes.length?t:g.randBoolean()?t:n,v=g.pickRandom(N.nodes)}var z=new m.Node(w);z.bias=v.bias,z.squash=v.squash,r.nodes.push(z)}var b=[],I=[];t.connections.forEach(function(t){b[g.pairing(t.from.index,t.to.index)]=t.toJSON()}),n.connections.forEach(function(t){I[g.pairing(t.from.index,t.to.index)]=t.toJSON()});var x=[],O=Object.keys(b),T=Object.keys(I);for(p=O.length-1;p>=0;p--)void 0!==I[parseInt(O[p])]?(x.push(g.randBoolean()?b[parseInt(O[p])]:I[parseInt(O[p])]),I[parseInt(O[p])]=void 0):a>=u&&x.push(b[parseInt(O[p])]);return u>=a&&T.map(function(t){return parseInt(t)}).map(function(t){return I[t]}).filter(function(t){return void 0!==t}).forEach(function(t){return x.push(t)}),x.forEach(function(t){if(void 0!==t&&t.toIndex<s&&t.fromIndex<s){var e=r.nodes[t.fromIndex],n=r.nodes[t.toIndex],o=r.connect(e,n,t.weight);null!==t.gateNodeIndex&&t.gateNodeIndex<s&&r.addGate(r.nodes[t.gateNodeIndex],o)}}),r},e.prototype.copy=function(){return e.fromJSON(this.toJSON())},e.prototype.connect=function(t,e,n){void 0===n&&(n=0);var o=t.connect(e,n);return this.connections.add(o),o},e.prototype.activate=function(t,e){var n,o;if(void 0===e&&(e={}),t.length!==this.inputSize)throw new RangeError("Input size of dataset is different to network input size!");return e.dropoutRate=null!==(n=e.dropoutRate)&&void 0!==n?n:0,e.trace=null===(o=e.trace)||void 0===o||o,this.nodes.filter(function(t){return t.isInputNode()}).forEach(function(n,o){return n.activate(t[o],e.trace)}),this.nodes.filter(function(t){return t.isHiddenNode()}).forEach(function(t){e.dropoutRate&&(t.mask=Math.random()>=e.dropoutRate?1:0),t.activate(void 0,e.trace)}),this.nodes.filter(function(t){return t.isOutputNode()}).map(function(t){return t.activate(void 0,e.trace)})},e.prototype.propagate=function(t,e){var n,o,i;if(void 0===e&&(e={}),e.rate=null!==(n=e.rate)&&void 0!==n?n:.3,e.momentum=null!==(o=e.momentum)&&void 0!==o?o:0,e.update=null!==(i=e.update)&&void 0!==i&&i,t.length!==this.outputSize)throw new Error("Output target length should match network output length");this.nodes.filter(function(t){return t.isOutputNode()}).forEach(function(n,o){return n.propagate(t[o],e)});for(var r=this.nodes.length-1;r>=0;r--)this.nodes[r].isHiddenNode()&&this.nodes[r].propagate(void 0,e);this.nodes.filter(function(t){return t.isInputNode()}).forEach(function(t){return t.propagate(void 0,e)})},e.prototype.clear=function(){this.nodes.forEach(function(t){return t.clear()})},e.prototype.disconnect=function(t,e){var n=this;return this.connections.forEach(function(o){o.from===t&&o.to===e&&(null!==o.gateNode&&n.removeGate(o),n.connections.delete(o))}),t.disconnect(e)},e.prototype.addGate=function(t,e){if(-1===this.nodes.indexOf(t))throw new ReferenceError("This node is not part of the network!");null==e.gateNode&&(t.addGate(e),this.gates.add(e))},e.prototype.removeGate=function(t){if(!this.gates.has(t))throw new Error("This connection is not gated!");this.gates.delete(t),null!=t.gateNode&&t.gateNode.removeGate(t)},e.prototype.removeNode=function(t,e){var n=this;if(void 0===e&&(e=(new f.SubNodeMutation).keepGates),!this.nodes.includes(t))throw new ReferenceError("This node does not exist in the network!");this.disconnect(t,t);var o=[],i=[],r=[],s=[];for(t.incoming.forEach(function(r){e&&null!==r.gateNode&&r.gateNode!==t&&i.push(r.gateNode),o.push(r.from),n.disconnect(r.from,t)}),t.outgoing.forEach(function(o){e&&null!==o.gateNode&&o.gateNode!==t&&i.push(o.gateNode),r.push(o.to),n.disconnect(t,o.to)}),o.forEach(function(t){r.forEach(function(e){t.isProjectingTo(e)||s.push(n.connect(t,e))})});i.length>0&&s.length>0;){var a=i.shift();if(void 0!==a){var u=g.pickRandom(s);this.addGate(a,u),g.removeFromArray(s,u)}}t.gated.forEach(this.removeGate),g.removeFromArray(this.nodes,t)},e.prototype.mutate=function(t,e){t.mutate(this,e)},e.prototype.mutateRandom=function(t,e){void 0===t&&(t=f.ALL_MUTATIONS),void 0===e&&(e={}),0!==t.length&&this.mutate(g.pickRandom(t),e)},e.prototype.train=function(e){var n,o,i,r,s,a,u,d,c,l;if(!e.dataset||e.dataset[0].input.length!==this.inputSize||e.dataset[0].output.length!==this.outputSize)throw new Error("Dataset input/output size should be same as network input/output size!");e.iterations=null!==(n=e.iterations)&&void 0!==n?n:-1,e.error=null!==(o=e.error)&&void 0!==o?o:-1,e.loss=null!==(i=e.loss)&&void 0!==i?i:h.MSELoss,e.dropout=null!==(r=e.dropout)&&void 0!==r?r:0,e.momentum=null!==(s=e.momentum)&&void 0!==s?s:0,e.batchSize=Math.min(e.dataset.length,null!==(a=e.batchSize)&&void 0!==a?a:e.dataset.length);var f=null!==(u=e.rate)&&void 0!==u?u:.3;e.ratePolicy=null!==(d=e.ratePolicy)&&void 0!==d?d:new p.FixedRate(f),e.log=null!==(c=e.log)&&void 0!==c?c:NaN;var v,m,w,N,S=Date.now();if(e.iterations<=0&&e.error<=0)throw new Error("At least one of the following options must be specified: error, iterations");e.crossValidateTestSize&&e.crossValidateTestSize>0?(v=Math.ceil((1-e.crossValidateTestSize)*e.dataset.length),m=e.dataset.slice(0,v),w=e.dataset.slice(v)):(m=e.dataset,w=[]);for(var y=0,E=1;E>e.error&&(e.iterations<=0||y<e.iterations);){y++,N=e.ratePolicy.calc(y);var z=this.trainEpoch(t(t({},e),{dataset:m,trainingRate:N}));if(!Number.isFinite(z))throw new RangeError;e.clear&&this.clear(),e.crossValidateTestSize?(E=this.test(w,e.loss),e.clear&&this.clear()):E=z,null!==(l=e.shuffle)&&void 0!==l&&l&&g.shuffle(e.dataset),e.log>0&&y%e.log==0&&console.log("iteration number",y,"error",E,"training rate",N),e.schedule&&y%e.schedule.iterations==0&&e.schedule.function(E,y)}return e.clear&&this.clear(),{error:E,iterations:y,time:Date.now()-S}},e.prototype.test=function(t,e){void 0===e&&(e=h.MSELoss);for(var n=0,o=0,i=t;o<i.length;o++){var r=i[o],s=r.input;n+=e(r.output,this.activate(s,{trace:!1}))}return n/t.length},e.prototype.toJSON=function(){for(var t={nodes:[],connections:[],inputSize:this.inputSize,outputSize:this.outputSize},e=0;e<this.nodes.length;e++)this.nodes[e].index=e;return this.nodes.forEach(function(e){t.nodes.push(e.toJSON()),0!==e.selfConnection.weight&&t.connections.push(e.selfConnection.toJSON())}),this.connections.forEach(function(e){t.connections.push(e.toJSON())}),t},e.prototype.evolve=function(t){var e,n,o,s,c,l,f,p,g;return void 0===t&&(t={}),i(this,void 0,void 0,function(){var m,w,N,S,y,E,z,b,I,x;return r(this,function(O){switch(O.label){case 0:if(!t.fitnessFunction&&t.dataset&&(t.dataset[0].input.length!==this.inputSize||t.dataset[0].output.length!==this.outputSize))throw new Error("Dataset input/output size should be same as network input/output size!");m=0,void 0===t.iterations&&void 0===t.error?(t.iterations=1e3,m=.05):t.iterations?m=-1:t.error&&(m=t.error,t.iterations=0),t.loss=null!==(e=t.loss)&&void 0!==e?e:h.MSELoss,t.maxNodes=null!==(n=t.maxNodes)&&void 0!==n?n:1/0,t.maxConnections=null!==(o=t.maxConnections)&&void 0!==o?o:1/0,t.maxGates=null!==(s=t.maxGates)&&void 0!==s?s:1/0,t.input=this.inputSize,t.output=this.outputSize,w=Date.now(),t.fitnessFunction||(S=JSON.stringify(t.dataset),y=Object.values(h.ALL_LOSSES).indexOf(null!==(c=t.loss)&&void 0!==c?c:h.MSELoss),N=d.Pool(function(){return u.spawn(new u.Worker("../multithreading/TestWorker"))},null!==(l=t.threads)&&void 0!==l?l:a.default.cpus().length),t.fitnessFunction=function(t){return i(this,void 0,void 0,function(){var e,n,o,s,a=this;return r(this,function(u){switch(u.label){case 0:for(e=function(t){N.queue(function(e){return i(a,void 0,void 0,function(){var n;return r(this,function(o){switch(o.label){case 0:if(void 0===t)throw new ReferenceError;return n=t,[4,e(S,JSON.stringify(t.toJSON()),y)];case 1:if(n.score=-o.sent(),!Number.isFinite(t.score))throw new RangeError;return[2]}})})})},n=0,o=t;n<o.length;n++)s=o[n],e(s);return[4,N.completed()];case 1:return u.sent(),[2]}})})}),t.template=this,E=new v.NEAT(t),b=0,I=this,O.label=1;case 1:return[4,E.evolve()];case 2:if(!(x=O.sent()).score)throw new ReferenceError;z=x.score,(1===E.generation||x.score>b)&&(b=x.score,I=x),(null!==(f=t.log)&&void 0!==f?f:0)>0&&E.generation%(null!==(p=t.log)&&void 0!==p?p:0)==0&&console.log("iteration",E.generation,"error",-z),t.schedule&&E.generation%t.schedule.iterations==0&&t.schedule.function(x.score,-z,E.generation),O.label=3;case 3:if(z<-m&&(0===t.iterations||E.generation<(null!==(g=t.iterations)&&void 0!==g?g:0)))return[3,1];O.label=4;case 4:return void 0!==I&&(this.nodes=I.nodes,this.connections=I.connections,this.gates=I.gates,t.clear&&this.clear()),N?[4,N.terminate()]:[3,6];case 5:O.sent(),O.label=6;case 6:return[2,{error:-z,iterations:E.generation,time:Date.now()-w}]}})})},e.prototype.distance=function(t){for(var e=this,n=0;n<e.nodes.length;n++)e.nodes[n].index=n;for(n=0;n<t.nodes.length;n++)t.nodes[n].index=n;var o=0,i=0,r=Array.from(e.connections).filter(function(t){return void 0!==t}),s=Array.from(t.connections).filter(function(t){return void 0!==t});if(c.sort(r,function(t,e){return t.getInnovationID()-e.getInnovationID()}),c.sort(s,function(t,e){return t.getInnovationID()-e.getInnovationID()}),r[r.length-1].getInnovationID()<s[s.length-1].getInnovationID()){var a=e;e=t,t=a}for(var u=0,d=0,l=0;o<r.length&&i<s.length;){var h=r[o],f=s[i];if(void 0===h||void 0===f)throw Error("HERE");h.getInnovationID()===f.getInnovationID()?(o++,i++,d+=Math.abs(h.weight-f.weight),l++):o>i?(i++,u++):(o++,u++)}d/=l;var p=e.connections.size-o,g=Math.max(e.connections.size,t.connections.size);return g<20&&(g=1),v.NEAT.C1*p/g+v.NEAT.C2*u/g+v.NEAT.C3*d},e.prototype.trainEpoch=function(t){for(var e,n,o,i=0,r=0;r<t.dataset.length;r++){var s=t.dataset[r].input,a=t.dataset[r].output,u=(r+1)%(null!==(e=t.batchSize)&&void 0!==e?e:t.dataset.length)==0||r+1===t.dataset.length,d=this.activate(s,{dropoutRate:null!==(n=t.dropoutRate)&&void 0!==n?n:.5});this.propagate(a,{rate:t.trainingRate,momentum:t.momentum,update:u}),i+=(null!==(o=t.loss)&&void 0!==o?o:h.MSELoss)(a,d)}return i/t.dataset.length},e}();exports.Network=w;
 },{"../enums/NodeType":"../src/enums/NodeType.js","../methods/Loss":"../src/methods/Loss.js","../methods/Mutation":"../src/methods/Mutation.js","../methods/Rate":"../src/methods/Rate.js","../NEAT":"../src/NEAT.js","../utils/Utils":"../src/utils/Utils.js","./Node":"../src/architecture/Node.js"}],"../src/architecture/Architect.js":[function(require,module,exports) {
 "use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.Architect=void 0;var e=require("./Layers/CoreLayers/InputLayer"),r=require("./Layers/CoreLayers/OutputLayer"),t=require("./Layers/Layer"),n=require("./Network"),a=function(){function a(){this.layers=[]}return a.prototype.addLayer=function(e,r){var t=null!=r?r:e.getDefaultIncomingConnectionType();if(!e.connectionTypeisAllowed(t))throw new ReferenceError("Connection type "+t+" is not allowed at layer "+e.constructor.name);return this.layers.push({layer:e,incomingConnectionType:t}),this},a.prototype.buildModel=function(){var a,s;if(!(this.layers[0].layer instanceof e.InputLayer))throw new ReferenceError("First layer has to be a InputLayer! Currently is: "+this.layers[0].layer.constructor.name);if(!(this.layers[this.layers.length-1].layer instanceof r.OutputLayer))throw new ReferenceError("Last layer has to be a OutputLayer! Currently is: "+this.layers[this.layers.length-1].layer.constructor.name);var o=this.layers[0].layer.nodes.length,i=this.layers[this.layers.length-1].layer.nodes.length,y=new n.Network(o,i);y.nodes=[],y.connections.clear();for(var l=0;l<this.layers.length-1;l++)t.Layer.connect(this.layers[l].layer,this.layers[l+1].layer,this.layers[l+1].incomingConnectionType).forEach(function(e){return y.connections.add(e)}),(a=y.nodes).push.apply(a,this.layers[l].layer.nodes),this.layers[l].layer.connections.forEach(function(e){return y.connections.add(e)}),this.layers[l].layer.gates.forEach(function(e){return y.gates.add(e)});return(s=y.nodes).push.apply(s,this.layers[this.layers.length-1].layer.nodes),y},a}();exports.Architect=a;
 },{"./Layers/CoreLayers/InputLayer":"../src/architecture/Layers/CoreLayers/InputLayer.js","./Layers/CoreLayers/OutputLayer":"../src/architecture/Layers/CoreLayers/OutputLayer.js","./Layers/Layer":"../src/architecture/Layers/Layer.js","./Network":"../src/architecture/Network.js"}],"../src/architecture/Nodes/ActivationNode.js":[function(require,module,exports) {
-"use strict";
-
-var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
-    };
-
-    return _extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    _extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.ActivationNode = void 0;
-
-var Utils_1 = require("../../utils/Utils");
-
-var ConstantNode_1 = require("./ConstantNode");
-/**
- * Activation node
- */
-
-
-var ActivationNode =
-/** @class */
-function (_super) {
-  __extends(ActivationNode, _super);
-
-  function ActivationNode() {
-    return _super.call(this) || this;
-  }
-  /**
-   * Actives the node.
-   *
-   * When a neuron activates, it computes its state from all its input connections and 'squashes' it using its activation function, and returns the output (activation).
-   *
-   * You can also provide the activation (a float between 0 and 1) as a parameter, which is useful for neurons in the input layer.
-   *
-   * @returns A neuron's output value
-   */
-
-
-  ActivationNode.prototype.activate = function () {
-    this.old = this.state;
-    var incomingStates = Array.from(this.incoming).map(function (conn) {
-      return conn.from.activation * conn.weight * conn.gain;
-    });
-
-    if (incomingStates.length !== 1) {
-      throw new ReferenceError("Only 1 incoming connections is allowed!");
-    }
-
-    this.state = incomingStates[0];
-    this.activation = this.squash(this.state, false) * this.mask;
-    this.derivativeState = this.squash(this.state, true);
-    return this.activation;
-  };
-  /**
-   * Backpropagate the error (a.k.a. learn).
-   *
-   * After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating. [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
-   *
-   * If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
-   *
-   * @param target The target value (i.e. "the value the network SHOULD have given")
-   * @param options More options for propagation
-   */
-
-
-  ActivationNode.prototype.propagate = function (target, options) {
-    var _this = this;
-
-    var _a, _b, _c;
-
-    options.momentum = (_a = options.momentum) !== null && _a !== void 0 ? _a : 0;
-    options.rate = (_b = options.rate) !== null && _b !== void 0 ? _b : 0.3;
-    options.update = (_c = options.update) !== null && _c !== void 0 ? _c : true;
-    var connectionsStates = Array.from(this.outgoing).map(function (conn) {
-      return conn.to.errorResponsibility * conn.weight * conn.gain;
-    });
-    this.errorResponsibility = this.errorProjected = Utils_1.sum(connectionsStates) * this.derivativeState;
-    this.incoming.forEach(function (connection) {
-      var _a, _b; // calculate gradient
-
-
-      var gradient = _this.errorProjected * connection.eligibility;
-      connection.xTrace.forEach(function (value, key) {
-        gradient += key.errorResponsibility * value;
-      });
-      connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * _this.mask;
-
-      if (options.update) {
-        connection.deltaWeightsTotal += ((_b = options.momentum) !== null && _b !== void 0 ? _b : 0) * connection.deltaWeightsPrevious;
-        connection.weight += connection.deltaWeightsTotal;
-        connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
-        connection.deltaWeightsTotal = 0;
-      }
-    });
-  };
-
-  return ActivationNode;
-}(ConstantNode_1.ConstantNode);
-
-exports.ActivationNode = ActivationNode;
+"use strict";var t=this&&this.__extends||function(){var t=function(e,i){return(t=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var i in e)e.hasOwnProperty(i)&&(t[i]=e[i])})(e,i)};return function(e,i){function o(){this.constructor=e}t(e,i),e.prototype=null===i?Object.create(i):(o.prototype=i.prototype,new o)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.ActivationNode=void 0;var e=require("../../utils/Utils"),i=require("./ConstantNode"),o=function(i){function o(){return i.call(this)||this}return t(o,i),o.prototype.activate=function(){this.old=this.state;var t=Array.from(this.incoming).map(function(t){return t.from.activation*t.weight*t.gain});if(1!==t.length)throw new ReferenceError("Only 1 incoming connections is allowed!");return this.state=t[0],this.activation=this.squash(this.state,!1)*this.mask,this.derivativeState=this.squash(this.state,!0),this.activation},o.prototype.propagate=function(t,i){var o,r,n,a=this;i.momentum=null!==(o=i.momentum)&&void 0!==o?o:0,i.rate=null!==(r=i.rate)&&void 0!==r?r:.3,i.update=null===(n=i.update)||void 0===n||n;var s=Array.from(this.outgoing).map(function(t){return t.to.errorResponsibility*t.weight*t.gain});this.errorResponsibility=this.errorProjected=e.sum(s)*this.derivativeState,this.incoming.forEach(function(t){var e,o,r=a.errorProjected*t.eligibility;t.xTrace.forEach(function(t,e){r+=e.errorResponsibility*t}),t.deltaWeightsTotal+=(null!==(e=i.rate)&&void 0!==e?e:.3)*r*a.mask,i.update&&(t.deltaWeightsTotal+=(null!==(o=i.momentum)&&void 0!==o?o:0)*t.deltaWeightsPrevious,t.weight+=t.deltaWeightsTotal,t.deltaWeightsPrevious=t.deltaWeightsTotal,t.deltaWeightsTotal=0)})},o}(i.ConstantNode);exports.ActivationNode=o;
 },{"../../utils/Utils":"../src/utils/Utils.js","./ConstantNode":"../src/architecture/Nodes/ConstantNode.js"}],"../src/architecture/Layers/CoreLayers/ActivationLayer.js":[function(require,module,exports) {
 "use strict";var t=this&&this.__extends||function(){var t=function(e,o){return(t=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(t,e){t.__proto__=e}||function(t,e){for(var o in e)e.hasOwnProperty(o)&&(t[o]=e[o])})(e,o)};return function(e,o){function n(){this.constructor=e}t(e,o),e.prototype=null===o?Object.create(o):(n.prototype=o.prototype,new n)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.ActivationLayer=void 0;var e=require("activations/build/src"),o=require("../../../enums/ConnectionType"),n=require("../../Nodes/ActivationNode"),r=require("../Layer"),i=function(r){function i(t,o){var i,c;void 0===o&&(o={});for(var u=r.call(this,t)||this,p=null!==(c=o.activation)&&void 0!==c?c:e.Logistic,a=0;a<t;a++)u.inputNodes.add((new n.ActivationNode).setActivationType(p));return u.outputNodes=u.inputNodes,(i=u.nodes).push.apply(i,Array.from(u.inputNodes)),u}return t(i,r),i.prototype.connectionTypeisAllowed=function(t){return t===o.ConnectionType.ONE_TO_ONE},i.prototype.getDefaultIncomingConnectionType=function(){return o.ConnectionType.ONE_TO_ONE},i}(r.Layer);exports.ActivationLayer=i;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../Nodes/ActivationNode":"../src/architecture/Nodes/ActivationNode.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/CoreLayers/DenseLayer.js":[function(require,module,exports) {
@@ -2015,210 +194,619 @@ exports.ActivationNode = ActivationNode;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/RecurrentLayers/RNNLayer.js":[function(require,module,exports) {
 "use strict";var e=this&&this.__extends||function(){var e=function(t,o){return(e=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,t){e.__proto__=t}||function(e,t){for(var o in t)t.hasOwnProperty(o)&&(e[o]=t[o])})(t,o)};return function(t,o){function n(){this.constructor=t}e(t,o),t.prototype=null===o?Object.create(o):(n.prototype=o.prototype,new n)}}();Object.defineProperty(exports,"__esModule",{value:!0}),exports.RNNLayer=void 0;var t=require("activations/build/src"),o=require("../../../enums/ConnectionType"),n=require("../../../enums/NodeType"),r=require("../../Node"),i=require("../Layer"),u=function(u){function p(e,p){var c,s,a;void 0===p&&(p={});for(var y=u.call(this,e)||this,d=0;d<e;d++)y.inputNodes.add(new r.Node(n.NodeType.HIDDEN).setActivationType(null!==(a=p.activation)&&void 0!==a?a:t.Logistic));return y.outputNodes=y.inputNodes,(c=y.nodes).push.apply(c,Array.from(y.inputNodes)),(s=y.connections).push.apply(s,i.Layer.connect(y.nodes,y.nodes,o.ConnectionType.ONE_TO_ONE)),y}return e(p,u),p.prototype.connectionTypeisAllowed=function(e){return!0},p.prototype.getDefaultIncomingConnectionType=function(){return o.ConnectionType.ALL_TO_ALL},p}(i.Layer);exports.RNNLayer=u;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"index.js":[function(require,module,exports) {
-"use strict";Object.defineProperty(exports,"__esModule",{value:!0}),exports.generateGaussian=exports.avg=exports.sum=exports.min=exports.minValueIndex=exports.maxValueIndex=exports.max=exports.shuffle=exports.removeFromArray=exports.randBoolean=exports.randDouble=exports.randInt=exports.pickRandom=exports.TournamentSelection=exports.PowerSelection=exports.FitnessProportionateSelection=exports.Selection=exports.InverseRate=exports.ExponentialRate=exports.StepRate=exports.FixedRate=exports.Rate=exports.SwapNodesMutation=exports.SubBackConnectionMutation=exports.AddBackConnectionMutation=exports.SubSelfConnectionMutation=exports.AddSelfConnectionMutation=exports.SubGateMutation=exports.AddGateMutation=exports.ModActivationMutation=exports.ModBiasMutation=exports.ModWeightMutation=exports.SubConnectionMutation=exports.AddConnectionMutation=exports.SubNodeMutation=exports.AddNodeMutation=exports.Mutation=exports.ONLY_STRUCTURE=exports.NO_STRUCTURE_MUTATIONS=exports.FEEDFORWARD_MUTATIONS=exports.ALL_MUTATIONS=exports.HINGELoss=exports.MSLELoss=exports.WAPELoss=exports.MAPELoss=exports.MAELoss=exports.BinaryLoss=exports.MBELoss=exports.MSELoss=exports.ALL_LOSSES=exports.NoiseNodeType=exports.PoolNodeType=exports.NodeType=exports.GatingType=exports.ConnectionType=exports.Node=exports.Species=exports.Network=exports.Connection=exports.Architect=exports.PoolNode=exports.NoiseNode=exports.DropoutNode=exports.ConstantNode=exports.Layer=exports.MemoryLayer=exports.LSTMLayer=exports.GRULayer=exports.RNNLayer=exports.HopfieldLayer=exports.ActivationLayer=exports.PoolingLayer=exports.GlobalMaxPooling1DLayer=exports.GlobalMinPooling1DLayer=exports.GlobalAvgPooling1DLayer=exports.MaxPooling1DLayer=exports.MinPooling1DLayer=exports.AvgPooling1DLayer=exports.NoiseLayer=exports.OutputLayer=exports.InputLayer=exports.DropoutLayer=exports.DenseLayer=void 0;var e=require("../src/architecture/Architect");Object.defineProperty(exports,"Architect",{enumerable:!0,get:function(){return e.Architect}});var r=require("../src/architecture/Connection");Object.defineProperty(exports,"Connection",{enumerable:!0,get:function(){return r.Connection}});var t=require("../src/architecture/Layers/CoreLayers/ActivationLayer");Object.defineProperty(exports,"ActivationLayer",{enumerable:!0,get:function(){return t.ActivationLayer}});var o=require("../src/architecture/Layers/CoreLayers/DenseLayer");Object.defineProperty(exports,"DenseLayer",{enumerable:!0,get:function(){return o.DenseLayer}});var n=require("../src/architecture/Layers/CoreLayers/DropoutLayer");Object.defineProperty(exports,"DropoutLayer",{enumerable:!0,get:function(){return n.DropoutLayer}});var i=require("../src/architecture/Layers/CoreLayers/InputLayer");Object.defineProperty(exports,"InputLayer",{enumerable:!0,get:function(){return i.InputLayer}});var a=require("../src/architecture/Layers/CoreLayers/OutputLayer");Object.defineProperty(exports,"OutputLayer",{enumerable:!0,get:function(){return a.OutputLayer}});var u=require("../src/architecture/Layers/Layer");Object.defineProperty(exports,"Layer",{enumerable:!0,get:function(){return u.Layer}});var s=require("../src/architecture/Layers/NoiseLayers/NoiseLayer");Object.defineProperty(exports,"NoiseLayer",{enumerable:!0,get:function(){return s.NoiseLayer}});var c=require("../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer");Object.defineProperty(exports,"AvgPooling1DLayer",{enumerable:!0,get:function(){return c.AvgPooling1DLayer}});var p=require("../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer");Object.defineProperty(exports,"GlobalAvgPooling1DLayer",{enumerable:!0,get:function(){return p.GlobalAvgPooling1DLayer}});var y=require("../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer");Object.defineProperty(exports,"GlobalMaxPooling1DLayer",{enumerable:!0,get:function(){return y.GlobalMaxPooling1DLayer}});var b=require("../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer");Object.defineProperty(exports,"GlobalMinPooling1DLayer",{enumerable:!0,get:function(){return b.GlobalMinPooling1DLayer}});var d=require("../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer");Object.defineProperty(exports,"MaxPooling1DLayer",{enumerable:!0,get:function(){return d.MaxPooling1DLayer}});var l=require("../src/architecture/Layers/PoolingLayers/MinPooling1DLayer");Object.defineProperty(exports,"MinPooling1DLayer",{enumerable:!0,get:function(){return l.MinPooling1DLayer}});var x=require("../src/architecture/Layers/PoolingLayers/PoolingLayer");Object.defineProperty(exports,"PoolingLayer",{enumerable:!0,get:function(){return x.PoolingLayer}});var f=require("../src/architecture/Layers/RecurrentLayers/GRULayer");Object.defineProperty(exports,"GRULayer",{enumerable:!0,get:function(){return f.GRULayer}});var L=require("../src/architecture/Layers/RecurrentLayers/HopfieldLayer");Object.defineProperty(exports,"HopfieldLayer",{enumerable:!0,get:function(){return L.HopfieldLayer}});var g=require("../src/architecture/Layers/RecurrentLayers/LSTMLayer");Object.defineProperty(exports,"LSTMLayer",{enumerable:!0,get:function(){return g.LSTMLayer}});var P=require("../src/architecture/Layers/RecurrentLayers/MemoryLayer");Object.defineProperty(exports,"MemoryLayer",{enumerable:!0,get:function(){return P.MemoryLayer}});var m=require("../src/architecture/Layers/RecurrentLayers/RNNLayer");Object.defineProperty(exports,"RNNLayer",{enumerable:!0,get:function(){return m.RNNLayer}});var O=require("../src/architecture/Network");Object.defineProperty(exports,"Network",{enumerable:!0,get:function(){return O.Network}});var M=require("../src/architecture/Node");Object.defineProperty(exports,"Node",{enumerable:!0,get:function(){return M.Node}});var N=require("../src/architecture/Nodes/ConstantNode");Object.defineProperty(exports,"ConstantNode",{enumerable:!0,get:function(){return N.ConstantNode}});var j=require("../src/architecture/Nodes/DropoutNode");Object.defineProperty(exports,"DropoutNode",{enumerable:!0,get:function(){return j.DropoutNode}});var S=require("../src/architecture/Nodes/NoiseNode");Object.defineProperty(exports,"NoiseNode",{enumerable:!0,get:function(){return S.NoiseNode}});var A=require("../src/architecture/Nodes/PoolNode");Object.defineProperty(exports,"PoolNode",{enumerable:!0,get:function(){return A.PoolNode}});var v=require("../src/architecture/Species");Object.defineProperty(exports,"Species",{enumerable:!0,get:function(){return v.Species}});var T=require("../src/enums/ConnectionType");Object.defineProperty(exports,"ConnectionType",{enumerable:!0,get:function(){return T.ConnectionType}});var R=require("../src/enums/GatingType");Object.defineProperty(exports,"GatingType",{enumerable:!0,get:function(){return R.GatingType}});var D=require("../src/enums/NodeType");Object.defineProperty(exports,"NodeType",{enumerable:!0,get:function(){return D.NodeType}}),Object.defineProperty(exports,"NoiseNodeType",{enumerable:!0,get:function(){return D.NoiseNodeType}}),Object.defineProperty(exports,"PoolNodeType",{enumerable:!0,get:function(){return D.PoolNodeType}});var h=require("../src/methods/Loss");Object.defineProperty(exports,"ALL_LOSSES",{enumerable:!0,get:function(){return h.ALL_LOSSES}}),Object.defineProperty(exports,"BinaryLoss",{enumerable:!0,get:function(){return h.BinaryLoss}}),Object.defineProperty(exports,"HINGELoss",{enumerable:!0,get:function(){return h.HINGELoss}}),Object.defineProperty(exports,"MAELoss",{enumerable:!0,get:function(){return h.MAELoss}}),Object.defineProperty(exports,"MAPELoss",{enumerable:!0,get:function(){return h.MAPELoss}}),Object.defineProperty(exports,"MBELoss",{enumerable:!0,get:function(){return h.MBELoss}}),Object.defineProperty(exports,"MSELoss",{enumerable:!0,get:function(){return h.MSELoss}}),Object.defineProperty(exports,"MSLELoss",{enumerable:!0,get:function(){return h.MSLELoss}}),Object.defineProperty(exports,"WAPELoss",{enumerable:!0,get:function(){return h.WAPELoss}});var C=require("../src/methods/Mutation");Object.defineProperty(exports,"AddBackConnectionMutation",{enumerable:!0,get:function(){return C.AddBackConnectionMutation}}),Object.defineProperty(exports,"AddConnectionMutation",{enumerable:!0,get:function(){return C.AddConnectionMutation}}),Object.defineProperty(exports,"AddGateMutation",{enumerable:!0,get:function(){return C.AddGateMutation}}),Object.defineProperty(exports,"AddNodeMutation",{enumerable:!0,get:function(){return C.AddNodeMutation}}),Object.defineProperty(exports,"AddSelfConnectionMutation",{enumerable:!0,get:function(){return C.AddSelfConnectionMutation}}),Object.defineProperty(exports,"ALL_MUTATIONS",{enumerable:!0,get:function(){return C.ALL_MUTATIONS}}),Object.defineProperty(exports,"FEEDFORWARD_MUTATIONS",{enumerable:!0,get:function(){return C.FEEDFORWARD_MUTATIONS}}),Object.defineProperty(exports,"ModActivationMutation",{enumerable:!0,get:function(){return C.ModActivationMutation}}),Object.defineProperty(exports,"ModBiasMutation",{enumerable:!0,get:function(){return C.ModBiasMutation}}),Object.defineProperty(exports,"ModWeightMutation",{enumerable:!0,get:function(){return C.ModWeightMutation}}),Object.defineProperty(exports,"Mutation",{enumerable:!0,get:function(){return C.Mutation}}),Object.defineProperty(exports,"NO_STRUCTURE_MUTATIONS",{enumerable:!0,get:function(){return C.NO_STRUCTURE_MUTATIONS}}),Object.defineProperty(exports,"ONLY_STRUCTURE",{enumerable:!0,get:function(){return C.ONLY_STRUCTURE}}),Object.defineProperty(exports,"SubBackConnectionMutation",{enumerable:!0,get:function(){return C.SubBackConnectionMutation}}),Object.defineProperty(exports,"SubConnectionMutation",{enumerable:!0,get:function(){return C.SubConnectionMutation}}),Object.defineProperty(exports,"SubGateMutation",{enumerable:!0,get:function(){return C.SubGateMutation}}),Object.defineProperty(exports,"SubNodeMutation",{enumerable:!0,get:function(){return C.SubNodeMutation}}),Object.defineProperty(exports,"SubSelfConnectionMutation",{enumerable:!0,get:function(){return C.SubSelfConnectionMutation}}),Object.defineProperty(exports,"SwapNodesMutation",{enumerable:!0,get:function(){return C.SwapNodesMutation}});var E=require("../src/methods/Rate");Object.defineProperty(exports,"ExponentialRate",{enumerable:!0,get:function(){return E.ExponentialRate}}),Object.defineProperty(exports,"FixedRate",{enumerable:!0,get:function(){return E.FixedRate}}),Object.defineProperty(exports,"InverseRate",{enumerable:!0,get:function(){return E.InverseRate}}),Object.defineProperty(exports,"Rate",{enumerable:!0,get:function(){return E.Rate}}),Object.defineProperty(exports,"StepRate",{enumerable:!0,get:function(){return E.StepRate}});var q=require("../src/methods/Selection");Object.defineProperty(exports,"FitnessProportionateSelection",{enumerable:!0,get:function(){return q.FitnessProportionateSelection}}),Object.defineProperty(exports,"PowerSelection",{enumerable:!0,get:function(){return q.PowerSelection}}),Object.defineProperty(exports,"Selection",{enumerable:!0,get:function(){return q.Selection}}),Object.defineProperty(exports,"TournamentSelection",{enumerable:!0,get:function(){return q.TournamentSelection}});var G=require("../src/utils/Utils");Object.defineProperty(exports,"avg",{enumerable:!0,get:function(){return G.avg}}),Object.defineProperty(exports,"generateGaussian",{enumerable:!0,get:function(){return G.generateGaussian}}),Object.defineProperty(exports,"max",{enumerable:!0,get:function(){return G.max}}),Object.defineProperty(exports,"maxValueIndex",{enumerable:!0,get:function(){return G.maxValueIndex}}),Object.defineProperty(exports,"min",{enumerable:!0,get:function(){return G.min}}),Object.defineProperty(exports,"minValueIndex",{enumerable:!0,get:function(){return G.minValueIndex}}),Object.defineProperty(exports,"pickRandom",{enumerable:!0,get:function(){return G.pickRandom}}),Object.defineProperty(exports,"randBoolean",{enumerable:!0,get:function(){return G.randBoolean}}),Object.defineProperty(exports,"randDouble",{enumerable:!0,get:function(){return G.randDouble}}),Object.defineProperty(exports,"randInt",{enumerable:!0,get:function(){return G.randInt}}),Object.defineProperty(exports,"removeFromArray",{enumerable:!0,get:function(){return G.removeFromArray}}),Object.defineProperty(exports,"shuffle",{enumerable:!0,get:function(){return G.shuffle}}),Object.defineProperty(exports,"sum",{enumerable:!0,get:function(){return G.sum}});
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.generateGaussian = exports.avg = exports.sum = exports.min = exports.minValueIndex = exports.maxValueIndex = exports.max = exports.shuffle = exports.removeFromArray = exports.randBoolean = exports.randDouble = exports.randInt = exports.pickRandom = exports.TournamentSelection = exports.PowerSelection = exports.FitnessProportionateSelection = exports.Selection = exports.InverseRate = exports.ExponentialRate = exports.StepRate = exports.FixedRate = exports.Rate = exports.SwapNodesMutation = exports.SubBackConnectionMutation = exports.AddBackConnectionMutation = exports.SubSelfConnectionMutation = exports.AddSelfConnectionMutation = exports.SubGateMutation = exports.AddGateMutation = exports.ModActivationMutation = exports.ModBiasMutation = exports.ModWeightMutation = exports.SubConnectionMutation = exports.AddConnectionMutation = exports.SubNodeMutation = exports.AddNodeMutation = exports.Mutation = exports.ONLY_STRUCTURE = exports.NO_STRUCTURE_MUTATIONS = exports.FEEDFORWARD_MUTATIONS = exports.ALL_MUTATIONS = exports.HINGELoss = exports.MSLELoss = exports.WAPELoss = exports.MAPELoss = exports.MAELoss = exports.BinaryLoss = exports.MBELoss = exports.MSELoss = exports.ALL_LOSSES = exports.NoiseNodeType = exports.PoolNodeType = exports.NodeType = exports.GatingType = exports.ConnectionType = exports.Node = exports.Species = exports.Network = exports.Connection = exports.Architect = exports.PoolNode = exports.NoiseNode = exports.DropoutNode = exports.ConstantNode = exports.Layer = exports.MemoryLayer = exports.LSTMLayer = exports.GRULayer = exports.RNNLayer = exports.HopfieldLayer = exports.ActivationLayer = exports.PoolingLayer = exports.GlobalMaxPooling1DLayer = exports.GlobalMinPooling1DLayer = exports.GlobalAvgPooling1DLayer = exports.MaxPooling1DLayer = exports.MinPooling1DLayer = exports.AvgPooling1DLayer = exports.NoiseLayer = exports.OutputLayer = exports.InputLayer = exports.DropoutLayer = exports.DenseLayer = void 0;
+
+var Architect_1 = require("../src/architecture/Architect");
+
+Object.defineProperty(exports, "Architect", {
+  enumerable: true,
+  get: function get() {
+    return Architect_1.Architect;
+  }
+});
+
+var Connection_1 = require("../src/architecture/Connection");
+
+Object.defineProperty(exports, "Connection", {
+  enumerable: true,
+  get: function get() {
+    return Connection_1.Connection;
+  }
+});
+
+var ActivationLayer_1 = require("../src/architecture/Layers/CoreLayers/ActivationLayer");
+
+Object.defineProperty(exports, "ActivationLayer", {
+  enumerable: true,
+  get: function get() {
+    return ActivationLayer_1.ActivationLayer;
+  }
+});
+
+var DenseLayer_1 = require("../src/architecture/Layers/CoreLayers/DenseLayer");
+
+Object.defineProperty(exports, "DenseLayer", {
+  enumerable: true,
+  get: function get() {
+    return DenseLayer_1.DenseLayer;
+  }
+});
+
+var DropoutLayer_1 = require("../src/architecture/Layers/CoreLayers/DropoutLayer");
+
+Object.defineProperty(exports, "DropoutLayer", {
+  enumerable: true,
+  get: function get() {
+    return DropoutLayer_1.DropoutLayer;
+  }
+});
+
+var InputLayer_1 = require("../src/architecture/Layers/CoreLayers/InputLayer");
+
+Object.defineProperty(exports, "InputLayer", {
+  enumerable: true,
+  get: function get() {
+    return InputLayer_1.InputLayer;
+  }
+});
+
+var OutputLayer_1 = require("../src/architecture/Layers/CoreLayers/OutputLayer");
+
+Object.defineProperty(exports, "OutputLayer", {
+  enumerable: true,
+  get: function get() {
+    return OutputLayer_1.OutputLayer;
+  }
+});
+
+var Layer_1 = require("../src/architecture/Layers/Layer");
+
+Object.defineProperty(exports, "Layer", {
+  enumerable: true,
+  get: function get() {
+    return Layer_1.Layer;
+  }
+});
+
+var NoiseLayer_1 = require("../src/architecture/Layers/NoiseLayers/NoiseLayer");
+
+Object.defineProperty(exports, "NoiseLayer", {
+  enumerable: true,
+  get: function get() {
+    return NoiseLayer_1.NoiseLayer;
+  }
+});
+
+var AvgPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer");
+
+Object.defineProperty(exports, "AvgPooling1DLayer", {
+  enumerable: true,
+  get: function get() {
+    return AvgPooling1DLayer_1.AvgPooling1DLayer;
+  }
+});
+
+var GlobalAvgPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer");
+
+Object.defineProperty(exports, "GlobalAvgPooling1DLayer", {
+  enumerable: true,
+  get: function get() {
+    return GlobalAvgPooling1DLayer_1.GlobalAvgPooling1DLayer;
+  }
+});
+
+var GlobalMaxPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer");
+
+Object.defineProperty(exports, "GlobalMaxPooling1DLayer", {
+  enumerable: true,
+  get: function get() {
+    return GlobalMaxPooling1DLayer_1.GlobalMaxPooling1DLayer;
+  }
+});
+
+var GlobalMinPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer");
+
+Object.defineProperty(exports, "GlobalMinPooling1DLayer", {
+  enumerable: true,
+  get: function get() {
+    return GlobalMinPooling1DLayer_1.GlobalMinPooling1DLayer;
+  }
+});
+
+var MaxPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer");
+
+Object.defineProperty(exports, "MaxPooling1DLayer", {
+  enumerable: true,
+  get: function get() {
+    return MaxPooling1DLayer_1.MaxPooling1DLayer;
+  }
+});
+
+var MinPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/MinPooling1DLayer");
+
+Object.defineProperty(exports, "MinPooling1DLayer", {
+  enumerable: true,
+  get: function get() {
+    return MinPooling1DLayer_1.MinPooling1DLayer;
+  }
+});
+
+var PoolingLayer_1 = require("../src/architecture/Layers/PoolingLayers/PoolingLayer");
+
+Object.defineProperty(exports, "PoolingLayer", {
+  enumerable: true,
+  get: function get() {
+    return PoolingLayer_1.PoolingLayer;
+  }
+});
+
+var GRULayer_1 = require("../src/architecture/Layers/RecurrentLayers/GRULayer");
+
+Object.defineProperty(exports, "GRULayer", {
+  enumerable: true,
+  get: function get() {
+    return GRULayer_1.GRULayer;
+  }
+});
+
+var HopfieldLayer_1 = require("../src/architecture/Layers/RecurrentLayers/HopfieldLayer");
+
+Object.defineProperty(exports, "HopfieldLayer", {
+  enumerable: true,
+  get: function get() {
+    return HopfieldLayer_1.HopfieldLayer;
+  }
+});
+
+var LSTMLayer_1 = require("../src/architecture/Layers/RecurrentLayers/LSTMLayer");
+
+Object.defineProperty(exports, "LSTMLayer", {
+  enumerable: true,
+  get: function get() {
+    return LSTMLayer_1.LSTMLayer;
+  }
+});
+
+var MemoryLayer_1 = require("../src/architecture/Layers/RecurrentLayers/MemoryLayer");
+
+Object.defineProperty(exports, "MemoryLayer", {
+  enumerable: true,
+  get: function get() {
+    return MemoryLayer_1.MemoryLayer;
+  }
+});
+
+var RNNLayer_1 = require("../src/architecture/Layers/RecurrentLayers/RNNLayer");
+
+Object.defineProperty(exports, "RNNLayer", {
+  enumerable: true,
+  get: function get() {
+    return RNNLayer_1.RNNLayer;
+  }
+});
+
+var Network_1 = require("../src/architecture/Network");
+
+Object.defineProperty(exports, "Network", {
+  enumerable: true,
+  get: function get() {
+    return Network_1.Network;
+  }
+});
+
+var Node_1 = require("../src/architecture/Node");
+
+Object.defineProperty(exports, "Node", {
+  enumerable: true,
+  get: function get() {
+    return Node_1.Node;
+  }
+});
+
+var ConstantNode_1 = require("../src/architecture/Nodes/ConstantNode");
+
+Object.defineProperty(exports, "ConstantNode", {
+  enumerable: true,
+  get: function get() {
+    return ConstantNode_1.ConstantNode;
+  }
+});
+
+var DropoutNode_1 = require("../src/architecture/Nodes/DropoutNode");
+
+Object.defineProperty(exports, "DropoutNode", {
+  enumerable: true,
+  get: function get() {
+    return DropoutNode_1.DropoutNode;
+  }
+});
+
+var NoiseNode_1 = require("../src/architecture/Nodes/NoiseNode");
+
+Object.defineProperty(exports, "NoiseNode", {
+  enumerable: true,
+  get: function get() {
+    return NoiseNode_1.NoiseNode;
+  }
+});
+
+var PoolNode_1 = require("../src/architecture/Nodes/PoolNode");
+
+Object.defineProperty(exports, "PoolNode", {
+  enumerable: true,
+  get: function get() {
+    return PoolNode_1.PoolNode;
+  }
+});
+
+var Species_1 = require("../src/architecture/Species");
+
+Object.defineProperty(exports, "Species", {
+  enumerable: true,
+  get: function get() {
+    return Species_1.Species;
+  }
+});
+
+var ConnectionType_1 = require("../src/enums/ConnectionType");
+
+Object.defineProperty(exports, "ConnectionType", {
+  enumerable: true,
+  get: function get() {
+    return ConnectionType_1.ConnectionType;
+  }
+});
+
+var GatingType_1 = require("../src/enums/GatingType");
+
+Object.defineProperty(exports, "GatingType", {
+  enumerable: true,
+  get: function get() {
+    return GatingType_1.GatingType;
+  }
+});
+
+var NodeType_1 = require("../src/enums/NodeType");
+
+Object.defineProperty(exports, "NodeType", {
+  enumerable: true,
+  get: function get() {
+    return NodeType_1.NodeType;
+  }
+});
+Object.defineProperty(exports, "NoiseNodeType", {
+  enumerable: true,
+  get: function get() {
+    return NodeType_1.NoiseNodeType;
+  }
+});
+Object.defineProperty(exports, "PoolNodeType", {
+  enumerable: true,
+  get: function get() {
+    return NodeType_1.PoolNodeType;
+  }
+});
+
+var Loss_1 = require("../src/methods/Loss");
+
+Object.defineProperty(exports, "ALL_LOSSES", {
+  enumerable: true,
+  get: function get() {
+    return Loss_1.ALL_LOSSES;
+  }
+});
+Object.defineProperty(exports, "BinaryLoss", {
+  enumerable: true,
+  get: function get() {
+    return Loss_1.BinaryLoss;
+  }
+});
+Object.defineProperty(exports, "HINGELoss", {
+  enumerable: true,
+  get: function get() {
+    return Loss_1.HINGELoss;
+  }
+});
+Object.defineProperty(exports, "MAELoss", {
+  enumerable: true,
+  get: function get() {
+    return Loss_1.MAELoss;
+  }
+});
+Object.defineProperty(exports, "MAPELoss", {
+  enumerable: true,
+  get: function get() {
+    return Loss_1.MAPELoss;
+  }
+});
+Object.defineProperty(exports, "MBELoss", {
+  enumerable: true,
+  get: function get() {
+    return Loss_1.MBELoss;
+  }
+});
+Object.defineProperty(exports, "MSELoss", {
+  enumerable: true,
+  get: function get() {
+    return Loss_1.MSELoss;
+  }
+});
+Object.defineProperty(exports, "MSLELoss", {
+  enumerable: true,
+  get: function get() {
+    return Loss_1.MSLELoss;
+  }
+});
+Object.defineProperty(exports, "WAPELoss", {
+  enumerable: true,
+  get: function get() {
+    return Loss_1.WAPELoss;
+  }
+});
+
+var Mutation_1 = require("../src/methods/Mutation");
+
+Object.defineProperty(exports, "AddBackConnectionMutation", {
+  enumerable: true,
+  get: function get() {
+    return Mutation_1.AddBackConnectionMutation;
+  }
+});
+Object.defineProperty(exports, "AddConnectionMutation", {
+  enumerable: true,
+  get: function get() {
+    return Mutation_1.AddConnectionMutation;
+  }
+});
+Object.defineProperty(exports, "AddGateMutation", {
+  enumerable: true,
+  get: function get() {
+    return Mutation_1.AddGateMutation;
+  }
+});
+Object.defineProperty(exports, "AddNodeMutation", {
+  enumerable: true,
+  get: function get() {
+    return Mutation_1.AddNodeMutation;
+  }
+});
+Object.defineProperty(exports, "AddSelfConnectionMutation", {
+  enumerable: true,
+  get: function get() {
+    return Mutation_1.AddSelfConnectionMutation;
+  }
+});
+Object.defineProperty(exports, "ALL_MUTATIONS", {
+  enumerable: true,
+  get: function get() {
+    return Mutation_1.ALL_MUTATIONS;
+  }
+});
+Object.defineProperty(exports, "FEEDFORWARD_MUTATIONS", {
+  enumerable: true,
+  get: function get() {
+    return Mutation_1.FEEDFORWARD_MUTATIONS;
+  }
+});
+Object.defineProperty(exports, "ModActivationMutation", {
+  enumerable: true,
+  get: function get() {
+    return Mutation_1.ModActivationMutation;
+  }
+});
+Object.defineProperty(exports, "ModBiasMutation", {
+  enumerable: true,
+  get: function get() {
+    return Mutation_1.ModBiasMutation;
+  }
+});
+Object.defineProperty(exports, "ModWeightMutation", {
+  enumerable: true,
+  get: function get() {
+    return Mutation_1.ModWeightMutation;
+  }
+});
+Object.defineProperty(exports, "Mutation", {
+  enumerable: true,
+  get: function get() {
+    return Mutation_1.Mutation;
+  }
+});
+Object.defineProperty(exports, "NO_STRUCTURE_MUTATIONS", {
+  enumerable: true,
+  get: function get() {
+    return Mutation_1.NO_STRUCTURE_MUTATIONS;
+  }
+});
+Object.defineProperty(exports, "ONLY_STRUCTURE", {
+  enumerable: true,
+  get: function get() {
+    return Mutation_1.ONLY_STRUCTURE;
+  }
+});
+Object.defineProperty(exports, "SubBackConnectionMutation", {
+  enumerable: true,
+  get: function get() {
+    return Mutation_1.SubBackConnectionMutation;
+  }
+});
+Object.defineProperty(exports, "SubConnectionMutation", {
+  enumerable: true,
+  get: function get() {
+    return Mutation_1.SubConnectionMutation;
+  }
+});
+Object.defineProperty(exports, "SubGateMutation", {
+  enumerable: true,
+  get: function get() {
+    return Mutation_1.SubGateMutation;
+  }
+});
+Object.defineProperty(exports, "SubNodeMutation", {
+  enumerable: true,
+  get: function get() {
+    return Mutation_1.SubNodeMutation;
+  }
+});
+Object.defineProperty(exports, "SubSelfConnectionMutation", {
+  enumerable: true,
+  get: function get() {
+    return Mutation_1.SubSelfConnectionMutation;
+  }
+});
+Object.defineProperty(exports, "SwapNodesMutation", {
+  enumerable: true,
+  get: function get() {
+    return Mutation_1.SwapNodesMutation;
+  }
+});
+
+var Rate_1 = require("../src/methods/Rate");
+
+Object.defineProperty(exports, "ExponentialRate", {
+  enumerable: true,
+  get: function get() {
+    return Rate_1.ExponentialRate;
+  }
+});
+Object.defineProperty(exports, "FixedRate", {
+  enumerable: true,
+  get: function get() {
+    return Rate_1.FixedRate;
+  }
+});
+Object.defineProperty(exports, "InverseRate", {
+  enumerable: true,
+  get: function get() {
+    return Rate_1.InverseRate;
+  }
+});
+Object.defineProperty(exports, "Rate", {
+  enumerable: true,
+  get: function get() {
+    return Rate_1.Rate;
+  }
+});
+Object.defineProperty(exports, "StepRate", {
+  enumerable: true,
+  get: function get() {
+    return Rate_1.StepRate;
+  }
+});
+
+var Selection_1 = require("../src/methods/Selection");
+
+Object.defineProperty(exports, "FitnessProportionateSelection", {
+  enumerable: true,
+  get: function get() {
+    return Selection_1.FitnessProportionateSelection;
+  }
+});
+Object.defineProperty(exports, "PowerSelection", {
+  enumerable: true,
+  get: function get() {
+    return Selection_1.PowerSelection;
+  }
+});
+Object.defineProperty(exports, "Selection", {
+  enumerable: true,
+  get: function get() {
+    return Selection_1.Selection;
+  }
+});
+Object.defineProperty(exports, "TournamentSelection", {
+  enumerable: true,
+  get: function get() {
+    return Selection_1.TournamentSelection;
+  }
+});
+
+var Utils_1 = require("../src/utils/Utils");
+
+Object.defineProperty(exports, "avg", {
+  enumerable: true,
+  get: function get() {
+    return Utils_1.avg;
+  }
+});
+Object.defineProperty(exports, "generateGaussian", {
+  enumerable: true,
+  get: function get() {
+    return Utils_1.generateGaussian;
+  }
+});
+Object.defineProperty(exports, "max", {
+  enumerable: true,
+  get: function get() {
+    return Utils_1.max;
+  }
+});
+Object.defineProperty(exports, "maxValueIndex", {
+  enumerable: true,
+  get: function get() {
+    return Utils_1.maxValueIndex;
+  }
+});
+Object.defineProperty(exports, "min", {
+  enumerable: true,
+  get: function get() {
+    return Utils_1.min;
+  }
+});
+Object.defineProperty(exports, "minValueIndex", {
+  enumerable: true,
+  get: function get() {
+    return Utils_1.minValueIndex;
+  }
+});
+Object.defineProperty(exports, "pickRandom", {
+  enumerable: true,
+  get: function get() {
+    return Utils_1.pickRandom;
+  }
+});
+Object.defineProperty(exports, "randBoolean", {
+  enumerable: true,
+  get: function get() {
+    return Utils_1.randBoolean;
+  }
+});
+Object.defineProperty(exports, "randDouble", {
+  enumerable: true,
+  get: function get() {
+    return Utils_1.randDouble;
+  }
+});
+Object.defineProperty(exports, "randInt", {
+  enumerable: true,
+  get: function get() {
+    return Utils_1.randInt;
+  }
+});
+Object.defineProperty(exports, "removeFromArray", {
+  enumerable: true,
+  get: function get() {
+    return Utils_1.removeFromArray;
+  }
+});
+Object.defineProperty(exports, "shuffle", {
+  enumerable: true,
+  get: function get() {
+    return Utils_1.shuffle;
+  }
+});
+Object.defineProperty(exports, "sum", {
+  enumerable: true,
+  get: function get() {
+    return Utils_1.sum;
+  }
+});
 },{"../src/architecture/Architect":"../src/architecture/Architect.js","../src/architecture/Connection":"../src/architecture/Connection.js","../src/architecture/Layers/CoreLayers/ActivationLayer":"../src/architecture/Layers/CoreLayers/ActivationLayer.js","../src/architecture/Layers/CoreLayers/DenseLayer":"../src/architecture/Layers/CoreLayers/DenseLayer.js","../src/architecture/Layers/CoreLayers/DropoutLayer":"../src/architecture/Layers/CoreLayers/DropoutLayer.js","../src/architecture/Layers/CoreLayers/InputLayer":"../src/architecture/Layers/CoreLayers/InputLayer.js","../src/architecture/Layers/CoreLayers/OutputLayer":"../src/architecture/Layers/CoreLayers/OutputLayer.js","../src/architecture/Layers/Layer":"../src/architecture/Layers/Layer.js","../src/architecture/Layers/NoiseLayers/NoiseLayer":"../src/architecture/Layers/NoiseLayers/NoiseLayer.js","../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer":"../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/MinPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MinPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js","../src/architecture/Layers/RecurrentLayers/GRULayer":"../src/architecture/Layers/RecurrentLayers/GRULayer.js","../src/architecture/Layers/RecurrentLayers/HopfieldLayer":"../src/architecture/Layers/RecurrentLayers/HopfieldLayer.js","../src/architecture/Layers/RecurrentLayers/LSTMLayer":"../src/architecture/Layers/RecurrentLayers/LSTMLayer.js","../src/architecture/Layers/RecurrentLayers/MemoryLayer":"../src/architecture/Layers/RecurrentLayers/MemoryLayer.js","../src/architecture/Layers/RecurrentLayers/RNNLayer":"../src/architecture/Layers/RecurrentLayers/RNNLayer.js","../src/architecture/Network":"../src/architecture/Network.js","../src/architecture/Node":"../src/architecture/Node.js","../src/architecture/Nodes/ConstantNode":"../src/architecture/Nodes/ConstantNode.js","../src/architecture/Nodes/DropoutNode":"../src/architecture/Nodes/DropoutNode.js","../src/architecture/Nodes/NoiseNode":"../src/architecture/Nodes/NoiseNode.js","../src/architecture/Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","../src/architecture/Species":"../src/architecture/Species.js","../src/enums/ConnectionType":"../src/enums/ConnectionType.js","../src/enums/GatingType":"../src/enums/GatingType.js","../src/enums/NodeType":"../src/enums/NodeType.js","../src/methods/Loss":"../src/methods/Loss.js","../src/methods/Mutation":"../src/methods/Mutation.js","../src/methods/Rate":"../src/methods/Rate.js","../src/methods/Selection":"../src/methods/Selection.js","../src/utils/Utils":"../src/utils/Utils.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
-var global = arguments[3];
-var OVERLAY_ID = '__parcel__error__overlay__';
-var OldModule = module.bundle.Module;
-
-function Module(moduleName) {
-  OldModule.call(this, moduleName);
-  this.hot = {
-    data: module.bundle.hotData,
-    _acceptCallbacks: [],
-    _disposeCallbacks: [],
-    accept: function (fn) {
-      this._acceptCallbacks.push(fn || function () {});
-    },
-    dispose: function (fn) {
-      this._disposeCallbacks.push(fn);
-    }
-  };
-  module.bundle.hotData = null;
-}
-
-module.bundle.Module = Module;
-var checkedAssets, assetsToAccept;
-var parent = module.bundle.parent;
-
-if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
-  var hostname = "" || location.hostname;
-  var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "36625" + '/');
-
-  ws.onmessage = function (event) {
-    checkedAssets = {};
-    assetsToAccept = [];
-    var data = JSON.parse(event.data);
-
-    if (data.type === 'update') {
-      var handled = false;
-      data.assets.forEach(function (asset) {
-        if (!asset.isNew) {
-          var didAccept = hmrAcceptCheck(global.parcelRequire, asset.id);
-
-          if (didAccept) {
-            handled = true;
-          }
-        }
-      }); // Enable HMR for CSS by default.
-
-      handled = handled || data.assets.every(function (asset) {
-        return asset.type === 'css' && asset.generated.js;
-      });
-
-      if (handled) {
-        console.clear();
-        data.assets.forEach(function (asset) {
-          hmrApply(global.parcelRequire, asset);
-        });
-        assetsToAccept.forEach(function (v) {
-          hmrAcceptRun(v[0], v[1]);
-        });
-      } else if (location.reload) {
-        // `location` global exists in a web worker context but lacks `.reload()` function.
-        location.reload();
-      }
-    }
-
-    if (data.type === 'reload') {
-      ws.close();
-
-      ws.onclose = function () {
-        location.reload();
-      };
-    }
-
-    if (data.type === 'error-resolved') {
-      console.log('[parcel] ✨ Error resolved');
-      removeErrorOverlay();
-    }
-
-    if (data.type === 'error') {
-      console.error('[parcel] 🚨  ' + data.error.message + '\n' + data.error.stack);
-      removeErrorOverlay();
-      var overlay = createErrorOverlay(data);
-      document.body.appendChild(overlay);
-    }
-  };
-}
-
-function removeErrorOverlay() {
-  var overlay = document.getElementById(OVERLAY_ID);
-
-  if (overlay) {
-    overlay.remove();
-  }
-}
-
-function createErrorOverlay(data) {
-  var overlay = document.createElement('div');
-  overlay.id = OVERLAY_ID; // html encode message and stack trace
-
-  var message = document.createElement('div');
-  var stackTrace = document.createElement('pre');
-  message.innerText = data.error.message;
-  stackTrace.innerText = data.error.stack;
-  overlay.innerHTML = '<div style="background: black; font-size: 16px; color: white; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; padding: 30px; opacity: 0.85; font-family: Menlo, Consolas, monospace; z-index: 9999;">' + '<span style="background: red; padding: 2px 4px; border-radius: 2px;">ERROR</span>' + '<span style="top: 2px; margin-left: 5px; position: relative;">🚨</span>' + '<div style="font-size: 18px; font-weight: bold; margin-top: 20px;">' + message.innerHTML + '</div>' + '<pre>' + stackTrace.innerHTML + '</pre>' + '</div>';
-  return overlay;
-}
-
-function getParents(bundle, id) {
-  var modules = bundle.modules;
-
-  if (!modules) {
-    return [];
-  }
-
-  var parents = [];
-  var k, d, dep;
-
-  for (k in modules) {
-    for (d in modules[k][1]) {
-      dep = modules[k][1][d];
-
-      if (dep === id || Array.isArray(dep) && dep[dep.length - 1] === id) {
-        parents.push(k);
-      }
-    }
-  }
-
-  if (bundle.parent) {
-    parents = parents.concat(getParents(bundle.parent, id));
-  }
-
-  return parents;
-}
-
-function hmrApply(bundle, asset) {
-  var modules = bundle.modules;
-
-  if (!modules) {
-    return;
-  }
-
-  if (modules[asset.id] || !bundle.parent) {
-    var fn = new Function('require', 'module', 'exports', asset.generated.js);
-    asset.isNew = !modules[asset.id];
-    modules[asset.id] = [fn, asset.deps];
-  } else if (bundle.parent) {
-    hmrApply(bundle.parent, asset);
-  }
-}
-
-function hmrAcceptCheck(bundle, id) {
-  var modules = bundle.modules;
-
-  if (!modules) {
-    return;
-  }
-
-  if (!modules[id] && bundle.parent) {
-    return hmrAcceptCheck(bundle.parent, id);
-  }
-
-  if (checkedAssets[id]) {
-    return;
-  }
-
-  checkedAssets[id] = true;
-  var cached = bundle.cache[id];
-  assetsToAccept.push([bundle, id]);
-
-  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
-    return true;
-  }
-
-  return getParents(global.parcelRequire, id).some(function (id) {
-    return hmrAcceptCheck(global.parcelRequire, id);
-  });
-}
-
-function hmrAcceptRun(bundle, id) {
-  var cached = bundle.cache[id];
-  bundle.hotData = {};
-
-  if (cached) {
-    cached.hot.data = bundle.hotData;
-  }
-
-  if (cached && cached.hot && cached.hot._disposeCallbacks.length) {
-    cached.hot._disposeCallbacks.forEach(function (cb) {
-      cb(bundle.hotData);
-    });
-  }
-
-  delete bundle.cache[id];
-  bundle(id);
-  cached = bundle.cache[id];
-
-  if (cached && cached.hot && cached.hot._acceptCallbacks.length) {
-    cached.hot._acceptCallbacks.forEach(function (cb) {
-      cb();
-    });
-
-    return true;
-  }
-}
+var e,o,t="__parcel__error__overlay__",a=module.bundle.Module;function r(e){a.call(this,e),this.hot={data:module.bundle.hotData,_acceptCallbacks:[],_disposeCallbacks:[],accept:function(e){this._acceptCallbacks.push(e||function(){})},dispose:function(e){this._disposeCallbacks.push(e)}},module.bundle.hotData=null}module.bundle.Module=r;var n=module.bundle.parent;if(!(n&&n.isParcelRequire||"undefined"==typeof WebSocket)){var c=process.env.HMR_HOSTNAME||location.hostname,l="https:"===location.protocol?"wss":"ws",i=new WebSocket(l+"://"+c+":"+process.env.HMR_PORT+"/");i.onmessage=function(t){e={},o=[];var a=JSON.parse(t.data);if("update"===a.type){var r=!1;a.assets.forEach(function(e){e.isNew||f(global.parcelRequire,e.id)&&(r=!0)}),(r=r||a.assets.every(function(e){return"css"===e.type&&e.generated.js}))?(console.clear(),a.assets.forEach(function(e){u(global.parcelRequire,e)}),o.forEach(function(e){h(e[0],e[1])})):location.reload&&location.reload()}if("reload"===a.type&&(i.close(),i.onclose=function(){location.reload()}),"error-resolved"===a.type&&(console.log("[parcel] ✨ Error resolved"),s()),"error"===a.type){console.error("[parcel] 🚨  "+a.error.message+"\n"+a.error.stack),s();var n=p(a);document.body.appendChild(n)}}}function s(){var e=document.getElementById(t);e&&e.remove()}function p(e){var o=document.createElement("div");o.id=t;var a=document.createElement("div"),r=document.createElement("pre");return a.innerText=e.error.message,r.innerText=e.error.stack,o.innerHTML='<div style="background: black; font-size: 16px; color: white; position: fixed; height: 100%; width: 100%; top: 0px; left: 0px; padding: 30px; opacity: 0.85; font-family: Menlo, Consolas, monospace; z-index: 9999;"><span style="background: red; padding: 2px 4px; border-radius: 2px;">ERROR</span><span style="top: 2px; margin-left: 5px; position: relative;">🚨</span><div style="font-size: 18px; font-weight: bold; margin-top: 20px;">'+a.innerHTML+"</div><pre>"+r.innerHTML+"</pre></div>",o}function d(e,o){var t=e.modules;if(!t)return[];var a,r,n,c=[];for(a in t)for(r in t[a][1])((n=t[a][1][r])===o||Array.isArray(n)&&n[n.length-1]===o)&&c.push(a);return e.parent&&(c=c.concat(d(e.parent,o))),c}function u(e,o){var t=e.modules;if(t)if(t[o.id]||!e.parent){var a=new Function("require","module","exports",o.generated.js);o.isNew=!t[o.id],t[o.id]=[a,o.deps]}else e.parent&&u(e.parent,o)}function f(t,a){var r=t.modules;if(r){if(!r[a]&&t.parent)return f(t.parent,a);if(!e[a]){e[a]=!0;var n=t.cache[a];return o.push([t,a]),!!(n&&n.hot&&n.hot._acceptCallbacks.length)||d(global.parcelRequire,a).some(function(e){return f(global.parcelRequire,e)})}}}function h(e,o){var t=e.cache[o];if(e.hotData={},t&&(t.hot.data=e.hotData),t&&t.hot&&t.hot._disposeCallbacks.length&&t.hot._disposeCallbacks.forEach(function(o){o(e.hotData)}),delete e.cache[o],e(o),(t=e.cache[o])&&t.hot&&t.hot._acceptCallbacks.length)return t.hot._acceptCallbacks.forEach(function(e){e()}),!0}
 },{}]},{},["../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js","index.js"], "carrot")
 //# sourceMappingURL=/index.browser.js.map
