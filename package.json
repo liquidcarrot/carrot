@@ -72,9 +72,8 @@
   },
   "homepage": "https://liquidcarrot.io/",
   "dependencies": {
-    "activations": "^1.0.6",
-    "nyc": "^15.1.0",
-    "threads": "^1.4.1",
+    "activations": "^1.0.13",
+    "threads": "^1.6.0",
     "timsort": "^0.3.0"
   },
   "devDependencies": {
@@ -83,14 +82,15 @@
     "@types/parcel-bundler": "^1.12.1",
     "@types/timsort": "^0.3.0",
     "chai": "^4.2.0",
+    "nyc": "^15.1.0",
     "husky": "^4.2.5",
     "mnist": "^1.1.0",
-    "mocha": "^7.1.2",
+    "mocha": "^8.0.1",
     "parcel-bundler": "^1.12.4",
-    "ts-node": "^8.10.1",
+    "ts-node": "^8.10.2",
     "tslint": "^6.1.2",
-    "typedoc": "^0.17.6",
-    "typescript": "^3.9.2"
+    "typedoc": "^0.17.7",
+    "typescript": "^3.9.5"
   },
   "nyc": {
     "include": [
