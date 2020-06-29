@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Liquid Carrot - architecture/group.js - Documentation</title>
+    <link rel="shortcut icon" href="/liquid-carrot-favicon.png" />
+    
+    
+    
+    
+    
+    <meta property="og:title" content=""/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:image" content=""/>
+    
+    <meta property="og:url" content=""/>
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" href="styles/bulma.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
+    <link type="text/css" rel="stylesheet" href="https://cdn.jsdelivr.net/ionicons/2.0.1/css/ionicons.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger">
+  <div class="fixed-action-btn">
+    <div class="button-floating">
+      <!--
+      <label for="nav-trigger" class="navicon-button x">
+        <div class="navicon"></div>
+      </label>
+      -->
+        <i class="ion-ios-book" aria-hidden="true"></i>
+    </div>
+  </div>
+</label>
+<label for="nav-trigger" class="overlay"></label>
+
+<div class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item" href="#" style="padding:0">
+      <img src="img/carrot-logo.png" height="28">
+    </a>
+
+    <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+
+  <div id="navbarBasicExample" class="navbar-menu">
+    <div class="navbar-start">
+      <a class="navbar-item" href="/">Home</a>
+      <a class="navbar-item" href="/carrot">Docs</a>
+      <a class="navbar-item" href="https://github.com/liquidcarrot/carrot" target="_blank"><i class="ion-social-github" aria-hidden="true"></i></a>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          Versions
+        </a>
+        
+        <div class="navbar-dropdown">
+          <a href='https://liquidcarrot.io/carrot/versions/0.2.27/' class="navbar-item">v0.2.27</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.2.28/' class="navbar-item">v0.2.28</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.0/' class="navbar-item">v0.3.0</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.1/' class="navbar-item">v0.3.1</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.3/' class="navbar-item">v0.3.3</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.4/' class="navbar-item">v0.3.4</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.7/' class="navbar-item">v0.3.7</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.8/' class="navbar-item">v0.3.8</a>
+      <a href='https://liquidcarrot.io/carrot/versions/0.3.9/' class="navbar-item">v0.3.9</a>
+      <a href='https://liquidcarrot.io/carrot/' class="navbar-item">latest</a>
+        </div>
+      </div>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More
+        </a>
+
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="mailto:people@liquidcarrot.io?subject=Contact%20From%20Docs">
+            Contact
+          </a>
+          <hr class="navbar-divider">
+          <a class="navbar-item" href="https://github.com/liquidcarrot/carrot/issues/new">
+            Report an issue
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <input type="text" id="nav-search" placeholder="Search" autofocus>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav >
+    <h3>Classes</h3><ul><li><a href="Connection.html">Connection</a><ul class='methods'><li data-type='method'><a href="Connection.html#.innovationID">innovationID</a></li><li data-type='method'><a href="Connection.html#.toJSON">toJSON</a></li></ul></li><li><a href="Group.html">Group</a><ul class='methods'><li data-type='method'><a href="Group.html#.activate">activate</a></li><li data-type='method'><a href="Group.html#.clear">clear</a></li><li data-type='method'><a href="Group.html#.connect">connect</a></li><li data-type='method'><a href="Group.html#.disconnect">disconnect</a></li><li data-type='method'><a href="Group.html#.gate">gate</a></li><li data-type='method'><a href="Group.html#.propagate">propagate</a></li><li data-type='method'><a href="Group.html#.set">set</a></li></ul></li><li><a href="Layer.html">Layer</a><ul class='methods'><li data-type='method'><a href="Layer.html#.Dense">Dense</a></li><li data-type='method'><a href="Layer.html#.GRU">GRU</a></li><li data-type='method'><a href="Layer.html#.LSTM">LSTM</a></li><li data-type='method'><a href="Layer.html#.Memory">Memory</a></li></ul></li><li><a href="Neat.html">Neat</a><ul class='methods'><li data-type='method'><a href="Neat.html#.createPool">createPool</a></li><li data-type='method'><a href="Neat.html#.createPopulation">createPopulation</a></li><li data-type='method'><a href="Neat.html#.evaluate">evaluate</a></li><li data-type='method'><a href="Neat.html#.evolve">evolve</a></li><li data-type='method'><a href="Neat.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Neat.html#.getAverage">getAverage</a></li><li data-type='method'><a href="Neat.html#.getFittest">getFittest</a></li><li data-type='method'><a href="Neat.html#.getOffspring">getOffspring</a></li><li data-type='method'><a href="Neat.html#.getParent">getParent</a></li><li data-type='method'><a href="Neat.html#.mutate">mutate</a></li><li data-type='method'><a href="Neat.html#.replace">replace</a></li><li data-type='method'><a href="Neat.html#.toJSON">toJSON</a></li></ul></li><li><a href="Network.html">Network</a><ul class='methods'><li data-type='method'><a href="Network.html#.activate">activate</a></li><li data-type='method'><a href="Network.html#.clear">clear</a></li><li data-type='method'><a href="Network.html#.clone">clone</a></li><li data-type='method'><a href="Network.html#.connect">connect</a></li><li data-type='method'><a href="Network.html#.crossOver">crossOver</a></li><li data-type='method'><a href="Network.html#.disconnect">disconnect</a></li><li data-type='method'><a href="Network.html#.evolve">evolve</a></li><li data-type='method'><a href="Network.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Network.html#.gate">gate</a></li><li data-type='method'><a href="Network.html#.graph">graph</a></li><li data-type='method'><a href="Network.html#.merge">merge</a></li><li data-type='method'><a href="Network.html#.mutate">mutate</a></li><li data-type='method'><a href="Network.html#.mutateRandom">mutateRandom</a></li><li data-type='method'><a href="Network.html#.noTraceActivate">noTraceActivate</a></li><li data-type='method'><a href="Network.html#.possible">possible</a></li><li data-type='method'><a href="Network.html#.remove">remove</a></li><li data-type='method'><a href="Network.html#.set">set</a></li><li data-type='method'><a href="Network.html#.standalone">standalone</a></li><li data-type='method'><a href="Network.html#.test">test</a></li><li data-type='method'><a href="Network.html#.toJSON">toJSON</a></li><li data-type='method'><a href="Network.html#.train">train</a></li><li data-type='method'><a href="Network.html#.ungate">ungate</a></li></ul></li><li><a href="Node.html">Node</a><ul class='methods'><li data-type='method'><a href="Node.html#.activate">activate</a></li><li data-type='method'><a href="Node.html#.clear">clear</a></li><li data-type='method'><a href="Node.html#.connect">connect</a></li><li data-type='method'><a href="Node.html#.disconnect">disconnect</a></li><li data-type='method'><a href="Node.html#.fromJSON">fromJSON</a></li><li data-type='method'><a href="Node.html#.gate">gate</a></li><li data-type='method'><a href="Node.html#.isProjectedBy">isProjectedBy</a></li><li data-type='method'><a href="Node.html#.isProjectingTo">isProjectingTo</a></li><li data-type='method'><a href="Node.html#.mutate">mutate</a></li><li data-type='method'><a href="Node.html#.noTraceActivate">noTraceActivate</a></li><li data-type='method'><a href="Node.html#.propagate">propagate</a></li><li data-type='method'><a href="Node.html#.toJSON">toJSON</a></li><li data-type='method'><a href="Node.html#.ungate">ungate</a></li></ul></li></ul><h3>Namespaces</h3><ul><li><a href="activation.html">activation</a><ul class='methods'><li data-type='method'><a href="activation.html#.ABSOLUTE">ABSOLUTE</a></li><li data-type='method'><a href="activation.html#.BENT_IDENTITY">BENT_IDENTITY</a></li><li data-type='method'><a href="activation.html#.BIPOLAR">BIPOLAR</a></li><li data-type='method'><a href="activation.html#.BIPOLAR_SIGMOID">BIPOLAR_SIGMOID</a></li><li data-type='method'><a href="activation.html#.GAUSSIAN">GAUSSIAN</a></li><li data-type='method'><a href="activation.html#.HARD_TANH">HARD_TANH</a></li><li data-type='method'><a href="activation.html#.IDENTITY">IDENTITY</a></li><li data-type='method'><a href="activation.html#.INVERSE">INVERSE</a></li><li data-type='method'><a href="activation.html#.LOGISTIC">LOGISTIC</a></li><li data-type='method'><a href="activation.html#.RELU">RELU</a></li><li data-type='method'><a href="activation.html#.SELU">SELU</a></li><li data-type='method'><a href="activation.html#.SINUSOID">SINUSOID</a></li><li data-type='method'><a href="activation.html#.SOFTSIGN">SOFTSIGN</a></li><li data-type='method'><a href="activation.html#.STEP">STEP</a></li><li data-type='method'><a href="activation.html#.TANH">TANH</a></li></ul></li><li><a href="architect.html">architect</a><ul class='methods'><li data-type='method'><a href="architect.html#.Construct">Construct</a></li><li data-type='method'><a href="architect.html#.GRU">GRU</a></li><li data-type='method'><a href="architect.html#.Hopfield">Hopfield</a></li><li data-type='method'><a href="architect.html#.Liquid">Liquid</a></li><li data-type='method'><a href="architect.html#.LSTM">LSTM</a></li><li data-type='method'><a href="architect.html#.NARX">NARX</a></li><li data-type='method'><a href="architect.html#.Perceptron">Perceptron</a></li><li data-type='method'><a href="architect.html#.Random">Random</a></li></ul></li><li><a href="connection_.html">connection</a><ul class='members'><li data-type='member'><a href="connection_.html#.ALL_TO_ALL">ALL_TO_ALL</a></li><li data-type='member'><a href="connection_.html#.ALL_TO_ELSE">ALL_TO_ELSE</a></li><li data-type='member'><a href="connection_.html#.ONE_TO_ONE">ONE_TO_ONE</a></li></ul></li><li><a href="cost.html">cost</a><ul class='methods'><li data-type='method'><a href="cost.html#.BINARY">BINARY</a></li><li data-type='method'><a href="cost.html#.CROSS_ENTROPY">CROSS_ENTROPY</a></li><li data-type='method'><a href="cost.html#.HINGE">HINGE</a></li><li data-type='method'><a href="cost.html#.MAE">MAE</a></li><li data-type='method'><a href="cost.html#.MAPE">MAPE</a></li><li data-type='method'><a href="cost.html#.MSE">MSE</a></li><li data-type='method'><a href="cost.html#.MSLE">MSLE</a></li><li data-type='method'><a href="cost.html#.WAPE">WAPE</a></li></ul></li><li><a href="crossover.html">crossover</a><ul class='members'><li data-type='member'><a href="crossover.html#.AVERAGE">AVERAGE</a></li><li data-type='member'><a href="crossover.html#.SINGLE_POINT">SINGLE_POINT</a></li><li data-type='member'><a href="crossover.html#.TWO_POINT">TWO_POINT</a></li><li data-type='member'><a href="crossover.html#.UNIFORM">UNIFORM</a></li></ul></li><li><a href="gating.html">gating</a><ul class='members'><li data-type='member'><a href="gating.html#.INPUT">INPUT</a></li><li data-type='member'><a href="gating.html#.OUTPUT">OUTPUT</a></li><li data-type='member'><a href="gating.html#.SELF">SELF</a></li></ul></li><li><a href="mutation.html">mutation</a><ul class='members'><li data-type='member'><a href="mutation.html#.ADD_BACK_CONN">ADD_BACK_CONN</a></li><li data-type='member'><a href="mutation.html#.ADD_CONN">ADD_CONN</a></li><li data-type='member'><a href="mutation.html#.ADD_GATE">ADD_GATE</a></li><li data-type='member'><a href="mutation.html#.ADD_NODE">ADD_NODE</a></li><li data-type='member'><a href="mutation.html#.ADD_SELF_CONN">ADD_SELF_CONN</a></li><li data-type='member'><a href="mutation.html#.ALL">ALL</a></li><li data-type='member'><a href="mutation.html#.FFW">FFW</a></li><li data-type='member'><a href="mutation.html#.MOD_ACTIVATION">MOD_ACTIVATION</a></li><li data-type='member'><a href="mutation.html#.MOD_BIAS">MOD_BIAS</a></li><li data-type='member'><a href="mutation.html#.MOD_WEIGHT">MOD_WEIGHT</a></li><li data-type='member'><a href="mutation.html#.SUB_BACK_CONN">SUB_BACK_CONN</a></li><li data-type='member'><a href="mutation.html#.SUB_CONN">SUB_CONN</a></li><li data-type='member'><a href="mutation.html#.SUB_GATE">SUB_GATE</a></li><li data-type='member'><a href="mutation.html#.SUB_NODE">SUB_NODE</a></li><li data-type='member'><a href="mutation.html#.SUB_SELF_CONN">SUB_SELF_CONN</a></li><li data-type='member'><a href="mutation.html#.SWAP_NODES">SWAP_NODES</a></li></ul></li><li><a href="rate.html">rate</a><ul class='methods'><li data-type='method'><a href="rate.html#.EXP">EXP</a></li><li data-type='method'><a href="rate.html#.FIXED">FIXED</a></li><li data-type='method'><a href="rate.html#.INV">INV</a></li><li data-type='method'><a href="rate.html#.STEP">STEP</a></li></ul></li><li><a href="selection.html">selection</a><ul class='members'><li data-type='member'><a href="selection.html#.FITNESS_PROPORTIONATE">FITNESS_PROPORTIONATE</a></li><li data-type='member'><a href="selection.html#.POWER">POWER</a></li><li data-type='member'><a href="selection.html#.TOURNAMENT">TOURNAMENT</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#config">config</a></li><li><a href="global.html#GAN">GAN</a></li><li><a href="global.html#sort">sort</a></li></ul>
+</nav>
+
+<div id="main">
+    <div class="columns">
+        <div class="column is-hidden-touch"></div>
+        <div class="column is-11-desktop is-10-widescreen">
+
+            
+                <h1 class="page-title">architecture/group.js</h1>
+            
+
+            
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const _ = require("lodash");
+const methods = require('../methods/methods');
+const config = require('../config');
+const Node = require('./node');
+
+/**
+* A group instance denotes a group of nodes. Beware: once a group has been used to construct a network, the groups will fall apart into individual nodes. They are purely for the creation and development of networks.
+*
+* @constructs Group
+*
+* @param {number} [size=0] Amount of nodes to build group with
+*
+* @prop {Nodes[]} [nodes=[]] All nodes within the group
+* @prop {Connection[]} [connections_incoming=[]] Incoming connections
+* @prop {Connection[]} [connections_outgoing=[]] Outgoing connections
+* @prop {Connection[]} [connections_self=[]] Self connections
+*
+* @example
+* let { Group } = require("@liquid-carrot/carrot");
+*
+* // A group with 5 nodes
+* let A = new Group(5);
+*/
+function Group(size) {
+  const self = this;
+
+  // Important:
+  // The order of the nodes dictates the ideal order of activation
+  self.nodes = [];
+  self.connections_self = [];
+  self.connections_incoming = [];
+  self.connections_outgoing = [];
+
+  for (let index = 0; index &lt; size; index++) {
+    self.nodes.push(new Node());
+  }
+
+  /**
+  * Activates all the nodes (neurons) in the group
+  *
+  * @function activate
+  * @memberof Group
+  *
+  * @param {number[]} inputs Array of inputs (numbers) for the group - _order matters._
+  *
+  * @returns {number[]} Squashed output values
+  *
+  * @example
+  * let { Group } = require("@liquid-carrot/carrot");
+  *
+  * let group = new Group(3);
+  *
+  * group.activate([1, 0, 1]);
+  */
+  self.activate = function(inputs) {
+    if (inputs != undefined &amp;&amp; inputs.length !== self.nodes.length) throw new RangeError('Array with values should be same as the amount of nodes!');
+
+    const outputs = [];
+
+    for (let index = 0; index &lt; self.nodes.length; index++) {
+      const activation = inputs == undefined ? self.nodes[index].activate() : self.nodes[index].activate(inputs[index]);
+
+      outputs.push(activation);
+    }
+
+    return outputs;
+  },
+
+  /**
+  * Will backpropagate all the node in the group -- make sure the group receives input from another group or node.
+  *
+  * [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one.
+  * If you combine a high learning rate with a lot of momentum, you will rush past the minimum with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
+  *
+  * @function propagate
+  * @memberof Group
+  *
+  * @param {number|number[]} [target] Ideal value(s) - _required for output nodes_
+  * @param {Object} [options]
+  * @param {number} [options.rate] [Learning rate](https://towardsdatascience.com/understanding-learning-rates-and-how-it-improves-performance-in-deep-learning-d0d4059c1c10)
+  * @param {number} [options.momentum] [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
+  * @param {boolean} [options.update=true]
+  *
+  * @returns {Array&lt;{responsibility: number, projected: number, gated: number}>} The errors created by backpropagating
+  *
+  * @example
+  * let { Group } = require("@liquid-carrot/carrot");
+  *
+  * let A = new Group(2);
+  * let B = new Group(3);
+  *
+  * // Connects group A to group B - creating a "little network"
+  * A.connect(B);
+  *
+  * // Activates the "little network"
+  * A.activate([1,0]);
+  * B.activate();
+  *
+  * // Teaches the network
+  * B.propagate([0,1,0.2]);
+  * A.propagate();
+  */
+  self.propagate = function(target, options) {
+    if (!options &amp;&amp; _.isPlainObject(target)) {
+      options = target;
+      target = undefined;
+    }
+
+    if (target != undefined &amp;&amp; target.length !== self.nodes.length) throw new RangeError('Array with values should be same as the amount of nodes!');
+
+    const errors = [];
+    for (let index = self.nodes.length - 1; index >= 0; index--) {
+      if (target == undefined) errors.push(self.nodes[index].propagate(options));
+      else errors.push(self.nodes[index].propagate(target[index], options));
+    }
+
+    return errors;
+  },
+
+  /**
+  * Connects the nodes in this group to nodes in another group or just a node
+  *
+  * @function connect
+  * @memberof Group
+  *
+  * @param {Group|Layer|Node} target Node(s) to form connections to
+  * @param {connection} method [Connection Method](connection), determines how the nodes in this group will connect to the target (e.g. one-to-one, all-to-all)
+  * @param {number} weight Weight of the connection(s)
+  *
+  * @returns {Connection[]} The formed connections
+  *
+  * @example
+  * let { Group } = require("@liquid-carrot/carrot");
+  *
+  * let A = new Group(4);
+  * let B = new Group(5);
+  *
+  * A.connect(B, methods.connection.ALL_TO_ALL); // specifying a method is optional
+  */
+  self.connect = function(target, method, weight) {
+    const self_targeted = target.nodes ? self.nodes == target.nodes : false;
+    // in the future this check could be replaced by id checking (source.id == target.id)
+
+    // set a default for method, although it should be provided
+    if (method == undefined) {
+      if (self_targeted) {
+        if (config.warnings) console.warn('No group connection specified, using ONE_TO_ONE');
+        method = methods.connection.ONE_TO_ONE;
+      } else {
+        if (config.warnings) console.warn('No group connection specified, using ALL_TO_ALL');
+        method = methods.connection.ALL_TO_ALL;
+      }
+    }
+
+    // will be assigned after checking the type of target
+    let source_nodes = [];
+    let target_nodes = [];
+
+    // assign source and target nodes
+    // when inherited, the children may add the properties input_nodes and output_nodes
+    if (self.output_nodes) source_nodes = self.output_nodes;
+    else source_nodes = self.nodes;
+    if (target.input_nodes) target_nodes = target.input_nodes;
+    else if (target.nodes) target_nodes = target.nodes;
+    else if (target instanceof Node) target_nodes = [target];
+    else throw new TypeError("Type of target not supported");
+
+    // lengths should match if one to one
+    if (method === methods.connection.ONE_TO_ONE &amp;&amp; source_nodes.length !== target_nodes.length) {
+      throw new RangeError("Method is one-to-one but there are unequal number of source and target nodes");
+    }
+
+    // the created connections will be added here. after the
+    // loops the connections will be added correspondingly
+    const new_connections = [];
+    for (let i = 0; i &lt; target_nodes.length; i++) {
+      // check that the target node is not in the source nodes (because its ALL TO ELSE)
+      if (method === methods.connection.ALL_TO_ELSE) {
+        // slow as fuck. TODO: improve performance. e.g. have a map of owned nodes
+        let should_skip = false;
+        for (let j = 0; j &lt; source_nodes.length; j++) {
+          if (target_nodes[i] == source_nodes[j]) {
+            should_skip = true;
+            break;
+          }
+        }
+        if (should_skip) continue;
+      }
+      // if ONE TO ONE
+      if (method === methods.connection.ONE_TO_ONE) {
+        // when one to one, we use the same index for source and target
+        // we checked before that the lengths match
+        let connection = source_nodes[i].connect(target_nodes[i], weight);
+        new_connections.push(connection);
+      }
+      // else (ALL_TO_ELSE or ALL_TO_ALL)
+      else {
+        for (let j = 0; j &lt; source_nodes.length; j++) {
+          // create the connection
+          let connection = source_nodes[j].connect(target_nodes[i], weight);
+          new_connections.push(connection);
+        }
+      }
+    }
+
+    // add the connections to source and targets connections
+    for (let i = 0; i &lt; new_connections.length; i++) {
+      const connection = new_connections[i];
+      if (self_targeted) {
+        self.connections_self.push(connection);
+      }
+      else {
+        self.connections_outgoing.push(connection);
+        target.connections_incoming.push(connection);
+      }
+    }
+
+    return new_connections;
+  },
+
+  /**
+  * Make nodes from this group gate the given connection(s) between two other groups. You have to specify a [Gating Method](gating)
+  *
+  * @function gate
+  * @memberof Group
+  *
+  * @param {Connection[]|Connection} connections Connections to gate
+  * @param {gating} method [Gating Method](gating)
+  */
+  self.gate = function(connections, method) {
+    if (method == undefined) throw new TypeError('Please specify Gating.INPUT, Gating.OUTPUT');
+
+    if (!Array.isArray(connections)) connections = [connections];
+
+    const nodes_from = [];
+    const nodes_to = [];
+
+    let i, j;
+
+    for (i = 0; i &lt; connections.length; i++) {
+      const connection = connections[i];
+      if (!nodes_from.includes(connection.from)) nodes_from.push(connection.from);
+      if (!nodes_to.includes(connection.to)) nodes_to.push(connection.to);
+    }
+
+    switch (method) {
+      case methods.gating.INPUT:
+        for (i = 0; i &lt; nodes_to.length; i++) {
+          const node = nodes_to[i];
+          const gater = self.nodes[i % self.nodes.length];
+
+          for (j = 0; j &lt; node.connections_incoming.length; j++) {
+            const connection = node.connections_incoming[j];
+            if (connections.includes(connection)) {
+              gater.gate(connection);
+            }
+          }
+        }
+        break;
+      case methods.gating.OUTPUT:
+        for (i = 0; i &lt; nodes_from.length; i++) {
+          const node = nodes_from[i];
+          const gater = self.nodes[i % this.nodes.length];
+
+          for (j = 0; j &lt; node.connections_outgoing.length; j++) {
+            const connection = node.connections_outgoing[j];
+            if (connections.includes(connection)) {
+              gater.gate(connection);
+            }
+          }
+        }
+        break;
+      case methods.gating.SELF:
+        for (i = 0; i &lt; nodes_from.length; i++) {
+          const node = nodes_from[i];
+          const gater = self.nodes[i % self.nodes.length];
+
+          if (connections.includes(node.connections_self)) {
+            gater.gate(node.connections_self);
+          }
+        }
+    }
+  },
+
+  /**
+  * Sets the value of a property for every node
+  *
+  * @function set
+  * @memberof Group
+  *
+  * @param {object} values A configuration object
+  * @param {number} values.bias [Weight bias](https://deepai.org/machine-learning-glossary-and-terms/bias-vector)
+  * @param {activation} values.squash [Activation function](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0)
+  *
+  * @example
+  * let { Group } = require("@liquid-carrot/carrot");
+  *
+  * var group = new Group(4);
+  *
+  * // All nodes in 'group' now have a bias of 1
+  * group.set({bias: 1});
+  */
+  self.set = function(options_to_set) {
+    if (typeof options_to_set !== 'object') throw TypeError(`options_to_set has to be an object with the properties to set and the desired values`);
+    for (let index = 0; index &lt; self.nodes.length; index++) {
+      Object.assign(self.nodes[index], options_to_set);
+    }
+  },
+
+  /**
+  * *INCOMPLETE* Disconnects all nodes from this group from another given group/node.
+  *
+  * @function disconnect
+  * @memberof Group
+  *
+  * @param {Group|Node} target Node(s) to remove connections to/from
+  * @param {boolean} [twosided=false] Set to true, to disconnect both to and from connections simultaneously (applies to two-sided [Connections](Connection) only)
+  */
+  self.disconnect = function(target, twosided) {
+    twosided = twosided || false;
+
+    if (target instanceof Group) {
+      for (let i = 0; i &lt; self.nodes.length; i++) {
+        for (let j = 0; j &lt; target.nodes.length; j++) {
+          self.nodes[i].disconnect(target.nodes[j], { twosided });
+
+          if (twosided) {
+            self.connections_incoming = self.connections_incoming.filter(connection => {
+              // this is a quick patch, there shouldnt be undefines here
+              if (!connection) return false;
+              return !(connection.from === target.nodes[j] &amp;&amp; connection.to === this.nodes[i])
+            });
+          }
+          self.connections_outgoing = self.connections_outgoing.filter(connection => {
+            // this is a quick patch, there shouldnt be undefines here
+            if (!connection) return false;
+            return !(connection.from === self.nodes[i] &amp;&amp; connection.to === target.nodes[j]);
+          });
+        }
+      }
+    }
+    else if (target instanceof Node) {
+      for (let index = 0; index &lt; self.nodes.length; index++) {
+        self.nodes[index].disconnect(target, { twosided });
+
+        if (twosided) self.connections_incoming = self.connections_incoming.filter(connection => !(connection.from === target &amp;&amp; connection.to === self.nodes[index]));
+        self.connections_outgoing = self.connections_outgoing.filter(connection => !(connection.from === self.nodes[index] &amp;&amp; connection.to === target));
+      }
+    }
+  },
+
+  /**
+  * Clear the context of the nodes in this group
+  *
+  * @function clear
+  * @memberof Group
+  *
+  * @returns {Group} The group itself
+  */
+  self.clear = function() {
+    for (let index = 0; index &lt; self.nodes.length; index++) {
+      self.nodes[index].clear();
+    }
+    return self;
+  }
+
+  /**
+   * Add the nodes to the group
+   * @param  {Node|Node[]|Group} nodes_to_add The nodes to add
+   * @return {Group} A self reference for chaining
+   */
+  self.addNodes = function(nodes_to_add) {
+    if (nodes_to_add instanceof Node) nodes_to_add = [nodes_to_add];
+    else if (nodes_to_add instanceof Group) nodes_to_add = nodes_to_add.nodes;
+    self.nodes.push(...nodes_to_add);
+  }
+}
+
+module.exports = Group;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+
+            
+
+        </div>
+        <div class="column is-hidden-touch"></div>
+    </div>
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a> on Wed Sep 04 2019 10:40:04 GMT-0400 (Eastern Daylight Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/jquery-3.1.1.min.js"></script>
+
+<script src="scripts/search.js"></script>
+
+
+
+
+<script type="text/javascript">
+  window.heap=window.heap||[],heap.load=function(e,t){window.heap.appid=e,window.heap.config=t=t||{};var r=t.forceSSL||"https:"===document.location.protocol,a=document.createElement("script");a.type="text/javascript",a.async=!0,a.src=(r?"https:":"http:")+"//cdn.heapanalytics.com/js/heap-"+e+".js";var n=document.getElementsByTagName("script")[0];n.parentNode.insertBefore(a,n);for(var o=function(e){return function(){heap.push([e].concat(Array.prototype.slice.call(arguments,0)))}},p=["addEventProperties","addUserProperties","clearEventProperties","identify","resetIdentity","removeEventProperty","setEventProperties","track","unsetEventProperty"],c=0;c<p.length;c++)heap[p[c]]=o(p[c])};
+  heap.load("1195922815");
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+  // Get all "navbar-burger" elements
+  const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+  // Check if there are any navbar burgers
+  if ($navbarBurgers.length > 0) {
+
+    // Add a click event on each of them
+    $navbarBurgers.forEach( el => {
+      el.addEventListener('click', () => {
+
+        // Get the target from the "data-target" attribute
+        const target = el.dataset.target;
+        const $target = document.getElementById(target);
+
+        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+        el.classList.toggle('is-active');
+        $target.classList.toggle('is-active');
+
+      });
+    });
+  }
+
+});
+</script>
+<script src="scripts/clipboard.min.js"></script>
+<script>
+  // example copying functionality
+  const clipboard = new ClipboardJS('code');
+  const clipboard_button = new ClipboardJS('.copy-button');
+
+  clipboard_button.on('success', (e) => {
+    e.trigger.innerText = "Copied!"
+  });
+
+  const copy_buttons = document.querySelectorAll(".copy-button");
+  
+  copy_buttons.forEach(function(btn) {
+    btn.addEventListener("mouseout", function(e) {
+      setTimeout(function() {
+        e.fromElement.innerText = "Copy"
+      }, 200);
+    });
+  });
+</script>
+<script>prettyPrint();</script>
+</body>
+</html>
