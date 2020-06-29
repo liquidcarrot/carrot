@@ -25,7 +25,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -145,7 +145,6 @@ var Network = /** @class */ (function () {
      *
      * @param {Network} network1 First parent network
      * @param {Network} network2 Second parent network
-     * @param {boolean} [equal] Flag to indicate equally fit Networks
      *
      * @returns {Network} New network created from mixing parent networks
      */
@@ -716,9 +715,6 @@ var Network = /** @class */ (function () {
                                                                 case 1:
                                                                     // test the genome
                                                                     _a.score = -(_b.sent());
-                                                                    if (!Number.isFinite(genome.score)) {
-                                                                        throw new RangeError();
-                                                                    }
                                                                     return [2 /*return*/];
                                                             }
                                                         });
