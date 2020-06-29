@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>Liquid Carrot - methods/gating.js - Documentation</title>
+    <title>Liquid Carrot - connection - Documentation</title>
     <link rel="shortcut icon" href="/liquid-carrot-favicon.png" />
     
     
@@ -121,67 +121,458 @@
         <div class="column is-11-desktop is-10-widescreen">
 
             
-                <h1 class="page-title">methods/gating.js</h1>
+                <h1 class="page-title">connection</h1>
             
 
             
 
 
+
+
+<section>
+
+<header>
+    
+        
+    
+</header>
+
+<article>
+    
+        <div class="container-overview">
+        
+            
+                <div class="description"><p>Specifies the way two <a href="Group">Groups</a> are connected.</p>
+<p>Connections can be made between groups using these built-in connection methods and within a group itself by calling the <a href="Group">Group</a> connection method with itself as a target.</p>
+<p>To learn more about the formed connections between <a href="Node">Nodes</a>, <a href="Group">Groups</a>, and <a href="Layer">Layers</a> please see <a href="Connection_">Connection</a></p></div>
+            
+            
+
+
+
+<dl class="details">
 
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>/**
-* Specifies how to gate a connection between two groups of multiple neurons.
-* Gating makes the weights in networks more dynamic by adapting them to their gating node. Read more about it [here](https://en.wikipedia.org/wiki/Synaptic_gating). For specific implementations of gating, see [Node](Node), [Group](Group) and [Network](Network)
-*
-* NOT YET IMPLEMENTED
-* @namespace
-*
-*/
-const gating = {
-  /**
-   * @constant
-   * @type {object}
-   * @description Every node in the gating group will gate (at least) 1 node in the emitting group and all its connections to the other, receiving group
-   * @default
-   *
-   * @example
-   * let example = "TODO"
-   */
-  OUTPUT: {
-    name: 'OUTPUT',
-  },
-  /**
-   * @constant
-   * @type {object}
-   * @description Every node in the gating group will gate (at least) 1 node in the receiving group and all its connections from the other, emitting group
-   * @default
-   *
-   * @example
-   * let example = "TODO"
-   */
-  INPUT: {
-    name: 'INPUT',
-  },
-  /**
-   * @constant
-   * @type {object}
-   * @description Every node in the gating group will gate (at least) 1 self connection in the emitting/receiving group
-   * @default
-   *
-   * @example
-   * let example = "TODO"
-   */
-  SELF: {
-    name: 'SELF',
-  },
-};
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="methods_connection.js.html">methods/connection.js</a>, <a href="methods_connection.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
 
-module.exports = gating;
-</code></pre>
-        </article>
-    </section>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+            
+                <h3>Examples</h3>
+                
+        <p class="code-caption">Connection between two Groups</p>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(B, methods.connection.ALL_TO_ALL_FORWARD); // specifying a method is optional'>Copy</a>
+      <code data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(B, methods.connection.ALL_TO_ALL_FORWARD); // specifying a method is optional'>let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(B, methods.connection.ALL_TO_ALL_FORWARD); // specifying a method is optional</code>
+    </pre>
+
+        <p class="code-caption">Group connection with itself</p>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+
+A.connect(A, methods.connection.ALL_TO_ALL_FORWARD);'>Copy</a>
+      <code data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+
+A.connect(A, methods.connection.ALL_TO_ALL_FORWARD);'>let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+
+A.connect(A, methods.connection.ALL_TO_ALL_FORWARD);</code>
+    </pre>
+
+
+            
+        
+        </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+        <h3 class="main-subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id=".ALL_TO_ALL_FORWARD"><span class="type-signature">(static, constant) </span>ALL_TO_ALL_FORWARD<span class="type-signature"> :object</span></h4>
+
+
+<div class="description">
+    <p>The default connection method between Groups</p>
+</div>
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5>Example</h5>
+    
+        <p class="code-caption">Connection between two Groups</p>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(B, methods.connection.ALL_TO_ALL_FORWARD); // specifying a method is optional'>Copy</a>
+      <code data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(B, methods.connection.ALL_TO_ALL_FORWARD); // specifying a method is optional'>let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(B, methods.connection.ALL_TO_ALL_FORWARD); // specifying a method is optional</code>
+    </pre>
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="methods_connection.js.html">methods/connection.js</a>, <a href="methods_connection.js.html#line42">line 42</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li class="object-value"><pre class="prettyprint"><code>{
+  "name": "OUTPUT"
+}</code></pre></li>
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+            
+<h4 class="name" id=".ALL_TO_ELSE"><span class="type-signature">(static, constant) </span>ALL_TO_ELSE<span class="type-signature"> :object</span></h4>
+
+
+<div class="description">
+    <p>Connects each node in <code>GroupX</code> to all nodes in <code>GroupY</code> except for the nodes also contained within itself</p>
+</div>
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5>Example</h5>
+    
+        <p class="code-caption">Connection between two Groups</p>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(B, methods.connection.ALL_TO_ELSE); // specifying a method is optional'>Copy</a>
+      <code data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(B, methods.connection.ALL_TO_ELSE); // specifying a method is optional'>let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(B, methods.connection.ALL_TO_ELSE); // specifying a method is optional</code>
+    </pre>
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="methods_connection.js.html">methods/connection.js</a>, <a href="methods_connection.js.html#line59">line 59</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li class="object-value"><pre class="prettyprint"><code>{
+  "name": "INPUT"
+}</code></pre></li>
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+            
+<h4 class="name" id=".ONE_TO_ONE"><span class="type-signature">(static, constant) </span>ONE_TO_ONE<span class="type-signature"> :object</span></h4>
+
+
+<div class="description">
+    <p>The default connection method when connecting Groups to themselves</p>
+</div>
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+    <h5>Example</h5>
+    
+        <p class="code-caption">Connection between two Groups</p>
+    
+    <pre class="prettyprint">
+      <a class="nocode copy-button button is-success is-outlined is-small" data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(A, methods.connection.ONE_TO_ONE); // specifying a method is optional'>Copy</a>
+      <code data-clipboard-text='let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(A, methods.connection.ONE_TO_ONE); // specifying a method is optional'>let { methods, Group } = require("@liquid-carrot/carrot");
+
+let A = new Group(4);
+let B = new Group(5);
+
+A.connect(A, methods.connection.ONE_TO_ONE); // specifying a method is optional</code>
+    </pre>
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="methods_connection.js.html">methods/connection.js</a>, <a href="methods_connection.js.html#line77">line 77</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-default">Default Value:</dt>
+    <dd class="tag-default"><ul class="dummy">
+            <li class="object-value"><pre class="prettyprint"><code>{
+  "name": "SELF"
+}</code></pre></li>
+        </ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+        
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 
