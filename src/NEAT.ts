@@ -105,7 +105,7 @@ export class NEAT {
     /**
      * species
      */
-    private species: Set<Species>;
+    private readonly species: Set<Species>;
     /**
      * A set of input values and ideal output values to evaluate a genome's fitness with. Must be included to use `NEAT.evaluate` without passing a dataset.
      */
@@ -130,7 +130,7 @@ export class NEAT {
     /**
      * Train options used for training in between two evolution steps
      */
-    private trainOptions: TrainOptions | null;
+    private readonly trainOptions: TrainOptions | null;
 
     /**
      * Constructs a NEAT object.

@@ -125,7 +125,6 @@ export class Network {
      *
      * @param {Network} network1 First parent network
      * @param {Network} network2 Second parent network
-     * @param {boolean} [equal] Flag to indicate equally fit Networks
      *
      * @returns {Network} New network created from mixing parent networks
      */
@@ -849,9 +848,6 @@ export class Network {
                         }
                         // test the genome
                         genome.score = -await test(serializedDataSet, JSON.stringify(genome.toJSON()), lossIndex);
-                        if (!Number.isFinite(genome.score)) {
-                            throw new RangeError();
-                        }
                     });
                 }
 

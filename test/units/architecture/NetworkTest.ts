@@ -168,8 +168,8 @@ describe('Network', () => {
         });
     });
 
-    describe('network.ungate()', () => {
-        it('network.ungate(connection_not_in_network) => {ReferenceError}', () => {
+    describe('network.removeGate()', () => {
+        it('network.removeGate(connection_not_in_network) => {ReferenceError}', () => {
             const testNetwork: Network = createTestNetwork();
             const node: Node = new Node();
             const connection: Connection = node.connect(testNetwork.nodes[20]);
@@ -179,7 +179,7 @@ describe('Network', () => {
                 testNetwork.removeGate(connection);
             }).to.throw(Error);
         });
-        it('network.ungate(Connection) => {undefined}', () => {
+        it('network.removeGate(Connection) => {undefined}', () => {
             const testNetwork: Network = createTestNetwork();
 
             for (let i: number = 0; i < 20; i++) {
@@ -256,7 +256,7 @@ describe('Network', () => {
 
             const initial: number = network.test(dataset);
             const evolveReturn: { error: number; iterations: number; time: number } = await network.evolve({
-                iterations: 50,
+                iterations: 10,
                 dataset
             });
             const final: number = network.test(dataset);

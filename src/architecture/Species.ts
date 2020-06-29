@@ -80,7 +80,7 @@ export class Species {
     }
 
     /**
-     * Kill a specific percantage of networks
+     * Kill a specific percentage of networks
      * @param percentage
      */
     public kill(percentage: number): void {
@@ -110,6 +110,9 @@ export class Species {
         return this.members.size;
     }
 
+    /**
+     * Returns the best genome from this species
+     */
     public getBest(): Network {
         const networks: Network[] = Array.from(this.members);
         return networks[maxValueIndex(networks.map(genome => genome.score ?? -Infinity))];
