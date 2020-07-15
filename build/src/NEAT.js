@@ -63,12 +63,9 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.NEAT = void 0;
-var src_1 = require("activations/build/src");
 var TimSort = __importStar(require("timsort"));
-var Network_1 = require("./architecture/Network");
 var Species_1 = require("./architecture/Species");
 var Mutation_1 = require("./methods/Mutation");
-var Selection_1 = require("./methods/Selection");
 var Utils_1 = require("./utils/Utils");
 /**
  * Runs the NEAT algorithm on group of neural networks.
@@ -82,42 +79,32 @@ var NEAT = /** @class */ (function () {
      * @param options
      */
     function NEAT(options) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s;
         if (!options.fitnessFunction) {
             throw new ReferenceError("No fitness function given!");
         }
-        this.dataset = options.dataset;
-        if (options.dataset && options.dataset.length > 0) {
-            this.input = options.dataset[0].input.length;
-            this.output = options.dataset[0].output.length;
-            this.trainOptions = (_a = options.training) !== null && _a !== void 0 ? _a : null;
-        }
-        else {
-            this.trainOptions = null;
-            this.input = (_b = options.input) !== null && _b !== void 0 ? _b : 0;
-            this.output = (_c = options.output) !== null && _c !== void 0 ? _c : 0;
-        }
-        this.generation = (_d = options.generation) !== null && _d !== void 0 ? _d : 0;
-        this.elitism = (_e = options.elitism) !== null && _e !== void 0 ? _e : 1;
-        this.equal = (_f = options.equal) !== null && _f !== void 0 ? _f : true;
-        this.clear = (_g = options.clear) !== null && _g !== void 0 ? _g : false;
-        this.populationSize = (_h = options.populationSize) !== null && _h !== void 0 ? _h : 50;
-        this.mutationRate = (_j = options.mutationRate) !== null && _j !== void 0 ? _j : 0.6;
-        this.mutationAmount = (_k = options.mutationAmount) !== null && _k !== void 0 ? _k : 5;
-        this.fitnessFunction = options.fitnessFunction;
-        this.selection = (_l = options.selection) !== null && _l !== void 0 ? _l : new Selection_1.FitnessProportionateSelection();
-        this.mutations = (_m = options.mutations) !== null && _m !== void 0 ? _m : Mutation_1.FEEDFORWARD_MUTATIONS;
-        this.activations = (_o = options.activations) !== null && _o !== void 0 ? _o : Object.values(src_1.ALL_ACTIVATIONS);
-        this.template = (_p = options.template) !== null && _p !== void 0 ? _p : new Network_1.Network(this.input, this.output);
-        this.maxNodes = (_q = options.maxNodes) !== null && _q !== void 0 ? _q : Infinity;
-        this.maxConnections = (_r = options.maxConnections) !== null && _r !== void 0 ? _r : Infinity;
-        this.maxGates = (_s = options.maxGates) !== null && _s !== void 0 ? _s : Infinity;
+        this._options = options;
         this.population = [];
         this.species = new Set();
-        for (var i = 0; i < this.populationSize; i++) {
-            this.population.push(this.template.copy());
+        for (var i = 0; i < this.options.populationSize; i++) {
+            this.population.push(this.options.template.copy());
         }
     }
+    Object.defineProperty(NEAT.prototype, "options", {
+        /**
+         * Getter
+         */
+        get: function () {
+            return this._options;
+        },
+        /**
+         * Setter
+         */
+        set: function (value) {
+            this._options = value;
+        },
+        enumerable: false,
+        configurable: true
+    });
     /**
      * Mutate a network with a random mutation from the allowed array.
      *
@@ -125,12 +112,12 @@ var NEAT = /** @class */ (function () {
      */
     NEAT.prototype.mutateRandom = function (network) {
         var _this = this;
-        var allowed = this.mutations.filter(function (method) {
-            return (method.constructor.name !== Mutation_1.AddNodeMutation.constructor.name || network.nodes.length < _this.maxNodes ||
-                method.constructor.name !== Mutation_1.AddConnectionMutation.constructor.name || network.connections.size < _this.maxConnections ||
-                method.constructor.name !== Mutation_1.AddGateMutation.constructor.name || network.gates.size < _this.maxGates);
+        var allowed = this.options.mutations.filter(function (method) {
+            return (method.constructor.name !== Mutation_1.AddNodeMutation.constructor.name || network.nodes.length < _this.options.maxNodes ||
+                method.constructor.name !== Mutation_1.AddConnectionMutation.constructor.name || network.connections.size < _this.options.maxConnections ||
+                method.constructor.name !== Mutation_1.AddGateMutation.constructor.name || network.gates.size < _this.options.maxGates);
         });
-        network.mutate(Utils_1.pickRandom(allowed), { allowedActivations: this.activations });
+        network.mutate(Utils_1.pickRandom(allowed), { allowedActivations: this.options.activations });
     };
     /**
      * Evaluates, selects, breeds and mutates population
@@ -139,44 +126,48 @@ var NEAT = /** @class */ (function () {
      */
     NEAT.prototype.evolve = function () {
         return __awaiter(this, void 0, void 0, function () {
-            var elitists, _i, _a, genome, fittest;
-            var _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var elitists, fittest;
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
                     case 0:
                         this.genSpecies();
                         if (!(this.population[this.population.length - 1].score === undefined)) return [3 /*break*/, 2];
                         return [4 /*yield*/, this.evaluate()];
                     case 1:
-                        _c.sent();
+                        _b.sent();
                         this.sort();
-                        _c.label = 2;
+                        _b.label = 2;
                     case 2:
                         this.species.forEach(function (species) { return species.evaluateScore(); });
-                        this.kill(1 - NEAT.SURVIVORS);
+                        this.kill(1 - this.options.survivors);
                         this.removeExtinctSpecies();
                         this.reproduce();
-                        elitists = this.population.splice(0, this.elitism);
+                        elitists = this.population.splice(0, this.options.elitism);
                         this.mutate();
-                        (_b = this.population).splice.apply(_b, __spreadArrays([0, 0], elitists));
-                        if (this.trainOptions !== null) {
-                            for (_i = 0, _a = this.population; _i < _a.length; _i++) {
-                                genome = _a[_i];
-                                genome.train(this.trainOptions);
+                        (_a = this.population).splice.apply(_a, __spreadArrays([0, 0], elitists));
+                        /*if (this.options.training) {
+                            for (const genome of this.population) {
+                                genome.train(this.options.training);
                             }
-                        }
+                        }*/
                         // evaluate the population
                         return [4 /*yield*/, this.evaluate()];
                     case 3:
+                        /*if (this.options.training) {
+                            for (const genome of this.population) {
+                                genome.train(this.options.training);
+                            }
+                        }*/
                         // evaluate the population
-                        _c.sent();
+                        _b.sent();
                         // Sort in order of fitness (fittest first)
                         this.sort();
                         fittest = this.population[0].copy();
                         fittest.score = this.population[0].score;
                         // Reset the scores
                         this.population.forEach(function (genome) { return genome.score = undefined; });
-                        this.generation++;
+                        this.options.generation++;
                         return [2 /*return*/, fittest];
                 }
             });
@@ -191,9 +182,9 @@ var NEAT = /** @class */ (function () {
         var _this = this;
         // Elitist genomes should not be included
         this.population
-            .filter(function () { return Math.random() <= _this.mutationRate; })
+            .filter(function () { return Math.random() <= _this.options.mutationRate; })
             .forEach(function (genome) {
-            for (var i = 0; i < _this.mutationAmount; i++) {
+            for (var i = 0; i < _this.options.mutationAmount; i++) {
                 if (method) {
                     genome.mutate(method);
                 }
@@ -209,16 +200,17 @@ var NEAT = /** @class */ (function () {
      * @return {Network} Fittest Network
      */
     NEAT.prototype.evaluate = function () {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
-                        if (this.clear) {
+                        if (this.options.clear) {
                             this.population.forEach(function (genome) { return genome.clear(); });
                         }
-                        return [4 /*yield*/, this.fitnessFunction(this.population, this.dataset)];
+                        return [4 /*yield*/, ((_b = (_a = this.options).fitnessFunction) === null || _b === void 0 ? void 0 : _b.call(_a, this.population, this.options.dataset))];
                     case 1:
-                        _a.sent();
+                        _c.sent();
                         // Sort the population in order of fitness
                         this.sort();
                         return [2 /*return*/, this.population[0]];
@@ -289,7 +281,7 @@ var NEAT = /** @class */ (function () {
      */
     NEAT.prototype.replacePopulation = function (genomes) {
         this.population = genomes;
-        this.populationSize = genomes.length;
+        this.options.populationSize = genomes.length;
     };
     /**
      * Reproduce the population, by replacing the killed networks
@@ -299,7 +291,7 @@ var NEAT = /** @class */ (function () {
         var speciesArr = Array.from(this.species);
         for (var i = 0; i < this.population.length; i++) {
             if (this.population[i].species === null) {
-                var selectedSpecies = this.selection.select(speciesArr);
+                var selectedSpecies = this.options.selection.select(speciesArr);
                 this.population[i] = selectedSpecies.breed();
                 selectedSpecies.forcePut(this.population[i]);
             }
@@ -337,7 +329,7 @@ var NEAT = /** @class */ (function () {
             var found = false;
             for (var _i = 0, _a = Array.from(_this.species); _i < _a.length; _i++) {
                 var species = _a[_i];
-                if (species.put(genome)) {
+                if (species.put(genome, _this.options.c1, _this.options.c2, _this.options.c3, _this.options.speciesDistanceThreshold)) {
                     found = true;
                     break;
                 }
@@ -347,14 +339,6 @@ var NEAT = /** @class */ (function () {
             }
         });
     };
-    /**
-     * How big could the distance be between two networks in a species
-     */
-    NEAT.SPECIES_DISTANCE_THRESHOLD = 3;
-    NEAT.C1 = 1;
-    NEAT.C2 = 1;
-    NEAT.C3 = 1;
-    NEAT.SURVIVORS = 0.8;
     return NEAT;
 }());
 exports.NEAT = NEAT;

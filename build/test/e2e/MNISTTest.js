@@ -41,6 +41,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var mnist = require("mnist");
 var chai_1 = require("chai");
 var Network_1 = require("../../src/architecture/Network");
+var EvolveOptions_1 = require("../../src/interfaces/EvolveOptions");
 var Mutation_1 = require("../../src/methods/Mutation");
 describe('MNIST', function () {
     it("evolve mnist", function () {
@@ -54,14 +55,13 @@ describe('MNIST', function () {
                         trainingSet = set.training;
                         net = new Network_1.Network(trainingSet[0].input.length, trainingSet[0].output.length);
                         errorBefore = net.test(trainingSet);
-                        options = {
-                            dataset: trainingSet,
-                            populationSize: 50,
-                            mutations: Mutation_1.FEEDFORWARD_MUTATIONS,
-                            mutationAmount: 2,
-                            mutationRate: 0.4,
-                            iterations: 10,
-                        };
+                        options = new EvolveOptions_1.EvolveOptions();
+                        options.dataset = trainingSet;
+                        options.populationSize = 50;
+                        options.mutations = Mutation_1.FEEDFORWARD_MUTATIONS;
+                        options.mutationAmount = 2;
+                        options.mutationRate = 0.4;
+                        options.iterations = 10;
                         return [4 /*yield*/, net.evolve(options)];
                     case 1:
                         _a.sent();

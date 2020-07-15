@@ -38,6 +38,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var chai_1 = require("chai");
 var Network_1 = require("../../src/architecture/Network");
+var EvolveOptions_1 = require("../../src/interfaces/EvolveOptions");
+var TrainOptions_1 = require("../../src/interfaces/TrainOptions");
 describe('Logic Gates', function () {
     var data = {
         NOT: [
@@ -84,20 +86,25 @@ describe('Logic Gates', function () {
     it('[NOT] Network.train()', function () {
         var network = new Network_1.Network(1, 1);
         var initial = network.test(data.NOT);
-        network.train({ iterations: 10, dataset: data.NOT });
+        var options = new TrainOptions_1.TrainOptions(data.NOT);
+        options.iterations = 20;
+        network.train(options);
         var final = network.test(data.NOT);
         chai_1.expect(final).to.be.at.most(initial);
     });
     it('[NOT] Network.evolve()', function () {
         return __awaiter(this, void 0, void 0, function () {
-            var network, initial, final;
+            var network, initial, options, final;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         this.timeout(20000);
                         network = new Network_1.Network(1, 1);
                         initial = network.test(data.NOT);
-                        return [4 /*yield*/, network.evolve({ iterations: 10, dataset: data.NOT })];
+                        options = new EvolveOptions_1.EvolveOptions();
+                        options.iterations = 20;
+                        options.dataset = data.NOT;
+                        return [4 /*yield*/, network.evolve(options)];
                     case 1:
                         _a.sent();
                         final = network.test(data.NOT);
@@ -110,20 +117,25 @@ describe('Logic Gates', function () {
     it('[AND] Network.train()', function () {
         var network = new Network_1.Network(2, 1);
         var initial = network.test(data.AND);
-        network.train({ iterations: 10, dataset: data.AND });
+        var options = new TrainOptions_1.TrainOptions(data.AND);
+        options.iterations = 20;
+        network.train(options);
         var final = network.test(data.AND);
         chai_1.expect(final).to.be.at.most(initial);
     });
     it('[AND] Network.evolve()', function () {
         return __awaiter(this, void 0, void 0, function () {
-            var network, initial, final;
+            var network, initial, options, final;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         this.timeout(20000);
                         network = new Network_1.Network(2, 1);
                         initial = network.test(data.AND);
-                        return [4 /*yield*/, network.evolve({ iterations: 10, dataset: data.AND })];
+                        options = new EvolveOptions_1.EvolveOptions();
+                        options.iterations = 20;
+                        options.dataset = data.AND;
+                        return [4 /*yield*/, network.evolve(options)];
                     case 1:
                         _a.sent();
                         final = network.test(data.AND);
@@ -136,20 +148,25 @@ describe('Logic Gates', function () {
     it('[OR] Network.train()', function () {
         var network = new Network_1.Network(2, 1);
         var initial = network.test(data.OR);
-        network.train({ iterations: 10, dataset: data.OR });
+        var options = new TrainOptions_1.TrainOptions(data.OR);
+        options.iterations = 20;
+        network.train(options);
         var final = network.test(data.OR);
         chai_1.expect(final).to.be.at.most(initial);
     });
     it('[OR] Network.evolve()', function () {
         return __awaiter(this, void 0, void 0, function () {
-            var network, initial, final;
+            var network, initial, options, final;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         this.timeout(20000);
                         network = new Network_1.Network(2, 1);
                         initial = network.test(data.OR);
-                        return [4 /*yield*/, network.evolve({ iterations: 10, dataset: data.OR })];
+                        options = new EvolveOptions_1.EvolveOptions();
+                        options.iterations = 20;
+                        options.dataset = data.OR;
+                        return [4 /*yield*/, network.evolve(options)];
                     case 1:
                         _a.sent();
                         final = network.test(data.OR);
@@ -162,20 +179,25 @@ describe('Logic Gates', function () {
     it('[NAND] Network.train()', function () {
         var network = new Network_1.Network(2, 1);
         var initial = network.test(data.NAND);
-        network.train({ iterations: 10, dataset: data.NAND });
+        var options = new TrainOptions_1.TrainOptions(data.NAND);
+        options.iterations = 20;
+        network.train(options);
         var final = network.test(data.NAND);
         chai_1.expect(final).to.be.at.most(initial);
     });
     it('[NAND] Network.evolve()', function () {
         return __awaiter(this, void 0, void 0, function () {
-            var network, initial, final;
+            var network, initial, options, final;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         this.timeout(20000);
                         network = new Network_1.Network(2, 1);
                         initial = network.test(data.NAND);
-                        return [4 /*yield*/, network.evolve({ iterations: 10, dataset: data.NAND })];
+                        options = new EvolveOptions_1.EvolveOptions();
+                        options.iterations = 20;
+                        options.dataset = data.NAND;
+                        return [4 /*yield*/, network.evolve(options)];
                     case 1:
                         _a.sent();
                         final = network.test(data.NAND);
@@ -188,20 +210,25 @@ describe('Logic Gates', function () {
     it('[NOR] Network.train()', function () {
         var network = new Network_1.Network(2, 1);
         var initial = network.test(data.NOR);
-        network.train({ iterations: 10, dataset: data.NOR });
+        var options = new TrainOptions_1.TrainOptions(data.NOR);
+        options.iterations = 20;
+        network.train(options);
         var final = network.test(data.NOR);
         chai_1.expect(final).to.be.at.most(initial);
     });
     it('[NOR] Network.evolve()', function () {
         return __awaiter(this, void 0, void 0, function () {
-            var network, initial, final;
+            var network, initial, options, final;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         this.timeout(20000);
                         network = new Network_1.Network(2, 1);
                         initial = network.test(data.NOR);
-                        return [4 /*yield*/, network.evolve({ iterations: 10, dataset: data.NOR })];
+                        options = new EvolveOptions_1.EvolveOptions();
+                        options.iterations = 20;
+                        options.dataset = data.NOR;
+                        return [4 /*yield*/, network.evolve(options)];
                     case 1:
                         _a.sent();
                         final = network.test(data.NOR);
@@ -214,20 +241,25 @@ describe('Logic Gates', function () {
     it('[XOR] Network.train()', function () {
         var network = new Network_1.Network(2, 1);
         var initial = network.test(data.XOR);
-        network.train({ iterations: 10, dataset: data.XOR });
+        var options = new TrainOptions_1.TrainOptions(data.XOR);
+        options.iterations = 20;
+        network.train(options);
         var final = network.test(data.XOR);
         chai_1.expect(final).to.be.at.most(initial);
     });
     it('[XOR] Network.evolve()', function () {
         return __awaiter(this, void 0, void 0, function () {
-            var network, initial, final;
+            var network, initial, options, final;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         this.timeout(20000);
                         network = new Network_1.Network(2, 1);
                         initial = network.test(data.XOR);
-                        return [4 /*yield*/, network.evolve({ iterations: 10, dataset: data.XOR })];
+                        options = new EvolveOptions_1.EvolveOptions();
+                        options.iterations = 20;
+                        options.dataset = data.XOR;
+                        return [4 /*yield*/, network.evolve(options)];
                     case 1:
                         _a.sent();
                         final = network.test(data.XOR);
@@ -240,20 +272,25 @@ describe('Logic Gates', function () {
     it('[XNOR] Network.train()', function () {
         var network = new Network_1.Network(2, 1);
         var initial = network.test(data.XNOR);
-        network.train({ iterations: 10, dataset: data.XNOR });
+        var options = new TrainOptions_1.TrainOptions(data.XNOR);
+        options.iterations = 20;
+        network.train(options);
         var final = network.test(data.XNOR);
         chai_1.expect(final).to.be.at.most(initial);
     });
     it('[XNOR] Network.evolve()', function () {
         return __awaiter(this, void 0, void 0, function () {
-            var network, initial, final;
+            var network, initial, options, final;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         this.timeout(20000);
                         network = new Network_1.Network(2, 1);
                         initial = network.test(data.XNOR);
-                        return [4 /*yield*/, network.evolve({ iterations: 10, dataset: data.XNOR })];
+                        options = new EvolveOptions_1.EvolveOptions();
+                        options.iterations = 20;
+                        options.dataset = data.XNOR;
+                        return [4 /*yield*/, network.evolve(options)];
                     case 1:
                         _a.sent();
                         final = network.test(data.XNOR);

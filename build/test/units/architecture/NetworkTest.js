@@ -40,6 +40,8 @@ var chai_1 = require("chai");
 var Connection_1 = require("../../../src/architecture/Connection");
 var Network_1 = require("../../../src/architecture/Network");
 var Node_1 = require("../../../src/architecture/Node");
+var EvolveOptions_1 = require("../../../src/interfaces/EvolveOptions");
+var TrainOptions_1 = require("../../../src/interfaces/TrainOptions");
 var Mutation_1 = require("../../../src/methods/Mutation");
 var Utils_1 = require("../../../src/utils/Utils");
 describe('Network', function () {
@@ -212,10 +214,9 @@ describe('Network', function () {
                 { input: [0, 0, 0, 1], output: [1, 0, 0, 0] },
             ];
             var initial = network.test(dataset);
-            var trainReturn = network.train({
-                iterations: 50,
-                dataset: dataset
-            });
+            var options = new TrainOptions_1.TrainOptions(dataset);
+            options.iterations = 50;
+            var trainReturn = network.train(options);
             var final = network.test(dataset);
             chai_1.expect(trainReturn.error).to.be.a('number');
             chai_1.expect(trainReturn.iterations).to.be.a('number');
@@ -228,7 +229,7 @@ describe('Network', function () {
         // evolving the network to be solvable
         it('network.evolve(dataset) => {{error:{number},iterations:{number},time:{number}}}', function () {
             return __awaiter(this, void 0, void 0, function () {
-                var network, i, dataset, initial, evolveReturn, final;
+                var network, i, dataset, initial, options, evolveReturn, final;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
@@ -248,6 +249,10 @@ describe('Network', function () {
                                 { input: [-3, 3], output: [-9] },
                             ];
                             initial = network.test(dataset);
+                            options = new EvolveOptions_1.EvolveOptions();
+                            options.iterations = 10;
+                            options.dataset = dataset;
+                            return [4 /*yield*/, network.evolve(options)];
                             return [4 /*yield*/, network.evolve({
                                     iterations: 10,
                                     dataset: dataset

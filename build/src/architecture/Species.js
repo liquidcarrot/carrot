@@ -21,7 +21,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Species = void 0;
 var TimSort = __importStar(require("timsort"));
-var NEAT_1 = require("../NEAT");
 var Utils_1 = require("../utils/Utils");
 var Network_1 = require("./Network");
 /**
@@ -38,9 +37,13 @@ var Species = /** @class */ (function () {
     /**
      * Puts a network to the species, after checking the distance
      * @param network
+     * @param c1
+     * @param c2
+     * @param c3
+     * @param distanceThreshold
      */
-    Species.prototype.put = function (network) {
-        if (network.distance(this.representative) < NEAT_1.NEAT.SPECIES_DISTANCE_THRESHOLD) {
+    Species.prototype.put = function (network, c1, c2, c3, distanceThreshold) {
+        if (network.distance(this.representative, c1, c2, c3) < distanceThreshold) {
             this.forcePut(network);
             return true;
         }

@@ -13,6 +13,8 @@ var LSTMLayer_1 = require("../../../src/architecture/Layers/RecurrentLayers/LSTM
 var MemoryLayer_1 = require("../../../src/architecture/Layers/RecurrentLayers/MemoryLayer");
 var RNNLayer_1 = require("../../../src/architecture/Layers/RecurrentLayers/RNNLayer");
 var PoolNode_1 = require("../../../src/architecture/Nodes/PoolNode");
+var TrainOptions_1 = require("../../../src/interfaces/TrainOptions");
+var Rate_1 = require("../../../src/methods/Rate");
 var Utils_1 = require("../../../src/utils/Utils");
 describe("ArchitectTest", function () {
     it("Build Multilayer-Perceptron", function () {
@@ -156,12 +158,12 @@ describe("ArchitectTest", function () {
             { input: [1, 1], output: [1] }
         ];
         var errorBefore = network.test(AND_GATE);
-        var error = network.train({
-            dataset: AND_GATE,
-            iterations: 10000,
-            rate: 0.01,
-            shuffle: true,
-        }).error;
+        var options = new TrainOptions_1.TrainOptions(AND_GATE);
+        options.iterations = 10000;
+        options.rate = new Rate_1.FixedRate(0.01);
+        options.shuffle = true;
+        network.train(options);
+        var error = network.train(options).error;
         chai_1.expect(Number.isFinite(error)).to.be.true;
         chai_1.expect(Number.isFinite(errorBefore)).to.be.true;
         chai_1.expect(error).to.be.at.most(errorBefore);
@@ -181,12 +183,12 @@ describe("ArchitectTest", function () {
             { input: [0], output: [0] }
         ];
         var errorBefore = network.test(data);
-        var error = network.train({
-            dataset: data,
-            iterations: 10000,
-            rate: 0.01,
-            clear: true,
-        }).error;
+        var options = new TrainOptions_1.TrainOptions(data);
+        options.iterations = 10000;
+        options.clear = true;
+        options.rate = new Rate_1.FixedRate(0.01);
+        network.train(options);
+        var error = network.train(options).error;
         chai_1.expect(Number.isFinite(error)).to.be.true;
         chai_1.expect(Number.isFinite(errorBefore)).to.be.true;
         chai_1.expect(error).to.be.at.most(errorBefore);
@@ -207,12 +209,12 @@ describe("ArchitectTest", function () {
             { input: [0], output: [0] }
         ];
         var errorBefore = network.test(data);
-        var error = network.train({
-            dataset: data,
-            iterations: 10000,
-            rate: 0.01,
-            clear: true,
-        }).error;
+        var options = new TrainOptions_1.TrainOptions(data);
+        options.iterations = 10000;
+        options.rate = new Rate_1.FixedRate(0.01);
+        options.clear = true;
+        network.train(options);
+        var error = network.train(options).error;
         chai_1.expect(Number.isFinite(error)).to.be.true;
         chai_1.expect(Number.isFinite(errorBefore)).to.be.true;
         chai_1.expect(error).to.be.at.most(errorBefore);
@@ -232,12 +234,12 @@ describe("ArchitectTest", function () {
             { input: [0], output: [0] }
         ];
         var errorBefore = network.test(data);
-        var error = network.train({
-            dataset: data,
-            iterations: 10000,
-            rate: 0.01,
-            clear: true,
-        }).error;
+        var options = new TrainOptions_1.TrainOptions(data);
+        options.iterations = 10000;
+        options.rate = new Rate_1.FixedRate(0.01);
+        options.clear = true;
+        network.train(options);
+        var error = network.train(options).error;
         chai_1.expect(Number.isFinite(error)).to.be.true;
         chai_1.expect(Number.isFinite(errorBefore)).to.be.true;
         chai_1.expect(error).to.be.at.most(errorBefore);
