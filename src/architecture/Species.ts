@@ -1,5 +1,4 @@
 import * as TimSort from "timsort";
-import {NEAT} from "../NEAT";
 import {maxValueIndex, pickRandom} from "../utils/Utils";
 import {Network} from "./Network";
 
@@ -36,9 +35,13 @@ export class Species {
     /**
      * Puts a network to the species, after checking the distance
      * @param network
+     * @param c1
+     * @param c2
+     * @param c3
+     * @param distanceThreshold
      */
-    public put(network: Network): boolean {
-        if (network.distance(this.representative) < NEAT.SPECIES_DISTANCE_THRESHOLD) {
+    public put(network: Network, c1: number, c2: number, c3: number, distanceThreshold: number): boolean {
+        if (network.distance(this.representative, c1, c2, c3) < distanceThreshold) {
             this.forcePut(network);
             return true;
         } else {

@@ -1,5 +1,7 @@
 import {expect} from "chai";
 import {Network} from "../../src/architecture/Network";
+import {EvolveOptions} from "../../src/interfaces/EvolveOptions";
+import {TrainOptions} from "../../src/interfaces/TrainOptions";
 
 describe('Logic Gates', () => {
     const data: {
@@ -57,18 +59,24 @@ describe('Logic Gates', () => {
         const network: Network = new Network(1, 1);
 
         const initial: number = network.test(data.NOT);
-        network.train({iterations: 10, dataset: data.NOT});
+        const options: TrainOptions = new TrainOptions(data.NOT);
+        options.iterations = 20;
+        network.train(options);
         const final: number = network.test(data.NOT);
 
         expect(final).to.be.at.most(initial);
     });
+
     it('[NOT] Network.evolve()', async function (): Promise<void> {
         this.timeout(20000);
 
         const network: Network = new Network(1, 1);
 
         const initial: number = network.test(data.NOT);
-        await network.evolve({iterations: 10, dataset: data.NOT});
+        const options: EvolveOptions = new EvolveOptions();
+        options.iterations = 20;
+        options.dataset = data.NOT;
+        await network.evolve(options);
         const final: number = network.test(data.NOT);
 
         expect(final).to.be.at.most(initial);
@@ -78,18 +86,24 @@ describe('Logic Gates', () => {
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.AND);
-        network.train({iterations: 10, dataset: data.AND});
+        const options: TrainOptions = new TrainOptions(data.AND);
+        options.iterations = 20;
+        network.train(options);
         const final: number = network.test(data.AND);
 
         expect(final).to.be.at.most(initial);
     });
+
     it('[AND] Network.evolve()', async function (): Promise<void> {
         this.timeout(20000);
 
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.AND);
-        await network.evolve({iterations: 10, dataset: data.AND});
+        const options: EvolveOptions = new EvolveOptions();
+        options.iterations = 20;
+        options.dataset = data.AND;
+        await network.evolve(options);
         const final: number = network.test(data.AND);
 
         expect(final).to.be.at.most(initial);
@@ -99,18 +113,24 @@ describe('Logic Gates', () => {
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.OR);
-        network.train({iterations: 10, dataset: data.OR});
+        const options: TrainOptions = new TrainOptions(data.OR);
+        options.iterations = 20;
+        network.train(options);
         const final: number = network.test(data.OR);
 
         expect(final).to.be.at.most(initial);
     });
+
     it('[OR] Network.evolve()', async function (): Promise<void> {
         this.timeout(20000);
 
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.OR);
-        await network.evolve({iterations: 10, dataset: data.OR});
+        const options: EvolveOptions = new EvolveOptions();
+        options.iterations = 20;
+        options.dataset = data.OR;
+        await network.evolve(options);
         const final: number = network.test(data.OR);
 
         expect(final).to.be.at.most(initial);
@@ -120,18 +140,24 @@ describe('Logic Gates', () => {
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.NAND);
-        network.train({iterations: 10, dataset: data.NAND});
+        const options: TrainOptions = new TrainOptions(data.NAND);
+        options.iterations = 20;
+        network.train(options);
         const final: number = network.test(data.NAND);
 
         expect(final).to.be.at.most(initial);
     });
+
     it('[NAND] Network.evolve()', async function (): Promise<void> {
         this.timeout(20000);
 
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.NAND);
-        await network.evolve({iterations: 10, dataset: data.NAND});
+        const options: EvolveOptions = new EvolveOptions();
+        options.iterations = 20;
+        options.dataset = data.NAND;
+        await network.evolve(options);
         const final: number = network.test(data.NAND);
 
         expect(final).to.be.at.most(initial);
@@ -141,18 +167,24 @@ describe('Logic Gates', () => {
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.NOR);
-        network.train({iterations: 10, dataset: data.NOR});
+        const options: TrainOptions = new TrainOptions(data.NOR);
+        options.iterations = 20;
+        network.train(options);
         const final: number = network.test(data.NOR);
 
         expect(final).to.be.at.most(initial);
     });
+
     it('[NOR] Network.evolve()', async function (): Promise<void> {
         this.timeout(20000);
 
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.NOR);
-        await network.evolve({iterations: 10, dataset: data.NOR});
+        const options: EvolveOptions = new EvolveOptions();
+        options.iterations = 20;
+        options.dataset = data.NOR;
+        await network.evolve(options);
         const final: number = network.test(data.NOR);
 
         expect(final).to.be.at.most(initial);
@@ -162,18 +194,24 @@ describe('Logic Gates', () => {
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.XOR);
-        network.train({iterations: 10, dataset: data.XOR});
+        const options: TrainOptions = new TrainOptions(data.XOR);
+        options.iterations = 20;
+        network.train(options);
         const final: number = network.test(data.XOR);
 
         expect(final).to.be.at.most(initial);
     });
+
     it('[XOR] Network.evolve()', async function (): Promise<void> {
         this.timeout(20000);
 
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.XOR);
-        await network.evolve({iterations: 10, dataset: data.XOR});
+        const options: EvolveOptions = new EvolveOptions();
+        options.iterations = 20;
+        options.dataset = data.XOR;
+        await network.evolve(options);
         const final: number = network.test(data.XOR);
 
         expect(final).to.be.at.most(initial);
@@ -183,18 +221,24 @@ describe('Logic Gates', () => {
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.XNOR);
-        network.train({iterations: 10, dataset: data.XNOR});
+        const options: TrainOptions = new TrainOptions(data.XNOR);
+        options.iterations = 20;
+        network.train(options);
         const final: number = network.test(data.XNOR);
 
         expect(final).to.be.at.most(initial);
     });
+
     it('[XNOR] Network.evolve()', async function (): Promise<void> {
         this.timeout(20000);
 
         const network: Network = new Network(2, 1);
 
         const initial: number = network.test(data.XNOR);
-        await network.evolve({iterations: 10, dataset: data.XNOR});
+        const options: EvolveOptions = new EvolveOptions();
+        options.iterations = 20;
+        options.dataset = data.XNOR;
+        await network.evolve(options);
         const final: number = network.test(data.XNOR);
 
         expect(final).to.be.at.most(initial);

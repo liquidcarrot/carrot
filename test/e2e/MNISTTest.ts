@@ -53,14 +53,13 @@ describe('MNIST', () => {
         const net: Network = new Network(trainingSet[0].input.length, trainingSet[0].output.length);
         const errorBefore: number = net.test(trainingSet);
 
-        const options: EvolveOptions = {
-            dataset: trainingSet,
-            populationSize: 50,
-            mutations: FEEDFORWARD_MUTATIONS,
-            mutationAmount: 2,
-            mutationRate: 0.4,
-            iterations: 10,
-        };
+        const options: EvolveOptions = new EvolveOptions();
+        options.dataset = trainingSet;
+        options.populationSize = 50;
+        options.mutations = FEEDFORWARD_MUTATIONS;
+        options.mutationAmount = 2;
+        options.mutationRate = 0.4;
+        options.iterations = 10;
         await net.evolve(options);
 
         const errorAfter: number = net.test(trainingSet);

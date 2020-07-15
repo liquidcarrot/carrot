@@ -1,18 +1,8 @@
-import {ActivationType} from "activations";
-import {ALL_ACTIVATIONS} from "activations/build/src";
 import * as TimSort from "timsort";
 import {Network} from "./architecture/Network";
 import {Species} from "./architecture/Species";
 import {EvolveOptions} from "./interfaces/EvolveOptions";
-import {TrainOptions} from "./interfaces/TrainOptions";
-import {
-    AddConnectionMutation,
-    AddGateMutation,
-    AddNodeMutation,
-    FEEDFORWARD_MUTATIONS,
-    Mutation
-} from "./methods/Mutation";
-import {FitnessProportionateSelection, Selection} from "./methods/Selection";
+import {AddConnectionMutation, AddGateMutation, AddNodeMutation, Mutation} from "./methods/Mutation";
 import {pickRandom} from "./utils/Utils";
 
 /**
@@ -22,115 +12,14 @@ import {pickRandom} from "./utils/Utils";
  */
 export class NEAT {
     /**
-     * How big could the distance be between two networks in a species
-     */
-    public static SPECIES_DISTANCE_THRESHOLD: number = 3;
-    public static C1: number = 1;
-    public static C2: number = 1;
-    public static C3: number = 1;
-    public static SURVIVORS: number = 0.8;
-    /**
-     * A count of the generations
-     */
-    public generation: number;
-    /**
-     * The input size of `template` networks.
-     */
-    private readonly input: number;
-    /**
-     * The output size of `template` networks.
-     */
-    private readonly output: number;
-    /**
-     * When true [crossover](Network.crossOver) parent genomes are assumed to be equally fit and offspring are built with a random amount of neurons within the range of parents' number of neurons. Set to false to select the "fittest" parent as the neuron amount template.
-     */
-    private readonly equal: boolean;
-    /**
-     * Clear the context of the population's nodes, basically reverting them to 'new' neurons. Useful for predicting time series with LSTM's.
-     */
-    private readonly clear: boolean;
-    /**
-     * Population size of each generation.
-     */
-    private populationSize: number;
-    /**
-     * Sets the mutation rate. If set to 0.3, 30% of the new population will be mutated. Default is 0.4.
-     */
-    private readonly mutationRate: number;
-    /**
-     * If mutation occurs (randomNumber < mutationRate), sets amount of times a mutation method will be applied to the network.
-     */
-    private readonly mutationAmount: number;
-    /**
-     * A fitness function to evaluate the networks. Takes a `dataset` and a `genome` i.e. a network or a `population` i.e. an array of networks and sets the genome `.score` property
-     */
-    private readonly fitnessFunction: ((population: Network[], dataset?: {
-        /**
-         * Set with all input values.
-         */
-        input: number[];
-        /**
-         * Set with all output values.
-         */
-        output: number[]
-    }[]) => Promise<void>);
-    /**
-     * Selection for evolution (e.g. Selection.FITNESS_PROPORTIONATE)
-     */
-    private readonly selection: Selection;
-    /**
-     * Sets allowed mutations for evolution, a random mutation method will be chosen from the array when mutation occurs. Optional, but default methods are non-recurrent.
-     */
-    private readonly mutations: Mutation[];
-    /**
-     * Network to start evolution from.
-     */
-    private readonly template: Network;
-    /**
-     * Maximum nodes for a potential network.
-     */
-    private readonly maxNodes: number;
-    /**
-     * Maximum connections for a potential network.
-     */
-    private readonly maxConnections: number;
-    /**
-     * Maximum gates for a potential network.
-     */
-    private readonly maxGates: number;
-    /**
      * population The current population for the neat instance. Accessible through `neat.population`.
      */
     private population: Network[];
+
     /**
-     * species
+     * Species
      */
     private readonly species: Set<Species>;
-    /**
-     * A set of input values and ideal output values to evaluate a genome's fitness with. Must be included to use `NEAT.evaluate` without passing a dataset.
-     */
-    private readonly dataset?: {
-        /**
-         * Set with all input values.
-         */
-        input: number[];
-        /**
-         * Set with all output values.
-         */
-        output: number[]
-    }[];
-    /**
-     * Sets allowed activations for evolution, a random activation method will be chosen from the array when activation mutation occurs.
-     */
-    private readonly activations: ActivationType[];
-    /**
-     * Elitism of every evolution loop. [Elitism in genetic algorithms.](https://www.researchgate.net/post/What_is_meant_by_the_term_Elitism_in_the_Genetic_Algorithm)
-     */
-    private readonly elitism: number;
-    /**
-     * Train options used for training in between two evolution steps
-     */
-    private readonly trainOptions: TrainOptions | null;
 
     /**
      * Constructs a NEAT object.
@@ -141,40 +30,32 @@ export class NEAT {
         if (!options.fitnessFunction) {
             throw new ReferenceError("No fitness function given!");
         }
-
-        this.dataset = options.dataset;
-        if (options.dataset && options.dataset.length > 0) {
-            this.input = options.dataset[0].input.length;
-            this.output = options.dataset[0].output.length;
-            this.trainOptions = options.training ?? null;
-        } else {
-            this.trainOptions = null;
-            this.input = options.input ?? 0;
-            this.output = options.output ?? 0;
-        }
-
-        this.generation = options.generation ?? 0;
-        this.elitism = options.elitism ?? 1;
-        this.equal = options.equal ?? true;
-        this.clear = options.clear ?? false;
-        this.populationSize = options.populationSize ?? 50;
-        this.mutationRate = options.mutationRate ?? 0.6;
-        this.mutationAmount = options.mutationAmount ?? 5;
-        this.fitnessFunction = options.fitnessFunction;
-
-        this.selection = options.selection ?? new FitnessProportionateSelection();
-        this.mutations = options.mutations ?? FEEDFORWARD_MUTATIONS;
-        this.activations = options.activations ?? Object.values(ALL_ACTIVATIONS);
-        this.template = options.template ?? new Network(this.input, this.output);
-        this.maxNodes = options.maxNodes ?? Infinity;
-        this.maxConnections = options.maxConnections ?? Infinity;
-        this.maxGates = options.maxGates ?? Infinity;
+        this._options = options;
         this.population = [];
         this.species = new Set<Species>();
 
-        for (let i: number = 0; i < this.populationSize; i++) {
-            this.population.push(this.template.copy());
+        for (let i: number = 0; i < this.options.populationSize; i++) {
+            this.population.push(this.options.template.copy());
         }
+    }
+
+    /**
+     * Class holding all options for the Evolution process
+     */
+    private _options: EvolveOptions;
+
+    /**
+     * Getter
+     */
+    public get options(): EvolveOptions {
+        return this._options;
+    }
+
+    /**
+     * Setter
+     */
+    public set options(value: EvolveOptions) {
+        this._options = value;
     }
 
     /**
@@ -183,14 +64,14 @@ export class NEAT {
      * @param network The network which will be mutated.
      */
     public mutateRandom(network: Network): void {
-        const allowed: Mutation[] = this.mutations.filter(method => {
+        const allowed: Mutation[] = this.options.mutations.filter(method => {
             return (
-                method.constructor.name !== AddNodeMutation.constructor.name || network.nodes.length < this.maxNodes ||
-                method.constructor.name !== AddConnectionMutation.constructor.name || network.connections.size < this.maxConnections ||
-                method.constructor.name !== AddGateMutation.constructor.name || network.gates.size < this.maxGates
+                method.constructor.name !== AddNodeMutation.constructor.name || network.nodes.length < this.options.maxNodes ||
+                method.constructor.name !== AddConnectionMutation.constructor.name || network.connections.size < this.options.maxConnections ||
+                method.constructor.name !== AddGateMutation.constructor.name || network.gates.size < this.options.maxGates
             );
         });
-        network.mutate(pickRandom(allowed), {allowedActivations: this.activations});
+        network.mutate(pickRandom(allowed), {allowedActivations: this.options.activations});
     }
 
     /**
@@ -206,19 +87,19 @@ export class NEAT {
         }
         this.species.forEach(species => species.evaluateScore());
 
-        this.kill(1 - NEAT.SURVIVORS);
+        this.kill(1 - this.options.survivors);
         this.removeExtinctSpecies();
         this.reproduce();
 
-        const elitists: Network[] = this.population.splice(0, this.elitism);
+        const elitists: Network[] = this.population.splice(0, this.options.elitism);
         this.mutate();
         this.population.splice(0, 0, ...elitists);
 
-        if (this.trainOptions !== null) {
+        /*if (this.options.training) {
             for (const genome of this.population) {
-                genome.train(this.trainOptions);
+                genome.train(this.options.training);
             }
-        }
+        }*/
 
         // evaluate the population
         await this.evaluate();
@@ -232,7 +113,7 @@ export class NEAT {
         // Reset the scores
         this.population.forEach(genome => genome.score = undefined);
 
-        this.generation++;
+        this.options.generation++;
 
         return fittest;
     }
@@ -245,9 +126,9 @@ export class NEAT {
     public mutate(method?: Mutation | undefined): void {
         // Elitist genomes should not be included
         this.population
-            .filter(() => Math.random() <= this.mutationRate)
+            .filter(() => Math.random() <= this.options.mutationRate)
             .forEach(genome => {
-                for (let i: number = 0; i < this.mutationAmount; i++) {
+                for (let i: number = 0; i < this.options.mutationAmount; i++) {
                     if (method) {
                         genome.mutate(method);
                     } else {
@@ -263,10 +144,10 @@ export class NEAT {
      * @return {Network} Fittest Network
      */
     public async evaluate(): Promise<Network> {
-        if (this.clear) {
+        if (this.options.clear) {
             this.population.forEach(genome => genome.clear());
         }
-        await this.fitnessFunction(this.population, this.dataset);
+        await this.options.fitnessFunction?.(this.population, this.options.dataset);
 
         // Sort the population in order of fitness
         this.sort();
@@ -320,7 +201,7 @@ export class NEAT {
      */
     public replacePopulation(genomes: Network[]): void {
         this.population = genomes;
-        this.populationSize = genomes.length;
+        this.options.populationSize = genomes.length;
     }
 
     /**
@@ -331,7 +212,7 @@ export class NEAT {
         const speciesArr: Species[] = Array.from(this.species);
         for (let i: number = 0; i < this.population.length; i++) {
             if (this.population[i].species === null) {
-                const selectedSpecies: Species = this.selection.select(speciesArr);
+                const selectedSpecies: Species = this.options.selection.select(speciesArr);
                 this.population[i] = selectedSpecies.breed();
                 selectedSpecies.forcePut(this.population[i]);
             }
@@ -369,7 +250,7 @@ export class NEAT {
         this.population.filter(genome => genome.species === null).forEach(genome => {
             let found: boolean = false;
             for (const species of Array.from(this.species)) {
-                if (species.put(genome)) {
+                if (species.put(genome, this.options.c1, this.options.c2, this.options.c3, this.options.speciesDistanceThreshold)) {
                     found = true;
                     break;
                 }
