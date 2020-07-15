@@ -1,28 +1,14 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ActivationNode = void 0;
-var Utils_1 = require("../../utils/Utils");
-var ConstantNode_1 = require("./ConstantNode");
+const Utils_1 = require("../../utils/Utils");
+const ConstantNode_1 = require("./ConstantNode");
 /**
  * Activation node
  */
-var ActivationNode = /** @class */ (function (_super) {
-    __extends(ActivationNode, _super);
-    function ActivationNode() {
-        return _super.call(this) || this;
+class ActivationNode extends ConstantNode_1.ConstantNode {
+    constructor() {
+        super();
     }
     /**
      * Actives the node.
@@ -33,9 +19,9 @@ var ActivationNode = /** @class */ (function (_super) {
      *
      * @returns A neuron's output value
      */
-    ActivationNode.prototype.activate = function () {
+    activate() {
         this.old = this.state;
-        var incomingStates = Array.from(this.incoming).map(function (conn) { return conn.from.activation * conn.weight * conn.gain; });
+        const incomingStates = Array.from(this.incoming).map(conn => conn.from.activation * conn.weight * conn.gain);
         if (incomingStates.length !== 1) {
             throw new ReferenceError("Only 1 incoming connections is allowed!");
         }
@@ -43,7 +29,7 @@ var ActivationNode = /** @class */ (function (_super) {
         this.activation = this.squash(this.state, false) * this.mask;
         this.derivativeState = this.squash(this.state, true);
         return this.activation;
-    };
+    }
     /**
      * Backpropagate the error (a.k.a. learn).
      *
@@ -54,22 +40,21 @@ var ActivationNode = /** @class */ (function (_super) {
      * @param target The target value (i.e. "the value the network SHOULD have given")
      * @param options More options for propagation
      */
-    ActivationNode.prototype.propagate = function (target, options) {
-        var _this = this;
+    propagate(target, options) {
         var _a, _b, _c;
         options.momentum = (_a = options.momentum) !== null && _a !== void 0 ? _a : 0;
         options.rate = (_b = options.rate) !== null && _b !== void 0 ? _b : 0.3;
         options.update = (_c = options.update) !== null && _c !== void 0 ? _c : true;
-        var connectionsStates = Array.from(this.outgoing).map(function (conn) { return conn.to.errorResponsibility * conn.weight * conn.gain; });
+        const connectionsStates = Array.from(this.outgoing).map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
         this.errorResponsibility = this.errorProjected = Utils_1.sum(connectionsStates) * this.derivativeState;
-        this.incoming.forEach(function (connection) {
+        this.incoming.forEach(connection => {
             var _a, _b;
             // calculate gradient
-            var gradient = _this.errorProjected * connection.eligibility;
-            connection.xTrace.forEach(function (value, key) {
+            let gradient = this.errorProjected * connection.eligibility;
+            connection.xTrace.forEach((value, key) => {
                 gradient += key.errorResponsibility * value;
             });
-            connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * _this.mask;
+            connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * this.mask;
             if (options.update) {
                 connection.deltaWeightsTotal += ((_b = options.momentum) !== null && _b !== void 0 ? _b : 0) * connection.deltaWeightsPrevious;
                 connection.weight += connection.deltaWeightsTotal;
@@ -77,7 +62,6 @@ var ActivationNode = /** @class */ (function (_super) {
                 connection.deltaWeightsTotal = 0;
             }
         });
-    };
-    return ActivationNode;
-}(ConstantNode_1.ConstantNode));
+    }
+}
 exports.ActivationNode = ActivationNode;

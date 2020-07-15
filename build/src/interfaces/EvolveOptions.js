@@ -4,17 +4,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EvolveOptions = void 0;
-var src_1 = require("activations/build/src");
-var os_1 = __importDefault(require("os"));
-var Network_1 = require("../architecture/Network");
-var Loss_1 = require("../methods/Loss");
-var Mutation_1 = require("../methods/Mutation");
-var Selection_1 = require("../methods/Selection");
+const src_1 = require("activations/build/src");
+const os_1 = __importDefault(require("os"));
+const Network_1 = require("../architecture/Network");
+const Loss_1 = require("../methods/Loss");
+const Mutation_1 = require("../methods/Mutation");
+const Selection_1 = require("../methods/Selection");
 /**
  * Options used to evolve network
  */
-var EvolveOptions = /** @class */ (function () {
-    function EvolveOptions() {
+class EvolveOptions {
+    constructor() {
         /**
          * How big could the distance be between a network and the represent of a species?
          */
@@ -45,486 +45,365 @@ var EvolveOptions = /** @class */ (function () {
         this._iterations = 1000;
         this._error = 0.05;
     }
-    Object.defineProperty(EvolveOptions.prototype, "speciesDistanceThreshold", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._speciesDistanceThreshold;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._speciesDistanceThreshold = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "c1", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._c1;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._c1 = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "c2", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._c2;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._c2 = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "c3", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._c3;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._c3 = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "survivors", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._survivors;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._survivors = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "threads", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._threads;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._threads = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "input", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._input;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._input = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "output", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._output;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._output = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "dataset", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._dataset;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._dataset = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "generation", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._generation;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._generation = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "training", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._training;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._training = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "template", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._template;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._template = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "mutations", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._mutations;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._mutations = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "activations", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._activations;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._activations = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "selection", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._selection;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._selection = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "mutationRate", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._mutationRate;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._mutationRate = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "mutationAmount", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._mutationAmount;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._mutationAmount = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "elitism", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._elitism;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._elitism = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "populationSize", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._populationSize;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._populationSize = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "fitnessFunction", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._fitnessFunction;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._fitnessFunction = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "loss", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._loss;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._loss = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "maxNodes", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._maxNodes;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._maxNodes = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "maxConnections", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._maxConnections;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._maxConnections = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "maxGates", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._maxGates;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._maxGates = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "equal", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._equal;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._equal = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "log", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._log;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._log = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "schedule", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._schedule;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._schedule = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "clear", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._clear;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._clear = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "iterations", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._iterations;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._iterations = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(EvolveOptions.prototype, "error", {
-        /**
-         * Getter
-         */
-        get: function () {
-            return this._error;
-        },
-        /**
-         * Setter
-         */
-        set: function (value) {
-            this._error = value;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    return EvolveOptions;
-}());
+    /**
+     * Getter
+     */
+    get speciesDistanceThreshold() {
+        return this._speciesDistanceThreshold;
+    }
+    /**
+     * Setter
+     */
+    set speciesDistanceThreshold(value) {
+        this._speciesDistanceThreshold = value;
+    }
+    /**
+     * Getter
+     */
+    get c1() {
+        return this._c1;
+    }
+    /**
+     * Setter
+     */
+    set c1(value) {
+        this._c1 = value;
+    }
+    /**
+     * Getter
+     */
+    get c2() {
+        return this._c2;
+    }
+    /**
+     * Setter
+     */
+    set c2(value) {
+        this._c2 = value;
+    }
+    /**
+     * Getter
+     */
+    get c3() {
+        return this._c3;
+    }
+    /**
+     * Setter
+     */
+    set c3(value) {
+        this._c3 = value;
+    }
+    /**
+     * Getter
+     */
+    get survivors() {
+        return this._survivors;
+    }
+    /**
+     * Setter
+     */
+    set survivors(value) {
+        this._survivors = value;
+    }
+    /**
+     * Getter
+     */
+    get threads() {
+        return this._threads;
+    }
+    /**
+     * Setter
+     */
+    set threads(value) {
+        this._threads = value;
+    }
+    /**
+     * Getter
+     */
+    get input() {
+        return this._input;
+    }
+    /**
+     * Setter
+     */
+    set input(value) {
+        this._input = value;
+    }
+    /**
+     * Getter
+     */
+    get output() {
+        return this._output;
+    }
+    /**
+     * Setter
+     */
+    set output(value) {
+        this._output = value;
+    }
+    /**
+     * Getter
+     */
+    get dataset() {
+        return this._dataset;
+    }
+    /**
+     * Setter
+     */
+    set dataset(value) {
+        this._dataset = value;
+    }
+    /**
+     * Getter
+     */
+    get generation() {
+        return this._generation;
+    }
+    /**
+     * Setter
+     */
+    set generation(value) {
+        this._generation = value;
+    }
+    /**
+     * Getter
+     */
+    get training() {
+        return this._training;
+    }
+    /**
+     * Setter
+     */
+    set training(value) {
+        this._training = value;
+    }
+    /**
+     * Getter
+     */
+    get template() {
+        return this._template;
+    }
+    /**
+     * Setter
+     */
+    set template(value) {
+        this._template = value;
+    }
+    /**
+     * Getter
+     */
+    get mutations() {
+        return this._mutations;
+    }
+    /**
+     * Setter
+     */
+    set mutations(value) {
+        this._mutations = value;
+    }
+    /**
+     * Getter
+     */
+    get activations() {
+        return this._activations;
+    }
+    /**
+     * Setter
+     */
+    set activations(value) {
+        this._activations = value;
+    }
+    /**
+     * Getter
+     */
+    get selection() {
+        return this._selection;
+    }
+    /**
+     * Setter
+     */
+    set selection(value) {
+        this._selection = value;
+    }
+    /**
+     * Getter
+     */
+    get mutationRate() {
+        return this._mutationRate;
+    }
+    /**
+     * Setter
+     */
+    set mutationRate(value) {
+        this._mutationRate = value;
+    }
+    /**
+     * Getter
+     */
+    get mutationAmount() {
+        return this._mutationAmount;
+    }
+    /**
+     * Setter
+     */
+    set mutationAmount(value) {
+        this._mutationAmount = value;
+    }
+    /**
+     * Getter
+     */
+    get elitism() {
+        return this._elitism;
+    }
+    /**
+     * Setter
+     */
+    set elitism(value) {
+        this._elitism = value;
+    }
+    /**
+     * Getter
+     */
+    get populationSize() {
+        return this._populationSize;
+    }
+    /**
+     * Setter
+     */
+    set populationSize(value) {
+        this._populationSize = value;
+    }
+    /**
+     * Getter
+     */
+    get fitnessFunction() {
+        return this._fitnessFunction;
+    }
+    /**
+     * Setter
+     */
+    set fitnessFunction(value) {
+        this._fitnessFunction = value;
+    }
+    /**
+     * Getter
+     */
+    get loss() {
+        return this._loss;
+    }
+    /**
+     * Setter
+     */
+    set loss(value) {
+        this._loss = value;
+    }
+    /**
+     * Getter
+     */
+    get maxNodes() {
+        return this._maxNodes;
+    }
+    /**
+     * Setter
+     */
+    set maxNodes(value) {
+        this._maxNodes = value;
+    }
+    /**
+     * Getter
+     */
+    get maxConnections() {
+        return this._maxConnections;
+    }
+    /**
+     * Setter
+     */
+    set maxConnections(value) {
+        this._maxConnections = value;
+    }
+    /**
+     * Getter
+     */
+    get maxGates() {
+        return this._maxGates;
+    }
+    /**
+     * Setter
+     */
+    set maxGates(value) {
+        this._maxGates = value;
+    }
+    /**
+     * Getter
+     */
+    get equal() {
+        return this._equal;
+    }
+    /**
+     * Setter
+     */
+    set equal(value) {
+        this._equal = value;
+    }
+    /**
+     * Getter
+     */
+    get log() {
+        return this._log;
+    }
+    /**
+     * Setter
+     */
+    set log(value) {
+        this._log = value;
+    }
+    /**
+     * Getter
+     */
+    get schedule() {
+        return this._schedule;
+    }
+    /**
+     * Setter
+     */
+    set schedule(value) {
+        this._schedule = value;
+    }
+    /**
+     * Getter
+     */
+    get clear() {
+        return this._clear;
+    }
+    /**
+     * Setter
+     */
+    set clear(value) {
+        this._clear = value;
+    }
+    /**
+     * Getter
+     */
+    get iterations() {
+        return this._iterations;
+    }
+    /**
+     * Setter
+     */
+    set iterations(value) {
+        this._iterations = value;
+    }
+    /**
+     * Getter
+     */
+    get error() {
+        return this._error;
+    }
+    /**
+     * Setter
+     */
+    set error(value) {
+        this._error = value;
+    }
+}
 exports.EvolveOptions = EvolveOptions;

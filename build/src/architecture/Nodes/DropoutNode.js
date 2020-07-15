@@ -1,31 +1,16 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DropoutNode = void 0;
-var Utils_1 = require("../../utils/Utils");
-var ConstantNode_1 = require("./ConstantNode");
+const Utils_1 = require("../../utils/Utils");
+const ConstantNode_1 = require("./ConstantNode");
 /**
  * Dropout node
  */
-var DropoutNode = /** @class */ (function (_super) {
-    __extends(DropoutNode, _super);
-    function DropoutNode(probability) {
-        var _this = _super.call(this) || this;
-        _this.probability = probability;
-        _this.droppedOut = false;
-        return _this;
+class DropoutNode extends ConstantNode_1.ConstantNode {
+    constructor(probability) {
+        super();
+        this.probability = probability;
+        this.droppedOut = false;
     }
     /**
      * Actives the node.
@@ -36,12 +21,11 @@ var DropoutNode = /** @class */ (function (_super) {
      *
      * @returns A neuron's output value
      */
-    DropoutNode.prototype.activate = function () {
-        var _this = this;
+    activate() {
         if (this.incoming.size !== 1) {
             throw new RangeError("Dropout node should have exactly one incoming connection!");
         }
-        var incomingConnection = Array.from(this.incoming)[0];
+        const incomingConnection = Array.from(this.incoming)[0];
         // https://stats.stackexchange.com/a/219240
         if (Utils_1.randDouble(0, 1) < this.probability) {
             // DROPOUT
@@ -55,9 +39,9 @@ var DropoutNode = /** @class */ (function (_super) {
         }
         this.activation = this.squash(this.state, false) * this.mask;
         // Adjust gain
-        this.gated.forEach(function (conn) { return conn.gain = _this.activation; });
+        this.gated.forEach(conn => conn.gain = this.activation);
         return this.activation;
-    };
+    }
     /**
      * Backpropagate the error (a.k.a. learn).
      *
@@ -68,32 +52,31 @@ var DropoutNode = /** @class */ (function (_super) {
      * @param target The target value (i.e. "the value the network SHOULD have given")
      * @param options More options for propagation
      */
-    DropoutNode.prototype.propagate = function (target, options) {
+    propagate(target, options = {}) {
         var _a, _b, _c;
-        if (options === void 0) { options = {}; }
         options.momentum = (_a = options.momentum) !== null && _a !== void 0 ? _a : 0;
         options.rate = (_b = options.rate) !== null && _b !== void 0 ? _b : 0.3;
         options.update = (_c = options.update) !== null && _c !== void 0 ? _c : true;
-        var connectionsStates = Array.from(this.outgoing).map(function (conn) { return conn.to.errorResponsibility * conn.weight * conn.gain; });
+        const connectionsStates = Array.from(this.outgoing).map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
         this.errorResponsibility = this.errorProjected = Utils_1.sum(connectionsStates) / (1 - this.probability);
         if (this.incoming.size !== 1) {
             throw new RangeError("Dropout node should have exactly one incoming connection!");
         }
-        var connection = Array.from(this.incoming)[0];
+        const connection = Array.from(this.incoming)[0];
         // calculate gradient
         if (!this.droppedOut) {
-            var gradient_1 = this.errorProjected * connection.eligibility;
-            connection.xTrace.forEach(function (value, key) {
-                gradient_1 += key.errorResponsibility * value;
+            let gradient = this.errorProjected * connection.eligibility;
+            connection.xTrace.forEach((value, key) => {
+                gradient += key.errorResponsibility * value;
             });
             if (options.update) {
-                connection.deltaWeightsTotal += options.rate * gradient_1 * this.mask + options.momentum * connection.deltaWeightsPrevious;
+                connection.deltaWeightsTotal += options.rate * gradient * this.mask + options.momentum * connection.deltaWeightsPrevious;
                 connection.weight += connection.deltaWeightsTotal;
                 connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
                 connection.deltaWeightsTotal = 0;
             }
         }
-    };
+    }
     /**
      * Create a constant node from json object.
      *
@@ -101,21 +84,20 @@ var DropoutNode = /** @class */ (function (_super) {
      *
      * @returns the created node
      */
-    DropoutNode.prototype.fromJSON = function (json) {
-        _super.prototype.fromJSON.call(this, json);
+    fromJSON(json) {
+        super.fromJSON(json);
         this.probability = json.probability;
         return this;
-    };
+    }
     /**
      * Convert this node into a json object.
      *
      * @returns the json object representing this node
      */
-    DropoutNode.prototype.toJSON = function () {
-        return Object.assign(_super.prototype.toJSON.call(this), {
+    toJSON() {
+        return Object.assign(super.toJSON(), {
             probability: this.probability
         });
-    };
-    return DropoutNode;
-}(ConstantNode_1.ConstantNode));
+    }
+}
 exports.DropoutNode = DropoutNode;

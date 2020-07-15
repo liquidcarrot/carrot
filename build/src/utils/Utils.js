@@ -58,7 +58,7 @@ exports.randBoolean = randBoolean;
  * @returns false -> element does not exists on array; true -> element removed from array
  */
 function removeFromArray(arr, elem) {
-    var index = arr.indexOf(elem);
+    const index = arr.indexOf(elem);
     if (index === -1) {
         return false;
     }
@@ -75,11 +75,11 @@ exports.removeFromArray = removeFromArray;
  */
 function shuffle(array) {
     // While there are elements in the array
-    for (var counter = array.length - 1; counter > 0; counter--) {
+    for (let counter = array.length - 1; counter > 0; counter--) {
         // Pick a random index
-        var index = randInt(0, counter);
+        const index = randInt(0, counter);
         // And swap the last element with it
-        var temp = array[counter];
+        const temp = array[counter];
         array[counter] = array[index];
         array[index] = temp;
     }
@@ -94,8 +94,8 @@ function max(array) {
     if (array.length === 0) {
         throw new RangeError();
     }
-    var maxValue = array[0];
-    for (var i = 1; i < array.length; i++) {
+    let maxValue = array[0];
+    for (let i = 1; i < array.length; i++) {
         if (array[i] > maxValue) {
             maxValue = array[i];
         }
@@ -112,9 +112,9 @@ function maxValueIndex(array) {
     if (array.length === 0) {
         throw new RangeError();
     }
-    var maxValue = array[0];
-    var maxValueIndex = 0;
-    for (var i = 1; i < array.length; i++) {
+    let maxValue = array[0];
+    let maxValueIndex = 0;
+    for (let i = 1; i < array.length; i++) {
         if (array[i] > maxValue) {
             maxValue = array[i];
             maxValueIndex = i;
@@ -132,9 +132,9 @@ function minValueIndex(array) {
     if (array.length === 0) {
         throw new RangeError();
     }
-    var minValue = array[0];
-    var minValueIndex = 0;
-    for (var i = 1; i < array.length; i++) {
+    let minValue = array[0];
+    let minValueIndex = 0;
+    for (let i = 1; i < array.length; i++) {
         if (array[i] < minValue) {
             minValue = array[i];
             minValueIndex = i;
@@ -152,8 +152,8 @@ function min(array) {
     if (array.length === 0) {
         throw new RangeError();
     }
-    var minValue = array[0];
-    for (var i = 1; i < array.length; i++) {
+    let minValue = array[0];
+    for (let i = 1; i < array.length; i++) {
         if (array[i] < minValue) {
             minValue = array[i];
         }
@@ -179,9 +179,8 @@ function sum(array) {
     if (array.length === 0) {
         throw new RangeError();
     }
-    var sum = 0;
-    for (var _i = 0, array_1 = array; _i < array_1.length; _i++) {
-        var value = array_1[_i];
+    let sum = 0;
+    for (const value of array) {
         sum += value;
     }
     return sum;
@@ -195,12 +194,10 @@ exports.sum = sum;
  * @param mean the mean value
  * @param deviation the standard deviation
  */
-function generateGaussian(mean, deviation) {
-    if (mean === void 0) { mean = 0; }
-    if (deviation === void 0) { deviation = 2; }
-    var sum = 0;
-    var numSamples = 10;
-    for (var i = 0; i < numSamples; i++) {
+function generateGaussian(mean = 0, deviation = 2) {
+    let sum = 0;
+    const numSamples = 10;
+    for (let i = 0; i < numSamples; i++) {
         sum += Math.random();
     }
     return deviation * sum / numSamples + mean - 0.5 * deviation;

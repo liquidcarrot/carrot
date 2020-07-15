@@ -1,41 +1,25 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.HopfieldLayer = void 0;
-var src_1 = require("activations/build/src");
-var ConnectionType_1 = require("../../../enums/ConnectionType");
-var NodeType_1 = require("../../../enums/NodeType");
-var Node_1 = require("../../Node");
-var Layer_1 = require("../Layer");
+const src_1 = require("activations/build/src");
+const ConnectionType_1 = require("../../../enums/ConnectionType");
+const NodeType_1 = require("../../../enums/NodeType");
+const Node_1 = require("../../Node");
+const Layer_1 = require("../Layer");
 /**
  * Hopfield layer
  */
-var HopfieldLayer = /** @class */ (function (_super) {
-    __extends(HopfieldLayer, _super);
-    function HopfieldLayer(outputSize) {
-        var _a, _b, _c, _d;
-        var _this = _super.call(this, outputSize) || this;
-        for (var i = 0; i < outputSize; i++) {
-            _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
-            _this.outputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setActivationType(src_1.BinaryStep));
+class HopfieldLayer extends Layer_1.Layer {
+    constructor(outputSize) {
+        super(outputSize);
+        for (let i = 0; i < outputSize; i++) {
+            this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
+            this.outputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setActivationType(src_1.BinaryStep));
         }
-        (_a = _this.connections).push.apply(_a, Layer_1.Layer.connect(_this.inputNodes, _this.outputNodes, ConnectionType_1.ConnectionType.ALL_TO_ALL));
-        (_b = _this.connections).push.apply(_b, Layer_1.Layer.connect(_this.outputNodes, _this.inputNodes, ConnectionType_1.ConnectionType.ALL_TO_ALL));
-        (_c = _this.nodes).push.apply(_c, Array.from(_this.inputNodes));
-        (_d = _this.nodes).push.apply(_d, Array.from(_this.outputNodes));
-        return _this;
+        this.connections.push(...Layer_1.Layer.connect(this.inputNodes, this.outputNodes, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+        this.connections.push(...Layer_1.Layer.connect(this.outputNodes, this.inputNodes, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+        this.nodes.push(...Array.from(this.inputNodes));
+        this.nodes.push(...Array.from(this.outputNodes));
     }
     /**
      * Checks if a given connection type is allowed on this layer.
@@ -44,17 +28,16 @@ var HopfieldLayer = /** @class */ (function (_super) {
      *
      * @return Is this connection type allowed?
      */
-    HopfieldLayer.prototype.connectionTypeisAllowed = function (type) {
+    connectionTypeisAllowed(type) {
         return true;
-    };
+    }
     /**
      * Gets the default connection type for a incoming connection to this layer.
      *
      * @returns the default incoming connection
      */
-    HopfieldLayer.prototype.getDefaultIncomingConnectionType = function () {
+    getDefaultIncomingConnectionType() {
         return ConnectionType_1.ConnectionType.ALL_TO_ALL;
-    };
-    return HopfieldLayer;
-}(Layer_1.Layer));
+    }
+}
 exports.HopfieldLayer = HopfieldLayer;

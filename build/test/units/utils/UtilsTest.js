@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var chai_1 = require("chai");
-var Utils_1 = require("../../../src/utils/Utils");
-describe("Utils", function () {
-    it("pick random", function () {
-        var arr = [
+const chai_1 = require("chai");
+const Utils_1 = require("../../../src/utils/Utils");
+describe("Utils", () => {
+    it("pick random", () => {
+        const arr = [
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50),
@@ -15,28 +15,28 @@ describe("Utils", function () {
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50)
         ];
-        var elem = Utils_1.pickRandom(arr);
+        const elem = Utils_1.pickRandom(arr);
         chai_1.expect(arr.includes(elem)).to.be.true;
     });
-    it("randInt", function () {
-        for (var i = 0; i < 100; i++) {
-            var int = Utils_1.randInt(-50, 50);
+    it("randInt", () => {
+        for (let i = 0; i < 100; i++) {
+            const int = Utils_1.randInt(-50, 50);
             chai_1.expect(int).to.be.below(50);
             chai_1.expect(int).to.be.above(-51);
         }
     });
-    it("randDouble", function () {
-        for (var i = 0; i < 100; i++) {
-            var double = Utils_1.randDouble(-50, 50);
+    it("randDouble", () => {
+        for (let i = 0; i < 100; i++) {
+            const double = Utils_1.randDouble(-50, 50);
             chai_1.expect(double).to.be.below(50);
             chai_1.expect(double).to.be.above(-51);
         }
     });
-    it("randBoolean", function () {
-        var trues = 0;
-        var falses = 0;
-        for (var i = 0; i < 1000; i++) {
-            var bool = Utils_1.randBoolean();
+    it("randBoolean", () => {
+        let trues = 0;
+        let falses = 0;
+        for (let i = 0; i < 1000; i++) {
+            const bool = Utils_1.randBoolean();
             if (bool) {
                 trues++;
             }
@@ -46,8 +46,8 @@ describe("Utils", function () {
         }
         chai_1.expect(trues).to.be.closeTo(falses, 100);
     });
-    it("remove from array", function () {
-        var arr = [
+    it("remove from array", () => {
+        const arr = [
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50),
@@ -60,12 +60,12 @@ describe("Utils", function () {
         ];
         chai_1.expect(Utils_1.removeFromArray(arr, 200)).to.be.false;
         chai_1.expect(Utils_1.removeFromArray(arr, arr[0])).to.be.true;
-        var len = arr.length;
+        const len = arr.length;
         chai_1.expect(Utils_1.removeFromArray(arr, arr[2])).to.be.true;
         chai_1.expect(arr.length).equals(len - 1);
     });
-    it("shuffle", function () {
-        var arr = [
+    it("shuffle", () => {
+        const arr = [
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50),
@@ -76,13 +76,13 @@ describe("Utils", function () {
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50)
         ];
-        var copy = arr.slice();
+        const copy = arr.slice();
         Utils_1.shuffle(copy);
         chai_1.expect(copy.length).to.be.equals(arr.length);
-        copy.forEach(function (element) { return chai_1.expect(arr).includes(element); });
+        copy.forEach(element => chai_1.expect(arr).includes(element));
     });
-    it("max", function () {
-        var arr = [
+    it("max", () => {
+        const arr = [
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50),
@@ -93,11 +93,11 @@ describe("Utils", function () {
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50)
         ];
-        var maxValue = Utils_1.max(arr);
-        arr.forEach(function (elem) { return chai_1.expect(elem).to.be.at.most(maxValue); });
+        const maxValue = Utils_1.max(arr);
+        arr.forEach(elem => chai_1.expect(elem).to.be.at.most(maxValue));
     });
-    it("max index", function () {
-        var arr = [
+    it("max index", () => {
+        const arr = [
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50),
@@ -108,11 +108,11 @@ describe("Utils", function () {
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50)
         ];
-        var maxValue = Utils_1.max(arr);
+        const maxValue = Utils_1.max(arr);
         chai_1.expect(Utils_1.maxValueIndex(arr)).to.be.equals(arr.indexOf(maxValue));
     });
-    it("min", function () {
-        var arr = [
+    it("min", () => {
+        const arr = [
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50),
@@ -123,11 +123,11 @@ describe("Utils", function () {
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50)
         ];
-        var minValue = Utils_1.min(arr);
-        arr.forEach(function (elem) { return chai_1.expect(elem).to.be.at.least(minValue); });
+        const minValue = Utils_1.min(arr);
+        arr.forEach(elem => chai_1.expect(elem).to.be.at.least(minValue));
     });
-    it("min index", function () {
-        var arr = [
+    it("min index", () => {
+        const arr = [
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50),
@@ -138,11 +138,11 @@ describe("Utils", function () {
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50)
         ];
-        var minValue = Utils_1.min(arr);
+        const minValue = Utils_1.min(arr);
         chai_1.expect(Utils_1.minValueIndex(arr)).to.be.equals(arr.indexOf(minValue));
     });
-    it("avg", function () {
-        var arr = [
+    it("avg", () => {
+        const arr = [
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50),
@@ -153,12 +153,12 @@ describe("Utils", function () {
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50)
         ];
-        var sum = 0;
-        arr.forEach(function (elem) { return sum += elem; });
+        let sum = 0;
+        arr.forEach(elem => sum += elem);
         chai_1.expect(Utils_1.avg(arr)).to.be.equals(sum / arr.length);
     });
-    it("sum", function () {
-        var arr = [
+    it("sum", () => {
+        const arr = [
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50),
@@ -169,20 +169,20 @@ describe("Utils", function () {
             Utils_1.randDouble(-50, 50),
             Utils_1.randDouble(-50, 50)
         ];
-        var sumValue = 0;
-        arr.forEach(function (elem) { return sumValue += elem; });
+        let sumValue = 0;
+        arr.forEach(elem => sumValue += elem);
         chai_1.expect(Utils_1.sum(arr)).to.be.equals(sumValue);
     });
-    describe("Utils pairing", function () {
-        var a = Utils_1.randInt(0, 100);
-        var b = Utils_1.randInt(0, 100);
-        it("pairing(a=" + a + ", b=" + b + ") => {number}", function () {
-            var pair = Utils_1.pairing(a, b);
+    describe("Utils pairing", () => {
+        const a = Utils_1.randInt(0, 100);
+        const b = Utils_1.randInt(0, 100);
+        it(`pairing(a=${a}, b=${b}) => {number}`, () => {
+            const pair = Utils_1.pairing(a, b);
             chai_1.expect(pair).to.be.a("number");
-            var w = Math.floor((Math.sqrt(8 * pair + 1) - 1) / 2);
-            var t = (w * w + w) / 2;
-            var y = pair - t;
-            var x = w - y;
+            const w = Math.floor((Math.sqrt(8 * pair + 1) - 1) / 2);
+            const t = (w * w + w) / 2;
+            const y = pair - t;
+            const x = w - y;
             chai_1.expect(a).to.be.equal(x);
             chai_1.expect(b).to.be.equal(y);
         });

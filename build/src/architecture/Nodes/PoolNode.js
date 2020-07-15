@@ -1,33 +1,17 @@
 "use strict";
-var __extends = (this && this.__extends) || (function () {
-    var extendStatics = function (d, b) {
-        extendStatics = Object.setPrototypeOf ||
-            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
-        return extendStatics(d, b);
-    };
-    return function (d, b) {
-        extendStatics(d, b);
-        function __() { this.constructor = d; }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
-})();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PoolNode = void 0;
-var NodeType_1 = require("../../enums/NodeType");
-var Utils_1 = require("../../utils/Utils");
-var ConstantNode_1 = require("./ConstantNode");
+const NodeType_1 = require("../../enums/NodeType");
+const Utils_1 = require("../../utils/Utils");
+const ConstantNode_1 = require("./ConstantNode");
 /**
  * Pool node
  */
-var PoolNode = /** @class */ (function (_super) {
-    __extends(PoolNode, _super);
-    function PoolNode(poolingType) {
-        if (poolingType === void 0) { poolingType = NodeType_1.PoolNodeType.MAX_POOLING; }
-        var _this = _super.call(this) || this;
-        _this.poolingType = poolingType;
-        _this.receivingNode = null;
-        return _this;
+class PoolNode extends ConstantNode_1.ConstantNode {
+    constructor(poolingType = NodeType_1.PoolNodeType.MAX_POOLING) {
+        super();
+        this.poolingType = poolingType;
+        this.receivingNode = null;
     }
     /**
      * Create a constant node from json object.
@@ -36,11 +20,11 @@ var PoolNode = /** @class */ (function (_super) {
      *
      * @returns the created node
      */
-    PoolNode.prototype.fromJSON = function (json) {
-        _super.prototype.fromJSON.call(this, json);
+    fromJSON(json) {
+        super.fromJSON(json);
         this.poolingType = json.poolType;
         return this;
-    };
+    }
     /**
      * Actives the node.
      *
@@ -50,12 +34,11 @@ var PoolNode = /** @class */ (function (_super) {
      *
      * @returns A neuron's output value
      */
-    PoolNode.prototype.activate = function () {
-        var _this = this;
-        var connections = Array.from(this.incoming);
-        var incomingStates = connections.map(function (conn) { return conn.from.activation * conn.weight * conn.gain; });
+    activate() {
+        const connections = Array.from(this.incoming);
+        const incomingStates = connections.map(conn => conn.from.activation * conn.weight * conn.gain);
         if (this.poolingType === NodeType_1.PoolNodeType.MAX_POOLING) {
-            var index = Utils_1.maxValueIndex(incomingStates);
+            const index = Utils_1.maxValueIndex(incomingStates);
             this.receivingNode = connections[index].from;
             this.state = incomingStates[index];
         }
@@ -63,7 +46,7 @@ var PoolNode = /** @class */ (function (_super) {
             this.state = Utils_1.avg(incomingStates);
         }
         else if (this.poolingType === NodeType_1.PoolNodeType.MIN_POOLING) {
-            var index = Utils_1.minValueIndex(incomingStates);
+            const index = Utils_1.minValueIndex(incomingStates);
             this.receivingNode = connections[index].from;
             this.state = incomingStates[index];
         }
@@ -75,9 +58,9 @@ var PoolNode = /** @class */ (function (_super) {
             this.derivativeState = this.squash(this.state, true);
         }
         // Adjust gain
-        this.gated.forEach(function (conn) { return conn.gain = _this.activation; });
+        this.gated.forEach(conn => conn.gain = this.activation);
         return this.activation;
-    };
+    }
     /**
      * Backpropagate the error (a.k.a. learn).
      *
@@ -88,24 +71,22 @@ var PoolNode = /** @class */ (function (_super) {
      * @param target The target value (i.e. "the value the network SHOULD have given")
      * @param options More options for propagation
      */
-    PoolNode.prototype.propagate = function (target, options) {
-        var _this = this;
+    propagate(target, options = {}) {
         var _a, _b, _c;
-        if (options === void 0) { options = {}; }
         options.momentum = (_a = options.momentum) !== null && _a !== void 0 ? _a : 0;
         options.rate = (_b = options.rate) !== null && _b !== void 0 ? _b : 0.3;
         options.update = (_c = options.update) !== null && _c !== void 0 ? _c : true;
-        var connectionsStates = Array.from(this.outgoing).map(function (conn) { return conn.to.errorResponsibility * conn.weight * conn.gain; });
+        const connectionsStates = Array.from(this.outgoing).map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
         this.errorResponsibility = this.errorProjected = Utils_1.sum(connectionsStates) * this.derivativeState;
         if (this.poolingType === NodeType_1.PoolNodeType.AVG_POOLING) {
-            this.incoming.forEach(function (connection) {
+            this.incoming.forEach(connection => {
                 var _a, _b;
                 // calculate gradient
-                var gradient = _this.errorProjected * connection.eligibility;
-                connection.xTrace.forEach(function (value, key) {
+                let gradient = this.errorProjected * connection.eligibility;
+                connection.xTrace.forEach((value, key) => {
                     gradient += key.errorResponsibility * value;
                 });
-                connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * _this.mask;
+                connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * this.mask;
                 if (options.update) {
                     connection.deltaWeightsTotal += ((_b = options.momentum) !== null && _b !== void 0 ? _b : 0) * connection.deltaWeightsPrevious;
                     connection.weight += connection.deltaWeightsTotal;
@@ -117,22 +98,21 @@ var PoolNode = /** @class */ (function (_super) {
         else {
             // TODO: don't think that this is correct
             // Passing only the connections that were used for getting the min or max
-            this.incoming.forEach(function (conn) {
-                conn.weight = _this.receivingNode === conn.from ? 1 : 0;
-                conn.gain = _this.receivingNode === conn.from ? 1 : 0;
+            this.incoming.forEach(conn => {
+                conn.weight = this.receivingNode === conn.from ? 1 : 0;
+                conn.gain = this.receivingNode === conn.from ? 1 : 0;
             });
         }
-    };
+    }
     /**
      * Convert this node into a json object.
      *
      * @returns the json object representing this node
      */
-    PoolNode.prototype.toJSON = function () {
-        return Object.assign(_super.prototype.toJSON.call(this), {
+    toJSON() {
+        return Object.assign(super.toJSON(), {
             poolType: this.poolingType
         });
-    };
-    return PoolNode;
-}(ConstantNode_1.ConstantNode));
+    }
+}
 exports.PoolNode = PoolNode;

@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Node = void 0;
-var src_1 = require("activations/build/src");
-var NodeType_1 = require("../enums/NodeType");
-var Mutation_1 = require("../methods/Mutation");
-var Utils_1 = require("../utils/Utils");
-var Connection_1 = require("./Connection");
+const src_1 = require("activations/build/src");
+const NodeType_1 = require("../enums/NodeType");
+const Mutation_1 = require("../methods/Mutation");
+const Utils_1 = require("../utils/Utils");
+const Connection_1 = require("./Connection");
 /**
  * Creates a new neuron/node
  *
@@ -18,9 +18,8 @@ var Connection_1 = require("./Connection");
  * - [Synaptic](https://github.com/cazala/synaptic/wiki/Neural-Networks-101)
  * - [Keras](https://keras.io/backend/#bias_add)
  */
-var Node = /** @class */ (function () {
-    function Node(type) {
-        if (type === void 0) { type = NodeType_1.NodeType.HIDDEN; }
+class Node {
+    constructor(type = NodeType_1.NodeType.HIDDEN) {
         this.type = type;
         this.bias = Utils_1.randDouble(-1, 1);
         this.squash = src_1.Logistic;
@@ -47,7 +46,7 @@ var Node = /** @class */ (function () {
      *
      * @returns itself
      */
-    Node.prototype.fromJSON = function (json) {
+    fromJSON(json) {
         var _a, _b, _c, _d;
         this.bias = (_a = json.bias) !== null && _a !== void 0 ? _a : Utils_1.randDouble(-1, 1);
         this.type = json.type;
@@ -55,42 +54,39 @@ var Node = /** @class */ (function () {
         this.mask = (_c = json.mask) !== null && _c !== void 0 ? _c : 1;
         this.index = (_d = json.index) !== null && _d !== void 0 ? _d : NaN;
         return this;
-    };
+    }
     /**
      * Clears this node's state information - _i.e. resets node and its connections to "factory settings"_
      *
      * `node.clear()` is useful for predicting time series.
      */
-    Node.prototype.clear = function () {
-        this.incoming.forEach(function (connection) {
+    clear() {
+        this.incoming.forEach(connection => {
             connection.eligibility = 0;
             connection.xTrace.clear();
         });
-        this.gated.forEach(function (conn) { return conn.gain = 0; });
+        this.gated.forEach(conn => conn.gain = 0);
         this.errorResponsibility = this.errorProjected = this.errorGated = 0;
         this.old = this.state = this.activation = 0;
-    };
+    }
     /**
      * Mutates the node's bias
      *
      * @param method The method is needed for the min and max value of the node's bias otherwise a range of [-1,1] is chosen
      */
-    Node.prototype.mutateBias = function (method) {
-        if (method === void 0) { method = new Mutation_1.ModBiasMutation(); }
+    mutateBias(method = new Mutation_1.ModBiasMutation()) {
         this.bias += Utils_1.randDouble(method.min, method.max); // add a random value in range [min,max)
-    };
+    }
     /**
      * Mutates the node's activation function
      */
-    Node.prototype.mutateActivation = function (allowedActivations) {
-        var _this = this;
-        if (allowedActivations === void 0) { allowedActivations = Object.values(src_1.ALL_ACTIVATIONS); }
+    mutateActivation(allowedActivations = Object.values(src_1.ALL_ACTIVATIONS)) {
         // pick a random activation from allowed activations except the current activation
-        var possible = allowedActivations.filter(function (activation) { return activation !== _this.squash; });
+        const possible = allowedActivations.filter(activation => activation !== this.squash);
         if (possible.length > 0) {
             this.squash = Utils_1.pickRandom(possible);
         }
-    };
+    }
     /**
      * Checks if the given node(s) are have outgoing connections to this node
      *
@@ -98,14 +94,14 @@ var Node = /** @class */ (function () {
      *
      * @return Returns true, if every node(s) has an outgoing connection into this node
      */
-    Node.prototype.isProjectedBy = function (node) {
+    isProjectedBy(node) {
         if (node === this) { // self connection
             return this.selfConnection.weight !== 0; // is projected, if weight of self connection is unequal 0
         }
         else {
-            return Array.from(this.incoming).map(function (conn) { return conn.from; }).includes(node); // check every incoming connection for node
+            return Array.from(this.incoming).map(conn => conn.from).includes(node); // check every incoming connection for node
         }
-    };
+    }
     /**
      * Checks if this node has an outgoing connection(s) into the given node(s)
      *
@@ -113,33 +109,33 @@ var Node = /** @class */ (function () {
      *
      * @returns Returns true, if this node has an outgoing connection into every node(s)
      */
-    Node.prototype.isProjectingTo = function (node) {
+    isProjectingTo(node) {
         if (node === this) { // self connection
             return this.selfConnection.weight !== 0; // is projected, if weight of self connection is unequal 0
         }
         else {
-            return Array.from(this.outgoing).map(function (conn) { return conn.to; }).includes(node); // check every outgoing connection for node
+            return Array.from(this.outgoing).map(conn => conn.to).includes(node); // check every outgoing connection for node
         }
-    };
+    }
     /**
      * This node gates (influences) the given connection
      *
      * @param connection Connection to be gated (influenced) by a neuron
      */
-    Node.prototype.addGate = function (connection) {
+    addGate(connection) {
         this.gated.add(connection);
         connection.gateNode = this;
-    };
+    }
     /**
      * Stops this node from gating (manipulating) the given connection(s)
      *
      * @param connection Connections to remove gate - _i.e. remove this node from_
      */
-    Node.prototype.removeGate = function (connection) {
+    removeGate(connection) {
         this.gated.delete(connection);
         connection.gateNode = null;
         connection.gain = 1;
-    };
+    }
     /**
      * Connects this node to the given node(s)
      *
@@ -147,9 +143,7 @@ var Node = /** @class */ (function () {
      * @param weight Initial connection(s) [weight](https://en.wikipedia.org/wiki/Synaptic_weight)
      * @param twoSided If `true` connect nodes to each other
      */
-    Node.prototype.connect = function (target, weight, twoSided) {
-        if (weight === void 0) { weight = 1; }
-        if (twoSided === void 0) { twoSided = false; }
+    connect(target, weight = 1, twoSided = false) {
         if (target === this) { // self connection
             this.selfConnection.weight = weight;
             return this.selfConnection;
@@ -158,7 +152,7 @@ var Node = /** @class */ (function () {
             throw new ReferenceError("Their is already a connection!"); // already connected
         }
         else {
-            var connection = new Connection_1.Connection(this, target, weight); // create new connection
+            const connection = new Connection_1.Connection(this, target, weight); // create new connection
             // add it to the arrays
             this.outgoing.add(connection);
             target.incoming.add(connection);
@@ -167,24 +161,23 @@ var Node = /** @class */ (function () {
             }
             return connection;
         }
-    };
+    }
     /**
      * Disconnects this node from the given node(s)
      *
      * @param node Node(s) to remove connection(s) to
      * @param twoSided=false If `true` disconnects nodes from each other (i.e. both sides)
      */
-    Node.prototype.disconnect = function (node, twoSided) {
-        if (twoSided === void 0) { twoSided = false; }
+    disconnect(node, twoSided = false) {
         if (node === this) { // self connection
             this.selfConnection.weight = 0; // set weight to 0
             return this.selfConnection;
         }
-        var connections = Array.from(this.outgoing).filter(function (conn) { return conn.to === node; });
+        const connections = Array.from(this.outgoing).filter(conn => conn.to === node);
         if (connections.length === 0) {
             throw new Error("No Connection found");
         }
-        var connection = connections[0];
+        const connection = connections[0];
         // remove it from the arrays
         this.outgoing.delete(connection);
         connection.to.incoming.delete(connection);
@@ -195,7 +188,7 @@ var Node = /** @class */ (function () {
             node.disconnect(this); // disconnect the other direction
         }
         return connection;
-    };
+    }
     /**
      * Backpropagate the error (a.k.a. learn).
      *
@@ -209,10 +202,8 @@ var Node = /** @class */ (function () {
      * @see [Regularization Neataptic](https://wagenaartje.github.io/neataptic/docs/methods/regularization/)
      * @see [What is backpropagation | YouTube](https://www.youtube.com/watch?v=Ilg3gGewQ5U)
      */
-    Node.prototype.propagate = function (target, options) {
-        var _this = this;
+    propagate(target, options = {}) {
         var _a, _b, _c;
-        if (options === void 0) { options = {}; }
         options.momentum = (_a = options.momentum) !== null && _a !== void 0 ? _a : 0;
         options.rate = (_b = options.rate) !== null && _b !== void 0 ? _b : 0.3;
         options.update = (_c = options.update) !== null && _c !== void 0 ? _c : true;
@@ -221,30 +212,30 @@ var Node = /** @class */ (function () {
         }
         else {
             this.errorProjected = 0;
-            this.outgoing.forEach(function (connection) {
-                _this.errorProjected += connection.to.errorResponsibility * connection.weight * connection.gain;
+            this.outgoing.forEach(connection => {
+                this.errorProjected += connection.to.errorResponsibility * connection.weight * connection.gain;
             });
             this.errorProjected *= this.derivativeState;
             this.errorGated = 0;
-            this.gated.forEach(function (connection) {
-                var influence;
-                if (connection.to.selfConnection.gateNode === _this) { // self connection is gated with this node
+            this.gated.forEach(connection => {
+                let influence;
+                if (connection.to.selfConnection.gateNode === this) { // self connection is gated with this node
                     influence = connection.to.old + connection.weight * connection.from.activation;
                 }
                 else {
                     influence = connection.weight * connection.from.activation;
                 }
-                _this.errorGated += connection.to.errorResponsibility * influence;
+                this.errorGated += connection.to.errorResponsibility * influence;
             });
             this.errorGated *= this.derivativeState;
             this.errorResponsibility = this.errorProjected + this.errorGated;
         }
-        this.incoming.forEach(function (connection) {
+        this.incoming.forEach(connection => {
             var _a, _b;
             // calculate gradient
-            var gradient = _this.errorProjected * connection.eligibility;
-            connection.xTrace.forEach(function (value, key) { return gradient += key.errorResponsibility * value; });
-            connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * _this.mask;
+            let gradient = this.errorProjected * connection.eligibility;
+            connection.xTrace.forEach((value, key) => gradient += key.errorResponsibility * value);
+            connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * this.mask;
             if (options.update) {
                 connection.deltaWeightsTotal += ((_b = options.momentum) !== null && _b !== void 0 ? _b : 0) * connection.deltaWeightsPrevious;
                 connection.weight += connection.deltaWeightsTotal;
@@ -259,7 +250,7 @@ var Node = /** @class */ (function () {
             this.deltaBiasPrevious = this.deltaBiasTotal;
             this.deltaBiasTotal = 0;
         }
-    };
+    }
     /**
      * Actives the node.
      *
@@ -272,9 +263,7 @@ var Node = /** @class */ (function () {
      *
      * @returns A neuron's ['Squashed'](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) output value
      */
-    Node.prototype.activate = function (input, trace) {
-        var _this = this;
-        if (trace === void 0) { trace = true; }
+    activate(input, trace = true) {
         if (input !== undefined) {
             return this.activation = input;
         }
@@ -284,44 +273,44 @@ var Node = /** @class */ (function () {
         if (trace) {
             this.old = this.state;
             this.state = this.selfConnection.gain * this.selfConnection.weight * this.state + this.bias;
-            this.incoming.forEach(function (conn) {
-                _this.state += conn.from.activation * conn.weight * conn.gain;
+            this.incoming.forEach(conn => {
+                this.state += conn.from.activation * conn.weight * conn.gain;
             });
             this.activation = this.squash(this.state, false) * this.mask;
             this.derivativeState = this.squash(this.state, true);
             // store traces
-            var nodes_1 = [];
-            var influences_1 = [];
+            const nodes = [];
+            const influences = [];
             // Adjust 'gain' (to gated connections) & Build traces
-            this.gated.forEach(function (connection) {
-                connection.gain = _this.activation;
+            this.gated.forEach(connection => {
+                connection.gain = this.activation;
                 // Build traces
-                var index = nodes_1.indexOf(connection.to);
+                const index = nodes.indexOf(connection.to);
                 if (index > -1) { // Node & influence exist
-                    influences_1[index] += connection.weight * connection.from.activation;
+                    influences[index] += connection.weight * connection.from.activation;
                 }
                 else { // Add node & corresponding influence
-                    nodes_1.push(connection.to);
-                    if (connection.to.selfConnection.gateNode === _this) {
-                        influences_1.push(connection.weight * connection.from.activation + connection.to.old);
+                    nodes.push(connection.to);
+                    if (connection.to.selfConnection.gateNode === this) {
+                        influences.push(connection.weight * connection.from.activation + connection.to.old);
                     }
                     else {
-                        influences_1.push(connection.weight * connection.from.activation);
+                        influences.push(connection.weight * connection.from.activation);
                     }
                 }
             });
             // Forwarding 'xTrace' (to incoming connections)
-            this.incoming.forEach(function (connection) {
+            this.incoming.forEach(connection => {
                 var _a;
-                connection.eligibility = _this.selfConnection.gain * _this.selfConnection.weight * connection.eligibility + connection.from.activation * connection.gain;
-                for (var i = 0; i < nodes_1.length; i++) {
-                    var node = nodes_1[i];
-                    var influence = influences_1[i];
+                connection.eligibility = this.selfConnection.gain * this.selfConnection.weight * connection.eligibility + connection.from.activation * connection.gain;
+                for (let i = 0; i < nodes.length; i++) {
+                    const node = nodes[i];
+                    const influence = influences[i];
                     if (connection.xTrace.has(node)) {
-                        connection.xTrace.set(node, node.selfConnection.gain * node.selfConnection.weight * ((_a = connection.xTrace.get(node)) !== null && _a !== void 0 ? _a : 0) + _this.derivativeState * connection.eligibility * influence);
+                        connection.xTrace.set(node, node.selfConnection.gain * node.selfConnection.weight * ((_a = connection.xTrace.get(node)) !== null && _a !== void 0 ? _a : 0) + this.derivativeState * connection.eligibility * influence);
                     }
                     else {
-                        connection.xTrace.set(node, _this.derivativeState * connection.eligibility * influence);
+                        connection.xTrace.set(node, this.derivativeState * connection.eligibility * influence);
                     }
                 }
             });
@@ -331,19 +320,19 @@ var Node = /** @class */ (function () {
             if (this.isInputNode())
                 return this.activation = 0;
             this.state = this.selfConnection.gain * this.selfConnection.weight * this.state + this.bias;
-            this.incoming.forEach(function (connection) { return _this.state += connection.from.activation * connection.weight * connection.gain; });
+            this.incoming.forEach(connection => this.state += connection.from.activation * connection.weight * connection.gain);
             this.activation = this.squash(this.state, false);
             // Adjust gain
-            this.gated.forEach(function (connection) { return connection.gain = _this.activation; });
+            this.gated.forEach(connection => connection.gain = this.activation);
             return this.activation;
         }
-    };
+    }
     /**
      * Converts the node to a json object that can later be converted back
      *
      * @returns A node representing json object
      */
-    Node.prototype.toJSON = function () {
+    toJSON() {
         return {
             bias: this.bias,
             type: this.type,
@@ -351,43 +340,42 @@ var Node = /** @class */ (function () {
             mask: this.mask,
             index: this.index
         };
-    };
+    }
     /**
      * Is this a input Node?
      */
-    Node.prototype.isInputNode = function () {
+    isInputNode() {
         return this.type === NodeType_1.NodeType.INPUT;
-    };
+    }
     /**
      * Is this a hidden Node?
      */
-    Node.prototype.isHiddenNode = function () {
+    isHiddenNode() {
         return this.type === NodeType_1.NodeType.HIDDEN;
-    };
+    }
     /**
      * Is this a output Node?
      */
-    Node.prototype.isOutputNode = function () {
+    isOutputNode() {
         return this.type === NodeType_1.NodeType.OUTPUT;
-    };
+    }
     /**
      * Set bias.
      *
      * @param bias the new bias value
      */
-    Node.prototype.setBias = function (bias) {
+    setBias(bias) {
         this.bias = bias;
         return this;
-    };
+    }
     /**
      * Set activation type
      *
      * @param activation the new activation type
      */
-    Node.prototype.setActivationType = function (activation) {
+    setActivationType(activation) {
         this.squash = activation;
         return this;
-    };
-    return Node;
-}());
+    }
+}
 exports.Node = Node;

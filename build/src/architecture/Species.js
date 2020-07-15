@@ -20,14 +20,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Species = void 0;
-var TimSort = __importStar(require("timsort"));
-var Utils_1 = require("../utils/Utils");
-var Network_1 = require("./Network");
+const TimSort = __importStar(require("timsort"));
+const Utils_1 = require("../utils/Utils");
+const Network_1 = require("./Network");
 /**
  * A class holding a species
  */
-var Species = /** @class */ (function () {
-    function Species(representative) {
+class Species {
+    constructor(representative) {
         this.representative = representative;
         this.representative.species = this;
         this.members = new Set();
@@ -42,7 +42,7 @@ var Species = /** @class */ (function () {
      * @param c3
      * @param distanceThreshold
      */
-    Species.prototype.put = function (network, c1, c2, c3, distanceThreshold) {
+    put(network, c1, c2, c3, distanceThreshold) {
         if (network.distance(this.representative, c1, c2, c3) < distanceThreshold) {
             this.forcePut(network);
             return true;
@@ -50,71 +50,70 @@ var Species = /** @class */ (function () {
         else {
             return false;
         }
-    };
+    }
     /**
      * Puts a network to the species without checking the distance
      * @param network
      */
-    Species.prototype.forcePut = function (network) {
+    forcePut(network) {
         if (network === undefined) {
             return;
         }
         this.members.add(network);
         network.species = this;
-    };
+    }
     /**
      * Calculate the score of this species
      */
-    Species.prototype.evaluateScore = function () {
-        var sum = 0;
-        this.members.forEach(function (network) { var _a; return sum += (_a = network.score) !== null && _a !== void 0 ? _a : 0; });
+    evaluateScore() {
+        let sum = 0;
+        this.members.forEach(network => { var _a; return sum += (_a = network.score) !== null && _a !== void 0 ? _a : 0; });
         this.score = sum / this.members.size;
-    };
+    }
     /**
      * Reset this object
      */
-    Species.prototype.reset = function () {
+    reset() {
         this.representative = Utils_1.pickRandom(this.members);
-        this.members.forEach(function (genome) { return genome.species = null; });
+        this.members.forEach(genome => genome.species = null);
         this.members.clear();
         this.members.add(this.representative);
         this.representative.species = this;
         this.score = 0;
-    };
+    }
     /**
      * Kill a specific percentage of networks
      * @param percentage
      */
-    Species.prototype.kill = function (percentage) {
-        var arr = Array.from(this.members);
-        TimSort.sort(arr, function (a, b) {
+    kill(percentage) {
+        const arr = Array.from(this.members);
+        TimSort.sort(arr, (a, b) => {
             return a.score === undefined || b.score === undefined ? 0 : a.score - b.score;
         });
-        var amount = Math.floor(percentage * this.members.size);
-        for (var i = 0; i < amount; i++) {
+        const amount = Math.floor(percentage * this.members.size);
+        for (let i = 0; i < amount; i++) {
             this.members.delete(arr[i]);
             arr[i].species = null;
         }
-    };
+    }
     /**
      * Create offspring
      */
-    Species.prototype.breed = function () {
+    breed() {
         return Network_1.Network.crossOver(Utils_1.pickRandom(this.members), Utils_1.pickRandom(this.members));
-    };
+    }
     /**
      * The size of this species
      */
-    Species.prototype.size = function () {
+    size() {
         return this.members.size;
-    };
+    }
     /**
      * Returns the best genome from this species
      */
-    Species.prototype.getBest = function () {
-        var networks = Array.from(this.members);
-        return networks[Utils_1.maxValueIndex(networks.map(function (genome) { var _a; return (_a = genome.score) !== null && _a !== void 0 ? _a : -Infinity; }))];
-    };
-    return Species;
-}());
+    getBest() {
+        const networks = Array.from(this.members);
+        return networks[Utils_1.maxValueIndex(networks.map(genome => { var _a; return (_a = genome.score) !== null && _a !== void 0 ? _a : -Infinity; }))];
+    }
+}
 exports.Species = Species;

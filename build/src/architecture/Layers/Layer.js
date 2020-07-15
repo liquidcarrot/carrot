@@ -1,13 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Layer = void 0;
-var ConnectionType_1 = require("../../enums/ConnectionType");
-var GatingType_1 = require("../../enums/GatingType");
+const ConnectionType_1 = require("../../enums/ConnectionType");
+const GatingType_1 = require("../../enums/GatingType");
 /**
  * Parent class for layers.
  */
-var Layer = /** @class */ (function () {
-    function Layer(outputSize) {
+class Layer {
+    constructor(outputSize) {
         this.outputSize = outputSize;
         this.nodes = [];
         this.inputNodes = new Set();
@@ -25,24 +25,22 @@ var Layer = /** @class */ (function () {
      *
      * @returns all created connections
      */
-    Layer.connect = function (from, to, connectionType, weight) {
-        if (connectionType === void 0) { connectionType = ConnectionType_1.ConnectionType.ALL_TO_ALL; }
-        if (weight === void 0) { weight = 1; }
+    static connect(from, to, connectionType = ConnectionType_1.ConnectionType.ALL_TO_ALL, weight = 1) {
         if (connectionType === ConnectionType_1.ConnectionType.NO_CONNECTION) {
             throw new ReferenceError("Cannot connect with 'NO_CONNECTION' connection type");
         }
-        var fromNodes = Array.from(from instanceof Layer ? from.outputNodes : from);
-        var toNodes = Array.from(to instanceof Layer ? to.inputNodes : to);
+        const fromNodes = Array.from(from instanceof Layer ? from.outputNodes : from);
+        const toNodes = Array.from(to instanceof Layer ? to.inputNodes : to);
         if (toNodes.length === 0) {
             throw new ReferenceError("Target from has no input nodes!");
         }
         if (fromNodes.length === 0) {
             throw new ReferenceError("This from has no output nodes!");
         }
-        var connections = [];
+        const connections = [];
         if (connectionType === ConnectionType_1.ConnectionType.ALL_TO_ALL) {
-            fromNodes.forEach(function (fromNode) {
-                toNodes.forEach(function (toNode) {
+            fromNodes.forEach(fromNode => {
+                toNodes.forEach(toNode => {
                     connections.push(fromNode.connect(toNode, weight)); // connect every "from node" to every "to node"
                 });
             });
@@ -51,18 +49,18 @@ var Layer = /** @class */ (function () {
             if (fromNodes.length !== toNodes.length) {
                 throw new RangeError("Can't connect one to one! Number of output nodes from are unequal number of incoming nodes from next layer!");
             }
-            for (var i = 0; i < fromNodes.length; i++) {
+            for (let i = 0; i < fromNodes.length; i++) {
                 connections.push(fromNodes[i].connect(toNodes[i], weight)); // connect every nodes with same indices
             }
         }
         else if (connectionType === ConnectionType_1.ConnectionType.POOLING) {
             // connect the same amount of input nodes to every output node
             // every input node has only one connection available
-            var ratio_1 = toNodes.length / fromNodes.length;
-            connections.push.apply(connections, fromNodes.map(function (node, index) { return node.connect(toNodes[Math.floor(index * ratio_1)], weight); }));
+            const ratio = toNodes.length / fromNodes.length;
+            connections.push(...fromNodes.map((node, index) => node.connect(toNodes[Math.floor(index * ratio)], weight)));
         }
         return connections;
-    };
+    }
     /**
      * Gate nodes and connections.
      *
@@ -72,30 +70,27 @@ var Layer = /** @class */ (function () {
      *
      * @returns all gated connections
      */
-    Layer.gate = function (nodes, connections, gateType) {
-        var gatedConnections = [];
+    static gate(nodes, connections, gateType) {
+        const gatedConnections = [];
         switch (gateType) {
             case GatingType_1.GatingType.INPUT: { // gate incoming connections
-                var toNodes = Array.from(new Set(connections.map(function (conn) { return conn.to; })));
-                var _loop_1 = function (i) {
-                    var node = toNodes[i];
-                    var gateNode = nodes[i % nodes.length];
+                const toNodes = Array.from(new Set(connections.map(conn => conn.to)));
+                for (let i = 0; i < toNodes.length; i++) {
+                    const node = toNodes[i];
+                    const gateNode = nodes[i % nodes.length];
                     node.incoming
-                        .forEach(function (conn) {
+                        .forEach(conn => {
                         if (connections.includes(conn)) {
                             gateNode.addGate(conn);
                             gatedConnections.push(conn);
                         }
                     });
-                };
-                for (var i = 0; i < toNodes.length; i++) {
-                    _loop_1(i);
                 }
                 break;
             }
             case GatingType_1.GatingType.SELF: { // gate self connections
-                var fromNodes = Array.from(new Set(connections.map(function (conn) { return conn.from; })));
-                for (var i = 0; i < fromNodes.length; i++) {
+                const fromNodes = Array.from(new Set(connections.map(conn => conn.from)));
+                for (let i = 0; i < fromNodes.length; i++) {
                     if (connections.includes(fromNodes[i].selfConnection)) {
                         nodes[i % nodes.length].addGate(fromNodes[i].selfConnection);
                         gatedConnections.push(fromNodes[i].selfConnection);
@@ -104,26 +99,22 @@ var Layer = /** @class */ (function () {
                 break;
             }
             case GatingType_1.GatingType.OUTPUT: { // gate outgoing connections
-                var fromNodes = Array.from(new Set(connections.map(function (conn) { return conn.from; })));
-                var _loop_2 = function (i) {
-                    var node = fromNodes[i];
-                    var gateNode = nodes[i % nodes.length];
+                const fromNodes = Array.from(new Set(connections.map(conn => conn.from)));
+                for (let i = 0; i < fromNodes.length; i++) {
+                    const node = fromNodes[i];
+                    const gateNode = nodes[i % nodes.length];
                     node.outgoing
-                        .forEach(function (conn) {
+                        .forEach(conn => {
                         if (connections.includes(conn)) {
                             gateNode.addGate(conn);
                             gatedConnections.push(conn);
                         }
                     });
-                };
-                for (var i = 0; i < fromNodes.length; i++) {
-                    _loop_2(i);
                 }
                 break;
             }
         }
         return gatedConnections;
-    };
-    return Layer;
-}());
+    }
+}
 exports.Layer = Layer;

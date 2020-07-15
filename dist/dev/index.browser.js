@@ -289,7 +289,7 @@ exports.randBoolean = randBoolean;
  */
 
 function removeFromArray(arr, elem) {
-  var index = arr.indexOf(elem);
+  const index = arr.indexOf(elem);
 
   if (index === -1) {
     return false;
@@ -308,11 +308,11 @@ exports.removeFromArray = removeFromArray;
 
 function shuffle(array) {
   // While there are elements in the array
-  for (var counter = array.length - 1; counter > 0; counter--) {
+  for (let counter = array.length - 1; counter > 0; counter--) {
     // Pick a random index
-    var index = randInt(0, counter); // And swap the last element with it
+    const index = randInt(0, counter); // And swap the last element with it
 
-    var temp = array[counter];
+    const temp = array[counter];
     array[counter] = array[index];
     array[index] = temp;
   }
@@ -330,9 +330,9 @@ function max(array) {
     throw new RangeError();
   }
 
-  var maxValue = array[0];
+  let maxValue = array[0];
 
-  for (var i = 1; i < array.length; i++) {
+  for (let i = 1; i < array.length; i++) {
     if (array[i] > maxValue) {
       maxValue = array[i];
     }
@@ -353,10 +353,10 @@ function maxValueIndex(array) {
     throw new RangeError();
   }
 
-  var maxValue = array[0];
-  var maxValueIndex = 0;
+  let maxValue = array[0];
+  let maxValueIndex = 0;
 
-  for (var i = 1; i < array.length; i++) {
+  for (let i = 1; i < array.length; i++) {
     if (array[i] > maxValue) {
       maxValue = array[i];
       maxValueIndex = i;
@@ -378,10 +378,10 @@ function minValueIndex(array) {
     throw new RangeError();
   }
 
-  var minValue = array[0];
-  var minValueIndex = 0;
+  let minValue = array[0];
+  let minValueIndex = 0;
 
-  for (var i = 1; i < array.length; i++) {
+  for (let i = 1; i < array.length; i++) {
     if (array[i] < minValue) {
       minValue = array[i];
       minValueIndex = i;
@@ -403,9 +403,9 @@ function min(array) {
     throw new RangeError();
   }
 
-  var minValue = array[0];
+  let minValue = array[0];
 
-  for (var i = 1; i < array.length; i++) {
+  for (let i = 1; i < array.length; i++) {
     if (array[i] < minValue) {
       minValue = array[i];
     }
@@ -437,10 +437,9 @@ function sum(array) {
     throw new RangeError();
   }
 
-  var sum = 0;
+  let sum = 0;
 
-  for (var _i = 0, array_1 = array; _i < array_1.length; _i++) {
-    var value = array_1[_i];
+  for (const value of array) {
     sum += value;
   }
 
@@ -457,19 +456,11 @@ exports.sum = sum;
  * @param deviation the standard deviation
  */
 
-function generateGaussian(mean, deviation) {
-  if (mean === void 0) {
-    mean = 0;
-  }
+function generateGaussian(mean = 0, deviation = 2) {
+  let sum = 0;
+  const numSamples = 10;
 
-  if (deviation === void 0) {
-    deviation = 2;
-  }
-
-  var sum = 0;
-  var numSamples = 10;
-
-  for (var i = 0; i < numSamples; i++) {
+  for (let i = 0; i < numSamples; i++) {
     sum += Math.random();
   }
 
@@ -496,40 +487,16 @@ exports.pairing = pairing;
 },{}],"../src/methods/Mutation.js":[function(require,module,exports) {
 "use strict";
 
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.SwapNodesMutation = exports.SubBackConnectionMutation = exports.AddBackConnectionMutation = exports.SubSelfConnectionMutation = exports.AddSelfConnectionMutation = exports.SubGateMutation = exports.AddGateMutation = exports.ModActivationMutation = exports.ModBiasMutation = exports.ModWeightMutation = exports.SubConnectionMutation = exports.AddConnectionMutation = exports.SubNodeMutation = exports.AddNodeMutation = exports.Mutation = exports.ONLY_STRUCTURE = exports.NO_STRUCTURE_MUTATIONS = exports.FEEDFORWARD_MUTATIONS = exports.ALL_MUTATIONS = void 0;
 
-var Node_1 = require("../architecture/Node");
+const Node_1 = require("../architecture/Node");
 
-var NodeType_1 = require("../enums/NodeType");
+const NodeType_1 = require("../enums/NodeType");
 
-var Utils_1 = require("../utils/Utils");
+const Utils_1 = require("../utils/Utils");
 /**
  *
  * Genetic algorithm mutation methods. Creates variations (mutations) in neural networks which are then selected for better performance.
@@ -539,13 +506,7 @@ var Utils_1 = require("../utils/Utils");
  */
 
 
-var Mutation =
-/** @class */
-function () {
-  function Mutation() {}
-
-  return Mutation;
-}();
+class Mutation {}
 
 exports.Mutation = Mutation;
 /**
@@ -554,25 +515,14 @@ exports.Mutation = Mutation;
  * Adds a hidden node to the network.
  */
 
-var AddNodeMutation =
-/** @class */
-function (_super) {
-  __extends(AddNodeMutation, _super);
+class AddNodeMutation extends Mutation {
   /**
    * Constructs a AddNodeMutation object
    * @param randomActivation Should choose a random activation for a new node?
    */
-
-
-  function AddNodeMutation(randomActivation) {
-    if (randomActivation === void 0) {
-      randomActivation = true;
-    }
-
-    var _this = _super.call(this) || this;
-
-    _this.randomActivation = randomActivation;
-    return _this;
+  constructor(randomActivation = true) {
+    super();
+    this.randomActivation = randomActivation;
   }
   /**
    * Mutates the network.
@@ -582,34 +532,30 @@ function (_super) {
    */
 
 
-  AddNodeMutation.prototype.mutate = function (network, options) {
-    if (options === void 0) {
-      options = {};
-    } // check if max nodes is already reached
-
-
+  mutate(network, options = {}) {
+    // check if max nodes is already reached
     if (options.maxNodes !== undefined && network.nodes.length >= options.maxNodes) {
       return;
     } // create a new hidden node
 
 
-    var node = new Node_1.Node(NodeType_1.NodeType.HIDDEN);
+    const node = new Node_1.Node(NodeType_1.NodeType.HIDDEN);
 
     if (this.randomActivation) {
       node.mutateActivation(); // choose random activation
     } // take a random connection
 
 
-    var connection = Utils_1.pickRandom(Array.from(network.connections));
-    var from = connection.from;
-    var to = connection.to;
+    const connection = Utils_1.pickRandom(Array.from(network.connections));
+    const from = connection.from;
+    const to = connection.to;
     network.disconnect(from, to); // disconnect it
     // put the node in between the connection
 
-    var minBound = Math.max(network.inputSize, 1 + network.nodes.indexOf(from));
+    const minBound = Math.max(network.inputSize, 1 + network.nodes.indexOf(from));
     network.nodes.splice(minBound, 0, node);
-    var newConnection1 = network.connect(from, node, 1);
-    var newConnection2 = network.connect(node, to, connection.weight);
+    const newConnection1 = network.connect(from, node, 1);
+    const newConnection2 = network.connect(node, to, connection.weight);
 
     if (connection.gateNode != null) {
       // if connection had a gate node
@@ -620,10 +566,9 @@ function (_super) {
         network.addGate(connection.gateNode, newConnection2);
       }
     }
-  };
+  }
 
-  return AddNodeMutation;
-}(Mutation);
+}
 
 exports.AddNodeMutation = AddNodeMutation;
 /**
@@ -632,20 +577,10 @@ exports.AddNodeMutation = AddNodeMutation;
  * Removes a random node from the network.
  */
 
-var SubNodeMutation =
-/** @class */
-function (_super) {
-  __extends(SubNodeMutation, _super);
-
-  function SubNodeMutation(keepGates) {
-    if (keepGates === void 0) {
-      keepGates = true;
-    }
-
-    var _this = _super.call(this) || this;
-
-    _this.keepGates = keepGates;
-    return _this;
+class SubNodeMutation extends Mutation {
+  constructor(keepGates = true) {
+    super();
+    this.keepGates = keepGates;
   }
   /**
    * Mutates the network.
@@ -654,18 +589,15 @@ function (_super) {
    */
 
 
-  SubNodeMutation.prototype.mutate = function (network) {
-    var possible = network.nodes.filter(function (node) {
-      return node !== undefined && node.isHiddenNode();
-    }); // hidden nodes
+  mutate(network) {
+    const possible = network.nodes.filter(node => node !== undefined && node.isHiddenNode()); // hidden nodes
 
     if (possible.length > 0) {
       network.removeNode(Utils_1.pickRandom(possible), this.keepGates); // remove a random node from the filtered array
     }
-  };
+  }
 
-  return SubNodeMutation;
-}(Mutation);
+}
 
 exports.SubNodeMutation = SubNodeMutation;
 /**
@@ -674,39 +606,26 @@ exports.SubNodeMutation = SubNodeMutation;
  * Adds a connection to the network.
  */
 
-var AddConnectionMutation =
-/** @class */
-function (_super) {
-  __extends(AddConnectionMutation, _super);
-
-  function AddConnectionMutation() {
-    return _super !== null && _super.apply(this, arguments) || this;
-  }
+class AddConnectionMutation extends Mutation {
   /**
    * Mutates the network.
    *
    * @param network The network which gets mutated
    * @param options
    */
-
-
-  AddConnectionMutation.prototype.mutate = function (network, options) {
-    if (options === void 0) {
-      options = {};
-    } // check if max connections is already reached
-
-
+  mutate(network, options = {}) {
+    // check if max connections is already reached
     if (options.maxConnections !== undefined && network.connections.size >= options.maxConnections) {
       return;
     }
 
-    var possible = [];
+    const possible = [];
 
-    for (var i = 0; i < network.nodes.length - network.outputSize; i++) {
-      var from = network.nodes[i];
+    for (let i = 0; i < network.nodes.length - network.outputSize; i++) {
+      const from = network.nodes[i];
 
-      for (var j = Math.max(i + 1, network.inputSize); j < network.nodes.length; j++) {
-        var to = network.nodes[j];
+      for (let j = Math.max(i + 1, network.inputSize); j < network.nodes.length; j++) {
+        const to = network.nodes[j];
 
         if (!from.isProjectingTo(to)) {
           possible.push([from, to]);
@@ -715,13 +634,12 @@ function (_super) {
     }
 
     if (possible.length > 0) {
-      var pair = Utils_1.pickRandom(possible);
+      const pair = Utils_1.pickRandom(possible);
       network.connect(pair[0], pair[1]);
     }
-  };
+  }
 
-  return AddConnectionMutation;
-}(Mutation);
+}
 
 exports.AddConnectionMutation = AddConnectionMutation;
 /**
@@ -730,41 +648,25 @@ exports.AddConnectionMutation = AddConnectionMutation;
  * Removes a random connection from the network.
  */
 
-var SubConnectionMutation =
-/** @class */
-function (_super) {
-  __extends(SubConnectionMutation, _super);
-
-  function SubConnectionMutation() {
-    return _super !== null && _super.apply(this, arguments) || this;
-  }
+class SubConnectionMutation extends Mutation {
   /**
    * Mutates the network.
    *
    * @param network The network which gets mutated
    */
-
-
-  SubConnectionMutation.prototype.mutate = function (network) {
-    var possible = Array.from(network.connections).filter(function (conn) {
-      return conn.from.outgoing.size > 1;
-    }) // do not deactivate a neuron
-    .filter(function (conn) {
-      return conn.to.incoming.size > 1;
-    }) // do not deactivate a neuron
-    .filter(function (conn) {
-      return network.nodes.indexOf(conn.to) > network.nodes.indexOf(conn.from);
-    }); // look for forward pointing connections
+  mutate(network) {
+    const possible = Array.from(network.connections).filter(conn => conn.from.outgoing.size > 1) // do not deactivate a neuron
+    .filter(conn => conn.to.incoming.size > 1) // do not deactivate a neuron
+    .filter(conn => network.nodes.indexOf(conn.to) > network.nodes.indexOf(conn.from)); // look for forward pointing connections
 
     if (possible.length > 0) {
-      var randomConnection = Utils_1.pickRandom(possible); // pick a random connection from the filtered array
+      const randomConnection = Utils_1.pickRandom(possible); // pick a random connection from the filtered array
 
       network.disconnect(randomConnection.from, randomConnection.to); // remove the connection from the network
     }
-  };
+  }
 
-  return SubConnectionMutation;
-}(Mutation);
+}
 
 exports.SubConnectionMutation = SubConnectionMutation;
 /**
@@ -773,31 +675,16 @@ exports.SubConnectionMutation = SubConnectionMutation;
  * Modifies the weight of a random connection.
  */
 
-var ModWeightMutation =
-/** @class */
-function (_super) {
-  __extends(ModWeightMutation, _super);
+class ModWeightMutation extends Mutation {
   /**
    * Constructs a ModWeightMutation object
    * @param min The minimum weight.
    * @param max The maximum weight.
    */
-
-
-  function ModWeightMutation(min, max) {
-    if (min === void 0) {
-      min = -1;
-    }
-
-    if (max === void 0) {
-      max = 1;
-    }
-
-    var _this = _super.call(this) || this;
-
-    _this.min = min;
-    _this.max = max;
-    return _this;
+  constructor(min = -1, max = 1) {
+    super();
+    this.min = min;
+    this.max = max;
   }
   /**
    * Mutates the network.
@@ -806,13 +693,12 @@ function (_super) {
    */
 
 
-  ModWeightMutation.prototype.mutate = function (network) {
+  mutate(network) {
     // pick random connection and mutate it's weight
     Utils_1.pickRandom(Array.from(network.connections)).weight += Utils_1.randDouble(this.min, this.max);
-  };
+  }
 
-  return ModWeightMutation;
-}(Mutation);
+}
 
 exports.ModWeightMutation = ModWeightMutation;
 /**
@@ -821,31 +707,16 @@ exports.ModWeightMutation = ModWeightMutation;
  * Modifies the bias value of a random hidden or output node
  */
 
-var ModBiasMutation =
-/** @class */
-function (_super) {
-  __extends(ModBiasMutation, _super);
+class ModBiasMutation extends Mutation {
   /**
    * Constructs a ModBiasMutation object
    * @param min The minimum bias.
    * @param max The maximum bias.
    */
-
-
-  function ModBiasMutation(min, max) {
-    if (min === void 0) {
-      min = -1;
-    }
-
-    if (max === void 0) {
-      max = 1;
-    }
-
-    var _this = _super.call(this) || this;
-
-    _this.min = min;
-    _this.max = max;
-    return _this;
+  constructor(min = -1, max = 1) {
+    super();
+    this.min = min;
+    this.max = max;
   }
   /**
    * Mutates the network.
@@ -854,15 +725,12 @@ function (_super) {
    */
 
 
-  ModBiasMutation.prototype.mutate = function (network) {
-    Utils_1.pickRandom(network.nodes.filter(function (node) {
-      return !node.isInputNode();
-    })) // pick random hidden or output node
+  mutate(network) {
+    Utils_1.pickRandom(network.nodes.filter(node => !node.isInputNode())) // pick random hidden or output node
     .mutateBias(this); // mutate it's bias
-  };
+  }
 
-  return ModBiasMutation;
-}(Mutation);
+}
 
 exports.ModBiasMutation = ModBiasMutation;
 /**
@@ -871,25 +739,14 @@ exports.ModBiasMutation = ModBiasMutation;
  * Modifies the activation function of a random node
  */
 
-var ModActivationMutation =
-/** @class */
-function (_super) {
-  __extends(ModActivationMutation, _super);
+class ModActivationMutation extends Mutation {
   /**
    * Constructs a ModActivationMutation object
    * @param mutateOutput Can the output be mutated?
    */
-
-
-  function ModActivationMutation(mutateOutput) {
-    if (mutateOutput === void 0) {
-      mutateOutput = false;
-    }
-
-    var _this = _super.call(this) || this;
-
-    _this.mutateOutput = mutateOutput;
-    return _this;
+  constructor(mutateOutput = false) {
+    super();
+    this.mutateOutput = mutateOutput;
   }
   /**
    * Mutates the network.
@@ -899,25 +756,16 @@ function (_super) {
    */
 
 
-  ModActivationMutation.prototype.mutate = function (network, options) {
-    if (options === void 0) {
-      options = {};
-    }
-
-    var possible = this.mutateOutput ? network.nodes.filter(function (node) {
-      return !node.isInputNode();
-    }) // hidden and output nodes
-    : network.nodes.filter(function (node) {
-      return node.isHiddenNode();
-    }); // hidden nodes
+  mutate(network, options = {}) {
+    const possible = this.mutateOutput ? network.nodes.filter(node => !node.isInputNode()) // hidden and output nodes
+    : network.nodes.filter(node => node.isHiddenNode()); // hidden nodes
 
     if (possible.length > 0) {
       Utils_1.pickRandom(possible).mutateActivation(options.allowedActivations); // mutate the activation of the node
     }
-  };
+  }
 
-  return ModActivationMutation;
-}(Mutation);
+}
 
 exports.ModActivationMutation = ModActivationMutation;
 /**
@@ -926,38 +774,24 @@ exports.ModActivationMutation = ModActivationMutation;
  * Adds a connection from a node to itself.
  */
 
-var AddSelfConnectionMutation =
-/** @class */
-function (_super) {
-  __extends(AddSelfConnectionMutation, _super);
-
-  function AddSelfConnectionMutation() {
-    return _super !== null && _super.apply(this, arguments) || this;
-  }
+class AddSelfConnectionMutation extends Mutation {
   /**
    * Mutates the network.
    *
    * @param network The network which gets mutated
    */
-
-
-  AddSelfConnectionMutation.prototype.mutate = function (network) {
-    var possible = network.nodes.filter(function (node) {
-      return !node.isInputNode();
-    }) // no input nodes
-    .filter(function (node) {
-      return node.selfConnection.weight === 0;
-    }); // only nodes that doesn't have an self connection already
+  mutate(network) {
+    const possible = network.nodes.filter(node => !node.isInputNode()) // no input nodes
+    .filter(node => node.selfConnection.weight === 0); // only nodes that doesn't have an self connection already
 
     if (possible.length > 0) {
-      var node = Utils_1.pickRandom(possible); // pick a random node from the filtered array
+      const node = Utils_1.pickRandom(possible); // pick a random node from the filtered array
 
       network.connect(node, node); // connection the node to itself
     }
-  };
+  }
 
-  return AddSelfConnectionMutation;
-}(Mutation);
+}
 
 exports.AddSelfConnectionMutation = AddSelfConnectionMutation;
 /**
@@ -966,34 +800,22 @@ exports.AddSelfConnectionMutation = AddSelfConnectionMutation;
  * Removes a connection from a node to itself.
  */
 
-var SubSelfConnectionMutation =
-/** @class */
-function (_super) {
-  __extends(SubSelfConnectionMutation, _super);
-
-  function SubSelfConnectionMutation() {
-    return _super !== null && _super.apply(this, arguments) || this;
-  }
+class SubSelfConnectionMutation extends Mutation {
   /**
    * Mutates the network.
    *
    * @param network The network which gets mutated
    */
-
-
-  SubSelfConnectionMutation.prototype.mutate = function (network) {
-    var possible = Array.from(network.connections).filter(function (conn) {
-      return conn.from === conn.to;
-    });
+  mutate(network) {
+    const possible = Array.from(network.connections).filter(conn => conn.from === conn.to);
 
     if (possible.length > 0) {
-      var randomConnection = Utils_1.pickRandom(possible);
+      const randomConnection = Utils_1.pickRandom(possible);
       network.disconnect(randomConnection.from, randomConnection.to);
     }
-  };
+  }
 
-  return SubSelfConnectionMutation;
-}(Mutation);
+}
 
 exports.SubSelfConnectionMutation = SubSelfConnectionMutation;
 /**
@@ -1002,50 +824,32 @@ exports.SubSelfConnectionMutation = SubSelfConnectionMutation;
  * Adds a gate to the network.
  */
 
-var AddGateMutation =
-/** @class */
-function (_super) {
-  __extends(AddGateMutation, _super);
-
-  function AddGateMutation() {
-    return _super !== null && _super.apply(this, arguments) || this;
-  }
+class AddGateMutation extends Mutation {
   /**
    * Mutates the network.
    *
    * @param network The network which gets mutated
    * @param options
    */
-
-
-  AddGateMutation.prototype.mutate = function (network, options) {
-    if (options === void 0) {
-      options = {};
-    } // check if max gates isn't reached already
-
-
+  mutate(network, options = {}) {
+    // check if max gates isn't reached already
     if (options.maxGates !== undefined && network.gates.size >= options.maxGates) {
       return;
     } // use only connections that aren't already gated
 
 
-    var possible = Array.from(network.connections).filter(function (conn) {
-      return conn.gateNode === null;
-    });
+    const possible = Array.from(network.connections).filter(conn => conn.gateNode === null);
 
     if (possible.length > 0) {
-      var node = Utils_1.pickRandom(network.nodes.filter(function (node) {
-        return !node.isInputNode();
-      })); // hidden or output node
+      const node = Utils_1.pickRandom(network.nodes.filter(node => !node.isInputNode())); // hidden or output node
 
-      var connection = Utils_1.pickRandom(possible); // random connection from filtered array
+      const connection = Utils_1.pickRandom(possible); // random connection from filtered array
 
       network.addGate(node, connection); // use the node to gate the connection
     }
-  };
+  }
 
-  return AddGateMutation;
-}(Mutation);
+}
 
 exports.AddGateMutation = AddGateMutation;
 /**
@@ -1054,29 +858,19 @@ exports.AddGateMutation = AddGateMutation;
  * Removes a gate from the network.
  */
 
-var SubGateMutation =
-/** @class */
-function (_super) {
-  __extends(SubGateMutation, _super);
-
-  function SubGateMutation() {
-    return _super !== null && _super.apply(this, arguments) || this;
-  }
+class SubGateMutation extends Mutation {
   /**
    * Mutates the network.
    *
    * @param network The network which gets mutated
    */
-
-
-  SubGateMutation.prototype.mutate = function (network) {
+  mutate(network) {
     if (network.gates.size > 0) {
       network.removeGate(Utils_1.pickRandom(Array.from(network.gates)));
     }
-  };
+  }
 
-  return SubGateMutation;
-}(Mutation);
+}
 
 exports.SubGateMutation = SubGateMutation;
 /**
@@ -1085,29 +879,20 @@ exports.SubGateMutation = SubGateMutation;
  * Adds a backward pointing connection to the network.
  */
 
-var AddBackConnectionMutation =
-/** @class */
-function (_super) {
-  __extends(AddBackConnectionMutation, _super);
-
-  function AddBackConnectionMutation() {
-    return _super !== null && _super.apply(this, arguments) || this;
-  }
+class AddBackConnectionMutation extends Mutation {
   /**
    * Mutates the network.
    *
    * @param network The network which gets mutated
    */
+  mutate(network) {
+    const possible = [];
 
+    for (let i = network.inputSize; i < network.nodes.length; i++) {
+      const from = network.nodes[i];
 
-  AddBackConnectionMutation.prototype.mutate = function (network) {
-    var possible = [];
-
-    for (var i = network.inputSize; i < network.nodes.length; i++) {
-      var from = network.nodes[i];
-
-      for (var j = network.inputSize; j < i; j++) {
-        var to = network.nodes[j];
+      for (let j = network.inputSize; j < i; j++) {
+        const to = network.nodes[j];
 
         if (!from.isProjectingTo(to)) {
           possible.push([from, to]);
@@ -1116,13 +901,12 @@ function (_super) {
     }
 
     if (possible.length > 0) {
-      var pair = Utils_1.pickRandom(possible);
+      const pair = Utils_1.pickRandom(possible);
       network.connect(pair[0], pair[1]);
     }
-  };
+  }
 
-  return AddBackConnectionMutation;
-}(Mutation);
+}
 
 exports.AddBackConnectionMutation = AddBackConnectionMutation;
 /**
@@ -1131,38 +915,22 @@ exports.AddBackConnectionMutation = AddBackConnectionMutation;
  * Removes a backward pointing connection to the network.
  */
 
-var SubBackConnectionMutation =
-/** @class */
-function (_super) {
-  __extends(SubBackConnectionMutation, _super);
-
-  function SubBackConnectionMutation() {
-    return _super !== null && _super.apply(this, arguments) || this;
-  }
+class SubBackConnectionMutation extends Mutation {
   /**
    * Mutates the network.
    *
    * @param network The network which gets mutated
    */
-
-
-  SubBackConnectionMutation.prototype.mutate = function (network) {
-    var possible = Array.from(network.connections).filter(function (conn) {
-      return conn.from.outgoing.size > 1;
-    }).filter(function (conn) {
-      return conn.to.incoming.size > 1;
-    }).filter(function (conn) {
-      return network.nodes.indexOf(conn.from) > network.nodes.indexOf(conn.to);
-    });
+  mutate(network) {
+    const possible = Array.from(network.connections).filter(conn => conn.from.outgoing.size > 1).filter(conn => conn.to.incoming.size > 1).filter(conn => network.nodes.indexOf(conn.from) > network.nodes.indexOf(conn.to));
 
     if (possible.length > 0) {
-      var randomConnection = Utils_1.pickRandom(possible);
+      const randomConnection = Utils_1.pickRandom(possible);
       network.disconnect(randomConnection.from, randomConnection.to);
     }
-  };
+  }
 
-  return SubBackConnectionMutation;
-}(Mutation);
+}
 
 exports.SubBackConnectionMutation = SubBackConnectionMutation;
 /**
@@ -1171,25 +939,14 @@ exports.SubBackConnectionMutation = SubBackConnectionMutation;
  * Swaps the values of two randomly picked nodes.
  */
 
-var SwapNodesMutation =
-/** @class */
-function (_super) {
-  __extends(SwapNodesMutation, _super);
+class SwapNodesMutation extends Mutation {
   /**
    * Constructs a SwapNodeMutation object
    * @param mutateOutput Can the output be mutated?
    */
-
-
-  function SwapNodesMutation(mutateOutput) {
-    if (mutateOutput === void 0) {
-      mutateOutput = false;
-    }
-
-    var _this = _super.call(this) || this;
-
-    _this.mutateOutput = mutateOutput;
-    return _this;
+  constructor(mutateOutput = false) {
+    super();
+    this.mutateOutput = mutateOutput;
   }
   /**
    * Mutates the network.
@@ -1198,49 +955,42 @@ function (_super) {
    */
 
 
-  SwapNodesMutation.prototype.mutate = function (network) {
-    var possible = this.mutateOutput ? network.nodes.filter(function (node) {
-      return node !== undefined && !node.isInputNode();
-    }) // hidden or output nodes
-    : network.nodes.filter(function (node) {
-      return node !== undefined && node.isHiddenNode();
-    }); // only hidden nodes
+  mutate(network) {
+    const possible = this.mutateOutput ? network.nodes.filter(node => node !== undefined && !node.isInputNode()) // hidden or output nodes
+    : network.nodes.filter(node => node !== undefined && node.isHiddenNode()); // only hidden nodes
 
     if (possible.length >= 2) {
       // select two different nodes from the filtered array
-      var node1_1 = Utils_1.pickRandom(possible);
-      var node2 = Utils_1.pickRandom(possible.filter(function (node) {
-        return node !== node1_1;
-      })); // change there parameters
+      const node1 = Utils_1.pickRandom(possible);
+      const node2 = Utils_1.pickRandom(possible.filter(node => node !== node1)); // change there parameters
 
-      var biasTemp = node1_1.bias;
-      var squashTemp = node1_1.squash;
-      node1_1.bias = node2.bias;
-      node1_1.squash = node2.squash;
+      const biasTemp = node1.bias;
+      const squashTemp = node1.squash;
+      node1.bias = node2.bias;
+      node1.squash = node2.squash;
       node2.bias = biasTemp;
       node2.squash = squashTemp;
     }
-  };
+  }
 
-  return SwapNodesMutation;
-}(Mutation);
+}
 
 exports.SwapNodesMutation = SwapNodesMutation;
 /**
  * Array of all mutation methods
  */
 
-var ALL_MUTATIONS = [new AddNodeMutation(), new SubNodeMutation(), new AddConnectionMutation(), new SubConnectionMutation(), new ModWeightMutation(), new ModBiasMutation(), new ModActivationMutation(), new AddGateMutation(), new SubGateMutation(), new AddSelfConnectionMutation(), new SubSelfConnectionMutation(), new AddBackConnectionMutation(), new SubBackConnectionMutation(), new SwapNodesMutation()];
+const ALL_MUTATIONS = [new AddNodeMutation(), new SubNodeMutation(), new AddConnectionMutation(), new SubConnectionMutation(), new ModWeightMutation(), new ModBiasMutation(), new ModActivationMutation(), new AddGateMutation(), new SubGateMutation(), new AddSelfConnectionMutation(), new SubSelfConnectionMutation(), new AddBackConnectionMutation(), new SubBackConnectionMutation(), new SwapNodesMutation()];
 exports.ALL_MUTATIONS = ALL_MUTATIONS;
 /**
  * Array of all feed forward mutation methods
  */
 
-var FEEDFORWARD_MUTATIONS = [new AddNodeMutation(), new SubNodeMutation(), new AddConnectionMutation(), new SubConnectionMutation(), new ModWeightMutation(), new ModBiasMutation(), new ModActivationMutation(), new SwapNodesMutation()];
+const FEEDFORWARD_MUTATIONS = [new AddNodeMutation(), new SubNodeMutation(), new AddConnectionMutation(), new SubConnectionMutation(), new ModWeightMutation(), new ModBiasMutation(), new ModActivationMutation(), new SwapNodesMutation()];
 exports.FEEDFORWARD_MUTATIONS = FEEDFORWARD_MUTATIONS;
-var NO_STRUCTURE_MUTATIONS = [new ModWeightMutation(), new ModBiasMutation(), new ModActivationMutation()];
+const NO_STRUCTURE_MUTATIONS = [new ModWeightMutation(), new ModBiasMutation(), new ModActivationMutation()];
 exports.NO_STRUCTURE_MUTATIONS = NO_STRUCTURE_MUTATIONS;
-var ONLY_STRUCTURE = [new AddNodeMutation(), new SubNodeMutation(), new AddConnectionMutation(), new SubConnectionMutation(), new AddGateMutation(), new SubGateMutation(), new AddSelfConnectionMutation(), new SubSelfConnectionMutation(), new AddBackConnectionMutation(), new SubBackConnectionMutation(), new SwapNodesMutation()];
+const ONLY_STRUCTURE = [new AddNodeMutation(), new SubNodeMutation(), new AddConnectionMutation(), new SubConnectionMutation(), new AddGateMutation(), new SubGateMutation(), new AddSelfConnectionMutation(), new SubSelfConnectionMutation(), new AddBackConnectionMutation(), new SubBackConnectionMutation(), new SwapNodesMutation()];
 exports.ONLY_STRUCTURE = ONLY_STRUCTURE;
 },{"../architecture/Node":"../src/architecture/Node.js","../enums/NodeType":"../src/enums/NodeType.js","../utils/Utils":"../src/utils/Utils.js"}],"../src/architecture/Connection.js":[function(require,module,exports) {
 "use strict";
@@ -1250,16 +1000,14 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Connection = void 0;
 
-var Utils_1 = require("../utils/Utils");
+const Utils_1 = require("../utils/Utils");
 /**
  * A connection instance describes the connection between two nodes.
  */
 
 
-var Connection =
-/** @class */
-function () {
-  function Connection(from, to, weight, gateNode) {
+class Connection {
+  constructor(from, to, weight, gateNode) {
     this.from = from;
     this.to = to;
     this.weight = weight !== null && weight !== void 0 ? weight : 0;
@@ -1283,25 +1031,24 @@ function () {
    */
 
 
-  Connection.prototype.toJSON = function () {
+  toJSON() {
     return {
       fromIndex: this.from.index,
       toIndex: this.to.index,
       gateNodeIndex: this.gateNode === null ? null : this.gateNode.index,
       weight: this.weight
     };
-  };
+  }
   /**
    * Get the innovation ID for this connection
    */
 
 
-  Connection.prototype.getInnovationID = function () {
+  getInnovationID() {
     return Utils_1.pairing(this.from.index, this.to.index);
-  };
+  }
 
-  return Connection;
-}();
+}
 
 exports.Connection = Connection;
 },{"../utils/Utils":"../src/utils/Utils.js"}],"../src/architecture/Node.js":[function(require,module,exports) {
@@ -1312,15 +1059,15 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Node = void 0;
 
-var src_1 = require("activations/build/src");
+const src_1 = require("activations/build/src");
 
-var NodeType_1 = require("../enums/NodeType");
+const NodeType_1 = require("../enums/NodeType");
 
-var Mutation_1 = require("../methods/Mutation");
+const Mutation_1 = require("../methods/Mutation");
 
-var Utils_1 = require("../utils/Utils");
+const Utils_1 = require("../utils/Utils");
 
-var Connection_1 = require("./Connection");
+const Connection_1 = require("./Connection");
 /**
  * Creates a new neuron/node
  *
@@ -1335,14 +1082,8 @@ var Connection_1 = require("./Connection");
  */
 
 
-var Node =
-/** @class */
-function () {
-  function Node(type) {
-    if (type === void 0) {
-      type = NodeType_1.NodeType.HIDDEN;
-    }
-
+class Node {
+  constructor(type = NodeType_1.NodeType.HIDDEN) {
     this.type = type;
     this.bias = Utils_1.randDouble(-1, 1);
     this.squash = src_1.Logistic;
@@ -1371,7 +1112,7 @@ function () {
    */
 
 
-  Node.prototype.fromJSON = function (json) {
+  fromJSON(json) {
     var _a, _b, _c, _d;
 
     this.bias = (_a = json.bias) !== null && _a !== void 0 ? _a : Utils_1.randDouble(-1, 1);
@@ -1380,7 +1121,7 @@ function () {
     this.mask = (_c = json.mask) !== null && _c !== void 0 ? _c : 1;
     this.index = (_d = json.index) !== null && _d !== void 0 ? _d : NaN;
     return this;
-  };
+  }
   /**
    * Clears this node's state information - _i.e. resets node and its connections to "factory settings"_
    *
@@ -1388,17 +1129,15 @@ function () {
    */
 
 
-  Node.prototype.clear = function () {
-    this.incoming.forEach(function (connection) {
+  clear() {
+    this.incoming.forEach(connection => {
       connection.eligibility = 0;
       connection.xTrace.clear();
     });
-    this.gated.forEach(function (conn) {
-      return conn.gain = 0;
-    });
+    this.gated.forEach(conn => conn.gain = 0);
     this.errorResponsibility = this.errorProjected = this.errorGated = 0;
     this.old = this.state = this.activation = 0;
-  };
+  }
   /**
    * Mutates the node's bias
    *
@@ -1406,34 +1145,22 @@ function () {
    */
 
 
-  Node.prototype.mutateBias = function (method) {
-    if (method === void 0) {
-      method = new Mutation_1.ModBiasMutation();
-    }
-
+  mutateBias(method = new Mutation_1.ModBiasMutation()) {
     this.bias += Utils_1.randDouble(method.min, method.max); // add a random value in range [min,max)
-  };
+  }
   /**
    * Mutates the node's activation function
    */
 
 
-  Node.prototype.mutateActivation = function (allowedActivations) {
-    var _this = this;
-
-    if (allowedActivations === void 0) {
-      allowedActivations = Object.values(src_1.ALL_ACTIVATIONS);
-    } // pick a random activation from allowed activations except the current activation
-
-
-    var possible = allowedActivations.filter(function (activation) {
-      return activation !== _this.squash;
-    });
+  mutateActivation(allowedActivations = Object.values(src_1.ALL_ACTIVATIONS)) {
+    // pick a random activation from allowed activations except the current activation
+    const possible = allowedActivations.filter(activation => activation !== this.squash);
 
     if (possible.length > 0) {
       this.squash = Utils_1.pickRandom(possible);
     }
-  };
+  }
   /**
    * Checks if the given node(s) are have outgoing connections to this node
    *
@@ -1443,16 +1170,14 @@ function () {
    */
 
 
-  Node.prototype.isProjectedBy = function (node) {
+  isProjectedBy(node) {
     if (node === this) {
       // self connection
       return this.selfConnection.weight !== 0; // is projected, if weight of self connection is unequal 0
     } else {
-      return Array.from(this.incoming).map(function (conn) {
-        return conn.from;
-      }).includes(node); // check every incoming connection for node
+      return Array.from(this.incoming).map(conn => conn.from).includes(node); // check every incoming connection for node
     }
-  };
+  }
   /**
    * Checks if this node has an outgoing connection(s) into the given node(s)
    *
@@ -1462,16 +1187,14 @@ function () {
    */
 
 
-  Node.prototype.isProjectingTo = function (node) {
+  isProjectingTo(node) {
     if (node === this) {
       // self connection
       return this.selfConnection.weight !== 0; // is projected, if weight of self connection is unequal 0
     } else {
-      return Array.from(this.outgoing).map(function (conn) {
-        return conn.to;
-      }).includes(node); // check every outgoing connection for node
+      return Array.from(this.outgoing).map(conn => conn.to).includes(node); // check every outgoing connection for node
     }
-  };
+  }
   /**
    * This node gates (influences) the given connection
    *
@@ -1479,10 +1202,10 @@ function () {
    */
 
 
-  Node.prototype.addGate = function (connection) {
+  addGate(connection) {
     this.gated.add(connection);
     connection.gateNode = this;
-  };
+  }
   /**
    * Stops this node from gating (manipulating) the given connection(s)
    *
@@ -1490,11 +1213,11 @@ function () {
    */
 
 
-  Node.prototype.removeGate = function (connection) {
+  removeGate(connection) {
     this.gated.delete(connection);
     connection.gateNode = null;
     connection.gain = 1;
-  };
+  }
   /**
    * Connects this node to the given node(s)
    *
@@ -1504,15 +1227,7 @@ function () {
    */
 
 
-  Node.prototype.connect = function (target, weight, twoSided) {
-    if (weight === void 0) {
-      weight = 1;
-    }
-
-    if (twoSided === void 0) {
-      twoSided = false;
-    }
-
+  connect(target, weight = 1, twoSided = false) {
     if (target === this) {
       // self connection
       this.selfConnection.weight = weight;
@@ -1520,7 +1235,7 @@ function () {
     } else if (this.isProjectingTo(target)) {
       throw new ReferenceError("Their is already a connection!"); // already connected
     } else {
-      var connection = new Connection_1.Connection(this, target, weight); // create new connection
+      const connection = new Connection_1.Connection(this, target, weight); // create new connection
       // add it to the arrays
 
       this.outgoing.add(connection);
@@ -1532,7 +1247,7 @@ function () {
 
       return connection;
     }
-  };
+  }
   /**
    * Disconnects this node from the given node(s)
    *
@@ -1541,11 +1256,7 @@ function () {
    */
 
 
-  Node.prototype.disconnect = function (node, twoSided) {
-    if (twoSided === void 0) {
-      twoSided = false;
-    }
-
+  disconnect(node, twoSided = false) {
     if (node === this) {
       // self connection
       this.selfConnection.weight = 0; // set weight to 0
@@ -1553,15 +1264,13 @@ function () {
       return this.selfConnection;
     }
 
-    var connections = Array.from(this.outgoing).filter(function (conn) {
-      return conn.to === node;
-    });
+    const connections = Array.from(this.outgoing).filter(conn => conn.to === node);
 
     if (connections.length === 0) {
       throw new Error("No Connection found");
     }
 
-    var connection = connections[0]; // remove it from the arrays
+    const connection = connections[0]; // remove it from the arrays
 
     this.outgoing.delete(connection);
     connection.to.incoming.delete(connection);
@@ -1575,7 +1284,7 @@ function () {
     }
 
     return connection;
-  };
+  }
   /**
    * Backpropagate the error (a.k.a. learn).
    *
@@ -1591,14 +1300,8 @@ function () {
    */
 
 
-  Node.prototype.propagate = function (target, options) {
-    var _this = this;
-
+  propagate(target, options = {}) {
     var _a, _b, _c;
-
-    if (options === void 0) {
-      options = {};
-    }
 
     options.momentum = (_a = options.momentum) !== null && _a !== void 0 ? _a : 0;
     options.rate = (_b = options.rate) !== null && _b !== void 0 ? _b : 0.3;
@@ -1608,36 +1311,34 @@ function () {
       this.errorResponsibility = this.errorProjected = target - this.activation;
     } else {
       this.errorProjected = 0;
-      this.outgoing.forEach(function (connection) {
-        _this.errorProjected += connection.to.errorResponsibility * connection.weight * connection.gain;
+      this.outgoing.forEach(connection => {
+        this.errorProjected += connection.to.errorResponsibility * connection.weight * connection.gain;
       });
       this.errorProjected *= this.derivativeState;
       this.errorGated = 0;
-      this.gated.forEach(function (connection) {
-        var influence;
+      this.gated.forEach(connection => {
+        let influence;
 
-        if (connection.to.selfConnection.gateNode === _this) {
+        if (connection.to.selfConnection.gateNode === this) {
           // self connection is gated with this node
           influence = connection.to.old + connection.weight * connection.from.activation;
         } else {
           influence = connection.weight * connection.from.activation;
         }
 
-        _this.errorGated += connection.to.errorResponsibility * influence;
+        this.errorGated += connection.to.errorResponsibility * influence;
       });
       this.errorGated *= this.derivativeState;
       this.errorResponsibility = this.errorProjected + this.errorGated;
     }
 
-    this.incoming.forEach(function (connection) {
+    this.incoming.forEach(connection => {
       var _a, _b; // calculate gradient
 
 
-      var gradient = _this.errorProjected * connection.eligibility;
-      connection.xTrace.forEach(function (value, key) {
-        return gradient += key.errorResponsibility * value;
-      });
-      connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * _this.mask;
+      let gradient = this.errorProjected * connection.eligibility;
+      connection.xTrace.forEach((value, key) => gradient += key.errorResponsibility * value);
+      connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * this.mask;
 
       if (options.update) {
         connection.deltaWeightsTotal += ((_b = options.momentum) !== null && _b !== void 0 ? _b : 0) * connection.deltaWeightsPrevious;
@@ -1654,7 +1355,7 @@ function () {
       this.deltaBiasPrevious = this.deltaBiasTotal;
       this.deltaBiasTotal = 0;
     }
-  };
+  }
   /**
    * Actives the node.
    *
@@ -1669,13 +1370,7 @@ function () {
    */
 
 
-  Node.prototype.activate = function (input, trace) {
-    var _this = this;
-
-    if (trace === void 0) {
-      trace = true;
-    }
-
+  activate(input, trace = true) {
     if (input !== undefined) {
       return this.activation = input;
     } else if (this.isInputNode()) {
@@ -1685,48 +1380,48 @@ function () {
     if (trace) {
       this.old = this.state;
       this.state = this.selfConnection.gain * this.selfConnection.weight * this.state + this.bias;
-      this.incoming.forEach(function (conn) {
-        _this.state += conn.from.activation * conn.weight * conn.gain;
+      this.incoming.forEach(conn => {
+        this.state += conn.from.activation * conn.weight * conn.gain;
       });
       this.activation = this.squash(this.state, false) * this.mask;
       this.derivativeState = this.squash(this.state, true); // store traces
 
-      var nodes_1 = [];
-      var influences_1 = []; // Adjust 'gain' (to gated connections) & Build traces
+      const nodes = [];
+      const influences = []; // Adjust 'gain' (to gated connections) & Build traces
 
-      this.gated.forEach(function (connection) {
-        connection.gain = _this.activation; // Build traces
+      this.gated.forEach(connection => {
+        connection.gain = this.activation; // Build traces
 
-        var index = nodes_1.indexOf(connection.to);
+        const index = nodes.indexOf(connection.to);
 
         if (index > -1) {
           // Node & influence exist
-          influences_1[index] += connection.weight * connection.from.activation;
+          influences[index] += connection.weight * connection.from.activation;
         } else {
           // Add node & corresponding influence
-          nodes_1.push(connection.to);
+          nodes.push(connection.to);
 
-          if (connection.to.selfConnection.gateNode === _this) {
-            influences_1.push(connection.weight * connection.from.activation + connection.to.old);
+          if (connection.to.selfConnection.gateNode === this) {
+            influences.push(connection.weight * connection.from.activation + connection.to.old);
           } else {
-            influences_1.push(connection.weight * connection.from.activation);
+            influences.push(connection.weight * connection.from.activation);
           }
         }
       }); // Forwarding 'xTrace' (to incoming connections)
 
-      this.incoming.forEach(function (connection) {
+      this.incoming.forEach(connection => {
         var _a;
 
-        connection.eligibility = _this.selfConnection.gain * _this.selfConnection.weight * connection.eligibility + connection.from.activation * connection.gain;
+        connection.eligibility = this.selfConnection.gain * this.selfConnection.weight * connection.eligibility + connection.from.activation * connection.gain;
 
-        for (var i = 0; i < nodes_1.length; i++) {
-          var node = nodes_1[i];
-          var influence = influences_1[i];
+        for (let i = 0; i < nodes.length; i++) {
+          const node = nodes[i];
+          const influence = influences[i];
 
           if (connection.xTrace.has(node)) {
-            connection.xTrace.set(node, node.selfConnection.gain * node.selfConnection.weight * ((_a = connection.xTrace.get(node)) !== null && _a !== void 0 ? _a : 0) + _this.derivativeState * connection.eligibility * influence);
+            connection.xTrace.set(node, node.selfConnection.gain * node.selfConnection.weight * ((_a = connection.xTrace.get(node)) !== null && _a !== void 0 ? _a : 0) + this.derivativeState * connection.eligibility * influence);
           } else {
-            connection.xTrace.set(node, _this.derivativeState * connection.eligibility * influence);
+            connection.xTrace.set(node, this.derivativeState * connection.eligibility * influence);
           }
         }
       });
@@ -1734,17 +1429,13 @@ function () {
     } else {
       if (this.isInputNode()) return this.activation = 0;
       this.state = this.selfConnection.gain * this.selfConnection.weight * this.state + this.bias;
-      this.incoming.forEach(function (connection) {
-        return _this.state += connection.from.activation * connection.weight * connection.gain;
-      });
+      this.incoming.forEach(connection => this.state += connection.from.activation * connection.weight * connection.gain);
       this.activation = this.squash(this.state, false); // Adjust gain
 
-      this.gated.forEach(function (connection) {
-        return connection.gain = _this.activation;
-      });
+      this.gated.forEach(connection => connection.gain = this.activation);
       return this.activation;
     }
-  };
+  }
   /**
    * Converts the node to a json object that can later be converted back
    *
@@ -1752,7 +1443,7 @@ function () {
    */
 
 
-  Node.prototype.toJSON = function () {
+  toJSON() {
     return {
       bias: this.bias,
       type: this.type,
@@ -1760,31 +1451,31 @@ function () {
       mask: this.mask,
       index: this.index
     };
-  };
+  }
   /**
    * Is this a input Node?
    */
 
 
-  Node.prototype.isInputNode = function () {
+  isInputNode() {
     return this.type === NodeType_1.NodeType.INPUT;
-  };
+  }
   /**
    * Is this a hidden Node?
    */
 
 
-  Node.prototype.isHiddenNode = function () {
+  isHiddenNode() {
     return this.type === NodeType_1.NodeType.HIDDEN;
-  };
+  }
   /**
    * Is this a output Node?
    */
 
 
-  Node.prototype.isOutputNode = function () {
+  isOutputNode() {
     return this.type === NodeType_1.NodeType.OUTPUT;
-  };
+  }
   /**
    * Set bias.
    *
@@ -1792,10 +1483,10 @@ function () {
    */
 
 
-  Node.prototype.setBias = function (bias) {
+  setBias(bias) {
     this.bias = bias;
     return this;
-  };
+  }
   /**
    * Set activation type
    *
@@ -1803,13 +1494,12 @@ function () {
    */
 
 
-  Node.prototype.setActivationType = function (activation) {
+  setActivationType(activation) {
     this.squash = activation;
     return this;
-  };
+  }
 
-  return Node;
-}();
+}
 
 exports.Node = Node;
 },{"../enums/NodeType":"../src/enums/NodeType.js","../methods/Mutation":"../src/methods/Mutation.js","../utils/Utils":"../src/utils/Utils.js","./Connection":"../src/architecture/Connection.js"}],"../src/enums/GatingType.js":[function(require,module,exports) {
@@ -1849,18 +1539,16 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Layer = void 0;
 
-var ConnectionType_1 = require("../../enums/ConnectionType");
+const ConnectionType_1 = require("../../enums/ConnectionType");
 
-var GatingType_1 = require("../../enums/GatingType");
+const GatingType_1 = require("../../enums/GatingType");
 /**
  * Parent class for layers.
  */
 
 
-var Layer =
-/** @class */
-function () {
-  function Layer(outputSize) {
+class Layer {
+  constructor(outputSize) {
     this.outputSize = outputSize;
     this.nodes = [];
     this.inputNodes = new Set();
@@ -1880,21 +1568,13 @@ function () {
    */
 
 
-  Layer.connect = function (from, to, connectionType, weight) {
-    if (connectionType === void 0) {
-      connectionType = ConnectionType_1.ConnectionType.ALL_TO_ALL;
-    }
-
-    if (weight === void 0) {
-      weight = 1;
-    }
-
+  static connect(from, to, connectionType = ConnectionType_1.ConnectionType.ALL_TO_ALL, weight = 1) {
     if (connectionType === ConnectionType_1.ConnectionType.NO_CONNECTION) {
       throw new ReferenceError("Cannot connect with 'NO_CONNECTION' connection type");
     }
 
-    var fromNodes = Array.from(from instanceof Layer ? from.outputNodes : from);
-    var toNodes = Array.from(to instanceof Layer ? to.inputNodes : to);
+    const fromNodes = Array.from(from instanceof Layer ? from.outputNodes : from);
+    const toNodes = Array.from(to instanceof Layer ? to.inputNodes : to);
 
     if (toNodes.length === 0) {
       throw new ReferenceError("Target from has no input nodes!");
@@ -1904,11 +1584,11 @@ function () {
       throw new ReferenceError("This from has no output nodes!");
     }
 
-    var connections = [];
+    const connections = [];
 
     if (connectionType === ConnectionType_1.ConnectionType.ALL_TO_ALL) {
-      fromNodes.forEach(function (fromNode) {
-        toNodes.forEach(function (toNode) {
+      fromNodes.forEach(fromNode => {
+        toNodes.forEach(toNode => {
           connections.push(fromNode.connect(toNode, weight)); // connect every "from node" to every "to node"
         });
       });
@@ -1917,20 +1597,18 @@ function () {
         throw new RangeError("Can't connect one to one! Number of output nodes from are unequal number of incoming nodes from next layer!");
       }
 
-      for (var i = 0; i < fromNodes.length; i++) {
+      for (let i = 0; i < fromNodes.length; i++) {
         connections.push(fromNodes[i].connect(toNodes[i], weight)); // connect every nodes with same indices
       }
     } else if (connectionType === ConnectionType_1.ConnectionType.POOLING) {
       // connect the same amount of input nodes to every output node
       // every input node has only one connection available
-      var ratio_1 = toNodes.length / fromNodes.length;
-      connections.push.apply(connections, fromNodes.map(function (node, index) {
-        return node.connect(toNodes[Math.floor(index * ratio_1)], weight);
-      }));
+      const ratio = toNodes.length / fromNodes.length;
+      connections.push(...fromNodes.map((node, index) => node.connect(toNodes[Math.floor(index * ratio)], weight)));
     }
 
     return connections;
-  };
+  }
   /**
    * Gate nodes and connections.
    *
@@ -1942,30 +1620,24 @@ function () {
    */
 
 
-  Layer.gate = function (nodes, connections, gateType) {
-    var gatedConnections = [];
+  static gate(nodes, connections, gateType) {
+    const gatedConnections = [];
 
     switch (gateType) {
       case GatingType_1.GatingType.INPUT:
         {
           // gate incoming connections
-          var toNodes = Array.from(new Set(connections.map(function (conn) {
-            return conn.to;
-          })));
+          const toNodes = Array.from(new Set(connections.map(conn => conn.to)));
 
-          var _loop_1 = function (i) {
-            var node = toNodes[i];
-            var gateNode = nodes[i % nodes.length];
-            node.incoming.forEach(function (conn) {
+          for (let i = 0; i < toNodes.length; i++) {
+            const node = toNodes[i];
+            const gateNode = nodes[i % nodes.length];
+            node.incoming.forEach(conn => {
               if (connections.includes(conn)) {
                 gateNode.addGate(conn);
                 gatedConnections.push(conn);
               }
             });
-          };
-
-          for (var i = 0; i < toNodes.length; i++) {
-            _loop_1(i);
           }
 
           break;
@@ -1974,11 +1646,9 @@ function () {
       case GatingType_1.GatingType.SELF:
         {
           // gate self connections
-          var fromNodes = Array.from(new Set(connections.map(function (conn) {
-            return conn.from;
-          })));
+          const fromNodes = Array.from(new Set(connections.map(conn => conn.from)));
 
-          for (var i = 0; i < fromNodes.length; i++) {
+          for (let i = 0; i < fromNodes.length; i++) {
             if (connections.includes(fromNodes[i].selfConnection)) {
               nodes[i % nodes.length].addGate(fromNodes[i].selfConnection);
               gatedConnections.push(fromNodes[i].selfConnection);
@@ -1991,23 +1661,17 @@ function () {
       case GatingType_1.GatingType.OUTPUT:
         {
           // gate outgoing connections
-          var fromNodes = Array.from(new Set(connections.map(function (conn) {
-            return conn.from;
-          })));
+          const fromNodes = Array.from(new Set(connections.map(conn => conn.from)));
 
-          var _loop_2 = function (i) {
-            var node = fromNodes[i];
-            var gateNode = nodes[i % nodes.length];
-            node.outgoing.forEach(function (conn) {
+          for (let i = 0; i < fromNodes.length; i++) {
+            const node = fromNodes[i];
+            const gateNode = nodes[i % nodes.length];
+            node.outgoing.forEach(conn => {
               if (connections.includes(conn)) {
                 gateNode.addGate(conn);
                 gatedConnections.push(conn);
               }
             });
-          };
-
-          for (var i = 0; i < fromNodes.length; i++) {
-            _loop_2(i);
           }
 
           break;
@@ -2015,64 +1679,33 @@ function () {
     }
 
     return gatedConnections;
-  };
+  }
 
-  return Layer;
-}();
+}
 
 exports.Layer = Layer;
 },{"../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../enums/GatingType":"../src/enums/GatingType.js"}],"../src/architecture/Nodes/ConstantNode.js":[function(require,module,exports) {
 "use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.ConstantNode = void 0;
 
-var src_1 = require("activations/build/src");
+const src_1 = require("activations/build/src");
 
-var NodeType_1 = require("../../enums/NodeType");
+const NodeType_1 = require("../../enums/NodeType");
 
-var Node_1 = require("../Node");
+const Node_1 = require("../Node");
 /**
  * Constant node
  */
 
 
-var ConstantNode =
-/** @class */
-function (_super) {
-  __extends(ConstantNode, _super);
-
-  function ConstantNode() {
-    var _this = _super.call(this, NodeType_1.NodeType.HIDDEN) || this;
-
-    _this.bias = 1;
-    return _this;
+class ConstantNode extends Node_1.Node {
+  constructor() {
+    super(NodeType_1.NodeType.HIDDEN);
+    this.bias = 1;
   }
   /**
    * Create a constant node from json object.
@@ -2083,13 +1716,13 @@ function (_super) {
    */
 
 
-  ConstantNode.prototype.fromJSON = function (json) {
+  fromJSON(json) {
     var _a, _b;
 
     this.index = (_a = json.index) !== null && _a !== void 0 ? _a : -1;
     this.squash = (_b = json.squash) !== null && _b !== void 0 ? _b : src_1.Identitiy;
     return this;
-  };
+  }
   /**
    * Convert this node into a json object.
    *
@@ -2097,116 +1730,81 @@ function (_super) {
    */
 
 
-  ConstantNode.prototype.toJSON = function () {
+  toJSON() {
     return {
       index: this.index,
       squash: this.squash
     };
-  };
+  }
   /**
    * Bias mutations aren't allowed for a constant node.
    */
 
 
-  ConstantNode.prototype.mutateBias = function () {
+  mutateBias() {
     throw new ReferenceError("Cannot mutate a pool node!");
-  };
+  }
   /**
    * Activation mutations aren't allowed for a constant node.
    */
 
 
-  ConstantNode.prototype.mutateActivation = function () {
+  mutateActivation() {
     throw new ReferenceError("Cannot mutate a pool node!");
-  };
+  }
   /**
    * Constant nodes can't gate a connection.
    */
 
 
-  ConstantNode.prototype.addGate = function () {
+  addGate() {
     throw new ReferenceError("A pool node can't gate a connection!");
-  };
+  }
   /**
    * Constant nodes can't gate a connection.
    */
 
 
-  ConstantNode.prototype.removeGate = function () {
+  removeGate() {
     throw new ReferenceError("A pool node can't gate a connection!");
-  };
+  }
   /**
    * Can't set the bias of a constant node.
    */
 
 
-  ConstantNode.prototype.setBias = function () {
+  setBias() {
     throw new ReferenceError("Cannot set the bias of a pool node!");
-  };
+  }
 
-  return ConstantNode;
-}(Node_1.Node);
+}
 
 exports.ConstantNode = ConstantNode;
 },{"../../enums/NodeType":"../src/enums/NodeType.js","../Node":"../src/architecture/Node.js"}],"../src/architecture/Nodes/NoiseNode.js":[function(require,module,exports) {
 "use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.NoiseNode = void 0;
 
-var NodeType_1 = require("../../enums/NodeType");
+const NodeType_1 = require("../../enums/NodeType");
 
-var Utils_1 = require("../../utils/Utils");
+const Utils_1 = require("../../utils/Utils");
 
-var ConstantNode_1 = require("./ConstantNode");
+const ConstantNode_1 = require("./ConstantNode");
 /**
  * Noise node
  */
 
 
-var NoiseNode =
-/** @class */
-function (_super) {
-  __extends(NoiseNode, _super);
-
-  function NoiseNode(options) {
-    if (options === void 0) {
-      options = {};
-    }
-
+class NoiseNode extends ConstantNode_1.ConstantNode {
+  constructor(options = {}) {
     var _a;
 
-    var _this = _super.call(this) || this;
-
-    _this.noiseType = (_a = options.noiseType) !== null && _a !== void 0 ? _a : NodeType_1.NoiseNodeType.GAUSSIAN_NOISE;
-    _this.options = options;
-    return _this;
+    super();
+    this.noiseType = (_a = options.noiseType) !== null && _a !== void 0 ? _a : NodeType_1.NoiseNodeType.GAUSSIAN_NOISE;
+    this.options = options;
   }
   /**
    * Actives the node.
@@ -2219,13 +1817,11 @@ function (_super) {
    */
 
 
-  NoiseNode.prototype.activate = function () {
+  activate() {
     var _a, _b, _c, _d;
 
     this.old = this.state;
-    var incomingStates = Array.from(this.incoming).map(function (conn) {
-      return conn.from.activation * conn.weight * conn.gain;
-    });
+    const incomingStates = Array.from(this.incoming).map(conn => conn.from.activation * conn.weight * conn.gain);
 
     switch (this.noiseType) {
       case NodeType_1.NoiseNodeType.GAUSSIAN_NOISE:
@@ -2239,7 +1835,7 @@ function (_super) {
     this.activation = this.squash(this.state, false) * this.mask;
     this.derivativeState = this.squash(this.state, true);
     return this.activation;
-  };
+  }
   /**
    * Backpropagate the error (a.k.a. learn).
    *
@@ -2252,31 +1848,23 @@ function (_super) {
    */
 
 
-  NoiseNode.prototype.propagate = function (target, options) {
-    var _this = this;
-
+  propagate(target, options = {}) {
     var _a, _b, _c;
-
-    if (options === void 0) {
-      options = {};
-    }
 
     options.momentum = (_a = options.momentum) !== null && _a !== void 0 ? _a : 0;
     options.rate = (_b = options.rate) !== null && _b !== void 0 ? _b : 0.3;
     options.update = (_c = options.update) !== null && _c !== void 0 ? _c : true;
-    var connectionsStates = Array.from(this.outgoing).map(function (conn) {
-      return conn.to.errorResponsibility * conn.weight * conn.gain;
-    });
+    const connectionsStates = Array.from(this.outgoing).map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
     this.errorResponsibility = this.errorProjected = Utils_1.sum(connectionsStates) * this.derivativeState;
-    this.incoming.forEach(function (connection) {
+    this.incoming.forEach(connection => {
       var _a, _b; // calculate gradient
 
 
-      var gradient = _this.errorProjected * connection.eligibility;
-      connection.xTrace.forEach(function (value, key) {
+      let gradient = this.errorProjected * connection.eligibility;
+      connection.xTrace.forEach((value, key) => {
         gradient += key.errorResponsibility * value;
       });
-      connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * _this.mask;
+      connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * this.mask;
 
       if (options.update) {
         connection.deltaWeightsTotal += ((_b = options.momentum) !== null && _b !== void 0 ? _b : 0) * connection.deltaWeightsPrevious;
@@ -2285,88 +1873,49 @@ function (_super) {
         connection.deltaWeightsTotal = 0;
       }
     });
-  };
+  }
 
-  return NoiseNode;
-}(ConstantNode_1.ConstantNode);
+}
 
 exports.NoiseNode = NoiseNode;
 },{"../../enums/NodeType":"../src/enums/NodeType.js","../../utils/Utils":"../src/utils/Utils.js","./ConstantNode":"../src/architecture/Nodes/ConstantNode.js"}],"../src/architecture/Layers/NoiseLayers/NoiseLayer.js":[function(require,module,exports) {
 "use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.NoiseLayer = void 0;
 
-var src_1 = require("activations/build/src");
+const src_1 = require("activations/build/src");
 
-var ConnectionType_1 = require("../../../enums/ConnectionType");
+const ConnectionType_1 = require("../../../enums/ConnectionType");
 
-var NodeType_1 = require("../../../enums/NodeType");
+const NodeType_1 = require("../../../enums/NodeType");
 
-var NoiseNode_1 = require("../../Nodes/NoiseNode");
+const NoiseNode_1 = require("../../Nodes/NoiseNode");
 
-var Layer_1 = require("../Layer");
+const Layer_1 = require("../Layer");
 /**
  * Noise layer
  */
 
 
-var NoiseLayer =
-/** @class */
-function (_super) {
-  __extends(NoiseLayer, _super);
-
-  function NoiseLayer(outputSize, options) {
+class NoiseLayer extends Layer_1.Layer {
+  constructor(outputSize, options = {}) {
     var _a;
 
-    if (options === void 0) {
-      options = {};
-    }
+    super(outputSize);
+    const activation = (_a = options.activation) !== null && _a !== void 0 ? _a : src_1.Identitiy;
 
-    var _b;
-
-    var _this = _super.call(this, outputSize) || this;
-
-    var activation = (_b = options.activation) !== null && _b !== void 0 ? _b : src_1.Identitiy;
-
-    for (var i = 0; i < outputSize; i++) {
-      _this.inputNodes.add(new NoiseNode_1.NoiseNode({
+    for (let i = 0; i < outputSize; i++) {
+      this.inputNodes.add(new NoiseNode_1.NoiseNode({
         noiseType: NodeType_1.NoiseNodeType.GAUSSIAN_NOISE,
         gaussian: options
       }).setActivationType(activation));
     }
 
-    _this.outputNodes = _this.inputNodes;
-
-    (_a = _this.nodes).push.apply(_a, Array.from(_this.inputNodes));
-
-    return _this;
+    this.outputNodes = this.inputNodes;
+    this.nodes.push(...Array.from(this.inputNodes));
   }
   /**
    * Gets the default connection type for a incoming connection to this layer.
@@ -2375,9 +1924,9 @@ function (_super) {
    */
 
 
-  NoiseLayer.prototype.getDefaultIncomingConnectionType = function () {
+  getDefaultIncomingConnectionType() {
     return ConnectionType_1.ConnectionType.ONE_TO_ONE;
-  };
+  }
   /**
    * Checks if a given connection type is allowed on this layer.
    *
@@ -2387,94 +1936,51 @@ function (_super) {
    */
 
 
-  NoiseLayer.prototype.connectionTypeisAllowed = function (type) {
+  connectionTypeisAllowed(type) {
     return type === ConnectionType_1.ConnectionType.ONE_TO_ONE;
-  };
+  }
 
-  return NoiseLayer;
-}(Layer_1.Layer);
+}
 
 exports.NoiseLayer = NoiseLayer;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Nodes/NoiseNode":"../src/architecture/Nodes/NoiseNode.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/CoreLayers/InputLayer.js":[function(require,module,exports) {
 "use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.InputLayer = void 0;
 
-var ConnectionType_1 = require("../../../enums/ConnectionType");
+const ConnectionType_1 = require("../../../enums/ConnectionType");
 
-var NodeType_1 = require("../../../enums/NodeType");
+const NodeType_1 = require("../../../enums/NodeType");
 
-var Node_1 = require("../../Node");
+const Node_1 = require("../../Node");
 
-var Layer_1 = require("../Layer");
+const Layer_1 = require("../Layer");
 
-var NoiseLayer_1 = require("../NoiseLayers/NoiseLayer");
+const NoiseLayer_1 = require("../NoiseLayers/NoiseLayer");
 /**
  * Input layer
  */
 
 
-var InputLayer =
-/** @class */
-function (_super) {
-  __extends(InputLayer, _super);
+class InputLayer extends Layer_1.Layer {
+  constructor(outputSize, options = {}) {
+    super(outputSize);
 
-  function InputLayer(outputSize, options) {
-    var _a;
-
-    if (options === void 0) {
-      options = {};
-    }
-
-    var _this = _super.call(this, outputSize) || this;
-
-    for (var i = 0; i < outputSize; i++) {
-      var node = new Node_1.Node(NodeType_1.NodeType.INPUT);
-
-      _this.nodes.push(node);
+    for (let i = 0; i < outputSize; i++) {
+      const node = new Node_1.Node(NodeType_1.NodeType.INPUT);
+      this.nodes.push(node);
     }
 
     if (options.noise) {
-      var noiseLayer = new NoiseLayer_1.NoiseLayer(options.noise);
-      noiseLayer.outputNodes.forEach(function (node) {
-        return _this.outputNodes.add(node);
-      });
-
-      (_a = _this.connections).push.apply(_a, Layer_1.Layer.connect(_this.nodes, noiseLayer, noiseLayer.getDefaultIncomingConnectionType()));
+      const noiseLayer = new NoiseLayer_1.NoiseLayer(options.noise);
+      noiseLayer.outputNodes.forEach(node => this.outputNodes.add(node));
+      this.connections.push(...Layer_1.Layer.connect(this.nodes, noiseLayer, noiseLayer.getDefaultIncomingConnectionType()));
     } else {
-      _this.nodes.forEach(function (node) {
-        return _this.outputNodes.add(node);
-      });
+      this.nodes.forEach(node => this.outputNodes.add(node));
     }
-
-    return _this;
   }
   /**
    * Gets the default connection type for a incoming connection to this layer.
@@ -2483,9 +1989,9 @@ function (_super) {
    */
 
 
-  InputLayer.prototype.getDefaultIncomingConnectionType = function () {
+  getDefaultIncomingConnectionType() {
     return ConnectionType_1.ConnectionType.NO_CONNECTION;
-  };
+  }
   /**
    * Checks if a given connection type is allowed on this layer.
    *
@@ -2495,94 +2001,56 @@ function (_super) {
    */
 
 
-  InputLayer.prototype.connectionTypeisAllowed = function (type) {
+  connectionTypeisAllowed(type) {
     return type === ConnectionType_1.ConnectionType.NO_CONNECTION;
-  };
+  }
 
-  return InputLayer;
-}(Layer_1.Layer);
+}
 
 exports.InputLayer = InputLayer;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js","../NoiseLayers/NoiseLayer":"../src/architecture/Layers/NoiseLayers/NoiseLayer.js"}],"../src/architecture/Layers/CoreLayers/OutputLayer.js":[function(require,module,exports) {
 "use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.OutputLayer = void 0;
 
-var src_1 = require("activations/build/src");
+const src_1 = require("activations/build/src");
 
-var ConnectionType_1 = require("../../../enums/ConnectionType");
+const ConnectionType_1 = require("../../../enums/ConnectionType");
 
-var NodeType_1 = require("../../../enums/NodeType");
+const NodeType_1 = require("../../../enums/NodeType");
 
-var Node_1 = require("../../Node");
+const Node_1 = require("../../Node");
 
-var Layer_1 = require("../Layer");
+const Layer_1 = require("../Layer");
 /**
  * Output layer
  */
 
 
-var OutputLayer =
-/** @class */
-function (_super) {
-  __extends(OutputLayer, _super);
-
-  function OutputLayer(outputSize, options) {
+class OutputLayer extends Layer_1.Layer {
+  constructor(outputSize, options = {}) {
     var _a;
 
-    if (options === void 0) {
-      options = {};
+    super(outputSize);
+    const activation = (_a = options.activation) !== null && _a !== void 0 ? _a : src_1.Identitiy;
+
+    for (let i = 0; i < outputSize; i++) {
+      this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.OUTPUT).setActivationType(activation));
     }
 
-    var _b;
-
-    var _this = _super.call(this, outputSize) || this;
-
-    var activation = (_b = options.activation) !== null && _b !== void 0 ? _b : src_1.Identitiy;
-
-    for (var i = 0; i < outputSize; i++) {
-      _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.OUTPUT).setActivationType(activation));
-    }
-
-    (_a = _this.nodes).push.apply(_a, Array.from(_this.inputNodes));
-
-    return _this;
+    this.nodes.push(...Array.from(this.inputNodes));
   }
   /**
    * A outgoing connection is not allowed for an output layer!
    */
 
 
-  OutputLayer.prototype.connect = function () {
+  connect() {
     throw new ReferenceError("Could not connect an OutputLayer!");
-  };
+  }
   /**
    * Checks if a given connection type is allowed on this layer.
    *
@@ -2592,9 +2060,9 @@ function (_super) {
    */
 
 
-  OutputLayer.prototype.connectionTypeisAllowed = function (type) {
+  connectionTypeisAllowed(type) {
     return true;
-  };
+  }
   /**
    * Gets the default connection type for a incoming connection to this layer.
    *
@@ -2602,12 +2070,11 @@ function (_super) {
    */
 
 
-  OutputLayer.prototype.getDefaultIncomingConnectionType = function () {
+  getDefaultIncomingConnectionType() {
     return ConnectionType_1.ConnectionType.ALL_TO_ALL;
-  };
+  }
 
-  return OutputLayer;
-}(Layer_1.Layer);
+}
 
 exports.OutputLayer = OutputLayer;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/methods/Loss.js":[function(require,module,exports) {
@@ -2618,67 +2085,67 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.ALL_LOSSES = exports.HINGELoss = exports.MSLELoss = exports.WAPELoss = exports.MAPELoss = exports.MAELoss = exports.BinaryLoss = exports.MBELoss = exports.MSELoss = void 0;
 
-var Utils_1 = require("../utils/Utils");
+const Utils_1 = require("../utils/Utils");
 
 exports.MSELoss = function (targets, outputs) {
-  var error = 0;
-  outputs.forEach(function (value, index) {
+  let error = 0;
+  outputs.forEach((value, index) => {
     error += Math.pow(targets[index] - value, 2);
   });
   return error / outputs.length;
 };
 
 exports.MBELoss = function (targets, outputs) {
-  var error = 0;
-  outputs.forEach(function (value, index) {
+  let error = 0;
+  outputs.forEach((value, index) => {
     error += targets[index] - value;
   });
   return error / outputs.length;
 };
 
 exports.BinaryLoss = function (targets, outputs) {
-  var error = 0;
-  outputs.forEach(function (value, index) {
+  let error = 0;
+  outputs.forEach((value, index) => {
     error += Math.round(targets[index] * 2) !== Math.round(value * 2) ? 1 : 0;
   });
   return error / outputs.length;
 };
 
 exports.MAELoss = function (targets, outputs) {
-  var error = 0;
-  outputs.forEach(function (value, index) {
+  let error = 0;
+  outputs.forEach((value, index) => {
     error += Math.abs(targets[index] - value);
   });
   return error / outputs.length;
 };
 
 exports.MAPELoss = function (targets, outputs) {
-  var error = 0;
-  outputs.forEach(function (value, index) {
+  let error = 0;
+  outputs.forEach((value, index) => {
     error += Math.abs((value - targets[index]) / Math.max(targets[index], 1e-15));
   });
   return error / outputs.length;
 };
 
 exports.WAPELoss = function (targets, outputs) {
-  var error = 0;
-  outputs.forEach(function (value, index) {
+  let error = 0;
+  outputs.forEach((value, index) => {
     error += Math.abs(targets[index] - value);
   });
   return error / Utils_1.sum(targets);
 };
 
 exports.MSLELoss = function (targets, outputs) {
-  var error = 0;
-  outputs.forEach(function (value, index) {
+  let error = 0;
+  outputs.forEach((value, index) => {
     error += Math.log(Math.max(targets[index], 1e-15)) - Math.log(Math.max(value, 1e-15));
   });
   return error / outputs.length;
 };
 
 exports.HINGELoss = function (targets, outputs) {
-  var error = 0;
-  outputs.forEach(function (value, index) {
+  let error = 0;
+  outputs.forEach((value, index) => {
     error += Math.max(0, 1 - value * targets[index]);
   });
   return error / outputs.length;
@@ -2696,30 +2163,6 @@ exports.ALL_LOSSES = {
 };
 },{"../utils/Utils":"../src/utils/Utils.js"}],"../src/methods/Selection.js":[function(require,module,exports) {
 "use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
 
 var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
   if (k2 === undefined) k2 = k;
@@ -2758,9 +2201,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.TournamentSelection = exports.PowerSelection = exports.FitnessProportionateSelection = exports.Selection = void 0;
 
-var TimSort = __importStar(require("timsort"));
+const TimSort = __importStar(require("timsort"));
 
-var Utils_1 = require("../utils/Utils");
+const Utils_1 = require("../utils/Utils");
 /**
  * Genetic Algorithm Selection Methods (Genetic Operator)
  *
@@ -2768,13 +2211,7 @@ var Utils_1 = require("../utils/Utils");
  */
 
 
-var Selection =
-/** @class */
-function () {
-  function Selection() {}
-
-  return Selection;
-}();
+class Selection {}
 
 exports.Selection = Selection;
 /**
@@ -2783,41 +2220,30 @@ exports.Selection = Selection;
  * [Fitness Proportionate / Roulette Wheel Selection on Wikipedia](https://en.wikipedia.org/wiki/Fitness_proportionate_selection)
  */
 
-var FitnessProportionateSelection =
-/** @class */
-function (_super) {
-  __extends(FitnessProportionateSelection, _super);
-
-  function FitnessProportionateSelection() {
-    return _super !== null && _super.apply(this, arguments) || this;
-  }
+class FitnessProportionateSelection extends Selection {
   /**
    * Selects a genome from the population according to the Selection method.
    *
    * @param population the pool of networks
    * @returns the selected genome
    */
-
-
-  FitnessProportionateSelection.prototype.select = function (population) {
+  select(population) {
     var _a, _b, _c;
 
-    var totalFitness = 0;
-    var minimalFitness = 0;
+    let totalFitness = 0;
+    let minimalFitness = 0;
 
-    for (var _i = 0, population_1 = population; _i < population_1.length; _i++) {
-      var genome = population_1[_i];
+    for (const genome of population) {
       minimalFitness = Math.min((_a = genome.score) !== null && _a !== void 0 ? _a : minimalFitness, minimalFitness);
       totalFitness += (_b = genome.score) !== null && _b !== void 0 ? _b : 0;
     }
 
     minimalFitness = Math.abs(minimalFitness);
     totalFitness += minimalFitness * population.length;
-    var random = Utils_1.randDouble(0, totalFitness);
-    var value = 0;
+    const random = Utils_1.randDouble(0, totalFitness);
+    let value = 0;
 
-    for (var _d = 0, population_2 = population; _d < population_2.length; _d++) {
-      var genome = population_2[_d];
+    for (const genome of population) {
       value += ((_c = genome.score) !== null && _c !== void 0 ? _c : 0) + minimalFitness;
 
       if (random < value) {
@@ -2826,10 +2252,9 @@ function (_super) {
     }
 
     return Utils_1.pickRandom(population);
-  };
+  }
 
-  return FitnessProportionateSelection;
-}(Selection);
+}
 
 exports.FitnessProportionateSelection = FitnessProportionateSelection;
 /**
@@ -2838,25 +2263,14 @@ exports.FitnessProportionateSelection = FitnessProportionateSelection;
  * A random decimal value between 0 and 1 will be generated (e.g. 0.5) then this value will get an exponential value (power, default is 4). So 0.5**4 = 0.0625. This is converted into an index for the array of the current population, sorted from fittest to worst.
  */
 
-var PowerSelection =
-/** @class */
-function (_super) {
-  __extends(PowerSelection, _super);
+class PowerSelection extends Selection {
   /**
    * Constructs a power selection.
    * @param power Probability of picking better networks.
    */
-
-
-  function PowerSelection(power) {
-    if (power === void 0) {
-      power = 4;
-    }
-
-    var _this = _super.call(this) || this;
-
-    _this.power = power;
-    return _this;
+  constructor(power = 4) {
+    super();
+    this.power = power;
   }
   /**
    * Selects a genome from the population according to the Selection method.
@@ -2866,12 +2280,11 @@ function (_super) {
    */
 
 
-  PowerSelection.prototype.select = function (population) {
+  select(population) {
     return population[Math.floor(Math.pow(Math.random(), this.power) * population.length)];
-  };
+  }
 
-  return PowerSelection;
-}(Selection);
+}
 
 exports.PowerSelection = PowerSelection;
 /**
@@ -2880,31 +2293,16 @@ exports.PowerSelection = PowerSelection;
  * [Tournament Selection on Wikipedia](https://en.wikipedia.org/wiki/Tournament_selection)
  */
 
-var TournamentSelection =
-/** @class */
-function (_super) {
-  __extends(TournamentSelection, _super);
+class TournamentSelection extends Selection {
   /**
    * Constructs a tournament selection.
    * @param size the size of a tournament
    * @param probability Selects the best individual (when probability = 1).
    */
-
-
-  function TournamentSelection(size, probability) {
-    if (size === void 0) {
-      size = 5;
-    }
-
-    if (probability === void 0) {
-      probability = 0.5;
-    }
-
-    var _this = _super.call(this) || this;
-
-    _this.size = size;
-    _this.probability = probability;
-    return _this;
+  constructor(size = 5, probability = 0.5) {
+    super();
+    this.size = size;
+    this.probability = probability;
   }
   /**
    * Selects a genome from the population according to the Selection method.
@@ -2914,34 +2312,33 @@ function (_super) {
    */
 
 
-  TournamentSelection.prototype.select = function (population) {
+  select(population) {
     if (this.size > population.length) {
-      throw new Error("Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size");
+      throw new Error(`Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size`);
     } // Create a tournament
 
 
-    var individuals = [];
+    const individuals = [];
 
-    for (var i = 0; i < this.size; i++) {
+    for (let i = 0; i < this.size; i++) {
       individuals.push(Utils_1.pickRandom(population));
     } // Sort the tournament individuals by score
 
 
-    TimSort.sort(individuals, function (a, b) {
+    TimSort.sort(individuals, (a, b) => {
       return b.score === undefined || a.score === undefined ? 0 : b.score - a.score;
     }); // Select an individual
 
-    for (var i = 0; i < this.size; i++) {
+    for (let i = 0; i < this.size; i++) {
       if (Math.random() < this.probability || i === this.size - 1) {
         return individuals[i];
       }
     }
 
     return Utils_1.pickRandom(population);
-  };
+  }
 
-  return TournamentSelection;
-}(Selection);
+}
 
 exports.TournamentSelection = TournamentSelection;
 },{"../utils/Utils":"../src/utils/Utils.js"}],"../src/interfaces/EvolveOptions.js":[function(require,module,exports) {
@@ -2958,26 +2355,24 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.EvolveOptions = void 0;
 
-var src_1 = require("activations/build/src");
+const src_1 = require("activations/build/src");
 
-var os_1 = __importDefault(require("os"));
+const os_1 = __importDefault(require("os"));
 
-var Network_1 = require("../architecture/Network");
+const Network_1 = require("../architecture/Network");
 
-var Loss_1 = require("../methods/Loss");
+const Loss_1 = require("../methods/Loss");
 
-var Mutation_1 = require("../methods/Mutation");
+const Mutation_1 = require("../methods/Mutation");
 
-var Selection_1 = require("../methods/Selection");
+const Selection_1 = require("../methods/Selection");
 /**
  * Options used to evolve network
  */
 
 
-var EvolveOptions =
-/** @class */
-function () {
-  function EvolveOptions() {
+class EvolveOptions {
+  constructor() {
     /**
      * How big could the distance be between a network and the represent of a species?
      */
@@ -3008,519 +2403,488 @@ function () {
     this._iterations = 1000;
     this._error = 0.05;
   }
+  /**
+   * Getter
+   */
 
-  Object.defineProperty(EvolveOptions.prototype, "speciesDistanceThreshold", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._speciesDistanceThreshold;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._speciesDistanceThreshold = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "c1", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._c1;
-    },
+  get speciesDistanceThreshold() {
+    return this._speciesDistanceThreshold;
+  }
+  /**
+   * Setter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._c1 = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "c2", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._c2;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._c2 = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "c3", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._c3;
-    },
+  set speciesDistanceThreshold(value) {
+    this._speciesDistanceThreshold = value;
+  }
+  /**
+   * Getter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._c3 = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "survivors", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._survivors;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._survivors = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "threads", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._threads;
-    },
+  get c1() {
+    return this._c1;
+  }
+  /**
+   * Setter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._threads = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "input", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._input;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._input = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "output", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._output;
-    },
+  set c1(value) {
+    this._c1 = value;
+  }
+  /**
+   * Getter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._output = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "dataset", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._dataset;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._dataset = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "generation", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._generation;
-    },
+  get c2() {
+    return this._c2;
+  }
+  /**
+   * Setter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._generation = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "training", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._training;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._training = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "template", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._template;
-    },
+  set c2(value) {
+    this._c2 = value;
+  }
+  /**
+   * Getter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._template = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "mutations", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._mutations;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._mutations = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "activations", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._activations;
-    },
+  get c3() {
+    return this._c3;
+  }
+  /**
+   * Setter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._activations = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "selection", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._selection;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._selection = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "mutationRate", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._mutationRate;
-    },
+  set c3(value) {
+    this._c3 = value;
+  }
+  /**
+   * Getter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._mutationRate = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "mutationAmount", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._mutationAmount;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._mutationAmount = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "elitism", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._elitism;
-    },
+  get survivors() {
+    return this._survivors;
+  }
+  /**
+   * Setter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._elitism = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "populationSize", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._populationSize;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._populationSize = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "fitnessFunction", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._fitnessFunction;
-    },
+  set survivors(value) {
+    this._survivors = value;
+  }
+  /**
+   * Getter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._fitnessFunction = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "loss", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._loss;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._loss = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "maxNodes", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._maxNodes;
-    },
+  get threads() {
+    return this._threads;
+  }
+  /**
+   * Setter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._maxNodes = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "maxConnections", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._maxConnections;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._maxConnections = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "maxGates", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._maxGates;
-    },
+  set threads(value) {
+    this._threads = value;
+  }
+  /**
+   * Getter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._maxGates = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "equal", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._equal;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._equal = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "log", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._log;
-    },
+  get input() {
+    return this._input;
+  }
+  /**
+   * Setter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._log = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "schedule", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._schedule;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._schedule = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "clear", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._clear;
-    },
+  set input(value) {
+    this._input = value;
+  }
+  /**
+   * Getter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._clear = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "iterations", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._iterations;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._iterations = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(EvolveOptions.prototype, "error", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._error;
-    },
+  get output() {
+    return this._output;
+  }
+  /**
+   * Setter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._error = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  return EvolveOptions;
-}();
+
+  set output(value) {
+    this._output = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get dataset() {
+    return this._dataset;
+  }
+  /**
+   * Setter
+   */
+
+
+  set dataset(value) {
+    this._dataset = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get generation() {
+    return this._generation;
+  }
+  /**
+   * Setter
+   */
+
+
+  set generation(value) {
+    this._generation = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get training() {
+    return this._training;
+  }
+  /**
+   * Setter
+   */
+
+
+  set training(value) {
+    this._training = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get template() {
+    return this._template;
+  }
+  /**
+   * Setter
+   */
+
+
+  set template(value) {
+    this._template = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get mutations() {
+    return this._mutations;
+  }
+  /**
+   * Setter
+   */
+
+
+  set mutations(value) {
+    this._mutations = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get activations() {
+    return this._activations;
+  }
+  /**
+   * Setter
+   */
+
+
+  set activations(value) {
+    this._activations = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get selection() {
+    return this._selection;
+  }
+  /**
+   * Setter
+   */
+
+
+  set selection(value) {
+    this._selection = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get mutationRate() {
+    return this._mutationRate;
+  }
+  /**
+   * Setter
+   */
+
+
+  set mutationRate(value) {
+    this._mutationRate = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get mutationAmount() {
+    return this._mutationAmount;
+  }
+  /**
+   * Setter
+   */
+
+
+  set mutationAmount(value) {
+    this._mutationAmount = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get elitism() {
+    return this._elitism;
+  }
+  /**
+   * Setter
+   */
+
+
+  set elitism(value) {
+    this._elitism = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get populationSize() {
+    return this._populationSize;
+  }
+  /**
+   * Setter
+   */
+
+
+  set populationSize(value) {
+    this._populationSize = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get fitnessFunction() {
+    return this._fitnessFunction;
+  }
+  /**
+   * Setter
+   */
+
+
+  set fitnessFunction(value) {
+    this._fitnessFunction = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get loss() {
+    return this._loss;
+  }
+  /**
+   * Setter
+   */
+
+
+  set loss(value) {
+    this._loss = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get maxNodes() {
+    return this._maxNodes;
+  }
+  /**
+   * Setter
+   */
+
+
+  set maxNodes(value) {
+    this._maxNodes = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get maxConnections() {
+    return this._maxConnections;
+  }
+  /**
+   * Setter
+   */
+
+
+  set maxConnections(value) {
+    this._maxConnections = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get maxGates() {
+    return this._maxGates;
+  }
+  /**
+   * Setter
+   */
+
+
+  set maxGates(value) {
+    this._maxGates = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get equal() {
+    return this._equal;
+  }
+  /**
+   * Setter
+   */
+
+
+  set equal(value) {
+    this._equal = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get log() {
+    return this._log;
+  }
+  /**
+   * Setter
+   */
+
+
+  set log(value) {
+    this._log = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get schedule() {
+    return this._schedule;
+  }
+  /**
+   * Setter
+   */
+
+
+  set schedule(value) {
+    this._schedule = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get clear() {
+    return this._clear;
+  }
+  /**
+   * Setter
+   */
+
+
+  set clear(value) {
+    this._clear = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get iterations() {
+    return this._iterations;
+  }
+  /**
+   * Setter
+   */
+
+
+  set iterations(value) {
+    this._iterations = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get error() {
+    return this._error;
+  }
+  /**
+   * Setter
+   */
+
+
+  set error(value) {
+    this._error = value;
+  }
+
+}
 
 exports.EvolveOptions = EvolveOptions;
 },{"../architecture/Network":"../src/architecture/Network.js","../methods/Loss":"../src/methods/Loss.js","../methods/Mutation":"../src/methods/Mutation.js","../methods/Selection":"../src/methods/Selection.js"}],"../../node_modules/timsort/build/timsort.js":[function(require,module,exports) {
@@ -4384,20 +3748,18 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Species = void 0;
 
-var TimSort = __importStar(require("timsort"));
+const TimSort = __importStar(require("timsort"));
 
-var Utils_1 = require("../utils/Utils");
+const Utils_1 = require("../utils/Utils");
 
-var Network_1 = require("./Network");
+const Network_1 = require("./Network");
 /**
  * A class holding a species
  */
 
 
-var Species =
-/** @class */
-function () {
-  function Species(representative) {
+class Species {
+  constructor(representative) {
     this.representative = representative;
     this.representative.species = this;
     this.members = new Set();
@@ -4414,111 +3776,122 @@ function () {
    */
 
 
-  Species.prototype.put = function (network, c1, c2, c3, distanceThreshold) {
+  put(network, c1, c2, c3, distanceThreshold) {
     if (network.distance(this.representative, c1, c2, c3) < distanceThreshold) {
       this.forcePut(network);
       return true;
     } else {
       return false;
     }
-  };
+  }
   /**
    * Puts a network to the species without checking the distance
    * @param network
    */
 
 
-  Species.prototype.forcePut = function (network) {
+  forcePut(network) {
     if (network === undefined) {
       return;
     }
 
     this.members.add(network);
     network.species = this;
-  };
+  }
   /**
    * Calculate the score of this species
    */
 
 
-  Species.prototype.evaluateScore = function () {
-    var sum = 0;
-    this.members.forEach(function (network) {
+  evaluateScore() {
+    let sum = 0;
+    this.members.forEach(network => {
       var _a;
 
       return sum += (_a = network.score) !== null && _a !== void 0 ? _a : 0;
     });
     this.score = sum / this.members.size;
-  };
+  }
   /**
    * Reset this object
    */
 
 
-  Species.prototype.reset = function () {
+  reset() {
     this.representative = Utils_1.pickRandom(this.members);
-    this.members.forEach(function (genome) {
-      return genome.species = null;
-    });
+    this.members.forEach(genome => genome.species = null);
     this.members.clear();
     this.members.add(this.representative);
     this.representative.species = this;
     this.score = 0;
-  };
+  }
   /**
    * Kill a specific percentage of networks
    * @param percentage
    */
 
 
-  Species.prototype.kill = function (percentage) {
-    var arr = Array.from(this.members);
-    TimSort.sort(arr, function (a, b) {
+  kill(percentage) {
+    const arr = Array.from(this.members);
+    TimSort.sort(arr, (a, b) => {
       return a.score === undefined || b.score === undefined ? 0 : a.score - b.score;
     });
-    var amount = Math.floor(percentage * this.members.size);
+    const amount = Math.floor(percentage * this.members.size);
 
-    for (var i = 0; i < amount; i++) {
+    for (let i = 0; i < amount; i++) {
       this.members.delete(arr[i]);
       arr[i].species = null;
     }
-  };
+  }
   /**
    * Create offspring
    */
 
 
-  Species.prototype.breed = function () {
+  breed() {
     return Network_1.Network.crossOver(Utils_1.pickRandom(this.members), Utils_1.pickRandom(this.members));
-  };
+  }
   /**
    * The size of this species
    */
 
 
-  Species.prototype.size = function () {
+  size() {
     return this.members.size;
-  };
+  }
   /**
    * Returns the best genome from this species
    */
 
 
-  Species.prototype.getBest = function () {
-    var networks = Array.from(this.members);
-    return networks[Utils_1.maxValueIndex(networks.map(function (genome) {
+  getBest() {
+    const networks = Array.from(this.members);
+    return networks[Utils_1.maxValueIndex(networks.map(genome => {
       var _a;
 
       return (_a = genome.score) !== null && _a !== void 0 ? _a : -Infinity;
     }))];
-  };
+  }
 
-  return Species;
-}();
+}
 
 exports.Species = Species;
 },{"../utils/Utils":"../src/utils/Utils.js","./Network":"../src/architecture/Network.js"}],"../src/NEAT.js":[function(require,module,exports) {
 "use strict";
+
+function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+
+function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+
+function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+
+function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
   if (k2 === undefined) k2 = k;
@@ -4586,131 +3959,6 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
   });
 };
 
-var __generator = this && this.__generator || function (thisArg, body) {
-  var _ = {
-    label: 0,
-    sent: function sent() {
-      if (t[0] & 1) throw t[1];
-      return t[1];
-    },
-    trys: [],
-    ops: []
-  },
-      f,
-      y,
-      t,
-      g;
-  return g = {
-    next: verb(0),
-    "throw": verb(1),
-    "return": verb(2)
-  }, typeof Symbol === "function" && (g[Symbol.iterator] = function () {
-    return this;
-  }), g;
-
-  function verb(n) {
-    return function (v) {
-      return step([n, v]);
-    };
-  }
-
-  function step(op) {
-    if (f) throw new TypeError("Generator is already executing.");
-
-    while (_) {
-      try {
-        if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-        if (y = 0, t) op = [op[0] & 2, t.value];
-
-        switch (op[0]) {
-          case 0:
-          case 1:
-            t = op;
-            break;
-
-          case 4:
-            _.label++;
-            return {
-              value: op[1],
-              done: false
-            };
-
-          case 5:
-            _.label++;
-            y = op[1];
-            op = [0];
-            continue;
-
-          case 7:
-            op = _.ops.pop();
-
-            _.trys.pop();
-
-            continue;
-
-          default:
-            if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-              _ = 0;
-              continue;
-            }
-
-            if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-              _.label = op[1];
-              break;
-            }
-
-            if (op[0] === 6 && _.label < t[1]) {
-              _.label = t[1];
-              t = op;
-              break;
-            }
-
-            if (t && _.label < t[2]) {
-              _.label = t[2];
-
-              _.ops.push(op);
-
-              break;
-            }
-
-            if (t[2]) _.ops.pop();
-
-            _.trys.pop();
-
-            continue;
-        }
-
-        op = body.call(thisArg, _);
-      } catch (e) {
-        op = [6, e];
-        y = 0;
-      } finally {
-        f = t = 0;
-      }
-    }
-
-    if (op[0] & 5) throw op[1];
-    return {
-      value: op[0] ? op[1] : void 0,
-      done: true
-    };
-  }
-};
-
-var __spreadArrays = this && this.__spreadArrays || function () {
-  for (var s = 0, i = 0, il = arguments.length; i < il; i++) {
-    s += arguments[i].length;
-  }
-
-  for (var r = Array(s), k = 0, i = 0; i < il; i++) {
-    for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) {
-      r[k] = a[j];
-    }
-  }
-
-  return r;
-};
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -4731,7 +3979,7 @@ var Utils_1 = require("./utils/Utils");
 
 
 var NEAT =
-/** @class */
+/*#__PURE__*/
 function () {
   /**
    * Constructs a NEAT object.
@@ -4739,6 +3987,8 @@ function () {
    * @param options
    */
   function NEAT(options) {
+    _classCallCheck(this, NEAT);
+
     if (!options.fitnessFunction) {
       throw new ReferenceError("No fitness function given!");
     }
@@ -4751,348 +4001,363 @@ function () {
       this.population.push(this.options.template.copy());
     }
   }
+  /**
+   * Getter
+   */
 
-  Object.defineProperty(NEAT.prototype, "options", {
+
+  _createClass(NEAT, [{
+    key: "mutateRandom",
+
     /**
-     * Getter
+     * Mutate a network with a random mutation from the allowed array.
+     *
+     * @param network The network which will be mutated.
      */
+    value: function mutateRandom(network) {
+      var _this = this;
+
+      var allowed = this.options.mutations.filter(function (method) {
+        return method.constructor.name !== Mutation_1.AddNodeMutation.constructor.name || network.nodes.length < _this.options.maxNodes || method.constructor.name !== Mutation_1.AddConnectionMutation.constructor.name || network.connections.size < _this.options.maxConnections || method.constructor.name !== Mutation_1.AddGateMutation.constructor.name || network.gates.size < _this.options.maxGates;
+      });
+      network.mutate(Utils_1.pickRandom(allowed), {
+        allowedActivations: this.options.activations
+      });
+    }
+    /**
+     * Evaluates, selects, breeds and mutates population
+     *
+     * @returns {Network} Fittest network
+     */
+
+  }, {
+    key: "evolve",
+    value: function evolve() {
+      return __awaiter(this, void 0, void 0,
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee() {
+        var _this$population;
+
+        var elitists, fittest;
+        return regeneratorRuntime.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                this.genSpecies();
+
+                if (!(this.population[this.population.length - 1].score === undefined)) {
+                  _context.next = 5;
+                  break;
+                }
+
+                _context.next = 4;
+                return this.evaluate();
+
+              case 4:
+                this.sort();
+
+              case 5:
+                this.species.forEach(function (species) {
+                  return species.evaluateScore();
+                });
+                this.kill(1 - this.options.survivors);
+                this.removeExtinctSpecies();
+                this.reproduce();
+                elitists = this.population.splice(0, this.options.elitism);
+                this.mutate();
+
+                (_this$population = this.population).splice.apply(_this$population, [0, 0].concat(_toConsumableArray(elitists)));
+                /*if (this.options.training) {
+                    for (const genome of this.population) {
+                        genome.train(this.options.training);
+                    }
+                }*/
+                // evaluate the population
+
+
+                _context.next = 14;
+                return this.evaluate();
+
+              case 14:
+                // Sort in order of fitness (fittest first)
+                this.sort();
+                fittest = this.population[0].copy();
+                fittest.score = this.population[0].score; // Reset the scores
+
+                this.population.forEach(function (genome) {
+                  return genome.score = undefined;
+                });
+                this.options.generation++;
+                return _context.abrupt("return", fittest);
+
+              case 20:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }));
+    }
+    /**
+     * Mutates the given (or current) population
+     *
+     * @param {Mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
+     */
+
+  }, {
+    key: "mutate",
+    value: function mutate(method) {
+      var _this2 = this;
+
+      // Elitist genomes should not be included
+      this.population.filter(function () {
+        return Math.random() <= _this2.options.mutationRate;
+      }).forEach(function (genome) {
+        for (var i = 0; i < _this2.options.mutationAmount; i++) {
+          if (method) {
+            genome.mutate(method);
+          } else {
+            _this2.mutateRandom(genome);
+          }
+        }
+      });
+    }
+    /**
+     * Evaluates the current population, basically sets their `.score` property
+     *
+     * @return {Network} Fittest Network
+     */
+
+  }, {
+    key: "evaluate",
+    value: function evaluate() {
+      var _a, _b;
+
+      return __awaiter(this, void 0, void 0,
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee2() {
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                if (this.options.clear) {
+                  this.population.forEach(function (genome) {
+                    return genome.clear();
+                  });
+                }
+
+                _context2.next = 3;
+                return (_b = (_a = this.options).fitnessFunction) === null || _b === void 0 ? void 0 : _b.call(_a, this.population, this.options.dataset);
+
+              case 3:
+                // Sort the population in order of fitness
+                this.sort();
+                return _context2.abrupt("return", this.population[0]);
+
+              case 5:
+              case "end":
+                return _context2.stop();
+            }
+          }
+        }, _callee2, this);
+      }));
+    }
+    /**
+     * Sorts the population by score (descending)
+     * @todo implement a quicksort algorithm in utils
+     */
+
+  }, {
+    key: "sort",
+    value: function sort() {
+      TimSort.sort(this.population, function (a, b) {
+        return a.score === undefined || b.score === undefined ? 0 : b.score - a.score;
+      });
+    }
+    /**
+     * Returns the fittest genome of the current population
+     *
+     * @returns {Network} Current population's fittest genome
+     */
+
+  }, {
+    key: "getFittest",
+    value: function getFittest() {
+      return __awaiter(this, void 0, void 0,
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee3() {
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                if (!(this.population[this.population.length - 1].score === undefined)) {
+                  _context3.next = 3;
+                  break;
+                }
+
+                _context3.next = 3;
+                return this.evaluate();
+
+              case 3:
+                this.sort();
+                return _context3.abrupt("return", this.population[0]);
+
+              case 5:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+    }
+    /**
+     * Returns the average fitness of the current population
+     *
+     * @returns {number} Average fitness of the current population
+     */
+
+  }, {
+    key: "getAverage",
+    value: function getAverage() {
+      return __awaiter(this, void 0, void 0,
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee4() {
+        var score;
+        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+          while (1) {
+            switch (_context4.prev = _context4.next) {
+              case 0:
+                if (!(this.population[this.population.length - 1].score === undefined)) {
+                  _context4.next = 3;
+                  break;
+                }
+
+                _context4.next = 3;
+                return this.evaluate();
+
+              case 3:
+                score = 0;
+                this.population.map(function (genome) {
+                  return genome.score;
+                }).forEach(function (val) {
+                  return score += val !== null && val !== void 0 ? val : 0;
+                });
+                return _context4.abrupt("return", score / this.population.length);
+
+              case 6:
+              case "end":
+                return _context4.stop();
+            }
+          }
+        }, _callee4, this);
+      }));
+    }
+    /**
+     * Replace the whole population with the new genomes
+     * @param genomes the genomes which replace the population
+     */
+
+  }, {
+    key: "replacePopulation",
+    value: function replacePopulation(genomes) {
+      this.population = genomes;
+      this.options.populationSize = genomes.length;
+    }
+    /**
+     * Reproduce the population, by replacing the killed networks
+     * @private
+     */
+
+  }, {
+    key: "reproduce",
+    value: function reproduce() {
+      var speciesArr = Array.from(this.species);
+
+      for (var i = 0; i < this.population.length; i++) {
+        if (this.population[i].species === null) {
+          var selectedSpecies = this.options.selection.select(speciesArr);
+          this.population[i] = selectedSpecies.breed();
+          selectedSpecies.forcePut(this.population[i]);
+        }
+      }
+    }
+    /**
+     * Remove empty species
+     * @private
+     */
+
+  }, {
+    key: "removeExtinctSpecies",
+    value: function removeExtinctSpecies() {
+      for (var _i = 0, _Array$from = Array.from(this.species); _i < _Array$from.length; _i++) {
+        var species = _Array$from[_i];
+
+        if (species.size() <= 1) {
+          species.members.forEach(function (member) {
+            return member.species = null;
+          });
+          this.species.delete(species);
+        }
+      }
+    }
+    /**
+     * Kill bad networks
+     * @param killRate
+     * @private
+     */
+
+  }, {
+    key: "kill",
+    value: function kill(killRate) {
+      this.species.forEach(function (species) {
+        return species.kill(killRate);
+      });
+    }
+    /**
+     * Generate species
+     * @private
+     */
+
+  }, {
+    key: "genSpecies",
+    value: function genSpecies() {
+      var _this3 = this;
+
+      this.species.forEach(function (species) {
+        return species.reset();
+      });
+      this.population.filter(function (genome) {
+        return genome.species === null;
+      }).forEach(function (genome) {
+        var found = false;
+
+        for (var _i2 = 0, _Array$from2 = Array.from(_this3.species); _i2 < _Array$from2.length; _i2++) {
+          var species = _Array$from2[_i2];
+
+          if (species.put(genome, _this3.options.c1, _this3.options.c2, _this3.options.c3, _this3.options.speciesDistanceThreshold)) {
+            found = true;
+            break;
+          }
+        }
+
+        if (!found) {
+          _this3.species.add(new Species_1.Species(genome));
+        }
+      });
+    }
+  }, {
+    key: "options",
     get: function get() {
       return this._options;
-    },
-
+    }
     /**
      * Setter
      */
+    ,
     set: function set(value) {
       this._options = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  /**
-   * Mutate a network with a random mutation from the allowed array.
-   *
-   * @param network The network which will be mutated.
-   */
-
-  NEAT.prototype.mutateRandom = function (network) {
-    var _this = this;
-
-    var allowed = this.options.mutations.filter(function (method) {
-      return method.constructor.name !== Mutation_1.AddNodeMutation.constructor.name || network.nodes.length < _this.options.maxNodes || method.constructor.name !== Mutation_1.AddConnectionMutation.constructor.name || network.connections.size < _this.options.maxConnections || method.constructor.name !== Mutation_1.AddGateMutation.constructor.name || network.gates.size < _this.options.maxGates;
-    });
-    network.mutate(Utils_1.pickRandom(allowed), {
-      allowedActivations: this.options.activations
-    });
-  };
-  /**
-   * Evaluates, selects, breeds and mutates population
-   *
-   * @returns {Network} Fittest network
-   */
-
-
-  NEAT.prototype.evolve = function () {
-    return __awaiter(this, void 0, void 0, function () {
-      var elitists, fittest;
-
-      var _a;
-
-      return __generator(this, function (_b) {
-        switch (_b.label) {
-          case 0:
-            this.genSpecies();
-            if (!(this.population[this.population.length - 1].score === undefined)) return [3
-            /*break*/
-            , 2];
-            return [4
-            /*yield*/
-            , this.evaluate()];
-
-          case 1:
-            _b.sent();
-
-            this.sort();
-            _b.label = 2;
-
-          case 2:
-            this.species.forEach(function (species) {
-              return species.evaluateScore();
-            });
-            this.kill(1 - this.options.survivors);
-            this.removeExtinctSpecies();
-            this.reproduce();
-            elitists = this.population.splice(0, this.options.elitism);
-            this.mutate();
-
-            (_a = this.population).splice.apply(_a, __spreadArrays([0, 0], elitists));
-            /*if (this.options.training) {
-                for (const genome of this.population) {
-                    genome.train(this.options.training);
-                }
-            }*/
-            // evaluate the population
-
-
-            return [4
-            /*yield*/
-            , this.evaluate()];
-
-          case 3:
-            /*if (this.options.training) {
-                for (const genome of this.population) {
-                    genome.train(this.options.training);
-                }
-            }*/
-            // evaluate the population
-            _b.sent(); // Sort in order of fitness (fittest first)
-
-
-            this.sort();
-            fittest = this.population[0].copy();
-            fittest.score = this.population[0].score; // Reset the scores
-
-            this.population.forEach(function (genome) {
-              return genome.score = undefined;
-            });
-            this.options.generation++;
-            return [2
-            /*return*/
-            , fittest];
-        }
-      });
-    });
-  };
-  /**
-   * Mutates the given (or current) population
-   *
-   * @param {Mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
-   */
-
-
-  NEAT.prototype.mutate = function (method) {
-    var _this = this; // Elitist genomes should not be included
-
-
-    this.population.filter(function () {
-      return Math.random() <= _this.options.mutationRate;
-    }).forEach(function (genome) {
-      for (var i = 0; i < _this.options.mutationAmount; i++) {
-        if (method) {
-          genome.mutate(method);
-        } else {
-          _this.mutateRandom(genome);
-        }
-      }
-    });
-  };
-  /**
-   * Evaluates the current population, basically sets their `.score` property
-   *
-   * @return {Network} Fittest Network
-   */
-
-
-  NEAT.prototype.evaluate = function () {
-    var _a, _b;
-
-    return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_c) {
-        switch (_c.label) {
-          case 0:
-            if (this.options.clear) {
-              this.population.forEach(function (genome) {
-                return genome.clear();
-              });
-            }
-
-            return [4
-            /*yield*/
-            , (_b = (_a = this.options).fitnessFunction) === null || _b === void 0 ? void 0 : _b.call(_a, this.population, this.options.dataset)];
-
-          case 1:
-            _c.sent(); // Sort the population in order of fitness
-
-
-            this.sort();
-            return [2
-            /*return*/
-            , this.population[0]];
-        }
-      });
-    });
-  };
-  /**
-   * Sorts the population by score (descending)
-   * @todo implement a quicksort algorithm in utils
-   */
-
-
-  NEAT.prototype.sort = function () {
-    TimSort.sort(this.population, function (a, b) {
-      return a.score === undefined || b.score === undefined ? 0 : b.score - a.score;
-    });
-  };
-  /**
-   * Returns the fittest genome of the current population
-   *
-   * @returns {Network} Current population's fittest genome
-   */
-
-
-  NEAT.prototype.getFittest = function () {
-    return __awaiter(this, void 0, void 0, function () {
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            if (!(this.population[this.population.length - 1].score === undefined)) return [3
-            /*break*/
-            , 2];
-            return [4
-            /*yield*/
-            , this.evaluate()];
-
-          case 1:
-            _a.sent();
-
-            _a.label = 2;
-
-          case 2:
-            this.sort();
-            return [2
-            /*return*/
-            , this.population[0]];
-        }
-      });
-    });
-  };
-  /**
-   * Returns the average fitness of the current population
-   *
-   * @returns {number} Average fitness of the current population
-   */
-
-
-  NEAT.prototype.getAverage = function () {
-    return __awaiter(this, void 0, void 0, function () {
-      var score;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            if (!(this.population[this.population.length - 1].score === undefined)) return [3
-            /*break*/
-            , 2];
-            return [4
-            /*yield*/
-            , this.evaluate()];
-
-          case 1:
-            _a.sent();
-
-            _a.label = 2;
-
-          case 2:
-            score = 0;
-            this.population.map(function (genome) {
-              return genome.score;
-            }).forEach(function (val) {
-              return score += val !== null && val !== void 0 ? val : 0;
-            });
-            return [2
-            /*return*/
-            , score / this.population.length];
-        }
-      });
-    });
-  };
-  /**
-   * Replace the whole population with the new genomes
-   * @param genomes the genomes which replace the population
-   */
-
-
-  NEAT.prototype.replacePopulation = function (genomes) {
-    this.population = genomes;
-    this.options.populationSize = genomes.length;
-  };
-  /**
-   * Reproduce the population, by replacing the killed networks
-   * @private
-   */
-
-
-  NEAT.prototype.reproduce = function () {
-    var speciesArr = Array.from(this.species);
-
-    for (var i = 0; i < this.population.length; i++) {
-      if (this.population[i].species === null) {
-        var selectedSpecies = this.options.selection.select(speciesArr);
-        this.population[i] = selectedSpecies.breed();
-        selectedSpecies.forcePut(this.population[i]);
-      }
     }
-  };
-  /**
-   * Remove empty species
-   * @private
-   */
-
-
-  NEAT.prototype.removeExtinctSpecies = function () {
-    for (var _i = 0, _a = Array.from(this.species); _i < _a.length; _i++) {
-      var species = _a[_i];
-
-      if (species.size() <= 1) {
-        species.members.forEach(function (member) {
-          return member.species = null;
-        });
-        this.species.delete(species);
-      }
-    }
-  };
-  /**
-   * Kill bad networks
-   * @param killRate
-   * @private
-   */
-
-
-  NEAT.prototype.kill = function (killRate) {
-    this.species.forEach(function (species) {
-      return species.kill(killRate);
-    });
-  };
-  /**
-   * Generate species
-   * @private
-   */
-
-
-  NEAT.prototype.genSpecies = function () {
-    var _this = this;
-
-    this.species.forEach(function (species) {
-      return species.reset();
-    });
-    this.population.filter(function (genome) {
-      return genome.species === null;
-    }).forEach(function (genome) {
-      var found = false;
-
-      for (var _i = 0, _a = Array.from(_this.species); _i < _a.length; _i++) {
-        var species = _a[_i];
-
-        if (species.put(genome, _this.options.c1, _this.options.c2, _this.options.c3, _this.options.speciesDistanceThreshold)) {
-          found = true;
-          break;
-        }
-      }
-
-      if (!found) {
-        _this.species.add(new Species_1.Species(genome));
-      }
-    });
-  };
+  }]);
 
   return NEAT;
 }();
@@ -5165,141 +4430,32 @@ var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, gene
   });
 };
 
-var __generator = this && this.__generator || function (thisArg, body) {
-  var _ = {
-    label: 0,
-    sent: function () {
-      if (t[0] & 1) throw t[1];
-      return t[1];
-    },
-    trys: [],
-    ops: []
-  },
-      f,
-      y,
-      t,
-      g;
-  return g = {
-    next: verb(0),
-    "throw": verb(1),
-    "return": verb(2)
-  }, typeof Symbol === "function" && (g[Symbol.iterator] = function () {
-    return this;
-  }), g;
-
-  function verb(n) {
-    return function (v) {
-      return step([n, v]);
-    };
-  }
-
-  function step(op) {
-    if (f) throw new TypeError("Generator is already executing.");
-
-    while (_) try {
-      if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-      if (y = 0, t) op = [op[0] & 2, t.value];
-
-      switch (op[0]) {
-        case 0:
-        case 1:
-          t = op;
-          break;
-
-        case 4:
-          _.label++;
-          return {
-            value: op[1],
-            done: false
-          };
-
-        case 5:
-          _.label++;
-          y = op[1];
-          op = [0];
-          continue;
-
-        case 7:
-          op = _.ops.pop();
-
-          _.trys.pop();
-
-          continue;
-
-        default:
-          if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) {
-            _ = 0;
-            continue;
-          }
-
-          if (op[0] === 3 && (!t || op[1] > t[0] && op[1] < t[3])) {
-            _.label = op[1];
-            break;
-          }
-
-          if (op[0] === 6 && _.label < t[1]) {
-            _.label = t[1];
-            t = op;
-            break;
-          }
-
-          if (t && _.label < t[2]) {
-            _.label = t[2];
-
-            _.ops.push(op);
-
-            break;
-          }
-
-          if (t[2]) _.ops.pop();
-
-          _.trys.pop();
-
-          continue;
-      }
-
-      op = body.call(thisArg, _);
-    } catch (e) {
-      op = [6, e];
-      y = 0;
-    } finally {
-      f = t = 0;
-    }
-
-    if (op[0] & 5) throw op[1];
-    return {
-      value: op[0] ? op[1] : void 0,
-      done: true
-    };
-  }
-};
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Network = void 0;
 
-var threads_1 = require("threads");
+const threads_1 = require("threads");
 
-var dist_1 = require("threads/dist");
+const dist_1 = require("threads/dist");
 
 require("threads/register");
 
-var TimSort = __importStar(require("timsort"));
+const TimSort = __importStar(require("timsort"));
 
-var NodeType_1 = require("../enums/NodeType");
+const NodeType_1 = require("../enums/NodeType");
 
-var EvolveOptions_1 = require("../interfaces/EvolveOptions");
+const EvolveOptions_1 = require("../interfaces/EvolveOptions");
 
-var Loss_1 = require("../methods/Loss");
+const Loss_1 = require("../methods/Loss");
 
-var Mutation_1 = require("../methods/Mutation");
+const Mutation_1 = require("../methods/Mutation");
 
-var NEAT_1 = require("../NEAT");
+const NEAT_1 = require("../NEAT");
 
-var Utils_1 = require("../utils/Utils");
+const Utils_1 = require("../utils/Utils");
 
-var Node_1 = require("./Node");
+const Node_1 = require("./Node");
 /**
  * Create a neural network
  *
@@ -5309,10 +4465,8 @@ var Node_1 = require("./Node");
  */
 
 
-var Network =
-/** @class */
-function () {
-  function Network(inputSize, outputSize) {
+class Network {
+  constructor(inputSize, outputSize) {
     this.inputSize = inputSize;
     this.outputSize = outputSize;
     this.nodes = [];
@@ -5321,19 +4475,19 @@ function () {
     this.score = undefined;
     this.species = null; // Create input and output nodes
 
-    for (var i = 0; i < inputSize; i++) {
+    for (let i = 0; i < inputSize; i++) {
       this.nodes.push(new Node_1.Node(NodeType_1.NodeType.INPUT));
     }
 
-    for (var i = 0; i < outputSize; i++) {
+    for (let i = 0; i < outputSize; i++) {
       this.nodes.push(new Node_1.Node(NodeType_1.NodeType.OUTPUT));
     } // Connect input and output nodes
 
 
-    for (var i = 0; i < this.inputSize; i++) {
-      for (var j = this.inputSize; j < this.outputSize + this.inputSize; j++) {
+    for (let i = 0; i < this.inputSize; i++) {
+      for (let j = this.inputSize; j < this.outputSize + this.inputSize; j++) {
         // https://stats.stackexchange.com/a/248040/147931
-        var weight = (Math.random() - 0.5) * this.inputSize * Math.sqrt(2 / this.inputSize);
+        const weight = (Math.random() - 0.5) * this.inputSize * Math.sqrt(2 / this.inputSize);
         this.connect(this.nodes[i], this.nodes[j], weight);
       }
     }
@@ -5347,24 +4501,20 @@ function () {
    */
 
 
-  Network.fromJSON = function (json) {
-    var network = new Network(json.inputSize, json.outputSize);
+  static fromJSON(json) {
+    const network = new Network(json.inputSize, json.outputSize);
     network.nodes = [];
     network.connections.clear();
-    json.nodes.map(function (nodeJSON) {
-      return new Node_1.Node().fromJSON(nodeJSON);
-    }).forEach(function (node) {
-      return network.nodes[node.index] = node;
-    });
-    json.connections.forEach(function (jsonConnection) {
-      var connection = network.connect(network.nodes[jsonConnection.fromIndex], network.nodes[jsonConnection.toIndex], jsonConnection.weight);
+    json.nodes.map(nodeJSON => new Node_1.Node().fromJSON(nodeJSON)).forEach(node => network.nodes[node.index] = node);
+    json.connections.forEach(jsonConnection => {
+      const connection = network.connect(network.nodes[jsonConnection.fromIndex], network.nodes[jsonConnection.toIndex], jsonConnection.weight);
 
       if (jsonConnection.gateNodeIndex != null) {
         network.addGate(network.nodes[jsonConnection.gateNodeIndex], connection);
       }
     });
     return network;
-  };
+  }
   /**
    * Create an offspring from two parent networks.
    *
@@ -5379,7 +4529,7 @@ function () {
    */
 
 
-  Network.crossOver = function (network1, network2) {
+  static crossOver(network1, network2) {
     var _a, _b;
 
     if (network1.inputSize !== network2.inputSize || network1.outputSize !== network2.outputSize) {
@@ -5387,20 +4537,20 @@ function () {
     } // Initialise offspring
 
 
-    var offspring = new Network(network1.inputSize, network1.outputSize);
+    const offspring = new Network(network1.inputSize, network1.outputSize);
     offspring.connections.clear(); // clear
 
     offspring.nodes = []; // clear
     // Save scores and create a copy
 
-    var score1 = (_a = network1.score) !== null && _a !== void 0 ? _a : 0;
-    var score2 = (_b = network2.score) !== null && _b !== void 0 ? _b : 0; // Determine offspring node size
+    const score1 = (_a = network1.score) !== null && _a !== void 0 ? _a : 0;
+    const score2 = (_b = network2.score) !== null && _b !== void 0 ? _b : 0; // Determine offspring node size
 
-    var offspringSize;
+    let offspringSize;
 
     if (score1 === score2) {
-      var max = Math.max(network1.nodes.length, network2.nodes.length);
-      var min = Math.min(network1.nodes.length, network2.nodes.length);
+      const max = Math.max(network1.nodes.length, network2.nodes.length);
+      const min = Math.min(network1.nodes.length, network2.nodes.length);
       offspringSize = Utils_1.randInt(min, max + 1); // [min,max]
     } else if (score1 > score2) {
       offspringSize = network1.nodes.length;
@@ -5408,29 +4558,29 @@ function () {
       offspringSize = network2.nodes.length;
     }
 
-    var inputSize = network1.inputSize;
-    var outputSize = network1.outputSize; // set node indices
+    const inputSize = network1.inputSize;
+    const outputSize = network1.outputSize; // set node indices
 
-    for (var i = 0; i < network1.nodes.length; i++) {
+    for (let i = 0; i < network1.nodes.length; i++) {
       network1.nodes[i].index = i;
     } // set node indices
 
 
-    for (var i = 0; i < network2.nodes.length; i++) {
+    for (let i = 0; i < network2.nodes.length; i++) {
       network2.nodes[i].index = i;
     } // Assign nodes from parents to offspring
 
 
-    for (var i = 0; i < offspringSize; i++) {
-      var chosenNode = void 0;
-      var chosenNodeType = null; // decide what type of node is needed first check for input and output nodes and fill up with hidden nodes
+    for (let i = 0; i < offspringSize; i++) {
+      let chosenNode;
+      let chosenNodeType = null; // decide what type of node is needed first check for input and output nodes and fill up with hidden nodes
 
       if (i < inputSize) {
         // pick input node
         chosenNodeType = NodeType_1.NodeType.INPUT;
-        var sourceNetwork = Utils_1.randBoolean() ? network1 : network2;
-        var inputNumber = -1;
-        var j = -1;
+        const sourceNetwork = Utils_1.randBoolean() ? network1 : network2;
+        let inputNumber = -1;
+        let j = -1;
 
         while (inputNumber < i) {
           if (j++ >= sourceNetwork.nodes.length) {
@@ -5446,9 +4596,9 @@ function () {
       } else if (i < inputSize + outputSize) {
         // pick output node
         chosenNodeType = NodeType_1.NodeType.OUTPUT;
-        var sourceNetwork = Utils_1.randBoolean() ? network1 : network2;
-        var outputNumber = -1;
-        var j = -1;
+        const sourceNetwork = Utils_1.randBoolean() ? network1 : network2;
+        let outputNumber = -1;
+        let j = -1;
 
         while (outputNumber < i - inputSize) {
           j++;
@@ -5466,7 +4616,7 @@ function () {
       } else {
         // pick hidden node
         chosenNodeType = NodeType_1.NodeType.HIDDEN;
-        var sourceNetwork = void 0;
+        let sourceNetwork;
 
         if (i >= network1.nodes.length) {
           sourceNetwork = network2;
@@ -5479,29 +4629,29 @@ function () {
         chosenNode = Utils_1.pickRandom(sourceNetwork.nodes);
       }
 
-      var newNode = new Node_1.Node(chosenNodeType);
+      const newNode = new Node_1.Node(chosenNodeType);
       newNode.bias = chosenNode.bias;
       newNode.squash = chosenNode.squash;
       offspring.nodes.push(newNode);
     } // Create arrays of connection genes
 
 
-    var n1connections = [];
-    var n2connections = []; // Add the connections of network 1
+    const n1connections = [];
+    const n2connections = []; // Add the connections of network 1
 
-    network1.connections.forEach(function (connection) {
+    network1.connections.forEach(connection => {
       n1connections[Utils_1.pairing(connection.from.index, connection.to.index)] = connection.toJSON();
     }); // Add the connections of network 2
 
-    network2.connections.forEach(function (connection) {
+    network2.connections.forEach(connection => {
       n2connections[Utils_1.pairing(connection.from.index, connection.to.index)] = connection.toJSON();
     }); // Split common conn genes from disjoint or excess conn genes
 
-    var connections = [];
-    var keys1 = Object.keys(n1connections);
-    var keys2 = Object.keys(n2connections);
+    const connections = [];
+    const keys1 = Object.keys(n1connections);
+    const keys2 = Object.keys(n2connections);
 
-    for (var i = keys1.length - 1; i >= 0; i--) {
+    for (let i = keys1.length - 1; i >= 0; i--) {
       if (n2connections[parseInt(keys1[i])] !== undefined) {
         connections.push(Utils_1.randBoolean() ? n1connections[parseInt(keys1[i])] : n2connections[parseInt(keys1[i])]);
         n2connections[parseInt(keys1[i])] = undefined;
@@ -5512,26 +4662,18 @@ function () {
 
 
     if (score2 >= score1) {
-      keys2.map(function (key) {
-        return parseInt(key);
-      }) // convert to numbers
-      .map(function (key) {
-        return n2connections[key];
-      }) // get the connection
-      .filter(function (conn) {
-        return conn !== undefined;
-      }) // filter out undefined connections
-      .forEach(function (conn) {
-        return connections.push(conn);
-      }); // add the filtered connections
+      keys2.map(key => parseInt(key)) // convert to numbers
+      .map(key => n2connections[key]) // get the connection
+      .filter(conn => conn !== undefined) // filter out undefined connections
+      .forEach(conn => connections.push(conn)); // add the filtered connections
     } // Add common conn genes uniformly
 
 
-    connections.forEach(function (connectionJSON) {
+    connections.forEach(connectionJSON => {
       if (connectionJSON !== undefined && connectionJSON.toIndex < offspringSize && connectionJSON.fromIndex < offspringSize) {
-        var from = offspring.nodes[connectionJSON.fromIndex];
-        var to = offspring.nodes[connectionJSON.toIndex];
-        var connection = offspring.connect(from, to, connectionJSON.weight);
+        const from = offspring.nodes[connectionJSON.fromIndex];
+        const to = offspring.nodes[connectionJSON.toIndex];
+        const connection = offspring.connect(from, to, connectionJSON.weight);
 
         if (connectionJSON.gateNodeIndex !== null && connectionJSON.gateNodeIndex < offspringSize) {
           offspring.addGate(offspring.nodes[connectionJSON.gateNodeIndex], connection);
@@ -5539,16 +4681,16 @@ function () {
       }
     });
     return offspring;
-  };
+  }
   /**
    * Returns a copy of Network.
    * @returns {Network} Returns an identical network
    */
 
 
-  Network.prototype.copy = function () {
+  copy() {
     return Network.fromJSON(this.toJSON());
-  };
+  }
   /**
    * Connects a Node to another Node or Group in the network
    *
@@ -5560,17 +4702,13 @@ function () {
    */
 
 
-  Network.prototype.connect = function (from, to, weight) {
-    if (weight === void 0) {
-      weight = 0;
-    }
-
-    var connection = from.connect(to, weight); // run node-level connect
+  connect(from, to, weight = 0) {
+    const connection = from.connect(to, weight); // run node-level connect
 
     this.connections.add(connection); // add it to the array
 
     return connection;
-  };
+  }
   /**
    * Activates the network
    *
@@ -5582,12 +4720,8 @@ function () {
    */
 
 
-  Network.prototype.activate = function (input, options) {
+  activate(input, options = {}) {
     var _a, _b;
-
-    if (options === void 0) {
-      options = {};
-    }
 
     if (input.length !== this.inputSize) {
       throw new RangeError("Input size of dataset is different to network input size!");
@@ -5596,30 +4730,20 @@ function () {
 
     options.dropoutRate = (_a = options.dropoutRate) !== null && _a !== void 0 ? _a : 0;
     options.trace = (_b = options.trace) !== null && _b !== void 0 ? _b : true;
-    this.nodes.filter(function (node) {
-      return node.isInputNode();
-    }) // only input nodes
-    .forEach(function (node, index) {
-      return node.activate(input[index], options.trace);
-    }); // activate them with the input
+    this.nodes.filter(node => node.isInputNode()) // only input nodes
+    .forEach((node, index) => node.activate(input[index], options.trace)); // activate them with the input
 
-    this.nodes.filter(function (node) {
-      return node.isHiddenNode();
-    }) // only hidden nodes
-    .forEach(function (node) {
+    this.nodes.filter(node => node.isHiddenNode()) // only hidden nodes
+    .forEach(node => {
       if (options.dropoutRate) {
         node.mask = Math.random() >= options.dropoutRate ? 1 : 0;
       }
 
       node.activate(undefined, options.trace); // activate them
     });
-    return this.nodes.filter(function (node) {
-      return node.isOutputNode();
-    }) // only output nodes
-    .map(function (node) {
-      return node.activate(undefined, options.trace);
-    }); // map them to there activation value will give the network's output
-  };
+    return this.nodes.filter(node => node.isOutputNode()) // only output nodes
+    .map(node => node.activate(undefined, options.trace)); // map them to there activation value will give the network's output
+  }
   /**
    * Backpropagate the network
    *
@@ -5630,12 +4754,8 @@ function () {
    */
 
 
-  Network.prototype.propagate = function (target, options) {
-    var _a, _b, _c;
-
-    if (options === void 0) {
-      options = {};
-    } // get default value if value isn't given
+  propagate(target, options = {}) {
+    var _a, _b, _c; // get default value if value isn't given
 
 
     options.rate = (_a = options.rate) !== null && _a !== void 0 ? _a : 0.3;
@@ -5643,20 +4763,16 @@ function () {
     options.update = (_c = options.update) !== null && _c !== void 0 ? _c : false;
 
     if (target.length !== this.outputSize) {
-      throw new Error("Output target length should match network output length");
+      throw new Error(`Output target length should match network output length`);
     } // Backpropagation: output -> hidden -> input
     // propagate through the output nodes
 
 
-    this.nodes.filter(function (node) {
-      return node.isOutputNode();
-    }) // only output nodes
-    .forEach(function (node, index) {
-      return node.propagate(target[index], options);
-    }); // propagate
+    this.nodes.filter(node => node.isOutputNode()) // only output nodes
+    .forEach((node, index) => node.propagate(target[index], options)); // propagate
     // propagate backwards through the hidden nodes
 
-    for (var i = this.nodes.length - 1; i >= 0; i--) {
+    for (let i = this.nodes.length - 1; i >= 0; i--) {
       if (this.nodes[i].isHiddenNode()) {
         // only hidden nodes
         this.nodes[i].propagate(undefined, options);
@@ -5664,23 +4780,17 @@ function () {
     } // propagate through the input nodes
 
 
-    this.nodes.filter(function (node) {
-      return node.isInputNode();
-    }) // only input nodes
-    .forEach(function (node) {
-      return node.propagate(undefined, options);
-    }); // propagate
-  };
+    this.nodes.filter(node => node.isInputNode()) // only input nodes
+    .forEach(node => node.propagate(undefined, options)); // propagate
+  }
   /**
    * Clear the context of the network
    */
 
 
-  Network.prototype.clear = function () {
-    this.nodes.forEach(function (node) {
-      return node.clear();
-    });
-  };
+  clear() {
+    this.nodes.forEach(node => node.clear());
+  }
   /**
    * Removes the connection of the `from` node to the `to` node
    *
@@ -5689,24 +4799,20 @@ function () {
    */
 
 
-  Network.prototype.disconnect = function (from, to) {
-    var _this = this; // remove the connection network-level
-
-
-    this.connections.forEach(function (conn) {
+  disconnect(from, to) {
+    // remove the connection network-level
+    this.connections.forEach(conn => {
       if (conn.from === from && conn.to === to) {
         if (conn.gateNode !== null) {
-          _this.removeGate(conn); // remove possible gate
-
+          this.removeGate(conn); // remove possible gate
         }
 
-        _this.connections.delete(conn); // remove connection from array
-
+        this.connections.delete(conn); // remove connection from array
       }
     }); // disconnect node-level
 
     return from.disconnect(to);
-  };
+  }
   /**
    * Makes a network node gate a connection
    *
@@ -5715,16 +4821,16 @@ function () {
    */
 
 
-  Network.prototype.addGate = function (node, connection) {
+  addGate(node, connection) {
     if (this.nodes.indexOf(node) === -1) {
-      throw new ReferenceError("This node is not part of the network!");
+      throw new ReferenceError(`This node is not part of the network!`);
     } else if (connection.gateNode != null) {
       return;
     }
 
     node.addGate(connection);
     this.gates.add(connection);
-  };
+  }
   /**
    * Remove the gate of a connection.
    *
@@ -5732,9 +4838,9 @@ function () {
    */
 
 
-  Network.prototype.removeGate = function (connection) {
+  removeGate(connection) {
     if (!this.gates.has(connection)) {
-      throw new Error("This connection is not gated!");
+      throw new Error(`This connection is not gated!`);
     }
 
     this.gates.delete(connection);
@@ -5742,7 +4848,7 @@ function () {
     if (connection.gateNode != null) {
       connection.gateNode.removeGate(connection);
     }
-  };
+  }
   /**
    * Removes a node from a network, all its connections will be redirected. If it gates a connection, the gate will be removed.
    *
@@ -5751,64 +4857,56 @@ function () {
    */
 
 
-  Network.prototype.removeNode = function (node, keepGates) {
-    var _this = this;
-
-    if (keepGates === void 0) {
-      keepGates = new Mutation_1.SubNodeMutation().keepGates;
-    }
-
+  removeNode(node, keepGates = new Mutation_1.SubNodeMutation().keepGates) {
     if (!this.nodes.includes(node)) {
-      throw new ReferenceError("This node does not exist in the network!");
+      throw new ReferenceError(`This node does not exist in the network!`);
     }
 
     this.disconnect(node, node); // remove self connection
 
-    var inputs = []; // keep track
+    const inputs = []; // keep track
 
-    var gates = []; // keep track
+    const gates = []; // keep track
 
-    var outputs = []; // keep track
+    const outputs = []; // keep track
 
-    var connections = []; // keep track
+    const connections = []; // keep track
     // read all inputs from node and keep track of the nodes that gate the incoming connection
 
-    node.incoming.forEach(function (connection) {
+    node.incoming.forEach(connection => {
       if (keepGates && connection.gateNode !== null && connection.gateNode !== node) {
         gates.push(connection.gateNode);
       }
 
       inputs.push(connection.from);
-
-      _this.disconnect(connection.from, node);
+      this.disconnect(connection.from, node);
     }); // read all outputs from node and keep track of the nodes that gate the outgoing connection
 
-    node.outgoing.forEach(function (connection) {
+    node.outgoing.forEach(connection => {
       if (keepGates && connection.gateNode !== null && connection.gateNode !== node) {
         gates.push(connection.gateNode);
       }
 
       outputs.push(connection.to);
-
-      _this.disconnect(node, connection.to);
+      this.disconnect(node, connection.to);
     }); // add all connections the node has
 
-    inputs.forEach(function (input) {
-      outputs.forEach(function (output) {
+    inputs.forEach(input => {
+      outputs.forEach(output => {
         if (!input.isProjectingTo(output)) {
-          connections.push(_this.connect(input, output));
+          connections.push(this.connect(input, output));
         }
       });
     }); // as long as there are gates and connections
 
     while (gates.length > 0 && connections.length > 0) {
-      var gate = gates.shift(); // take a gate node and remove it from the array
+      const gate = gates.shift(); // take a gate node and remove it from the array
 
       if (gate === undefined) {
         continue;
       }
 
-      var connection = Utils_1.pickRandom(connections); // take a random connection
+      const connection = Utils_1.pickRandom(connections); // take a random connection
 
       this.addGate(gate, connection); // gate the connection with the gate node
 
@@ -5818,7 +4916,7 @@ function () {
 
     node.gated.forEach(this.removeGate);
     Utils_1.removeFromArray(this.nodes, node); // remove the node from the nodes array
-  };
+  }
   /**
    * Mutates the network with the given method.
    *
@@ -5830,9 +4928,9 @@ function () {
    */
 
 
-  Network.prototype.mutate = function (method, options) {
+  mutate(method, options) {
     method.mutate(this, options);
-  };
+  }
   /**
    * Selects a random mutation method and returns a mutated copy of the network. Warning! Mutates network directly.
    *
@@ -5844,22 +4942,14 @@ function () {
    */
 
 
-  Network.prototype.mutateRandom = function (allowedMethods, options) {
-    if (allowedMethods === void 0) {
-      allowedMethods = Mutation_1.ALL_MUTATIONS;
-    }
-
-    if (options === void 0) {
-      options = {};
-    }
-
+  mutateRandom(allowedMethods = Mutation_1.ALL_MUTATIONS, options = {}) {
     if (allowedMethods.length === 0) {
       return;
     } // mutate the network with a random allowed mutation
 
 
     this.mutate(Utils_1.pickRandom(allowedMethods), options);
-  };
+  }
   /**
    * Train the given data to this network
    *
@@ -5869,21 +4959,21 @@ function () {
    */
 
 
-  Network.prototype.train = function (options) {
+  train(options) {
     if (options.dataset[0].input.length !== this.inputSize || options.dataset[0].output.length !== this.outputSize) {
-      throw new Error("Dataset input/output size should be same as network input/output size!");
+      throw new Error(`Dataset input/output size should be same as network input/output size!`);
     }
 
-    var start = Date.now();
+    const start = Date.now();
 
     if (options.iterations <= 0 && options.error <= 0) {
-      throw new Error("At least one of the following options must be specified: error, iterations");
+      throw new Error(`At least one of the following options must be specified: error, iterations`);
     } // Split into trainingSet and testSet if cross validation is enabled
 
 
-    var trainingSetSize;
-    var trainingSet;
-    var testSet;
+    let trainingSetSize;
+    let trainingSet;
+    let testSet;
 
     if (options.crossValidateTestSize > 0) {
       trainingSetSize = Math.ceil((1 - options.crossValidateTestSize) * options.dataset.length);
@@ -5894,9 +4984,9 @@ function () {
       testSet = [];
     }
 
-    var currentTrainingRate;
-    var iterationCount = 0;
-    var error = 1; // train until the target error is reached or the target iterations are reached
+    let currentTrainingRate;
+    let iterationCount = 0;
+    let error = 1; // train until the target error is reached or the target iterations are reached
 
     while (error > options.error && (options.iterations <= 0 || iterationCount < options.iterations)) {
       iterationCount++; // update the rate according to the rate policy
@@ -5930,7 +5020,7 @@ function () {
       }
 
       if (options.log > 0 && iterationCount % options.log === 0) {
-        console.log("iteration number", iterationCount, "error", error, "training rate", currentTrainingRate);
+        console.log(`iteration number`, iterationCount, `error`, error, `training rate`, currentTrainingRate);
       }
 
       if (options.schedule && iterationCount % options.schedule.iterations === 0) {
@@ -5943,11 +5033,11 @@ function () {
     }
 
     return {
-      error: error,
+      error,
       iterations: iterationCount,
       time: Date.now() - start
     };
-  };
+  }
   /**
    * Tests a set and returns the error and elapsed time
    *
@@ -5958,25 +5048,20 @@ function () {
    */
 
 
-  Network.prototype.test = function (dataset, loss) {
-    if (loss === void 0) {
-      loss = Loss_1.MSELoss;
-    }
+  test(dataset, loss = Loss_1.MSELoss) {
+    let error = 0;
 
-    var error = 0;
-
-    for (var _i = 0, dataset_1 = dataset; _i < dataset_1.length; _i++) {
-      var entry = dataset_1[_i];
-      var input = entry.input;
-      var target = entry.output;
-      var output = this.activate(input, {
+    for (const entry of dataset) {
+      const input = entry.input;
+      const target = entry.output;
+      const output = this.activate(input, {
         trace: false
       });
       error += loss(target, output);
     }
 
     return error / dataset.length;
-  };
+  }
   /**
    * Convert the network to a json object
    *
@@ -5984,20 +5069,20 @@ function () {
    */
 
 
-  Network.prototype.toJSON = function () {
-    var json = {
+  toJSON() {
+    const json = {
       nodes: [],
       connections: [],
       inputSize: this.inputSize,
       outputSize: this.outputSize
     }; // set node indices
 
-    for (var i = 0; i < this.nodes.length; i++) {
+    for (let i = 0; i < this.nodes.length; i++) {
       this.nodes[i].index = i;
     } // convert all nodes to json and add the to the json object
 
 
-    this.nodes.forEach(function (node) {
+    this.nodes.forEach(node => {
       json.nodes.push(node.toJSON());
 
       if (node.selfConnection.weight !== 0) {
@@ -6006,11 +5091,11 @@ function () {
         json.connections.push(node.selfConnection.toJSON());
       }
     });
-    this.connections.forEach(function (conn) {
+    this.connections.forEach(conn => {
       json.connections.push(conn.toJSON());
     });
     return json;
-  };
+  }
   /**
    * Evolves the network to reach a lower error on a dataset using the [NEAT algorithm](http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf)
    *
@@ -6022,175 +5107,99 @@ function () {
    */
 
 
-  Network.prototype.evolve = function (options) {
-    if (options === void 0) {
-      options = new EvolveOptions_1.EvolveOptions();
-    }
-
-    return __awaiter(this, void 0, void 0, function () {
-      var start, workerPool, serializedDataSet_1, lossIndex_1, neat, error, bestFitness, bestGenome, fittest;
-      return __generator(this, function (_a) {
-        switch (_a.label) {
-          case 0:
-            if (!options.fitnessFunction && options.dataset && (options.dataset[0].input.length !== this.inputSize || options.dataset[0].output.length !== this.outputSize)) {
-              throw new Error("Dataset input/output size should be same as network input/output size!");
-            } // set options to default if necessary
+  evolve(options = new EvolveOptions_1.EvolveOptions()) {
+    return __awaiter(this, void 0, void 0, function* () {
+      if (!options.fitnessFunction && options.dataset && (options.dataset[0].input.length !== this.inputSize || options.dataset[0].output.length !== this.outputSize)) {
+        throw new Error(`Dataset input/output size should be same as network input/output size!`);
+      } // set options to default if necessary
 
 
-            options.input = this.inputSize;
-            options.output = this.outputSize;
-            start = Date.now();
+      options.input = this.inputSize;
+      options.output = this.outputSize;
+      const start = Date.now(); // @ts-ignore
 
-            if (!options.fitnessFunction) {
-              serializedDataSet_1 = JSON.stringify(options.dataset);
-              lossIndex_1 = Object.values(Loss_1.ALL_LOSSES).indexOf(options.loss); // init a pool of workers
+      let workerPool;
 
-              workerPool = dist_1.Pool(function () {
-                return threads_1.spawn(new threads_1.Worker("../multithreading/TestWorker"));
-              }, options.threads);
+      if (!options.fitnessFunction) {
+        // if no fitness function is given
+        // create default one
+        // Serialize the dataset using JSON
+        const serializedDataSet = JSON.stringify(options.dataset);
+        const lossIndex = Object.values(Loss_1.ALL_LOSSES).indexOf(options.loss); // init a pool of workers
 
-              options.fitnessFunction = function (population) {
-                return __awaiter(this, void 0, void 0, function () {
-                  var _loop_1, _i, population_1, genome;
+        workerPool = dist_1.Pool(() => threads_1.spawn(new threads_1.Worker("../multithreading/TestWorker")), options.threads);
 
-                  var _this = this;
-
-                  return __generator(this, function (_a) {
-                    switch (_a.label) {
-                      case 0:
-                        _loop_1 = function (genome) {
-                          // add a task to the workerPool's queue
-                          workerPool.queue(function (test) {
-                            return __awaiter(_this, void 0, void 0, function () {
-                              var _a;
-
-                              return __generator(this, function (_b) {
-                                switch (_b.label) {
-                                  case 0:
-                                    if (genome === undefined) {
-                                      throw new ReferenceError();
-                                    } // test the genome
+        options.fitnessFunction = function (population) {
+          return __awaiter(this, void 0, void 0, function* () {
+            for (const genome of population) {
+              // add a task to the workerPool's queue
+              workerPool.queue(test => __awaiter(this, void 0, void 0, function* () {
+                if (genome === undefined) {
+                  throw new ReferenceError();
+                } // test the genome
 
 
-                                    _a = genome;
-                                    return [4
-                                    /*yield*/
-                                    , test(serializedDataSet_1, JSON.stringify(genome.toJSON()), lossIndex_1)];
-
-                                  case 1:
-                                    // test the genome
-                                    _a.score = -_b.sent();
-                                    return [2
-                                    /*return*/
-                                    ];
-                                }
-                              });
-                            });
-                          });
-                        };
-
-                        for (_i = 0, population_1 = population; _i < population_1.length; _i++) {
-                          genome = population_1[_i];
-
-                          _loop_1(genome);
-                        }
-
-                        return [4
-                        /*yield*/
-                        , workerPool.completed()];
-
-                      case 1:
-                        _a.sent(); // wait until every task is done
-
-
-                        return [2
-                        /*return*/
-                        ];
-                    }
-                  });
-                });
-              };
+                genome.score = -(yield test(serializedDataSet, JSON.stringify(genome.toJSON()), lossIndex));
+              }));
             }
 
-            options.template = this; // set this network as template for first generation
+            yield workerPool.completed(); // wait until every task is done
+          });
+        };
+      }
 
-            neat = new NEAT_1.NEAT(options);
-            bestFitness = 0;
-            bestGenome = this;
-            _a.label = 1;
+      options.template = this; // set this network as template for first generation
 
-          case 1:
-            return [4
-            /*yield*/
-            , neat.evolve()];
+      const neat = new NEAT_1.NEAT(options);
+      let error;
+      let bestFitness = 0;
+      let bestGenome = this; // run until error goal is reached or iteration goal is reached
 
-          case 2:
-            fittest = _a.sent();
+      do {
+        const fittest = yield neat.evolve(); // run one generation
 
-            if (!fittest.score) {
-              throw new ReferenceError();
-            }
-
-            error = fittest.score;
-
-            if (neat.options.generation === 1 || fittest.score > bestFitness) {
-              bestFitness = fittest.score;
-              bestGenome = fittest;
-            }
-
-            if (options.log > 0 && neat.options.generation % options.log === 0) {
-              console.log("iteration", neat.options.generation, "error", -error);
-            }
-
-            if (options.schedule && neat.options.generation % options.schedule.iterations === 0) {
-              options.schedule.function(fittest.score, -error, neat.options.generation);
-            }
-
-            _a.label = 3;
-
-          case 3:
-            if (error < -options.error && (options.iterations === 0 || neat.options.generation < options.iterations)) return [3
-            /*break*/
-            , 1];
-            _a.label = 4;
-
-          case 4:
-            if (bestGenome !== undefined) {
-              // set this network to the fittest from NEAT
-              this.nodes = bestGenome.nodes;
-              this.connections = bestGenome.connections;
-              this.gates = bestGenome.gates;
-
-              if (options.clear) {
-                this.clear();
-              }
-            }
-
-            if (!workerPool) return [3
-            /*break*/
-            , 6];
-            return [4
-            /*yield*/
-            , workerPool.terminate()];
-
-          case 5:
-            _a.sent(); // stop all processes
-
-
-            _a.label = 6;
-
-          case 6:
-            return [2
-            /*return*/
-            , {
-              error: -error,
-              iterations: neat.options.generation,
-              time: Date.now() - start
-            }];
+        if (!fittest.score) {
+          throw new ReferenceError();
         }
-      });
+
+        error = fittest.score;
+
+        if (neat.options.generation === 1 || fittest.score > bestFitness) {
+          bestFitness = fittest.score;
+          bestGenome = fittest;
+        }
+
+        if (options.log > 0 && neat.options.generation % options.log === 0) {
+          console.log(`iteration`, neat.options.generation, `error`, -error);
+        }
+
+        if (options.schedule && neat.options.generation % options.schedule.iterations === 0) {
+          options.schedule.function(fittest.score, -error, neat.options.generation);
+        }
+      } while (error < -options.error && (options.iterations === 0 || neat.options.generation < options.iterations));
+
+      if (bestGenome !== undefined) {
+        // set this network to the fittest from NEAT
+        this.nodes = bestGenome.nodes;
+        this.connections = bestGenome.connections;
+        this.gates = bestGenome.gates;
+
+        if (options.clear) {
+          this.clear();
+        }
+      }
+
+      if (workerPool) {
+        yield workerPool.terminate(); // stop all processes
+      }
+
+      return {
+        error: -error,
+        iterations: neat.options.generation,
+        time: Date.now() - start
+      };
     });
-  };
+  }
   /**
    * Distance function
    * @param g2 other network
@@ -6200,55 +5209,51 @@ function () {
    */
 
 
-  Network.prototype.distance = function (g2, c1, c2, c3) {
-    var g1 = this; // set node indices
+  distance(g2, c1, c2, c3) {
+    let g1 = this; // set node indices
 
-    for (var i = 0; i < g1.nodes.length; i++) {
+    for (let i = 0; i < g1.nodes.length; i++) {
       g1.nodes[i].index = i;
     } // set node indices
 
 
-    for (var i = 0; i < g2.nodes.length; i++) {
+    for (let i = 0; i < g2.nodes.length; i++) {
       g2.nodes[i].index = i;
     }
 
-    var indexG1 = 0;
-    var indexG2 = 0;
-    var connections1 = Array.from(g1.connections).filter(function (conn) {
-      return conn !== undefined;
-    });
-    var connections2 = Array.from(g2.connections).filter(function (conn) {
-      return conn !== undefined;
-    });
-    TimSort.sort(connections1, function (a, b) {
+    let indexG1 = 0;
+    let indexG2 = 0;
+    const connections1 = Array.from(g1.connections).filter(conn => conn !== undefined);
+    const connections2 = Array.from(g2.connections).filter(conn => conn !== undefined);
+    TimSort.sort(connections1, (a, b) => {
       return a.getInnovationID() - b.getInnovationID();
     });
-    TimSort.sort(connections2, function (a, b) {
+    TimSort.sort(connections2, (a, b) => {
       return a.getInnovationID() - b.getInnovationID();
     });
-    var highestInnovationID1 = connections1[connections1.length - 1].getInnovationID();
-    var highestInnovationID2 = connections2[connections2.length - 1].getInnovationID();
+    const highestInnovationID1 = connections1[connections1.length - 1].getInnovationID();
+    const highestInnovationID2 = connections2[connections2.length - 1].getInnovationID();
 
     if (highestInnovationID1 < highestInnovationID2) {
-      var temp = g1;
+      const temp = g1;
       g1 = g2;
       g2 = temp;
     }
 
-    var disjointGenes = 0;
-    var totalWeightDiff = 0;
-    var similarGenes = 0;
+    let disjointGenes = 0;
+    let totalWeightDiff = 0;
+    let similarGenes = 0;
 
     while (indexG1 < connections1.length && indexG2 < connections2.length) {
-      var gene1 = connections1[indexG1];
-      var gene2 = connections2[indexG2];
+      const gene1 = connections1[indexG1];
+      const gene2 = connections2[indexG2];
 
       if (gene1 === undefined || gene2 === undefined) {
         throw Error("HERE");
       }
 
-      var in1 = gene1.getInnovationID();
-      var in2 = gene2.getInnovationID();
+      const in1 = gene1.getInnovationID();
+      const in2 = gene2.getInnovationID();
 
       if (in1 === in2) {
         // similarGenes
@@ -6268,15 +5273,15 @@ function () {
     }
 
     totalWeightDiff /= similarGenes;
-    var excessGenes = g1.connections.size - indexG1;
-    var N = Math.max(g1.connections.size, g2.connections.size);
+    const excessGenes = g1.connections.size - indexG1;
+    let N = Math.max(g1.connections.size, g2.connections.size);
 
     if (N < 20) {
       N = 1;
     }
 
     return c1 * excessGenes / N + c2 * disjointGenes / N + c3 * totalWeightDiff;
-  };
+  }
   /**
    * Performs one training epoch and returns the error - this is a private function used in `self.train`
    *
@@ -6286,29 +5291,28 @@ function () {
    */
 
 
-  Network.prototype.trainEpoch = function (options) {
-    var errorSum = 0;
+  trainEpoch(options) {
+    let errorSum = 0;
 
-    for (var i = 0; i < options.dataset.length; i++) {
-      var input = options.dataset[i].input;
-      var correctOutput = options.dataset[i].output;
-      var update = (i + 1) % options.batchSize === 0 || i + 1 === options.dataset.length;
-      var output = this.activate(input, {
+    for (let i = 0; i < options.dataset.length; i++) {
+      const input = options.dataset[i].input;
+      const correctOutput = options.dataset[i].output;
+      const update = (i + 1) % options.batchSize === 0 || i + 1 === options.dataset.length;
+      const output = this.activate(input, {
         dropoutRate: options.dropoutRate
       });
       this.propagate(correctOutput, {
         rate: options.trainingRate,
         momentum: options.momentum,
-        update: update
+        update
       });
       errorSum += options.loss(correctOutput, output);
     }
 
     return errorSum / options.dataset.length;
-  };
+  }
 
-  return Network;
-}();
+}
 
 exports.Network = Network;
 },{"../enums/NodeType":"../src/enums/NodeType.js","../interfaces/EvolveOptions":"../src/interfaces/EvolveOptions.js","../methods/Loss":"../src/methods/Loss.js","../methods/Mutation":"../src/methods/Mutation.js","../NEAT":"../src/NEAT.js","../utils/Utils":"../src/utils/Utils.js","./Node":"../src/architecture/Node.js"}],"../src/architecture/Architect.js":[function(require,module,exports) {
@@ -6319,22 +5323,20 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Architect = void 0;
 
-var InputLayer_1 = require("./Layers/CoreLayers/InputLayer");
+const InputLayer_1 = require("./Layers/CoreLayers/InputLayer");
 
-var OutputLayer_1 = require("./Layers/CoreLayers/OutputLayer");
+const OutputLayer_1 = require("./Layers/CoreLayers/OutputLayer");
 
-var Layer_1 = require("./Layers/Layer");
+const Layer_1 = require("./Layers/Layer");
 
-var Network_1 = require("./Network");
+const Network_1 = require("./Network");
 /**
  * Architect constructs multilayer networks with various types of layers.
  */
 
 
-var Architect =
-/** @class */
-function () {
-  function Architect() {
+class Architect {
+  constructor() {
     this.layers = [];
   }
   /**
@@ -6346,19 +5348,19 @@ function () {
    */
 
 
-  Architect.prototype.addLayer = function (layer, incomingConnectionType) {
-    var connectionType = incomingConnectionType !== null && incomingConnectionType !== void 0 ? incomingConnectionType : layer.getDefaultIncomingConnectionType();
+  addLayer(layer, incomingConnectionType) {
+    const connectionType = incomingConnectionType !== null && incomingConnectionType !== void 0 ? incomingConnectionType : layer.getDefaultIncomingConnectionType();
 
     if (!layer.connectionTypeisAllowed(connectionType)) {
       throw new ReferenceError("Connection type " + connectionType + " is not allowed at layer " + layer.constructor.name);
     }
 
     this.layers.push({
-      layer: layer,
+      layer,
       incomingConnectionType: connectionType
     });
     return this; // function as builder class
-  };
+  }
   /**
    * Build the network from the layers added to the architect.
    *
@@ -6366,9 +5368,7 @@ function () {
    */
 
 
-  Architect.prototype.buildModel = function () {
-    var _a, _b;
-
+  buildModel() {
     if (!(this.layers[0].layer instanceof InputLayer_1.InputLayer)) {
       throw new ReferenceError("First layer has to be a InputLayer! Currently is: " + this.layers[0].layer.constructor.name);
     }
@@ -6377,64 +5377,46 @@ function () {
       throw new ReferenceError("Last layer has to be a OutputLayer! Currently is: " + this.layers[this.layers.length - 1].layer.constructor.name);
     }
 
-    var inputSize = this.layers[0].layer.nodes.length;
-    var outputSize = this.layers[this.layers.length - 1].layer.nodes.length;
-    var network = new Network_1.Network(inputSize, outputSize);
+    const inputSize = this.layers[0].layer.nodes.length;
+    const outputSize = this.layers[this.layers.length - 1].layer.nodes.length;
+    const network = new Network_1.Network(inputSize, outputSize);
     network.nodes = [];
     network.connections.clear();
 
-    for (var i = 0; i < this.layers.length - 1; i++) {
-      Layer_1.Layer.connect(this.layers[i].layer, this.layers[i + 1].layer, this.layers[i + 1].incomingConnectionType).forEach(function (conn) {
-        return network.connections.add(conn);
-      });
-
-      (_a = network.nodes).push.apply(_a, this.layers[i].layer.nodes);
-
-      this.layers[i].layer.connections.forEach(function (conn) {
-        return network.connections.add(conn);
-      });
-      this.layers[i].layer.gates.forEach(function (conn) {
-        return network.gates.add(conn);
-      });
+    for (let i = 0; i < this.layers.length - 1; i++) {
+      Layer_1.Layer.connect(this.layers[i].layer, this.layers[i + 1].layer, this.layers[i + 1].incomingConnectionType).forEach(conn => network.connections.add(conn));
+      network.nodes.push(...this.layers[i].layer.nodes);
+      this.layers[i].layer.connections.forEach(conn => network.connections.add(conn));
+      this.layers[i].layer.gates.forEach(conn => network.gates.add(conn));
     }
 
-    (_b = network.nodes).push.apply(_b, this.layers[this.layers.length - 1].layer.nodes);
-
+    network.nodes.push(...this.layers[this.layers.length - 1].layer.nodes);
     return network;
-  };
+  }
 
-  return Architect;
-}();
+}
 
 exports.Architect = Architect;
 },{"./Layers/CoreLayers/InputLayer":"../src/architecture/Layers/CoreLayers/InputLayer.js","./Layers/CoreLayers/OutputLayer":"../src/architecture/Layers/CoreLayers/OutputLayer.js","./Layers/Layer":"../src/architecture/Layers/Layer.js","./Network":"../src/architecture/Network.js"}],"../src/architecture/Nodes/ActivationNode.js":[function(require,module,exports) {
 "use strict";
 
-var __extends = this && this.__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) {
-        if (b.hasOwnProperty(p)) d[p] = b[p];
-      }
-    };
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-    return _extendStatics(d, b);
-  };
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-  return function (d, b) {
-    _extendStatics(d, b);
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-    function __() {
-      this.constructor = d;
-    }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -6450,12 +5432,14 @@ var ConstantNode_1 = require("./ConstantNode");
 
 
 var ActivationNode =
-/** @class */
-function (_super) {
-  __extends(ActivationNode, _super);
+/*#__PURE__*/
+function (_ConstantNode_1$Const) {
+  _inherits(ActivationNode, _ConstantNode_1$Const);
 
   function ActivationNode() {
-    return _super.call(this) || this;
+    _classCallCheck(this, ActivationNode);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(ActivationNode).call(this));
   }
   /**
    * Actives the node.
@@ -6468,684 +5452,48 @@ function (_super) {
    */
 
 
-  ActivationNode.prototype.activate = function () {
-    this.old = this.state;
-    var incomingStates = Array.from(this.incoming).map(function (conn) {
-      return conn.from.activation * conn.weight * conn.gain;
-    });
-
-    if (incomingStates.length !== 1) {
-      throw new ReferenceError("Only 1 incoming connections is allowed!");
-    }
-
-    this.state = incomingStates[0];
-    this.activation = this.squash(this.state, false) * this.mask;
-    this.derivativeState = this.squash(this.state, true);
-    return this.activation;
-  };
-  /**
-   * Backpropagate the error (a.k.a. learn).
-   *
-   * After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating. [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
-   *
-   * If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
-   *
-   * @param target The target value (i.e. "the value the network SHOULD have given")
-   * @param options More options for propagation
-   */
-
-
-  ActivationNode.prototype.propagate = function (target, options) {
-    var _this = this;
-
-    var _a, _b, _c;
-
-    options.momentum = (_a = options.momentum) !== null && _a !== void 0 ? _a : 0;
-    options.rate = (_b = options.rate) !== null && _b !== void 0 ? _b : 0.3;
-    options.update = (_c = options.update) !== null && _c !== void 0 ? _c : true;
-    var connectionsStates = Array.from(this.outgoing).map(function (conn) {
-      return conn.to.errorResponsibility * conn.weight * conn.gain;
-    });
-    this.errorResponsibility = this.errorProjected = Utils_1.sum(connectionsStates) * this.derivativeState;
-    this.incoming.forEach(function (connection) {
-      var _a, _b; // calculate gradient
-
-
-      var gradient = _this.errorProjected * connection.eligibility;
-      connection.xTrace.forEach(function (value, key) {
-        gradient += key.errorResponsibility * value;
-      });
-      connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * _this.mask;
-
-      if (options.update) {
-        connection.deltaWeightsTotal += ((_b = options.momentum) !== null && _b !== void 0 ? _b : 0) * connection.deltaWeightsPrevious;
-        connection.weight += connection.deltaWeightsTotal;
-        connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
-        connection.deltaWeightsTotal = 0;
-      }
-    });
-  };
-
-  return ActivationNode;
-}(ConstantNode_1.ConstantNode);
-
-exports.ActivationNode = ActivationNode;
-},{"../../utils/Utils":"../src/utils/Utils.js","./ConstantNode":"../src/architecture/Nodes/ConstantNode.js"}],"../src/architecture/Layers/CoreLayers/ActivationLayer.js":[function(require,module,exports) {
-"use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.ActivationLayer = void 0;
-
-var src_1 = require("activations/build/src");
-
-var ConnectionType_1 = require("../../../enums/ConnectionType");
-
-var ActivationNode_1 = require("../../Nodes/ActivationNode");
-
-var Layer_1 = require("../Layer");
-/**
- * Activation layer
- */
-
-
-var ActivationLayer =
-/** @class */
-function (_super) {
-  __extends(ActivationLayer, _super);
-
-  function ActivationLayer(outputSize, options) {
-    var _a;
-
-    if (options === void 0) {
-      options = {};
-    }
-
-    var _b;
-
-    var _this = _super.call(this, outputSize) || this;
-
-    var activation = (_b = options.activation) !== null && _b !== void 0 ? _b : src_1.Logistic;
-
-    for (var i = 0; i < outputSize; i++) {
-      _this.inputNodes.add(new ActivationNode_1.ActivationNode().setActivationType(activation));
-    }
-
-    _this.outputNodes = _this.inputNodes;
-
-    (_a = _this.nodes).push.apply(_a, Array.from(_this.inputNodes));
-
-    return _this;
-  }
-  /**
-   * Checks if a given connection type is allowed on this layer.
-   *
-   * @param type the type to check
-   *
-   * @return Is this connection type allowed?
-   */
-
-
-  ActivationLayer.prototype.connectionTypeisAllowed = function (type) {
-    return type === ConnectionType_1.ConnectionType.ONE_TO_ONE;
-  };
-  /**
-   * Gets the default connection type for a incoming connection to this layer.
-   *
-   * @returns the default incoming connection
-   */
-
-
-  ActivationLayer.prototype.getDefaultIncomingConnectionType = function () {
-    return ConnectionType_1.ConnectionType.ONE_TO_ONE;
-  };
-
-  return ActivationLayer;
-}(Layer_1.Layer);
-
-exports.ActivationLayer = ActivationLayer;
-},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../Nodes/ActivationNode":"../src/architecture/Nodes/ActivationNode.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/CoreLayers/DenseLayer.js":[function(require,module,exports) {
-"use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.DenseLayer = void 0;
-
-var src_1 = require("activations/build/src");
-
-var ConnectionType_1 = require("../../../enums/ConnectionType");
-
-var NodeType_1 = require("../../../enums/NodeType");
-
-var Node_1 = require("../../Node");
-
-var Layer_1 = require("../Layer");
-/**
- * Dense layer
- */
-
-
-var DenseLayer =
-/** @class */
-function (_super) {
-  __extends(DenseLayer, _super);
-
-  function DenseLayer(outputSize, options) {
-    var _a;
-
-    if (options === void 0) {
-      options = {};
-    }
-
-    var _b;
-
-    var _this = _super.call(this, outputSize) || this;
-
-    var activation = (_b = options.activationType) !== null && _b !== void 0 ? _b : src_1.Logistic;
-
-    for (var i = 0; i < outputSize; i++) {
-      _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setActivationType(activation));
-    }
-
-    _this.outputNodes = _this.inputNodes;
-
-    (_a = _this.nodes).push.apply(_a, Array.from(_this.inputNodes));
-
-    return _this;
-  }
-  /**
-   * Checks if a given connection type is allowed on this layer.
-   *
-   * @param type the type to check
-   *
-   * @return Is this connection type allowed?
-   */
-
-
-  DenseLayer.prototype.connectionTypeisAllowed = function (type) {
-    return true;
-  };
-  /**
-   * Gets the default connection type for a incoming connection to this layer.
-   *
-   * @returns the default incoming connection
-   */
-
-
-  DenseLayer.prototype.getDefaultIncomingConnectionType = function () {
-    return ConnectionType_1.ConnectionType.ALL_TO_ALL;
-  };
-
-  return DenseLayer;
-}(Layer_1.Layer);
-
-exports.DenseLayer = DenseLayer;
-},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Nodes/DropoutNode.js":[function(require,module,exports) {
-"use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.DropoutNode = void 0;
-
-var Utils_1 = require("../../utils/Utils");
-
-var ConstantNode_1 = require("./ConstantNode");
-/**
- * Dropout node
- */
-
-
-var DropoutNode =
-/** @class */
-function (_super) {
-  __extends(DropoutNode, _super);
-
-  function DropoutNode(probability) {
-    var _this = _super.call(this) || this;
-
-    _this.probability = probability;
-    _this.droppedOut = false;
-    return _this;
-  }
-  /**
-   * Actives the node.
-   *
-   * When a neuron activates, it computes its state from all its input connections and 'squashes' it using its activation function, and returns the output (activation).
-   *
-   * You can also provide the activation (a float between 0 and 1) as a parameter, which is useful for neurons in the input layer.
-   *
-   * @returns A neuron's output value
-   */
-
-
-  DropoutNode.prototype.activate = function () {
-    var _this = this;
-
-    if (this.incoming.size !== 1) {
-      throw new RangeError("Dropout node should have exactly one incoming connection!");
-    }
-
-    var incomingConnection = Array.from(this.incoming)[0]; // https://stats.stackexchange.com/a/219240
-
-    if (Utils_1.randDouble(0, 1) < this.probability) {
-      // DROPOUT
-      this.droppedOut = true;
-      this.state = 0;
-    } else {
-      this.droppedOut = false;
-      this.state = incomingConnection.from.activation * incomingConnection.weight * incomingConnection.gain;
-      this.state *= 1 / (1 - this.probability);
-    }
-
-    this.activation = this.squash(this.state, false) * this.mask; // Adjust gain
-
-    this.gated.forEach(function (conn) {
-      return conn.gain = _this.activation;
-    });
-    return this.activation;
-  };
-  /**
-   * Backpropagate the error (a.k.a. learn).
-   *
-   * After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating. [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
-   *
-   * If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
-   *
-   * @param target The target value (i.e. "the value the network SHOULD have given")
-   * @param options More options for propagation
-   */
-
-
-  DropoutNode.prototype.propagate = function (target, options) {
-    var _a, _b, _c;
-
-    if (options === void 0) {
-      options = {};
-    }
-
-    options.momentum = (_a = options.momentum) !== null && _a !== void 0 ? _a : 0;
-    options.rate = (_b = options.rate) !== null && _b !== void 0 ? _b : 0.3;
-    options.update = (_c = options.update) !== null && _c !== void 0 ? _c : true;
-    var connectionsStates = Array.from(this.outgoing).map(function (conn) {
-      return conn.to.errorResponsibility * conn.weight * conn.gain;
-    });
-    this.errorResponsibility = this.errorProjected = Utils_1.sum(connectionsStates) / (1 - this.probability);
-
-    if (this.incoming.size !== 1) {
-      throw new RangeError("Dropout node should have exactly one incoming connection!");
-    }
-
-    var connection = Array.from(this.incoming)[0]; // calculate gradient
-
-    if (!this.droppedOut) {
-      var gradient_1 = this.errorProjected * connection.eligibility;
-      connection.xTrace.forEach(function (value, key) {
-        gradient_1 += key.errorResponsibility * value;
+  _createClass(ActivationNode, [{
+    key: "activate",
+    value: function activate() {
+      this.old = this.state;
+      var incomingStates = Array.from(this.incoming).map(function (conn) {
+        return conn.from.activation * conn.weight * conn.gain;
       });
 
-      if (options.update) {
-        connection.deltaWeightsTotal += options.rate * gradient_1 * this.mask + options.momentum * connection.deltaWeightsPrevious;
-        connection.weight += connection.deltaWeightsTotal;
-        connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
-        connection.deltaWeightsTotal = 0;
+      if (incomingStates.length !== 1) {
+        throw new ReferenceError("Only 1 incoming connections is allowed!");
       }
-    }
-  };
-  /**
-   * Create a constant node from json object.
-   *
-   * @param json the json object representing the node
-   *
-   * @returns the created node
-   */
 
-
-  DropoutNode.prototype.fromJSON = function (json) {
-    _super.prototype.fromJSON.call(this, json);
-
-    this.probability = json.probability;
-    return this;
-  };
-  /**
-   * Convert this node into a json object.
-   *
-   * @returns the json object representing this node
-   */
-
-
-  DropoutNode.prototype.toJSON = function () {
-    return Object.assign(_super.prototype.toJSON.call(this), {
-      probability: this.probability
-    });
-  };
-
-  return DropoutNode;
-}(ConstantNode_1.ConstantNode);
-
-exports.DropoutNode = DropoutNode;
-},{"../../utils/Utils":"../src/utils/Utils.js","./ConstantNode":"../src/architecture/Nodes/ConstantNode.js"}],"../src/architecture/Layers/CoreLayers/DropoutLayer.js":[function(require,module,exports) {
-"use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.DropoutLayer = void 0;
-
-var src_1 = require("activations/build/src");
-
-var ConnectionType_1 = require("../../../enums/ConnectionType");
-
-var DropoutNode_1 = require("../../Nodes/DropoutNode");
-
-var Layer_1 = require("../Layer");
-/**
- * Dropout layer
- */
-
-
-var DropoutLayer =
-/** @class */
-function (_super) {
-  __extends(DropoutLayer, _super);
-
-  function DropoutLayer(outputSize, options) {
-    var _a;
-
-    if (options === void 0) {
-      options = {};
-    }
-
-    var _b, _c;
-
-    var _this = _super.call(this, outputSize) || this;
-
-    var activation = (_b = options.activation) !== null && _b !== void 0 ? _b : src_1.Identitiy;
-    var probability = (_c = options.probability) !== null && _c !== void 0 ? _c : 0.1;
-
-    for (var i = 0; i < outputSize; i++) {
-      _this.inputNodes.add(new DropoutNode_1.DropoutNode(probability).setActivationType(activation));
-    }
-
-    _this.outputNodes = _this.inputNodes;
-
-    (_a = _this.nodes).push.apply(_a, Array.from(_this.inputNodes));
-
-    return _this;
-  }
-  /**
-   * Gets the default connection type for a incoming connection to this layer.
-   *
-   * @returns the default incoming connection
-   */
-
-
-  DropoutLayer.prototype.getDefaultIncomingConnectionType = function () {
-    return ConnectionType_1.ConnectionType.ONE_TO_ONE;
-  };
-  /**
-   * Checks if a given connection type is allowed on this layer.
-   *
-   * @param type the type to check
-   *
-   * @return Is this connection type allowed?
-   */
-
-
-  DropoutLayer.prototype.connectionTypeisAllowed = function (type) {
-    return type === ConnectionType_1.ConnectionType.ONE_TO_ONE;
-  };
-
-  return DropoutLayer;
-}(Layer_1.Layer);
-
-exports.DropoutLayer = DropoutLayer;
-},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../Nodes/DropoutNode":"../src/architecture/Nodes/DropoutNode.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Nodes/PoolNode.js":[function(require,module,exports) {
-"use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.PoolNode = void 0;
-
-var NodeType_1 = require("../../enums/NodeType");
-
-var Utils_1 = require("../../utils/Utils");
-
-var ConstantNode_1 = require("./ConstantNode");
-/**
- * Pool node
- */
-
-
-var PoolNode =
-/** @class */
-function (_super) {
-  __extends(PoolNode, _super);
-
-  function PoolNode(poolingType) {
-    if (poolingType === void 0) {
-      poolingType = NodeType_1.PoolNodeType.MAX_POOLING;
-    }
-
-    var _this = _super.call(this) || this;
-
-    _this.poolingType = poolingType;
-    _this.receivingNode = null;
-    return _this;
-  }
-  /**
-   * Create a constant node from json object.
-   *
-   * @param json the json object representing the node
-   *
-   * @returns the created node
-   */
-
-
-  PoolNode.prototype.fromJSON = function (json) {
-    _super.prototype.fromJSON.call(this, json);
-
-    this.poolingType = json.poolType;
-    return this;
-  };
-  /**
-   * Actives the node.
-   *
-   * When a neuron activates, it computes its state from all its input connections and 'squashes' it using its activation function, and returns the output (activation).
-   *
-   * You can also provide the activation (a float between 0 and 1) as a parameter, which is useful for neurons in the input layer.
-   *
-   * @returns A neuron's output value
-   */
-
-
-  PoolNode.prototype.activate = function () {
-    var _this = this;
-
-    var connections = Array.from(this.incoming);
-    var incomingStates = connections.map(function (conn) {
-      return conn.from.activation * conn.weight * conn.gain;
-    });
-
-    if (this.poolingType === NodeType_1.PoolNodeType.MAX_POOLING) {
-      var index = Utils_1.maxValueIndex(incomingStates);
-      this.receivingNode = connections[index].from;
-      this.state = incomingStates[index];
-    } else if (this.poolingType === NodeType_1.PoolNodeType.AVG_POOLING) {
-      this.state = Utils_1.avg(incomingStates);
-    } else if (this.poolingType === NodeType_1.PoolNodeType.MIN_POOLING) {
-      var index = Utils_1.minValueIndex(incomingStates);
-      this.receivingNode = connections[index].from;
-      this.state = incomingStates[index];
-    } else {
-      throw new ReferenceError("No valid pooling type! Type: " + this.poolingType);
-    }
-
-    this.activation = this.squash(this.state, false) * this.mask;
-
-    if (this.poolingType === NodeType_1.PoolNodeType.AVG_POOLING) {
+      this.state = incomingStates[0];
+      this.activation = this.squash(this.state, false) * this.mask;
       this.derivativeState = this.squash(this.state, true);
-    } // Adjust gain
-
-
-    this.gated.forEach(function (conn) {
-      return conn.gain = _this.activation;
-    });
-    return this.activation;
-  };
-  /**
-   * Backpropagate the error (a.k.a. learn).
-   *
-   * After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating. [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
-   *
-   * If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
-   *
-   * @param target The target value (i.e. "the value the network SHOULD have given")
-   * @param options More options for propagation
-   */
-
-
-  PoolNode.prototype.propagate = function (target, options) {
-    var _this = this;
-
-    var _a, _b, _c;
-
-    if (options === void 0) {
-      options = {};
+      return this.activation;
     }
+    /**
+     * Backpropagate the error (a.k.a. learn).
+     *
+     * After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating. [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
+     *
+     * If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
+     *
+     * @param target The target value (i.e. "the value the network SHOULD have given")
+     * @param options More options for propagation
+     */
 
-    options.momentum = (_a = options.momentum) !== null && _a !== void 0 ? _a : 0;
-    options.rate = (_b = options.rate) !== null && _b !== void 0 ? _b : 0.3;
-    options.update = (_c = options.update) !== null && _c !== void 0 ? _c : true;
-    var connectionsStates = Array.from(this.outgoing).map(function (conn) {
-      return conn.to.errorResponsibility * conn.weight * conn.gain;
-    });
-    this.errorResponsibility = this.errorProjected = Utils_1.sum(connectionsStates) * this.derivativeState;
+  }, {
+    key: "propagate",
+    value: function propagate(target, options) {
+      var _this = this;
 
-    if (this.poolingType === NodeType_1.PoolNodeType.AVG_POOLING) {
+      var _a, _b, _c;
+
+      options.momentum = (_a = options.momentum) !== null && _a !== void 0 ? _a : 0;
+      options.rate = (_b = options.rate) !== null && _b !== void 0 ? _b : 0.3;
+      options.update = (_c = options.update) !== null && _c !== void 0 ? _c : true;
+      var connectionsStates = Array.from(this.outgoing).map(function (conn) {
+        return conn.to.errorResponsibility * conn.weight * conn.gain;
+      });
+      this.errorResponsibility = this.errorProjected = Utils_1.sum(connectionsStates) * this.derivativeState;
       this.incoming.forEach(function (connection) {
         var _a, _b; // calculate gradient
 
@@ -7163,15 +5511,245 @@ function (_super) {
           connection.deltaWeightsTotal = 0;
         }
       });
-    } else {
-      // TODO: don't think that this is correct
-      // Passing only the connections that were used for getting the min or max
-      this.incoming.forEach(function (conn) {
-        conn.weight = _this.receivingNode === conn.from ? 1 : 0;
-        conn.gain = _this.receivingNode === conn.from ? 1 : 0;
-      });
     }
-  };
+  }]);
+
+  return ActivationNode;
+}(ConstantNode_1.ConstantNode);
+
+exports.ActivationNode = ActivationNode;
+},{"../../utils/Utils":"../src/utils/Utils.js","./ConstantNode":"../src/architecture/Nodes/ConstantNode.js"}],"../src/architecture/Layers/CoreLayers/ActivationLayer.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ActivationLayer = void 0;
+
+const src_1 = require("activations/build/src");
+
+const ConnectionType_1 = require("../../../enums/ConnectionType");
+
+const ActivationNode_1 = require("../../Nodes/ActivationNode");
+
+const Layer_1 = require("../Layer");
+/**
+ * Activation layer
+ */
+
+
+class ActivationLayer extends Layer_1.Layer {
+  constructor(outputSize, options = {}) {
+    var _a;
+
+    super(outputSize);
+    const activation = (_a = options.activation) !== null && _a !== void 0 ? _a : src_1.Logistic;
+
+    for (let i = 0; i < outputSize; i++) {
+      this.inputNodes.add(new ActivationNode_1.ActivationNode().setActivationType(activation));
+    }
+
+    this.outputNodes = this.inputNodes;
+    this.nodes.push(...Array.from(this.inputNodes));
+  }
+  /**
+   * Checks if a given connection type is allowed on this layer.
+   *
+   * @param type the type to check
+   *
+   * @return Is this connection type allowed?
+   */
+
+
+  connectionTypeisAllowed(type) {
+    return type === ConnectionType_1.ConnectionType.ONE_TO_ONE;
+  }
+  /**
+   * Gets the default connection type for a incoming connection to this layer.
+   *
+   * @returns the default incoming connection
+   */
+
+
+  getDefaultIncomingConnectionType() {
+    return ConnectionType_1.ConnectionType.ONE_TO_ONE;
+  }
+
+}
+
+exports.ActivationLayer = ActivationLayer;
+},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../Nodes/ActivationNode":"../src/architecture/Nodes/ActivationNode.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/CoreLayers/DenseLayer.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.DenseLayer = void 0;
+
+const src_1 = require("activations/build/src");
+
+const ConnectionType_1 = require("../../../enums/ConnectionType");
+
+const NodeType_1 = require("../../../enums/NodeType");
+
+const Node_1 = require("../../Node");
+
+const Layer_1 = require("../Layer");
+/**
+ * Dense layer
+ */
+
+
+class DenseLayer extends Layer_1.Layer {
+  constructor(outputSize, options = {}) {
+    var _a;
+
+    super(outputSize);
+    const activation = (_a = options.activationType) !== null && _a !== void 0 ? _a : src_1.Logistic;
+
+    for (let i = 0; i < outputSize; i++) {
+      this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setActivationType(activation));
+    }
+
+    this.outputNodes = this.inputNodes;
+    this.nodes.push(...Array.from(this.inputNodes));
+  }
+  /**
+   * Checks if a given connection type is allowed on this layer.
+   *
+   * @param type the type to check
+   *
+   * @return Is this connection type allowed?
+   */
+
+
+  connectionTypeisAllowed(type) {
+    return true;
+  }
+  /**
+   * Gets the default connection type for a incoming connection to this layer.
+   *
+   * @returns the default incoming connection
+   */
+
+
+  getDefaultIncomingConnectionType() {
+    return ConnectionType_1.ConnectionType.ALL_TO_ALL;
+  }
+
+}
+
+exports.DenseLayer = DenseLayer;
+},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Nodes/DropoutNode.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.DropoutNode = void 0;
+
+const Utils_1 = require("../../utils/Utils");
+
+const ConstantNode_1 = require("./ConstantNode");
+/**
+ * Dropout node
+ */
+
+
+class DropoutNode extends ConstantNode_1.ConstantNode {
+  constructor(probability) {
+    super();
+    this.probability = probability;
+    this.droppedOut = false;
+  }
+  /**
+   * Actives the node.
+   *
+   * When a neuron activates, it computes its state from all its input connections and 'squashes' it using its activation function, and returns the output (activation).
+   *
+   * You can also provide the activation (a float between 0 and 1) as a parameter, which is useful for neurons in the input layer.
+   *
+   * @returns A neuron's output value
+   */
+
+
+  activate() {
+    if (this.incoming.size !== 1) {
+      throw new RangeError("Dropout node should have exactly one incoming connection!");
+    }
+
+    const incomingConnection = Array.from(this.incoming)[0]; // https://stats.stackexchange.com/a/219240
+
+    if (Utils_1.randDouble(0, 1) < this.probability) {
+      // DROPOUT
+      this.droppedOut = true;
+      this.state = 0;
+    } else {
+      this.droppedOut = false;
+      this.state = incomingConnection.from.activation * incomingConnection.weight * incomingConnection.gain;
+      this.state *= 1 / (1 - this.probability);
+    }
+
+    this.activation = this.squash(this.state, false) * this.mask; // Adjust gain
+
+    this.gated.forEach(conn => conn.gain = this.activation);
+    return this.activation;
+  }
+  /**
+   * Backpropagate the error (a.k.a. learn).
+   *
+   * After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating. [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
+   *
+   * If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
+   *
+   * @param target The target value (i.e. "the value the network SHOULD have given")
+   * @param options More options for propagation
+   */
+
+
+  propagate(target, options = {}) {
+    var _a, _b, _c;
+
+    options.momentum = (_a = options.momentum) !== null && _a !== void 0 ? _a : 0;
+    options.rate = (_b = options.rate) !== null && _b !== void 0 ? _b : 0.3;
+    options.update = (_c = options.update) !== null && _c !== void 0 ? _c : true;
+    const connectionsStates = Array.from(this.outgoing).map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
+    this.errorResponsibility = this.errorProjected = Utils_1.sum(connectionsStates) / (1 - this.probability);
+
+    if (this.incoming.size !== 1) {
+      throw new RangeError("Dropout node should have exactly one incoming connection!");
+    }
+
+    const connection = Array.from(this.incoming)[0]; // calculate gradient
+
+    if (!this.droppedOut) {
+      let gradient = this.errorProjected * connection.eligibility;
+      connection.xTrace.forEach((value, key) => {
+        gradient += key.errorResponsibility * value;
+      });
+
+      if (options.update) {
+        connection.deltaWeightsTotal += options.rate * gradient * this.mask + options.momentum * connection.deltaWeightsPrevious;
+        connection.weight += connection.deltaWeightsTotal;
+        connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
+        connection.deltaWeightsTotal = 0;
+      }
+    }
+  }
+  /**
+   * Create a constant node from json object.
+   *
+   * @param json the json object representing the node
+   *
+   * @returns the created node
+   */
+
+
+  fromJSON(json) {
+    super.fromJSON(json);
+    this.probability = json.probability;
+    return this;
+  }
   /**
    * Convert this node into a json object.
    *
@@ -7179,63 +5757,236 @@ function (_super) {
    */
 
 
-  PoolNode.prototype.toJSON = function () {
-    return Object.assign(_super.prototype.toJSON.call(this), {
+  toJSON() {
+    return Object.assign(super.toJSON(), {
+      probability: this.probability
+    });
+  }
+
+}
+
+exports.DropoutNode = DropoutNode;
+},{"../../utils/Utils":"../src/utils/Utils.js","./ConstantNode":"../src/architecture/Nodes/ConstantNode.js"}],"../src/architecture/Layers/CoreLayers/DropoutLayer.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.DropoutLayer = void 0;
+
+const src_1 = require("activations/build/src");
+
+const ConnectionType_1 = require("../../../enums/ConnectionType");
+
+const DropoutNode_1 = require("../../Nodes/DropoutNode");
+
+const Layer_1 = require("../Layer");
+/**
+ * Dropout layer
+ */
+
+
+class DropoutLayer extends Layer_1.Layer {
+  constructor(outputSize, options = {}) {
+    var _a, _b;
+
+    super(outputSize);
+    const activation = (_a = options.activation) !== null && _a !== void 0 ? _a : src_1.Identitiy;
+    const probability = (_b = options.probability) !== null && _b !== void 0 ? _b : 0.1;
+
+    for (let i = 0; i < outputSize; i++) {
+      this.inputNodes.add(new DropoutNode_1.DropoutNode(probability).setActivationType(activation));
+    }
+
+    this.outputNodes = this.inputNodes;
+    this.nodes.push(...Array.from(this.inputNodes));
+  }
+  /**
+   * Gets the default connection type for a incoming connection to this layer.
+   *
+   * @returns the default incoming connection
+   */
+
+
+  getDefaultIncomingConnectionType() {
+    return ConnectionType_1.ConnectionType.ONE_TO_ONE;
+  }
+  /**
+   * Checks if a given connection type is allowed on this layer.
+   *
+   * @param type the type to check
+   *
+   * @return Is this connection type allowed?
+   */
+
+
+  connectionTypeisAllowed(type) {
+    return type === ConnectionType_1.ConnectionType.ONE_TO_ONE;
+  }
+
+}
+
+exports.DropoutLayer = DropoutLayer;
+},{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../Nodes/DropoutNode":"../src/architecture/Nodes/DropoutNode.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Nodes/PoolNode.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.PoolNode = void 0;
+
+const NodeType_1 = require("../../enums/NodeType");
+
+const Utils_1 = require("../../utils/Utils");
+
+const ConstantNode_1 = require("./ConstantNode");
+/**
+ * Pool node
+ */
+
+
+class PoolNode extends ConstantNode_1.ConstantNode {
+  constructor(poolingType = NodeType_1.PoolNodeType.MAX_POOLING) {
+    super();
+    this.poolingType = poolingType;
+    this.receivingNode = null;
+  }
+  /**
+   * Create a constant node from json object.
+   *
+   * @param json the json object representing the node
+   *
+   * @returns the created node
+   */
+
+
+  fromJSON(json) {
+    super.fromJSON(json);
+    this.poolingType = json.poolType;
+    return this;
+  }
+  /**
+   * Actives the node.
+   *
+   * When a neuron activates, it computes its state from all its input connections and 'squashes' it using its activation function, and returns the output (activation).
+   *
+   * You can also provide the activation (a float between 0 and 1) as a parameter, which is useful for neurons in the input layer.
+   *
+   * @returns A neuron's output value
+   */
+
+
+  activate() {
+    const connections = Array.from(this.incoming);
+    const incomingStates = connections.map(conn => conn.from.activation * conn.weight * conn.gain);
+
+    if (this.poolingType === NodeType_1.PoolNodeType.MAX_POOLING) {
+      const index = Utils_1.maxValueIndex(incomingStates);
+      this.receivingNode = connections[index].from;
+      this.state = incomingStates[index];
+    } else if (this.poolingType === NodeType_1.PoolNodeType.AVG_POOLING) {
+      this.state = Utils_1.avg(incomingStates);
+    } else if (this.poolingType === NodeType_1.PoolNodeType.MIN_POOLING) {
+      const index = Utils_1.minValueIndex(incomingStates);
+      this.receivingNode = connections[index].from;
+      this.state = incomingStates[index];
+    } else {
+      throw new ReferenceError("No valid pooling type! Type: " + this.poolingType);
+    }
+
+    this.activation = this.squash(this.state, false) * this.mask;
+
+    if (this.poolingType === NodeType_1.PoolNodeType.AVG_POOLING) {
+      this.derivativeState = this.squash(this.state, true);
+    } // Adjust gain
+
+
+    this.gated.forEach(conn => conn.gain = this.activation);
+    return this.activation;
+  }
+  /**
+   * Backpropagate the error (a.k.a. learn).
+   *
+   * After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating. [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
+   *
+   * If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
+   *
+   * @param target The target value (i.e. "the value the network SHOULD have given")
+   * @param options More options for propagation
+   */
+
+
+  propagate(target, options = {}) {
+    var _a, _b, _c;
+
+    options.momentum = (_a = options.momentum) !== null && _a !== void 0 ? _a : 0;
+    options.rate = (_b = options.rate) !== null && _b !== void 0 ? _b : 0.3;
+    options.update = (_c = options.update) !== null && _c !== void 0 ? _c : true;
+    const connectionsStates = Array.from(this.outgoing).map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
+    this.errorResponsibility = this.errorProjected = Utils_1.sum(connectionsStates) * this.derivativeState;
+
+    if (this.poolingType === NodeType_1.PoolNodeType.AVG_POOLING) {
+      this.incoming.forEach(connection => {
+        var _a, _b; // calculate gradient
+
+
+        let gradient = this.errorProjected * connection.eligibility;
+        connection.xTrace.forEach((value, key) => {
+          gradient += key.errorResponsibility * value;
+        });
+        connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * this.mask;
+
+        if (options.update) {
+          connection.deltaWeightsTotal += ((_b = options.momentum) !== null && _b !== void 0 ? _b : 0) * connection.deltaWeightsPrevious;
+          connection.weight += connection.deltaWeightsTotal;
+          connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
+          connection.deltaWeightsTotal = 0;
+        }
+      });
+    } else {
+      // TODO: don't think that this is correct
+      // Passing only the connections that were used for getting the min or max
+      this.incoming.forEach(conn => {
+        conn.weight = this.receivingNode === conn.from ? 1 : 0;
+        conn.gain = this.receivingNode === conn.from ? 1 : 0;
+      });
+    }
+  }
+  /**
+   * Convert this node into a json object.
+   *
+   * @returns the json object representing this node
+   */
+
+
+  toJSON() {
+    return Object.assign(super.toJSON(), {
       poolType: this.poolingType
     });
-  };
+  }
 
-  return PoolNode;
-}(ConstantNode_1.ConstantNode);
+}
 
 exports.PoolNode = PoolNode;
 },{"../../enums/NodeType":"../src/enums/NodeType.js","../../utils/Utils":"../src/utils/Utils.js","./ConstantNode":"../src/architecture/Nodes/ConstantNode.js"}],"../src/architecture/Layers/PoolingLayers/PoolingLayer.js":[function(require,module,exports) {
 "use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.PoolingLayer = void 0;
 
-var ConnectionType_1 = require("../../../enums/ConnectionType");
+const ConnectionType_1 = require("../../../enums/ConnectionType");
 
-var Layer_1 = require("../Layer");
+const Layer_1 = require("../Layer");
 /**
  * Parent class for all pooling layers
  */
 
 
-var PoolingLayer =
-/** @class */
-function (_super) {
-  __extends(PoolingLayer, _super);
-
-  function PoolingLayer(outputSize) {
-    return _super.call(this, outputSize) || this;
+class PoolingLayer extends Layer_1.Layer {
+  constructor(outputSize) {
+    super(outputSize);
   }
   /**
    * Gets the default connection type for a incoming connection to this layer.
@@ -7244,9 +5995,9 @@ function (_super) {
    */
 
 
-  PoolingLayer.prototype.getDefaultIncomingConnectionType = function () {
+  getDefaultIncomingConnectionType() {
     return ConnectionType_1.ConnectionType.POOLING;
-  };
+  }
   /**
    * Checks if a given connection type is allowed on this layer.
    *
@@ -7256,542 +6007,264 @@ function (_super) {
    */
 
 
-  PoolingLayer.prototype.connectionTypeisAllowed = function (type) {
+  connectionTypeisAllowed(type) {
     return true;
-  };
+  }
 
-  return PoolingLayer;
-}(Layer_1.Layer);
+}
 
 exports.PoolingLayer = PoolingLayer;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer.js":[function(require,module,exports) {
 "use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.AvgPooling1DLayer = void 0;
 
-var src_1 = require("activations/build/src");
+const src_1 = require("activations/build/src");
 
-var NodeType_1 = require("../../../enums/NodeType");
+const NodeType_1 = require("../../../enums/NodeType");
 
-var PoolNode_1 = require("../../Nodes/PoolNode");
+const PoolNode_1 = require("../../Nodes/PoolNode");
 
-var PoolingLayer_1 = require("./PoolingLayer");
+const PoolingLayer_1 = require("./PoolingLayer");
 /**
  * Average pooling layer 1D
  */
 
 
-var AvgPooling1DLayer =
-/** @class */
-function (_super) {
-  __extends(AvgPooling1DLayer, _super);
-
-  function AvgPooling1DLayer(outputSize, options) {
+class AvgPooling1DLayer extends PoolingLayer_1.PoolingLayer {
+  constructor(outputSize, options = {}) {
     var _a;
 
-    if (options === void 0) {
-      options = {};
+    super(outputSize);
+    const activationType = (_a = options.activation) !== null && _a !== void 0 ? _a : src_1.Identitiy;
+
+    for (let i = 0; i < outputSize; i++) {
+      this.inputNodes.add(new PoolNode_1.PoolNode(NodeType_1.PoolNodeType.AVG_POOLING).setActivationType(activationType));
     }
 
-    var _b;
-
-    var _this = _super.call(this, outputSize) || this;
-
-    var activationType = (_b = options.activation) !== null && _b !== void 0 ? _b : src_1.Identitiy;
-
-    for (var i = 0; i < outputSize; i++) {
-      _this.inputNodes.add(new PoolNode_1.PoolNode(NodeType_1.PoolNodeType.AVG_POOLING).setActivationType(activationType));
-    }
-
-    _this.outputNodes = _this.inputNodes;
-
-    (_a = _this.nodes).push.apply(_a, Array.from(_this.inputNodes));
-
-    return _this;
+    this.outputNodes = this.inputNodes;
+    this.nodes.push(...Array.from(this.inputNodes));
   }
 
-  return AvgPooling1DLayer;
-}(PoolingLayer_1.PoolingLayer);
+}
 
 exports.AvgPooling1DLayer = AvgPooling1DLayer;
 },{"../../../enums/NodeType":"../src/enums/NodeType.js","../../Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","./PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js"}],"../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer.js":[function(require,module,exports) {
 "use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.GlobalAvgPooling1DLayer = void 0;
 
-var AvgPooling1DLayer_1 = require("./AvgPooling1DLayer");
+const AvgPooling1DLayer_1 = require("./AvgPooling1DLayer");
 /**
  * Global average pooling layer 1D
  */
 
 
-var GlobalAvgPooling1DLayer =
-/** @class */
-function (_super) {
-  __extends(GlobalAvgPooling1DLayer, _super);
-
-  function GlobalAvgPooling1DLayer(outputSize, options) {
-    if (options === void 0) {
-      options = {};
-    }
-
-    return _super.call(this, 1, options) || this;
+class GlobalAvgPooling1DLayer extends AvgPooling1DLayer_1.AvgPooling1DLayer {
+  constructor(outputSize, options = {}) {
+    super(1, options);
   }
 
-  return GlobalAvgPooling1DLayer;
-}(AvgPooling1DLayer_1.AvgPooling1DLayer);
+}
 
 exports.GlobalAvgPooling1DLayer = GlobalAvgPooling1DLayer;
 },{"./AvgPooling1DLayer":"../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer.js"}],"../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer.js":[function(require,module,exports) {
 "use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.MaxPooling1DLayer = void 0;
 
-var src_1 = require("activations/build/src");
+const src_1 = require("activations/build/src");
 
-var NodeType_1 = require("../../../enums/NodeType");
+const NodeType_1 = require("../../../enums/NodeType");
 
-var PoolNode_1 = require("../../Nodes/PoolNode");
+const PoolNode_1 = require("../../Nodes/PoolNode");
 
-var PoolingLayer_1 = require("./PoolingLayer");
+const PoolingLayer_1 = require("./PoolingLayer");
 /**
  * Maximum pooling layer 1D
  */
 
 
-var MaxPooling1DLayer =
-/** @class */
-function (_super) {
-  __extends(MaxPooling1DLayer, _super);
-
-  function MaxPooling1DLayer(outputSize, options) {
+class MaxPooling1DLayer extends PoolingLayer_1.PoolingLayer {
+  constructor(outputSize, options = {}) {
     var _a;
 
-    if (options === void 0) {
-      options = {};
+    super(outputSize);
+    const activationType = (_a = options.activation) !== null && _a !== void 0 ? _a : src_1.Identitiy;
+
+    for (let i = 0; i < outputSize; i++) {
+      this.inputNodes.add(new PoolNode_1.PoolNode(NodeType_1.PoolNodeType.MAX_POOLING).setActivationType(activationType));
     }
 
-    var _b;
-
-    var _this = _super.call(this, outputSize) || this;
-
-    var activationType = (_b = options.activation) !== null && _b !== void 0 ? _b : src_1.Identitiy;
-
-    for (var i = 0; i < outputSize; i++) {
-      _this.inputNodes.add(new PoolNode_1.PoolNode(NodeType_1.PoolNodeType.MAX_POOLING).setActivationType(activationType));
-    }
-
-    _this.outputNodes = _this.inputNodes;
-
-    (_a = _this.nodes).push.apply(_a, Array.from(_this.inputNodes));
-
-    return _this;
+    this.outputNodes = this.inputNodes;
+    this.nodes.push(...Array.from(this.inputNodes));
   }
 
-  return MaxPooling1DLayer;
-}(PoolingLayer_1.PoolingLayer);
+}
 
 exports.MaxPooling1DLayer = MaxPooling1DLayer;
 },{"../../../enums/NodeType":"../src/enums/NodeType.js","../../Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","./PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js"}],"../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer.js":[function(require,module,exports) {
 "use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.GlobalMaxPooling1DLayer = void 0;
 
-var MaxPooling1DLayer_1 = require("./MaxPooling1DLayer");
+const MaxPooling1DLayer_1 = require("./MaxPooling1DLayer");
 /**
  * Global maximum pooling layer 1D
  */
 
 
-var GlobalMaxPooling1DLayer =
-/** @class */
-function (_super) {
-  __extends(GlobalMaxPooling1DLayer, _super);
-
-  function GlobalMaxPooling1DLayer(outputSize, options) {
-    if (options === void 0) {
-      options = {};
-    }
-
-    return _super.call(this, 1, options) || this;
+class GlobalMaxPooling1DLayer extends MaxPooling1DLayer_1.MaxPooling1DLayer {
+  constructor(outputSize, options = {}) {
+    super(1, options);
   }
 
-  return GlobalMaxPooling1DLayer;
-}(MaxPooling1DLayer_1.MaxPooling1DLayer);
+}
 
 exports.GlobalMaxPooling1DLayer = GlobalMaxPooling1DLayer;
 },{"./MaxPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer.js"}],"../src/architecture/Layers/PoolingLayers/MinPooling1DLayer.js":[function(require,module,exports) {
 "use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.MinPooling1DLayer = void 0;
 
-var src_1 = require("activations/build/src");
+const src_1 = require("activations/build/src");
 
-var NodeType_1 = require("../../../enums/NodeType");
+const NodeType_1 = require("../../../enums/NodeType");
 
-var PoolNode_1 = require("../../Nodes/PoolNode");
+const PoolNode_1 = require("../../Nodes/PoolNode");
 
-var PoolingLayer_1 = require("./PoolingLayer");
+const PoolingLayer_1 = require("./PoolingLayer");
 /**
  * Minimum pooling layer 1D
  */
 
 
-var MinPooling1DLayer =
-/** @class */
-function (_super) {
-  __extends(MinPooling1DLayer, _super);
-
-  function MinPooling1DLayer(outputSize, options) {
+class MinPooling1DLayer extends PoolingLayer_1.PoolingLayer {
+  constructor(outputSize, options = {}) {
     var _a;
 
-    if (options === void 0) {
-      options = {};
+    super(outputSize);
+    const activationType = (_a = options.activation) !== null && _a !== void 0 ? _a : src_1.Identitiy;
+
+    for (let i = 0; i < outputSize; i++) {
+      this.inputNodes.add(new PoolNode_1.PoolNode(NodeType_1.PoolNodeType.MIN_POOLING).setActivationType(activationType));
     }
 
-    var _b;
-
-    var _this = _super.call(this, outputSize) || this;
-
-    var activationType = (_b = options.activation) !== null && _b !== void 0 ? _b : src_1.Identitiy;
-
-    for (var i = 0; i < outputSize; i++) {
-      _this.inputNodes.add(new PoolNode_1.PoolNode(NodeType_1.PoolNodeType.MIN_POOLING).setActivationType(activationType));
-    }
-
-    _this.outputNodes = _this.inputNodes;
-
-    (_a = _this.nodes).push.apply(_a, Array.from(_this.inputNodes));
-
-    return _this;
+    this.outputNodes = this.inputNodes;
+    this.nodes.push(...Array.from(this.inputNodes));
   }
 
-  return MinPooling1DLayer;
-}(PoolingLayer_1.PoolingLayer);
+}
 
 exports.MinPooling1DLayer = MinPooling1DLayer;
 },{"../../../enums/NodeType":"../src/enums/NodeType.js","../../Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","./PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js"}],"../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer.js":[function(require,module,exports) {
 "use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.GlobalMinPooling1DLayer = void 0;
 
-var MinPooling1DLayer_1 = require("./MinPooling1DLayer");
+const MinPooling1DLayer_1 = require("./MinPooling1DLayer");
 /**
  * Global minimum pooling layer 1D
  */
 
 
-var GlobalMinPooling1DLayer =
-/** @class */
-function (_super) {
-  __extends(GlobalMinPooling1DLayer, _super);
-
-  function GlobalMinPooling1DLayer(outputSize, options) {
-    if (options === void 0) {
-      options = {};
-    }
-
-    return _super.call(this, 1, options) || this;
+class GlobalMinPooling1DLayer extends MinPooling1DLayer_1.MinPooling1DLayer {
+  constructor(outputSize, options = {}) {
+    super(1, options);
   }
 
-  return GlobalMinPooling1DLayer;
-}(MinPooling1DLayer_1.MinPooling1DLayer);
+}
 
 exports.GlobalMinPooling1DLayer = GlobalMinPooling1DLayer;
 },{"./MinPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MinPooling1DLayer.js"}],"../src/architecture/Layers/RecurrentLayers/GRULayer.js":[function(require,module,exports) {
 "use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.GRULayer = void 0;
 
-var src_1 = require("activations/build/src");
+const src_1 = require("activations/build/src");
 
-var ConnectionType_1 = require("../../../enums/ConnectionType");
+const ConnectionType_1 = require("../../../enums/ConnectionType");
 
-var GatingType_1 = require("../../../enums/GatingType");
+const GatingType_1 = require("../../../enums/GatingType");
 
-var NodeType_1 = require("../../../enums/NodeType");
+const NodeType_1 = require("../../../enums/NodeType");
 
-var Node_1 = require("../../Node");
+const Node_1 = require("../../Node");
 
-var Layer_1 = require("../Layer");
+const Layer_1 = require("../Layer");
 /**
  * GRU layer
  */
 
 
-var GRULayer =
-/** @class */
-function (_super) {
-  __extends(GRULayer, _super);
+class GRULayer extends Layer_1.Layer {
+  constructor(outputSize, options = {}) {
+    super(outputSize);
+    const updateGate = [];
+    const inverseUpdateGate = [];
+    const resetGate = [];
+    const memoryCell = [];
+    const previousOutput = [];
 
-  function GRULayer(outputSize, options) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v;
-
-    if (options === void 0) {
-      options = {};
-    }
-
-    var _this = _super.call(this, outputSize) || this;
-
-    var updateGate = [];
-    var inverseUpdateGate = [];
-    var resetGate = [];
-    var memoryCell = [];
-    var previousOutput = [];
-
-    for (var i = 0; i < outputSize; i++) {
-      _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
-
+    for (let i = 0; i < outputSize; i++) {
+      this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
       updateGate.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(1));
       inverseUpdateGate.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(0).setActivationType(src_1.Logistic));
       resetGate.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(0));
       memoryCell.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setActivationType(src_1.TANH));
       previousOutput.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(0).setActivationType(src_1.Logistic));
-
-      _this.outputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
+      this.outputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
     }
 
-    (_a = _this.connections).push.apply(_a, Layer_1.Layer.connect(_this.inputNodes, updateGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
-
-    (_b = _this.connections).push.apply(_b, Layer_1.Layer.connect(_this.inputNodes, resetGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
-
-    (_c = _this.connections).push.apply(_c, Layer_1.Layer.connect(_this.inputNodes, memoryCell, ConnectionType_1.ConnectionType.ALL_TO_ALL));
-
-    (_d = _this.connections).push.apply(_d, Layer_1.Layer.connect(previousOutput, updateGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
-
-    (_e = _this.connections).push.apply(_e, Layer_1.Layer.connect(updateGate, inverseUpdateGate, ConnectionType_1.ConnectionType.ONE_TO_ONE, 1));
-
-    (_f = _this.connections).push.apply(_f, Layer_1.Layer.connect(previousOutput, resetGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
-
-    var reset = Layer_1.Layer.connect(previousOutput, memoryCell, ConnectionType_1.ConnectionType.ALL_TO_ALL);
-
-    (_g = _this.connections).push.apply(_g, reset);
-
-    (_h = _this.gates).push.apply(_h, Layer_1.Layer.gate(resetGate, reset, GatingType_1.GatingType.OUTPUT));
-
-    var update = Layer_1.Layer.connect(previousOutput, _this.outputNodes, ConnectionType_1.ConnectionType.ALL_TO_ALL);
-    var inverseUpdate = Layer_1.Layer.connect(memoryCell, _this.outputNodes, ConnectionType_1.ConnectionType.ALL_TO_ALL);
-
-    (_j = _this.connections).push.apply(_j, update);
-
-    (_k = _this.connections).push.apply(_k, inverseUpdate);
-
-    (_l = _this.gates).push.apply(_l, Layer_1.Layer.gate(updateGate, update, GatingType_1.GatingType.OUTPUT));
-
-    (_m = _this.gates).push.apply(_m, Layer_1.Layer.gate(inverseUpdateGate, inverseUpdate, GatingType_1.GatingType.OUTPUT));
-
-    (_o = _this.connections).push.apply(_o, Layer_1.Layer.connect(_this.outputNodes, previousOutput, ConnectionType_1.ConnectionType.ONE_TO_ONE, 1));
-
-    (_p = _this.nodes).push.apply(_p, Array.from(_this.inputNodes));
-
-    (_q = _this.nodes).push.apply(_q, updateGate);
-
-    (_r = _this.nodes).push.apply(_r, inverseUpdateGate);
-
-    (_s = _this.nodes).push.apply(_s, resetGate);
-
-    (_t = _this.nodes).push.apply(_t, memoryCell);
-
-    (_u = _this.nodes).push.apply(_u, Array.from(_this.outputNodes));
-
-    (_v = _this.nodes).push.apply(_v, previousOutput);
-
-    _this.outputNodes.forEach(function (node) {
+    this.connections.push(...Layer_1.Layer.connect(this.inputNodes, updateGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+    this.connections.push(...Layer_1.Layer.connect(this.inputNodes, resetGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+    this.connections.push(...Layer_1.Layer.connect(this.inputNodes, memoryCell, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+    this.connections.push(...Layer_1.Layer.connect(previousOutput, updateGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+    this.connections.push(...Layer_1.Layer.connect(updateGate, inverseUpdateGate, ConnectionType_1.ConnectionType.ONE_TO_ONE, 1));
+    this.connections.push(...Layer_1.Layer.connect(previousOutput, resetGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+    const reset = Layer_1.Layer.connect(previousOutput, memoryCell, ConnectionType_1.ConnectionType.ALL_TO_ALL);
+    this.connections.push(...reset);
+    this.gates.push(...Layer_1.Layer.gate(resetGate, reset, GatingType_1.GatingType.OUTPUT));
+    const update = Layer_1.Layer.connect(previousOutput, this.outputNodes, ConnectionType_1.ConnectionType.ALL_TO_ALL);
+    const inverseUpdate = Layer_1.Layer.connect(memoryCell, this.outputNodes, ConnectionType_1.ConnectionType.ALL_TO_ALL);
+    this.connections.push(...update);
+    this.connections.push(...inverseUpdate);
+    this.gates.push(...Layer_1.Layer.gate(updateGate, update, GatingType_1.GatingType.OUTPUT));
+    this.gates.push(...Layer_1.Layer.gate(inverseUpdateGate, inverseUpdate, GatingType_1.GatingType.OUTPUT));
+    this.connections.push(...Layer_1.Layer.connect(this.outputNodes, previousOutput, ConnectionType_1.ConnectionType.ONE_TO_ONE, 1));
+    this.nodes.push(...Array.from(this.inputNodes));
+    this.nodes.push(...updateGate);
+    this.nodes.push(...inverseUpdateGate);
+    this.nodes.push(...resetGate);
+    this.nodes.push(...memoryCell);
+    this.nodes.push(...Array.from(this.outputNodes));
+    this.nodes.push(...previousOutput);
+    this.outputNodes.forEach(node => {
       var _a;
 
       return node.squash = (_a = options.activation) !== null && _a !== void 0 ? _a : src_1.Logistic;
     });
-
-    return _this;
   }
   /**
    * Checks if a given connection type is allowed on this layer.
@@ -7802,9 +6275,9 @@ function (_super) {
    */
 
 
-  GRULayer.prototype.connectionTypeisAllowed = function (type) {
+  connectionTypeisAllowed(type) {
     return true;
-  };
+  }
   /**
    * Gets the default connection type for a incoming connection to this layer.
    *
@@ -7812,85 +6285,48 @@ function (_super) {
    */
 
 
-  GRULayer.prototype.getDefaultIncomingConnectionType = function () {
+  getDefaultIncomingConnectionType() {
     return ConnectionType_1.ConnectionType.ALL_TO_ALL;
-  };
+  }
 
-  return GRULayer;
-}(Layer_1.Layer);
+}
 
 exports.GRULayer = GRULayer;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/GatingType":"../src/enums/GatingType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/RecurrentLayers/HopfieldLayer.js":[function(require,module,exports) {
 "use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.HopfieldLayer = void 0;
 
-var src_1 = require("activations/build/src");
+const src_1 = require("activations/build/src");
 
-var ConnectionType_1 = require("../../../enums/ConnectionType");
+const ConnectionType_1 = require("../../../enums/ConnectionType");
 
-var NodeType_1 = require("../../../enums/NodeType");
+const NodeType_1 = require("../../../enums/NodeType");
 
-var Node_1 = require("../../Node");
+const Node_1 = require("../../Node");
 
-var Layer_1 = require("../Layer");
+const Layer_1 = require("../Layer");
 /**
  * Hopfield layer
  */
 
 
-var HopfieldLayer =
-/** @class */
-function (_super) {
-  __extends(HopfieldLayer, _super);
+class HopfieldLayer extends Layer_1.Layer {
+  constructor(outputSize) {
+    super(outputSize);
 
-  function HopfieldLayer(outputSize) {
-    var _a, _b, _c, _d;
-
-    var _this = _super.call(this, outputSize) || this;
-
-    for (var i = 0; i < outputSize; i++) {
-      _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
-
-      _this.outputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setActivationType(src_1.BinaryStep));
+    for (let i = 0; i < outputSize; i++) {
+      this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
+      this.outputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setActivationType(src_1.BinaryStep));
     }
 
-    (_a = _this.connections).push.apply(_a, Layer_1.Layer.connect(_this.inputNodes, _this.outputNodes, ConnectionType_1.ConnectionType.ALL_TO_ALL));
-
-    (_b = _this.connections).push.apply(_b, Layer_1.Layer.connect(_this.outputNodes, _this.inputNodes, ConnectionType_1.ConnectionType.ALL_TO_ALL));
-
-    (_c = _this.nodes).push.apply(_c, Array.from(_this.inputNodes));
-
-    (_d = _this.nodes).push.apply(_d, Array.from(_this.outputNodes));
-
-    return _this;
+    this.connections.push(...Layer_1.Layer.connect(this.inputNodes, this.outputNodes, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+    this.connections.push(...Layer_1.Layer.connect(this.outputNodes, this.inputNodes, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+    this.nodes.push(...Array.from(this.inputNodes));
+    this.nodes.push(...Array.from(this.outputNodes));
   }
   /**
    * Checks if a given connection type is allowed on this layer.
@@ -7901,9 +6337,9 @@ function (_super) {
    */
 
 
-  HopfieldLayer.prototype.connectionTypeisAllowed = function (type) {
+  connectionTypeisAllowed(type) {
     return true;
-  };
+  }
   /**
    * Gets the default connection type for a incoming connection to this layer.
    *
@@ -7911,140 +6347,80 @@ function (_super) {
    */
 
 
-  HopfieldLayer.prototype.getDefaultIncomingConnectionType = function () {
+  getDefaultIncomingConnectionType() {
     return ConnectionType_1.ConnectionType.ALL_TO_ALL;
-  };
+  }
 
-  return HopfieldLayer;
-}(Layer_1.Layer);
+}
 
 exports.HopfieldLayer = HopfieldLayer;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/RecurrentLayers/LSTMLayer.js":[function(require,module,exports) {
 "use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.LSTMLayer = void 0;
 
-var src_1 = require("activations/build/src");
+const src_1 = require("activations/build/src");
 
-var ConnectionType_1 = require("../../../enums/ConnectionType");
+const ConnectionType_1 = require("../../../enums/ConnectionType");
 
-var GatingType_1 = require("../../../enums/GatingType");
+const GatingType_1 = require("../../../enums/GatingType");
 
-var NodeType_1 = require("../../../enums/NodeType");
+const NodeType_1 = require("../../../enums/NodeType");
 
-var Node_1 = require("../../Node");
+const Node_1 = require("../../Node");
 
-var Layer_1 = require("../Layer");
+const Layer_1 = require("../Layer");
 /**
  * LSTM layer
  */
 
 
-var LSTMLayer =
-/** @class */
-function (_super) {
-  __extends(LSTMLayer, _super);
+class LSTMLayer extends Layer_1.Layer {
+  constructor(outputSize, options = {}) {
+    super(outputSize);
+    const inputGate = [];
+    const forgetGate = [];
+    const memoryCell = [];
+    const outputGate = [];
 
-  function LSTMLayer(outputSize, options) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t;
-
-    if (options === void 0) {
-      options = {};
-    }
-
-    var _this = _super.call(this, outputSize) || this;
-
-    var inputGate = [];
-    var forgetGate = [];
-    var memoryCell = [];
-    var outputGate = [];
-
-    for (var i = 0; i < outputSize; i++) {
-      _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
-
+    for (let i = 0; i < outputSize; i++) {
+      this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
       inputGate.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(1));
       forgetGate.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(1).setActivationType(src_1.Logistic));
       memoryCell.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
       outputGate.push(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setBias(1));
-
-      _this.outputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
+      this.outputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
     }
 
-    (_a = _this.connections).push.apply(_a, Layer_1.Layer.connect(memoryCell, inputGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
-
-    (_b = _this.connections).push.apply(_b, Layer_1.Layer.connect(memoryCell, forgetGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
-
-    (_c = _this.connections).push.apply(_c, Layer_1.Layer.connect(memoryCell, outputGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
-
-    var forgetGateConnections = Layer_1.Layer.connect(memoryCell, memoryCell, ConnectionType_1.ConnectionType.ONE_TO_ONE);
-    var outputGateConnections = Layer_1.Layer.connect(memoryCell, _this.outputNodes, ConnectionType_1.ConnectionType.ALL_TO_ALL);
-
-    (_d = _this.connections).push.apply(_d, forgetGateConnections);
-
-    (_e = _this.connections).push.apply(_e, outputGateConnections);
-
-    (_f = _this.connections).push.apply(_f, Layer_1.Layer.connect(_this.inputNodes, memoryCell, ConnectionType_1.ConnectionType.ALL_TO_ALL));
-
-    (_g = _this.connections).push.apply(_g, Layer_1.Layer.connect(_this.inputNodes, outputGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
-
-    (_h = _this.connections).push.apply(_h, Layer_1.Layer.connect(_this.inputNodes, forgetGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
-
-    var inputGateConnections = Layer_1.Layer.connect(_this.inputNodes, inputGate, ConnectionType_1.ConnectionType.ALL_TO_ALL);
-
-    (_j = _this.connections).push.apply(_j, inputGateConnections);
-
-    (_k = _this.gates).push.apply(_k, Layer_1.Layer.gate(forgetGate, forgetGateConnections, GatingType_1.GatingType.SELF));
-
-    (_l = _this.gates).push.apply(_l, Layer_1.Layer.gate(outputGate, outputGateConnections, GatingType_1.GatingType.OUTPUT));
-
-    (_m = _this.gates).push.apply(_m, Layer_1.Layer.gate(inputGate, inputGateConnections, GatingType_1.GatingType.INPUT));
-
-    (_o = _this.nodes).push.apply(_o, Array.from(_this.inputNodes));
-
-    (_p = _this.nodes).push.apply(_p, inputGate);
-
-    (_q = _this.nodes).push.apply(_q, forgetGate);
-
-    (_r = _this.nodes).push.apply(_r, memoryCell);
-
-    (_s = _this.nodes).push.apply(_s, outputGate);
-
-    (_t = _this.nodes).push.apply(_t, Array.from(_this.outputNodes));
-
-    _this.outputNodes.forEach(function (node) {
+    this.connections.push(...Layer_1.Layer.connect(memoryCell, inputGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+    this.connections.push(...Layer_1.Layer.connect(memoryCell, forgetGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+    this.connections.push(...Layer_1.Layer.connect(memoryCell, outputGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+    const forgetGateConnections = Layer_1.Layer.connect(memoryCell, memoryCell, ConnectionType_1.ConnectionType.ONE_TO_ONE);
+    const outputGateConnections = Layer_1.Layer.connect(memoryCell, this.outputNodes, ConnectionType_1.ConnectionType.ALL_TO_ALL);
+    this.connections.push(...forgetGateConnections);
+    this.connections.push(...outputGateConnections);
+    this.connections.push(...Layer_1.Layer.connect(this.inputNodes, memoryCell, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+    this.connections.push(...Layer_1.Layer.connect(this.inputNodes, outputGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+    this.connections.push(...Layer_1.Layer.connect(this.inputNodes, forgetGate, ConnectionType_1.ConnectionType.ALL_TO_ALL));
+    const inputGateConnections = Layer_1.Layer.connect(this.inputNodes, inputGate, ConnectionType_1.ConnectionType.ALL_TO_ALL);
+    this.connections.push(...inputGateConnections);
+    this.gates.push(...Layer_1.Layer.gate(forgetGate, forgetGateConnections, GatingType_1.GatingType.SELF));
+    this.gates.push(...Layer_1.Layer.gate(outputGate, outputGateConnections, GatingType_1.GatingType.OUTPUT));
+    this.gates.push(...Layer_1.Layer.gate(inputGate, inputGateConnections, GatingType_1.GatingType.INPUT));
+    this.nodes.push(...Array.from(this.inputNodes));
+    this.nodes.push(...inputGate);
+    this.nodes.push(...forgetGate);
+    this.nodes.push(...memoryCell);
+    this.nodes.push(...outputGate);
+    this.nodes.push(...Array.from(this.outputNodes));
+    this.outputNodes.forEach(node => {
       var _a;
 
       return node.squash = (_a = options.activation) !== null && _a !== void 0 ? _a : src_1.TANH;
     });
-
-    return _this;
   }
   /**
    * Checks if a given connection type is allowed on this layer.
@@ -8055,9 +6431,9 @@ function (_super) {
    */
 
 
-  LSTMLayer.prototype.connectionTypeisAllowed = function (type) {
+  connectionTypeisAllowed(type) {
     return true;
-  };
+  }
   /**
    * Gets the default connection type for a incoming connection to this layer.
    *
@@ -8065,114 +6441,71 @@ function (_super) {
    */
 
 
-  LSTMLayer.prototype.getDefaultIncomingConnectionType = function () {
+  getDefaultIncomingConnectionType() {
     return ConnectionType_1.ConnectionType.ALL_TO_ALL;
-  };
+  }
 
-  return LSTMLayer;
-}(Layer_1.Layer);
+}
 
 exports.LSTMLayer = LSTMLayer;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/GatingType":"../src/enums/GatingType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/RecurrentLayers/MemoryLayer.js":[function(require,module,exports) {
 "use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.MemoryLayer = void 0;
 
-var src_1 = require("activations/build/src");
+const src_1 = require("activations/build/src");
 
-var ConnectionType_1 = require("../../../enums/ConnectionType");
+const ConnectionType_1 = require("../../../enums/ConnectionType");
 
-var NodeType_1 = require("../../../enums/NodeType");
+const NodeType_1 = require("../../../enums/NodeType");
 
-var Node_1 = require("../../Node");
+const Node_1 = require("../../Node");
 
-var Layer_1 = require("../Layer");
+const Layer_1 = require("../Layer");
 /**
  * Memory layer
  */
 
 
-var MemoryLayer =
-/** @class */
-function (_super) {
-  __extends(MemoryLayer, _super);
+class MemoryLayer extends Layer_1.Layer {
+  constructor(outputSize, options = {}) {
+    var _a;
 
-  function MemoryLayer(outputSize, options) {
-    var _a, _b, _c;
+    super(outputSize);
 
-    if (options === void 0) {
-      options = {};
+    for (let i = 0; i < outputSize; i++) {
+      this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
     }
 
-    var _d;
+    let prevNodes = Array.from(this.inputNodes);
+    const nodes = [];
 
-    var _this = _super.call(this, outputSize) || this;
+    for (let i = 0; i < ((_a = options.memorySize) !== null && _a !== void 0 ? _a : 1); i++) {
+      const block = [];
 
-    for (var i = 0; i < outputSize; i++) {
-      _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN));
-    }
-
-    var prevNodes = Array.from(_this.inputNodes);
-    var nodes = [];
-
-    for (var i = 0; i < ((_d = options.memorySize) !== null && _d !== void 0 ? _d : 1); i++) {
-      var block = [];
-
-      for (var j = 0; j < outputSize; j++) {
-        var node = new Node_1.Node(NodeType_1.NodeType.HIDDEN);
+      for (let j = 0; j < outputSize; j++) {
+        const node = new Node_1.Node(NodeType_1.NodeType.HIDDEN);
         node.squash = src_1.Identitiy;
         node.bias = 0;
         block.push(node);
       }
 
-      (_a = _this.connections).push.apply(_a, Layer_1.Layer.connect(prevNodes, block, ConnectionType_1.ConnectionType.ONE_TO_ONE));
-
-      nodes.push.apply(nodes, block);
+      this.connections.push(...Layer_1.Layer.connect(prevNodes, block, ConnectionType_1.ConnectionType.ONE_TO_ONE));
+      nodes.push(...block);
       prevNodes = block;
     }
 
-    (_b = _this.nodes).push.apply(_b, Array.from(_this.inputNodes));
-
-    (_c = _this.nodes).push.apply(_c, nodes.reverse());
-
-    prevNodes.forEach(function (node) {
-      return _this.outputNodes.add(node);
-    });
-
-    _this.outputNodes.forEach(function (node) {
+    this.nodes.push(...Array.from(this.inputNodes));
+    this.nodes.push(...nodes.reverse());
+    prevNodes.forEach(node => this.outputNodes.add(node));
+    this.outputNodes.forEach(node => {
       var _a;
 
       return node.squash = (_a = options.activation) !== null && _a !== void 0 ? _a : src_1.Logistic;
     });
-
-    return _this;
   }
   /**
    * Checks if a given connection type is allowed on this layer.
@@ -8183,9 +6516,9 @@ function (_super) {
    */
 
 
-  MemoryLayer.prototype.connectionTypeisAllowed = function (type) {
+  connectionTypeisAllowed(type) {
     return true;
-  };
+  }
   /**
    * Gets the default connection type for a incoming connection to this layer.
    *
@@ -8193,88 +6526,49 @@ function (_super) {
    */
 
 
-  MemoryLayer.prototype.getDefaultIncomingConnectionType = function () {
+  getDefaultIncomingConnectionType() {
     return ConnectionType_1.ConnectionType.ALL_TO_ALL;
-  };
+  }
 
-  return MemoryLayer;
-}(Layer_1.Layer);
+}
 
 exports.MemoryLayer = MemoryLayer;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/architecture/Layers/RecurrentLayers/RNNLayer.js":[function(require,module,exports) {
 "use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.RNNLayer = void 0;
 
-var src_1 = require("activations/build/src");
+const src_1 = require("activations/build/src");
 
-var ConnectionType_1 = require("../../../enums/ConnectionType");
+const ConnectionType_1 = require("../../../enums/ConnectionType");
 
-var NodeType_1 = require("../../../enums/NodeType");
+const NodeType_1 = require("../../../enums/NodeType");
 
-var Node_1 = require("../../Node");
+const Node_1 = require("../../Node");
 
-var Layer_1 = require("../Layer");
+const Layer_1 = require("../Layer");
 /**
  * RNN layer
  */
 
 
-var RNNLayer =
-/** @class */
-function (_super) {
-  __extends(RNNLayer, _super);
+class RNNLayer extends Layer_1.Layer {
+  constructor(outputSize, options = {}) {
+    var _a;
 
-  function RNNLayer(outputSize, options) {
-    var _a, _b;
+    super(outputSize);
 
-    if (options === void 0) {
-      options = {};
+    for (let i = 0; i < outputSize; i++) {
+      this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setActivationType((_a = options.activation) !== null && _a !== void 0 ? _a : src_1.Logistic));
     }
 
-    var _c;
+    this.outputNodes = this.inputNodes;
+    this.nodes.push(...Array.from(this.inputNodes)); // Adding self connections
 
-    var _this = _super.call(this, outputSize) || this;
-
-    for (var i = 0; i < outputSize; i++) {
-      _this.inputNodes.add(new Node_1.Node(NodeType_1.NodeType.HIDDEN).setActivationType((_c = options.activation) !== null && _c !== void 0 ? _c : src_1.Logistic));
-    }
-
-    _this.outputNodes = _this.inputNodes;
-
-    (_a = _this.nodes).push.apply(_a, Array.from(_this.inputNodes)); // Adding self connections
-
-
-    (_b = _this.connections).push.apply(_b, Layer_1.Layer.connect(_this.nodes, _this.nodes, ConnectionType_1.ConnectionType.ONE_TO_ONE));
-
-    return _this;
+    this.connections.push(...Layer_1.Layer.connect(this.nodes, this.nodes, ConnectionType_1.ConnectionType.ONE_TO_ONE));
   }
   /**
    * Checks if a given connection type is allowed on this layer.
@@ -8285,9 +6579,9 @@ function (_super) {
    */
 
 
-  RNNLayer.prototype.connectionTypeisAllowed = function (type) {
+  connectionTypeisAllowed(type) {
     return true;
-  };
+  }
   /**
    * Gets the default connection type for a incoming connection to this layer.
    *
@@ -8295,40 +6589,15 @@ function (_super) {
    */
 
 
-  RNNLayer.prototype.getDefaultIncomingConnectionType = function () {
+  getDefaultIncomingConnectionType() {
     return ConnectionType_1.ConnectionType.ALL_TO_ALL;
-  };
+  }
 
-  return RNNLayer;
-}(Layer_1.Layer);
+}
 
 exports.RNNLayer = RNNLayer;
 },{"../../../enums/ConnectionType":"../src/enums/ConnectionType.js","../../../enums/NodeType":"../src/enums/NodeType.js","../../Node":"../src/architecture/Node.js","../Layer":"../src/architecture/Layers/Layer.js"}],"../src/methods/Rate.js":[function(require,module,exports) {
 "use strict";
-
-var __extends = this && this.__extends || function () {
-  var extendStatics = function (d, b) {
-    extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-
-    return extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -8342,19 +6611,16 @@ exports.InverseRate = exports.ExponentialRate = exports.StepRate = exports.Fixed
  *
  */
 
-var Rate =
-/** @class */
-function () {
+class Rate {
   /**
    * Constructs a rate policy
    * @param baseRate the rate at first iteration
    */
-  function Rate(baseRate) {
+  constructor(baseRate) {
     this.baseRate = baseRate;
   }
 
-  return Rate;
-}();
+}
 
 exports.Rate = Rate;
 /**
@@ -8363,28 +6629,18 @@ exports.Rate = Rate;
  * Default rate policy. Using this will make learning rate static (no change). Useful as a way to update a previous rate policy.
  */
 
-var FixedRate =
-/** @class */
-function (_super) {
-  __extends(FixedRate, _super);
-
-  function FixedRate() {
-    return _super !== null && _super.apply(this, arguments) || this;
-  }
+class FixedRate extends Rate {
   /**
    * Calculates the current training rate.
    *
    * @param iteration count
    * @returns the current training rate
    */
-
-
-  FixedRate.prototype.calc = function (iteration) {
+  calc(iteration) {
     return this.baseRate;
-  };
+  }
 
-  return FixedRate;
-}(Rate);
+}
 
 exports.FixedRate = FixedRate;
 /**
@@ -8393,10 +6649,7 @@ exports.FixedRate = FixedRate;
  * The learning rate will decrease (i.e. 'step down') every `stepSize` iterations.
  */
 
-var StepRate =
-/** @class */
-function (_super) {
-  __extends(StepRate, _super);
+class StepRate extends Rate {
   /**
    * Constructs a step rate policy.
    *
@@ -8404,22 +6657,10 @@ function (_super) {
    * @param gamma=0.9 Learning rate retention per step; - _0 < `gamma` < 1_ - _large `gamma` CAN cause networks to never converge, low `gamma` CAN cause networks to converge too quickly_
    * @param stepSize=100 Learning rate is updated every `step_size` iterations
    */
-
-
-  function StepRate(baseRate, gamma, stepSize) {
-    if (gamma === void 0) {
-      gamma = 0.9;
-    }
-
-    if (stepSize === void 0) {
-      stepSize = 100;
-    }
-
-    var _this = _super.call(this, baseRate) || this;
-
-    _this.gamma = gamma;
-    _this.stepSize = stepSize;
-    return _this;
+  constructor(baseRate, gamma = 0.9, stepSize = 100) {
+    super(baseRate);
+    this.gamma = gamma;
+    this.stepSize = stepSize;
   }
   /**
    * Calculates the current training rate.
@@ -8429,12 +6670,11 @@ function (_super) {
    */
 
 
-  StepRate.prototype.calc = function (iteration) {
+  calc(iteration) {
     return this.baseRate * Math.pow(this.gamma, Math.floor(iteration / this.stepSize));
-  };
+  }
 
-  return StepRate;
-}(Rate);
+}
 
 exports.StepRate = StepRate;
 /**
@@ -8445,27 +6685,16 @@ exports.StepRate = StepRate;
  * The rate at `iteration` is calculated as: `rate = base_rate * Math.pow(gamma, iteration)`
  */
 
-var ExponentialRate =
-/** @class */
-function (_super) {
-  __extends(ExponentialRate, _super);
+class ExponentialRate extends Rate {
   /**
    * Constructs a step rate policy.
    *
    * @param baseRate the rate at first iteration
    * @param gamma=0.9 Learning rate retention per step; - _0 < `gamma` < 1_ - _large `gamma` CAN cause networks to never converge, low `gamma` CAN cause networks to converge too quickly_
    */
-
-
-  function ExponentialRate(baseRate, gamma) {
-    if (gamma === void 0) {
-      gamma = 0.999;
-    }
-
-    var _this = _super.call(this, baseRate) || this;
-
-    _this.gamma = gamma;
-    return _this;
+  constructor(baseRate, gamma = 0.999) {
+    super(baseRate);
+    this.gamma = gamma;
   }
   /**
    * Calculates the current training rate.
@@ -8475,12 +6704,11 @@ function (_super) {
    */
 
 
-  ExponentialRate.prototype.calc = function (iteration) {
+  calc(iteration) {
     return this.baseRate * Math.pow(this.gamma, iteration);
-  };
+  }
 
-  return ExponentialRate;
-}(Rate);
+}
 
 exports.ExponentialRate = ExponentialRate;
 /**
@@ -8491,10 +6719,7 @@ exports.ExponentialRate = ExponentialRate;
  * The rate at `iteration` is calculated as: `rate = baseRate * Math.pow(1 + gamma * iteration, -power)`
  */
 
-var InverseRate =
-/** @class */
-function (_super) {
-  __extends(InverseRate, _super);
+class InverseRate extends Rate {
   /**
    * Constructs a step rate policy.
    *
@@ -8502,22 +6727,10 @@ function (_super) {
    * @param gamma=0.001 Learning rate decay per iteration; - _0 < `gamma` < 1_ - _large `gamma` CAN cause networks to converge too quickly and stop learning, low `gamma` CAN cause networks to converge to learn VERY slowly_
    * @param power=2 Decay rate per iteration - _0 < `power`_ - _large `power` CAN cause networks to stop learning quickly, low `power` CAN cause networks to learn VERY slowly_
    */
-
-
-  function InverseRate(baseRate, gamma, power) {
-    if (gamma === void 0) {
-      gamma = 0.001;
-    }
-
-    if (power === void 0) {
-      power = 2;
-    }
-
-    var _this = _super.call(this, baseRate) || this;
-
-    _this.gamma = gamma;
-    _this.power = power;
-    return _this;
+  constructor(baseRate, gamma = 0.001, power = 2) {
+    super(baseRate);
+    this.gamma = gamma;
+    this.power = power;
   }
   /**
    * Calculates the current training rate.
@@ -8527,12 +6740,11 @@ function (_super) {
    */
 
 
-  InverseRate.prototype.calc = function (iteration) {
+  calc(iteration) {
     return this.baseRate * Math.pow(1 + this.gamma * iteration, -this.power);
-  };
+  }
 
-  return InverseRate;
-}(Rate);
+}
 
 exports.InverseRate = InverseRate;
 },{}],"../src/interfaces/TrainOptions.js":[function(require,module,exports) {
@@ -8543,18 +6755,16 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.TrainOptions = void 0;
 
-var Loss_1 = require("../methods/Loss");
+const Loss_1 = require("../methods/Loss");
 
-var Rate_1 = require("../methods/Rate");
+const Rate_1 = require("../methods/Rate");
 /**
  * Options used to train network
  */
 
 
-var TrainOptions =
-/** @class */
-function () {
-  function TrainOptions(dataset) {
+class TrainOptions {
+  constructor(dataset) {
     this._dataset = dataset;
     this._iterations = -1;
     this._error = -1;
@@ -8568,230 +6778,216 @@ function () {
     this._shuffle = false;
     this._clear = false;
   }
+  /**
+   * Getter
+   */
 
-  Object.defineProperty(TrainOptions.prototype, "dataset", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._dataset;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._dataset = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(TrainOptions.prototype, "shuffle", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._shuffle;
-    },
+  get dataset() {
+    return this._dataset;
+  }
+  /**
+   * Setter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._shuffle = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(TrainOptions.prototype, "clear", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._clear;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._clear = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(TrainOptions.prototype, "schedule", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._schedule;
-    },
+  set dataset(value) {
+    this._dataset = value;
+  }
+  /**
+   * Getter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._schedule = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(TrainOptions.prototype, "crossValidateTestSize", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._crossValidateTestSize;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._crossValidateTestSize = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(TrainOptions.prototype, "rate", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._rate;
-    },
+  get shuffle() {
+    return this._shuffle;
+  }
+  /**
+   * Setter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._rate = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(TrainOptions.prototype, "loss", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._loss;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._loss = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(TrainOptions.prototype, "iterations", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._iterations;
-    },
+  set shuffle(value) {
+    this._shuffle = value;
+  }
+  /**
+   * Getter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._iterations = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(TrainOptions.prototype, "error", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._error;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._error = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(TrainOptions.prototype, "momentum", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._momentum;
-    },
+  get clear() {
+    return this._clear;
+  }
+  /**
+   * Setter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._momentum = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(TrainOptions.prototype, "dropout", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._dropout;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._dropout = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(TrainOptions.prototype, "log", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._log;
-    },
+  set clear(value) {
+    this._clear = value;
+  }
+  /**
+   * Getter
+   */
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._log = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  Object.defineProperty(TrainOptions.prototype, "batchSize", {
-    /**
-     * Getter
-     */
-    get: function () {
-      return this._batchSize;
-    },
 
-    /**
-     * Setter
-     */
-    set: function (value) {
-      this._batchSize = value;
-    },
-    enumerable: false,
-    configurable: true
-  });
-  return TrainOptions;
-}();
+  get schedule() {
+    return this._schedule;
+  }
+  /**
+   * Setter
+   */
+
+
+  set schedule(value) {
+    this._schedule = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get crossValidateTestSize() {
+    return this._crossValidateTestSize;
+  }
+  /**
+   * Setter
+   */
+
+
+  set crossValidateTestSize(value) {
+    this._crossValidateTestSize = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get rate() {
+    return this._rate;
+  }
+  /**
+   * Setter
+   */
+
+
+  set rate(value) {
+    this._rate = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get loss() {
+    return this._loss;
+  }
+  /**
+   * Setter
+   */
+
+
+  set loss(value) {
+    this._loss = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get iterations() {
+    return this._iterations;
+  }
+  /**
+   * Setter
+   */
+
+
+  set iterations(value) {
+    this._iterations = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get error() {
+    return this._error;
+  }
+  /**
+   * Setter
+   */
+
+
+  set error(value) {
+    this._error = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get momentum() {
+    return this._momentum;
+  }
+  /**
+   * Setter
+   */
+
+
+  set momentum(value) {
+    this._momentum = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get dropout() {
+    return this._dropout;
+  }
+  /**
+   * Setter
+   */
+
+
+  set dropout(value) {
+    this._dropout = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get log() {
+    return this._log;
+  }
+  /**
+   * Setter
+   */
+
+
+  set log(value) {
+    this._log = value;
+  }
+  /**
+   * Getter
+   */
+
+
+  get batchSize() {
+    return this._batchSize;
+  }
+  /**
+   * Setter
+   */
+
+
+  set batchSize(value) {
+    this._batchSize = value;
+  }
+
+}
 
 exports.TrainOptions = TrainOptions;
 },{"../methods/Loss":"../src/methods/Loss.js","../methods/Rate":"../src/methods/Rate.js"}],"index.js":[function(require,module,exports) {
@@ -8802,7 +6998,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.generateGaussian = exports.avg = exports.sum = exports.min = exports.minValueIndex = exports.maxValueIndex = exports.max = exports.shuffle = exports.removeFromArray = exports.randBoolean = exports.randDouble = exports.randInt = exports.pickRandom = exports.TournamentSelection = exports.PowerSelection = exports.FitnessProportionateSelection = exports.Selection = exports.InverseRate = exports.ExponentialRate = exports.StepRate = exports.FixedRate = exports.Rate = exports.SwapNodesMutation = exports.SubBackConnectionMutation = exports.AddBackConnectionMutation = exports.SubSelfConnectionMutation = exports.AddSelfConnectionMutation = exports.SubGateMutation = exports.AddGateMutation = exports.ModActivationMutation = exports.ModBiasMutation = exports.ModWeightMutation = exports.SubConnectionMutation = exports.AddConnectionMutation = exports.SubNodeMutation = exports.AddNodeMutation = exports.Mutation = exports.ONLY_STRUCTURE = exports.NO_STRUCTURE_MUTATIONS = exports.FEEDFORWARD_MUTATIONS = exports.ALL_MUTATIONS = exports.HINGELoss = exports.MSLELoss = exports.WAPELoss = exports.MAPELoss = exports.MAELoss = exports.BinaryLoss = exports.MBELoss = exports.MSELoss = exports.ALL_LOSSES = exports.TrainOptions = exports.EvolveOptions = exports.NoiseNodeType = exports.PoolNodeType = exports.NodeType = exports.GatingType = exports.ConnectionType = exports.Node = exports.Species = exports.Network = exports.Connection = exports.Architect = exports.PoolNode = exports.NoiseNode = exports.DropoutNode = exports.ConstantNode = exports.Layer = exports.MemoryLayer = exports.LSTMLayer = exports.GRULayer = exports.RNNLayer = exports.HopfieldLayer = exports.ActivationLayer = exports.PoolingLayer = exports.GlobalMaxPooling1DLayer = exports.GlobalMinPooling1DLayer = exports.GlobalAvgPooling1DLayer = exports.MaxPooling1DLayer = exports.MinPooling1DLayer = exports.AvgPooling1DLayer = exports.NoiseLayer = exports.OutputLayer = exports.InputLayer = exports.DropoutLayer = exports.DenseLayer = void 0;
 
-var Architect_1 = require("../src/architecture/Architect");
+const Architect_1 = require("../src/architecture/Architect");
 
 Object.defineProperty(exports, "Architect", {
   enumerable: true,
@@ -8811,7 +7007,7 @@ Object.defineProperty(exports, "Architect", {
   }
 });
 
-var Connection_1 = require("../src/architecture/Connection");
+const Connection_1 = require("../src/architecture/Connection");
 
 Object.defineProperty(exports, "Connection", {
   enumerable: true,
@@ -8820,7 +7016,7 @@ Object.defineProperty(exports, "Connection", {
   }
 });
 
-var ActivationLayer_1 = require("../src/architecture/Layers/CoreLayers/ActivationLayer");
+const ActivationLayer_1 = require("../src/architecture/Layers/CoreLayers/ActivationLayer");
 
 Object.defineProperty(exports, "ActivationLayer", {
   enumerable: true,
@@ -8829,7 +7025,7 @@ Object.defineProperty(exports, "ActivationLayer", {
   }
 });
 
-var DenseLayer_1 = require("../src/architecture/Layers/CoreLayers/DenseLayer");
+const DenseLayer_1 = require("../src/architecture/Layers/CoreLayers/DenseLayer");
 
 Object.defineProperty(exports, "DenseLayer", {
   enumerable: true,
@@ -8838,7 +7034,7 @@ Object.defineProperty(exports, "DenseLayer", {
   }
 });
 
-var DropoutLayer_1 = require("../src/architecture/Layers/CoreLayers/DropoutLayer");
+const DropoutLayer_1 = require("../src/architecture/Layers/CoreLayers/DropoutLayer");
 
 Object.defineProperty(exports, "DropoutLayer", {
   enumerable: true,
@@ -8847,7 +7043,7 @@ Object.defineProperty(exports, "DropoutLayer", {
   }
 });
 
-var InputLayer_1 = require("../src/architecture/Layers/CoreLayers/InputLayer");
+const InputLayer_1 = require("../src/architecture/Layers/CoreLayers/InputLayer");
 
 Object.defineProperty(exports, "InputLayer", {
   enumerable: true,
@@ -8856,7 +7052,7 @@ Object.defineProperty(exports, "InputLayer", {
   }
 });
 
-var OutputLayer_1 = require("../src/architecture/Layers/CoreLayers/OutputLayer");
+const OutputLayer_1 = require("../src/architecture/Layers/CoreLayers/OutputLayer");
 
 Object.defineProperty(exports, "OutputLayer", {
   enumerable: true,
@@ -8865,7 +7061,7 @@ Object.defineProperty(exports, "OutputLayer", {
   }
 });
 
-var Layer_1 = require("../src/architecture/Layers/Layer");
+const Layer_1 = require("../src/architecture/Layers/Layer");
 
 Object.defineProperty(exports, "Layer", {
   enumerable: true,
@@ -8874,7 +7070,7 @@ Object.defineProperty(exports, "Layer", {
   }
 });
 
-var NoiseLayer_1 = require("../src/architecture/Layers/NoiseLayers/NoiseLayer");
+const NoiseLayer_1 = require("../src/architecture/Layers/NoiseLayers/NoiseLayer");
 
 Object.defineProperty(exports, "NoiseLayer", {
   enumerable: true,
@@ -8883,7 +7079,7 @@ Object.defineProperty(exports, "NoiseLayer", {
   }
 });
 
-var AvgPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer");
+const AvgPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer");
 
 Object.defineProperty(exports, "AvgPooling1DLayer", {
   enumerable: true,
@@ -8892,7 +7088,7 @@ Object.defineProperty(exports, "AvgPooling1DLayer", {
   }
 });
 
-var GlobalAvgPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer");
+const GlobalAvgPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer");
 
 Object.defineProperty(exports, "GlobalAvgPooling1DLayer", {
   enumerable: true,
@@ -8901,7 +7097,7 @@ Object.defineProperty(exports, "GlobalAvgPooling1DLayer", {
   }
 });
 
-var GlobalMaxPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer");
+const GlobalMaxPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer");
 
 Object.defineProperty(exports, "GlobalMaxPooling1DLayer", {
   enumerable: true,
@@ -8910,7 +7106,7 @@ Object.defineProperty(exports, "GlobalMaxPooling1DLayer", {
   }
 });
 
-var GlobalMinPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer");
+const GlobalMinPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer");
 
 Object.defineProperty(exports, "GlobalMinPooling1DLayer", {
   enumerable: true,
@@ -8919,7 +7115,7 @@ Object.defineProperty(exports, "GlobalMinPooling1DLayer", {
   }
 });
 
-var MaxPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer");
+const MaxPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer");
 
 Object.defineProperty(exports, "MaxPooling1DLayer", {
   enumerable: true,
@@ -8928,7 +7124,7 @@ Object.defineProperty(exports, "MaxPooling1DLayer", {
   }
 });
 
-var MinPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/MinPooling1DLayer");
+const MinPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/MinPooling1DLayer");
 
 Object.defineProperty(exports, "MinPooling1DLayer", {
   enumerable: true,
@@ -8937,7 +7133,7 @@ Object.defineProperty(exports, "MinPooling1DLayer", {
   }
 });
 
-var PoolingLayer_1 = require("../src/architecture/Layers/PoolingLayers/PoolingLayer");
+const PoolingLayer_1 = require("../src/architecture/Layers/PoolingLayers/PoolingLayer");
 
 Object.defineProperty(exports, "PoolingLayer", {
   enumerable: true,
@@ -8946,7 +7142,7 @@ Object.defineProperty(exports, "PoolingLayer", {
   }
 });
 
-var GRULayer_1 = require("../src/architecture/Layers/RecurrentLayers/GRULayer");
+const GRULayer_1 = require("../src/architecture/Layers/RecurrentLayers/GRULayer");
 
 Object.defineProperty(exports, "GRULayer", {
   enumerable: true,
@@ -8955,7 +7151,7 @@ Object.defineProperty(exports, "GRULayer", {
   }
 });
 
-var HopfieldLayer_1 = require("../src/architecture/Layers/RecurrentLayers/HopfieldLayer");
+const HopfieldLayer_1 = require("../src/architecture/Layers/RecurrentLayers/HopfieldLayer");
 
 Object.defineProperty(exports, "HopfieldLayer", {
   enumerable: true,
@@ -8964,7 +7160,7 @@ Object.defineProperty(exports, "HopfieldLayer", {
   }
 });
 
-var LSTMLayer_1 = require("../src/architecture/Layers/RecurrentLayers/LSTMLayer");
+const LSTMLayer_1 = require("../src/architecture/Layers/RecurrentLayers/LSTMLayer");
 
 Object.defineProperty(exports, "LSTMLayer", {
   enumerable: true,
@@ -8973,7 +7169,7 @@ Object.defineProperty(exports, "LSTMLayer", {
   }
 });
 
-var MemoryLayer_1 = require("../src/architecture/Layers/RecurrentLayers/MemoryLayer");
+const MemoryLayer_1 = require("../src/architecture/Layers/RecurrentLayers/MemoryLayer");
 
 Object.defineProperty(exports, "MemoryLayer", {
   enumerable: true,
@@ -8982,7 +7178,7 @@ Object.defineProperty(exports, "MemoryLayer", {
   }
 });
 
-var RNNLayer_1 = require("../src/architecture/Layers/RecurrentLayers/RNNLayer");
+const RNNLayer_1 = require("../src/architecture/Layers/RecurrentLayers/RNNLayer");
 
 Object.defineProperty(exports, "RNNLayer", {
   enumerable: true,
@@ -8991,7 +7187,7 @@ Object.defineProperty(exports, "RNNLayer", {
   }
 });
 
-var Network_1 = require("../src/architecture/Network");
+const Network_1 = require("../src/architecture/Network");
 
 Object.defineProperty(exports, "Network", {
   enumerable: true,
@@ -9000,7 +7196,7 @@ Object.defineProperty(exports, "Network", {
   }
 });
 
-var Node_1 = require("../src/architecture/Node");
+const Node_1 = require("../src/architecture/Node");
 
 Object.defineProperty(exports, "Node", {
   enumerable: true,
@@ -9009,7 +7205,7 @@ Object.defineProperty(exports, "Node", {
   }
 });
 
-var ConstantNode_1 = require("../src/architecture/Nodes/ConstantNode");
+const ConstantNode_1 = require("../src/architecture/Nodes/ConstantNode");
 
 Object.defineProperty(exports, "ConstantNode", {
   enumerable: true,
@@ -9018,7 +7214,7 @@ Object.defineProperty(exports, "ConstantNode", {
   }
 });
 
-var DropoutNode_1 = require("../src/architecture/Nodes/DropoutNode");
+const DropoutNode_1 = require("../src/architecture/Nodes/DropoutNode");
 
 Object.defineProperty(exports, "DropoutNode", {
   enumerable: true,
@@ -9027,7 +7223,7 @@ Object.defineProperty(exports, "DropoutNode", {
   }
 });
 
-var NoiseNode_1 = require("../src/architecture/Nodes/NoiseNode");
+const NoiseNode_1 = require("../src/architecture/Nodes/NoiseNode");
 
 Object.defineProperty(exports, "NoiseNode", {
   enumerable: true,
@@ -9036,7 +7232,7 @@ Object.defineProperty(exports, "NoiseNode", {
   }
 });
 
-var PoolNode_1 = require("../src/architecture/Nodes/PoolNode");
+const PoolNode_1 = require("../src/architecture/Nodes/PoolNode");
 
 Object.defineProperty(exports, "PoolNode", {
   enumerable: true,
@@ -9045,7 +7241,7 @@ Object.defineProperty(exports, "PoolNode", {
   }
 });
 
-var Species_1 = require("../src/architecture/Species");
+const Species_1 = require("../src/architecture/Species");
 
 Object.defineProperty(exports, "Species", {
   enumerable: true,
@@ -9054,7 +7250,7 @@ Object.defineProperty(exports, "Species", {
   }
 });
 
-var ConnectionType_1 = require("../src/enums/ConnectionType");
+const ConnectionType_1 = require("../src/enums/ConnectionType");
 
 Object.defineProperty(exports, "ConnectionType", {
   enumerable: true,
@@ -9063,7 +7259,7 @@ Object.defineProperty(exports, "ConnectionType", {
   }
 });
 
-var GatingType_1 = require("../src/enums/GatingType");
+const GatingType_1 = require("../src/enums/GatingType");
 
 Object.defineProperty(exports, "GatingType", {
   enumerable: true,
@@ -9072,7 +7268,7 @@ Object.defineProperty(exports, "GatingType", {
   }
 });
 
-var NodeType_1 = require("../src/enums/NodeType");
+const NodeType_1 = require("../src/enums/NodeType");
 
 Object.defineProperty(exports, "NodeType", {
   enumerable: true,
@@ -9093,7 +7289,7 @@ Object.defineProperty(exports, "PoolNodeType", {
   }
 });
 
-var EvolveOptions_1 = require("../src/interfaces/EvolveOptions");
+const EvolveOptions_1 = require("../src/interfaces/EvolveOptions");
 
 Object.defineProperty(exports, "EvolveOptions", {
   enumerable: true,
@@ -9102,7 +7298,7 @@ Object.defineProperty(exports, "EvolveOptions", {
   }
 });
 
-var TrainOptions_1 = require("../src/interfaces/TrainOptions");
+const TrainOptions_1 = require("../src/interfaces/TrainOptions");
 
 Object.defineProperty(exports, "TrainOptions", {
   enumerable: true,
@@ -9111,7 +7307,7 @@ Object.defineProperty(exports, "TrainOptions", {
   }
 });
 
-var Loss_1 = require("../src/methods/Loss");
+const Loss_1 = require("../src/methods/Loss");
 
 Object.defineProperty(exports, "ALL_LOSSES", {
   enumerable: true,
@@ -9168,7 +7364,7 @@ Object.defineProperty(exports, "WAPELoss", {
   }
 });
 
-var Mutation_1 = require("../src/methods/Mutation");
+const Mutation_1 = require("../src/methods/Mutation");
 
 Object.defineProperty(exports, "AddBackConnectionMutation", {
   enumerable: true,
@@ -9285,7 +7481,7 @@ Object.defineProperty(exports, "SwapNodesMutation", {
   }
 });
 
-var Rate_1 = require("../src/methods/Rate");
+const Rate_1 = require("../src/methods/Rate");
 
 Object.defineProperty(exports, "ExponentialRate", {
   enumerable: true,
@@ -9318,7 +7514,7 @@ Object.defineProperty(exports, "StepRate", {
   }
 });
 
-var Selection_1 = require("../src/methods/Selection");
+const Selection_1 = require("../src/methods/Selection");
 
 Object.defineProperty(exports, "FitnessProportionateSelection", {
   enumerable: true,
@@ -9345,7 +7541,7 @@ Object.defineProperty(exports, "TournamentSelection", {
   }
 });
 
-var Utils_1 = require("../src/utils/Utils");
+const Utils_1 = require("../src/utils/Utils");
 
 Object.defineProperty(exports, "avg", {
   enumerable: true,
@@ -9453,7 +7649,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "44707" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "33065" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
