@@ -15,7 +15,8 @@
     "build:src": "ts-node scripts/build.ts",
     "deploy:docs": "typedoc --options typedoc.json",
     "test": "tsc && mocha build/test --recursive",
-    "lint": "tslint --project ./"
+    "lint": "tslint --project ./",
+    "coverage": "nyc --reporter lcov npm test"
   },
   "husky": {
     "hooks": {
@@ -72,25 +73,25 @@
   },
   "homepage": "https://liquidcarrot.io/",
   "dependencies": {
-    "activations": "^1.0.6",
+    "activations": "^1.0.13",
     "nyc": "^15.1.0",
-    "threads": "^1.4.1",
+    "threads": "^1.6.3",
     "timsort": "^0.3.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
-    "@types/mocha": "^7.0.2",
+    "@types/mocha": "^8.0.0",
     "@types/parcel-bundler": "^1.12.1",
     "@types/timsort": "^0.3.0",
     "chai": "^4.2.0",
     "husky": "^4.2.5",
     "mnist": "^1.1.0",
-    "mocha": "^7.1.2",
+    "mocha": "^8.0.1",
     "parcel-bundler": "^1.12.4",
-    "ts-node": "^8.10.1",
+    "ts-node": "^8.10.2",
     "tslint": "^6.1.2",
-    "typedoc": "^0.17.6",
-    "typescript": "^3.9.2"
+    "typedoc": "^0.17.8",
+    "typescript": "^3.9.6"
   },
   "nyc": {
     "include": [
