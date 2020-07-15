@@ -171,8 +171,8 @@ describe('Network', function () {
             chai_1.expect(node.gated).to.have.lengthOf(1);
         });
     });
-    describe('network.ungate()', function () {
-        it('network.ungate(connection_not_in_network) => {ReferenceError}', function () {
+    describe('network.removeGate()', function () {
+        it('network.removeGate(connection_not_in_network) => {ReferenceError}', function () {
             var testNetwork = createTestNetwork();
             var node = new Node_1.Node();
             var connection = node.connect(testNetwork.nodes[20]);
@@ -181,7 +181,7 @@ describe('Network', function () {
                 testNetwork.removeGate(connection);
             }).to.throw(Error);
         });
-        it('network.ungate(Connection) => {undefined}', function () {
+        it('network.removeGate(Connection) => {undefined}', function () {
             var testNetwork = createTestNetwork();
             for (var i = 0; i < 20; i++) {
                 testNetwork.mutate(new Mutation_1.AddNodeMutation());
@@ -249,7 +249,7 @@ describe('Network', function () {
                             ];
                             initial = network.test(dataset);
                             return [4 /*yield*/, network.evolve({
-                                    iterations: 50,
+                                    iterations: 10,
                                     dataset: dataset
                                 })];
                         case 1:
