@@ -1,5 +1,5 @@
 import {DropoutNodeJSON} from "../../interfaces/NodeJSON";
-import {getOrDefault, randDouble, sum} from "../../utils/Utils";
+import {randDouble, sum} from "../../utils/Utils";
 import {Connection} from "../Connection";
 import {ConstantNode} from "./ConstantNode";
 
@@ -79,9 +79,9 @@ export class DropoutNode extends ConstantNode {
          */
         update?: boolean
     } = {}): void {
-        options.momentum = getOrDefault(options.momentum, 0);
-        options.rate = getOrDefault(options.rate, 0.3);
-        options.update = getOrDefault(options.update, true);
+        options.momentum = options.momentum ?? 0;
+        options.rate = options.rate ?? 0.3;
+        options.update = options.update ?? true;
 
         const connectionsStates: number[] = Array.from(this.outgoing).map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
         this.errorResponsibility = this.errorProjected = sum(connectionsStates) / (1 - this.probability);

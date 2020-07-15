@@ -13,6 +13,8 @@ import {RNNLayer} from "../../../src/architecture/Layers/RecurrentLayers/RNNLaye
 import {Network} from "../../../src/architecture/Network";
 import {Node} from "../../../src/architecture/Node";
 import {PoolNode} from "../../../src/architecture/Nodes/PoolNode";
+import {TrainOptions} from "../../../src/interfaces/TrainOptions";
+import {FixedRate} from "../../../src/methods/Rate";
 import {randInt} from "../../../src/utils/Utils";
 
 describe("ArchitectTest", () => {
@@ -214,12 +216,12 @@ describe("ArchitectTest", () => {
 
         const errorBefore: number = network.test(AND_GATE);
 
-        const error: number = network.train({
-            dataset: AND_GATE,
-            iterations: 10000,
-            rate: 0.01,
-            shuffle: true,
-        }).error;
+        const options: TrainOptions = new TrainOptions(AND_GATE);
+        options.iterations = 10000;
+        options.rate = new FixedRate(0.01);
+        options.shuffle = true;
+        network.train(options);
+        const error: number = network.train(options).error;
 
         expect(Number.isFinite(error)).to.be.true;
         expect(Number.isFinite(errorBefore)).to.be.true;
@@ -246,12 +248,12 @@ describe("ArchitectTest", () => {
 
         const errorBefore: number = network.test(data);
 
-        const error: number = network.train({
-            dataset: data,
-            iterations: 10000,
-            rate: 0.01,
-            clear: true,
-        }).error;
+        const options: TrainOptions = new TrainOptions(data);
+        options.iterations = 10000;
+        options.clear = true;
+        options.rate = new FixedRate(0.01);
+        network.train(options);
+        const error: number = network.train(options).error;
 
 
         expect(Number.isFinite(error)).to.be.true;
@@ -280,12 +282,12 @@ describe("ArchitectTest", () => {
 
         const errorBefore: number = network.test(data);
 
-        const error: number = network.train({
-            dataset: data,
-            iterations: 10000,
-            rate: 0.01,
-            clear: true,
-        }).error;
+        const options: TrainOptions = new TrainOptions(data);
+        options.iterations = 10000;
+        options.rate = new FixedRate(0.01);
+        options.clear = true;
+        network.train(options);
+        const error: number = network.train(options).error;
 
         expect(Number.isFinite(error)).to.be.true;
         expect(Number.isFinite(errorBefore)).to.be.true;
@@ -312,12 +314,12 @@ describe("ArchitectTest", () => {
 
         const errorBefore: number = network.test(data);
 
-        const error: number = network.train({
-            dataset: data,
-            iterations: 10000,
-            rate: 0.01,
-            clear: true,
-        }).error;
+        const options: TrainOptions = new TrainOptions(data);
+        options.iterations = 10000;
+        options.rate = new FixedRate(0.01);
+        options.clear = true;
+        network.train(options);
+        const error: number = network.train(options).error;
 
         expect(Number.isFinite(error)).to.be.true;
         expect(Number.isFinite(errorBefore)).to.be.true;

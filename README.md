@@ -6,8 +6,8 @@
     <a href="https://www.npmjs.com/package/@liquid-carrot/carrot">
      <img src="https://img.shields.io/npm/dm/@liquid-carrot/carrot">
     </a>
-    <a href="https://github.com/raimannma/carrot/actions">
-     <img src="https://github.com/raimannma/carrot/workflows/Node.js%20CI/badge.svg?branch=master">
+    <a href="https://github.com/liquidcarrot/carrot/actions">
+     <img src="https://github.com/liquidcarrot/carrot/workflows/Node.js%20CI/badge.svg">
     </a>
     <a href="https://coveralls.io/github/raimannma/carrot?branch=master">
       <img src="https://coveralls.io/repos/github/raimannma/carrot/badge.svg?branch=master" alt="Coverage Status">

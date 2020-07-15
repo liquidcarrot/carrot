@@ -24,8 +24,9 @@ var NoiseNode = /** @class */ (function (_super) {
     __extends(NoiseNode, _super);
     function NoiseNode(options) {
         if (options === void 0) { options = {}; }
+        var _a;
         var _this = _super.call(this) || this;
-        _this.noiseType = Utils_1.getOrDefault(options.noiseType, NodeType_1.NoiseNodeType.GAUSSIAN_NOISE);
+        _this.noiseType = (_a = options.noiseType) !== null && _a !== void 0 ? _a : NodeType_1.NoiseNodeType.GAUSSIAN_NOISE;
         _this.options = options;
         return _this;
     }
@@ -65,10 +66,11 @@ var NoiseNode = /** @class */ (function (_super) {
      */
     NoiseNode.prototype.propagate = function (target, options) {
         var _this = this;
+        var _a, _b, _c;
         if (options === void 0) { options = {}; }
-        options.momentum = Utils_1.getOrDefault(options.momentum, 0);
-        options.rate = Utils_1.getOrDefault(options.rate, 0.3);
-        options.update = Utils_1.getOrDefault(options.update, true);
+        options.momentum = (_a = options.momentum) !== null && _a !== void 0 ? _a : 0;
+        options.rate = (_b = options.rate) !== null && _b !== void 0 ? _b : 0.3;
+        options.update = (_c = options.update) !== null && _c !== void 0 ? _c : true;
         var connectionsStates = Array.from(this.outgoing).map(function (conn) { return conn.to.errorResponsibility * conn.weight * conn.gain; });
         this.errorResponsibility = this.errorProjected = Utils_1.sum(connectionsStates) * this.derivativeState;
         this.incoming.forEach(function (connection) {

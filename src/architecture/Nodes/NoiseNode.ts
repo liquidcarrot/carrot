@@ -1,5 +1,5 @@
 import {NoiseNodeType} from "../../enums/NodeType";
-import {avg, generateGaussian, getOrDefault, sum} from "../../utils/Utils";
+import {avg, generateGaussian, sum} from "../../utils/Utils";
 import {ConstantNode} from "./ConstantNode";
 
 /**
@@ -49,7 +49,7 @@ export class NoiseNode extends ConstantNode {
         }
     } = {}) {
         super();
-        this.noiseType = getOrDefault(options.noiseType, NoiseNodeType.GAUSSIAN_NOISE);
+        this.noiseType = options.noiseType ?? NoiseNodeType.GAUSSIAN_NOISE;
         this.options = options;
     }
 
@@ -106,9 +106,9 @@ export class NoiseNode extends ConstantNode {
          */
         update?: boolean
     } = {}): void {
-        options.momentum = getOrDefault(options.momentum, 0);
-        options.rate = getOrDefault(options.rate, 0.3);
-        options.update = getOrDefault(options.update, true);
+        options.momentum = options.momentum ?? 0;
+        options.rate = options.rate ?? 0.3;
+        options.update = options.update ?? true;
 
         const connectionsStates: number[] = Array.from(this.outgoing).map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
         this.errorResponsibility = this.errorProjected = sum(connectionsStates) * this.derivativeState;

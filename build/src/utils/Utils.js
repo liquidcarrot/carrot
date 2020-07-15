@@ -1,18 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.generateGaussian = exports.avg = exports.sum = exports.min = exports.minValueIndex = exports.maxValueIndex = exports.max = exports.shuffle = exports.getOrDefault = exports.removeFromArray = exports.randBoolean = exports.randDouble = exports.randInt = exports.pickRandom = void 0;
+exports.pairing = exports.generateGaussian = exports.avg = exports.sum = exports.min = exports.minValueIndex = exports.maxValueIndex = exports.max = exports.shuffle = exports.removeFromArray = exports.randBoolean = exports.randDouble = exports.randInt = exports.pickRandom = void 0;
 /**
  * Returns an random element from the given array.
  *
  * @param arr the array to pick from
- * @time O(1)
  * @returns the random picked element
  */
 function pickRandom(arr) {
-    if (arr.length === 0) {
-        throw new RangeError("Cannot pick from an empty array");
+    if (Array.isArray(arr)) {
+        if (arr.length === 0) {
+            throw new RangeError("Cannot pick from an empty array");
+        }
+        return arr[randInt(0, arr.length)];
     }
-    return arr[randInt(0, arr.length)];
+    else {
+        return pickRandom(Array.from(arr));
+    }
 }
 exports.pickRandom = pickRandom;
 /**
@@ -20,7 +24,6 @@ exports.pickRandom = pickRandom;
  *
  * @param min bound
  * @param max bound
- * @time O(1)
  * @returns random integer in [min,max)
  */
 function randInt(min, max) {
@@ -32,7 +35,6 @@ exports.randInt = randInt;
  *
  * @param min bound
  * @param max bound
- * @time O(1)
  * @returns random double in [min,max)
  */
 function randDouble(min, max) {
@@ -43,7 +45,6 @@ exports.randDouble = randDouble;
  * Returns a random boolean
  *
  * @returns random boolean
- * @time O(1)
  */
 function randBoolean() {
     return Math.random() >= 0.5;
@@ -54,7 +55,6 @@ exports.randBoolean = randBoolean;
  *
  * @param arr the array
  * @param elem the element which will be removed
- * @time O(n)
  * @returns false -> element does not exists on array; true -> element removed from array
  */
 function removeFromArray(arr, elem) {
@@ -69,22 +69,9 @@ function removeFromArray(arr, elem) {
 }
 exports.removeFromArray = removeFromArray;
 /**
- * Checks a given value. If value is undefined return the default value.
- *
- * @param value to check
- * @param defaultValue to return if value is undefined
- * @returns value if defined otherwise defaultValue
- * @time O(1)
- */
-function getOrDefault(value, defaultValue) {
-    return value !== null && value !== void 0 ? value : defaultValue;
-}
-exports.getOrDefault = getOrDefault;
-/**
  * Shuffles an array
  * @param array the array
  * @returns the shuffled array
- * @time O(n)
  */
 function shuffle(array) {
     // While there are elements in the array
@@ -102,7 +89,6 @@ exports.shuffle = shuffle;
  * Finds the maximum value of an number array
  *
  * @param array
- * @time O(n)
  */
 function max(array) {
     if (array.length === 0) {
@@ -121,7 +107,6 @@ exports.max = max;
  * Finds the maximum value index of an number array
  *
  * @param array
- * @time O(n)
  */
 function maxValueIndex(array) {
     if (array.length === 0) {
@@ -142,7 +127,6 @@ exports.maxValueIndex = maxValueIndex;
  * Finds the minimum value index of an number array
  *
  * @param array
- * @time O(n)
  */
 function minValueIndex(array) {
     if (array.length === 0) {
@@ -163,7 +147,6 @@ exports.minValueIndex = minValueIndex;
  * Finds the minimum value of an number array
  *
  * @param array
- * @time O(n)
  */
 function min(array) {
     if (array.length === 0) {
@@ -182,7 +165,6 @@ exports.min = min;
  * Calculates the average value of an array
  *
  * @param array
- * @time O(n)
  */
 function avg(array) {
     return sum(array) / array.length;
@@ -192,7 +174,6 @@ exports.avg = avg;
  * Calculates the sum of all values of an array
  *
  * @param array
- * @time O(n)
  */
 function sum(array) {
     if (array.length === 0) {
@@ -213,7 +194,6 @@ exports.sum = sum;
  *
  * @param mean the mean value
  * @param deviation the standard deviation
- * @time O(1)
  */
 function generateGaussian(mean, deviation) {
     if (mean === void 0) { mean = 0; }
@@ -226,3 +206,17 @@ function generateGaussian(mean, deviation) {
     return deviation * sum / numSamples + mean - 0.5 * deviation;
 }
 exports.generateGaussian = generateGaussian;
+/**
+ * Pairing two numbers
+ *
+ * @see {@link https://en.wikipedia.org/wiki/Pairing_function (Cantor pairing function)|Pairing function (Cantor pairing function)}
+ *
+ * @param a - A [natural number](https://en.wikipedia.org/wiki/Natural_number), which is an integer greater than or equal to zero
+ * @param b - A [natural number](https://en.wikipedia.org/wiki/Natural_number), which is an integer greater than or equal to zero
+ *
+ * @return An Integer that uniquely represents a pair of Integers
+ */
+function pairing(a, b) {
+    return 1 / 2 * (a + b) * (a + b + 1) + b;
+}
+exports.pairing = pairing;

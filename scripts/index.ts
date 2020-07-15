@@ -25,6 +25,7 @@ import {ConstantNode} from "../src/architecture/Nodes/ConstantNode";
 import {DropoutNode} from "../src/architecture/Nodes/DropoutNode";
 import {NoiseNode} from "../src/architecture/Nodes/NoiseNode";
 import {PoolNode} from "../src/architecture/Nodes/PoolNode";
+import {Species} from "../src/architecture/Species";
 import {ConnectionType} from "../src/enums/ConnectionType";
 import {GatingType} from "../src/enums/GatingType";
 import {NodeType, NoiseNodeType, PoolNodeType} from "../src/enums/NodeType";
@@ -70,7 +71,6 @@ import {FitnessProportionateSelection, PowerSelection, Selection, TournamentSele
 import {
     avg,
     generateGaussian,
-    getOrDefault,
     max,
     maxValueIndex,
     min,
@@ -112,6 +112,7 @@ export {
     Architect,
     Connection,
     Network,
+    Species,
     Node,
     ConnectionType,
     GatingType,
@@ -167,7 +168,6 @@ export {
     randDouble,
     randBoolean,
     removeFromArray,
-    getOrDefault,
     shuffle,
     max,
     maxValueIndex,

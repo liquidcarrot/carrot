@@ -1,11 +1,11 @@
 import {expect} from "chai";
 import {
     avg,
-    getOrDefault,
     max,
     maxValueIndex,
     min,
     minValueIndex,
+    pairing,
     pickRandom,
     randBoolean,
     randDouble,
@@ -84,15 +84,6 @@ describe("Utils", () => {
         const len: number = arr.length;
         expect(removeFromArray(arr, arr[2])).to.be.true;
         expect(arr.length).equals(len - 1);
-    });
-
-    it("get or default", () => {
-        expect(getOrDefault(null, 50)).to.be.equals(50);
-        expect(getOrDefault(null, 12)).to.be.equals(12);
-        expect(getOrDefault(23, 50)).to.be.equals(23);
-        expect(getOrDefault(50, 50)).to.be.equals(50);
-        expect(getOrDefault(undefined, 50)).to.be.equals(50);
-        expect(getOrDefault(undefined, 6)).to.be.equals(6);
     });
 
     it("shuffle", () => {
@@ -221,5 +212,24 @@ describe("Utils", () => {
         let sumValue: number = 0;
         arr.forEach(elem => sumValue += elem);
         expect(sum(arr)).to.be.equals(sumValue);
+    });
+
+
+    describe("Utils pairing", () => {
+        const a: number = randInt(0, 100);
+        const b: number = randInt(0, 100);
+
+        it(`pairing(a=${a}, b=${b}) => {number}`, () => {
+            const pair: number = pairing(a, b);
+            expect(pair).to.be.a("number");
+
+            const w: number = Math.floor((Math.sqrt(8 * pair + 1) - 1) / 2);
+            const t: number = (w * w + w) / 2;
+            const y: number = pair - t;
+            const x: number = w - y;
+
+            expect(a).to.be.equal(x);
+            expect(b).to.be.equal(y);
+        });
     });
 });

@@ -1,8 +1,8 @@
 import {ActivationType} from "activations/build/src";
-import os from "os";
 import {spawn, Worker} from "threads";
 import {Pool} from "threads/dist";
 import "threads/register";
+import * as TimSort from "timsort";
 import {NodeType} from "../enums/NodeType";
 import {ConnectionJSON} from "../interfaces/ConnectionJSON";
 import {EvolveOptions} from "../interfaces/EvolveOptions";
@@ -10,12 +10,13 @@ import {NetworkJSON} from "../interfaces/NetworkJSON";
 import {TrainOptions} from "../interfaces/TrainOptions";
 import {ALL_LOSSES, lossType, MSELoss} from "../methods/Loss";
 import {ALL_MUTATIONS, Mutation, SubNodeMutation} from "../methods/Mutation";
-import {FixedRate} from "../methods/Rate";
 import {TestWorker} from "../multithreading/TestWorker";
 import {NEAT} from "../NEAT";
-import {getOrDefault, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../utils/Utils";
+import {pairing, pickRandom, randBoolean, randInt, removeFromArray, shuffle} from "../utils/Utils";
 import {Connection} from "./Connection";
 import {Node} from "./Node";
+import {Species} from "./Species";
+
 
 /**
  * Create a neural network
@@ -25,6 +26,10 @@ import {Node} from "./Node";
  * @constructs Network
  */
 export class Network {
+    /**
+     * Species of this network
+     */
+    public species: Species | null;
     /**
      * The input size of this network.
      */
@@ -58,6 +63,7 @@ export class Network {
         this.connections = new Set<Connection>();
         this.gates = new Set<Connection>();
         this.score = undefined;
+        this.species = null;
 
         // Create input and output nodes
         for (let i: number = 0; i < inputSize; i++) {
@@ -81,7 +87,6 @@ export class Network {
      * Convert a json object to a network
      *
      * @param {{input:{number},output:{number},dropout:{number},nodes:Array<object>,connections:Array<object>}} json A network represented as a json object
-     * @time O(n&sup2;)
      *
      * @returns {Network} Network A reconstructed network
      */
@@ -118,12 +123,10 @@ export class Network {
      *
      * @param {Network} network1 First parent network
      * @param {Network} network2 Second parent network
-     * @param {boolean} [equal] Flag to indicate equally fit Networks
-     * @time O(n&sup2;)
      *
      * @returns {Network} New network created from mixing parent networks
      */
-    public static crossOver(network1: Network, network2: Network, equal: boolean): Network {
+    public static crossOver(network1: Network, network2: Network): Network {
         if (network1.inputSize !== network2.inputSize || network1.outputSize !== network2.outputSize) {
             throw new Error("Networks don`t have the same input/output size!");
         }
@@ -139,7 +142,7 @@ export class Network {
 
         // Determine offspring node size
         let offspringSize: number;
-        if (equal || score1 === score2) {
+        if (score1 === score2) {
             const max: number = Math.max(network1.nodes.length, network2.nodes.length);
             const min: number = Math.min(network1.nodes.length, network2.nodes.length);
             offspringSize = randInt(min, max + 1); // [min,max]
@@ -222,11 +225,11 @@ export class Network {
 
         // Add the connections of network 1
         network1.connections.forEach(connection => {
-            n1connections[Connection.innovationID(connection.from.index, connection.to.index)] = connection.toJSON();
+            n1connections[pairing(connection.from.index, connection.to.index)] = connection.toJSON();
         });
         // Add the connections of network 2
         network2.connections.forEach(connection => {
-            n2connections[Connection.innovationID(connection.from.index, connection.to.index)] = connection.toJSON();
+            n2connections[pairing(connection.from.index, connection.to.index)] = connection.toJSON();
         });
 
         // Split common conn genes from disjoint or excess conn genes
@@ -238,13 +241,13 @@ export class Network {
                 connections.push(randBoolean() ? n1connections[parseInt(keys1[i])] : n2connections[parseInt(keys1[i])]);
 
                 n2connections[parseInt(keys1[i])] = undefined;
-            } else if (score1 >= score2 || equal) {
+            } else if (score1 >= score2) {
                 connections.push(n1connections[parseInt(keys1[i])]);
             }
         }
 
         // Excess/disjoint gene
-        if (score2 >= score1 || equal) {
+        if (score2 >= score1) {
             keys2
                 .map(key => parseInt(key))// convert to numbers
                 .map(key => n2connections[key]) // get the connection
@@ -270,7 +273,6 @@ export class Network {
 
     /**
      * Returns a copy of Network.
-     * @time O(n&sup2;)
      * @returns {Network} Returns an identical network
      */
     public copy(): Network {
@@ -283,7 +285,6 @@ export class Network {
      * @param {Node} from The source Node
      * @param {Node} to The destination Node or Group
      * @param {number} [weight=0] An initial weight for the connections to be formed
-     * @time O(n)
      *
      * @returns {Connection[]} An array of the formed connections
      */
@@ -300,7 +301,6 @@ export class Network {
      *
      * @param {number[]} [input] Input values to activate nodes with
      * @param options
-     * @time O(n&sup3;)
      * @returns {number[]} Squashed output values
      */
     public activate(input: number[], options: {
@@ -317,8 +317,8 @@ export class Network {
             throw new RangeError("Input size of dataset is different to network input size!");
         }
         // get default value if no value is given
-        options.dropoutRate = getOrDefault(options.dropoutRate, 0);
-        options.trace = getOrDefault(options.trace, true);
+        options.dropoutRate = options.dropoutRate ?? 0;
+        options.trace = options.trace ?? true;
 
         this.nodes
             .filter(node => node.isInputNode()) // only input nodes
@@ -347,7 +347,6 @@ export class Network {
      *
      * @param {number[]} target Ideal values of the previous activate. Will use the difference to improve the weights
      * @param options More option for propagation
-     * @time O(n&sup3;)
      */
     public propagate(target: number[], options: {
         /**
@@ -364,9 +363,9 @@ export class Network {
         update?: boolean
     } = {}): void {
         // get default value if value isn't given
-        options.rate = getOrDefault(options.rate, 0.3);
-        options.momentum = getOrDefault(options.momentum, 0);
-        options.update = getOrDefault(options.update, false);
+        options.rate = options.rate ?? 0.3;
+        options.momentum = options.momentum ?? 0;
+        options.update = options.update ?? false;
 
 
         if (target.length !== this.outputSize) {
@@ -395,7 +394,6 @@ export class Network {
 
     /**
      * Clear the context of the network
-     * @time O(n&sup3;)
      */
     public clear(): void {
         this.nodes.forEach(node => node.clear());
@@ -406,7 +404,6 @@ export class Network {
      *
      * @param {Node} from Source node
      * @param {Node} to Destination node
-     * @time O(n)
      */
     public disconnect(from: Node, to: Node): Connection {
         // remove the connection network-level
@@ -427,7 +424,6 @@ export class Network {
      *
      * @param {Node} node Gating node
      * @param {Connection} connection Connection to gate with node
-     * @time O(n)
      */
     public addGate(node: Node, connection: Connection): void {
         if (this.nodes.indexOf(node) === -1) {
@@ -443,7 +439,6 @@ export class Network {
      * Remove the gate of a connection.
      *
      * @param {Connection} connection Connection to remove gate from
-     * @time O(1)
      */
     public removeGate(connection: Connection): void {
         if (!this.gates.has(connection)) {
@@ -460,7 +455,6 @@ export class Network {
      *
      * @param {Node} node Node to remove from the network
      * @param keepGates
-     * @time O(&sup3;)
      */
     public removeNode(node: Node, keepGates: boolean = new SubNodeMutation().keepGates): void {
         if (!this.nodes.includes(node)) {
@@ -527,7 +521,6 @@ export class Network {
      * @param {number} [options.maxNodes]
      * @param {number} [options.maxConnections]
      * @param {number} [options.maxGates] Maximum amount of Gates a network can grow to
-     * @time O(n&sup3;)
      */
     public mutate(method: Mutation, options?: {
         /**
@@ -558,7 +551,6 @@ export class Network {
      * @param {number} [options.maxNodes] Maximum amount of [Nodes](node) a network can grow to
      * @param {number} [options.maxConnections] Maximum amount of [Connections](connection) a network can grow to
      * @param {number} [options.maxGates] Maximum amount of Gates a network can grow to
-     * @time O(n&sup3;)
      */
     public mutateRandom(allowedMethods: Mutation[] = ALL_MUTATIONS, options: {
         /**
@@ -589,7 +581,6 @@ export class Network {
      * Train the given data to this network
      *
      * @param {TrainOptions} options Options used to train network
-     * @time O(n&sup5;)
      *
      * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance
      */
@@ -607,20 +598,9 @@ export class Network {
          */
         time: number
     } {
-        if (!options.dataset || options.dataset[0].input.length !== this.inputSize || options.dataset[0].output.length !== this.outputSize) {
+        if (options.dataset[0].input.length !== this.inputSize || options.dataset[0].output.length !== this.outputSize) {
             throw new Error(`Dataset input/output size should be same as network input/output size!`);
         }
-
-        // Use the default values, if no value is given
-        options.iterations = getOrDefault(options.iterations, -1);
-        options.error = getOrDefault(options.error, -1);
-        options.loss = getOrDefault(options.loss, MSELoss);
-        options.dropout = getOrDefault(options.dropout, 0);
-        options.momentum = getOrDefault(options.momentum, 0);
-        options.batchSize = Math.min(options.dataset.length, getOrDefault(options.batchSize, options.dataset.length));
-        const baseRate: number = getOrDefault(options.rate, 0.3);
-        options.ratePolicy = getOrDefault(options.ratePolicy, new FixedRate(baseRate));
-        options.log = getOrDefault(options.log, NaN);
 
         const start: number = Date.now();
 
@@ -650,7 +630,7 @@ export class Network {
              */
             output: number[]
         }[];
-        if (options.crossValidateTestSize && options.crossValidateTestSize > 0) {
+        if (options.crossValidateTestSize > 0) {
             trainingSetSize = Math.ceil((1 - options.crossValidateTestSize) * options.dataset.length);
             trainingSet = options.dataset.slice(0, trainingSetSize);
             testSet = options.dataset.slice(trainingSetSize);
@@ -668,34 +648,31 @@ export class Network {
             iterationCount++;
 
             // update the rate according to the rate policy
-            currentTrainingRate = options.ratePolicy.calc(iterationCount);
+            currentTrainingRate = options.rate.calc(iterationCount);
 
             // train a single epoch
-            const trainError: number = this.trainEpoch({
-                ...options,
+            error = this.trainEpoch({
                 dataset: trainingSet,
-                trainingRate: currentTrainingRate
+                batchSize: options.batchSize,
+                trainingRate: currentTrainingRate,
+                momentum: options.momentum,
+                loss: options.loss,
+                dropoutRate: options.dropout
             });
-
-            if (!Number.isFinite(trainError)) {
-                throw new RangeError();
-            }
 
             if (options.clear) {
                 this.clear();
             }
 
             // Run test with the testSet, if cross validation is enabled
-            if (options.crossValidateTestSize) {
+            if (options.crossValidateTestSize > 0) {
                 error = this.test(testSet, options.loss);
                 if (options.clear) {
                     this.clear();
                 }
-            } else {
-                error = trainError;
             }
 
-            if (options.shuffle ?? false) {
+            if (options.shuffle) {
                 shuffle(options.dataset);
             }
 
@@ -724,7 +701,6 @@ export class Network {
      *
      * @param {Array<{input:number[],output:number[]}>} dataset A set of input values and ideal output values to test the network against
      * @param {lossType} [loss=MSELoss] The [loss function](https://en.wikipedia.org/wiki/Loss_function) used to determine network error
-     * @time O(n&sup4;)
      *
      * @returns {number} A summary object of the network's performance
      */
@@ -753,7 +729,6 @@ export class Network {
     /**
      * Convert the network to a json object
      *
-     * @time O(n)
      * @returns {NetworkJSON} The network represented as a json object
      */
     public toJSON(): NetworkJSON {
@@ -792,11 +767,10 @@ export class Network {
      * If both `iterations` and `error` options are unset, evolve will default to `iterations` as an end condition.
      *
      * @param {object} [options] Configuration options
-     * @time O(n * time for fitness function + n&sup2; * time for adjust genome + n&sup6;)
      *
      * @returns {{error:{number},iterations:{number},time:{number}}} A summary object of the network's performance. <br /> Properties include: `error` - error of the best genome, `iterations` - generations used to evolve networks, `time` - clock time elapsed while evolving
      */
-    public async evolve(options: EvolveOptions = {}): Promise<{
+    public async evolve(options: EvolveOptions = new EvolveOptions()): Promise<{
         /**
          * The loss of the network after training.
          */
@@ -814,23 +788,7 @@ export class Network {
             throw new Error(`Dataset input/output size should be same as network input/output size!`);
         }
 
-        let targetError: number = 0;
-        if (typeof options.iterations === `undefined` && typeof options.error === `undefined`) {
-            options.iterations = 1000;
-            targetError = 0.05;
-        } else if (options.iterations) {
-            targetError = -1; // run until iterations
-        } else if (options.error) {
-            targetError = options.error;
-            options.iterations = 0; // run until error
-        }
-
         // set options to default if necessary
-        options.growth = getOrDefault<number>(options.growth, 0.0001);
-        options.loss = getOrDefault(options.loss, MSELoss);
-        options.maxNodes = getOrDefault(options.maxNodes, Infinity);
-        options.maxConnections = getOrDefault(options.maxConnections, Infinity);
-        options.maxGates = getOrDefault(options.maxGates, Infinity);
         options.input = this.inputSize;
         options.output = this.outputSize;
 
@@ -845,9 +803,9 @@ export class Network {
 
             // Serialize the dataset using JSON
             const serializedDataSet: string = JSON.stringify(options.dataset);
-            const lossIndex: number = Object.values(ALL_LOSSES).indexOf(options.loss ?? MSELoss);
+            const lossIndex: number = Object.values(ALL_LOSSES).indexOf(options.loss);
             // init a pool of workers
-            workerPool = Pool(() => spawn<TestWorker>(new Worker("../multithreading/TestWorker")), options.threads ?? os.cpus().length);
+            workerPool = Pool(() => spawn<TestWorker>(new Worker("../multithreading/TestWorker")), options.threads);
 
             options.fitnessFunction = async function (population: Network[]): Promise<void> {
                 for (const genome of population) {
@@ -859,18 +817,6 @@ export class Network {
                         }
                         // test the genome
                         genome.score = -await test(serializedDataSet, JSON.stringify(genome.toJSON()), lossIndex);
-                        if (!Number.isFinite(genome.score)) {
-                            throw new RangeError();
-                        }
-
-                        // subtract growth value
-                        genome.score -= (options.growth ?? 0.0001) * (
-                            genome.nodes.length
-                            - genome.inputSize
-                            - genome.outputSize
-                            + genome.connections.size
-                            + genome.gates.size
-                        );
                     });
                 }
 
@@ -893,28 +839,21 @@ export class Network {
                 throw new ReferenceError();
             }
 
-            // add the growth value back to get the real error
-            error = fittest.score + options.growth * (
-                fittest.nodes.length
-                + fittest.connections.size
-                + fittest.gates.size
-                - fittest.inputSize
-                - fittest.outputSize
-            );
+            error = fittest.score;
 
-            if (neat.generation === 1 || fittest.score > bestFitness) {
+            if (neat.options.generation === 1 || fittest.score > bestFitness) {
                 bestFitness = fittest.score;
                 bestGenome = fittest;
             }
 
-            if ((options.log ?? 0) > 0 && neat.generation % (options.log ?? 0) === 0) {
-                console.log(`iteration`, neat.generation, `fitness`, fittest.score, `error`, -error);
+            if (options.log > 0 && neat.options.generation % options.log === 0) {
+                console.log(`iteration`, neat.options.generation, `error`, -error);
             }
 
-            if (options.schedule && neat.generation % options.schedule.iterations === 0) {
-                options.schedule.function(fittest.score, -error, neat.generation);
+            if (options.schedule && neat.options.generation % options.schedule.iterations === 0) {
+                options.schedule.function(fittest.score, -error, neat.options.generation);
             }
-        } while (error < -targetError && (options.iterations === 0 || neat.generation < (options.iterations ?? 0)));
+        } while (error < -options.error && (options.iterations === 0 || neat.options.generation < options.iterations));
 
         if (bestGenome !== undefined) {
             // set this network to the fittest from NEAT
@@ -933,16 +872,99 @@ export class Network {
 
         return {
             error: -error,
-            iterations: neat.generation,
+            iterations: neat.options.generation,
             time: Date.now() - start,
         };
+    }
+
+    /**
+     * Distance function
+     * @param g2 other network
+     * @param c1
+     * @param c2
+     * @param c3
+     */
+    public distance(g2: Network, c1: number, c2: number, c3: number): number {
+        let g1: Network = this;
+
+        // set node indices
+        for (let i: number = 0; i < g1.nodes.length; i++) {
+            g1.nodes[i].index = i;
+        }
+
+        // set node indices
+        for (let i: number = 0; i < g2.nodes.length; i++) {
+            g2.nodes[i].index = i;
+        }
+
+        let indexG1: number = 0;
+        let indexG2: number = 0;
+
+        const connections1: Connection[] = Array.from(g1.connections).filter(conn => conn !== undefined);
+        const connections2: Connection[] = Array.from(g2.connections).filter(conn => conn !== undefined);
+
+        TimSort.sort(connections1, (a: Connection, b: Connection) => {
+            return a.getInnovationID() - b.getInnovationID();
+        });
+
+        TimSort.sort(connections2, (a: Connection, b: Connection) => {
+            return a.getInnovationID() - b.getInnovationID();
+        });
+
+        const highestInnovationID1: number = connections1[connections1.length - 1].getInnovationID();
+        const highestInnovationID2: number = connections2[connections2.length - 1].getInnovationID();
+        if (highestInnovationID1 < highestInnovationID2) {
+            const temp: Network = g1;
+            g1 = g2;
+            g2 = temp;
+        }
+
+        let disjointGenes: number = 0;
+        let totalWeightDiff: number = 0;
+        let similarGenes: number = 0;
+
+        while (indexG1 < connections1.length && indexG2 < connections2.length) {
+            const gene1: Connection = connections1[indexG1];
+            const gene2: Connection = connections2[indexG2];
+
+            if (gene1 === undefined || gene2 === undefined) {
+                throw Error("HERE");
+            }
+
+            const in1: number = gene1.getInnovationID();
+            const in2: number = gene2.getInnovationID();
+
+            if (in1 === in2) {
+                // similarGenes
+                indexG1++;
+                indexG2++;
+                totalWeightDiff += Math.abs(gene1.weight - gene2.weight);
+                similarGenes++;
+            } else if (indexG1 > indexG2) {
+                // disjoint of b
+                indexG2++;
+                disjointGenes++;
+            } else {
+                // disjoint of a
+                indexG1++;
+                disjointGenes++;
+            }
+        }
+        totalWeightDiff /= similarGenes;
+        const excessGenes: number = g1.connections.size - indexG1;
+
+        let N: number = Math.max(g1.connections.size, g2.connections.size);
+        if (N < 20) {
+            N = 1;
+        }
+
+        return c1 * excessGenes / N + c2 * disjointGenes / N + c3 * totalWeightDiff;
     }
 
     /**
      * Performs one training epoch and returns the error - this is a private function used in `self.train`
      *
      * @private
-     * @time O(n&sup4;)
      *
      * @returns {number}
      */
@@ -963,35 +985,35 @@ export class Network {
         /**
          * The batch size.
          */
-        batchSize?: number,
+        batchSize: number,
         /**
          * The training rate.
          */
-        trainingRate?: number,
+        trainingRate: number,
         /**
          * The momentum.
          */
-        momentum?: number,
+        momentum: number,
         /**
          * The loss function.
          */
-        loss?: lossType,
+        loss: lossType,
         /**
          * The dropout rate
          */
-        dropoutRate?: number
+        dropoutRate: number
     }): number {
         let errorSum: number = 0;
         for (let i: number = 0; i < options.dataset.length; i++) {
             const input: number[] = options.dataset[i].input;
             const correctOutput: number[] = options.dataset[i].output;
 
-            const update: boolean = (i + 1) % (options.batchSize ?? options.dataset.length) === 0 || i + 1 === options.dataset.length;
+            const update: boolean = (i + 1) % options.batchSize === 0 || i + 1 === options.dataset.length;
 
-            const output: number[] = this.activate(input, {dropoutRate: options.dropoutRate ?? 0.5});
+            const output: number[] = this.activate(input, {dropoutRate: options.dropoutRate});
             this.propagate(correctOutput, {rate: options.trainingRate, momentum: options.momentum, update});
 
-            errorSum += (options.loss ?? MSELoss)(correctOutput, output);
+            errorSum += options.loss(correctOutput, output);
         }
         return errorSum / options.dataset.length;
     }

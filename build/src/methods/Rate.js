@@ -46,7 +46,6 @@ var FixedRate = /** @class */ (function (_super) {
      * Calculates the current training rate.
      *
      * @param iteration count
-     * @time O(1)
      * @returns the current training rate
      */
     FixedRate.prototype.calc = function (iteration) {
@@ -81,7 +80,6 @@ var StepRate = /** @class */ (function (_super) {
      * Calculates the current training rate.
      *
      * @param iteration count
-     * @time O(1)
      * @returns the current training rate
      */
     StepRate.prototype.calc = function (iteration) {
@@ -115,7 +113,6 @@ var ExponentialRate = /** @class */ (function (_super) {
      * Calculates the current training rate.
      *
      * @param iteration count
-     * @time O(1)
      * @returns the current training rate
      */
     ExponentialRate.prototype.calc = function (iteration) {
@@ -152,7 +149,6 @@ var InverseRate = /** @class */ (function (_super) {
      * Calculates the current training rate.
      *
      * @param iteration count
-     * @time O(1)
      * @returns the current training rate
      */
     InverseRate.prototype.calc = function (iteration) {

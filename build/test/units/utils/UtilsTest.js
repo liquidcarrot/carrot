@@ -64,14 +64,6 @@ describe("Utils", function () {
         chai_1.expect(Utils_1.removeFromArray(arr, arr[2])).to.be.true;
         chai_1.expect(arr.length).equals(len - 1);
     });
-    it("get or default", function () {
-        chai_1.expect(Utils_1.getOrDefault(null, 50)).to.be.equals(50);
-        chai_1.expect(Utils_1.getOrDefault(null, 12)).to.be.equals(12);
-        chai_1.expect(Utils_1.getOrDefault(23, 50)).to.be.equals(23);
-        chai_1.expect(Utils_1.getOrDefault(50, 50)).to.be.equals(50);
-        chai_1.expect(Utils_1.getOrDefault(undefined, 50)).to.be.equals(50);
-        chai_1.expect(Utils_1.getOrDefault(undefined, 6)).to.be.equals(6);
-    });
     it("shuffle", function () {
         var arr = [
             Utils_1.randDouble(-50, 50),
@@ -180,5 +172,19 @@ describe("Utils", function () {
         var sumValue = 0;
         arr.forEach(function (elem) { return sumValue += elem; });
         chai_1.expect(Utils_1.sum(arr)).to.be.equals(sumValue);
+    });
+    describe("Utils pairing", function () {
+        var a = Utils_1.randInt(0, 100);
+        var b = Utils_1.randInt(0, 100);
+        it("pairing(a=" + a + ", b=" + b + ") => {number}", function () {
+            var pair = Utils_1.pairing(a, b);
+            chai_1.expect(pair).to.be.a("number");
+            var w = Math.floor((Math.sqrt(8 * pair + 1) - 1) / 2);
+            var t = (w * w + w) / 2;
+            var y = pair - t;
+            var x = w - y;
+            chai_1.expect(a).to.be.equal(x);
+            chai_1.expect(b).to.be.equal(y);
+        });
     });
 });

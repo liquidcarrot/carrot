@@ -73,13 +73,15 @@
   "homepage": "https://liquidcarrot.io/",
   "dependencies": {
     "activations": "^1.0.6",
+    "nyc": "^15.1.0",
     "threads": "^1.4.1",
-    "nyc": "^15.1.0"
+    "timsort": "^0.3.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
     "@types/parcel-bundler": "^1.12.1",
+    "@types/timsort": "^0.3.0",
     "chai": "^4.2.0",
     "husky": "^4.2.5",
     "mnist": "^1.1.0",

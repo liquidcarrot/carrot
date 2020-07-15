@@ -18,7 +18,6 @@ abstract class Mutation {
      *
      * @param network the network to mutate
      * @param options you can set the max amount of nodes, connections and gates
-     * @time O(n&sup3;)
      */
     public abstract mutate(network: Network, options?: {
         /**
@@ -65,7 +64,6 @@ class AddNodeMutation extends Mutation {
      *
      * @param network The network which gets mutated
      * @param options
-     * @time O(n)
      */
     public mutate(network: Network, options: {
         /**
@@ -126,7 +124,6 @@ class SubNodeMutation extends Mutation {
      * Mutates the network.
      *
      * @param network The network which gets mutated
-     * @time O(n&sup3;)
      */
     public mutate(network: Network): void {
         const possible: Node[] = network.nodes.filter(node => node !== undefined && node.isHiddenNode()); // hidden nodes
@@ -147,7 +144,6 @@ class AddConnectionMutation extends Mutation {
      *
      * @param network The network which gets mutated
      * @param options
-     * @time O(n&sup3;)
      */
     public mutate(network: Network, options: {
         /**
@@ -188,7 +184,6 @@ class SubConnectionMutation extends Mutation {
      * Mutates the network.
      *
      * @param network The network which gets mutated
-     * @time O(n&sup2;)
      */
     public mutate(network: Network): void {
         const possible: Connection[] = Array.from(network.connections)
@@ -232,7 +227,6 @@ class ModWeightMutation extends Mutation {
      * Mutates the network.
      *
      * @param network The network which gets mutated
-     * @time O(1)
      */
     public mutate(network: Network): void {
         // pick random connection and mutate it's weight
@@ -270,7 +264,6 @@ class ModBiasMutation extends Mutation {
      * Mutates the network.
      *
      * @param network The network which gets mutated
-     * @time O(n)
      */
     public mutate(network: Network): void {
         pickRandom(network.nodes.filter(node => !node.isInputNode())) // pick random hidden or output node
@@ -303,7 +296,6 @@ class ModActivationMutation extends Mutation {
      *
      * @param network The network which gets mutated
      * @param options
-     * @time O(n)
      */
     public mutate(network: Network, options: {
         /**
@@ -330,7 +322,6 @@ class AddSelfConnectionMutation extends Mutation {
      * Mutates the network.
      *
      * @param network The network which gets mutated
-     * @time O(n)
      */
     public mutate(network: Network): void {
         const possible: Node[] = network.nodes
@@ -353,7 +344,6 @@ class SubSelfConnectionMutation extends Mutation {
      * Mutates the network.
      *
      * @param network The network which gets mutated
-     * @time O(n)
      */
     public mutate(network: Network): void {
         const possible: Connection[] = Array.from(network.connections).filter(conn => conn.from === conn.to);
@@ -375,7 +365,6 @@ class AddGateMutation extends Mutation {
      *
      * @param network The network which gets mutated
      * @param options
-     * @time O(n)
      */
     public mutate(network: Network, options: {
         /**
@@ -409,7 +398,6 @@ class SubGateMutation extends Mutation {
      * Mutates the network.
      *
      * @param network The network which gets mutated
-     * @time O(1)
      */
     public mutate(network: Network): void {
         if (network.gates.size > 0) {
@@ -428,7 +416,6 @@ class AddBackConnectionMutation extends Mutation {
      * Mutates the network.
      *
      * @param network The network which gets mutated
-     * @time O(n&sup3;)
      */
     public mutate(network: Network): void {
         const possible: Node[][] = [];
@@ -458,7 +445,6 @@ class SubBackConnectionMutation extends Mutation {
      * Mutates the network.
      *
      * @param network The network which gets mutated
-     * @time O(n&sup2;)
      */
     public mutate(network: Network): void {
         const possible: Connection[] = Array.from(network.connections)
@@ -496,7 +482,6 @@ class SwapNodesMutation extends Mutation {
      * Mutates the network.
      *
      * @param network The network which gets mutated
-     * @time O(n)
      */
     public mutate(network: Network): void {
         const possible: Node[] = this.mutateOutput
