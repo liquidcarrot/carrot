@@ -253,10 +253,6 @@ describe('Network', function () {
                             options.iterations = 10;
                             options.dataset = dataset;
                             return [4 /*yield*/, network.evolve(options)];
-                            return [4 /*yield*/, network.evolve({
-                                    iterations: 10,
-                                    dataset: dataset
-                                })];
                         case 1:
                             evolveReturn = _a.sent();
                             final = network.test(dataset);
