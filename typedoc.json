@@ -21,6 +21,7 @@
     "Connection",
     "Mutation",
     "Rate",
-    "Selection"
+    "Selection",
+    "Species"
   ]
 }
