@@ -217,6 +217,9 @@ export class NEAT {
      */
     private reproduce(): void {
         const speciesArr: Species[] = Array.from(this.species);
+        if (speciesArr.length === 0) {
+            return;
+        }
         for (let i: number = 0; i < this.population.length; i++) {
             if (this.population[i].species === null) {
                 const selectedSpecies: Species = this.options.selection.select(speciesArr);
