@@ -81,10 +81,9 @@ export class NEAT {
      */
     public async evolve(): Promise<Network> {
         this.genSpecies();
-        if (this.population[this.population.length - 1].score === undefined) {
-            await this.evaluate();
-            this.sort();
-        }
+
+        await this.evaluate();
+        this.sort();
         this.species.forEach(species => species.evaluateScore());
 
         this.kill(1 - this.options.survivors);
@@ -95,11 +94,11 @@ export class NEAT {
         this.mutate();
         this.population.splice(0, 0, ...elitists);
 
-        /*if (this.options.training) {
+        if (this.options.training) {
             for (const genome of this.population) {
                 genome.train(this.options.training);
             }
-        }*/
+        }
 
         // evaluate the population
         await this.evaluate();
@@ -109,6 +108,12 @@ export class NEAT {
 
         const fittest: Network = this.population[0].copy();
         fittest.score = this.population[0].score;
+
+        console.log("\n---------------------------");
+        console.log("Generation: " + this.options.generation + "; Species: " + this.species.size + "; Score: " + this.population[0].score);
+        for (const species of this.species) {
+            species.print();
+        }
 
         // Reset the scores
         this.population.forEach(genome => genome.score = undefined);
@@ -225,7 +230,7 @@ export class NEAT {
      */
     private removeExtinctSpecies(): void {
         for (const species of Array.from(this.species)) {
-            if (species.size() <= 1) {
+            if (species.size() <= 1 || species.stagnation > this.options.maxStagnation) {
                 species.members.forEach(member => member.species = null);
                 this.species.delete(species);
             }

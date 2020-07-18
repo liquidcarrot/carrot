@@ -6,21 +6,18 @@ import {Network} from "./Network";
  * A class holding a species
  */
 export class Species {
+
     /**
      * The representative network of this species
      * @private
      */
     public representative: Network;
     /**
-     * The score of this species
-     * @private
-     */
-    public score: number;
-    /**
      * The member networks in this species
      * @private
      */
     public readonly members: Set<Network>;
+    private lastScore: number;
 
     constructor(representative: Network) {
         this.representative = representative;
@@ -29,7 +26,35 @@ export class Species {
         this.members = new Set<Network>();
         this.members.add(representative);
 
-        this.score = 0;
+        this._score = 0;
+        this.lastScore = 0;
+        this._stagnation = 0;
+    }
+
+    /**
+     * The score of this species
+     * @private
+     */
+    private _score: number;
+
+    /**
+     * Getter
+     */
+    get score(): number {
+        return this._score;
+    }
+
+    /**
+     * Indicates how man episodes without improvements.
+     * @private
+     */
+    private _stagnation: number;
+
+    /**
+     * Getter
+     */
+    get stagnation(): number {
+        return this._stagnation;
     }
 
     /**
@@ -67,7 +92,13 @@ export class Species {
     public evaluateScore(): void {
         let sum: number = 0;
         this.members.forEach(network => sum += network.score ?? 0);
-        this.score = sum / this.members.size;
+        const score: number = sum / this.members.size;
+        if (this.lastScore < score) {
+            this._stagnation++;
+        } else {
+            this._stagnation = 0;
+        }
+        this._score = score;
     }
 
     /**
@@ -79,7 +110,8 @@ export class Species {
         this.members.clear();
         this.members.add(this.representative);
         this.representative.species = this;
-        this.score = 0;
+        this.lastScore = this.score;
+        this._score = 0;
     }
 
     /**
@@ -119,5 +151,12 @@ export class Species {
     public getBest(): Network {
         const networks: Network[] = Array.from(this.members);
         return networks[maxValueIndex(networks.map(genome => genome.score ?? -Infinity))];
+    }
+
+    /**
+     * to string
+     */
+    public print(): void {
+        console.log("Species={Members: " + this.members.size + "; Score: " + this._score + "; Stagnation: " + this.stagnation + "}");
     }
 }
