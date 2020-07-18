@@ -14,7 +14,7 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 var __importStar = (this && this.__importStar) || function (mod) {
     if (mod && mod.__esModule) return mod;
     var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
     __setModuleDefault(result, mod);
     return result;
 };
@@ -212,6 +212,9 @@ class NEAT {
      */
     reproduce() {
         const speciesArr = Array.from(this.species);
+        if (speciesArr.length === 0) {
+            return;
+        }
         for (let i = 0; i < this.population.length; i++) {
             if (this.population[i].species === null) {
                 const selectedSpecies = this.options.selection.select(speciesArr);
