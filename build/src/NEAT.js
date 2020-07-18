@@ -88,10 +88,8 @@ class NEAT {
     evolve() {
         return __awaiter(this, void 0, void 0, function* () {
             this.genSpecies();
-            if (this.population[this.population.length - 1].score === undefined) {
-                yield this.evaluate();
-                this.sort();
-            }
+            yield this.evaluate();
+            this.sort();
             this.species.forEach(species => species.evaluateScore());
             this.kill(1 - this.options.survivors);
             this.removeExtinctSpecies();
@@ -99,17 +97,22 @@ class NEAT {
             const elitists = this.population.splice(0, this.options.elitism);
             this.mutate();
             this.population.splice(0, 0, ...elitists);
-            /*if (this.options.training) {
+            if (this.options.training) {
                 for (const genome of this.population) {
                     genome.train(this.options.training);
                 }
-            }*/
+            }
             // evaluate the population
             yield this.evaluate();
             // Sort in order of fitness (fittest first)
             this.sort();
             const fittest = this.population[0].copy();
             fittest.score = this.population[0].score;
+            console.log("\n---------------------------");
+            console.log("Generation: " + this.options.generation + "; Species: " + this.species.size + "; Score: " + this.population[0].score);
+            for (const species of this.species) {
+                species.print();
+            }
             // Reset the scores
             this.population.forEach(genome => genome.score = undefined);
             this.options.generation++;
@@ -221,7 +224,7 @@ class NEAT {
      */
     removeExtinctSpecies() {
         for (const species of Array.from(this.species)) {
-            if (species.size() <= 1) {
+            if (species.size() <= 1 || species.stagnation > this.options.maxStagnation) {
                 species.members.forEach(member => member.species = null);
                 this.species.delete(species);
             }
