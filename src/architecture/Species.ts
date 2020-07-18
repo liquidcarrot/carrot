@@ -12,11 +12,18 @@ export class Species {
      * @private
      */
     public representative: Network;
+
     /**
      * The member networks in this species
      * @private
      */
     public readonly members: Set<Network>;
+
+    /**
+     * The last score of this species.
+     * Used for stagnation checking.
+     * @private
+     */
     private lastScore: number;
 
     constructor(representative: Network) {
