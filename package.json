@@ -15,7 +15,8 @@
     "build:src": "ts-node scripts/build.ts",
     "deploy:docs": "typedoc --options typedoc.json",
     "test": "tsc && mocha build/test --recursive",
-    "lint": "tslint --project ./"
+    "lint": "tslint --project ./",
+    "coverage": "nyc --reporter lcov npm test"
   },
   "husky": {
     "hooks": {
