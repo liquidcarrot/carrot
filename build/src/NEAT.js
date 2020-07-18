@@ -108,10 +108,12 @@ class NEAT {
             this.sort();
             const fittest = this.population[0].copy();
             fittest.score = this.population[0].score;
-            console.log("\n---------------------------");
-            console.log("Generation: " + this.options.generation + "; Species: " + this.species.size + "; Score: " + this.population[0].score);
-            for (const species of this.species) {
-                species.print();
+            if (this.options.log > 0 && this.options.generation % this.options.log === 0) {
+                console.log("\n---------------------------");
+                console.log("Generation: " + this.options.generation + "; Species: " + this.species.size + "; Score: " + this.population[0].score);
+                for (const species of this.species) {
+                    species.print();
+                }
             }
             // Reset the scores
             this.population.forEach(genome => genome.score = undefined);
