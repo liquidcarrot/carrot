@@ -10,6 +10,7 @@ import {TrainOptions} from "./TrainOptions";
  * Options used to evolve network
  */
 export class EvolveOptions {
+
     constructor() {
         this._input = 1;
         this._output = 1;
@@ -33,8 +34,27 @@ export class EvolveOptions {
         this._log = -1;
         this._iterations = 1000;
         this._error = 0.05;
+        this._maxStagnation = 3;
     }
 
+    /**
+     * Maximum amount of episodes without improvement before removing a species
+     */
+    private _maxStagnation: number;
+    /**
+     * Getter
+     */
+    public get maxStagnation(): number {
+        return this._maxStagnation;
+    }
+
+    /**
+     * Setter
+     * @param value
+     */
+    public set maxStagnation(value: number) {
+        this._maxStagnation = value;
+    }
 
     /**
      * How big could the distance be between a network and the represent of a species?

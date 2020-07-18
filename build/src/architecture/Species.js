@@ -32,7 +32,21 @@ class Species {
         this.representative.species = this;
         this.members = new Set();
         this.members.add(representative);
-        this.score = 0;
+        this._score = 0;
+        this.lastScore = 0;
+        this._stagnation = 0;
+    }
+    /**
+     * Getter
+     */
+    get score() {
+        return this._score;
+    }
+    /**
+     * Getter
+     */
+    get stagnation() {
+        return this._stagnation;
     }
     /**
      * Puts a network to the species, after checking the distance
@@ -68,7 +82,14 @@ class Species {
     evaluateScore() {
         let sum = 0;
         this.members.forEach(network => { var _a; return sum += (_a = network.score) !== null && _a !== void 0 ? _a : 0; });
-        this.score = sum / this.members.size;
+        const score = sum / this.members.size;
+        if (this.lastScore < score) {
+            this._stagnation++;
+        }
+        else {
+            this._stagnation = 0;
+        }
+        this._score = score;
     }
     /**
      * Reset this object
@@ -79,7 +100,8 @@ class Species {
         this.members.clear();
         this.members.add(this.representative);
         this.representative.species = this;
-        this.score = 0;
+        this.lastScore = this.score;
+        this._score = 0;
     }
     /**
      * Kill a specific percentage of networks
@@ -114,6 +136,12 @@ class Species {
     getBest() {
         const networks = Array.from(this.members);
         return networks[Utils_1.maxValueIndex(networks.map(genome => { var _a; return (_a = genome.score) !== null && _a !== void 0 ? _a : -Infinity; }))];
+    }
+    /**
+     * to string
+     */
+    print() {
+        console.log("Species={Members: " + this.members.size + "; Score: " + this._score + "; Stagnation: " + this.stagnation + "}");
     }
 }
 exports.Species = Species;

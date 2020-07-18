@@ -44,6 +44,20 @@ class EvolveOptions {
         this._log = -1;
         this._iterations = 1000;
         this._error = 0.05;
+        this._maxStagnation = 3;
+    }
+    /**
+     * Getter
+     */
+    get maxStagnation() {
+        return this._maxStagnation;
+    }
+    /**
+     * Setter
+     * @param value
+     */
+    set maxStagnation(value) {
+        this._maxStagnation = value;
     }
     /**
      * Getter

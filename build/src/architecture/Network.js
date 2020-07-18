@@ -645,9 +645,6 @@ class Network {
                     bestFitness = fittest.score;
                     bestGenome = fittest;
                 }
-                if (options.log > 0 && neat.options.generation % options.log === 0) {
-                    console.log(`iteration`, neat.options.generation, `error`, -error);
-                }
                 if (options.schedule && neat.options.generation % options.schedule.iterations === 0) {
                     options.schedule.function(fittest.score, -error, neat.options.generation);
                 }
