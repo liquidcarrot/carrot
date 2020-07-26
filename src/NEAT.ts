@@ -90,9 +90,9 @@ export class NEAT {
         this.removeExtinctSpecies();
         this.reproduce();
 
-        const elitists: Network[] = this.population.splice(0, this.options.elitism);
+        // const elitists: Network[] = this.population.splice(0, this.options.elitism);
         this.mutate();
-        this.population.splice(0, 0, ...elitists);
+        // this.population.splice(0, 0, ...elitists);
 
         if (this.options.training) {
             for (const genome of this.population) {
