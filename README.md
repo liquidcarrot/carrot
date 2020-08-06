@@ -29,6 +29,8 @@
     </a>
 </p>
 
+<h4>ℹ️ The new TypeScript version is coming! If you would like to try the expiremental version please clone the repository and checkout the typescript branch of the project. Docs for this new version can temporarily be found <a href="https://raimannma.github.io/carrot/index.html">here</a></h4> 
+
 <h4>Top Sponsors</h4>
 
 <table>
