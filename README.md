@@ -29,20 +29,7 @@
     </a>
 </p>
 
-<h4>ℹ️ The new TypeScript version is coming! If you would like to try the expiremental version please clone the repository and checkout the typescript branch of the project. Docs for this new version can temporarily be found <a href="https://raimannma.github.io/carrot/index.html">here</a></h4> 
-
-<h4>Top Sponsors</h4>
-
-<table>
- <thead>
-  <tr>
-   <th>
-    <p align="center">Solinfra</p> 
-    <a href="https://www.solinfra.io/" alt="Solinfra"><img src="https://avatars0.githubusercontent.com/u/53709700?s=400&u=5d4523af8b372ed3be43c23bb8ed1003f2f234a4&v=4" alt="D-Nice Profile Pitcure" width="50px" /></a>
-   </th>
-  </tr>
- </thead>
-</table>
+<h4>ℹ️ The new TypeScript version is coming! If you would like to try the expiremental version please clone the repository and checkout the typescript branch of the project. Docs for this new version can temporarily be found <a href="https://raimannma.github.io/carrot/index.html">here</a></h4>
 
 <p>
   Carrot is an architecture-free neural network library built around neuroevolution
@@ -274,57 +261,6 @@ And finally, a big thank you to all of you for supporting! 🤗
 
 ## Patrons
 [![Carrot's Patrons](https://img.shields.io/endpoint.svg?color=blue&label=patrons&logo=patrons&url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fliquidcarrot)](https://www.patreon.com/liquidcarrot)
-
-<table>
- <thead>
-  <tr>
-   <th>Silver Patrons</th>
-  </tr>
- </thead>
- <tbody>
-  <tr>
-   <td align="center">
-    <a href="https://www.solinfra.io/" alt="Solinfra"><img src="https://avatars0.githubusercontent.com/u/53709700?s=400&u=5d4523af8b372ed3be43c23bb8ed1003f2f234a4&v=4" alt="D-Nice Profile Pitcure" width="150px" /></a>
-    <br>
-    <strong>Solinfra</strong>
-   </td>
-  </tr>
- </tbody>
-</table>
-
-<table>
- <thead>
-  <tr>
-   <th>Bronze Patrons</th>
-  </tr>
- </thead>
- <tbody>
-  <tr>
-   <td align="center">
-    <a href="https://github.com/kappaxbeta" alt="Kappaxbeta on Github"><img src="https://avatars2.githubusercontent.com/u/7612464?s=460&v=4" alt="Kappaxbeta's Profile Pitcure" width="125px" /></a>
-    <br>
-    <strong>Kappaxbeta</strong>
-   </td>
-  </tr>
- </tbody>
-</table>
-
-<table>
- <thead>
-  <tr>
-   <th>Patrons</th>
-  </tr>
- </thead>
- <tbody>
-  <tr>
-   <td>
-    <a href="http://dollarbizclub.com/" alt="DollarBizClub"><img src="http://dollarbizclub.com/css/img/red400.png" alt="DollarBizClub Logo" width="100px" /></a>
-    <br>
-    <strong>DollarBizClub</strong>
-   </td>
-  </tr>
- </tbody>
-</table>
 
 [![Become a Patron](https://c5.patreon.com/external/logo/become_a_patron_button.png)](https://www.patreon.com/liquidcarrot)
 
