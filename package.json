@@ -10,6 +10,9 @@
     "fs": false,
     "child_process": false
   },
+  "browserslist": [
+    "last 1 Chrome version"
+  ],
   "scripts": {
     "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | coveralls && rm -rf ./src-cov",
     "build:src": "concurrently 'node scripts/src.build.node.js' 'node scripts/src.build.browser.js'",
