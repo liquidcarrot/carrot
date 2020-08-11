@@ -228,7 +228,7 @@ export class Node {
             this.selfConnection.weight = weight;
             return this.selfConnection;
         } else if (this.isProjectingTo(target)) {
-            throw new ReferenceError("Their is already a connection!"); // already connected
+            throw new ReferenceError("There is already a connection!"); // already connected
         } else {
             const connection: Connection = new Connection(this, target, weight); // create new connection
 
