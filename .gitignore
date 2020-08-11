@@ -42,8 +42,9 @@ build/Release
 node_modules/
 jspm_packages/
 
-# TypeScript v1 declaration files
+# TypeScript
 typings/
+build/
 
 # Optional npm cache directory
 .npm
@@ -69,3 +70,4 @@ typings/
 # IDE configuration files
 .codetasty/
 .idea/
+actions-runner

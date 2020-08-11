@@ -9,11 +9,11 @@
     <a href="https://github.com/liquidcarrot/carrot/actions">
      <img src="https://github.com/liquidcarrot/carrot/workflows/Node.js%20CI/badge.svg">
     </a>
-    <a href="https://coveralls.io/github/raimannma/carrot?branch=master">
-      <img src="https://coveralls.io/repos/github/raimannma/carrot/badge.svg?branch=master" alt="Coverage Status">
-    </a>
     <a href="https://deepscan.io/dashboard#view=project&tid=9592&pid=12128&bid=184224">
         <img src="https://deepscan.io/api/teams/9592/projects/12128/branches/184224/badge/grade.svg" alt="DeepScan grade">
+    </a>
+    <a href="https://github.com/google/gts">
+        <img src="https://img.shields.io/badge/code%20style-google-blueviolet.svg" alt="Code Style: Google">
     </a>
     <a href="https://gitter.im/carrot-ai/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badgee&utm_content=badge">
         <img src="https://badges.gitter.im/Join%20Chat.svg"
