@@ -9,9 +9,6 @@
     <a href="https://github.com/liquidcarrot/carrot/actions">
      <img src="https://github.com/liquidcarrot/carrot/workflows/Node.js%20CI/badge.svg">
     </a>
-    <a href="https://coveralls.io/github/raimannma/carrot?branch=master">
-      <img src="https://coveralls.io/repos/github/raimannma/carrot/badge.svg?branch=master" alt="Coverage Status">
-    </a>
     <a href="https://deepscan.io/dashboard#view=project&tid=9592&pid=12128&bid=184224">
         <img src="https://deepscan.io/api/teams/9592/projects/12128/branches/184224/badge/grade.svg" alt="DeepScan grade">
     </a>
