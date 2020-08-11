@@ -2189,7 +2189,7 @@ var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? fun
 var __importStar = this && this.__importStar || function (mod) {
   if (mod && mod.__esModule) return mod;
   var result = {};
-  if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
 
   __setModuleDefault(result, mod);
 
@@ -2905,828 +2905,7 @@ class EvolveOptions {
 }
 
 exports.EvolveOptions = EvolveOptions;
-},{"../architecture/Network":"../src/architecture/Network.js","../methods/Loss":"../src/methods/Loss.js","../methods/Mutation":"../src/methods/Mutation.js","../methods/Selection":"../src/methods/Selection.js"}],"../../node_modules/timsort/build/timsort.js":[function(require,module,exports) {
-var define;
-var global = arguments[3];
-/****
- * The MIT License
- *
- * Copyright (c) 2015 Marco Ziccardi
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- *
- ****/
-(function (global, factory) {
-  if (typeof define === 'function' && define.amd) {
-    define('timsort', ['exports'], factory);
-  } else if (typeof exports !== 'undefined') {
-    factory(exports);
-  } else {
-    var mod = {
-      exports: {}
-    };
-    factory(mod.exports);
-    global.timsort = mod.exports;
-  }
-})(this, function (exports) {
-  'use strict';
-
-  exports.__esModule = true;
-  exports.sort = sort;
-
-  function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-      throw new TypeError('Cannot call a class as a function');
-    }
-  }
-
-  var DEFAULT_MIN_MERGE = 32;
-
-  var DEFAULT_MIN_GALLOPING = 7;
-
-  var DEFAULT_TMP_STORAGE_LENGTH = 256;
-
-  var POWERS_OF_TEN = [1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9];
-
-  function log10(x) {
-    if (x < 1e5) {
-      if (x < 1e2) {
-        return x < 1e1 ? 0 : 1;
-      }
-
-      if (x < 1e4) {
-        return x < 1e3 ? 2 : 3;
-      }
-
-      return 4;
-    }
-
-    if (x < 1e7) {
-      return x < 1e6 ? 5 : 6;
-    }
-
-    if (x < 1e9) {
-      return x < 1e8 ? 7 : 8;
-    }
-
-    return 9;
-  }
-
-  function alphabeticalCompare(a, b) {
-    if (a === b) {
-      return 0;
-    }
-
-    if (~ ~a === a && ~ ~b === b) {
-      if (a === 0 || b === 0) {
-        return a < b ? -1 : 1;
-      }
-
-      if (a < 0 || b < 0) {
-        if (b >= 0) {
-          return -1;
-        }
-
-        if (a >= 0) {
-          return 1;
-        }
-
-        a = -a;
-        b = -b;
-      }
-
-      var al = log10(a);
-      var bl = log10(b);
-
-      var t = 0;
-
-      if (al < bl) {
-        a *= POWERS_OF_TEN[bl - al - 1];
-        b /= 10;
-        t = -1;
-      } else if (al > bl) {
-        b *= POWERS_OF_TEN[al - bl - 1];
-        a /= 10;
-        t = 1;
-      }
-
-      if (a === b) {
-        return t;
-      }
-
-      return a < b ? -1 : 1;
-    }
-
-    var aStr = String(a);
-    var bStr = String(b);
-
-    if (aStr === bStr) {
-      return 0;
-    }
-
-    return aStr < bStr ? -1 : 1;
-  }
-
-  function minRunLength(n) {
-    var r = 0;
-
-    while (n >= DEFAULT_MIN_MERGE) {
-      r |= n & 1;
-      n >>= 1;
-    }
-
-    return n + r;
-  }
-
-  function makeAscendingRun(array, lo, hi, compare) {
-    var runHi = lo + 1;
-
-    if (runHi === hi) {
-      return 1;
-    }
-
-    if (compare(array[runHi++], array[lo]) < 0) {
-      while (runHi < hi && compare(array[runHi], array[runHi - 1]) < 0) {
-        runHi++;
-      }
-
-      reverseRun(array, lo, runHi);
-    } else {
-      while (runHi < hi && compare(array[runHi], array[runHi - 1]) >= 0) {
-        runHi++;
-      }
-    }
-
-    return runHi - lo;
-  }
-
-  function reverseRun(array, lo, hi) {
-    hi--;
-
-    while (lo < hi) {
-      var t = array[lo];
-      array[lo++] = array[hi];
-      array[hi--] = t;
-    }
-  }
-
-  function binaryInsertionSort(array, lo, hi, start, compare) {
-    if (start === lo) {
-      start++;
-    }
-
-    for (; start < hi; start++) {
-      var pivot = array[start];
-
-      var left = lo;
-      var right = start;
-
-      while (left < right) {
-        var mid = left + right >>> 1;
-
-        if (compare(pivot, array[mid]) < 0) {
-          right = mid;
-        } else {
-          left = mid + 1;
-        }
-      }
-
-      var n = start - left;
-
-      switch (n) {
-        case 3:
-          array[left + 3] = array[left + 2];
-
-        case 2:
-          array[left + 2] = array[left + 1];
-
-        case 1:
-          array[left + 1] = array[left];
-          break;
-        default:
-          while (n > 0) {
-            array[left + n] = array[left + n - 1];
-            n--;
-          }
-      }
-
-      array[left] = pivot;
-    }
-  }
-
-  function gallopLeft(value, array, start, length, hint, compare) {
-    var lastOffset = 0;
-    var maxOffset = 0;
-    var offset = 1;
-
-    if (compare(value, array[start + hint]) > 0) {
-      maxOffset = length - hint;
-
-      while (offset < maxOffset && compare(value, array[start + hint + offset]) > 0) {
-        lastOffset = offset;
-        offset = (offset << 1) + 1;
-
-        if (offset <= 0) {
-          offset = maxOffset;
-        }
-      }
-
-      if (offset > maxOffset) {
-        offset = maxOffset;
-      }
-
-      lastOffset += hint;
-      offset += hint;
-    } else {
-      maxOffset = hint + 1;
-      while (offset < maxOffset && compare(value, array[start + hint - offset]) <= 0) {
-        lastOffset = offset;
-        offset = (offset << 1) + 1;
-
-        if (offset <= 0) {
-          offset = maxOffset;
-        }
-      }
-      if (offset > maxOffset) {
-        offset = maxOffset;
-      }
-
-      var tmp = lastOffset;
-      lastOffset = hint - offset;
-      offset = hint - tmp;
-    }
-
-    lastOffset++;
-    while (lastOffset < offset) {
-      var m = lastOffset + (offset - lastOffset >>> 1);
-
-      if (compare(value, array[start + m]) > 0) {
-        lastOffset = m + 1;
-      } else {
-        offset = m;
-      }
-    }
-    return offset;
-  }
-
-  function gallopRight(value, array, start, length, hint, compare) {
-    var lastOffset = 0;
-    var maxOffset = 0;
-    var offset = 1;
-
-    if (compare(value, array[start + hint]) < 0) {
-      maxOffset = hint + 1;
-
-      while (offset < maxOffset && compare(value, array[start + hint - offset]) < 0) {
-        lastOffset = offset;
-        offset = (offset << 1) + 1;
-
-        if (offset <= 0) {
-          offset = maxOffset;
-        }
-      }
-
-      if (offset > maxOffset) {
-        offset = maxOffset;
-      }
-
-      var tmp = lastOffset;
-      lastOffset = hint - offset;
-      offset = hint - tmp;
-    } else {
-      maxOffset = length - hint;
-
-      while (offset < maxOffset && compare(value, array[start + hint + offset]) >= 0) {
-        lastOffset = offset;
-        offset = (offset << 1) + 1;
-
-        if (offset <= 0) {
-          offset = maxOffset;
-        }
-      }
-
-      if (offset > maxOffset) {
-        offset = maxOffset;
-      }
-
-      lastOffset += hint;
-      offset += hint;
-    }
-
-    lastOffset++;
-
-    while (lastOffset < offset) {
-      var m = lastOffset + (offset - lastOffset >>> 1);
-
-      if (compare(value, array[start + m]) < 0) {
-        offset = m;
-      } else {
-        lastOffset = m + 1;
-      }
-    }
-
-    return offset;
-  }
-
-  var TimSort = (function () {
-    function TimSort(array, compare) {
-      _classCallCheck(this, TimSort);
-
-      this.array = null;
-      this.compare = null;
-      this.minGallop = DEFAULT_MIN_GALLOPING;
-      this.length = 0;
-      this.tmpStorageLength = DEFAULT_TMP_STORAGE_LENGTH;
-      this.stackLength = 0;
-      this.runStart = null;
-      this.runLength = null;
-      this.stackSize = 0;
-
-      this.array = array;
-      this.compare = compare;
-
-      this.length = array.length;
-
-      if (this.length < 2 * DEFAULT_TMP_STORAGE_LENGTH) {
-        this.tmpStorageLength = this.length >>> 1;
-      }
-
-      this.tmp = new Array(this.tmpStorageLength);
-
-      this.stackLength = this.length < 120 ? 5 : this.length < 1542 ? 10 : this.length < 119151 ? 19 : 40;
-
-      this.runStart = new Array(this.stackLength);
-      this.runLength = new Array(this.stackLength);
-    }
-
-    TimSort.prototype.pushRun = function pushRun(runStart, runLength) {
-      this.runStart[this.stackSize] = runStart;
-      this.runLength[this.stackSize] = runLength;
-      this.stackSize += 1;
-    };
-
-    TimSort.prototype.mergeRuns = function mergeRuns() {
-      while (this.stackSize > 1) {
-        var n = this.stackSize - 2;
-
-        if (n >= 1 && this.runLength[n - 1] <= this.runLength[n] + this.runLength[n + 1] || n >= 2 && this.runLength[n - 2] <= this.runLength[n] + this.runLength[n - 1]) {
-
-          if (this.runLength[n - 1] < this.runLength[n + 1]) {
-            n--;
-          }
-        } else if (this.runLength[n] > this.runLength[n + 1]) {
-          break;
-        }
-        this.mergeAt(n);
-      }
-    };
-
-    TimSort.prototype.forceMergeRuns = function forceMergeRuns() {
-      while (this.stackSize > 1) {
-        var n = this.stackSize - 2;
-
-        if (n > 0 && this.runLength[n - 1] < this.runLength[n + 1]) {
-          n--;
-        }
-
-        this.mergeAt(n);
-      }
-    };
-
-    TimSort.prototype.mergeAt = function mergeAt(i) {
-      var compare = this.compare;
-      var array = this.array;
-
-      var start1 = this.runStart[i];
-      var length1 = this.runLength[i];
-      var start2 = this.runStart[i + 1];
-      var length2 = this.runLength[i + 1];
-
-      this.runLength[i] = length1 + length2;
-
-      if (i === this.stackSize - 3) {
-        this.runStart[i + 1] = this.runStart[i + 2];
-        this.runLength[i + 1] = this.runLength[i + 2];
-      }
-
-      this.stackSize--;
-
-      var k = gallopRight(array[start2], array, start1, length1, 0, compare);
-      start1 += k;
-      length1 -= k;
-
-      if (length1 === 0) {
-        return;
-      }
-
-      length2 = gallopLeft(array[start1 + length1 - 1], array, start2, length2, length2 - 1, compare);
-
-      if (length2 === 0) {
-        return;
-      }
-
-      if (length1 <= length2) {
-        this.mergeLow(start1, length1, start2, length2);
-      } else {
-        this.mergeHigh(start1, length1, start2, length2);
-      }
-    };
-
-    TimSort.prototype.mergeLow = function mergeLow(start1, length1, start2, length2) {
-
-      var compare = this.compare;
-      var array = this.array;
-      var tmp = this.tmp;
-      var i = 0;
-
-      for (i = 0; i < length1; i++) {
-        tmp[i] = array[start1 + i];
-      }
-
-      var cursor1 = 0;
-      var cursor2 = start2;
-      var dest = start1;
-
-      array[dest++] = array[cursor2++];
-
-      if (--length2 === 0) {
-        for (i = 0; i < length1; i++) {
-          array[dest + i] = tmp[cursor1 + i];
-        }
-        return;
-      }
-
-      if (length1 === 1) {
-        for (i = 0; i < length2; i++) {
-          array[dest + i] = array[cursor2 + i];
-        }
-        array[dest + length2] = tmp[cursor1];
-        return;
-      }
-
-      var minGallop = this.minGallop;
-
-      while (true) {
-        var count1 = 0;
-        var count2 = 0;
-        var exit = false;
-
-        do {
-          if (compare(array[cursor2], tmp[cursor1]) < 0) {
-            array[dest++] = array[cursor2++];
-            count2++;
-            count1 = 0;
-
-            if (--length2 === 0) {
-              exit = true;
-              break;
-            }
-          } else {
-            array[dest++] = tmp[cursor1++];
-            count1++;
-            count2 = 0;
-            if (--length1 === 1) {
-              exit = true;
-              break;
-            }
-          }
-        } while ((count1 | count2) < minGallop);
-
-        if (exit) {
-          break;
-        }
-
-        do {
-          count1 = gallopRight(array[cursor2], tmp, cursor1, length1, 0, compare);
-
-          if (count1 !== 0) {
-            for (i = 0; i < count1; i++) {
-              array[dest + i] = tmp[cursor1 + i];
-            }
-
-            dest += count1;
-            cursor1 += count1;
-            length1 -= count1;
-            if (length1 <= 1) {
-              exit = true;
-              break;
-            }
-          }
-
-          array[dest++] = array[cursor2++];
-
-          if (--length2 === 0) {
-            exit = true;
-            break;
-          }
-
-          count2 = gallopLeft(tmp[cursor1], array, cursor2, length2, 0, compare);
-
-          if (count2 !== 0) {
-            for (i = 0; i < count2; i++) {
-              array[dest + i] = array[cursor2 + i];
-            }
-
-            dest += count2;
-            cursor2 += count2;
-            length2 -= count2;
-
-            if (length2 === 0) {
-              exit = true;
-              break;
-            }
-          }
-          array[dest++] = tmp[cursor1++];
-
-          if (--length1 === 1) {
-            exit = true;
-            break;
-          }
-
-          minGallop--;
-        } while (count1 >= DEFAULT_MIN_GALLOPING || count2 >= DEFAULT_MIN_GALLOPING);
-
-        if (exit) {
-          break;
-        }
-
-        if (minGallop < 0) {
-          minGallop = 0;
-        }
-
-        minGallop += 2;
-      }
-
-      this.minGallop = minGallop;
-
-      if (minGallop < 1) {
-        this.minGallop = 1;
-      }
-
-      if (length1 === 1) {
-        for (i = 0; i < length2; i++) {
-          array[dest + i] = array[cursor2 + i];
-        }
-        array[dest + length2] = tmp[cursor1];
-      } else if (length1 === 0) {
-        throw new Error('mergeLow preconditions were not respected');
-      } else {
-        for (i = 0; i < length1; i++) {
-          array[dest + i] = tmp[cursor1 + i];
-        }
-      }
-    };
-
-    TimSort.prototype.mergeHigh = function mergeHigh(start1, length1, start2, length2) {
-      var compare = this.compare;
-      var array = this.array;
-      var tmp = this.tmp;
-      var i = 0;
-
-      for (i = 0; i < length2; i++) {
-        tmp[i] = array[start2 + i];
-      }
-
-      var cursor1 = start1 + length1 - 1;
-      var cursor2 = length2 - 1;
-      var dest = start2 + length2 - 1;
-      var customCursor = 0;
-      var customDest = 0;
-
-      array[dest--] = array[cursor1--];
-
-      if (--length1 === 0) {
-        customCursor = dest - (length2 - 1);
-
-        for (i = 0; i < length2; i++) {
-          array[customCursor + i] = tmp[i];
-        }
-
-        return;
-      }
-
-      if (length2 === 1) {
-        dest -= length1;
-        cursor1 -= length1;
-        customDest = dest + 1;
-        customCursor = cursor1 + 1;
-
-        for (i = length1 - 1; i >= 0; i--) {
-          array[customDest + i] = array[customCursor + i];
-        }
-
-        array[dest] = tmp[cursor2];
-        return;
-      }
-
-      var minGallop = this.minGallop;
-
-      while (true) {
-        var count1 = 0;
-        var count2 = 0;
-        var exit = false;
-
-        do {
-          if (compare(tmp[cursor2], array[cursor1]) < 0) {
-            array[dest--] = array[cursor1--];
-            count1++;
-            count2 = 0;
-            if (--length1 === 0) {
-              exit = true;
-              break;
-            }
-          } else {
-            array[dest--] = tmp[cursor2--];
-            count2++;
-            count1 = 0;
-            if (--length2 === 1) {
-              exit = true;
-              break;
-            }
-          }
-        } while ((count1 | count2) < minGallop);
-
-        if (exit) {
-          break;
-        }
-
-        do {
-          count1 = length1 - gallopRight(tmp[cursor2], array, start1, length1, length1 - 1, compare);
-
-          if (count1 !== 0) {
-            dest -= count1;
-            cursor1 -= count1;
-            length1 -= count1;
-            customDest = dest + 1;
-            customCursor = cursor1 + 1;
-
-            for (i = count1 - 1; i >= 0; i--) {
-              array[customDest + i] = array[customCursor + i];
-            }
-
-            if (length1 === 0) {
-              exit = true;
-              break;
-            }
-          }
-
-          array[dest--] = tmp[cursor2--];
-
-          if (--length2 === 1) {
-            exit = true;
-            break;
-          }
-
-          count2 = length2 - gallopLeft(array[cursor1], tmp, 0, length2, length2 - 1, compare);
-
-          if (count2 !== 0) {
-            dest -= count2;
-            cursor2 -= count2;
-            length2 -= count2;
-            customDest = dest + 1;
-            customCursor = cursor2 + 1;
-
-            for (i = 0; i < count2; i++) {
-              array[customDest + i] = tmp[customCursor + i];
-            }
-
-            if (length2 <= 1) {
-              exit = true;
-              break;
-            }
-          }
-
-          array[dest--] = array[cursor1--];
-
-          if (--length1 === 0) {
-            exit = true;
-            break;
-          }
-
-          minGallop--;
-        } while (count1 >= DEFAULT_MIN_GALLOPING || count2 >= DEFAULT_MIN_GALLOPING);
-
-        if (exit) {
-          break;
-        }
-
-        if (minGallop < 0) {
-          minGallop = 0;
-        }
-
-        minGallop += 2;
-      }
-
-      this.minGallop = minGallop;
-
-      if (minGallop < 1) {
-        this.minGallop = 1;
-      }
-
-      if (length2 === 1) {
-        dest -= length1;
-        cursor1 -= length1;
-        customDest = dest + 1;
-        customCursor = cursor1 + 1;
-
-        for (i = length1 - 1; i >= 0; i--) {
-          array[customDest + i] = array[customCursor + i];
-        }
-
-        array[dest] = tmp[cursor2];
-      } else if (length2 === 0) {
-        throw new Error('mergeHigh preconditions were not respected');
-      } else {
-        customCursor = dest - (length2 - 1);
-        for (i = 0; i < length2; i++) {
-          array[customCursor + i] = tmp[i];
-        }
-      }
-    };
-
-    return TimSort;
-  })();
-
-  function sort(array, compare, lo, hi) {
-    if (!Array.isArray(array)) {
-      throw new TypeError('Can only sort arrays');
-    }
-
-    if (!compare) {
-      compare = alphabeticalCompare;
-    } else if (typeof compare !== 'function') {
-      hi = lo;
-      lo = compare;
-      compare = alphabeticalCompare;
-    }
-
-    if (!lo) {
-      lo = 0;
-    }
-    if (!hi) {
-      hi = array.length;
-    }
-
-    var remaining = hi - lo;
-
-    if (remaining < 2) {
-      return;
-    }
-
-    var runLength = 0;
-
-    if (remaining < DEFAULT_MIN_MERGE) {
-      runLength = makeAscendingRun(array, lo, hi, compare);
-      binaryInsertionSort(array, lo, hi, lo + runLength, compare);
-      return;
-    }
-
-    var ts = new TimSort(array, compare);
-
-    var minRun = minRunLength(remaining);
-
-    do {
-      runLength = makeAscendingRun(array, lo, hi, compare);
-      if (runLength < minRun) {
-        var force = remaining;
-        if (force > minRun) {
-          force = minRun;
-        }
-
-        binaryInsertionSort(array, lo, lo + force, lo + runLength, compare);
-        runLength = force;
-      }
-
-      ts.pushRun(lo, runLength);
-      ts.mergeRuns();
-
-      remaining -= runLength;
-      lo += runLength;
-    } while (remaining !== 0);
-
-    ts.forceMergeRuns();
-  }
-});
-
-},{}],"../../node_modules/timsort/index.js":[function(require,module,exports) {
-module.exports = require('./build/timsort.js');
-},{"./build/timsort.js":"../../node_modules/timsort/build/timsort.js"}],"../src/architecture/Species.js":[function(require,module,exports) {
+},{"../architecture/Network":"../src/architecture/Network.js","../methods/Loss":"../src/methods/Loss.js","../methods/Mutation":"../src/methods/Mutation.js","../methods/Selection":"../src/methods/Selection.js"}],"../src/architecture/Species.js":[function(require,module,exports) {
 "use strict";
 
 var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
@@ -3754,7 +2933,7 @@ var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? fun
 var __importStar = this && this.__importStar || function (mod) {
   if (mod && mod.__esModule) return mod;
   var result = {};
-  if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
 
   __setModuleDefault(result, mod);
 
@@ -3932,25 +3111,11 @@ exports.Species = Species;
 },{"../utils/Utils":"../src/utils/Utils.js","./Network":"../src/architecture/Network.js"}],"../src/NEAT.js":[function(require,module,exports) {
 "use strict";
 
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
 var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
   if (k2 === undefined) k2 = k;
   Object.defineProperty(o, k2, {
     enumerable: true,
-    get: function get() {
+    get: function () {
       return m[k];
     }
   });
@@ -3971,9 +3136,7 @@ var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? fun
 var __importStar = this && this.__importStar || function (mod) {
   if (mod && mod.__esModule) return mod;
   var result = {};
-  if (mod != null) for (var k in mod) {
-    if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-  }
+  if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
 
   __setModuleDefault(result, mod);
 
@@ -4017,13 +3180,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.NEAT = void 0;
 
-var TimSort = __importStar(require("timsort"));
+const TimSort = __importStar(require("timsort"));
 
-var Species_1 = require("./architecture/Species");
+const Species_1 = require("./architecture/Species");
 
-var Mutation_1 = require("./methods/Mutation");
+const Mutation_1 = require("./methods/Mutation");
 
-var Utils_1 = require("./utils/Utils");
+const Utils_1 = require("./utils/Utils");
 /**
  * Runs the NEAT algorithm on group of neural networks.
  *
@@ -4031,17 +3194,13 @@ var Utils_1 = require("./utils/Utils");
  */
 
 
-var NEAT =
-/*#__PURE__*/
-function () {
+class NEAT {
   /**
    * Constructs a NEAT object.
    *
    * @param options
    */
-  function NEAT(options) {
-    _classCallCheck(this, NEAT);
-
+  constructor(options) {
     if (!options.fitnessFunction) {
       throw new ReferenceError("No fitness function given!");
     }
@@ -4050,7 +3209,7 @@ function () {
     this.population = [];
     this.species = new Set();
 
-    for (var i = 0; i < this.options.populationSize; i++) {
+    for (let i = 0; i < this.options.populationSize; i++) {
       this.population.push(this.options.template.copy());
     }
   }
@@ -4059,455 +3218,248 @@ function () {
    */
 
 
-  _createClass(NEAT, [{
-    key: "mutateRandom",
+  get options() {
+    return this._options;
+  }
+  /**
+   * Setter
+   */
 
-    /**
-     * Mutate a network with a random mutation from the allowed array.
-     *
-     * @param network The network which will be mutated.
-     */
-    value: function mutateRandom(network) {
-      var _this = this;
 
-      var allowed = this.options.mutations.filter(function (method) {
-        return method.constructor.name !== Mutation_1.AddNodeMutation.constructor.name || network.nodes.length < _this.options.maxNodes || method.constructor.name !== Mutation_1.AddConnectionMutation.constructor.name || network.connections.size < _this.options.maxConnections || method.constructor.name !== Mutation_1.AddGateMutation.constructor.name || network.gates.size < _this.options.maxGates;
-      });
-      network.mutate(Utils_1.pickRandom(allowed), {
-        allowedActivations: this.options.activations
-      });
-    }
-    /**
-     * Evaluates, selects, breeds and mutates population
-     *
-     * @returns {Network} Fittest network
-     */
+  set options(value) {
+    this._options = value;
+  }
+  /**
+   * Mutate a network with a random mutation from the allowed array.
+   *
+   * @param network The network which will be mutated.
+   */
 
-  }, {
-    key: "evolve",
-    value: function evolve() {
-      return __awaiter(this, void 0, void 0,
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee() {
-        var _this$population;
 
-        var elitists, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, genome, fittest, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _iterator2, _step2, species;
+  mutateRandom(network) {
+    const allowed = this.options.mutations.filter(method => {
+      return method.constructor.name !== Mutation_1.AddNodeMutation.constructor.name || network.nodes.length < this.options.maxNodes || method.constructor.name !== Mutation_1.AddConnectionMutation.constructor.name || network.connections.size < this.options.maxConnections || method.constructor.name !== Mutation_1.AddGateMutation.constructor.name || network.gates.size < this.options.maxGates;
+    });
+    network.mutate(Utils_1.pickRandom(allowed), {
+      allowedActivations: this.options.activations
+    });
+  }
+  /**
+   * Evaluates, selects, breeds and mutates population
+   *
+   * @returns {Network} Fittest network
+   */
 
-        return regeneratorRuntime.wrap(function _callee$(_context) {
-          while (1) {
-            switch (_context.prev = _context.next) {
-              case 0:
-                this.genSpecies();
-                _context.next = 3;
-                return this.evaluate();
 
-              case 3:
-                this.sort();
-                this.species.forEach(function (species) {
-                  return species.evaluateScore();
-                });
-                this.kill(1 - this.options.survivors);
-                this.removeExtinctSpecies();
-                this.reproduce();
-                elitists = this.population.splice(0, this.options.elitism);
-                this.mutate();
+  evolve() {
+    return __awaiter(this, void 0, void 0, function* () {
+      this.genSpecies();
+      yield this.evaluate();
+      this.sort();
+      this.species.forEach(species => species.evaluateScore());
+      this.kill(1 - this.options.survivors);
+      this.removeExtinctSpecies();
+      this.reproduce(); // const elitists: Network[] = this.population.splice(0, this.options.elitism);
 
-                (_this$population = this.population).splice.apply(_this$population, [0, 0].concat(_toConsumableArray(elitists)));
+      this.mutate(); // this.population.splice(0, 0, ...elitists);
 
-                if (!this.options.training) {
-                  _context.next = 31;
-                  break;
-                }
-
-                _iteratorNormalCompletion = true;
-                _didIteratorError = false;
-                _iteratorError = undefined;
-                _context.prev = 15;
-
-                for (_iterator = this.population[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                  genome = _step.value;
-                  genome.train(this.options.training);
-                }
-
-                _context.next = 23;
-                break;
-
-              case 19:
-                _context.prev = 19;
-                _context.t0 = _context["catch"](15);
-                _didIteratorError = true;
-                _iteratorError = _context.t0;
-
-              case 23:
-                _context.prev = 23;
-                _context.prev = 24;
-
-                if (!_iteratorNormalCompletion && _iterator.return != null) {
-                  _iterator.return();
-                }
-
-              case 26:
-                _context.prev = 26;
-
-                if (!_didIteratorError) {
-                  _context.next = 29;
-                  break;
-                }
-
-                throw _iteratorError;
-
-              case 29:
-                return _context.finish(26);
-
-              case 30:
-                return _context.finish(23);
-
-              case 31:
-                _context.next = 33;
-                return this.evaluate();
-
-              case 33:
-                // Sort in order of fitness (fittest first)
-                this.sort();
-                fittest = this.population[0].copy();
-                fittest.score = this.population[0].score;
-
-                if (!(this.options.log > 0 && this.options.generation % this.options.log === 0)) {
-                  _context.next = 58;
-                  break;
-                }
-
-                console.log("\n---------------------------");
-                console.log("Generation: " + this.options.generation + "; Species: " + this.species.size + "; Score: " + this.population[0].score);
-                _iteratorNormalCompletion2 = true;
-                _didIteratorError2 = false;
-                _iteratorError2 = undefined;
-                _context.prev = 42;
-
-                for (_iterator2 = this.species[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                  species = _step2.value;
-                  species.print();
-                }
-
-                _context.next = 50;
-                break;
-
-              case 46:
-                _context.prev = 46;
-                _context.t1 = _context["catch"](42);
-                _didIteratorError2 = true;
-                _iteratorError2 = _context.t1;
-
-              case 50:
-                _context.prev = 50;
-                _context.prev = 51;
-
-                if (!_iteratorNormalCompletion2 && _iterator2.return != null) {
-                  _iterator2.return();
-                }
-
-              case 53:
-                _context.prev = 53;
-
-                if (!_didIteratorError2) {
-                  _context.next = 56;
-                  break;
-                }
-
-                throw _iteratorError2;
-
-              case 56:
-                return _context.finish(53);
-
-              case 57:
-                return _context.finish(50);
-
-              case 58:
-                // Reset the scores
-                this.population.forEach(function (genome) {
-                  return genome.score = undefined;
-                });
-                this.options.generation++;
-                return _context.abrupt("return", fittest);
-
-              case 61:
-              case "end":
-                return _context.stop();
-            }
-          }
-        }, _callee, this, [[15, 19, 23, 31], [24,, 26, 30], [42, 46, 50, 58], [51,, 53, 57]]);
-      }));
-    }
-    /**
-     * Mutates the given (or current) population
-     *
-     * @param {Mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
-     */
-
-  }, {
-    key: "mutate",
-    value: function mutate(method) {
-      var _this2 = this;
-
-      // Elitist genomes should not be included
-      this.population.filter(function () {
-        return Math.random() <= _this2.options.mutationRate;
-      }).forEach(function (genome) {
-        for (var i = 0; i < _this2.options.mutationAmount; i++) {
-          if (method) {
-            genome.mutate(method);
-          } else {
-            _this2.mutateRandom(genome);
-          }
+      if (this.options.training) {
+        for (const genome of this.population) {
+          genome.train(this.options.training);
         }
-      });
-    }
-    /**
-     * Evaluates the current population, basically sets their `.score` property
-     *
-     * @return {Network} Fittest Network
-     */
+      } // evaluate the population
 
-  }, {
-    key: "evaluate",
-    value: function evaluate() {
-      var _a, _b;
 
-      return __awaiter(this, void 0, void 0,
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee2() {
-        return regeneratorRuntime.wrap(function _callee2$(_context2) {
-          while (1) {
-            switch (_context2.prev = _context2.next) {
-              case 0:
-                if (this.options.clear) {
-                  this.population.forEach(function (genome) {
-                    return genome.clear();
-                  });
-                }
+      yield this.evaluate(); // Sort in order of fitness (fittest first)
 
-                _context2.next = 3;
-                return (_b = (_a = this.options).fitnessFunction) === null || _b === void 0 ? void 0 : _b.call(_a, this.population, this.options.dataset);
+      this.sort();
+      const fittest = this.population[0].copy();
+      fittest.score = this.population[0].score;
 
-              case 3:
-                // Sort the population in order of fitness
-                this.sort();
-                return _context2.abrupt("return", this.population[0]);
+      if (this.options.log > 0 && this.options.generation % this.options.log === 0) {
+        console.log("\n---------------------------");
+        console.log("Generation: " + this.options.generation + "; Species: " + this.species.size + "; Score: " + this.population[0].score);
 
-              case 5:
-              case "end":
-                return _context2.stop();
-            }
-          }
-        }, _callee2, this);
-      }));
-    }
-    /**
-     * Sorts the population by score (descending)
-     * @todo implement a quicksort algorithm in utils
-     */
+        for (const species of this.species) {
+          species.print();
+        }
+      } // Reset the scores
 
-  }, {
-    key: "sort",
-    value: function sort() {
-      TimSort.sort(this.population, function (a, b) {
-        return a.score === undefined || b.score === undefined ? 0 : b.score - a.score;
-      });
-    }
-    /**
-     * Returns the fittest genome of the current population
-     *
-     * @returns {Network} Current population's fittest genome
-     */
 
-  }, {
-    key: "getFittest",
-    value: function getFittest() {
-      return __awaiter(this, void 0, void 0,
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee3() {
-        return regeneratorRuntime.wrap(function _callee3$(_context3) {
-          while (1) {
-            switch (_context3.prev = _context3.next) {
-              case 0:
-                if (!(this.population[this.population.length - 1].score === undefined)) {
-                  _context3.next = 3;
-                  break;
-                }
+      this.population.forEach(genome => genome.score = undefined);
+      this.options.generation++;
+      return fittest;
+    });
+  }
+  /**
+   * Mutates the given (or current) population
+   *
+   * @param {Mutation} [method] A mutation method to mutate the population with. When not specified will pick a random mutation from the set allowed mutations.
+   */
 
-                _context3.next = 3;
-                return this.evaluate();
 
-              case 3:
-                this.sort();
-                return _context3.abrupt("return", this.population[0]);
-
-              case 5:
-              case "end":
-                return _context3.stop();
-            }
-          }
-        }, _callee3, this);
-      }));
-    }
-    /**
-     * Returns the average fitness of the current population
-     *
-     * @returns {number} Average fitness of the current population
-     */
-
-  }, {
-    key: "getAverage",
-    value: function getAverage() {
-      return __awaiter(this, void 0, void 0,
-      /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee4() {
-        var score;
-        return regeneratorRuntime.wrap(function _callee4$(_context4) {
-          while (1) {
-            switch (_context4.prev = _context4.next) {
-              case 0:
-                if (!(this.population[this.population.length - 1].score === undefined)) {
-                  _context4.next = 3;
-                  break;
-                }
-
-                _context4.next = 3;
-                return this.evaluate();
-
-              case 3:
-                score = 0;
-                this.population.map(function (genome) {
-                  return genome.score;
-                }).forEach(function (val) {
-                  return score += val !== null && val !== void 0 ? val : 0;
-                });
-                return _context4.abrupt("return", score / this.population.length);
-
-              case 6:
-              case "end":
-                return _context4.stop();
-            }
-          }
-        }, _callee4, this);
-      }));
-    }
-    /**
-     * Replace the whole population with the new genomes
-     * @param genomes the genomes which replace the population
-     */
-
-  }, {
-    key: "replacePopulation",
-    value: function replacePopulation(genomes) {
-      this.population = genomes;
-      this.options.populationSize = genomes.length;
-    }
-    /**
-     * Reproduce the population, by replacing the killed networks
-     * @private
-     */
-
-  }, {
-    key: "reproduce",
-    value: function reproduce() {
-      var speciesArr = Array.from(this.species);
-
-      if (speciesArr.length === 0) {
-        return;
-      }
-
-      for (var i = 0; i < this.population.length; i++) {
-        if (this.population[i].species === null) {
-          var selectedSpecies = this.options.selection.select(speciesArr);
-          this.population[i] = selectedSpecies.breed();
-          selectedSpecies.forcePut(this.population[i]);
+  mutate(method) {
+    // Elitist genomes should not be included
+    this.population.filter(() => Math.random() <= this.options.mutationRate).forEach(genome => {
+      for (let i = 0; i < this.options.mutationAmount; i++) {
+        if (method) {
+          genome.mutate(method);
+        } else {
+          this.mutateRandom(genome);
         }
       }
+    });
+  }
+  /**
+   * Evaluates the current population, basically sets their `.score` property
+   *
+   * @return {Network} Fittest Network
+   */
+
+
+  evaluate() {
+    var _a, _b;
+
+    return __awaiter(this, void 0, void 0, function* () {
+      if (this.options.clear) {
+        this.population.forEach(genome => genome.clear());
+      }
+
+      yield (_b = (_a = this.options).fitnessFunction) === null || _b === void 0 ? void 0 : _b.call(_a, this.population, this.options.dataset); // Sort the population in order of fitness
+
+      this.sort();
+      return this.population[0];
+    });
+  }
+  /**
+   * Sorts the population by score (descending)
+   * @todo implement a quicksort algorithm in utils
+   */
+
+
+  sort() {
+    TimSort.sort(this.population, (a, b) => {
+      return a.score === undefined || b.score === undefined ? 0 : b.score - a.score;
+    });
+  }
+  /**
+   * Returns the fittest genome of the current population
+   *
+   * @returns {Network} Current population's fittest genome
+   */
+
+
+  getFittest() {
+    return __awaiter(this, void 0, void 0, function* () {
+      if (this.population[this.population.length - 1].score === undefined) {
+        yield this.evaluate();
+      }
+
+      this.sort();
+      return this.population[0];
+    });
+  }
+  /**
+   * Returns the average fitness of the current population
+   *
+   * @returns {number} Average fitness of the current population
+   */
+
+
+  getAverage() {
+    return __awaiter(this, void 0, void 0, function* () {
+      if (this.population[this.population.length - 1].score === undefined) {
+        yield this.evaluate();
+      }
+
+      let score = 0;
+      this.population.map(genome => genome.score).forEach(val => score += val !== null && val !== void 0 ? val : 0);
+      return score / this.population.length;
+    });
+  }
+  /**
+   * Replace the whole population with the new genomes
+   * @param genomes the genomes which replace the population
+   */
+
+
+  replacePopulation(genomes) {
+    this.population = genomes;
+    this.options.populationSize = genomes.length;
+  }
+  /**
+   * Reproduce the population, by replacing the killed networks
+   * @private
+   */
+
+
+  reproduce() {
+    const speciesArr = Array.from(this.species);
+
+    if (speciesArr.length === 0) {
+      return;
     }
-    /**
-     * Remove empty species
-     * @private
-     */
 
-  }, {
-    key: "removeExtinctSpecies",
-    value: function removeExtinctSpecies() {
-      for (var _i = 0, _Array$from = Array.from(this.species); _i < _Array$from.length; _i++) {
-        var species = _Array$from[_i];
-
-        if (species.size() <= 1 || species.stagnation > this.options.maxStagnation) {
-          species.members.forEach(function (member) {
-            return member.species = null;
-          });
-          this.species.delete(species);
-        }
+    for (let i = 0; i < this.population.length; i++) {
+      if (this.population[i].species === null) {
+        const selectedSpecies = this.options.selection.select(speciesArr);
+        this.population[i] = selectedSpecies.breed();
+        selectedSpecies.forcePut(this.population[i]);
       }
     }
-    /**
-     * Kill bad networks
-     * @param killRate
-     * @private
-     */
+  }
+  /**
+   * Remove empty species
+   * @private
+   */
 
-  }, {
-    key: "kill",
-    value: function kill(killRate) {
-      this.species.forEach(function (species) {
-        return species.kill(killRate);
-      });
+
+  removeExtinctSpecies() {
+    for (const species of Array.from(this.species)) {
+      if (species.size() <= 1 || species.stagnation > this.options.maxStagnation) {
+        species.members.forEach(member => member.species = null);
+        this.species.delete(species);
+      }
     }
-    /**
-     * Generate species
-     * @private
-     */
+  }
+  /**
+   * Kill bad networks
+   * @param killRate
+   * @private
+   */
 
-  }, {
-    key: "genSpecies",
-    value: function genSpecies() {
-      var _this3 = this;
 
-      this.species.forEach(function (species) {
-        return species.reset();
-      });
-      this.population.filter(function (genome) {
-        return genome.species === null;
-      }).forEach(function (genome) {
-        var found = false;
+  kill(killRate) {
+    this.species.forEach(species => species.kill(killRate));
+  }
+  /**
+   * Generate species
+   * @private
+   */
 
-        for (var _i2 = 0, _Array$from2 = Array.from(_this3.species); _i2 < _Array$from2.length; _i2++) {
-          var species = _Array$from2[_i2];
 
-          if (species.put(genome, _this3.options.c1, _this3.options.c2, _this3.options.c3, _this3.options.speciesDistanceThreshold)) {
-            found = true;
-            break;
-          }
+  genSpecies() {
+    this.species.forEach(species => species.reset());
+    this.population.filter(genome => genome.species === null).forEach(genome => {
+      let found = false;
+
+      for (const species of Array.from(this.species)) {
+        if (species.put(genome, this.options.c1, this.options.c2, this.options.c3, this.options.speciesDistanceThreshold)) {
+          found = true;
+          break;
         }
+      }
 
-        if (!found) {
-          _this3.species.add(new Species_1.Species(genome));
-        }
-      });
-    }
-  }, {
-    key: "options",
-    get: function get() {
-      return this._options;
-    }
-    /**
-     * Setter
-     */
-    ,
-    set: function set(value) {
-      this._options = value;
-    }
-  }]);
+      if (!found) {
+        this.species.add(new Species_1.Species(genome));
+      }
+    });
+  }
 
-  return NEAT;
-}();
+}
 
 exports.NEAT = NEAT;
-},{"timsort":"../../node_modules/timsort/index.js","./architecture/Species":"../src/architecture/Species.js","./methods/Mutation":"../src/methods/Mutation.js","./utils/Utils":"../src/utils/Utils.js"}],"../src/architecture/Network.js":[function(require,module,exports) {
+},{"./architecture/Species":"../src/architecture/Species.js","./methods/Mutation":"../src/methods/Mutation.js","./utils/Utils":"../src/utils/Utils.js"}],"../src/architecture/Network.js":[function(require,module,exports) {
 "use strict";
 
 var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
@@ -4535,7 +3487,7 @@ var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? fun
 var __importStar = this && this.__importStar || function (mod) {
   if (mod && mod.__esModule) return mod;
   var result = {};
-  if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
 
   __setModuleDefault(result, mod);
 
@@ -5540,46 +4492,22 @@ exports.Architect = Architect;
 },{"./Layers/CoreLayers/InputLayer":"../src/architecture/Layers/CoreLayers/InputLayer.js","./Layers/CoreLayers/OutputLayer":"../src/architecture/Layers/CoreLayers/OutputLayer.js","./Layers/Layer":"../src/architecture/Layers/Layer.js","./Network":"../src/architecture/Network.js"}],"../src/architecture/Nodes/ActivationNode.js":[function(require,module,exports) {
 "use strict";
 
-function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
-
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
-
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.ActivationNode = void 0;
 
-var Utils_1 = require("../../utils/Utils");
+const Utils_1 = require("../../utils/Utils");
 
-var ConstantNode_1 = require("./ConstantNode");
+const ConstantNode_1 = require("./ConstantNode");
 /**
  * Activation node
  */
 
 
-var ActivationNode =
-/*#__PURE__*/
-function (_ConstantNode_1$Const) {
-  _inherits(ActivationNode, _ConstantNode_1$Const);
-
-  function ActivationNode() {
-    _classCallCheck(this, ActivationNode);
-
-    return _possibleConstructorReturn(this, _getPrototypeOf(ActivationNode).call(this));
+class ActivationNode extends ConstantNode_1.ConstantNode {
+  constructor() {
+    super();
   }
   /**
    * Actives the node.
@@ -5592,70 +4520,59 @@ function (_ConstantNode_1$Const) {
    */
 
 
-  _createClass(ActivationNode, [{
-    key: "activate",
-    value: function activate() {
-      this.old = this.state;
-      var incomingStates = Array.from(this.incoming).map(function (conn) {
-        return conn.from.activation * conn.weight * conn.gain;
-      });
+  activate() {
+    this.old = this.state;
+    const incomingStates = Array.from(this.incoming).map(conn => conn.from.activation * conn.weight * conn.gain);
 
-      if (incomingStates.length !== 1) {
-        throw new ReferenceError("Only 1 incoming connections is allowed!");
+    if (incomingStates.length !== 1) {
+      throw new ReferenceError("Only 1 incoming connections is allowed!");
+    }
+
+    this.state = incomingStates[0];
+    this.activation = this.squash(this.state, false) * this.mask;
+    this.derivativeState = this.squash(this.state, true);
+    return this.activation;
+  }
+  /**
+   * Backpropagate the error (a.k.a. learn).
+   *
+   * After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating. [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
+   *
+   * If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
+   *
+   * @param target The target value (i.e. "the value the network SHOULD have given")
+   * @param options More options for propagation
+   */
+
+
+  propagate(target, options) {
+    var _a, _b, _c;
+
+    options.momentum = (_a = options.momentum) !== null && _a !== void 0 ? _a : 0;
+    options.rate = (_b = options.rate) !== null && _b !== void 0 ? _b : 0.3;
+    options.update = (_c = options.update) !== null && _c !== void 0 ? _c : true;
+    const connectionsStates = Array.from(this.outgoing).map(conn => conn.to.errorResponsibility * conn.weight * conn.gain);
+    this.errorResponsibility = this.errorProjected = Utils_1.sum(connectionsStates) * this.derivativeState;
+    this.incoming.forEach(connection => {
+      var _a, _b; // calculate gradient
+
+
+      let gradient = this.errorProjected * connection.eligibility;
+      connection.xTrace.forEach((value, key) => {
+        gradient += key.errorResponsibility * value;
+      });
+      connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * this.mask;
+
+      if (options.update) {
+        connection.deltaWeightsTotal += ((_b = options.momentum) !== null && _b !== void 0 ? _b : 0) * connection.deltaWeightsPrevious;
+        connection.weight += connection.deltaWeightsTotal;
+        connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
+        connection.deltaWeightsTotal = 0;
       }
+    });
+  }
 
-      this.state = incomingStates[0];
-      this.activation = this.squash(this.state, false) * this.mask;
-      this.derivativeState = this.squash(this.state, true);
-      return this.activation;
-    }
-    /**
-     * Backpropagate the error (a.k.a. learn).
-     *
-     * After an activation, you can teach the node what should have been the correct output (a.k.a. train). This is done by backpropagating. [Momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html) adds a fraction of the previous weight update to the current one. When the gradient keeps pointing in the same direction, this will increase the size of the steps taken towards the minimum.
-     *
-     * If you combine a high learning rate with a lot of momentum, you will rush past the minimum (of the error function) with huge steps. It is therefore often necessary to reduce the global learning rate µ when using a lot of momentum (m close to 1).
-     *
-     * @param target The target value (i.e. "the value the network SHOULD have given")
-     * @param options More options for propagation
-     */
-
-  }, {
-    key: "propagate",
-    value: function propagate(target, options) {
-      var _this = this;
-
-      var _a, _b, _c;
-
-      options.momentum = (_a = options.momentum) !== null && _a !== void 0 ? _a : 0;
-      options.rate = (_b = options.rate) !== null && _b !== void 0 ? _b : 0.3;
-      options.update = (_c = options.update) !== null && _c !== void 0 ? _c : true;
-      var connectionsStates = Array.from(this.outgoing).map(function (conn) {
-        return conn.to.errorResponsibility * conn.weight * conn.gain;
-      });
-      this.errorResponsibility = this.errorProjected = Utils_1.sum(connectionsStates) * this.derivativeState;
-      this.incoming.forEach(function (connection) {
-        var _a, _b; // calculate gradient
-
-
-        var gradient = _this.errorProjected * connection.eligibility;
-        connection.xTrace.forEach(function (value, key) {
-          gradient += key.errorResponsibility * value;
-        });
-        connection.deltaWeightsTotal += ((_a = options.rate) !== null && _a !== void 0 ? _a : 0.3) * gradient * _this.mask;
-
-        if (options.update) {
-          connection.deltaWeightsTotal += ((_b = options.momentum) !== null && _b !== void 0 ? _b : 0) * connection.deltaWeightsPrevious;
-          connection.weight += connection.deltaWeightsTotal;
-          connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
-          connection.deltaWeightsTotal = 0;
-        }
-      });
-    }
-  }]);
-
-  return ActivationNode;
-}(ConstantNode_1.ConstantNode);
+}
 
 exports.ActivationNode = ActivationNode;
 },{"../../utils/Utils":"../src/utils/Utils.js","./ConstantNode":"../src/architecture/Nodes/ConstantNode.js"}],"../src/architecture/Layers/CoreLayers/ActivationLayer.js":[function(require,module,exports) {
@@ -7138,631 +6055,630 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.generateGaussian = exports.avg = exports.sum = exports.min = exports.minValueIndex = exports.maxValueIndex = exports.max = exports.shuffle = exports.removeFromArray = exports.randBoolean = exports.randDouble = exports.randInt = exports.pickRandom = exports.TournamentSelection = exports.PowerSelection = exports.FitnessProportionateSelection = exports.Selection = exports.InverseRate = exports.ExponentialRate = exports.StepRate = exports.FixedRate = exports.Rate = exports.SwapNodesMutation = exports.SubBackConnectionMutation = exports.AddBackConnectionMutation = exports.SubSelfConnectionMutation = exports.AddSelfConnectionMutation = exports.SubGateMutation = exports.AddGateMutation = exports.ModActivationMutation = exports.ModBiasMutation = exports.ModWeightMutation = exports.SubConnectionMutation = exports.AddConnectionMutation = exports.SubNodeMutation = exports.AddNodeMutation = exports.Mutation = exports.ONLY_STRUCTURE = exports.NO_STRUCTURE_MUTATIONS = exports.FEEDFORWARD_MUTATIONS = exports.ALL_MUTATIONS = exports.HINGELoss = exports.MSLELoss = exports.WAPELoss = exports.MAPELoss = exports.MAELoss = exports.BinaryLoss = exports.MBELoss = exports.MSELoss = exports.ALL_LOSSES = exports.TrainOptions = exports.EvolveOptions = exports.NoiseNodeType = exports.PoolNodeType = exports.NodeType = exports.GatingType = exports.ConnectionType = exports.Node = exports.Species = exports.Network = exports.Connection = exports.Architect = exports.PoolNode = exports.NoiseNode = exports.DropoutNode = exports.ConstantNode = exports.Layer = exports.MemoryLayer = exports.LSTMLayer = exports.GRULayer = exports.RNNLayer = exports.HopfieldLayer = exports.ActivationLayer = exports.PoolingLayer = exports.GlobalMaxPooling1DLayer = exports.GlobalMinPooling1DLayer = exports.GlobalAvgPooling1DLayer = exports.MaxPooling1DLayer = exports.MinPooling1DLayer = exports.AvgPooling1DLayer = exports.NoiseLayer = exports.OutputLayer = exports.InputLayer = exports.DropoutLayer = exports.DenseLayer = void 0;
 
-var Architect_1 = require("../src/architecture/Architect");
+const Architect_1 = require("../src/architecture/Architect");
 
 Object.defineProperty(exports, "Architect", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Architect_1.Architect;
   }
 });
 
-var Connection_1 = require("../src/architecture/Connection");
+const Connection_1 = require("../src/architecture/Connection");
 
 Object.defineProperty(exports, "Connection", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Connection_1.Connection;
   }
 });
 
-var ActivationLayer_1 = require("../src/architecture/Layers/CoreLayers/ActivationLayer");
+const ActivationLayer_1 = require("../src/architecture/Layers/CoreLayers/ActivationLayer");
 
 Object.defineProperty(exports, "ActivationLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return ActivationLayer_1.ActivationLayer;
   }
 });
 
-var DenseLayer_1 = require("../src/architecture/Layers/CoreLayers/DenseLayer");
+const DenseLayer_1 = require("../src/architecture/Layers/CoreLayers/DenseLayer");
 
 Object.defineProperty(exports, "DenseLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return DenseLayer_1.DenseLayer;
   }
 });
 
-var DropoutLayer_1 = require("../src/architecture/Layers/CoreLayers/DropoutLayer");
+const DropoutLayer_1 = require("../src/architecture/Layers/CoreLayers/DropoutLayer");
 
 Object.defineProperty(exports, "DropoutLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return DropoutLayer_1.DropoutLayer;
   }
 });
 
-var InputLayer_1 = require("../src/architecture/Layers/CoreLayers/InputLayer");
+const InputLayer_1 = require("../src/architecture/Layers/CoreLayers/InputLayer");
 
 Object.defineProperty(exports, "InputLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return InputLayer_1.InputLayer;
   }
 });
 
-var OutputLayer_1 = require("../src/architecture/Layers/CoreLayers/OutputLayer");
+const OutputLayer_1 = require("../src/architecture/Layers/CoreLayers/OutputLayer");
 
 Object.defineProperty(exports, "OutputLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return OutputLayer_1.OutputLayer;
   }
 });
 
-var Layer_1 = require("../src/architecture/Layers/Layer");
+const Layer_1 = require("../src/architecture/Layers/Layer");
 
 Object.defineProperty(exports, "Layer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Layer_1.Layer;
   }
 });
 
-var NoiseLayer_1 = require("../src/architecture/Layers/NoiseLayers/NoiseLayer");
+const NoiseLayer_1 = require("../src/architecture/Layers/NoiseLayers/NoiseLayer");
 
 Object.defineProperty(exports, "NoiseLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return NoiseLayer_1.NoiseLayer;
   }
 });
 
-var AvgPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer");
+const AvgPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer");
 
 Object.defineProperty(exports, "AvgPooling1DLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return AvgPooling1DLayer_1.AvgPooling1DLayer;
   }
 });
 
-var GlobalAvgPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer");
+const GlobalAvgPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer");
 
 Object.defineProperty(exports, "GlobalAvgPooling1DLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return GlobalAvgPooling1DLayer_1.GlobalAvgPooling1DLayer;
   }
 });
 
-var GlobalMaxPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer");
+const GlobalMaxPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer");
 
 Object.defineProperty(exports, "GlobalMaxPooling1DLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return GlobalMaxPooling1DLayer_1.GlobalMaxPooling1DLayer;
   }
 });
 
-var GlobalMinPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer");
+const GlobalMinPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer");
 
 Object.defineProperty(exports, "GlobalMinPooling1DLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return GlobalMinPooling1DLayer_1.GlobalMinPooling1DLayer;
   }
 });
 
-var MaxPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer");
+const MaxPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer");
 
 Object.defineProperty(exports, "MaxPooling1DLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return MaxPooling1DLayer_1.MaxPooling1DLayer;
   }
 });
 
-var MinPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/MinPooling1DLayer");
+const MinPooling1DLayer_1 = require("../src/architecture/Layers/PoolingLayers/MinPooling1DLayer");
 
 Object.defineProperty(exports, "MinPooling1DLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return MinPooling1DLayer_1.MinPooling1DLayer;
   }
 });
 
-var PoolingLayer_1 = require("../src/architecture/Layers/PoolingLayers/PoolingLayer");
+const PoolingLayer_1 = require("../src/architecture/Layers/PoolingLayers/PoolingLayer");
 
 Object.defineProperty(exports, "PoolingLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return PoolingLayer_1.PoolingLayer;
   }
 });
 
-var GRULayer_1 = require("../src/architecture/Layers/RecurrentLayers/GRULayer");
+const GRULayer_1 = require("../src/architecture/Layers/RecurrentLayers/GRULayer");
 
 Object.defineProperty(exports, "GRULayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return GRULayer_1.GRULayer;
   }
 });
 
-var HopfieldLayer_1 = require("../src/architecture/Layers/RecurrentLayers/HopfieldLayer");
+const HopfieldLayer_1 = require("../src/architecture/Layers/RecurrentLayers/HopfieldLayer");
 
 Object.defineProperty(exports, "HopfieldLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return HopfieldLayer_1.HopfieldLayer;
   }
 });
 
-var LSTMLayer_1 = require("../src/architecture/Layers/RecurrentLayers/LSTMLayer");
+const LSTMLayer_1 = require("../src/architecture/Layers/RecurrentLayers/LSTMLayer");
 
 Object.defineProperty(exports, "LSTMLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return LSTMLayer_1.LSTMLayer;
   }
 });
 
-var MemoryLayer_1 = require("../src/architecture/Layers/RecurrentLayers/MemoryLayer");
+const MemoryLayer_1 = require("../src/architecture/Layers/RecurrentLayers/MemoryLayer");
 
 Object.defineProperty(exports, "MemoryLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return MemoryLayer_1.MemoryLayer;
   }
 });
 
-var RNNLayer_1 = require("../src/architecture/Layers/RecurrentLayers/RNNLayer");
+const RNNLayer_1 = require("../src/architecture/Layers/RecurrentLayers/RNNLayer");
 
 Object.defineProperty(exports, "RNNLayer", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return RNNLayer_1.RNNLayer;
   }
 });
 
-var Network_1 = require("../src/architecture/Network");
+const Network_1 = require("../src/architecture/Network");
 
 Object.defineProperty(exports, "Network", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Network_1.Network;
   }
 });
 
-var Node_1 = require("../src/architecture/Node");
+const Node_1 = require("../src/architecture/Node");
 
 Object.defineProperty(exports, "Node", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Node_1.Node;
   }
 });
 
-var ConstantNode_1 = require("../src/architecture/Nodes/ConstantNode");
+const ConstantNode_1 = require("../src/architecture/Nodes/ConstantNode");
 
 Object.defineProperty(exports, "ConstantNode", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return ConstantNode_1.ConstantNode;
   }
 });
 
-var DropoutNode_1 = require("../src/architecture/Nodes/DropoutNode");
+const DropoutNode_1 = require("../src/architecture/Nodes/DropoutNode");
 
 Object.defineProperty(exports, "DropoutNode", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return DropoutNode_1.DropoutNode;
   }
 });
 
-var NoiseNode_1 = require("../src/architecture/Nodes/NoiseNode");
+const NoiseNode_1 = require("../src/architecture/Nodes/NoiseNode");
 
 Object.defineProperty(exports, "NoiseNode", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return NoiseNode_1.NoiseNode;
   }
 });
 
-var PoolNode_1 = require("../src/architecture/Nodes/PoolNode");
+const PoolNode_1 = require("../src/architecture/Nodes/PoolNode");
 
 Object.defineProperty(exports, "PoolNode", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return PoolNode_1.PoolNode;
   }
 });
 
-var Species_1 = require("../src/architecture/Species");
+const Species_1 = require("../src/architecture/Species");
 
 Object.defineProperty(exports, "Species", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Species_1.Species;
   }
 });
 
-var ConnectionType_1 = require("../src/enums/ConnectionType");
+const ConnectionType_1 = require("../src/enums/ConnectionType");
 
 Object.defineProperty(exports, "ConnectionType", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return ConnectionType_1.ConnectionType;
   }
 });
 
-var GatingType_1 = require("../src/enums/GatingType");
+const GatingType_1 = require("../src/enums/GatingType");
 
 Object.defineProperty(exports, "GatingType", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return GatingType_1.GatingType;
   }
 });
 
-var NodeType_1 = require("../src/enums/NodeType");
+const NodeType_1 = require("../src/enums/NodeType");
 
 Object.defineProperty(exports, "NodeType", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return NodeType_1.NodeType;
   }
 });
 Object.defineProperty(exports, "NoiseNodeType", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return NodeType_1.NoiseNodeType;
   }
 });
 Object.defineProperty(exports, "PoolNodeType", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return NodeType_1.PoolNodeType;
   }
 });
 
-var EvolveOptions_1 = require("../src/interfaces/EvolveOptions");
+const EvolveOptions_1 = require("../src/interfaces/EvolveOptions");
 
 Object.defineProperty(exports, "EvolveOptions", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return EvolveOptions_1.EvolveOptions;
   }
 });
 
-var TrainOptions_1 = require("../src/interfaces/TrainOptions");
+const TrainOptions_1 = require("../src/interfaces/TrainOptions");
 
 Object.defineProperty(exports, "TrainOptions", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return TrainOptions_1.TrainOptions;
   }
 });
 
-var Loss_1 = require("../src/methods/Loss");
+const Loss_1 = require("../src/methods/Loss");
 
 Object.defineProperty(exports, "ALL_LOSSES", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Loss_1.ALL_LOSSES;
   }
 });
 Object.defineProperty(exports, "BinaryLoss", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Loss_1.BinaryLoss;
   }
 });
 Object.defineProperty(exports, "HINGELoss", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Loss_1.HINGELoss;
   }
 });
 Object.defineProperty(exports, "MAELoss", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Loss_1.MAELoss;
   }
 });
 Object.defineProperty(exports, "MAPELoss", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Loss_1.MAPELoss;
   }
 });
 Object.defineProperty(exports, "MBELoss", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Loss_1.MBELoss;
   }
 });
 Object.defineProperty(exports, "MSELoss", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Loss_1.MSELoss;
   }
 });
 Object.defineProperty(exports, "MSLELoss", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Loss_1.MSLELoss;
   }
 });
 Object.defineProperty(exports, "WAPELoss", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Loss_1.WAPELoss;
   }
 });
 
-var Mutation_1 = require("../src/methods/Mutation");
+const Mutation_1 = require("../src/methods/Mutation");
 
 Object.defineProperty(exports, "AddBackConnectionMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.AddBackConnectionMutation;
   }
 });
 Object.defineProperty(exports, "AddConnectionMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.AddConnectionMutation;
   }
 });
 Object.defineProperty(exports, "AddGateMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.AddGateMutation;
   }
 });
 Object.defineProperty(exports, "AddNodeMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.AddNodeMutation;
   }
 });
 Object.defineProperty(exports, "AddSelfConnectionMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.AddSelfConnectionMutation;
   }
 });
 Object.defineProperty(exports, "ALL_MUTATIONS", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.ALL_MUTATIONS;
   }
 });
 Object.defineProperty(exports, "FEEDFORWARD_MUTATIONS", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.FEEDFORWARD_MUTATIONS;
   }
 });
 Object.defineProperty(exports, "ModActivationMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.ModActivationMutation;
   }
 });
 Object.defineProperty(exports, "ModBiasMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.ModBiasMutation;
   }
 });
 Object.defineProperty(exports, "ModWeightMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.ModWeightMutation;
   }
 });
 Object.defineProperty(exports, "Mutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.Mutation;
   }
 });
 Object.defineProperty(exports, "NO_STRUCTURE_MUTATIONS", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.NO_STRUCTURE_MUTATIONS;
   }
 });
 Object.defineProperty(exports, "ONLY_STRUCTURE", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.ONLY_STRUCTURE;
   }
 });
 Object.defineProperty(exports, "SubBackConnectionMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.SubBackConnectionMutation;
   }
 });
 Object.defineProperty(exports, "SubConnectionMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.SubConnectionMutation;
   }
 });
 Object.defineProperty(exports, "SubGateMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.SubGateMutation;
   }
 });
 Object.defineProperty(exports, "SubNodeMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.SubNodeMutation;
   }
 });
 Object.defineProperty(exports, "SubSelfConnectionMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.SubSelfConnectionMutation;
   }
 });
 Object.defineProperty(exports, "SwapNodesMutation", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Mutation_1.SwapNodesMutation;
   }
 });
 
-var Rate_1 = require("../src/methods/Rate");
+const Rate_1 = require("../src/methods/Rate");
 
 Object.defineProperty(exports, "ExponentialRate", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Rate_1.ExponentialRate;
   }
 });
 Object.defineProperty(exports, "FixedRate", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Rate_1.FixedRate;
   }
 });
 Object.defineProperty(exports, "InverseRate", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Rate_1.InverseRate;
   }
 });
 Object.defineProperty(exports, "Rate", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Rate_1.Rate;
   }
 });
 Object.defineProperty(exports, "StepRate", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Rate_1.StepRate;
   }
 });
 
-var Selection_1 = require("../src/methods/Selection");
+const Selection_1 = require("../src/methods/Selection");
 
 Object.defineProperty(exports, "FitnessProportionateSelection", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Selection_1.FitnessProportionateSelection;
   }
 });
 Object.defineProperty(exports, "PowerSelection", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Selection_1.PowerSelection;
   }
 });
 Object.defineProperty(exports, "Selection", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Selection_1.Selection;
   }
 });
 Object.defineProperty(exports, "TournamentSelection", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Selection_1.TournamentSelection;
   }
 });
 
-var Utils_1 = require("../src/utils/Utils");
+const Utils_1 = require("../src/utils/Utils");
 
 Object.defineProperty(exports, "avg", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.avg;
   }
 });
 Object.defineProperty(exports, "generateGaussian", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.generateGaussian;
   }
 });
 Object.defineProperty(exports, "max", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.max;
   }
 });
 Object.defineProperty(exports, "maxValueIndex", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.maxValueIndex;
   }
 });
 Object.defineProperty(exports, "min", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.min;
   }
 });
 Object.defineProperty(exports, "minValueIndex", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.minValueIndex;
   }
 });
 Object.defineProperty(exports, "pickRandom", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.pickRandom;
   }
 });
 Object.defineProperty(exports, "randBoolean", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.randBoolean;
   }
 });
 Object.defineProperty(exports, "randDouble", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.randDouble;
   }
 });
 Object.defineProperty(exports, "randInt", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.randInt;
   }
 });
 Object.defineProperty(exports, "removeFromArray", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.removeFromArray;
   }
 });
 Object.defineProperty(exports, "shuffle", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.shuffle;
   }
 });
 Object.defineProperty(exports, "sum", {
   enumerable: true,
-  get: function get() {
+  get: function () {
     return Utils_1.sum;
   }
 });
 },{"../src/architecture/Architect":"../src/architecture/Architect.js","../src/architecture/Connection":"../src/architecture/Connection.js","../src/architecture/Layers/CoreLayers/ActivationLayer":"../src/architecture/Layers/CoreLayers/ActivationLayer.js","../src/architecture/Layers/CoreLayers/DenseLayer":"../src/architecture/Layers/CoreLayers/DenseLayer.js","../src/architecture/Layers/CoreLayers/DropoutLayer":"../src/architecture/Layers/CoreLayers/DropoutLayer.js","../src/architecture/Layers/CoreLayers/InputLayer":"../src/architecture/Layers/CoreLayers/InputLayer.js","../src/architecture/Layers/CoreLayers/OutputLayer":"../src/architecture/Layers/CoreLayers/OutputLayer.js","../src/architecture/Layers/Layer":"../src/architecture/Layers/Layer.js","../src/architecture/Layers/NoiseLayers/NoiseLayer":"../src/architecture/Layers/NoiseLayers/NoiseLayer.js","../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer":"../src/architecture/Layers/PoolingLayers/AvgPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalAvgPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalMaxPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer":"../src/architecture/Layers/PoolingLayers/GlobalMinPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MaxPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/MinPooling1DLayer":"../src/architecture/Layers/PoolingLayers/MinPooling1DLayer.js","../src/architecture/Layers/PoolingLayers/PoolingLayer":"../src/architecture/Layers/PoolingLayers/PoolingLayer.js","../src/architecture/Layers/RecurrentLayers/GRULayer":"../src/architecture/Layers/RecurrentLayers/GRULayer.js","../src/architecture/Layers/RecurrentLayers/HopfieldLayer":"../src/architecture/Layers/RecurrentLayers/HopfieldLayer.js","../src/architecture/Layers/RecurrentLayers/LSTMLayer":"../src/architecture/Layers/RecurrentLayers/LSTMLayer.js","../src/architecture/Layers/RecurrentLayers/MemoryLayer":"../src/architecture/Layers/RecurrentLayers/MemoryLayer.js","../src/architecture/Layers/RecurrentLayers/RNNLayer":"../src/architecture/Layers/RecurrentLayers/RNNLayer.js","../src/architecture/Network":"../src/architecture/Network.js","../src/architecture/Node":"../src/architecture/Node.js","../src/architecture/Nodes/ConstantNode":"../src/architecture/Nodes/ConstantNode.js","../src/architecture/Nodes/DropoutNode":"../src/architecture/Nodes/DropoutNode.js","../src/architecture/Nodes/NoiseNode":"../src/architecture/Nodes/NoiseNode.js","../src/architecture/Nodes/PoolNode":"../src/architecture/Nodes/PoolNode.js","../src/architecture/Species":"../src/architecture/Species.js","../src/enums/ConnectionType":"../src/enums/ConnectionType.js","../src/enums/GatingType":"../src/enums/GatingType.js","../src/enums/NodeType":"../src/enums/NodeType.js","../src/interfaces/EvolveOptions":"../src/interfaces/EvolveOptions.js","../src/interfaces/TrainOptions":"../src/interfaces/TrainOptions.js","../src/methods/Loss":"../src/methods/Loss.js","../src/methods/Mutation":"../src/methods/Mutation.js","../src/methods/Rate":"../src/methods/Rate.js","../src/methods/Selection":"../src/methods/Selection.js","../src/utils/Utils":"../src/utils/Utils.js"}],"../../node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
-var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
 
@@ -7787,9 +6703,9 @@ var checkedAssets, assetsToAccept;
 var parent = module.bundle.parent;
 
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
-  var hostname = "" || location.hostname;
+  var hostname = process.env.HMR_HOSTNAME || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "39017" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + process.env.HMR_PORT + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

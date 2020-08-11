@@ -2189,7 +2189,7 @@ var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? fun
 var __importStar = this && this.__importStar || function (mod) {
   if (mod && mod.__esModule) return mod;
   var result = {};
-  if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
 
   __setModuleDefault(result, mod);
 
@@ -2933,7 +2933,7 @@ var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? fun
 var __importStar = this && this.__importStar || function (mod) {
   if (mod && mod.__esModule) return mod;
   var result = {};
-  if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
 
   __setModuleDefault(result, mod);
 
@@ -3136,7 +3136,7 @@ var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? fun
 var __importStar = this && this.__importStar || function (mod) {
   if (mod && mod.__esModule) return mod;
   var result = {};
-  if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
 
   __setModuleDefault(result, mod);
 
@@ -3259,10 +3259,9 @@ class NEAT {
       this.species.forEach(species => species.evaluateScore());
       this.kill(1 - this.options.survivors);
       this.removeExtinctSpecies();
-      this.reproduce();
-      const elitists = this.population.splice(0, this.options.elitism);
-      this.mutate();
-      this.population.splice(0, 0, ...elitists);
+      this.reproduce(); // const elitists: Network[] = this.population.splice(0, this.options.elitism);
+
+      this.mutate(); // this.population.splice(0, 0, ...elitists);
 
       if (this.options.training) {
         for (const genome of this.population) {
@@ -3488,7 +3487,7 @@ var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? fun
 var __importStar = this && this.__importStar || function (mod) {
   if (mod && mod.__esModule) return mod;
   var result = {};
-  if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+  if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
 
   __setModuleDefault(result, mod);
 
