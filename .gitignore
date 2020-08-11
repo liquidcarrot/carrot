@@ -70,3 +70,4 @@ build/
 # IDE configuration files
 .codetasty/
 .idea/
+actions-runner
