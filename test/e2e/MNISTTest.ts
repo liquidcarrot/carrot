@@ -1,9 +1,10 @@
 import {expect} from 'chai';
-import mnist from 'mnist';
 import {describe, it} from 'mocha';
 import {Network} from '../../src/architecture/Network';
 import {EvolveOptions} from '../../src/interfaces/EvolveOptions';
 import {FEEDFORWARD_MUTATIONS} from '../../src/methods/Mutation';
+// @ts-ignore
+const mnist: any = require('mnist');
 
 describe('MNIST', () => {
   it('evolve mnist', async function (): Promise<void> {

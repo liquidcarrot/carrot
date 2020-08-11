@@ -16,14 +16,13 @@
     "deploy:docs": "typedoc --options typedoc.json",
     "test": "mocha --require ts-node/register test/units/**/*.ts",
     "lint": "tslint --project ./",
-    "coverage": "nyc --reporter lcov npm test",
     "check": "gts check ./**/*.ts",
     "clean": "gts clean",
     "compile": "tsc",
     "fix": "gts fix ./**/*.ts",
     "prepare": "npm run compile",
     "pretest": "npm run compile",
-    "posttest": "npm run check"
+    "posttest": "npm run fix"
   },
   "husky": {
     "hooks": {
@@ -82,8 +81,8 @@
   "dependencies": {
     "activations": "^1.0.6",
     "chai": "^4.2.0",
+    "mnist": "^1.1.0",
     "mocha": "^7.2.0",
-    "nyc": "^15.1.0",
     "os": "^0.1.1",
     "threads": "^1.4.1",
     "timsort": "^0.3.0"
@@ -96,18 +95,9 @@
     "@types/timsort": "^0.3.0",
     "gts": "^2.0.2",
     "husky": "^4.2.5",
-    "mnist": "^1.1.0",
     "parcel-bundler": "^1.12.4",
     "ts-node": "^8.10.1",
     "typedoc": "^0.17.6",
     "typescript": "^3.8.3"
-  },
-  "nyc": {
-    "include": [
-      "build/src/**/*.js"
-    ],
-    "exclude": [
-      "test"
-    ]
   }
 }
