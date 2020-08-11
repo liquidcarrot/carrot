@@ -17,7 +17,7 @@
     "test": "mocha --require ts-node/register test/units/**/*.ts",
     "lint": "tslint --project ./",
     "coverage": "nyc --reporter lcov npm test",
-    "check": "gts check",
+    "check": "gts check ./**/*.ts",
     "clean": "gts clean",
     "compile": "tsc",
     "fix": "gts fix ./**/*.ts",
@@ -27,7 +27,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run fix && npm run deploy:src && npm run deploy:docs"
+      "pre-commit": "npm run compile && npm run fix && npm run deploy:src && npm run deploy:docs"
     }
   },
   "repository": {
