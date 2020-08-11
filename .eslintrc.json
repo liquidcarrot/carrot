@@ -1,0 +1,6 @@
+{
+  "extends": "./node_modules/gts/",
+  "rules": {
+    "node/no-unpublished-import": [1]
+  }
+}

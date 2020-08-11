@@ -1,51 +1,30 @@
-import * as path from "path";
-import ParcelBundler = require("parcel-bundler");
+import * as path from 'path';
+import ParcelBundler = require('parcel-bundler');
 
 // tslint:disable-next-line:completed-docs
 async function runBuild(options: ParcelBundler.ParcelOptions): Promise<void> {
-    const entry: string = path.resolve(__dirname, '../build/scripts/index.js');
-    await new ParcelBundler(entry, options).bundle();
+  const entry: string = path.resolve(__dirname, '../build/scripts/index.js');
+  await new ParcelBundler(entry, options).bundle();
 }
 
 const browserProduction: ParcelBundler.ParcelOptions = {
-    outDir: path.resolve(__dirname, '../dist/production'),
-    outFile: path.resolve(__dirname, '../dist/production/index.browser.min.js'),
-    minify: true,
-    watch: false,
-    target: 'browser',
-    bundleNodeModules: true,
-    global: 'carrot',
-};
-const browserDev: ParcelBundler.ParcelOptions = {
-    outDir: path.resolve(__dirname, '../dist/dev'),
-    outFile: path.resolve(__dirname, '../dist/dev/index.browser.js'),
-    minify: false,
-    watch: true,
-    target: 'browser',
-    bundleNodeModules: true,
-    global: 'carrot',
+  outDir: path.resolve(__dirname, '../dist'),
+  outFile: path.resolve(__dirname, '../dist/index.browser.min.js'),
+  minify: true,
+  watch: false,
+  target: 'browser',
+  bundleNodeModules: true,
+  global: 'carrot',
 };
 const nodeProduction: ParcelBundler.ParcelOptions = {
-    outDir: path.resolve(__dirname, '../dist/production'),
-    outFile: path.resolve(__dirname, '../dist/production/index.min.js'),
-    minify: true,
-    watch: false,
-    target: "node",
-    global: 'carrot',
+  outDir: path.resolve(__dirname, '../dist'),
+  outFile: path.resolve(__dirname, '../dist/index.min.js'),
+  minify: true,
+  watch: false,
+  target: 'node',
+  global: 'carrot',
 };
-const nodeDev: ParcelBundler.ParcelOptions = {
-    outDir: path.resolve(__dirname, '../dist/dev'),
-    outFile: path.resolve(__dirname, '../dist/dev/index.js'),
-    minify: false,
-    watch: true,
-    target: "node",
-    global: 'carrot',
+const build: () => Promise<void> = async function () {
+  await Promise.all([runBuild(browserProduction), runBuild(nodeProduction)]);
 };
-Promise.all([
-    runBuild(browserProduction),
-    runBuild(browserDev),
-    runBuild(nodeProduction),
-    runBuild(nodeDev)
-])
-    .then(() => process.exit(0))
-    .catch(() => process.exit(1));
+build();

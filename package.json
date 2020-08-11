@@ -12,15 +12,22 @@
     "child_process": false
   },
   "scripts": {
-    "build:src": "ts-node scripts/build.ts",
+    "deploy:src": "ts-node scripts/build.ts",
     "deploy:docs": "typedoc --options typedoc.json",
-    "test": "tsc && mocha build/test --recursive",
+    "test": "mocha --require ts-node/register test/units/**/*.ts",
     "lint": "tslint --project ./",
-    "coverage": "nyc --reporter lcov npm test"
+    "coverage": "nyc --reporter lcov npm test",
+    "check": "gts check",
+    "clean": "gts clean",
+    "compile": "tsc",
+    "fix": "gts fix ./**/*.ts",
+    "prepare": "npm run compile",
+    "pretest": "npm run compile",
+    "posttest": "npm run check"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run build:src && npm run deploy:docs"
+      "pre-commit": "npm run fix && npm run deploy:src && npm run deploy:docs"
     }
   },
   "repository": {
@@ -74,24 +81,26 @@
   "homepage": "https://liquidcarrot.io/",
   "dependencies": {
     "activations": "^1.0.6",
+    "chai": "^4.2.0",
+    "mocha": "^7.2.0",
     "nyc": "^15.1.0",
+    "os": "^0.1.1",
     "threads": "^1.4.1",
     "timsort": "^0.3.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",
+    "@types/node": "^13.11.1",
     "@types/parcel-bundler": "^1.12.1",
     "@types/timsort": "^0.3.0",
-    "chai": "^4.2.0",
+    "gts": "^2.0.2",
     "husky": "^4.2.5",
     "mnist": "^1.1.0",
-    "mocha": "^7.1.2",
     "parcel-bundler": "^1.12.4",
     "ts-node": "^8.10.1",
-    "tslint": "^6.1.2",
     "typedoc": "^0.17.6",
-    "typescript": "^3.9.2"
+    "typescript": "^3.8.3"
   },
   "nyc": {
     "include": [
