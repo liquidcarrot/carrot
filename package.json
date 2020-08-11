@@ -20,7 +20,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "tsc --build --clean && tsc && npm run build:src && npm run deploy:docs"
+      "pre-commit": "npm run build:src && npm run deploy:docs"
     }
   },
   "repository": {
