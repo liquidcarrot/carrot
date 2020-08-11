@@ -87,6 +87,7 @@
     "eslint-plugin-prettier": "^3.1.4",
     "mnist": "^1.1.0",
     "mocha": "^8.1.1",
+    "os": "^0.1.1",
     "threads": "1.4.1",
     "timsort": "^0.3.0",
     "tiny-worker": "^2.3.0",
