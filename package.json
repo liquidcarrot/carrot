@@ -26,7 +26,8 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run compile && npm run fix && npm run deploy:src && npm run deploy:docs"
+      "pre-commit": "npm run fix",
+      "pre-push": "npm run compile && npm run deploy:src && npm run deploy:docs && git add -A && git commit --no-verify -m 'Build Project'"
     }
   },
   "repository": {
