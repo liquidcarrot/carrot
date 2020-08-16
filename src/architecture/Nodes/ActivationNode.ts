@@ -1,4 +1,4 @@
-import {sum} from '../../utils/Utils';
+import {sum} from '../..';
 import {ConstantNode} from './ConstantNode';
 
 /**

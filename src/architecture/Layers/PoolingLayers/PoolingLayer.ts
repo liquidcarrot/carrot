@@ -1,4 +1,4 @@
-import {ConnectionType} from '../../../enums/ConnectionType';
+import {ConnectionType} from '../../..';
 import {Layer} from '../Layer';
 
 /**

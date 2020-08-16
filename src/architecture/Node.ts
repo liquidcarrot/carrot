@@ -1,8 +1,5 @@
-import {ActivationType, ALL_ACTIVATIONS, Logistic} from 'activations/build/src';
-import {NodeType} from '../enums/NodeType';
-import {NodeJSON} from '../interfaces/NodeJSON';
-import {ModBiasMutation} from '../methods/Mutation';
-import {pickRandom, randDouble} from '../utils/Utils';
+import {ActivationType, ALL_ACTIVATIONS, Logistic} from 'activations';
+import {ModBiasMutation, NodeJSON, NodeType, pickRandom, randDouble} from '..';
 import {Connection} from './Connection';
 
 /**

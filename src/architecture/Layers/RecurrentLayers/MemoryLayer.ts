@@ -1,6 +1,5 @@
-import {ActivationType, Identitiy, Logistic} from 'activations/build/src';
-import {ConnectionType} from '../../../enums/ConnectionType';
-import {NodeType} from '../../../enums/NodeType';
+import {ActivationType, Identitiy, Logistic} from 'activations';
+import {ConnectionType, NodeType} from '../../..';
 import {Node} from '../../Node';
 import {Layer} from '../Layer';
 

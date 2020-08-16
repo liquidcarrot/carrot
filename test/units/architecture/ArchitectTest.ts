@@ -1,4 +1,4 @@
-import {BinaryStep, Identitiy, Logistic, RELU} from 'activations/build/src';
+import {BinaryStep, Identitiy, Logistic, RELU} from 'activations';
 import {expect} from 'chai';
 import {describe, it} from 'mocha';
 import {Architect} from '../../../src/architecture/Architect';

@@ -1,4 +1,4 @@
-import {sum} from '../utils/Utils';
+import {sum} from '..';
 
 export type lossType = (targets: number[], outputs: number[]) => number;
 

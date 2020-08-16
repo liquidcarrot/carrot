@@ -1,6 +1,5 @@
-import {BinaryStep} from 'activations/build/src';
-import {ConnectionType} from '../../../enums/ConnectionType';
-import {NodeType} from '../../../enums/NodeType';
+import {BinaryStep} from 'activations';
+import {ConnectionType, NodeType} from '../../..';
 import {Node} from '../../Node';
 import {Layer} from '../Layer';
 

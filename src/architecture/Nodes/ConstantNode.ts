@@ -1,5 +1,4 @@
-import {NodeType} from '../../enums/NodeType';
-import {NodeJSON} from '../../interfaces/NodeJSON';
+import {NodeJSON, NodeType} from '../..';
 import {Node} from '../Node';
 
 /**

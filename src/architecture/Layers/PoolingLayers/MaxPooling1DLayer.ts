@@ -1,6 +1,5 @@
-import {ActivationType, Identitiy} from 'activations/build/src';
-import {PoolNodeType} from '../../../enums/NodeType';
-import {PoolNode} from '../../Nodes/PoolNode';
+import {ActivationType, Identitiy} from 'activations';
+import {PoolNode, PoolNodeType} from '../../..';
 import {PoolingLayer} from './PoolingLayer';
 
 /**

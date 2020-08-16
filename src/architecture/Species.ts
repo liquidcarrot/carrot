@@ -1,5 +1,5 @@
 import * as TimSort from 'timsort';
-import {maxValueIndex, pickRandom} from '../utils/Utils';
+import {maxValueIndex, pickRandom} from '..';
 import {Network} from './Network';
 
 /**

@@ -1,5 +1,5 @@
+import {FixedRate, Rate} from '..';
 import {lossType, MSELoss} from '../methods/Loss';
-import {FixedRate, Rate} from '../methods/Rate';
 
 /**
  * Options used to train network

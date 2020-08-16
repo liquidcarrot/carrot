@@ -1,4 +1,4 @@
-import {ConnectionJSON} from '../interfaces/ConnectionJSON';
+import {ConnectionJSON} from '..';
 import {pairing} from '../utils/Utils';
 import {Node} from './Node';
 

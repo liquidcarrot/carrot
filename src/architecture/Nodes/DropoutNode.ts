@@ -1,5 +1,4 @@
-import {DropoutNodeJSON} from '../../interfaces/NodeJSON';
-import {randDouble, sum} from '../../utils/Utils';
+import {DropoutNodeJSON, randDouble, sum} from '../..';
 import {Connection} from '../Connection';
 import {ConstantNode} from './ConstantNode';
 

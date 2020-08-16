@@ -1,5 +1,5 @@
-import {ActivationType, Logistic} from 'activations/build/src';
-import {ConnectionType} from '../../../enums/ConnectionType';
+import {ActivationType, Logistic} from 'activations';
+import {ConnectionType} from '../../..';
 import {ActivationNode} from '../../Nodes/ActivationNode';
 import {Layer} from '../Layer';
 
@@ -23,7 +23,6 @@ export class ActivationLayer extends Layer {
     for (let i = 0; i < outputSize; i++) {
       this.inputNodes.add(new ActivationNode().setActivationType(activation));
     }
-
     this.outputNodes = this.inputNodes;
     this.nodes.push(...Array.from(this.inputNodes));
   }

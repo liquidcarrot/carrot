@@ -1,7 +1,5 @@
-import {ActivationType, Identitiy} from 'activations/build/src';
-import {ConnectionType} from '../../../enums/ConnectionType';
-import {NoiseNodeType} from '../../../enums/NodeType';
-import {NoiseNode} from '../../Nodes/NoiseNode';
+import {ActivationType, Identitiy} from 'activations';
+import {ConnectionType, NoiseNode, NoiseNodeType} from '../../..';
 import {Layer} from '../Layer';
 
 /**

@@ -1,6 +1,5 @@
 import * as TimSort from 'timsort';
-import {Species} from '../architecture/Species';
-import {pickRandom, randDouble} from '../utils/Utils';
+import {pickRandom, randDouble, Species} from '..';
 
 /**
  * Genetic Algorithm Selection Methods (Genetic Operator)

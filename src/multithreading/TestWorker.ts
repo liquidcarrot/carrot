@@ -1,6 +1,5 @@
 import {expose} from 'threads/worker';
-import {Network} from '../architecture/Network';
-import {ALL_LOSSES} from '../methods/Loss';
+import {ALL_LOSSES, Network} from '..';
 
 export type TestWorker = (
   serializedDataSet: string,

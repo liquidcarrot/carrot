@@ -1,4 +1,4 @@
-import {ConnectionType} from '../enums/ConnectionType';
+import {ConnectionType} from '..';
 import {InputLayer} from './Layers/CoreLayers/InputLayer';
 import {OutputLayer} from './Layers/CoreLayers/OutputLayer';
 import {Layer} from './Layers/Layer';

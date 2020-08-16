@@ -1,4 +1,4 @@
-import {ActivationType} from 'activations/build/src';
+import {ActivationType} from 'activations';
 import {expect} from 'chai';
 import {describe, it} from 'mocha';
 import {Connection} from '../../../src/architecture/Connection';

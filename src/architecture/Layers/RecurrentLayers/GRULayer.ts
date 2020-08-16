@@ -1,7 +1,5 @@
-import {ActivationType, Logistic, TANH} from 'activations/build/src';
-import {ConnectionType} from '../../../enums/ConnectionType';
-import {GatingType} from '../../../enums/GatingType';
-import {NodeType} from '../../../enums/NodeType';
+import {ActivationType, Logistic, TANH} from 'activations';
+import {ConnectionType, GatingType, NodeType} from '../../..';
 import {Connection} from '../../Connection';
 import {Node} from '../../Node';
 import {Layer} from '../Layer';

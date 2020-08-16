@@ -1,5 +1,4 @@
-import {ConnectionType} from '../../enums/ConnectionType';
-import {GatingType} from '../../enums/GatingType';
+import {ConnectionType, GatingType} from '../..';
 import {Connection} from '../Connection';
 import {Node} from '../Node';
 

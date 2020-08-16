@@ -1,15 +1,18 @@
-import {ActivationType} from 'activations/build/src';
+import {ActivationType} from 'activations';
 import {spawn, Worker} from 'threads';
 import {Pool} from 'threads/dist';
-import 'threads/register';
 import * as TimSort from 'timsort';
-import {NodeType} from '../enums/NodeType';
-import {ConnectionJSON} from '../interfaces/ConnectionJSON';
-import {EvolveOptions} from '../interfaces/EvolveOptions';
-import {NetworkJSON} from '../interfaces/NetworkJSON';
-import {TrainOptions} from '../interfaces/TrainOptions';
+import {
+  ALL_MUTATIONS,
+  ConnectionJSON,
+  EvolveOptions,
+  Mutation,
+  NetworkJSON,
+  NodeType,
+  SubNodeMutation,
+  TrainOptions,
+} from '..';
 import {ALL_LOSSES, lossType, MSELoss} from '../methods/Loss';
-import {ALL_MUTATIONS, Mutation, SubNodeMutation} from '../methods/Mutation';
 import {TestWorker} from '../multithreading/TestWorker';
 import {NEAT} from '../NEAT';
 import {
@@ -23,6 +26,19 @@ import {
 import {Connection} from './Connection';
 import {Node} from './Node';
 import {Species} from './Species';
+
+function connFromJSON(network: Network, jsonConnection: ConnectionJSON) {
+  const connection: Connection = network.connect(
+    network.nodes[jsonConnection.fromIndex],
+    network.nodes[jsonConnection.toIndex],
+    jsonConnection.weight
+  );
+
+  jsonConnection.xTraces?.forEach((xTraceValue, xTraceNodeIndex) => {
+    connection.xTrace.set(network.nodes[xTraceNodeIndex], xTraceValue);
+  });
+  return connection;
+}
 
 /**
  * Create a neural network
@@ -116,15 +132,7 @@ export class Network {
       .forEach(node => network.nodes[node.index] = node);
 
     json.connections.forEach((jsonConnection: ConnectionJSON) => {
-      const connection: Connection = network.connect(
-        network.nodes[jsonConnection.fromIndex],
-        network.nodes[jsonConnection.toIndex],
-        jsonConnection.weight
-      );
-
-      jsonConnection.xTraces?.forEach((xTraceValue, xTraceNodeIndex) => {
-        connection.xTrace.set(network.nodes[xTraceNodeIndex], xTraceValue);
-      });
+      const connection = connFromJSON(network, jsonConnection);
 
       if (jsonConnection.gateNodeIndex !== null) {
         network.addGate(

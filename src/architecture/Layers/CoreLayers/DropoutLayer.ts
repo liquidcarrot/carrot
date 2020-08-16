@@ -1,6 +1,5 @@
-import {ActivationType, Identitiy} from 'activations/build/src';
-import {ConnectionType} from '../../../enums/ConnectionType';
-import {DropoutNode} from '../../Nodes/DropoutNode';
+import {ActivationType, Identitiy} from 'activations';
+import {ConnectionType, DropoutNode} from '../../..';
 import {Layer} from '../Layer';
 
 /**

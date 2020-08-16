@@ -1,8 +1,0 @@
-{
-  "extends": "./node_modules/gts/",
-  "rules": {
-    "node/no-unpublished-import": [1],
-    "@typescript-eslint/no-var-requires": [1],
-    "@typescript-eslint/ban-ts-ignore": [1]
-  }
-}

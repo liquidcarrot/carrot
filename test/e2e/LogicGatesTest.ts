@@ -1,8 +1,6 @@
 import {expect} from 'chai';
 import {describe, it} from 'mocha';
-import {Network} from '../../src/architecture/Network';
-import {EvolveOptions} from '../../src/interfaces/EvolveOptions';
-import {TrainOptions} from '../../src/interfaces/TrainOptions';
+import {EvolveOptions, Network, TrainOptions} from '../../src';
 
 describe('Logic Gates', () => {
   const data: {

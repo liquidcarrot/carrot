@@ -1,9 +1,13 @@
-import {ActivationType} from 'activations/build/src';
-import {Connection} from '../architecture/Connection';
-import {Network} from '../architecture/Network';
-import {Node} from '../architecture/Node';
-import {NodeType} from '../enums/NodeType';
-import {pickRandom, randBoolean, randDouble} from '../utils/Utils';
+import {ActivationType} from 'activations';
+import {
+  Connection,
+  Network,
+  Node,
+  NodeType,
+  pickRandom,
+  randBoolean,
+  randDouble,
+} from '..';
 
 /**
  *

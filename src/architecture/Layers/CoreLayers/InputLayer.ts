@@ -1,8 +1,6 @@
-import {ConnectionType} from '../../../enums/ConnectionType';
-import {NodeType, NoiseNodeType} from '../../../enums/NodeType';
+import {ConnectionType, NodeType, NoiseLayer, NoiseNodeType} from '../../..';
 import {Node} from '../../Node';
 import {Layer} from '../Layer';
-import {NoiseLayer} from '../NoiseLayers/NoiseLayer';
 
 /**
  * Input layer

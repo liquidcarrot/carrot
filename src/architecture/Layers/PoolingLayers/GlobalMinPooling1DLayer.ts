@@ -1,4 +1,4 @@
-import {ActivationType} from 'activations/build/src';
+import {ActivationType} from 'activations';
 import {MinPooling1DLayer} from './MinPooling1DLayer';
 
 /**

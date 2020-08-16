@@ -1,5 +1,4 @@
-import {NoiseNodeType} from '../../enums/NodeType';
-import {avg, generateGaussian, sum} from '../../utils/Utils';
+import {avg, generateGaussian, NoiseNodeType, sum} from '../..';
 import {ConstantNode} from './ConstantNode';
 
 /**
