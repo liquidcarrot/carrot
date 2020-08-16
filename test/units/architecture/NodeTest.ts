@@ -249,7 +249,7 @@ describe('Node', () => {
 
       node.clear();
 
-      expect(node.old).to.equal(0);
+      expect(node.prevState).to.equal(0);
       expect(node.state).to.equal(0);
       expect(node.activation).to.equal(0);
       expect(node.errorResponsibility).to.equal(0);
@@ -369,7 +369,7 @@ describe('Node', () => {
 
       expect(json).to.be.an('object');
       expect(json.bias).to.not.be.NaN;
-      expect(json.squash).to.be.a('function');
+      expect(json.squash).to.be.a('string');
     });
   });
 });

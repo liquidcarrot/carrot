@@ -9,7 +9,7 @@ describe('Mutation', () => {
     describe('ADD_NODE', () => {
       it('originalNetwork != newNetwork | when mutation possible', () => {
         const network: Network = new Network(1, 1);
-        const originalNetwork: Network = network.copy();
+        const originalNetwork: Network = network.deepCopy();
         network.mutate(new AddNodeMutation());
 
         expect(network).not.eql(originalNetwork);

@@ -1,6 +1,10 @@
 import {expect} from 'chai';
 import {describe, it} from 'mocha';
+import {Architect} from '../../../src/architecture/Architect';
 import {Connection} from '../../../src/architecture/Connection';
+import {DenseLayer} from '../../../src/architecture/Layers/CoreLayers/DenseLayer';
+import {InputLayer} from '../../../src/architecture/Layers/CoreLayers/InputLayer';
+import {OutputLayer} from '../../../src/architecture/Layers/CoreLayers/OutputLayer';
 import {Network} from '../../../src/architecture/Network';
 import {Node} from '../../../src/architecture/Node';
 import {EvolveOptions} from '../../../src/interfaces/EvolveOptions';
@@ -65,7 +69,7 @@ describe('Network', () => {
         expect(node.errorResponsibility).to.equal(0);
         expect(node.errorProjected).to.equal(0);
         expect(node.errorGated).to.equal(0);
-        expect(node.old).to.equal(0);
+        expect(node.prevState).to.equal(0);
         expect(node.state).to.equal(0);
         expect(node.activation).to.equal(0);
       });
@@ -76,7 +80,7 @@ describe('Network', () => {
     describe('Network.mutateRandom()', () => {
       it('originalNetwork !== newNetwork', () => {
         const network: Network = new Network(10, 10);
-        const copy: Network = network.copy();
+        const copy: Network = network.deepCopy();
         network.mutateRandom();
         expect(copy.toJSON()).to.not.equal(network.toJSON()); // eql: check for content equality (instead of for the same point in memory)
       });
@@ -101,7 +105,7 @@ describe('Network', () => {
 
       it("Shouldn't change network when all methods impossible", () => {
         const network: Network = new Network(2, 2);
-        const copy: Network = network.copy();
+        const copy: Network = network.deepCopy();
 
         // impossible mutation method
         network.mutateRandom([new SubGateMutation()]);
@@ -115,7 +119,7 @@ describe('Network', () => {
     it('network.copy() => {Network}', () => {
       const original: Network = new Network(10, 10);
 
-      const copy: Network = original.copy();
+      const copy: Network = original.deepCopy();
 
       expect(copy).eql(original);
     });
@@ -123,7 +127,7 @@ describe('Network', () => {
     it("network.copy() | Shouldn't return a shallow copy", () => {
       const original: Network = new Network(10, 5);
 
-      const copy: Network = original.copy();
+      const copy: Network = original.deepCopy();
 
       expect(copy).not.equal(original);
     });
@@ -299,6 +303,76 @@ describe('Network', () => {
       expect(evolveReturn.iterations).to.be.a('number');
       expect(evolveReturn.time).to.be.a('number');
       expect(final).to.be.at.most(initial);
+    });
+  });
+  describe('network.fromJSON', () => {
+    it('testing', function () {
+      this.timeout(0);
+      const inputSize: number = randInt(1, 5);
+      const outputSize: number = randInt(1, 5);
+
+      const network = new Architect()
+        .addLayer(new InputLayer(inputSize))
+        .addLayer(new DenseLayer(2))
+        .addLayer(new OutputLayer(outputSize))
+        .buildModel();
+
+      network.nodes.forEach(node => {
+        node.bias = Math.random();
+      });
+
+      network.connections.forEach(conn => {
+        conn.weight = Math.random();
+      });
+
+      const network2 = Network.fromJSON(network.toJSON());
+
+      const input = [];
+      const output = [];
+      for (let i = 0; i < inputSize; i++) {
+        input.push(Math.random());
+      }
+      for (let i = 0; i < outputSize; i++) {
+        output.push(Math.random());
+      }
+
+      expect(network).to.be.deep.equal(network2);
+      const out1 = network.activate(input);
+      const out2 = network2.activate(input);
+      expect(out1).to.be.eql(out2);
+      network.propagate(output);
+      network2.propagate(output);
+      expect(network).to.be.deep.equal(network2); // checking for xTraces
+    });
+
+    it('check activation', function () {
+      this.timeout(0);
+      const inputSize: number = randInt(2, 3);
+
+      const network = new Architect()
+        .addLayer(new InputLayer(inputSize))
+        .addLayer(new DenseLayer(2))
+        .addLayer(new OutputLayer(2))
+        .buildModel();
+
+      network.nodes.forEach(node => {
+        node.bias = Math.random();
+      });
+
+      network.connections.forEach(conn => {
+        conn.weight = Math.random();
+      });
+
+      const network2 = Network.fromJSON(network.toJSON());
+
+      const input = [];
+      for (let i = 0; i < inputSize; i++) {
+        input.push(Math.random());
+      }
+
+      const out1 = network.activate(input);
+      const out2 = network2.activate(input);
+      expect(out1).to.be.eql(out2);
     });
   });
 });
