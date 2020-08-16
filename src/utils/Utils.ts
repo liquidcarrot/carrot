@@ -211,6 +211,7 @@ function generateGaussian(mean = 0, deviation = 2): number {
  * @return An Integer that uniquely represents a pair of Integers
  */
 function pairing(a: number, b: number): number {
+  if (a < 0 || b < 0) throw new RangeError("Should be a positive integer!");
   return (1 / 2) * (a + b) * (a + b + 1) + b;
 }
 
