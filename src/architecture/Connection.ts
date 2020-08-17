@@ -1,6 +1,6 @@
-import {ConnectionJSON} from '..';
-import {pairing} from '../utils/Utils';
-import {Node} from './Node';
+import { ConnectionJSON } from "..";
+import { pairing } from "../utils/Utils";
+import { Node } from "./Node";
 
 /**
  * A connection instance describes the connection between two nodes.
@@ -58,9 +58,29 @@ export class Connection {
     if (gateNode) {
       this.gateNode = gateNode;
       gateNode.addGate(this);
-    } else {
-      this.gateNode = null;
-    }
+    } else this.gateNode = null;
+  }
+
+  /**
+   * Convert a json object to a connection
+   *
+   * @param jsonConnection A connection represented as a JSON object
+   * @param nodes the nodes in the network used to crate the connection
+   * @returns the created connection
+   */
+  public static fromJSON(
+    jsonConnection: ConnectionJSON,
+    nodes: Node[]
+  ): Connection {
+    const connection: Connection = nodes[jsonConnection.fromIndex].connect(
+      nodes[jsonConnection.toIndex],
+      jsonConnection.weight
+    );
+
+    jsonConnection.xTraces?.forEach((xTraceValue, xTraceNodeIndex) => {
+      connection.xTrace.set(nodes[xTraceNodeIndex], xTraceValue);
+    });
+    return connection;
   }
 
   /**

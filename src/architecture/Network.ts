@@ -1,7 +1,7 @@
-import {ActivationType} from 'activations';
-import {spawn, Worker} from 'threads';
-import {Pool} from 'threads/dist';
-import * as TimSort from 'timsort';
+import { ActivationType } from "activations";
+import { spawn, Worker } from "threads";
+import { Pool } from "threads/dist";
+import * as TimSort from "timsort";
 import {
   ALL_MUTATIONS,
   ConnectionJSON,
@@ -11,10 +11,10 @@ import {
   NodeType,
   SubNodeMutation,
   TrainOptions,
-} from '..';
-import {ALL_LOSSES, lossType, MSELoss} from '../methods/Loss';
-import {TestWorker} from '../multithreading/TestWorker';
-import {NEAT} from '../NEAT';
+} from "..";
+import { ALL_LOSSES, lossType, MSELoss } from "../methods/Loss";
+import { TestWorker } from "../multithreading/TestWorker";
+import { NEAT } from "../NEAT";
 import {
   pairing,
   pickRandom,
@@ -22,23 +22,10 @@ import {
   randInt,
   removeFromArray,
   shuffle,
-} from '../utils/Utils';
-import {Connection} from './Connection';
-import {Node} from './Node';
-import {Species} from './Species';
-
-function connFromJSON(network: Network, jsonConnection: ConnectionJSON) {
-  const connection: Connection = network.connect(
-    network.nodes[jsonConnection.fromIndex],
-    network.nodes[jsonConnection.toIndex],
-    jsonConnection.weight
-  );
-
-  jsonConnection.xTraces?.forEach((xTraceValue, xTraceNodeIndex) => {
-    connection.xTrace.set(network.nodes[xTraceNodeIndex], xTraceValue);
-  });
-  return connection;
-}
+} from "../utils/Utils";
+import { Connection } from "./Connection";
+import { Node } from "./Node";
+import { Species } from "./Species";
 
 /**
  * Create a neural network
@@ -126,13 +113,14 @@ export class Network {
     network.connections.clear();
 
     json.nodes
-      .map(nodeJSON => {
+      .map((nodeJSON) => {
         return new Node().fromJSON(nodeJSON);
       })
       .forEach(node => network.nodes[node.index] = node);
 
     json.connections.forEach((jsonConnection: ConnectionJSON) => {
-      const connection = connFromJSON(network, jsonConnection);
+      const connection = Connection.fromJSON(jsonConnection, network.nodes);
+      network.connections.add(connection);
 
       if (jsonConnection.gateNodeIndex !== null) {
         network.addGate(
@@ -161,7 +149,7 @@ export class Network {
       network1.inputSize !== network2.inputSize ||
       network1.outputSize !== network2.outputSize
     ) {
-      throw new Error('Networks don`t have the same input/output size!');
+      throw new Error("Networks don`t have the same input/output size!");
     }
 
     // Initialise offspring
@@ -221,7 +209,7 @@ export class Network {
         let j = -1;
         while (inputNumber < i) {
           if (j++ >= sourceNetwork.nodes.length) {
-            throw RangeError('something is wrong with the size of the input');
+            throw RangeError("something is wrong with the size of the input");
           }
           if (sourceNetwork.nodes[j].isInputNode()) {
             inputNumber++;
@@ -237,7 +225,7 @@ export class Network {
         while (outputNumber < i - inputSize) {
           j++;
           if (j >= sourceNetwork.nodes.length) {
-            throw RangeError('something is wrong with the size of the output');
+            throw RangeError("something is wrong with the size of the output");
           }
           if (sourceNetwork.nodes[j].isOutputNode()) {
             outputNumber++;
@@ -269,13 +257,13 @@ export class Network {
     const n2connections: (ConnectionJSON | undefined)[] = [];
 
     // Add the connections of network 1
-    network1.connections.forEach(connection => {
+    network1.connections.forEach((connection) => {
       n1connections[
         pairing(connection.from.index, connection.to.index)
       ] = connection.toJSON();
     });
     // Add the connections of network 2
-    network2.connections.forEach(connection => {
+    network2.connections.forEach((connection) => {
       n2connections[
         pairing(connection.from.index, connection.to.index)
       ] = connection.toJSON();
@@ -302,14 +290,14 @@ export class Network {
     // Excess/disjoint gene
     if (score2 >= score1) {
       keys2
-        .map(key => parseInt(key)) // convert to numbers
-        .map(key => n2connections[key]) // get the connection
-        .filter(conn => conn !== undefined) // filter out undefined connections
-        .forEach(conn => connections.push(conn)); // add the filtered connections
+        .map((key) => parseInt(key)) // convert to numbers
+        .map((key) => n2connections[key]) // get the connection
+        .filter((conn) => conn !== undefined) // filter out undefined connections
+        .forEach((conn) => connections.push(conn)); // add the filtered connections
     }
 
     // Add common conn genes uniformly
-    connections.forEach(connectionJSON => {
+    connections.forEach((connectionJSON) => {
       if (
         connectionJSON !== undefined &&
         connectionJSON.toIndex < offspringSize &&
@@ -385,7 +373,7 @@ export class Network {
   ): number[] {
     if (input.length !== this.inputSize) {
       throw new RangeError(
-        'Input size of dataset is different to network input size!'
+        "Input size of dataset is different to network input size!"
       );
     }
     // get default value if no value is given
@@ -393,13 +381,13 @@ export class Network {
     options.trace = options.trace ?? true;
 
     this.nodes
-      .filter(node => node.isInputNode()) // only input nodes
+      .filter((node) => node.isInputNode()) // only input nodes
       .forEach((node: Node, index: number) =>
         node.activate(input[index], options.trace)
       ); // activate them with the input
 
     this.nodes
-      .filter(node => node.isHiddenNode()) // only hidden nodes
+      .filter((node) => node.isHiddenNode()) // only hidden nodes
       .forEach((node: Node) => {
         if (options.dropoutRate) {
           node.mask = Math.random() >= options.dropoutRate ? 1 : 0;
@@ -409,7 +397,7 @@ export class Network {
       });
 
     return this.nodes
-      .filter(node => node.isOutputNode()) // only output nodes
+      .filter((node) => node.isOutputNode()) // only output nodes
       .map((node: Node) => node.activate(undefined, options.trace)); // map them to there activation value will give the network's output
   }
 
@@ -445,7 +433,7 @@ export class Network {
 
     if (target.length !== this.outputSize) {
       throw new Error(
-        'Output target length should match network output length'
+        "Output target length should match network output length"
       );
     }
 
@@ -453,7 +441,7 @@ export class Network {
 
     // propagate through the output nodes
     this.nodes
-      .filter(node => node.isOutputNode()) // only output nodes
+      .filter((node) => node.isOutputNode()) // only output nodes
       .forEach((node, index) => node.propagate(target[index], options)); // propagate
 
     // propagate backwards through the hidden nodes
@@ -466,15 +454,15 @@ export class Network {
 
     // propagate through the input nodes
     this.nodes
-      .filter(node => node.isInputNode()) // only input nodes
-      .forEach(node => node.propagate(undefined, options)); // propagate
+      .filter((node) => node.isInputNode()) // only input nodes
+      .forEach((node) => node.propagate(undefined, options)); // propagate
   }
 
   /**
    * Clear the context of the network
    */
   public clear(): void {
-    this.nodes.forEach(node => node.clear());
+    this.nodes.forEach((node) => node.clear());
   }
 
   /**
@@ -485,7 +473,7 @@ export class Network {
    */
   public disconnect(from: Node, to: Node): Connection {
     // remove the connection network-level
-    this.connections.forEach(conn => {
+    this.connections.forEach((conn) => {
       if (conn.from === from && conn.to === to) {
         if (conn.gateNode !== null) {
           this.removeGate(conn); // remove possible gate
@@ -505,7 +493,7 @@ export class Network {
    */
   public addGate(node: Node, connection: Connection): void {
     if (this.nodes.indexOf(node) === -1) {
-      throw new ReferenceError('This node is not part of the network!');
+      throw new ReferenceError("This node is not part of the network!");
     } else if (connection.gateNode !== null) {
       return;
     }
@@ -520,7 +508,7 @@ export class Network {
    */
   public removeGate(connection: Connection): void {
     if (!this.gates.has(connection)) {
-      throw new Error('This connection is not gated!');
+      throw new Error("This connection is not gated!");
     }
     this.gates.delete(connection);
     if (connection.gateNode !== null) {
@@ -539,7 +527,7 @@ export class Network {
     keepGates: boolean = new SubNodeMutation().keepGates
   ): void {
     if (!this.nodes.includes(node)) {
-      throw new ReferenceError('This node does not exist in the network!');
+      throw new ReferenceError("This node does not exist in the network!");
     }
 
     this.disconnect(node, node); // remove self connection
@@ -550,7 +538,7 @@ export class Network {
     const connections: Connection[] = []; // keep track
 
     // read all inputs from node and keep track of the nodes that gate the incoming connection
-    node.incoming.forEach(connection => {
+    node.incoming.forEach((connection) => {
       if (
         keepGates &&
         connection.gateNode !== null &&
@@ -563,7 +551,7 @@ export class Network {
     });
 
     // read all outputs from node and keep track of the nodes that gate the outgoing connection
-    node.outgoing.forEach(connection => {
+    node.outgoing.forEach((connection) => {
       if (
         keepGates &&
         connection.gateNode !== null &&
@@ -576,8 +564,8 @@ export class Network {
     });
 
     // add all connections the node has
-    inputs.forEach(input => {
-      outputs.forEach(output => {
+    inputs.forEach((input) => {
+      outputs.forEach((output) => {
         if (!input.isProjectingTo(output)) {
           connections.push(this.connect(input, output));
         }
@@ -700,7 +688,7 @@ export class Network {
       options.dataset[0].output.length !== this.outputSize
     ) {
       throw new Error(
-        'Dataset input/output size should be same as network input/output size!'
+        "Dataset input/output size should be same as network input/output size!"
       );
     }
 
@@ -708,7 +696,7 @@ export class Network {
 
     if (options.iterations <= 0 && options.error <= 0) {
       throw new Error(
-        'At least one of the following options must be specified: error, iterations'
+        "At least one of the following options must be specified: error, iterations"
       );
     }
 
@@ -787,11 +775,11 @@ export class Network {
 
       if (options.log > 0 && iterationCount % options.log === 0) {
         console.log(
-          'iteration number',
+          "iteration number",
           iterationCount,
-          'error',
+          "error",
           error,
-          'training rate',
+          "training rate",
           currentTrainingRate
         );
       }
@@ -841,7 +829,7 @@ export class Network {
     for (const entry of dataset) {
       const input: number[] = entry.input;
       const target: number[] = entry.output;
-      const output: number[] = this.activate(input, {trace: false});
+      const output: number[] = this.activate(input, { trace: false });
       error += loss(target, output);
     }
 
@@ -867,7 +855,7 @@ export class Network {
     }
 
     // convert all nodes to json and add the to the json object
-    this.nodes.forEach(node => {
+    this.nodes.forEach((node) => {
       json.nodes.push(node.toJSON());
 
       if (node.selfConnection.weight !== 0) {
@@ -877,7 +865,7 @@ export class Network {
       }
     });
 
-    this.connections.forEach(conn => {
+    this.connections.forEach((conn) => {
       json.connections.push(conn.toJSON());
     });
     return json;
@@ -915,7 +903,7 @@ export class Network {
         options.dataset[0].output.length !== this.outputSize)
     ) {
       throw new Error(
-        'Dataset input/output size should be same as network input/output size!'
+        "Dataset input/output size should be same as network input/output size!"
       );
     }
 
@@ -937,7 +925,7 @@ export class Network {
       const lossIndex: number = Object.values(ALL_LOSSES).indexOf(options.loss);
       // init a pool of workers
       workerPool = Pool(
-        () => spawn<TestWorker>(new Worker('../multithreading/TestWorker')),
+        () => spawn<TestWorker>(new Worker("../multithreading/TestWorker")),
         options.threads
       );
       options.fitnessFunction = async function (
@@ -1047,10 +1035,10 @@ export class Network {
     let indexG2 = 0;
 
     const connections1: Connection[] = Array.from(this.connections).filter(
-      conn => conn !== undefined
+      (conn) => conn !== undefined
     );
     const connections2: Connection[] = Array.from(g2.connections).filter(
-      conn => conn !== undefined
+      (conn) => conn !== undefined
     );
 
     TimSort.sort(connections1, (a: Connection, b: Connection) => {
@@ -1080,7 +1068,7 @@ export class Network {
       const gene2: Connection = connections2[indexG2];
 
       if (gene1 === undefined || gene2 === undefined) {
-        throw Error('HERE');
+        throw Error("HERE");
       }
 
       const in1: number = gene1.getInnovationID();
