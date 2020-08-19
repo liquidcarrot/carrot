@@ -1,8 +1,8 @@
-import {ActivationType, Logistic, TANH} from 'activations';
-import {ConnectionType, GatingType, NodeType} from '../../..';
-import {Connection} from '../../Connection';
-import {Node} from '../../Node';
-import {Layer} from '../Layer';
+import { ActivationType, Logistic, TANH } from "activations";
+import { ConnectionType, GatingType, NodeType } from "../../..";
+import { Connection } from "../../Connection";
+import { Node } from "../../Node";
+import { Layer } from "../Layer";
 
 /**
  * LSTM layer
@@ -91,7 +91,7 @@ export class LSTMLayer extends Layer {
     this.nodes.push(...Array.from(this.outputNodes));
 
     this.outputNodes.forEach(
-      node => (node.squash = options.activation ?? TANH)
+      (node) => (node.squash = options.activation ?? TANH)
     );
   }
 

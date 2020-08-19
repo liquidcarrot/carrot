@@ -1,5 +1,5 @@
-import {ActivationType} from 'activations';
-import {MinPooling1DLayer} from './MinPooling1DLayer';
+import { ActivationType } from "activations";
+import { MinPooling1DLayer } from "./MinPooling1DLayer";
 
 /**
  * Global minimum pooling layer 1D

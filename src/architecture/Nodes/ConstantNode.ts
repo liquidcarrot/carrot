@@ -1,5 +1,5 @@
-import {NodeJSON, NodeType} from '../..';
-import {Node} from '../Node';
+import { NodeJSON, NodeType } from "../..";
+import { Node } from "../Node";
 
 /**
  * Constant node
@@ -74,14 +74,14 @@ export abstract class ConstantNode extends Node {
    * Bias mutations aren't allowed for a constant node.
    */
   public mutateBias(): void {
-    throw new ReferenceError('Cannot mutate a pool node!');
+    throw new ReferenceError("Cannot mutate a pool node!");
   }
 
   /**
    * Activation mutations aren't allowed for a constant node.
    */
   public mutateActivation(): void {
-    throw new ReferenceError('Cannot mutate a pool node!');
+    throw new ReferenceError("Cannot mutate a pool node!");
   }
 
   /**
@@ -102,6 +102,6 @@ export abstract class ConstantNode extends Node {
    * Can't set the bias of a constant node.
    */
   public setBias(): Node {
-    throw new ReferenceError('Cannot set the bias of a pool node!');
+    throw new ReferenceError("Cannot set the bias of a pool node!");
   }
 }

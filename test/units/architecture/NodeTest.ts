@@ -1,28 +1,28 @@
-import {ActivationType} from 'activations';
-import {expect} from 'chai';
-import {describe, it} from 'mocha';
-import {Connection} from '../../../src/architecture/Connection';
-import {Node} from '../../../src/architecture/Node';
-import {NodeType} from '../../../src/enums/NodeType';
-import {NodeJSON} from '../../../src/interfaces/NodeJSON';
-import {ModBiasMutation} from '../../../src/methods/Mutation';
-import {randDouble, randInt} from '../../../src/utils/Utils';
+import { ActivationType } from "activations";
+import { expect } from "chai";
+import { describe, it } from "mocha";
+import { Connection } from "../../../src";
+import { Node } from "../../../src";
+import { NodeType } from "../../../src";
+import { NodeJSON } from "../../../src";
+import { ModBiasMutation } from "../../../src";
+import { randDouble, randInt } from "../../../src";
 
-describe('Node', () => {
-  describe('node.connect()', () => {
-    it('node.connect(self) => {Connection}', () => {
+describe("Node", () => {
+  describe("node.connect()", () => {
+    it("node.connect(self) => {Connection}", () => {
       const node: Node = new Node();
 
       expect(node.connect(node)).to.be.an.instanceOf(Connection);
       expect(node.selfConnection.weight).to.equal(1);
     });
-    it('node.connect(node) => {Connection}', () => {
+    it("node.connect(node) => {Connection}", () => {
       const node: Node = new Node();
       const other: Node = new Node();
 
       expect(node.connect(other)).to.be.an.instanceOf(Connection);
     });
-    it('node.connect(node, options={ twosided: true }) => {Connection}', () => {
+    it("node.connect(node, options={ twosided: true }) => {Connection}", () => {
       const node: Node = new Node();
       const other: Node = new Node();
       expect(node.connect(other, 1, true)).to.be.an.instanceOf(Connection);
@@ -30,21 +30,21 @@ describe('Node', () => {
       expect(node.outgoing).to.have.lengthOf(1);
     });
   });
-  describe('node.disconnect()', () => {
-    it('node.disconnect(self) => {Connection}', () => {
+  describe("node.disconnect()", () => {
+    it("node.disconnect(self) => {Connection}", () => {
       const node: Node = new Node();
       node.connect(node);
 
       expect(node.disconnect(node)).to.be.an.instanceOf(Connection);
       expect(node.selfConnection.weight).to.equal(0);
     });
-    it('node.disconnect(node) => {Connection}', () => {
+    it("node.disconnect(node) => {Connection}", () => {
       const node: Node = new Node();
       const other: Node = new Node();
 
       expect(node.connect(other)).to.be.an.instanceOf(Connection);
     });
-    it('node.disconnect(node, options={ twosided: true }) => {Connection}', () => {
+    it("node.disconnect(node, options={ twosided: true }) => {Connection}", () => {
       const node: Node = new Node(NodeType.HIDDEN);
       const other: Node = new Node(NodeType.OUTPUT);
 
@@ -57,13 +57,13 @@ describe('Node', () => {
       expect(node.outgoing).to.have.lengthOf(0);
     });
   });
-  describe('node.activate()', () => {
-    it('node.activate() => {number}', () => {
+  describe("node.activate()", () => {
+    it("node.activate() => {number}", () => {
       const node: Node = new Node();
 
       expect(node.activate()).to.not.be.NaN;
     });
-    it('node.activate(number) => {number}', () => {
+    it("node.activate(number) => {number}", () => {
       const node: Node = new Node();
       const input: number = randDouble(0, 10);
 
@@ -72,7 +72,7 @@ describe('Node', () => {
       expect(output).to.not.be.NaN;
       expect(output).to.equal(input);
     });
-    it('node.activate(options={ trace: false })', () => {
+    it("node.activate(options={ trace: false })", () => {
       const node: Node = new Node();
 
       const output: number = node.activate(undefined, false);
@@ -80,7 +80,7 @@ describe('Node', () => {
       expect(output).to.not.be.NaN;
       expect(node.derivativeState).to.be.equal(1);
     });
-    it('node.activate(number, options={ trace: false })', () => {
+    it("node.activate(number, options={ trace: false })", () => {
       const node: Node = new Node();
       const input: number = randDouble(0, 10);
 
@@ -91,8 +91,8 @@ describe('Node', () => {
       expect(node.derivativeState).to.be.equal(1);
     });
   });
-  describe('node.propagate()', () => {
-    it('node.propagate() => { responsibility: number, projected: number, gated: number }', () => {
+  describe("node.propagate()", () => {
+    it("node.propagate() => { responsibility: number, projected: number, gated: number }", () => {
       const node: Node = new Node();
       const input: number = randDouble(0, 10);
 
@@ -107,7 +107,7 @@ describe('Node', () => {
       expect(node.errorProjected).to.not.be.NaN;
       expect(node.errorGated).to.not.be.NaN;
     });
-    it('node.propagate(number) => { responsibility: number, projected: number, gated: number }', () => {
+    it("node.propagate(number) => { responsibility: number, projected: number, gated: number }", () => {
       const node: Node = new Node();
       const input: number = randDouble(0, 10);
       const target: number = randDouble(0, 10);
@@ -126,7 +126,7 @@ describe('Node', () => {
       expect(node.errorProjected).to.equal(target - input);
       expect(node.errorGated).to.equal(0);
     });
-    it('node.propagate(options={ update: false }) => { responsibility: number, projected: number, gated: number }', () => {
+    it("node.propagate(options={ update: false }) => { responsibility: number, projected: number, gated: number }", () => {
       const node: Node = new Node();
       const input: number = randDouble(0, 10);
       node.activate(input);
@@ -142,7 +142,7 @@ describe('Node', () => {
       expect(node.deltaBiasTotal).to.equal(0);
       expect(node.deltaBiasPrevious).to.equal(0);
     });
-    it('node.propagate(number, options={ update: false }) => { responsibility: number, projected: number, gated: number }', () => {
+    it("node.propagate(number, options={ update: false }) => { responsibility: number, projected: number, gated: number }", () => {
       const node: Node = new Node();
       const input: number = randDouble(0, 10);
       const target: number = randDouble(0, 10);
@@ -160,8 +160,8 @@ describe('Node', () => {
       expect(node.deltaBiasPrevious).to.equal(0);
     });
   });
-  describe('node.gate()', () => {
-    it('node.gate(connection) => {Connection}', () => {
+  describe("node.gate()", () => {
+    it("node.gate(connection) => {Connection}", () => {
       const input: Node = new Node();
       const output: Node = new Node();
       const connection: Connection = input.connect(output);
@@ -173,7 +173,7 @@ describe('Node', () => {
       expect(connection.gateNode).to.eql(node);
       expect(node.gated).to.have.lengthOf(1);
     });
-    it('node.gate(connections) => {Connection[]}', () => {
+    it("node.gate(connections) => {Connection[]}", () => {
       const size: number = randInt(1, 10);
       const inputs: Node[] = [];
       const outputs: Node[] = [];
@@ -187,7 +187,7 @@ describe('Node', () => {
       }
       connections.forEach((connection: Connection) => node.addGate(connection));
 
-      expect(connections).to.be.an('array');
+      expect(connections).to.be.an("array");
       expect(connections).to.have.lengthOf(size);
 
       for (const connection of connections) {
@@ -198,8 +198,8 @@ describe('Node', () => {
       expect(node.gated).to.have.lengthOf(size);
     });
   });
-  describe('node.removeGate()', () => {
-    it('node.removeGate(connection) => {Connection}', () => {
+  describe("node.removeGate()", () => {
+    it("node.removeGate(connection) => {Connection}", () => {
       const input: Node = new Node();
       const output: Node = new Node();
       const node: Node = new Node();
@@ -212,7 +212,7 @@ describe('Node', () => {
       expect(connection.gateNode).to.not.exist;
       expect(node.gated).to.have.lengthOf(0);
     });
-    it('node.removeGate(connections) => {Connection[]}', () => {
+    it("node.removeGate(connections) => {Connection[]}", () => {
       const size: number = randInt(1, 10);
       const inputs: Node[] = [];
       const outputs: Node[] = [];
@@ -227,7 +227,7 @@ describe('Node', () => {
       connections.forEach((conn: Connection) => node.addGate(conn));
       connections.forEach((conn: Connection) => node.removeGate(conn));
 
-      expect(connections).to.be.an('array');
+      expect(connections).to.be.an("array");
       expect(connections).to.have.lengthOf(size);
 
       for (const connection of connections) {
@@ -238,14 +238,14 @@ describe('Node', () => {
       expect(node.gated).to.have.lengthOf(0);
     });
   });
-  describe('node.clear()', () => {
-    it('node.clear() => {undefined}', () => {
+  describe("node.clear()", () => {
+    it("node.clear() => {undefined}", () => {
       const node: Node = new Node();
       const input: number = randDouble(0, 10);
       const input2: number = randDouble(0, 10);
 
       node.activate(input);
-      node.propagate(input2, {rate: 0, momentum: 0, update: false});
+      node.propagate(input2, { rate: 0, momentum: 0, update: false });
 
       node.clear();
 
@@ -256,7 +256,7 @@ describe('Node', () => {
       expect(node.errorProjected).to.equal(0);
       expect(node.errorGated).to.equal(0);
 
-      node.incoming.forEach(connection => {
+      node.incoming.forEach((connection) => {
         expect(connection.eligibility).to.equal(0);
         expect(connection.xTrace.size).to.equal(0);
       });
@@ -265,8 +265,8 @@ describe('Node', () => {
       );
     });
   });
-  describe('node.mutate()', () => {
-    it('node.mutate(options={ method: methods.mutation.MOD_ACTIVATION }) => {undefined}', () => {
+  describe("node.mutate()", () => {
+    it("node.mutate(options={ method: methods.mutation.MOD_ACTIVATION }) => {undefined}", () => {
       const node: Node = new Node();
       const squash: ActivationType = node.squash;
       const bias: number = node.bias;
@@ -277,7 +277,7 @@ describe('Node', () => {
       expect(node.bias).to.equal(bias);
       expect(node.bias).to.eql(bias);
     });
-    it('node.mutate(options={ method: methods.mutation.MOD_BIAS }) => {undefined}', () => {
+    it("node.mutate(options={ method: methods.mutation.MOD_BIAS }) => {undefined}", () => {
       const node: Node = new Node();
       const squash: ActivationType = node.squash;
       const bias: number = node.bias;
@@ -289,8 +289,8 @@ describe('Node', () => {
       expect(node.bias).to.not.eql(bias);
     });
   });
-  describe('node.isProjectingTo()', () => {
-    it('node.isProjectingTo(self) => {boolean}', () => {
+  describe("node.isProjectingTo()", () => {
+    it("node.isProjectingTo(self) => {boolean}", () => {
       const node: Node = new Node();
 
       expect(node.isProjectingTo(node)).to.be.false;
@@ -299,7 +299,7 @@ describe('Node', () => {
 
       expect(node.isProjectingTo(node)).to.be.true;
     });
-    it('node.isProjectingTo(node) => {boolean}', () => {
+    it("node.isProjectingTo(node) => {boolean}", () => {
       const node: Node = new Node();
       const other: Node = new Node();
 
@@ -309,7 +309,7 @@ describe('Node', () => {
 
       expect(node.isProjectingTo(other)).to.be.true;
     });
-    it('node.isProjectingTo(nodes) => {boolean}', () => {
+    it("node.isProjectingTo(nodes) => {boolean}", () => {
       const size: number = randInt(1, 10);
       const node: Node = new Node();
       const others: Node[] = [];
@@ -326,8 +326,8 @@ describe('Node', () => {
       });
     });
   });
-  describe('node.isProjectedBy()', () => {
-    it('node.isProjectedBy(self) => {boolean}', () => {
+  describe("node.isProjectedBy()", () => {
+    it("node.isProjectedBy(self) => {boolean}", () => {
       const node: Node = new Node();
 
       expect(node.isProjectedBy(node)).to.be.false;
@@ -336,7 +336,7 @@ describe('Node', () => {
 
       expect(node.isProjectedBy(node)).to.be.true;
     });
-    it('node.isProjectedBy(node) => {boolean}', () => {
+    it("node.isProjectedBy(node) => {boolean}", () => {
       const node: Node = new Node();
       const other: Node = new Node();
 
@@ -346,7 +346,7 @@ describe('Node', () => {
 
       expect(node.isProjectedBy(other)).to.be.true;
     });
-    it('node.isProjectedBy(nodes) => {boolean}', () => {
+    it("node.isProjectedBy(nodes) => {boolean}", () => {
       const size: number = randInt(1, 10);
       const node: Node = new Node();
       const others: Node[] = [];
@@ -361,15 +361,15 @@ describe('Node', () => {
       });
     });
   });
-  describe('node.toJSON()', () => {
-    it('node.toJSON() => {Object}', () => {
+  describe("node.toJSON()", () => {
+    it("node.toJSON() => {Object}", () => {
       const node: Node = new Node();
 
       const json: NodeJSON = node.toJSON();
 
-      expect(json).to.be.an('object');
+      expect(json).to.be.an("object");
       expect(json.bias).to.not.be.NaN;
-      expect(json.squash).to.be.a('string');
+      expect(json.squash).to.be.a("string");
     });
   });
 });

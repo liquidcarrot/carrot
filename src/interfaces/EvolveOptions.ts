@@ -1,13 +1,13 @@
-import {ActivationType, ALL_ACTIVATIONS} from 'activations';
+import { ActivationType, ALL_ACTIVATIONS } from "activations";
 import {
   FEEDFORWARD_MUTATIONS,
   FitnessProportionateSelection,
   Mutation,
   Network,
   Selection,
-} from '..';
-import {lossType, MSELoss} from '../methods/Loss';
-import {TrainOptions} from './TrainOptions';
+} from "..";
+import { lossType, MSELoss } from "../methods/Loss";
+import { TrainOptions } from "./TrainOptions";
 
 /**
  * Options used to evolve network

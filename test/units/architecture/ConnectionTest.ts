@@ -1,9 +1,9 @@
-import {expect} from 'chai';
-import {describe, it} from 'mocha';
-import {Connection} from '../../../src/architecture/Connection';
-import {Node} from '../../../src/architecture/Node';
-import {ConnectionJSON} from '../../../src/interfaces/ConnectionJSON';
-import {randDouble} from '../../../src/utils/Utils';
+import { expect } from "chai";
+import { describe, it } from "mocha";
+import { Connection } from "../../../src";
+import { Node } from "../../../src";
+import { ConnectionJSON } from "../../../src";
+import { randDouble } from "../../../src";
 
 const was: {
   connected: (connection: Connection, from: Node, to: Node) => void;
@@ -18,14 +18,14 @@ const was: {
   },
 };
 
-describe('Connection', () => {
+describe("Connection", () => {
   const from: Node = new Node();
   const to: Node = new Node();
   const weight: number = randDouble(-1, 1);
   const gateNode: Node = new Node();
   const gain: number = randDouble(-1, 1);
 
-  describe('new Connection()', () => {
+  describe("new Connection()", () => {
     it(`new Connection(from=${from}, to=${to}) => {Connection}`, () => {
       const connection: Connection = new Connection(from, to);
 
@@ -61,13 +61,13 @@ describe('Connection', () => {
       was.connected(connection, from, to);
     });
   });
-  describe('connection.toJSON()', () => {
-    it('connection.toJSON() => {Object}', () => {
+  describe("connection.toJSON()", () => {
+    it("connection.toJSON() => {Object}", () => {
       const connection: Connection = new Connection(from, to);
       const json: ConnectionJSON = connection.toJSON();
 
-      expect(json).to.be.an('object');
-      expect(json.weight).to.be.a('number');
+      expect(json).to.be.an("object");
+      expect(json.weight).to.be.a("number");
     });
   });
 });

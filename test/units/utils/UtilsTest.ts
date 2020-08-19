@@ -1,5 +1,5 @@
-import {expect} from 'chai';
-import {describe, it} from 'mocha';
+import { expect } from "chai";
+import { describe, it } from "mocha";
 import {
   avg,
   max,
@@ -14,10 +14,10 @@ import {
   removeFromArray,
   shuffle,
   sum,
-} from '../../../src/utils/Utils';
+} from "../../../src/utils/Utils";
 
-describe('Utils', () => {
-  it('pick random', () => {
+describe("Utils", () => {
+  it("pick random", () => {
     const arr: number[] = [
       randDouble(-50, 50),
       randDouble(-50, 50),
@@ -34,7 +34,7 @@ describe('Utils', () => {
     expect(arr.includes(elem)).to.be.true;
   });
 
-  it('randInt', () => {
+  it("randInt", () => {
     for (let i = 0; i < 100; i++) {
       const int: number = randInt(-50, 50);
 
@@ -43,7 +43,7 @@ describe('Utils', () => {
     }
   });
 
-  it('randDouble', () => {
+  it("randDouble", () => {
     for (let i = 0; i < 100; i++) {
       const double: number = randDouble(-50, 50);
 
@@ -52,7 +52,7 @@ describe('Utils', () => {
     }
   });
 
-  it('randBoolean', () => {
+  it("randBoolean", () => {
     let trues = 0;
     let falses = 0;
     for (let i = 0; i < 1000; i++) {
@@ -66,7 +66,7 @@ describe('Utils', () => {
     expect(trues).to.be.closeTo(falses, 100);
   });
 
-  it('remove from array', () => {
+  it("remove from array", () => {
     const arr: number[] = [
       randDouble(-50, 50),
       randDouble(-50, 50),
@@ -87,7 +87,7 @@ describe('Utils', () => {
     expect(arr.length).equals(len - 1);
   });
 
-  it('shuffle', () => {
+  it("shuffle", () => {
     const arr: number[] = [
       randDouble(-50, 50),
       randDouble(-50, 50),
@@ -104,10 +104,10 @@ describe('Utils', () => {
     shuffle(copy);
 
     expect(copy.length).to.be.equals(arr.length);
-    copy.forEach(element => expect(arr).includes(element));
+    copy.forEach((element) => expect(arr).includes(element));
   });
 
-  it('max', () => {
+  it("max", () => {
     const arr: number[] = [
       randDouble(-50, 50),
       randDouble(-50, 50),
@@ -122,10 +122,10 @@ describe('Utils', () => {
 
     const maxValue: number = max(arr);
 
-    arr.forEach(elem => expect(elem).to.be.at.most(maxValue));
+    arr.forEach((elem) => expect(elem).to.be.at.most(maxValue));
   });
 
-  it('max index', () => {
+  it("max index", () => {
     const arr: number[] = [
       randDouble(-50, 50),
       randDouble(-50, 50),
@@ -143,7 +143,7 @@ describe('Utils', () => {
     expect(maxValueIndex(arr)).to.be.equals(arr.indexOf(maxValue));
   });
 
-  it('min', () => {
+  it("min", () => {
     const arr: number[] = [
       randDouble(-50, 50),
       randDouble(-50, 50),
@@ -158,10 +158,10 @@ describe('Utils', () => {
 
     const minValue: number = min(arr);
 
-    arr.forEach(elem => expect(elem).to.be.at.least(minValue));
+    arr.forEach((elem) => expect(elem).to.be.at.least(minValue));
   });
 
-  it('min index', () => {
+  it("min index", () => {
     const arr: number[] = [
       randDouble(-50, 50),
       randDouble(-50, 50),
@@ -179,7 +179,7 @@ describe('Utils', () => {
     expect(minValueIndex(arr)).to.be.equals(arr.indexOf(minValue));
   });
 
-  it('avg', () => {
+  it("avg", () => {
     const arr: number[] = [
       randDouble(-50, 50),
       randDouble(-50, 50),
@@ -193,11 +193,11 @@ describe('Utils', () => {
     ];
 
     let sum = 0;
-    arr.forEach(elem => (sum += elem));
+    arr.forEach((elem) => (sum += elem));
     expect(avg(arr)).to.be.equals(sum / arr.length);
   });
 
-  it('sum', () => {
+  it("sum", () => {
     const arr: number[] = [
       randDouble(-50, 50),
       randDouble(-50, 50),
@@ -211,20 +211,20 @@ describe('Utils', () => {
     ];
 
     let sumValue = 0;
-    arr.forEach(elem => (sumValue += elem));
+    arr.forEach((elem) => (sumValue += elem));
     expect(sum(arr)).to.be.equals(sumValue);
   });
 
-  describe('Utils pairing', () => {
+  describe("Utils pairing", () => {
     const a: number = randInt(0, 100);
     const b: number = randInt(0, 100);
 
     it(`util.getCantorNumber(a=${a}, b=${b}) => {number}`, () => {
-      expect(pairing(a, b)).to.be.a('number');
+      expect(pairing(a, b)).to.be.a("number");
     });
     // Critical, avoids silent errors
-    it('(-number, -number) => -1', () => {
-      expect(() => pairing(-1, -1)).to.throw('Should be a positive integer!');
+    it("(-number, -number) => -1", () => {
+      expect(() => pairing(-1, -1)).to.throw("Should be a positive integer!");
     });
   });
 });

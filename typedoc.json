@@ -1,17 +1,13 @@
 {
-  "inputFiles": [
-    "./src"
-  ],
-  "exclude": [
-    "./test",
-    "./scripts"
-  ],
+  "inputFiles": ["./src"],
+  "exclude": ["./test", "./scripts"],
   "out": "docs/",
   "mode": "file",
   "tsconfig": "./tsconfig.json",
   "includeVersion": true,
   "readme": "README.md",
   "name": "Carrot",
+  "theme": "node_modules/eledoc/bin/default/",
   "toc": [
     "NEAT",
     "Network",

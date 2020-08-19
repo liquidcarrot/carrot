@@ -1,22 +1,26 @@
-import {avg, generateGaussian, NoiseNodeType, sum} from '../..';
-import {ConstantNode} from './ConstantNode';
+import { avg, generateGaussian, sum } from "../..";
+import { ConstantNode } from "./ConstantNode";
 
 /**
  * Noise node
  */
 export class NoiseNode extends ConstantNode {
   /**
-   * The type of noise
-   */
-  private readonly noiseType: NoiseNodeType;
-  /**
    * More options for applying noise
    */
   private readonly options: {
     /**
-     * Options for gaussian noise
+     * Mean value
      */
-    gaussian?: {
+    mean?: number;
+    /**
+     * Standard deviation
+     */
+    deviation?: number;
+  };
+
+  constructor(
+    options: {
       /**
        * Mean value
        */
@@ -25,32 +29,9 @@ export class NoiseNode extends ConstantNode {
        * Standard deviation
        */
       deviation?: number;
-    };
-  };
-
-  constructor(
-    options: {
-      /**
-       * The type of noise
-       */
-      noiseType?: NoiseNodeType;
-      /**
-       * Options for gaussian noise
-       */
-      gaussian?: {
-        /**
-         * Mean value
-         */
-        mean?: number;
-        /**
-         * Standard deviation
-         */
-        deviation?: number;
-      };
     } = {}
   ) {
     super();
-    this.noiseType = options.noiseType ?? NoiseNodeType.GAUSSIAN_NOISE;
     this.options = options;
   }
 
@@ -67,21 +48,12 @@ export class NoiseNode extends ConstantNode {
     this.prevState = this.state;
 
     const incomingStates: number[] = Array.from(this.incoming).map(
-      conn => conn.from.activation * conn.weight * conn.gain
+      (conn) => conn.from.activation * conn.weight * conn.gain
     );
 
-    switch (this.noiseType) {
-      case NoiseNodeType.GAUSSIAN_NOISE:
-        this.state =
-          avg(incomingStates) +
-          generateGaussian(
-            this.options.gaussian?.mean ?? 0,
-            this.options.gaussian?.deviation ?? 2
-          );
-        break;
-      default:
-        throw new ReferenceError('Cannot activate this noise type!');
-    }
+    this.state =
+      avg(incomingStates) +
+      generateGaussian(this.options?.mean ?? 0, this.options?.deviation ?? 2);
 
     this.activation = this.squash(this.state, false) * this.mask;
     this.derivativeState = this.squash(this.state, true);
@@ -121,12 +93,12 @@ export class NoiseNode extends ConstantNode {
     options.update = options.update ?? true;
 
     const connectionsStates: number[] = Array.from(this.outgoing).map(
-      conn => conn.to.errorResponsibility * conn.weight * conn.gain
+      (conn) => conn.to.errorResponsibility * conn.weight * conn.gain
     );
     this.errorResponsibility = this.errorProjected =
       sum(connectionsStates) * this.derivativeState;
 
-    this.incoming.forEach(connection => {
+    this.incoming.forEach((connection) => {
       // calculate gradient
       let gradient: number = this.errorProjected * connection.eligibility;
       connection.xTrace.forEach((value, key) => {

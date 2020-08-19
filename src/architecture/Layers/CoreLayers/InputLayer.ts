@@ -1,6 +1,6 @@
-import {ConnectionType, NodeType, NoiseLayer, NoiseNodeType} from '../../..';
-import {Node} from '../../Node';
-import {Layer} from '../Layer';
+import { ConnectionType, NodeType, NoiseLayer, NoiseNodeType } from "../../..";
+import { Node } from "../../Node";
+import { Layer } from "../Layer";
 
 /**
  * Input layer
@@ -24,7 +24,7 @@ export class InputLayer extends Layer {
 
     if (options.noise) {
       const noiseLayer: NoiseLayer = new NoiseLayer(options.noise);
-      noiseLayer.outputNodes.forEach(node => this.outputNodes.add(node));
+      noiseLayer.outputNodes.forEach((node) => this.outputNodes.add(node));
       this.connections.push(
         ...Layer.connect(
           this.nodes,
@@ -33,7 +33,7 @@ export class InputLayer extends Layer {
         )
       );
     } else {
-      this.nodes.forEach(node => this.outputNodes.add(node));
+      this.nodes.forEach((node) => this.outputNodes.add(node));
     }
   }
 

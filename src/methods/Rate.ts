@@ -159,4 +159,4 @@ class InverseRate extends Rate {
   }
 }
 
-export {Rate, FixedRate, StepRate, ExponentialRate, InverseRate};
+export { Rate, FixedRate, StepRate, ExponentialRate, InverseRate };

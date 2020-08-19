@@ -1,6 +1,12 @@
-import {ActivationType, ALL_ACTIVATIONS, Logistic} from 'activations';
-import {ModBiasMutation, NodeJSON, NodeType, pickRandom, randDouble} from '..';
-import {Connection} from './Connection';
+import { ActivationType, ALL_ACTIVATIONS, Logistic } from "activations";
+import {
+  ModBiasMutation,
+  NodeJSON,
+  NodeType,
+  pickRandom,
+  randDouble,
+} from "..";
+import { Connection } from "./Connection";
 
 /**
  * Creates a new neuron/node
@@ -124,7 +130,9 @@ export class Node {
   public fromJSON(json: NodeJSON): Node {
     this.bias = json.bias;
     this.type = json.type as NodeType;
-    this.squash = ALL_ACTIVATIONS.filter(activation => activation.name === json.squash)[0];
+    this.squash = ALL_ACTIVATIONS.filter(
+      (activation) => activation.name === json.squash
+    )[0];
     this.mask = json.mask;
     this.index = json.index;
     this.errorResponsibility = json.errorResponsibility;
@@ -145,12 +153,12 @@ export class Node {
    * `node.clear()` is useful for predicting time series.
    */
   public clear(): void {
-    this.incoming.forEach(connection => {
+    this.incoming.forEach((connection) => {
       connection.eligibility = 0;
       connection.xTrace.clear();
     });
 
-    this.gated.forEach(conn => (conn.gain = 0));
+    this.gated.forEach((conn) => (conn.gain = 0));
 
     this.errorResponsibility = this.errorProjected = this.errorGated = 0;
     this.prevState = this.state = this.activation = 0;
@@ -173,7 +181,7 @@ export class Node {
   ): void {
     // pick a random activation from allowed activations except the current activation
     const possible: ActivationType[] = allowedActivations.filter(
-      activation => activation !== this.squash
+      (activation) => activation !== this.squash
     );
     if (possible.length > 0) {
       this.squash = pickRandom(possible);
@@ -193,7 +201,7 @@ export class Node {
       return this.selfConnection.weight !== 0; // is projected, if weight of self connection is unequal 0
     } else {
       return Array.from(this.incoming)
-        .map(conn => conn.from)
+        .map((conn) => conn.from)
         .includes(node); // check every incoming connection for node
     }
   }
@@ -211,7 +219,7 @@ export class Node {
       return this.selfConnection.weight !== 0; // is projected, if weight of self connection is unequal 0
     } else {
       return Array.from(this.outgoing)
-        .map(conn => conn.to)
+        .map((conn) => conn.to)
         .includes(node); // check every outgoing connection for node
     }
   }
@@ -250,7 +258,7 @@ export class Node {
       this.selfConnection.weight = weight;
       return this.selfConnection;
     } else if (this.isProjectingTo(target)) {
-      throw new ReferenceError('There is already a connection!'); // already connected
+      throw new ReferenceError("There is already a connection!"); // already connected
     } else {
       const connection: Connection = new Connection(this, target, weight); // create new connection
 
@@ -279,11 +287,11 @@ export class Node {
     }
 
     const connections: Connection[] = Array.from(this.outgoing).filter(
-      conn => conn.to === node
+      (conn) => conn.to === node
     );
 
     if (connections.length === 0) {
-      throw new Error('No Connection found');
+      throw new Error("No Connection found");
     }
     const connection: Connection = connections[0];
 
@@ -339,7 +347,7 @@ export class Node {
       this.errorResponsibility = this.errorProjected = target - this.activation;
     } else {
       this.errorProjected = 0;
-      this.outgoing.forEach(connection => {
+      this.outgoing.forEach((connection) => {
         this.errorProjected +=
           connection.to.errorResponsibility *
           connection.weight *
@@ -348,7 +356,7 @@ export class Node {
       this.errorProjected *= this.derivativeState;
 
       this.errorGated = 0;
-      this.gated.forEach(connection => {
+      this.gated.forEach((connection) => {
         let influence: number;
         if (connection.to.selfConnection.gateNode === this) {
           // self connection is gated with this node
@@ -366,7 +374,7 @@ export class Node {
       this.errorResponsibility = this.errorProjected + this.errorGated;
     }
 
-    this.incoming.forEach(connection => {
+    this.incoming.forEach((connection) => {
       // calculate gradient
       let gradient: number = this.errorProjected * connection.eligibility;
       connection.xTrace.forEach(
@@ -410,7 +418,7 @@ export class Node {
     if (input !== undefined) {
       return (this.activation = input);
     } else if (this.isInputNode()) {
-      throw new ReferenceError('There is no input given to an input node!');
+      throw new ReferenceError("There is no input given to an input node!");
     }
 
     if (trace) {
@@ -420,7 +428,7 @@ export class Node {
         this.selfConnection.gain * this.selfConnection.weight * this.state +
         this.bias;
 
-      this.incoming.forEach(conn => {
+      this.incoming.forEach((conn) => {
         this.state += conn.from.activation * conn.weight * conn.gain;
       });
 
@@ -432,7 +440,7 @@ export class Node {
       const influences: number[] = [];
 
       // Adjust 'gain' (to gated connections) & Build traces
-      this.gated.forEach(connection => {
+      this.gated.forEach((connection) => {
         connection.gain = this.activation;
 
         // Build traces
@@ -446,7 +454,7 @@ export class Node {
           if (connection.to.selfConnection.gateNode === this) {
             influences.push(
               connection.weight * connection.from.activation +
-              connection.to.prevState
+                connection.to.prevState
             );
           } else {
             influences.push(connection.weight * connection.from.activation);
@@ -455,11 +463,11 @@ export class Node {
       });
 
       // Forwarding 'xTrace' (to incoming connections)
-      this.incoming.forEach(connection => {
+      this.incoming.forEach((connection) => {
         connection.eligibility =
           this.selfConnection.gain *
-          this.selfConnection.weight *
-          connection.eligibility +
+            this.selfConnection.weight *
+            connection.eligibility +
           connection.from.activation * connection.gain;
 
         for (let i = 0; i < nodes.length; i++) {
@@ -470,9 +478,9 @@ export class Node {
             connection.xTrace.set(
               node,
               node.selfConnection.gain *
-              node.selfConnection.weight *
-              (connection.xTrace.get(node) ?? 0) +
-              this.derivativeState * connection.eligibility * influence
+                node.selfConnection.weight *
+                (connection.xTrace.get(node) ?? 0) +
+                this.derivativeState * connection.eligibility * influence
             );
           } else {
             connection.xTrace.set(
@@ -492,14 +500,14 @@ export class Node {
         this.bias;
 
       this.incoming.forEach(
-        connection =>
+        (connection) =>
           (this.state +=
             connection.from.activation * connection.weight * connection.gain)
       );
       this.activation = this.squash(this.state, false);
 
       // Adjust gain
-      this.gated.forEach(connection => (connection.gain = this.activation));
+      this.gated.forEach((connection) => (connection.gain = this.activation));
 
       return this.activation;
     }
@@ -511,7 +519,6 @@ export class Node {
    * @returns A node representing json object
    */
   public toJSON(): NodeJSON {
-    console.log(this.squash);
     return {
       bias: this.bias,
       type: this.type,

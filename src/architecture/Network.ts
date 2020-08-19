@@ -116,7 +116,7 @@ export class Network {
       .map((nodeJSON) => {
         return new Node().fromJSON(nodeJSON);
       })
-      .forEach(node => network.nodes[node.index] = node);
+      .forEach((node) => (network.nodes[node.index] = node));
 
     json.connections.forEach((jsonConnection: ConnectionJSON) => {
       const connection = Connection.fromJSON(jsonConnection, network.nodes);

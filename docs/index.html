@@ -156,7 +156,7 @@
 				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> architect = <span class="hljs-keyword">new</span> Architect();
 
 architect.addLayer(<span class="hljs-keyword">new</span> InputLayer(<span class="hljs-number">4</span>));
-architect.addLayer(<span class="hljs-keyword">new</span> DenseLayer(<span class="hljs-number">5</span>, {<span class="hljs-attr">activationType</span>: RELUActivation}));
+architect.addLayer(<span class="hljs-keyword">new</span> DenseLayer(<span class="hljs-number">5</span>, { <span class="hljs-attr">activationType</span>: RELUActivation }));
 architect.addLayer(<span class="hljs-keyword">new</span> OutputLayer(<span class="hljs-number">1</span>));
 
 <span class="hljs-keyword">const</span> network = architect.buildModel();</code></pre>
@@ -165,42 +165,44 @@ architect.addLayer(<span class="hljs-keyword">new</span> OutputLayer(<span class
 				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> architect = <span class="hljs-keyword">new</span> Architect();
 
 architect.addLayer(<span class="hljs-keyword">new</span> InputLayer(<span class="hljs-number">10</span>));
-architect.addLayer(<span class="hljs-keyword">new</span> DenseLayer(<span class="hljs-number">10</span>, {<span class="hljs-attr">activationType</span>: RELUActivation}));
-architect.addLayer(<span class="hljs-keyword">new</span> MaxPooling1DLayer(<span class="hljs-number">5</span>, {<span class="hljs-attr">activation</span>: IdentityActivation}));
-architect.addLayer(<span class="hljs-keyword">new</span> OutputLayer(<span class="hljs-number">2</span>, {<span class="hljs-attr">activation</span>: RELUActivation}));
+architect.addLayer(<span class="hljs-keyword">new</span> DenseLayer(<span class="hljs-number">10</span>, { <span class="hljs-attr">activationType</span>: RELUActivation }));
+architect.addLayer(
+  <span class="hljs-keyword">new</span> MaxPooling1DLayer(<span class="hljs-number">5</span>, { <span class="hljs-attr">activation</span>: IdentityActivation })
+);
+architect.addLayer(<span class="hljs-keyword">new</span> OutputLayer(<span class="hljs-number">2</span>, { <span class="hljs-attr">activation</span>: RELUActivation }));
 
 <span class="hljs-keyword">const</span> network = architect.buildModel();</code></pre>
 				<p>Networks also shape <strong>themselves</strong> with neuro-evolution</p>
 				<pre><code class="language-javascript"><span class="hljs-keyword">const</span> XOR = [
-    {<span class="hljs-attr">input</span>: [<span class="hljs-number">0</span>, <span class="hljs-number">0</span>], <span class="hljs-attr">output</span>: [<span class="hljs-number">0</span>]},
-    {<span class="hljs-attr">input</span>: [<span class="hljs-number">0</span>, <span class="hljs-number">1</span>], <span class="hljs-attr">output</span>: [<span class="hljs-number">1</span>]},
-    {<span class="hljs-attr">input</span>: [<span class="hljs-number">1</span>, <span class="hljs-number">0</span>], <span class="hljs-attr">output</span>: [<span class="hljs-number">1</span>]},
-    {<span class="hljs-attr">input</span>: [<span class="hljs-number">1</span>, <span class="hljs-number">1</span>], <span class="hljs-attr">output</span>: [<span class="hljs-number">0</span>]}
+  { <span class="hljs-attr">input</span>: [<span class="hljs-number">0</span>, <span class="hljs-number">0</span>], <span class="hljs-attr">output</span>: [<span class="hljs-number">0</span>] },
+  { <span class="hljs-attr">input</span>: [<span class="hljs-number">0</span>, <span class="hljs-number">1</span>], <span class="hljs-attr">output</span>: [<span class="hljs-number">1</span>] },
+  { <span class="hljs-attr">input</span>: [<span class="hljs-number">1</span>, <span class="hljs-number">0</span>], <span class="hljs-attr">output</span>: [<span class="hljs-number">1</span>] },
+  { <span class="hljs-attr">input</span>: [<span class="hljs-number">1</span>, <span class="hljs-number">1</span>], <span class="hljs-attr">output</span>: [<span class="hljs-number">0</span>] },
 ];
 
 <span class="hljs-comment">// this network learns the XOR gate (through neuro-evolution)</span>
 <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">execute</span>(<span class="hljs-params"></span>): <span class="hljs-title">Promise</span>&lt;<span class="hljs-title">void</span>&gt; </span>{
-    <span class="hljs-built_in">this</span>.timeout(<span class="hljs-number">20000</span>);
+  <span class="hljs-built_in">this</span>.timeout(<span class="hljs-number">20000</span>);
 
-    <span class="hljs-keyword">const</span> network: Network = <span class="hljs-keyword">new</span> Network(<span class="hljs-number">2</span>, <span class="hljs-number">1</span>);
+  <span class="hljs-keyword">const</span> network: Network = <span class="hljs-keyword">new</span> Network(<span class="hljs-number">2</span>, <span class="hljs-number">1</span>);
 
-    <span class="hljs-keyword">const</span> initial: number = network.test(XOR);
-    <span class="hljs-keyword">await</span> network.evolve({<span class="hljs-attr">iterations</span>: <span class="hljs-number">50</span>, <span class="hljs-attr">dataset</span>: XOR});
-    <span class="hljs-keyword">const</span> final: number = network.test(XOR);
+  <span class="hljs-keyword">const</span> initial: number = network.test(XOR);
+  <span class="hljs-keyword">await</span> network.evolve({ <span class="hljs-attr">iterations</span>: <span class="hljs-number">50</span>, <span class="hljs-attr">dataset</span>: XOR });
+  <span class="hljs-keyword">const</span> final: number = network.test(XOR);
 
-    expect(final).to.be.at.most(initial);
+  expect(final).to.be.at.most(initial);
 }
 
 execute();</code></pre>
 				<p>Or implement custom algorithms with neuron-level control</p>
-				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> Node = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@liquid-carrot/carrot&#x27;</span>).Node
+				<pre><code class="language-javascript"><span class="hljs-keyword">let</span> Node = <span class="hljs-built_in">require</span>(<span class="hljs-string">&quot;@liquid-carrot/carrot&quot;</span>).Node;
 
-<span class="hljs-keyword">let</span> A = <span class="hljs-keyword">new</span> Node() <span class="hljs-comment">// neuron</span>
-<span class="hljs-keyword">let</span> B = <span class="hljs-keyword">new</span> Node() <span class="hljs-comment">// neuron</span>
+<span class="hljs-keyword">let</span> A = <span class="hljs-keyword">new</span> Node(); <span class="hljs-comment">// neuron</span>
+<span class="hljs-keyword">let</span> B = <span class="hljs-keyword">new</span> Node(); <span class="hljs-comment">// neuron</span>
 
-A.connect(B)
-A.activate(<span class="hljs-number">0.5</span>)
-<span class="hljs-built_in">console</span>.log(B.activate())</code></pre>
+A.connect(B);
+A.activate(<span class="hljs-number">0.5</span>);
+<span class="hljs-built_in">console</span>.log(B.activate());</code></pre>
 				<a href="#try-with" id="try-with" style="color: inherit; text-decoration: none;">
 					<h2>Try with</h2>
 				</a>
@@ -383,17 +385,19 @@ A.activate(<span class="hljs-number">0.5</span>)
 				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
 			</ul>
 			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+			</ul>
+			<ul class="tsd-legend">
 				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
 			</ul>
 			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
-			</ul>
-			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
 			</ul>
 		</div>
 	</div>

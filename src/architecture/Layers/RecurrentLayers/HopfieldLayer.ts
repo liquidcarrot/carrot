@@ -1,7 +1,7 @@
-import {BinaryStep} from 'activations';
-import {ConnectionType, NodeType} from '../../..';
-import {Node} from '../../Node';
-import {Layer} from '../Layer';
+import { BinaryStep } from "activations";
+import { ConnectionType, NodeType } from "../../..";
+import { Node } from "../../Node";
+import { Layer } from "../Layer";
 
 /**
  * Hopfield layer

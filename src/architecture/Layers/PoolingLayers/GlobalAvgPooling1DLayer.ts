@@ -1,5 +1,5 @@
-import {ActivationType} from 'activations';
-import {AvgPooling1DLayer} from './AvgPooling1DLayer';
+import { ActivationType } from "activations";
+import { AvgPooling1DLayer } from "./AvgPooling1DLayer";
 
 /**
  * Global average pooling layer 1D

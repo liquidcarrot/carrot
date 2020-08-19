@@ -56,12 +56,13 @@
  - Want to discover the ideal neural-network structure for
 
 You can use Carrot's ability to **design networks of arbitrary complexity by itself** to solve whatever problem you have. If you want to see Carrot designing a neural-network to play flappy-bird [check here](https://liquidcarrot.io/example.flappy-bird/)
- 
+
 </p>
 
 For Documentation, visit [here](https://liquidcarrot.github.io/carrot)
 
 ## Key Features
+
 - [Simple docs](https://liquidcarrot.github.io/carrot) & [interactive examples](https://liquidcarrot.io/example.flappy-bird/)
 - **Neuro-evolution** & population based training
 - Multi-threading & GPU (coming soon)
@@ -69,10 +70,10 @@ For Documentation, visit [here](https://liquidcarrot.github.io/carrot)
 - Mutable Neurons, Connections, Layers, and Networks
 
 ## Demos
+
 ![flappy bird neuro-evolution demo](https://raw.githubusercontent.com/liquidcarrot/carrot/master/images/flappy-bird-demo.gif)
 <br>
 [Flappy bird neuro-evolution](https://liquidcarrot.io/example.flappy-bird/ "flappy bird playground")
-
 
 ## Install
 
@@ -114,7 +115,7 @@ How to build it with Carrot:
 const architect = new Architect();
 
 architect.addLayer(new InputLayer(4));
-architect.addLayer(new DenseLayer(5, {activationType: RELUActivation}));
+architect.addLayer(new DenseLayer(5, { activationType: RELUActivation }));
 architect.addLayer(new OutputLayer(1));
 
 const network = architect.buildModel();
@@ -127,9 +128,11 @@ You can combine them as you need.
 const architect = new Architect();
 
 architect.addLayer(new InputLayer(10));
-architect.addLayer(new DenseLayer(10, {activationType: RELUActivation}));
-architect.addLayer(new MaxPooling1DLayer(5, {activation: IdentityActivation}));
-architect.addLayer(new OutputLayer(2, {activation: RELUActivation}));
+architect.addLayer(new DenseLayer(10, { activationType: RELUActivation }));
+architect.addLayer(
+  new MaxPooling1DLayer(5, { activation: IdentityActivation })
+);
+architect.addLayer(new OutputLayer(2, { activation: RELUActivation }));
 
 const network = architect.buildModel();
 ```
@@ -138,23 +141,23 @@ Networks also shape **themselves** with neuro-evolution
 
 ```javascript
 const XOR = [
-    {input: [0, 0], output: [0]},
-    {input: [0, 1], output: [1]},
-    {input: [1, 0], output: [1]},
-    {input: [1, 1], output: [0]}
+  { input: [0, 0], output: [0] },
+  { input: [0, 1], output: [1] },
+  { input: [1, 0], output: [1] },
+  { input: [1, 1], output: [0] },
 ];
 
 // this network learns the XOR gate (through neuro-evolution)
 async function execute(): Promise<void> {
-    this.timeout(20000);
-    
-    const network: Network = new Network(2, 1);
-    
-    const initial: number = network.test(XOR);
-    await network.evolve({iterations: 50, dataset: XOR});
-    const final: number = network.test(XOR);
-    
-    expect(final).to.be.at.most(initial);
+  this.timeout(20000);
+
+  const network: Network = new Network(2, 1);
+
+  const initial: number = network.test(XOR);
+  await network.evolve({ iterations: 50, dataset: XOR });
+  const final: number = network.test(XOR);
+
+  expect(final).to.be.at.most(initial);
 }
 
 execute();
@@ -163,21 +166,21 @@ execute();
 Or implement custom algorithms with neuron-level control
 
 ```javascript
-let Node = require('@liquid-carrot/carrot').Node
+let Node = require("@liquid-carrot/carrot").Node;
 
-let A = new Node() // neuron
-let B = new Node() // neuron
+let A = new Node(); // neuron
+let B = new Node(); // neuron
 
-A.connect(B)
-A.activate(0.5)
-console.log(B.activate())
+A.connect(B);
+A.activate(0.5);
+console.log(B.activate());
 ```
 
 ## Try with
 
 #### Data Sets
- - [ ] [MNIST](https://www.npmjs.com/package/mnist)
 
+- [ ] [MNIST](https://www.npmjs.com/package/mnist)
 
 ## Contributors ✨
 
@@ -202,10 +205,10 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
-
 
 ## 💬 Contributing
 
@@ -239,6 +242,7 @@ And finally, a big thank you to all of you for supporting! 🤗
 </details>
 
 ## Patrons
+
 [![Carrot's Patrons](https://img.shields.io/endpoint.svg?color=blue&label=patrons&logo=patrons&url=https%3A%2F%2Fshieldsio-patreon.herokuapp.com%2Fliquidcarrot)](https://www.patreon.com/liquidcarrot)
 
 <table>

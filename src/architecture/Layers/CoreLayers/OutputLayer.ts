@@ -1,7 +1,7 @@
-import {ActivationType, Identitiy} from 'activations';
-import {ConnectionType, NodeType} from '../../..';
-import {Node} from '../../Node';
-import {Layer} from '../Layer';
+import { ActivationType, Identitiy } from "activations";
+import { ConnectionType, NodeType } from "../../..";
+import { Node } from "../../Node";
+import { Layer } from "../Layer";
 
 /**
  * Output layer
@@ -31,7 +31,7 @@ export class OutputLayer extends Layer {
    * A outgoing connection is not allowed for an output layer!
    */
   public connect(): void {
-    throw new ReferenceError('Could not connect an OutputLayer!');
+    throw new ReferenceError("Could not connect an OutputLayer!");
   }
 
   /**

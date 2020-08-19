@@ -1,5 +1,5 @@
-import {ConnectionType} from '../../..';
-import {Layer} from '../Layer';
+import { ConnectionType } from "../../..";
+import { Layer } from "../Layer";
 
 /**
  * Parent class for all pooling layers

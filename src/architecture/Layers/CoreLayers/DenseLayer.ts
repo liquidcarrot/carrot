@@ -1,7 +1,7 @@
-import {ActivationType, Logistic} from 'activations';
-import {ConnectionType, NodeType} from '../../..';
-import {Node} from '../../Node';
-import {Layer} from '../Layer';
+import { ActivationType, Logistic } from "activations";
+import { ConnectionType, NodeType } from "../../..";
+import { Node } from "../../Node";
+import { Layer } from "../Layer";
 
 /**
  * Dense layer

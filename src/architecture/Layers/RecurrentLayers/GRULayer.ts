@@ -1,8 +1,8 @@
-import {ActivationType, Logistic, TANH} from 'activations';
-import {ConnectionType, GatingType, NodeType} from '../../..';
-import {Connection} from '../../Connection';
-import {Node} from '../../Node';
-import {Layer} from '../Layer';
+import { ActivationType, Logistic, TANH } from "activations";
+import { ConnectionType, GatingType, NodeType } from "../../..";
+import { Connection } from "../../Connection";
+import { Node } from "../../Node";
+import { Layer } from "../Layer";
 
 /**
  * GRU layer
@@ -109,7 +109,7 @@ export class GRULayer extends Layer {
     this.nodes.push(...previousOutput);
 
     this.outputNodes.forEach(
-      node => (node.squash = options.activation ?? Logistic)
+      (node) => (node.squash = options.activation ?? Logistic)
     );
   }
 

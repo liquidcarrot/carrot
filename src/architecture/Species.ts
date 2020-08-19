@@ -1,6 +1,6 @@
-import * as TimSort from 'timsort';
-import {maxValueIndex, pickRandom} from '..';
-import {Network} from './Network';
+import * as TimSort from "timsort";
+import { maxValueIndex, pickRandom } from "..";
+import { Network } from "./Network";
 
 /**
  * A class holding a species
@@ -103,7 +103,7 @@ export class Species {
    */
   public evaluateScore(): void {
     let sum = 0;
-    this.members.forEach(network => (sum += network.score ?? 0));
+    this.members.forEach((network) => (sum += network.score ?? 0));
     const score: number = sum / this.members.size;
     if (this.lastScore < score) {
       this._stagnation++;
@@ -118,7 +118,7 @@ export class Species {
    */
   public reset(): void {
     this.representative = pickRandom(this.members);
-    this.members.forEach(genome => (genome.species = null));
+    this.members.forEach((genome) => (genome.species = null));
     this.members.clear();
     this.members.add(this.representative);
     this.representative.species = this;
@@ -168,7 +168,7 @@ export class Species {
   public getBest(): Network {
     const networks: Network[] = Array.from(this.members);
     return networks[
-      maxValueIndex(networks.map(genome => genome.score ?? -Infinity))
+      maxValueIndex(networks.map((genome) => genome.score ?? -Infinity))
     ];
   }
 
@@ -177,13 +177,13 @@ export class Species {
    */
   public print(): void {
     console.log(
-      'Species={Members: ' +
+      "Species={Members: " +
         this.members.size +
-        '; Score: ' +
+        "; Score: " +
         this._score +
-        '; Stagnation: ' +
+        "; Stagnation: " +
         this.stagnation +
-        '}'
+        "}"
     );
   }
 }

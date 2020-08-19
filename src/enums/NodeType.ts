@@ -33,13 +33,3 @@ export enum PoolNodeType {
    */
   MIN_POOLING,
 }
-
-/**
- * The type of noise node.
- */
-export enum NoiseNodeType {
-  /**
-   * Gaussian noise node
-   */
-  GAUSSIAN_NOISE,
-}

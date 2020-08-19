@@ -1,4 +1,4 @@
-import {PoolNodeType} from '..';
+import { PoolNodeType } from "..";
 
 /**
  * An interface for representing a node with an json object

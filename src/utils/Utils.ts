@@ -7,7 +7,7 @@
 function pickRandom<T>(arr: T[] | Set<T>): T {
   if (Array.isArray(arr)) {
     if (arr.length === 0) {
-      throw new RangeError('Cannot pick from an empty array');
+      throw new RangeError("Cannot pick from an empty array");
     }
     return arr[randInt(0, arr.length)];
   } else {
@@ -33,7 +33,7 @@ function randInt(min: number, max: number): number {
  * @param max bound
  * @returns random double in [min,max)
  */
-function randDouble(min: number, max: number): number {
+function randDouble(min: number = 0, max: number = 1): number {
   return Math.random() * (max - min) + min;
 }
 
@@ -211,7 +211,7 @@ function generateGaussian(mean = 0, deviation = 2): number {
  * @return An Integer that uniquely represents a pair of Integers
  */
 function pairing(a: number, b: number): number {
-  if (a < 0 || b < 0) throw new RangeError('Should be a positive integer!');
+  if (a < 0 || b < 0) throw new RangeError("Should be a positive integer!");
   return (1 / 2) * (a + b) * (a + b + 1) + b;
 }
 

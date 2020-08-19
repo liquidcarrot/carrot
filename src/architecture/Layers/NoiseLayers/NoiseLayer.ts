@@ -1,6 +1,6 @@
-import {ActivationType, Identitiy} from 'activations';
-import {ConnectionType, NoiseNode, NoiseNodeType} from '../../..';
-import {Layer} from '../Layer';
+import { ActivationType, Identitiy } from "activations";
+import { ConnectionType, NoiseNode } from "../../..";
+import { Layer } from "../Layer";
 
 /**
  * Noise layer
@@ -28,12 +28,7 @@ export class NoiseLayer extends Layer {
     const activation: ActivationType = options.activation ?? Identitiy;
 
     for (let i = 0; i < outputSize; i++) {
-      this.inputNodes.add(
-        new NoiseNode({
-          noiseType: NoiseNodeType.GAUSSIAN_NOISE,
-          gaussian: options,
-        }).setActivationType(activation)
-      );
+      this.inputNodes.add(new NoiseNode(options).setActivationType(activation));
     }
 
     this.outputNodes = this.inputNodes;

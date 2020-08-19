@@ -69,20 +69,17 @@ export class Connection {
   /**
    * Convert a json object to a connection
    *
-   * @param jsonConnection A connection represented as a JSON object
+   * @param json A connection represented as a JSON object
    * @param nodes the nodes in the network used to crate the connection
    * @returns the created connection
    */
-  public static fromJSON(
-    jsonConnection: ConnectionJSON,
-    nodes: Node[]
-  ): Connection {
-    const connection: Connection = nodes[jsonConnection.fromIndex].connect(
-      nodes[jsonConnection.toIndex],
-      jsonConnection.weight
+  public static fromJSON(json: ConnectionJSON, nodes: Node[]): Connection {
+    const connection: Connection = nodes[json.fromIndex].connect(
+      nodes[json.toIndex],
+      json.weight
     );
 
-    jsonConnection.xTraces?.forEach((xTraceValue, xTraceNodeIndex) => {
+    json.xTraces?.forEach((xTraceValue, xTraceNodeIndex) => {
       connection.xTrace.set(nodes[xTraceNodeIndex], xTraceValue);
     });
     return connection;

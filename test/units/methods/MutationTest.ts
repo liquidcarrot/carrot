@@ -1,13 +1,13 @@
-import {expect} from 'chai';
-import {describe, it} from 'mocha';
-import {Network} from '../../../src/architecture/Network';
-import {NetworkJSON} from '../../../src/interfaces/NetworkJSON';
-import {AddNodeMutation} from '../../../src/methods/Mutation';
+import { expect } from "chai";
+import { describe, it } from "mocha";
+import { Network } from "../../../src";
+import { NetworkJSON } from "../../../src";
+import { AddNodeMutation } from "../../../src";
 
-describe('Mutation', () => {
-  describe('network.mutate()', () => {
-    describe('ADD_NODE', () => {
-      it('originalNetwork != newNetwork | when mutation possible', () => {
+describe("Mutation", () => {
+  describe("network.mutate()", () => {
+    describe("ADD_NODE", () => {
+      it("originalNetwork != newNetwork | when mutation possible", () => {
         const network: Network = new Network(1, 1);
         const originalNetwork: Network = network.deepCopy();
         network.mutate(new AddNodeMutation());
@@ -15,7 +15,7 @@ describe('Mutation', () => {
         expect(network).not.eql(originalNetwork);
       });
 
-      it('Network.nodes.length is greater by 1 after mutation', () => {
+      it("Network.nodes.length is greater by 1 after mutation", () => {
         const network: Network = new Network(1, 1);
         const originalNodesLength: number = network.nodes.length;
         network.mutate(new AddNodeMutation());
@@ -23,7 +23,7 @@ describe('Mutation', () => {
         expect(network.nodes.length).equal(originalNodesLength + 1);
       });
 
-      it('network.connections.size is greater by 1 after mutation', () => {
+      it("network.connections.size is greater by 1 after mutation", () => {
         const network: Network = new Network(1, 1);
         const originalConnectionsLength: number = network.connections.size;
         network.mutate(new AddNodeMutation());
@@ -31,14 +31,14 @@ describe('Mutation', () => {
         expect(network.connections.size).equal(originalConnectionsLength + 1);
       });
 
-      it('First neuron should have no incoming connections | new Network(1,1)', () => {
+      it("First neuron should have no incoming connections | new Network(1,1)", () => {
         const network: Network = new Network(1, 1);
         network.mutate(new AddNodeMutation());
 
         expect(network.nodes[0].incoming.size).equal(0);
       });
 
-      it('Middle (hidden) neuron should have directionally correct incoming & outgoing connections | new Network(1,1)', () => {
+      it("Middle (hidden) neuron should have directionally correct incoming & outgoing connections | new Network(1,1)", () => {
         const network: Network = new Network(1, 1);
         network.mutate(new AddNodeMutation());
         const json: NetworkJSON = network.toJSON();
@@ -64,7 +64,7 @@ describe('Mutation', () => {
         const original: number = Array.from(network.connections)[0].weight;
         network.mutate(new AddNodeMutation());
         // Assumption about removing original connection, not what should happen according to NEAT spec.
-        network.connections.forEach(conn => {
+        network.connections.forEach((conn) => {
           if (conn.to.isOutputNode()) {
             expect(conn.weight).equal(original);
           } else {
@@ -73,7 +73,7 @@ describe('Mutation', () => {
         });
       });
 
-      it('Last neuron should have no outgoing connections | new Network(1,1)', () => {
+      it("Last neuron should have no outgoing connections | new Network(1,1)", () => {
         const network: Network = new Network(1, 1);
         network.mutate(new AddNodeMutation());
 

@@ -1,5 +1,5 @@
-import {ActivationType} from 'activations';
-import {MaxPooling1DLayer} from './MaxPooling1DLayer';
+import { ActivationType } from "activations";
+import { MaxPooling1DLayer } from "./MaxPooling1DLayer";
 
 /**
  * Global maximum pooling layer 1D

@@ -1,7 +1,7 @@
-import {ActivationType, Logistic} from 'activations';
-import {ConnectionType} from '../../..';
-import {ActivationNode} from '../../Nodes/ActivationNode';
-import {Layer} from '../Layer';
+import { ActivationType, Logistic } from "activations";
+import { ConnectionType } from "../../..";
+import { ActivationNode } from "../../Nodes/ActivationNode";
+import { Layer } from "../Layer";
 
 /**
  * Activation layer

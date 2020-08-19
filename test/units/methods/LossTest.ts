@@ -1,10 +1,10 @@
-import {expect} from 'chai';
-import {describe, it} from 'mocha';
-import {ALL_LOSSES} from '../../../src/methods/Loss';
-import {randDouble} from '../../../src/utils/Utils';
+import { expect } from "chai";
+import { describe, it } from "mocha";
+import { ALL_LOSSES } from "../../../src";
+import { randDouble } from "../../../src";
 
-describe('Loss', () => {
-  Object.values(ALL_LOSSES).forEach(loss => {
+describe("Loss", () => {
+  Object.values(ALL_LOSSES).forEach((loss) => {
     describe(`Loss.${loss.constructor.name}()`, () => {
       const targets: number[] = [
         randDouble(-50, 50),
@@ -18,7 +18,7 @@ describe('Loss', () => {
       ];
 
       it(`Loss.${loss.constructor.name}(targets=[${targets}], outputs=[${outputs}]) => {number}`, () => {
-        expect(loss(targets, outputs)).to.be.a('number');
+        expect(loss(targets, outputs)).to.be.a("number");
         expect(Number.isFinite(loss(targets, outputs))).to.be.true;
       });
     });

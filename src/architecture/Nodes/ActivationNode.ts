@@ -1,5 +1,5 @@
-import {sum} from '../..';
-import {ConstantNode} from './ConstantNode';
+import { sum } from "../..";
+import { ConstantNode } from "./ConstantNode";
 
 /**
  * Activation node
@@ -22,11 +22,11 @@ export class ActivationNode extends ConstantNode {
     this.prevState = this.state;
 
     const incomingStates: number[] = Array.from(this.incoming).map(
-      conn => conn.from.activation * conn.weight * conn.gain
+      (conn) => conn.from.activation * conn.weight * conn.gain
     );
 
     if (incomingStates.length !== 1) {
-      throw new ReferenceError('Only 1 incoming connections is allowed!');
+      throw new ReferenceError("Only 1 incoming connections is allowed!");
     }
 
     this.state = incomingStates[0];
@@ -69,12 +69,12 @@ export class ActivationNode extends ConstantNode {
     options.update = options.update ?? true;
 
     const connectionsStates: number[] = Array.from(this.outgoing).map(
-      conn => conn.to.errorResponsibility * conn.weight * conn.gain
+      (conn) => conn.to.errorResponsibility * conn.weight * conn.gain
     );
     this.errorResponsibility = this.errorProjected =
       sum(connectionsStates) * this.derivativeState;
 
-    this.incoming.forEach(connection => {
+    this.incoming.forEach((connection) => {
       // calculate gradient
       let gradient: number = this.errorProjected * connection.eligibility;
       connection.xTrace.forEach((value, key) => {

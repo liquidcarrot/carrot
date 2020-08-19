@@ -62,10 +62,11 @@ npm run build:src
 ```
 
 Runs `scripts/build.ts` and creates/updates four files in `dist/`:
-* `dist/dev/index.js`: _compiled for Node.js development_
-* `dist/production/index.min.js`: _compiled for Node.js production_
-* `dist/dev/index.browser.js`: _compiled for Browser development_
-* `dist/production/index.browser.min.js`: _compiled for Browser production_
+
+- `dist/dev/index.js`: _compiled for Node.js development_
+- `dist/production/index.min.js`: _compiled for Node.js production_
+- `dist/dev/index.browser.js`: _compiled for Browser development_
+- `dist/production/index.browser.min.js`: _compiled for Browser production_
 
 **Generating Documentation**
 
@@ -93,11 +94,11 @@ The GitHub issue tracker is the preferred channel for [bug reports](#bugs),
 [features requests](#features) and [submitting pull requests](#pull-requests),
 but please respect the following restrictions:
 
-* Please **do not** use the issue tracker for personal support requests. Use
+- Please **do not** use the issue tracker for personal support requests. Use
   [Carrot Chat][8] instead. Alternately, help us to help more people by
   using our publicly archived user(TODO) or developer(TODO) mailing lists.
 
-* Please **do not** derail or troll issues. Keep the discussion on topic and
+- Please **do not** derail or troll issues. Keep the discussion on topic and
   respect the opinions of others.
 
 If you need to learn how to open an issue on Github we invite you to check out [this resource](https://help.github.com/en/articles/creating-an-issue)!
@@ -105,7 +106,7 @@ If you need to learn how to open an issue on Github we invite you to check out [
 ## Bug reports
 
 A bug is a _demonstrable problem_ that is caused by the code in our
-repositories.  Good bug reports are extremely helpful - thank you!
+repositories. Good bug reports are extremely helpful - thank you!
 
 Guidelines for bug reports:
 
@@ -142,14 +143,12 @@ Example:
 > causing the bug, and potential solutions (and your opinions on their
 > merits).
 
-
 ## Feature requests
 
 Feature requests are welcome. But take a moment to find out whether your idea
-fits with the scope and aims of the project. It's up to *you* to make a strong
+fits with the scope and aims of the project. It's up to _you_ to make a strong
 case to convince the project's developers of the merits of this feature. Please
 provide as much detail and context as possible.
-
 
 ## Pull requests
 
@@ -161,9 +160,8 @@ commits.
 implementing features, refactoring code), otherwise you risk spending a lot of
 time working on something that the project's developers might not want to merge
 into the project. You can talk with the community on our
-developer mailing list(TODO).  We're always open to suggestions and will get
+developer mailing list(TODO). We're always open to suggestions and will get
 back to you as soon as we can!
-
 
 ### For new Contributors
 
@@ -211,9 +209,8 @@ on how to send one :)
    git push origin <topic-branch-name>
    ```
 
-8. [Open a Pull Request](https://help.github.com/articles/using-pull-requests/)
-    with a clear title and description.
-
+7. [Open a Pull Request](https://help.github.com/articles/using-pull-requests/)
+   with a clear title and description.
 
 ### For Carrot Committers
 
@@ -269,7 +266,6 @@ complicated, we can help you out and teach you as we go :)
 **IMPORTANT**: By submitting a patch, you agree to license your work under the
 License, per your signed CLA.
 
-
 ## Triagers
 
 Carrot committers who have completed the GitHub account linking
@@ -281,7 +277,6 @@ issue (reproducing if possible), and add one or more labels.
 
 If you are not an official committer, please reach out to our mailing list(TODO)
 or [chat][8] to learn how you can assist with triaging indirectly.
-
 
 ## Maintainers
 
@@ -342,7 +337,6 @@ hub checkout link-to-pull-request
 
 meaning that you will automatically check out the branch for the pull request,
 without needing any other steps like setting git upstreams! :sparkles:
-
 
 ## Thanks
 

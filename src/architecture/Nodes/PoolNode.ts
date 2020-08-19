@@ -5,10 +5,10 @@ import {
   PoolNodeJSON,
   PoolNodeType,
   sum,
-} from '../..';
-import {Connection} from '../Connection';
-import {Node} from '../Node';
-import {ConstantNode} from './ConstantNode';
+} from "../..";
+import { Connection } from "../Connection";
+import { Node } from "../Node";
+import { ConstantNode } from "./ConstantNode";
 
 /**
  * Pool node
@@ -54,7 +54,7 @@ export class PoolNode extends ConstantNode {
   public activate(): number {
     const connections: Connection[] = Array.from(this.incoming);
     const incomingStates: number[] = connections.map(
-      conn => conn.from.activation * conn.weight * conn.gain
+      (conn) => conn.from.activation * conn.weight * conn.gain
     );
 
     if (this.poolingType === PoolNodeType.MAX_POOLING) {
@@ -69,7 +69,7 @@ export class PoolNode extends ConstantNode {
       this.state = incomingStates[index];
     } else {
       throw new ReferenceError(
-        'No valid pooling type! Type: ' + this.poolingType
+        "No valid pooling type! Type: " + this.poolingType
       );
     }
 
@@ -79,7 +79,7 @@ export class PoolNode extends ConstantNode {
     }
 
     // Adjust gain
-    this.gated.forEach(conn => (conn.gain = this.activation));
+    this.gated.forEach((conn) => (conn.gain = this.activation));
 
     return this.activation;
   }
@@ -116,12 +116,12 @@ export class PoolNode extends ConstantNode {
     options.update = options.update ?? true;
 
     const connectionsStates: number[] = Array.from(this.outgoing).map(
-      conn => conn.to.errorResponsibility * conn.weight * conn.gain
+      (conn) => conn.to.errorResponsibility * conn.weight * conn.gain
     );
     this.errorResponsibility = this.errorProjected =
       sum(connectionsStates) * this.derivativeState;
     if (this.poolingType === PoolNodeType.AVG_POOLING) {
-      this.incoming.forEach(connection => {
+      this.incoming.forEach((connection) => {
         // calculate gradient
         let gradient: number = this.errorProjected * connection.eligibility;
         connection.xTrace.forEach((value, key) => {
@@ -141,7 +141,7 @@ export class PoolNode extends ConstantNode {
     } else {
       // TODO: don't think that this is correct
       // Passing only the connections that were used for getting the min or max
-      this.incoming.forEach(conn => {
+      this.incoming.forEach((conn) => {
         conn.weight = this.receivingNode === conn.from ? 1 : 0;
         conn.gain = this.receivingNode === conn.from ? 1 : 0;
       });

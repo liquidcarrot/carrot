@@ -1,6 +1,6 @@
-import {ActivationType, Identitiy} from 'activations';
-import {ConnectionType, DropoutNode} from '../../..';
-import {Layer} from '../Layer';
+import { ActivationType, Identitiy } from "activations";
+import { ConnectionType, DropoutNode } from "../../..";
+import { Layer } from "../Layer";
 
 /**
  * Dropout layer

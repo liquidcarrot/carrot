@@ -1,5 +1,5 @@
-import {ConnectionJSON} from './ConnectionJSON';
-import {NodeJSON} from './NodeJSON';
+import { ConnectionJSON } from "./ConnectionJSON";
+import { NodeJSON } from "./NodeJSON";
 
 /**
  * An interface for representing a network with an json object

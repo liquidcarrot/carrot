@@ -1,7 +1,7 @@
-import {ActivationType, Identitiy, Logistic} from 'activations';
-import {ConnectionType, NodeType} from '../../..';
-import {Node} from '../../Node';
-import {Layer} from '../Layer';
+import { ActivationType, Identitiy, Logistic } from "activations";
+import { ConnectionType, NodeType } from "../../..";
+import { Node } from "../../Node";
+import { Layer } from "../Layer";
 
 /**
  * Memory layer
@@ -46,10 +46,10 @@ export class MemoryLayer extends Layer {
 
     this.nodes.push(...Array.from(this.inputNodes));
     this.nodes.push(...nodes.reverse());
-    prevNodes.forEach(node => this.outputNodes.add(node));
+    prevNodes.forEach((node) => this.outputNodes.add(node));
 
     this.outputNodes.forEach(
-      node => (node.squash = options.activation ?? Logistic)
+      (node) => (node.squash = options.activation ?? Logistic)
     );
   }
 

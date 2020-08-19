@@ -1,5 +1,5 @@
-import * as TimSort from 'timsort';
-import {pickRandom, randDouble, Species} from '..';
+import * as TimSort from "timsort";
+import { pickRandom, randDouble, Species } from "..";
 
 /**
  * Genetic Algorithm Selection Methods (Genetic Operator)
@@ -121,7 +121,7 @@ class TournamentSelection extends Selection {
   public select(population: Species[]): Species {
     if (this.size > population.length) {
       throw new Error(
-        'Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size'
+        "Your tournament size should be lower than the population size, please change methods.selection.TOURNAMENT.size"
       );
     }
 

@@ -1,6 +1,6 @@
-import {DropoutNodeJSON, randDouble, sum} from '../..';
-import {Connection} from '../Connection';
-import {ConstantNode} from './ConstantNode';
+import { DropoutNodeJSON, randDouble, sum } from "../..";
+import { Connection } from "../Connection";
+import { ConstantNode } from "./ConstantNode";
 
 /**
  * Dropout node
@@ -33,7 +33,7 @@ export class DropoutNode extends ConstantNode {
   public activate(): number {
     if (this.incoming.size !== 1) {
       throw new RangeError(
-        'Dropout node should have exactly one incoming connection!'
+        "Dropout node should have exactly one incoming connection!"
       );
     }
     const incomingConnection: Connection = Array.from(this.incoming)[0];
@@ -54,7 +54,7 @@ export class DropoutNode extends ConstantNode {
     this.activation = this.squash(this.state, false) * this.mask;
 
     // Adjust gain
-    this.gated.forEach(conn => (conn.gain = this.activation));
+    this.gated.forEach((conn) => (conn.gain = this.activation));
 
     return this.activation;
   }
@@ -91,14 +91,14 @@ export class DropoutNode extends ConstantNode {
     options.update = options.update ?? true;
 
     const connectionsStates: number[] = Array.from(this.outgoing).map(
-      conn => conn.to.errorResponsibility * conn.weight * conn.gain
+      (conn) => conn.to.errorResponsibility * conn.weight * conn.gain
     );
     this.errorResponsibility = this.errorProjected =
       sum(connectionsStates) / (1 - this.probability);
 
     if (this.incoming.size !== 1) {
       throw new RangeError(
-        'Dropout node should have exactly one incoming connection!'
+        "Dropout node should have exactly one incoming connection!"
       );
     }
     const connection: Connection = Array.from(this.incoming)[0];
