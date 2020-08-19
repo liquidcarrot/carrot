@@ -1,4 +1,5 @@
 import { Network, Species } from "..";
+import { pairing } from "../utils/Utils";
 import { Population } from "./Population";
 
 export class NEATPopulation extends Population {
@@ -23,7 +24,7 @@ export class NEATPopulation extends Population {
 
   protected crossover(): void {}
 
-  protected fitnessEvaluation(): void {}
+  protected async fitnessEvaluation(): Promise<void> {}
 
   protected mutation(): void {}
 
@@ -47,10 +48,44 @@ export class NEATPopulation extends Population {
   }
 
   private createNodeIDsFromTemplate(template: Network): Map<number, number> {
-    return new Map<number, number>();
+    const nodeIDs = new Map<number, number>();
+    template.nodes
+      .filter((node) => node.isInputNode())
+      .forEach((node) => {
+        nodeIDs.set(NEATPopulation.nodeCounter, NEATPopulation.nodeCounter);
+        node.id = NEATPopulation.nodeCounter;
+        NEATPopulation.nodeCounter++;
+      });
+    template.nodes
+      .filter((node) => node.isOutputNode())
+      .forEach((node) => {
+        nodeIDs.set(NEATPopulation.nodeCounter, NEATPopulation.nodeCounter);
+        node.id = NEATPopulation.nodeCounter;
+        NEATPopulation.nodeCounter++;
+      });
+    template.nodes
+      .filter((node) => node.isHiddenNode())
+      .forEach((node) => {
+        nodeIDs.set(NEATPopulation.nodeCounter, NEATPopulation.nodeCounter);
+        node.id = NEATPopulation.nodeCounter;
+        NEATPopulation.nodeCounter++;
+      });
+    return nodeIDs;
   }
 
   private createConnIDsFromTemplate(template: Network): Map<number, number> {
-    return new Map<number, number>();
+    if (NEATPopulation.nodeCounter === 0)
+      throw new ReferenceError("Can't create connection ids without node ids");
+
+    const connIDs = new Map<number, number>();
+    template.connections.forEach((connection) => {
+      connIDs.set(
+        pairing(connection.from.id, connection.to.id),
+        NEATPopulation.connCounter
+      );
+      connection.id = NEATPopulation.connCounter;
+      NEATPopulation.connCounter++;
+    });
+    return connIDs;
   }
 }

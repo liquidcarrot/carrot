@@ -15,7 +15,7 @@ class InstinctPopulation extends Population {
 
   protected crossover(): void {}
 
-  protected fitnessEvaluation(): void {}
+  protected async fitnessEvaluation(): Promise<void> {}
 
   protected mutation(): void {}
 

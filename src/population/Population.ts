@@ -22,11 +22,11 @@ export abstract class Population {
     this.generation = 0;
   }
 
-  public evolve() {
+  public async evolve() {
     this.selection();
     this.crossover();
     this.mutation();
-    this.fitnessEvaluation();
+    await this.fitnessEvaluation();
     this.generation++;
   }
 
@@ -36,7 +36,7 @@ export abstract class Population {
 
   protected abstract mutation(): void;
 
-  protected abstract fitnessEvaluation(): void;
+  protected abstract async fitnessEvaluation(): Promise<void>;
 
   protected abstract createNetworks(option: {
     template: Network | undefined;

@@ -87,6 +87,10 @@ export class Node {
    * error gated
    */
   public errorGated: number;
+  /**
+   * Node ID for NEAT
+   */
+  public id: number;
 
   constructor(type: NodeType = NodeType.HIDDEN) {
     this.type = type;
@@ -97,6 +101,7 @@ export class Node {
     this.state = 0;
     this.prevState = 0;
     this.mask = 1;
+    this.id = -1;
     this.deltaBiasPrevious = 0;
     this.deltaBiasTotal = 0;
     this.incoming = new Set<Connection>();

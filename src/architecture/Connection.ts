@@ -44,10 +44,15 @@ export class Connection {
    * Tracks [momentum](https://www.willamette.edu/~gorr/classes/cs449/momrate.html)
    */
   public deltaWeightsPrevious: number;
+  /**
+   * Connection id for NEAT
+   */
+  public id: number;
 
   constructor(from: Node, to: Node, weight?: number, gateNode?: Node) {
     this.from = from;
     this.to = to;
+    this.id = -1;
     this.weight = weight ?? 0;
     this.gain = 1;
     this.eligibility = 0;
