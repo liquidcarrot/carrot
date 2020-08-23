@@ -32,9 +32,7 @@ export class DropoutNode extends ConstantNode {
    */
   public activate(): number {
     if (this.incoming.size !== 1) {
-      throw new RangeError(
-        "Dropout node should have exactly one incoming connection!"
-      );
+      throw new RangeError("Dropout node should have exactly one incoming connection!");
     }
     const incomingConnection: Connection = Array.from(this.incoming)[0];
 
@@ -45,10 +43,7 @@ export class DropoutNode extends ConstantNode {
       this.state = 0;
     } else {
       this.droppedOut = false;
-      this.state =
-        incomingConnection.from.activation *
-        incomingConnection.weight *
-        incomingConnection.gain;
+      this.state = incomingConnection.from.activation * incomingConnection.weight * incomingConnection.gain;
       this.state *= 1 / (1 - this.probability);
     }
     this.activation = this.squash(this.state, false) * this.mask;
@@ -93,13 +88,10 @@ export class DropoutNode extends ConstantNode {
     const connectionsStates: number[] = Array.from(this.outgoing).map(
       (conn) => conn.to.errorResponsibility * conn.weight * conn.gain
     );
-    this.errorResponsibility = this.errorProjected =
-      sum(connectionsStates) / (1 - this.probability);
+    this.errorResponsibility = this.errorProjected = sum(connectionsStates) / (1 - this.probability);
 
     if (this.incoming.size !== 1) {
-      throw new RangeError(
-        "Dropout node should have exactly one incoming connection!"
-      );
+      throw new RangeError("Dropout node should have exactly one incoming connection!");
     }
     const connection: Connection = Array.from(this.incoming)[0];
 
@@ -113,8 +105,7 @@ export class DropoutNode extends ConstantNode {
 
       if (options.update) {
         connection.deltaWeightsTotal +=
-          options.rate * gradient * this.mask +
-          options.momentum * connection.deltaWeightsPrevious;
+          options.rate * gradient * this.mask + options.momentum * connection.deltaWeightsPrevious;
         connection.weight += connection.deltaWeightsTotal;
         connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
         connection.deltaWeightsTotal = 0;

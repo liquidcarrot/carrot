@@ -129,9 +129,7 @@ const architect = new Architect();
 
 architect.addLayer(new InputLayer(10));
 architect.addLayer(new DenseLayer(10, { activationType: RELUActivation }));
-architect.addLayer(
-  new MaxPooling1DLayer(5, { activation: IdentityActivation })
-);
+architect.addLayer(new MaxPooling1DLayer(5, { activation: IdentityActivation }));
 architect.addLayer(new OutputLayer(2, { activation: RELUActivation }));
 
 const network = architect.buildModel();

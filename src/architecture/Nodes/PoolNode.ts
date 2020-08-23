@@ -1,11 +1,4 @@
-import {
-  avg,
-  maxValueIndex,
-  minValueIndex,
-  PoolNodeJSON,
-  PoolNodeType,
-  sum,
-} from "../..";
+import { avg, maxValueIndex, minValueIndex, PoolNodeJSON, PoolNodeType, sum } from "../..";
 import { Connection } from "../Connection";
 import { Node } from "../Node";
 import { ConstantNode } from "./ConstantNode";
@@ -53,9 +46,7 @@ export class PoolNode extends ConstantNode {
    */
   public activate(): number {
     const connections: Connection[] = Array.from(this.incoming);
-    const incomingStates: number[] = connections.map(
-      (conn) => conn.from.activation * conn.weight * conn.gain
-    );
+    const incomingStates: number[] = connections.map((conn) => conn.from.activation * conn.weight * conn.gain);
 
     if (this.poolingType === PoolNodeType.MAX_POOLING) {
       const index: number = maxValueIndex(incomingStates);
@@ -68,9 +59,7 @@ export class PoolNode extends ConstantNode {
       this.receivingNode = connections[index].from;
       this.state = incomingStates[index];
     } else {
-      throw new ReferenceError(
-        "No valid pooling type! Type: " + this.poolingType
-      );
+      throw new ReferenceError("No valid pooling type! Type: " + this.poolingType);
     }
 
     this.activation = this.squash(this.state, false) * this.mask;
@@ -118,8 +107,7 @@ export class PoolNode extends ConstantNode {
     const connectionsStates: number[] = Array.from(this.outgoing).map(
       (conn) => conn.to.errorResponsibility * conn.weight * conn.gain
     );
-    this.errorResponsibility = this.errorProjected =
-      sum(connectionsStates) * this.derivativeState;
+    this.errorResponsibility = this.errorProjected = sum(connectionsStates) * this.derivativeState;
     if (this.poolingType === PoolNodeType.AVG_POOLING) {
       this.incoming.forEach((connection) => {
         // calculate gradient
@@ -128,11 +116,9 @@ export class PoolNode extends ConstantNode {
           gradient += key.errorResponsibility * value;
         });
 
-        connection.deltaWeightsTotal +=
-          (options.rate ?? 0.3) * gradient * this.mask;
+        connection.deltaWeightsTotal += (options.rate ?? 0.3) * gradient * this.mask;
         if (options.update) {
-          connection.deltaWeightsTotal +=
-            (options.momentum ?? 0) * connection.deltaWeightsPrevious;
+          connection.deltaWeightsTotal += (options.momentum ?? 0) * connection.deltaWeightsPrevious;
           connection.weight += connection.deltaWeightsTotal;
           connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
           connection.deltaWeightsTotal = 0;

@@ -1,12 +1,6 @@
 import { expect } from "chai";
 import { describe, it } from "mocha";
-import {
-  ExponentialRate,
-  FixedRate,
-  InverseRate,
-  Rate,
-  StepRate,
-} from "../../../src";
+import { ExponentialRate, FixedRate, InverseRate, Rate, StepRate } from "../../../src";
 import { randInt } from "../../../src";
 
 describe("Rate", () => {
@@ -16,9 +10,7 @@ describe("Rate", () => {
 
     const fixedRate: Rate = new FixedRate(baseRate);
     expect(fixedRate.calc(iteration)).to.be.a("number");
-    expect(fixedRate.calc(iteration + 10)).to.be.equal(
-      fixedRate.calc(iteration)
-    );
+    expect(fixedRate.calc(iteration + 10)).to.be.equal(fixedRate.calc(iteration));
   });
 
   it("StepRate", () => {
@@ -29,9 +21,7 @@ describe("Rate", () => {
 
     const stepRate: StepRate = new StepRate(baseRate, gamma, stepSize);
     expect(stepRate.calc(iteration)).to.be.a("number");
-    expect(stepRate.calc(iteration + 10)).to.be.at.most(
-      stepRate.calc(iteration)
-    );
+    expect(stepRate.calc(iteration + 10)).to.be.at.most(stepRate.calc(iteration));
   });
 
   it("ExponentialRate", () => {
@@ -39,14 +29,9 @@ describe("Rate", () => {
     const iteration: number = randInt(1, 100);
     const gamma: number = Math.random();
 
-    const exponentialRate: ExponentialRate = new ExponentialRate(
-      baseRate,
-      gamma
-    );
+    const exponentialRate: ExponentialRate = new ExponentialRate(baseRate, gamma);
     expect(exponentialRate.calc(iteration)).to.be.a("number");
-    expect(exponentialRate.calc(iteration + 10)).to.be.below(
-      exponentialRate.calc(iteration)
-    );
+    expect(exponentialRate.calc(iteration + 10)).to.be.below(exponentialRate.calc(iteration));
   });
 
   it("InverseRate", () => {
@@ -57,8 +42,6 @@ describe("Rate", () => {
 
     const inverseRate: InverseRate = new InverseRate(baseRate, gamma, power);
     expect(inverseRate.calc(iteration)).to.be.a("number");
-    expect(inverseRate.calc(iteration + 10)).to.be.below(
-      inverseRate.calc(iteration)
-    );
+    expect(inverseRate.calc(iteration + 10)).to.be.below(inverseRate.calc(iteration));
   });
 });

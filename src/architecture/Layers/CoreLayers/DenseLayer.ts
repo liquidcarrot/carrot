@@ -21,9 +21,7 @@ export class DenseLayer extends Layer {
     const activation: ActivationType = options.activationType ?? Logistic;
 
     for (let i = 0; i < outputSize; i++) {
-      this.inputNodes.add(
-        new Node(NodeType.HIDDEN).setActivationType(activation)
-      );
+      this.inputNodes.add(new Node(NodeType.HIDDEN).setActivationType(activation));
     }
 
     this.outputNodes = this.inputNodes;

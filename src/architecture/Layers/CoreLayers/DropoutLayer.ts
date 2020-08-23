@@ -25,9 +25,7 @@ export class DropoutLayer extends Layer {
     const probability: number = options.probability ?? 0.1;
 
     for (let i = 0; i < outputSize; i++) {
-      this.inputNodes.add(
-        new DropoutNode(probability).setActivationType(activation)
-      );
+      this.inputNodes.add(new DropoutNode(probability).setActivationType(activation));
     }
 
     this.outputNodes = this.inputNodes;

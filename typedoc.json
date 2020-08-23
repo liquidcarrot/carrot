@@ -9,7 +9,9 @@
   "name": "Carrot",
   "theme": "node_modules/eledoc/bin/default/",
   "toc": [
-    "NEAT",
+    "Population",
+    "InstinctPopulation",
+    "NEATPopulation",
     "Network",
     "Layer",
     "Architect",

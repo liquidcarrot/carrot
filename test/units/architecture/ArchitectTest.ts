@@ -18,11 +18,7 @@ import { randInt } from "../../../src";
 
 describe("ArchitectTest", () => {
   it("Build Multilayer-Perceptron", () => {
-    const layerSizes: number[] = [
-      randInt(5, 10),
-      randInt(10, 20),
-      randInt(5, 10),
-    ];
+    const layerSizes: number[] = [randInt(5, 10), randInt(10, 20), randInt(5, 10)];
 
     const architect: Architect = new Architect();
 
@@ -34,23 +30,14 @@ describe("ArchitectTest", () => {
 
     const network: Network = architect.buildModel();
 
-    expect(network.nodes.length).to.be.equal(
-      10 + layerSizes[0] + layerSizes[1] + layerSizes[2] + 2
-    );
+    expect(network.nodes.length).to.be.equal(10 + layerSizes[0] + layerSizes[1] + layerSizes[2] + 2);
     expect(network.connections.size).to.be.equal(
-      10 * layerSizes[0] +
-        layerSizes[0] * layerSizes[1] +
-        layerSizes[1] * layerSizes[2] +
-        layerSizes[2] * 2
+      10 * layerSizes[0] + layerSizes[0] * layerSizes[1] + layerSizes[1] * layerSizes[2] + layerSizes[2] * 2
     );
     expect(network.gates.size).to.be.equal(0);
 
-    const numNodesWithRELU: number = network.nodes.filter(
-      (node) => node.squash === RELU
-    ).length;
-    expect(numNodesWithRELU).to.be.equal(
-      layerSizes[0] + layerSizes[1] + layerSizes[2]
-    );
+    const numNodesWithRELU: number = network.nodes.filter((node) => node.squash === RELU).length;
+    expect(numNodesWithRELU).to.be.equal(layerSizes[0] + layerSizes[1] + layerSizes[2]);
   });
 
   it("Build Perceptron with pooling layer", () => {
@@ -60,9 +47,7 @@ describe("ArchitectTest", () => {
 
     architect.addLayer(new InputLayer(10));
     architect.addLayer(new DenseLayer(10, { activationType: RELU }));
-    architect.addLayer(
-      new MaxPooling1DLayer(layerSize, { activation: Identitiy })
-    );
+    architect.addLayer(new MaxPooling1DLayer(layerSize, { activation: Identitiy }));
     architect.addLayer(new OutputLayer(2, { activation: RELU }));
 
     const network: Network = architect.buildModel();
@@ -71,20 +56,14 @@ describe("ArchitectTest", () => {
     expect(network.connections.size).to.be.equal(10 * 10 + 10 + layerSize * 2);
     expect(network.gates.size).to.be.equal(0);
 
-    const numNodesWithRELU: number = network.nodes.filter(
-      (node) => node.squash === RELU
-    ).length;
+    const numNodesWithRELU: number = network.nodes.filter((node) => node.squash === RELU).length;
     expect(numNodesWithRELU).to.be.equal(10 + 2);
 
-    const poolNodes: Node[] = network.nodes.filter(
-      (node) => node instanceof PoolNode
-    );
+    const poolNodes: Node[] = network.nodes.filter((node) => node instanceof PoolNode);
     expect(poolNodes.length).to.be.equal(layerSize);
     poolNodes.forEach((node) => expect(node.bias).to.be.equal(1));
 
-    const numNodesWithIdentity: number = network.nodes.filter(
-      (node) => node.squash === Identitiy
-    ).length;
+    const numNodesWithIdentity: number = network.nodes.filter((node) => node.squash === Identitiy).length;
     expect(numNodesWithIdentity).to.be.equal(layerSize);
   });
 
@@ -96,31 +75,20 @@ describe("ArchitectTest", () => {
 
     architect.addLayer(new InputLayer(10));
     architect.addLayer(new DenseLayer(10, { activationType: RELU }));
-    architect.addLayer(
-      new MemoryLayer(outputSize, { memorySize, activation: RELU })
-    );
+    architect.addLayer(new MemoryLayer(outputSize, { memorySize, activation: RELU }));
     architect.addLayer(new DenseLayer(20, { activationType: RELU }));
     architect.addLayer(new DenseLayer(10, { activationType: RELU }));
     architect.addLayer(new OutputLayer(2));
 
     const network: Network = architect.buildModel();
 
-    expect(network.nodes.length).to.be.equal(
-      10 + 10 + outputSize * (memorySize + 1) + 20 + 10 + 2
-    );
+    expect(network.nodes.length).to.be.equal(10 + 10 + outputSize * (memorySize + 1) + 20 + 10 + 2);
     expect(network.connections.size).to.be.equal(
-      10 * 10 +
-        10 * outputSize +
-        memorySize * outputSize +
-        outputSize * 20 +
-        20 * 10 +
-        10 * 2
+      10 * 10 + 10 * outputSize + memorySize * outputSize + outputSize * 20 + 20 * 10 + 10 * 2
     );
     expect(network.gates.size).to.be.equal(0);
 
-    const numNodesWithRELU: number = network.nodes.filter(
-      (node) => node.squash === RELU
-    ).length;
+    const numNodesWithRELU: number = network.nodes.filter((node) => node.squash === RELU).length;
     expect(numNodesWithRELU).to.be.equal(10 + outputSize + 20 + 10);
   });
 
@@ -138,14 +106,10 @@ describe("ArchitectTest", () => {
     const network: Network = architect.buildModel();
 
     expect(network.nodes.length).to.be.equal(10 + 10 + outputSize + 2 + 2);
-    expect(network.connections.size).to.be.equal(
-      10 * 10 + 10 * outputSize + outputSize + outputSize * 2 + 2 * 2
-    );
+    expect(network.connections.size).to.be.equal(10 * 10 + 10 * outputSize + outputSize + outputSize * 2 + 2 * 2);
     expect(network.gates.size).to.be.equal(0);
 
-    const numNodesWithRELU: number = network.nodes.filter(
-      (node) => node.squash === RELU
-    ).length;
+    const numNodesWithRELU: number = network.nodes.filter((node) => node.squash === RELU).length;
     expect(numNodesWithRELU).to.be.equal(outputSize);
   });
 
@@ -167,15 +131,11 @@ describe("ArchitectTest", () => {
     // 10 * GRUSize (input -> LSTM)
     // GRUSize * GRUSize * 8 + GRUSize (LSTM intern connection)
     // GRUSize * 2 (LSTM -> output)
-    expect(network.connections.size).to.be.equal(
-      10 * GRUSize + GRUSize * GRUSize * 8 + 2 * GRUSize + GRUSize * 2
-    );
+    expect(network.connections.size).to.be.equal(10 * GRUSize + GRUSize * GRUSize * 8 + 2 * GRUSize + GRUSize * 2);
 
     expect(network.gates.size).to.be.equal(3 * GRUSize * GRUSize);
 
-    const numNodesWithRELU: number = network.nodes.filter(
-      (node) => node.squash === RELU
-    ).length;
+    const numNodesWithRELU: number = network.nodes.filter((node) => node.squash === RELU).length;
     expect(numNodesWithRELU).to.be.equal(GRUSize);
   });
 
@@ -197,15 +157,11 @@ describe("ArchitectTest", () => {
     // 10 * LSTMSize (input -> LSTM)
     // LSTMSize * LSTMSize * 8 + LSTMSize (LSTM intern connection)
     // LSTMSize * 2 (LSTM -> output)
-    expect(network.connections.size).to.be.equal(
-      10 * LSTMSize + LSTMSize * LSTMSize * 8 + LSTMSize + LSTMSize * 2
-    );
+    expect(network.connections.size).to.be.equal(10 * LSTMSize + LSTMSize * LSTMSize * 8 + LSTMSize + LSTMSize * 2);
 
     expect(network.gates.size).to.be.equal(2 * LSTMSize * LSTMSize + LSTMSize);
 
-    const numNodesWithRELU: number = network.nodes.filter(
-      (node) => node.squash === RELU
-    ).length;
+    const numNodesWithRELU: number = network.nodes.filter((node) => node.squash === RELU).length;
     expect(numNodesWithRELU).to.be.equal(LSTMSize);
   });
 
@@ -242,9 +198,7 @@ describe("ArchitectTest", () => {
 
     expect(network.gates.size).to.be.equal(0);
 
-    const numNodesWithSTEP: number = network.nodes.filter(
-      (node) => node.squash === BinaryStep
-    ).length;
+    const numNodesWithSTEP: number = network.nodes.filter((node) => node.squash === BinaryStep).length;
     expect(numNodesWithSTEP).to.be.equal(HopfieldSize);
   });
 });

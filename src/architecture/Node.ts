@@ -1,11 +1,5 @@
 import { ActivationType, ALL_ACTIVATIONS, Logistic } from "activations";
-import {
-  ModBiasMutation,
-  NodeJSON,
-  NodeType,
-  pickRandom,
-  randDouble,
-} from "..";
+import { ModBiasMutation, NodeJSON, NodeType, pickRandom, randDouble } from "..";
 import { Connection } from "./Connection";
 
 /**
@@ -130,9 +124,7 @@ export class Node {
   public fromJSON(json: NodeJSON): Node {
     this.bias = json.bias;
     this.type = json.type as NodeType;
-    this.squash = ALL_ACTIVATIONS.filter(
-      (activation) => activation.name === json.squash
-    )[0];
+    this.squash = ALL_ACTIVATIONS.filter((activation) => activation.name === json.squash)[0];
     this.mask = json.mask;
     this.index = json.index;
     this.errorResponsibility = json.errorResponsibility;
@@ -176,13 +168,9 @@ export class Node {
   /**
    * Mutates the node's activation function
    */
-  public mutateActivation(
-    allowedActivations: ActivationType[] = Object.values(ALL_ACTIVATIONS)
-  ): void {
+  public mutateActivation(allowedActivations: ActivationType[] = Object.values(ALL_ACTIVATIONS)): void {
     // pick a random activation from allowed activations except the current activation
-    const possible: ActivationType[] = allowedActivations.filter(
-      (activation) => activation !== this.squash
-    );
+    const possible: ActivationType[] = allowedActivations.filter((activation) => activation !== this.squash);
     if (possible.length > 0) {
       this.squash = pickRandom(possible);
     }
@@ -252,7 +240,7 @@ export class Node {
    * @param weight Initial connection(s) [weight](https://en.wikipedia.org/wiki/Synaptic_weight)
    * @param twoSided If `true` connect nodes to each other
    */
-  public connect(target: Node, weight = 1, twoSided = false): Connection {
+  public connect(target: Node, weight: number = 1, twoSided: boolean = false): Connection {
     if (target === this) {
       // self connection
       this.selfConnection.weight = weight;
@@ -279,16 +267,14 @@ export class Node {
    * @param node Node(s) to remove connection(s) to
    * @param twoSided=false If `true` disconnects nodes from each other (i.e. both sides)
    */
-  public disconnect(node: Node, twoSided = false): Connection {
+  public disconnect(node: Node, twoSided: boolean = false): Connection {
     if (node === this) {
       // self connection
       this.selfConnection.weight = 0; // set weight to 0
       return this.selfConnection;
     }
 
-    const connections: Connection[] = Array.from(this.outgoing).filter(
-      (conn) => conn.to === node
-    );
+    const connections: Connection[] = Array.from(this.outgoing).filter((conn) => conn.to === node);
 
     if (connections.length === 0) {
       throw new Error("No Connection found");
@@ -348,10 +334,7 @@ export class Node {
     } else {
       this.errorProjected = 0;
       this.outgoing.forEach((connection) => {
-        this.errorProjected +=
-          connection.to.errorResponsibility *
-          connection.weight *
-          connection.gain;
+        this.errorProjected += connection.to.errorResponsibility * connection.weight * connection.gain;
       });
       this.errorProjected *= this.derivativeState;
 
@@ -360,9 +343,7 @@ export class Node {
         let influence: number;
         if (connection.to.selfConnection.gateNode === this) {
           // self connection is gated with this node
-          influence =
-            connection.to.prevState +
-            connection.weight * connection.from.activation;
+          influence = connection.to.prevState + connection.weight * connection.from.activation;
         } else {
           influence = connection.weight * connection.from.activation;
         }
@@ -378,15 +359,12 @@ export class Node {
       // calculate gradient
       let gradient: number = this.errorProjected * connection.eligibility;
       connection.xTrace.forEach(
-        (xTraceValue, xTraceNode) =>
-          (gradient += xTraceNode.errorResponsibility * xTraceValue)
+        (xTraceValue, xTraceNode) => (gradient += xTraceNode.errorResponsibility * xTraceValue)
       );
 
-      connection.deltaWeightsTotal +=
-        (options.rate ?? 0.3) * gradient * this.mask;
+      connection.deltaWeightsTotal += (options.rate ?? 0.3) * gradient * this.mask;
       if (options.update) {
-        connection.deltaWeightsTotal +=
-          (options.momentum ?? 0) * connection.deltaWeightsPrevious;
+        connection.deltaWeightsTotal += (options.momentum ?? 0) * connection.deltaWeightsPrevious;
         connection.weight += connection.deltaWeightsTotal;
         connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
         connection.deltaWeightsTotal = 0;
@@ -414,7 +392,7 @@ export class Node {
    *
    * @returns A neuron's ['Squashed'](https://medium.com/the-theory-of-everything/understanding-activation-functions-in-neural-networks-9491262884e0) output value
    */
-  public activate(input?: number, trace = true): number {
+  public activate(input?: number, trace: boolean = true): number {
     if (input !== undefined) {
       return (this.activation = input);
     } else if (this.isInputNode()) {
@@ -424,9 +402,7 @@ export class Node {
     if (trace) {
       this.prevState = this.state;
 
-      this.state =
-        this.selfConnection.gain * this.selfConnection.weight * this.state +
-        this.bias;
+      this.state = this.selfConnection.gain * this.selfConnection.weight * this.state + this.bias;
 
       this.incoming.forEach((conn) => {
         this.state += conn.from.activation * conn.weight * conn.gain;
@@ -452,10 +428,7 @@ export class Node {
           // Add node & corresponding influence
           nodes.push(connection.to);
           if (connection.to.selfConnection.gateNode === this) {
-            influences.push(
-              connection.weight * connection.from.activation +
-                connection.to.prevState
-            );
+            influences.push(connection.weight * connection.from.activation + connection.to.prevState);
           } else {
             influences.push(connection.weight * connection.from.activation);
           }
@@ -465,9 +438,7 @@ export class Node {
       // Forwarding 'xTrace' (to incoming connections)
       this.incoming.forEach((connection) => {
         connection.eligibility =
-          this.selfConnection.gain *
-            this.selfConnection.weight *
-            connection.eligibility +
+          this.selfConnection.gain * this.selfConnection.weight * connection.eligibility +
           connection.from.activation * connection.gain;
 
         for (let i = 0; i < nodes.length; i++) {
@@ -477,16 +448,11 @@ export class Node {
           if (connection.xTrace.has(node)) {
             connection.xTrace.set(
               node,
-              node.selfConnection.gain *
-                node.selfConnection.weight *
-                (connection.xTrace.get(node) ?? 0) +
+              node.selfConnection.gain * node.selfConnection.weight * (connection.xTrace.get(node) ?? 0) +
                 this.derivativeState * connection.eligibility * influence
             );
           } else {
-            connection.xTrace.set(
-              node,
-              this.derivativeState * connection.eligibility * influence
-            );
+            connection.xTrace.set(node, this.derivativeState * connection.eligibility * influence);
           }
         }
       });
@@ -495,14 +461,10 @@ export class Node {
     } else {
       if (this.isInputNode()) return (this.activation = 0);
 
-      this.state =
-        this.selfConnection.gain * this.selfConnection.weight * this.state +
-        this.bias;
+      this.state = this.selfConnection.gain * this.selfConnection.weight * this.state + this.bias;
 
       this.incoming.forEach(
-        (connection) =>
-          (this.state +=
-            connection.from.activation * connection.weight * connection.gain)
+        (connection) => (this.state += connection.from.activation * connection.weight * connection.gain)
       );
       this.activation = this.squash(this.state, false);
 

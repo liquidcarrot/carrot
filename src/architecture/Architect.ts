@@ -33,19 +33,12 @@ export class Architect {
    * @param incomingConnectionType The incoming connection to this layer
    * @returns this object to function as builder class
    */
-  public addLayer(
-    layer: Layer,
-    incomingConnectionType?: ConnectionType
-  ): Architect {
-    const connectionType: ConnectionType =
-      incomingConnectionType ?? layer.getDefaultIncomingConnectionType();
+  public addLayer(layer: Layer, incomingConnectionType?: ConnectionType): Architect {
+    const connectionType: ConnectionType = incomingConnectionType ?? layer.getDefaultIncomingConnectionType();
 
     if (!layer.connectionTypeisAllowed(connectionType)) {
       throw new ReferenceError(
-        "Connection type " +
-          connectionType +
-          " is not allowed at layer " +
-          layer.constructor.name
+        "Connection type " + connectionType + " is not allowed at layer " + layer.constructor.name
       );
     }
 
@@ -64,8 +57,7 @@ export class Architect {
   public buildModel(): Network {
     if (!(this.layers[0].layer instanceof InputLayer)) {
       throw new ReferenceError(
-        "First layer has to be a InputLayer! Currently is: " +
-          this.layers[0].layer.constructor.name
+        "First layer has to be a InputLayer! Currently is: " + this.layers[0].layer.constructor.name
       );
     }
     if (!(this.layers[this.layers.length - 1].layer instanceof OutputLayer)) {
@@ -76,10 +68,9 @@ export class Architect {
     }
 
     const inputSize: number = this.layers[0].layer.nodes.length;
-    const outputSize: number = this.layers[this.layers.length - 1].layer.nodes
-      .length;
+    const outputSize: number = this.layers[this.layers.length - 1].layer.nodes.length;
 
-    const network: Network = new Network(inputSize, outputSize);
+    const network: Network = new Network(inputSize, outputSize, true);
     network.nodes = [];
     network.connections.clear();
 
@@ -91,9 +82,7 @@ export class Architect {
       ).forEach((conn) => network.connections.add(conn));
 
       network.nodes.push(...this.layers[i].layer.nodes);
-      this.layers[i].layer.connections.forEach((conn) =>
-        network.connections.add(conn)
-      );
+      this.layers[i].layer.connections.forEach((conn) => network.connections.add(conn));
       this.layers[i].layer.gates.forEach((conn) => network.gates.add(conn));
     }
     network.nodes.push(...this.layers[this.layers.length - 1].layer.nodes);

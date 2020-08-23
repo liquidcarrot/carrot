@@ -1,5 +1,4 @@
-import * as TimSort from "timsort";
-import { maxValueIndex, pickRandom } from "..";
+import { NEATPopulation, pickRandom, Selection } from "..";
 import { Network } from "./Network";
 
 /**
@@ -17,100 +16,111 @@ export class Species {
    * @private
    */
   public readonly members: Set<Network>;
-
-  /**
-   * The last score of this species.
-   * Used for stagnation checking.
-   * @private
-   */
-  private lastScore: number;
-
-  constructor(representative: Network) {
-    this.representative = representative;
-    this.representative.species = this;
-
-    this.members = new Set<Network>();
-    this.members.add(representative);
-
-    this._score = 0;
-    this.lastScore = 0;
-    this._stagnation = 0;
-  }
-
   /**
    * The score of this species
    * @private
    */
-  private _score: number;
+  public score: number;
+  public highScore: number;
 
-  /**
-   * Getter
-   */
-  get score(): number {
-    return this._score;
+  public stagnation: number;
+  public bestNetwork: Network;
+  private avgScore: number;
+
+  constructor(representative: Network) {
+    this.representative = representative;
+
+    this.members = new Set<Network>();
+    this.members.add(representative);
+    this.highScore = -Infinity;
+    this.score = 0;
+    this.avgScore = 0;
+    this.stagnation = 0;
+    this.bestNetwork = representative.deepCopy();
   }
 
   /**
-   * Indicates how man episodes without improvements.
-   * @private
+   * Returns whether a genome is compatible with the species or not
+   *
+   * @param {Network} network An array of genomes to determine compatibility with (currently assumes two)
+   * @return {boolean} Whether a genome is compatible with the species
    */
-  private _stagnation: number;
-
-  /**
-   * Getter
-   */
-  get stagnation(): number {
-    return this._stagnation;
-  }
-
-  /**
-   * Puts a network to the species, after checking the distance
-   * @param network
-   * @param c1
-   * @param c2
-   * @param c3
-   * @param distanceThreshold
-   */
-  public put(
-    network: Network,
-    c1: number,
-    c2: number,
-    c3: number,
-    distanceThreshold: number
-  ): boolean {
-    if (network.distance(this.representative, c1, c2, c3) < distanceThreshold) {
-      this.forcePut(network);
-      return true;
-    } else {
-      return false;
-    }
+  public isCompatible(network: Network): boolean {
+    return (
+      network.distance(this.representative, NEATPopulation.c1, NEATPopulation.c2, NEATPopulation.c3) <
+      NEATPopulation.distanceThreshold
+    );
   }
 
   /**
    * Puts a network to the species without checking the distance
    * @param network
    */
-  public forcePut(network: Network): void {
-    if (network === undefined) {
-      return;
-    }
+  public put(network: Network): void {
     this.members.add(network);
-    network.species = this;
   }
 
   /**
-   * Calculate the score of this species
+   * Update the score of this species and updating the best network.
    */
-  public evaluateScore(): void {
-    let sum = 0;
-    this.members.forEach((network) => (sum += network.score ?? 0));
-    const score: number = sum / this.members.size;
-    if (this.lastScore < score) {
-      this._stagnation++;
+  public updateScore(representativeIsBest: boolean = true): void {
+    this.fitnessSharing();
+    this.score = this.sumScores();
+
+    // Get the score of the best member
+    let max: number = -Infinity;
+    let bestNetwork: Network = this.representative;
+    this.members.forEach((network) => {
+      if (network.score && network.score > max) {
+        max = network.score;
+        bestNetwork = network;
+      }
+    });
+
+    // check if the high score changed
+    if (max > this.highScore) {
+      // new high score -> save best network and reset stagnation
+      this.highScore = max;
+      this.bestNetwork = bestNetwork.deepCopy();
+      this.stagnation = 0;
+
+      this.representative = representativeIsBest ? bestNetwork : pickRandom(this.members);
     } else {
-      this._stagnation = 0;
+      // if not increase stagnation value
+      this.stagnation++;
     }
-    this._score = score;
+  }
+
+  /**
+   * Add all network scores up and return
+   */
+  public sumScores(): number {
+    let score = 0; // reset score
+    this.members.forEach((network) => {
+      // add score up
+      if (network.score) score += network.score;
+      else throw new ReferenceError("Network needs score for fitness evaluation!");
+    });
+    return score;
+  }
+
+  /**
+   * Add all adjusted network scores up and return.
+   */
+  public getSumAdjustedScores(): number {
+    let sum: number = 0;
+    this.members.forEach((network) => {
+      if (network.score) sum += network.adjustedFitness;
+      else throw new ReferenceError("Network needs score for fitness evaluation!");
+    });
+    return sum;
+  }
+
+  /**
+   * Add all adjusted network scores up and divide by the member size.
+   */
+  public getAvgAdjustedScore(): number {
+    return this.getSumAdjustedScores() / this.members.size;
   }
 
   /**
@@ -118,41 +128,33 @@ export class Species {
    */
   public reset(): void {
     this.representative = pickRandom(this.members);
-    this.members.forEach((genome) => (genome.species = null));
     this.members.clear();
     this.members.add(this.representative);
-    this.representative.species = this;
-    this.lastScore = this.score;
-    this._score = 0;
+    this.score = 0;
   }
 
   /**
    * Kill a specific percentage of networks
-   * @param percentage
+   * @param percentage the kill rate
+   * @param representativeIsBest is representative always the best member?
    */
-  public kill(percentage: number): void {
-    const arr: Network[] = Array.from(this.members);
-    TimSort.sort(arr, (a: Network, b: Network) => {
-      return a.score === undefined || b.score === undefined
-        ? 0
-        : a.score - b.score;
-    });
+  public cull(percentage: number = 0.5, representativeIsBest: boolean = true): void {
+    const arr: Network[] = this.sortedMembersArray(); // descending
 
     const amount: number = Math.floor(percentage * this.members.size);
-    for (let i = 0; i < amount; i++) {
+    for (let i: number = amount; i < arr.length; i++) {
       this.members.delete(arr[i]);
-      arr[i].species = null;
     }
+
+    if (!representativeIsBest) this.representative = pickRandom(this.members);
   }
 
   /**
    * Create offspring
    */
-  public breed(): Network {
-    return Network.crossOver(
-      pickRandom(this.members),
-      pickRandom(this.members)
-    );
+  public breed(selection: Selection): Network {
+    const sortedMembers = this.sortedMembersArray();
+    return Network.crossover(selection.select(sortedMembers), selection.select(sortedMembers));
   }
 
   /**
@@ -163,27 +165,31 @@ export class Species {
   }
 
   /**
-   * Returns the best genome from this species
+   * Returning a string representation of this species.
    */
-  public getBest(): Network {
-    const networks: Network[] = Array.from(this.members);
-    return networks[
-      maxValueIndex(networks.map((genome) => genome.score ?? -Infinity))
-    ];
+  public toString(): string {
+    return "Species={Members: " + this.members.size + "; Score: " + this.score + "}";
   }
 
   /**
-   * to string
+   * Returns a sorted array representation of the members field
    */
-  public print(): void {
-    console.log(
-      "Species={Members: " +
-        this.members.size +
-        "; Score: " +
-        this._score +
-        "; Stagnation: " +
-        this.stagnation +
-        "}"
-    );
+  public sortedMembersArray(): Network[] {
+    return Array.from(this.members).sort((a: Network, b: Network) => {
+      if (a.score && b.score) return b.score - a.score;
+      else if (a.score) return -1;
+      else if (b.score) return 1;
+      else return 0;
+    });
+  }
+
+  /**
+   * Dividing the fitness value of each individual by the size of the species and save the adjusted fitness.
+   */
+  public fitnessSharing(): void {
+    this.members.forEach((network) => {
+      if (network.score) network.adjustedFitness = network.score / this.members.size;
+      else throw new ReferenceError("Network needs score for fitness sharing!");
+    });
   }
 }

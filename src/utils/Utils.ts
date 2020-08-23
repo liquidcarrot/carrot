@@ -190,7 +190,7 @@ function sum(array: number[]): number {
  * @param mean the mean value
  * @param deviation the standard deviation
  */
-function generateGaussian(mean = 0, deviation = 2): number {
+function generateGaussian(mean: number = 0, deviation: number = 2): number {
   let sum = 0;
   const numSamples = 10;
   for (let i = 0; i < numSamples; i++) {

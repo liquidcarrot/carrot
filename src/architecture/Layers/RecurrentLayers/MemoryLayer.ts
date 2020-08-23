@@ -37,9 +37,7 @@ export class MemoryLayer extends Layer {
         block.push(node);
       }
 
-      this.connections.push(
-        ...Layer.connect(prevNodes, block, ConnectionType.ONE_TO_ONE)
-      );
+      this.connections.push(...Layer.connect(prevNodes, block, ConnectionType.ONE_TO_ONE));
       nodes.push(...block);
       prevNodes = block;
     }
@@ -48,9 +46,7 @@ export class MemoryLayer extends Layer {
     this.nodes.push(...nodes.reverse());
     prevNodes.forEach((node) => this.outputNodes.add(node));
 
-    this.outputNodes.forEach(
-      (node) => (node.squash = options.activation ?? Logistic)
-    );
+    this.outputNodes.forEach((node) => (node.squash = options.activation ?? Logistic));
   }
 
   /**

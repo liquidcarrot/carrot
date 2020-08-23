@@ -20,9 +20,7 @@ export class OutputLayer extends Layer {
 
     const activation: ActivationType = options.activation ?? Identitiy;
     for (let i = 0; i < outputSize; i++) {
-      this.inputNodes.add(
-        new Node(NodeType.OUTPUT).setActivationType(activation)
-      );
+      this.inputNodes.add(new Node(NodeType.OUTPUT).setActivationType(activation));
     }
     this.nodes.push(...Array.from(this.inputNodes));
   }

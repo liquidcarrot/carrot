@@ -51,9 +51,7 @@ export class NoiseNode extends ConstantNode {
       (conn) => conn.from.activation * conn.weight * conn.gain
     );
 
-    this.state =
-      avg(incomingStates) +
-      generateGaussian(this.options?.mean ?? 0, this.options?.deviation ?? 2);
+    this.state = avg(incomingStates) + generateGaussian(this.options?.mean ?? 0, this.options?.deviation ?? 2);
 
     this.activation = this.squash(this.state, false) * this.mask;
     this.derivativeState = this.squash(this.state, true);
@@ -95,8 +93,7 @@ export class NoiseNode extends ConstantNode {
     const connectionsStates: number[] = Array.from(this.outgoing).map(
       (conn) => conn.to.errorResponsibility * conn.weight * conn.gain
     );
-    this.errorResponsibility = this.errorProjected =
-      sum(connectionsStates) * this.derivativeState;
+    this.errorResponsibility = this.errorProjected = sum(connectionsStates) * this.derivativeState;
 
     this.incoming.forEach((connection) => {
       // calculate gradient
@@ -105,11 +102,9 @@ export class NoiseNode extends ConstantNode {
         gradient += key.errorResponsibility * value;
       });
 
-      connection.deltaWeightsTotal +=
-        (options.rate ?? 0.3) * gradient * this.mask;
+      connection.deltaWeightsTotal += (options.rate ?? 0.3) * gradient * this.mask;
       if (options.update) {
-        connection.deltaWeightsTotal +=
-          (options.momentum ?? 0) * connection.deltaWeightsPrevious;
+        connection.deltaWeightsTotal += (options.momentum ?? 0) * connection.deltaWeightsPrevious;
         connection.weight += connection.deltaWeightsTotal;
         connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
         connection.deltaWeightsTotal = 0;

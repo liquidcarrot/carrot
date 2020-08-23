@@ -260,9 +260,7 @@ describe("Node", () => {
         expect(connection.eligibility).to.equal(0);
         expect(connection.xTrace.size).to.equal(0);
       });
-      node.gated.forEach((connection: Connection) =>
-        expect(connection.gain).to.equal(0)
-      );
+      node.gated.forEach((connection: Connection) => expect(connection.gain).to.equal(0));
     });
   });
   describe("node.mutate()", () => {

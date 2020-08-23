@@ -28,7 +28,7 @@ import { PoolNode } from "./architecture/Nodes/PoolNode";
 import { Species } from "./architecture/Species";
 import { ConnectionType } from "./enums/ConnectionType";
 import { GatingType } from "./enums/GatingType";
-import { NodeType, NoiseNodeType, PoolNodeType } from "./enums/NodeType";
+import { NodeType, PoolNodeType } from "./enums/NodeType";
 import { ConnectionJSON } from "./interfaces/ConnectionJSON";
 import { EvolveOptions } from "./interfaces/EvolveOptions";
 import { NetworkJSON } from "./interfaces/NetworkJSON";
@@ -66,19 +66,8 @@ import {
   SubSelfConnectionMutation,
   SwapNodesMutation,
 } from "./methods/Mutation";
-import {
-  ExponentialRate,
-  FixedRate,
-  InverseRate,
-  Rate,
-  StepRate,
-} from "./methods/Rate";
-import {
-  FitnessProportionateSelection,
-  PowerSelection,
-  Selection,
-  TournamentSelection,
-} from "./methods/Selection";
+import { ExponentialRate, FixedRate, InverseRate, Rate, StepRate } from "./methods/Rate";
+import { FitnessProportionateSelection, PowerSelection, Selection, TournamentSelection } from "./methods/Selection";
 import {
   avg,
   generateGaussian,
@@ -94,6 +83,9 @@ import {
   shuffle,
   sum,
 } from "./utils/Utils";
+import { InstinctPopulation } from "./population/InstinctPopulation";
+import { NEATPopulation } from "./population/NEATPopulation";
+import { Population } from "./population/Population";
 
 // TODO this could be more beautiful and also dynamic
 export {
@@ -129,7 +121,6 @@ export {
   GatingType,
   NodeType,
   PoolNodeType,
-  NoiseNodeType,
   ConnectionJSON,
   EvolveOptions,
   NetworkJSON,
@@ -187,4 +178,7 @@ export {
   sum,
   avg,
   generateGaussian,
+  Population,
+  NEATPopulation,
+  InstinctPopulation,
 };

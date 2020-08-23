@@ -19,20 +19,14 @@ export class RNNLayer extends Layer {
     super(outputSize);
 
     for (let i = 0; i < outputSize; i++) {
-      this.inputNodes.add(
-        new Node(NodeType.HIDDEN).setActivationType(
-          options.activation ?? Logistic
-        )
-      );
+      this.inputNodes.add(new Node(NodeType.HIDDEN).setActivationType(options.activation ?? Logistic));
     }
 
     this.outputNodes = this.inputNodes;
     this.nodes.push(...Array.from(this.inputNodes));
 
     // Adding self connections
-    this.connections.push(
-      ...Layer.connect(this.nodes, this.nodes, ConnectionType.ONE_TO_ONE)
-    );
+    this.connections.push(...Layer.connect(this.nodes, this.nodes, ConnectionType.ONE_TO_ONE));
   }
 
   /**

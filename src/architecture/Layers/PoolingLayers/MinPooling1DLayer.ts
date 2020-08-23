@@ -20,9 +20,7 @@ export class MinPooling1DLayer extends PoolingLayer {
     const activationType: ActivationType = options.activation ?? Identitiy;
 
     for (let i = 0; i < outputSize; i++) {
-      this.inputNodes.add(
-        new PoolNode(PoolNodeType.MIN_POOLING).setActivationType(activationType)
-      );
+      this.inputNodes.add(new PoolNode(PoolNodeType.MIN_POOLING).setActivationType(activationType));
     }
 
     this.outputNodes = this.inputNodes;

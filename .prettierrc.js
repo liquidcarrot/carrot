@@ -1,3 +1,3 @@
 module.exports = {
-  ...require(".prettierrc.json"),
+  ...require(".prettierrc.yaml"),
 };

@@ -74,10 +74,7 @@ export class Connection {
    * @returns the created connection
    */
   public static fromJSON(json: ConnectionJSON, nodes: Node[]): Connection {
-    const connection: Connection = nodes[json.fromIndex].connect(
-      nodes[json.toIndex],
-      json.weight
-    );
+    const connection: Connection = nodes[json.fromIndex].connect(nodes[json.toIndex], json.weight);
 
     json.xTraces?.forEach((xTraceValue, xTraceNodeIndex) => {
       connection.xTrace.set(nodes[xTraceNodeIndex], xTraceValue);
