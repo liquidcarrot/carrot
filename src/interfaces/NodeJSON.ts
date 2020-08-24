@@ -1,8 +1,8 @@
-import { PoolNodeType } from "..";
-
 /**
  * An interface for representing a node with an json object
  */
+import { PoolNodeType } from "../enums/NodeType";
+
 export interface NodeJSON {
   /**
    * The bias value of the node

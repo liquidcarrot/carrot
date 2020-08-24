@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { describe, it } from "mocha";
-import { ExponentialRate, FixedRate, InverseRate, Rate, StepRate } from "../../../src";
-import { randInt } from "../../../src";
+import { ExponentialRate, FixedRate, InverseRate, Rate, StepRate } from "../../../src/methods/Rate";
+import { randInt } from "../../../src/utils/Utils";
 
 describe("Rate", () => {
   it("FixedRate", () => {

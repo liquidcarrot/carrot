@@ -166,9 +166,7 @@ architect.addLayer(<span class="hljs-keyword">new</span> OutputLayer(<span class
 
 architect.addLayer(<span class="hljs-keyword">new</span> InputLayer(<span class="hljs-number">10</span>));
 architect.addLayer(<span class="hljs-keyword">new</span> DenseLayer(<span class="hljs-number">10</span>, { <span class="hljs-attr">activationType</span>: RELUActivation }));
-architect.addLayer(
-  <span class="hljs-keyword">new</span> MaxPooling1DLayer(<span class="hljs-number">5</span>, { <span class="hljs-attr">activation</span>: IdentityActivation })
-);
+architect.addLayer(<span class="hljs-keyword">new</span> MaxPooling1DLayer(<span class="hljs-number">5</span>, { <span class="hljs-attr">activation</span>: IdentityActivation }));
 architect.addLayer(<span class="hljs-keyword">new</span> OutputLayer(<span class="hljs-number">2</span>, { <span class="hljs-attr">activation</span>: RELUActivation }));
 
 <span class="hljs-keyword">const</span> network = architect.buildModel();</code></pre>
@@ -341,19 +339,25 @@ A.activate(<span class="hljs-number">0.5</span>);
 						<a href="classes/connection.html" class="tsd-kind-icon">Connection</a>
 					</li>
 					<li class=" tsd-kind-class">
+						<a href="classes/instinctpopulation.html" class="tsd-kind-icon">Instinct<wbr>Population</a>
+					</li>
+					<li class=" tsd-kind-class">
 						<a href="classes/layer.html" class="tsd-kind-icon">Layer</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/mutation.html" class="tsd-kind-icon">Mutation</a>
 					</li>
 					<li class=" tsd-kind-class">
-						<a href="classes/neat.html" class="tsd-kind-icon">NEAT</a>
+						<a href="classes/neatpopulation.html" class="tsd-kind-icon">NEATPopulation</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/network.html" class="tsd-kind-icon">Network</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/node.html" class="tsd-kind-icon">Node</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/population.html" class="tsd-kind-icon">Population</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/rate.html" class="tsd-kind-icon">Rate</a>
@@ -377,7 +381,6 @@ A.activate(<span class="hljs-number">0.5</span>);
 				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
 				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>

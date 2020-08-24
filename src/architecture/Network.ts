@@ -1,10 +1,15 @@
 import { ActivationType } from "activations";
 import * as TimSort from "timsort";
-import { ALL_MUTATIONS, ConnectionJSON, Mutation, NetworkJSON, NodeType, TrainOptions } from "..";
 import { lossType, MSELoss } from "../methods/Loss";
 import { pairing, pickRandom, randBoolean, randInt, removeFromArray, shuffle } from "../utils/Utils";
 import { Connection } from "./Connection";
 import { Node } from "./Node";
+import { NodeType } from "../enums/NodeType";
+import { NetworkJSON } from "../interfaces/NetworkJSON";
+import { ConnectionJSON } from "../interfaces/ConnectionJSON";
+import { Mutation } from "../methods/Mutation";
+import { TrainOptions } from "../interfaces/TrainOptions";
+import { ALL_INSTINCT_MUTATIONS } from "../methods/InstinctMutation";
 
 /**
  * Create a neural network
@@ -523,7 +528,7 @@ export class Network {
     method: Mutation,
     options?: {
       /**
-       * Maximum amount of [Nodes](node) a network can grow to
+       * Maximum amount of [nodes](node) a network can grow to
        */
       maxNodes?: number;
       /**
@@ -548,15 +553,15 @@ export class Network {
    *
    * @param {Mutation[]} [allowedMethods=methods.mutation.ALL] An array of [Mutation methods](mutation) to automatically pick from
    * @param {object} options
-   * @param {number} [options.maxNodes] Maximum amount of [Nodes](node) a network can grow to
+   * @param {number} [options.maxNodes] Maximum amount of [nodes](node) a network can grow to
    * @param {number} [options.maxConnections] Maximum amount of [Connections](connection) a network can grow to
    * @param {number} [options.maxGates] Maximum amount of Gates a network can grow to
    */
   public mutateRandom(
-    allowedMethods: Mutation[] = ALL_MUTATIONS,
+    allowedMethods: Mutation[] = ALL_INSTINCT_MUTATIONS,
     options: {
       /**
-       * Maximum amount of [Nodes](node) a network can grow to
+       * Maximum amount of [nodes](node) a network can grow to
        */
       maxNodes?: number;
       /**

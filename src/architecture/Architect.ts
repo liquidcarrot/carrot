@@ -1,8 +1,8 @@
-import { ConnectionType } from "..";
-import { InputLayer } from "./Layers/CoreLayers/InputLayer";
-import { OutputLayer } from "./Layers/CoreLayers/OutputLayer";
-import { Layer } from "./Layers/Layer";
+import { InputLayer } from "./layers/core/InputLayer";
+import { OutputLayer } from "./layers/core/OutputLayer";
+import { Layer } from "./layers/Layer";
 import { Network } from "./Network";
+import { ConnectionType } from "../enums/ConnectionType";
 
 /**
  * Architect constructs multilayer networks with various types of layers.

@@ -1,7 +1,10 @@
-import { Mutation, Network, Selection, Species } from "..";
 import { pairing } from "../utils/Utils";
 import { Population } from "./Population";
-import { ActivationType } from "activations/build/src";
+import { ActivationType } from "activations";
+import { Network } from "../architecture/Network";
+import { Species } from "../architecture/Species";
+import { Selection } from "../methods/Selection";
+import { Mutation } from "../methods/Mutation";
 
 export class NEATPopulation extends Population {
   public static nodeCounter: number;

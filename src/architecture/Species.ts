@@ -1,5 +1,7 @@
-import { NEATPopulation, pickRandom, Selection } from "..";
 import { Network } from "./Network";
+import { NEATPopulation } from "../population/NEATPopulation";
+import { Selection } from "../methods/Selection";
+import { pickRandom } from "../utils/Utils";
 
 /**
  * A class holding a species

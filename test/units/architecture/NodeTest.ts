@@ -1,12 +1,12 @@
 import { ActivationType } from "activations";
 import { expect } from "chai";
 import { describe, it } from "mocha";
-import { Connection } from "../../../src";
-import { Node } from "../../../src";
-import { NodeType } from "../../../src";
-import { NodeJSON } from "../../../src";
-import { ModBiasMutation } from "../../../src";
-import { randDouble, randInt } from "../../../src";
+import { Node } from "../../../src/architecture/Node";
+import { randDouble, randInt } from "../../../src/utils/Utils";
+import { Connection } from "../../../src/architecture/Connection";
+import { ModBiasMutation } from "../../../src/methods/InstinctMutation";
+import { NodeType } from "../../../src/enums/NodeType";
+import { NodeJSON } from "../../../src/interfaces/NodeJSON";
 
 describe("Node", () => {
   describe("node.connect()", () => {
@@ -256,7 +256,7 @@ describe("Node", () => {
       expect(node.errorProjected).to.equal(0);
       expect(node.errorGated).to.equal(0);
 
-      node.incoming.forEach((connection) => {
+      node.incoming.forEach((connection: Connection) => {
         expect(connection.eligibility).to.equal(0);
         expect(connection.xTrace.size).to.equal(0);
       });

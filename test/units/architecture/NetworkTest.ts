@@ -1,20 +1,20 @@
 import { expect } from "chai";
 import { describe, it } from "mocha";
+import { Network } from "../../../src/architecture/Network";
+import { Node } from "../../../src/architecture/Node";
+import { Connection } from "../../../src/architecture/Connection";
+import { TrainOptions } from "../../../src/interfaces/TrainOptions";
+import { randInt } from "../../../src/utils/Utils";
 import {
   AddConnectionMutation,
   AddGateMutation,
   AddNodeMutation,
-  Architect,
-  Connection,
-  DenseLayer,
-  InputLayer,
-  Network,
-  Node,
-  OutputLayer,
-  randInt,
   SubGateMutation,
-  TrainOptions,
-} from "../../../src";
+} from "../../../src/methods/InstinctMutation";
+import { Architect } from "../../../src/architecture/Architect";
+import { InputLayer } from "../../../src/architecture/layers/core/InputLayer";
+import { DenseLayer } from "../../../src/architecture/layers/core/DenseLayer";
+import { OutputLayer } from "../../../src/architecture/layers/core/OutputLayer";
 
 describe("Network", () => {
   function createTestNetwork(): Network {

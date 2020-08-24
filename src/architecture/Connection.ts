@@ -1,4 +1,4 @@
-import { ConnectionJSON } from "..";
+import { ConnectionJSON } from "../interfaces/ConnectionJSON";
 import { pairing } from "../utils/Utils";
 import { Node } from "./Node";
 
@@ -76,7 +76,7 @@ export class Connection {
   public static fromJSON(json: ConnectionJSON, nodes: Node[]): Connection {
     const connection: Connection = nodes[json.fromIndex].connect(nodes[json.toIndex], json.weight);
 
-    json.xTraces?.forEach((xTraceValue, xTraceNodeIndex) => {
+    json.xTraces?.forEach((xTraceValue: number, xTraceNodeIndex: number) => {
       connection.xTrace.set(nodes[xTraceNodeIndex], xTraceValue);
     });
     return connection;

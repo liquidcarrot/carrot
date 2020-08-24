@@ -1,7 +1,11 @@
-import { EvolveOptions, Mutation, Network, pickRandom, Selection } from "..";
 import { lossType } from "../methods/Loss";
 import { datasetType, fitnessFunction } from "../enums/types";
 import { ActivationType } from "activations/build/src";
+import { Network } from "../architecture/Network";
+import { EvolveOptions } from "../interfaces/EvolveOptions";
+import { Selection } from "../methods/Selection";
+import { Mutation } from "../methods/Mutation";
+import { pickRandom } from "../utils/Utils";
 
 export abstract class Population {
   protected readonly populationSize: number;

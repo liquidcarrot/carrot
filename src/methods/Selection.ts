@@ -3,7 +3,8 @@
  *
  * @see [Genetic Algorithm - Selection]{@link https://en.wikipedia.org/wiki/Selection_(genetic_algorithm)}
  */
-import { Network, pickRandom, randDouble } from "..";
+import { pickRandom, randDouble } from "../utils/Utils";
+import { Network } from "../architecture/Network";
 
 abstract class Selection {
   /**

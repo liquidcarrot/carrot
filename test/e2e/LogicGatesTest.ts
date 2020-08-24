@@ -1,6 +1,10 @@
 import { expect } from "chai";
 import { describe, it } from "mocha";
-import { EvolveOptions, InstinctPopulation, NEATPopulation, Network, TrainOptions } from "../../src";
+import { Network } from "../../src/architecture/Network";
+import { TrainOptions } from "../../src/interfaces/TrainOptions";
+import { InstinctPopulation } from "../../src/population/InstinctPopulation";
+import { EvolveOptions } from "../../src/interfaces/EvolveOptions";
+import { NEATPopulation } from "../../src/population/NEATPopulation";
 
 describe("Logic Gates", () => {
   const data: {

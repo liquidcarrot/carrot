@@ -100,13 +100,13 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="network.html#adjustedfitness" class="tsd-kind-icon">adjusted<wbr>Fitness</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="network.html#connections" class="tsd-kind-icon">connections</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="network.html#gates" class="tsd-kind-icon">gates</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="network.html#inputsize" class="tsd-kind-icon">input<wbr>Size</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="network.html#nodes" class="tsd-kind-icon">nodes</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="network.html#outputsize" class="tsd-kind-icon">output<wbr>Size</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="network.html#score" class="tsd-kind-icon">score</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-class"><a href="network.html#species" class="tsd-kind-icon">species</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -119,7 +119,6 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="network.html#deepcopy" class="tsd-kind-icon">deep<wbr>Copy</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="network.html#disconnect" class="tsd-kind-icon">disconnect</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="network.html#distance" class="tsd-kind-icon">distance</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="network.html#evolve" class="tsd-kind-icon">evolve</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="network.html#mutate" class="tsd-kind-icon">mutate</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="network.html#mutaterandom" class="tsd-kind-icon">mutate<wbr>Random</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="network.html#propagate" class="tsd-kind-icon">propagate</a></li>
@@ -129,7 +128,7 @@
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="network.html#tojson" class="tsd-kind-icon">toJSON</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class"><a href="network.html#train" class="tsd-kind-icon">train</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="network.html#trainepoch" class="tsd-kind-icon">train<wbr>Epoch</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="network.html#crossover" class="tsd-kind-icon">cross<wbr>Over</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="network.html#crossover" class="tsd-kind-icon">crossover</a></li>
 								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-static"><a href="network.html#fromjson" class="tsd-kind-icon">fromJSON</a></li>
 							</ul>
 						</section>
@@ -142,13 +141,13 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Network<span class="tsd-signature-symbol">(</span>inputSize<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, outputSize<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="network.html" class="tsd-signature-type">Network</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Network<span class="tsd-signature-symbol">(</span>inputSize<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, outputSize<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, startsEmpty<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="network.html" class="tsd-signature-type">Network</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L65">architecture/Network.ts:65</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L46">architecture/Network.ts:46</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -159,6 +158,9 @@
 								<li>
 									<h5>outputSize: <span class="tsd-signature-type">number</span></h5>
 								</li>
+								<li>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> startsEmpty: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></h5>
+								</li>
 							</ul>
 							<h4 class="tsd-returns-title">Returns <a href="network.html" class="tsd-signature-type">Network</a></h4>
 						</li>
@@ -168,12 +170,22 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="adjustedfitness" class="tsd-anchor"></a>
+					<h3>adjusted<wbr>Fitness</h3>
+					<div class="tsd-signature tsd-kind-icon">adjusted<wbr>Fitness<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L46">architecture/Network.ts:46</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="connections" class="tsd-anchor"></a>
 					<h3>connections</h3>
 					<div class="tsd-signature tsd-kind-icon">connections<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><a href="connection.html" class="tsd-signature-type">Connection</a><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L57">architecture/Network.ts:57</a></li>
+							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L37">architecture/Network.ts:37</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -188,7 +200,7 @@
 					<div class="tsd-signature tsd-kind-icon">gates<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><a href="connection.html" class="tsd-signature-type">Connection</a><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L61">architecture/Network.ts:61</a></li>
+							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L41">architecture/Network.ts:41</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -203,7 +215,7 @@
 					<div class="tsd-signature tsd-kind-icon">input<wbr>Size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L45">architecture/Network.ts:45</a></li>
+							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L25">architecture/Network.ts:25</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -218,7 +230,7 @@
 					<div class="tsd-signature tsd-kind-icon">nodes<span class="tsd-signature-symbol">:</span> <a href="node.html" class="tsd-signature-type">Node</a><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L53">architecture/Network.ts:53</a></li>
+							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L33">architecture/Network.ts:33</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -233,7 +245,7 @@
 					<div class="tsd-signature tsd-kind-icon">output<wbr>Size<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L49">architecture/Network.ts:49</a></li>
+							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L29">architecture/Network.ts:29</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -248,27 +260,12 @@
 					<div class="tsd-signature tsd-kind-icon">score<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L65">architecture/Network.ts:65</a></li>
+							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L45">architecture/Network.ts:45</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
 						<div class="lead">
 							<p>The score of this network for evolution.</p>
-						</div>
-					</div>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
-					<a name="species" class="tsd-anchor"></a>
-					<h3>species</h3>
-					<div class="tsd-signature tsd-kind-icon">species<span class="tsd-signature-symbol">:</span> <a href="species.html" class="tsd-signature-type">Species</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
-					<aside class="tsd-sources">
-						<ul>
-							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L41">architecture/Network.ts:41</a></li>
-						</ul>
-					</aside>
-					<div class="tsd-comment tsd-typography">
-						<div class="lead">
-							<p>Species of this network</p>
 						</div>
 					</div>
 				</section>
@@ -285,7 +282,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L361">architecture/Network.ts:361</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L303">architecture/Network.ts:303</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -336,7 +333,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L494">architecture/Network.ts:494</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L430">architecture/Network.ts:430</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -373,7 +370,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L464">architecture/Network.ts:464</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L400">architecture/Network.ts:400</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -395,7 +392,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L346">architecture/Network.ts:346</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L288">architecture/Network.ts:288</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -436,7 +433,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L333">architecture/Network.ts:333</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L275">architecture/Network.ts:275</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -459,7 +456,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L474">architecture/Network.ts:474</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L410">architecture/Network.ts:410</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -490,13 +487,13 @@
 					<a name="distance" class="tsd-anchor"></a>
 					<h3>distance</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">distance<span class="tsd-signature-symbol">(</span>g2<span class="tsd-signature-symbol">: </span><a href="network.html" class="tsd-signature-type">Network</a>, c1<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, c2<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, c3<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+						<li class="tsd-signature tsd-kind-icon">distance<span class="tsd-signature-symbol">(</span>genome2<span class="tsd-signature-symbol">: </span><a href="network.html" class="tsd-signature-type">Network</a>, c1<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, c2<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, c3<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L1023">architecture/Network.ts:1023</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L784">architecture/Network.ts:784</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -507,7 +504,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>g2: <a href="network.html" class="tsd-signature-type">Network</a></h5>
+									<h5>genome2: <a href="network.html" class="tsd-signature-type">Network</a></h5>
 									<div class="tsd-comment tsd-typography">
 										<p>other network</p>
 									</div>
@@ -529,36 +526,6 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="evolve" class="tsd-anchor"></a>
-					<h3>evolve</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">evolve<span class="tsd-signature-symbol">(</span>options<span class="tsd-signature-symbol">?: </span><a href="evolveoptions.html" class="tsd-signature-type">EvolveOptions</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>iterations<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>time<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L883">architecture/Network.ts:883</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Evolves the network to reach a lower error on a dataset using the <a href="http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf">NEAT algorithm</a></p>
-								</div>
-								<p>If both <code>iterations</code> and <code>error</code> options are unset, evolve will default to <code>iterations</code> as an end condition.</p>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <a href="evolveoptions.html" class="tsd-signature-type">EvolveOptions</a><span class="tsd-signature-symbol"> = new EvolveOptions()</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-symbol">{ </span>error<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>iterations<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>time<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<p>,iterations:{number},time:{number}}} A summary object of the network&#39;s performance. <br /> Properties include: <code>error</code> - error of the best genome, <code>iterations</code> - generations used to evolve networks, <code>time</code> - clock time elapsed while evolving</p>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="mutate" class="tsd-anchor"></a>
 					<h3>mutate</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
@@ -568,7 +535,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L602">architecture/Network.ts:602</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L527">architecture/Network.ts:527</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -602,7 +569,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L635">architecture/Network.ts:635</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L560">architecture/Network.ts:560</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -613,7 +580,7 @@
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> allowedMethods: <a href="mutation.html" class="tsd-signature-type">Mutation</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = ALL_MUTATIONS</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> allowedMethods: <a href="mutation.html" class="tsd-signature-type">Mutation</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = ALL_INSTINCT_MUTATIONS</span></h5>
 								</li>
 								<li>
 									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <span class="tsd-signature-symbol">{ </span>allowedActivations<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">ActivationType</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>maxConnections<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>maxGates<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">; </span>maxNodes<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = {}</span></h5>
@@ -646,7 +613,7 @@
 											<h5><span class="tsd-flag ts-flagOptional">Optional</span> max<wbr>Nodes<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
 											<div class="tsd-comment tsd-typography">
 												<div class="lead">
-													<p>Maximum amount of <a href="node">Nodes</a> a network can grow to</p>
+													<p>Maximum amount of <a href="node">nodes</a> a network can grow to</p>
 												</div>
 											</div>
 										</li>
@@ -667,7 +634,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L412">architecture/Network.ts:412</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L350">architecture/Network.ts:350</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -731,7 +698,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L509">architecture/Network.ts:509</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L445">architecture/Network.ts:445</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -762,7 +729,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L525">architecture/Network.ts:525</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L461">architecture/Network.ts:461</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -779,7 +746,7 @@
 									</div>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> keepGates: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = new SubNodeMutation().keepGates</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> keepGates: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = true</span></h5>
 									<div class="tsd-comment tsd-typography">
 									</div>
 								</li>
@@ -798,7 +765,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L814">architecture/Network.ts:814</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L717">architecture/Network.ts:717</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -830,7 +797,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L844">architecture/Network.ts:844</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L747">architecture/Network.ts:747</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -853,7 +820,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L670">architecture/Network.ts:670</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L595">architecture/Network.ts:595</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -911,7 +878,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L1113">architecture/Network.ts:1113</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L864">architecture/Network.ts:864</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -981,15 +948,15 @@
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-static">
 					<a name="crossover" class="tsd-anchor"></a>
-					<h3><span class="tsd-flag ts-flagStatic">Static</span> cross<wbr>Over</h3>
+					<h3><span class="tsd-flag ts-flagStatic">Static</span> crossover</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-static">
-						<li class="tsd-signature tsd-kind-icon">cross<wbr>Over<span class="tsd-signature-symbol">(</span>network1<span class="tsd-signature-symbol">: </span><a href="network.html" class="tsd-signature-type">Network</a>, network2<span class="tsd-signature-symbol">: </span><a href="network.html" class="tsd-signature-type">Network</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="network.html" class="tsd-signature-type">Network</a></li>
+						<li class="tsd-signature tsd-kind-icon">crossover<span class="tsd-signature-symbol">(</span>network1<span class="tsd-signature-symbol">: </span><a href="network.html" class="tsd-signature-type">Network</a>, network2<span class="tsd-signature-symbol">: </span><a href="network.html" class="tsd-signature-type">Network</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="network.html" class="tsd-signature-type">Network</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L147">architecture/Network.ts:147</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L119">architecture/Network.ts:119</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1033,7 +1000,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Network.ts#L109">architecture/Network.ts:109</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/Network.ts#L84">architecture/Network.ts:84</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -1073,6 +1040,9 @@
 								<a href="network.html#constructor" class="tsd-kind-icon">constructor</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="network.html#adjustedfitness" class="tsd-kind-icon">adjusted<wbr>Fitness</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="network.html#connections" class="tsd-kind-icon">connections</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
@@ -1089,9 +1059,6 @@
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="network.html#score" class="tsd-kind-icon">score</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-class">
-								<a href="network.html#species" class="tsd-kind-icon">species</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="network.html#activate" class="tsd-kind-icon">activate</a>
@@ -1113,9 +1080,6 @@
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="network.html#distance" class="tsd-kind-icon">distance</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="network.html#evolve" class="tsd-kind-icon">evolve</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
 								<a href="network.html#mutate" class="tsd-kind-icon">mutate</a>
@@ -1145,7 +1109,7 @@
 								<a href="network.html#trainepoch" class="tsd-kind-icon">train<wbr>Epoch</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
-								<a href="network.html#crossover" class="tsd-kind-icon">cross<wbr>Over</a>
+								<a href="network.html#crossover" class="tsd-kind-icon">crossover</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-static">
 								<a href="network.html#fromjson" class="tsd-kind-icon">fromJSON</a>
@@ -1167,7 +1131,6 @@
 				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
 				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>

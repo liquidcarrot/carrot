@@ -1,7 +1,10 @@
 import { ActivationType, ALL_ACTIVATIONS } from "activations";
-import { FEEDFORWARD_MUTATIONS, FitnessProportionateSelection, Mutation, Network, Selection } from "..";
 import { lossType, MSELoss } from "../methods/Loss";
 import { TrainOptions } from "./TrainOptions";
+import { Network } from "../architecture/Network";
+import { Mutation } from "../methods/Mutation";
+import { FitnessProportionateSelection, Selection } from "../methods/Selection";
+import { FEEDFORWARD_INSTINCT_MUTATIONS } from "../methods/InstinctMutation";
 
 /**
  * Options used to evolve network
@@ -154,7 +157,7 @@ export class EvolveOptions {
 
     this.selection = new FitnessProportionateSelection();
     this.loss = MSELoss;
-    this.mutations = FEEDFORWARD_MUTATIONS;
+    this.mutations = FEEDFORWARD_INSTINCT_MUTATIONS;
     this.activations = Object.values(ALL_ACTIVATIONS);
     this.maxNodes = Infinity;
     this.maxConnections = Infinity;

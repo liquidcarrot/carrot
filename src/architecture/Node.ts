@@ -1,6 +1,9 @@
 import { ActivationType, ALL_ACTIVATIONS, Logistic } from "activations";
-import { ModBiasMutation, NodeJSON, NodeType, pickRandom, randDouble } from "..";
 import { Connection } from "./Connection";
+import { NodeType } from "../enums/NodeType";
+import { NodeJSON } from "../interfaces/NodeJSON";
+import { ModBiasMutation } from "../methods/InstinctMutation";
+import { pickRandom, randDouble } from "../utils/Utils";
 
 /**
  * Creates a new neuron/node

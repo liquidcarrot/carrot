@@ -1,6 +1,9 @@
-import { Mutation, Network, randDouble, Selection } from "..";
 import { Population } from "./Population";
 import { ActivationType } from "activations/build/src";
+import { randDouble } from "../utils/Utils";
+import { Network } from "../architecture/Network";
+import { Selection } from "../methods/Selection";
+import { Mutation } from "../methods/Mutation";
 
 export class InstinctPopulation extends Population {
   constructor(

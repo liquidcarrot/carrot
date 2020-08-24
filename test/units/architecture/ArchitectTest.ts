@@ -1,20 +1,20 @@
 import { BinaryStep, Identitiy, Logistic, RELU } from "activations";
 import { expect } from "chai";
 import { describe, it } from "mocha";
-import { Architect } from "../../../src";
-import { DenseLayer } from "../../../src";
-import { InputLayer } from "../../../src";
-import { OutputLayer } from "../../../src";
-import { MaxPooling1DLayer } from "../../../src";
-import { GRULayer } from "../../../src";
-import { HopfieldLayer } from "../../../src";
-import { LSTMLayer } from "../../../src";
-import { MemoryLayer } from "../../../src";
-import { RNNLayer } from "../../../src";
-import { Network } from "../../../src";
-import { Node } from "../../../src";
-import { PoolNode } from "../../../src";
-import { randInt } from "../../../src";
+import { Architect } from "../../../src/architecture/Architect";
+import { Network } from "../../../src/architecture/Network";
+import { Node } from "../../../src/architecture/Node";
+import { PoolNode } from "../../../src/architecture/nodes/PoolNode";
+import { randInt } from "../../../src/utils/Utils";
+import { InputLayer } from "../../../src/architecture/layers/core/InputLayer";
+import { DenseLayer } from "../../../src/architecture/layers/core/DenseLayer";
+import { OutputLayer } from "../../../src/architecture/layers/core/OutputLayer";
+import { MaxPooling1DLayer } from "../../../src/architecture/layers/pooling/MaxPooling1DLayer";
+import { MemoryLayer } from "../../../src/architecture/layers/recurrent/MemoryLayer";
+import { RNNLayer } from "../../../src/architecture/layers/recurrent/RNNLayer";
+import { GRULayer } from "../../../src/architecture/layers/recurrent/GRULayer";
+import { LSTMLayer } from "../../../src/architecture/layers/recurrent/LSTMLayer";
+import { HopfieldLayer } from "../../../src/architecture/layers/recurrent/HopfieldLayer";
 
 describe("ArchitectTest", () => {
   it("Build Multilayer-Perceptron", () => {

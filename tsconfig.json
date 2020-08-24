@@ -5,7 +5,8 @@
     "target": "es6",
     "module": "commonjs",
     "moduleResolution": "Node",
-    "declaration": false,
+    "declaration": true,
+    "declarationDir": "types",
     "lib": ["es6"],
     "allowJs": false,
     "strict": true,
@@ -13,5 +14,6 @@
     "esModuleInterop": true,
     "resolveJsonModule": true
   },
-  "include": ["src/**/*", "test/**/*"]
+  "include": ["src/**/*", "test/**/*"],
+  "exclude": ["node_modules"]
 }

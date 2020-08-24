@@ -125,14 +125,14 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class tsd-is-overwrite">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Input<wbr>Layer<span class="tsd-signature-symbol">(</span>outputSize<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>noise<span class="tsd-signature-symbol">?: </span><a href="../enums/noisenodetype.html" class="tsd-signature-type">NoiseNodeType</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="inputlayer.html" class="tsd-signature-type">InputLayer</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Input<wbr>Layer<span class="tsd-signature-symbol">(</span>outputSize<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, options<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-symbol">{ </span>noise<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="inputlayer.html" class="tsd-signature-type">InputLayer</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<p>Overrides <a href="layer.html">Layer</a>.<a href="layer.html#constructor">constructor</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Layers/CoreLayers/InputLayer.ts#L8">architecture/Layers/CoreLayers/InputLayer.ts:8</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/layers/core/InputLayer.ts#L10">architecture/layers/core/InputLayer.ts:10</a></li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -141,10 +141,10 @@
 									<h5>outputSize: <span class="tsd-signature-type">number</span></h5>
 								</li>
 								<li>
-									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <span class="tsd-signature-symbol">{ </span>noise<span class="tsd-signature-symbol">?: </span><a href="../enums/noisenodetype.html" class="tsd-signature-type">NoiseNodeType</a><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = {}</span></h5>
+									<h5><span class="tsd-flag ts-flagDefault value">Default value</span> options: <span class="tsd-signature-symbol">{ </span>noise<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol"> = { noise: false }</span></h5>
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter">
-											<h5><span class="tsd-flag ts-flagOptional">Optional</span> noise<span class="tsd-signature-symbol">?: </span><a href="../enums/noisenodetype.html" class="tsd-signature-type">NoiseNodeType</a></h5>
+											<h5>noise<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></h5>
 											<div class="tsd-comment tsd-typography">
 												<div class="lead">
 													<p>The noise type</p>
@@ -168,7 +168,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#connections">connections</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Layers/Layer.ts#L28">architecture/Layers/Layer.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/layers/Layer.ts#L29">architecture/layers/Layer.ts:29</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -184,7 +184,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#gates">gates</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Layers/Layer.ts#L32">architecture/Layers/Layer.ts:32</a></li>
+							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/layers/Layer.ts#L33">architecture/layers/Layer.ts:33</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -200,7 +200,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#inputnodes">inputNodes</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Layers/Layer.ts#L16">architecture/Layers/Layer.ts:16</a></li>
+							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/layers/Layer.ts#L17">architecture/layers/Layer.ts:17</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -216,7 +216,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#nodes">nodes</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Layers/Layer.ts#L24">architecture/Layers/Layer.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/layers/Layer.ts#L25">architecture/layers/Layer.ts:25</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -232,7 +232,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#outputnodes">outputNodes</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Layers/Layer.ts#L20">architecture/Layers/Layer.ts:20</a></li>
+							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/layers/Layer.ts#L21">architecture/layers/Layer.ts:21</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -248,7 +248,7 @@
 					<aside class="tsd-sources">
 						<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#outputsize">outputSize</a></p>
 						<ul>
-							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Layers/Layer.ts#L12">architecture/Layers/Layer.ts:12</a></li>
+							<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/layers/Layer.ts#L13">architecture/layers/Layer.ts:13</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -271,7 +271,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="layer.html">Layer</a>.<a href="layer.html#connectiontypeisallowed">connectionTypeisAllowed</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Layers/CoreLayers/InputLayer.ts#L56">architecture/Layers/CoreLayers/InputLayer.ts:56</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/layers/core/InputLayer.ts#L52">architecture/layers/core/InputLayer.ts:52</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -304,7 +304,7 @@
 							<aside class="tsd-sources">
 								<p>Overrides <a href="layer.html">Layer</a>.<a href="layer.html#getdefaultincomingconnectiontype">getDefaultIncomingConnectionType</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Layers/CoreLayers/InputLayer.ts#L45">architecture/Layers/CoreLayers/InputLayer.ts:45</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/layers/core/InputLayer.ts#L41">architecture/layers/core/InputLayer.ts:41</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -328,12 +328,12 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#connect">connect</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Layers/Layer.ts#L53">architecture/Layers/Layer.ts:53</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/layers/Layer.ts#L54">architecture/layers/Layer.ts:54</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
 								<div class="lead">
-									<p>Connect two Layers or sets of Nodes.</p>
+									<p>Connect two layers or sets of nodes.</p>
 								</div>
 							</div>
 							<h4 class="tsd-parameters-title">Parameters</h4>
@@ -341,13 +341,13 @@
 								<li>
 									<h5>from: <a href="layer.html" class="tsd-signature-type">Layer</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><a href="node.html" class="tsd-signature-type">Node</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="node.html" class="tsd-signature-type">Node</a><span class="tsd-signature-symbol">[]</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>origin Nodes / Layer</p>
+										<p>origin nodes / Layer</p>
 									</div>
 								</li>
 								<li>
 									<h5>to: <a href="layer.html" class="tsd-signature-type">Layer</a><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Set</span><span class="tsd-signature-symbol">&lt;</span><a href="node.html" class="tsd-signature-type">Node</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> | </span><a href="node.html" class="tsd-signature-type">Node</a><span class="tsd-signature-symbol">[]</span></h5>
 									<div class="tsd-comment tsd-typography">
-										<p>destination Nodes / Layer</p>
+										<p>destination nodes / Layer</p>
 									</div>
 								</li>
 								<li>
@@ -379,7 +379,7 @@
 							<aside class="tsd-sources">
 								<p>Inherited from <a href="layer.html">Layer</a>.<a href="layer.html#gate">gate</a></p>
 								<ul>
-									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/0270ff32/src/architecture/Layers/Layer.ts#L117">architecture/Layers/Layer.ts:117</a></li>
+									<li>Defined in <a href="https://github.com/liquidcarrot/carrot/blob/2d9ed2ad/src/architecture/layers/Layer.ts#L108">architecture/layers/Layer.ts:108</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -480,7 +480,6 @@
 				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
 				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
-				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>

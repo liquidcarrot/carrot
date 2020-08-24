@@ -7,7 +7,6 @@
   "includeVersion": true,
   "readme": "README.md",
   "name": "Carrot",
-  "theme": "node_modules/eledoc/bin/default/",
   "toc": [
     "Population",
     "InstinctPopulation",
