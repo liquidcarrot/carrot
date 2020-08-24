@@ -6,18 +6,17 @@ on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    name: Build Project
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Build Project
-        uses: actions/setup-node@v1
+      - name: Checkout repository
+        uses: actions/checkout@master
+      - name: Set up Node.js
+        uses: actions/setup-node@master
         with:
           node-version: "14.x"
       - run: npm ci
@@ -32,3 +31,22 @@ jobs:
       - run: git diff
       - run: git commit -m "Build Project"
       - run: git push --force
+
+  npm-publish:
+    needs:
+      - build
+    name: npm-publish
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@master
+      - name: Set up Node.js
+        uses: actions/setup-node@master
+        with:
+          node-version: "14.x"
+          registry-url: "https://registry.npmjs.org"
+          scope: "@liquid-carrot"
+      - run: npm install
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
