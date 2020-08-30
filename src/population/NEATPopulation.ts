@@ -5,10 +5,13 @@ import { Network } from "../architecture/Network";
 import { Species } from "../architecture/Species";
 import { Selection } from "../methods/Selection";
 import { Mutation } from "../methods/Mutation";
+import { AddConnectionMutation, AddNodeMutation, ModBiasMutation, ModWeightMutation } from "../methods/NEATMutation";
+import { Connection } from "../architecture/Connection";
+import { Node } from "../architecture/Node";
 
 export class NEATPopulation extends Population {
-  public static nodeCounter: number;
-  public static connCounter: number;
+  public static nodeCounter: number = -1;
+  public static connCounter: number = -1;
   public static nodeIDs: Map<number, number>;
   public static connIDs: Map<number, number>;
   public static c1: number;
@@ -48,6 +51,27 @@ export class NEATPopulation extends Population {
     NEATPopulation.distanceThreshold = options.speciesDistanceThreshold ?? 2;
     NEATPopulation.speciesStagnationLimit = options.speciesStagnationLimit ?? 15;
     NEATPopulation.populationStagnationLimit = options.populationStagnationLimit ?? 15;
+  }
+
+  public static addConnection(node1ID: number, node2ID: number, newConnection: Connection): void {
+    const cantorPair = pairing(node1ID, node2ID);
+    if (NEATPopulation.connIDs.has(cantorPair)) {
+      newConnection.id = NEATPopulation.connIDs.get(cantorPair) ?? -1;
+    } else {
+      NEATPopulation.connCounter++;
+      NEATPopulation.connIDs.set(cantorPair, NEATPopulation.connCounter);
+      newConnection.id = NEATPopulation.connCounter;
+    }
+  }
+  public static addNode(node1ID: number, node2ID: number, newNode: Node): void {
+    let cantorPair = pairing(node1ID, node2ID);
+    if (NEATPopulation.nodeIDs.has(cantorPair)) {
+      newNode.id = NEATPopulation.nodeIDs.get(cantorPair) ?? -1;
+    } else {
+      NEATPopulation.nodeCounter++;
+      NEATPopulation.nodeIDs.set(cantorPair, NEATPopulation.nodeCounter);
+      newNode.id = NEATPopulation.nodeCounter;
+    }
   }
 
   /**
@@ -105,7 +129,23 @@ export class NEATPopulation extends Population {
       activations: ActivationType[];
     }
   ): void {
-    throw new Error("Not implemented!");
+    this.networks.forEach((network) => {
+      if (Math.random() <= 0.7) {
+        new AddNodeMutation().mutate(network);
+      }
+      if (Math.random() <= 0.4) {
+        new AddConnectionMutation().mutate(network);
+      }
+      if (Math.random() <= 0.4) {
+        new ModWeightMutation().mutate(network);
+      }
+      if (Math.random() <= 0.4) {
+        new ModBiasMutation().mutate(network);
+      }
+    });
+
+    // copy the best networks over
+    this.species.forEach((species) => species.put(species.bestNetwork));
   }
 
   /**
@@ -169,23 +209,23 @@ export class NEATPopulation extends Population {
     template.nodes
       .filter((node) => node.isInputNode())
       .forEach((node) => {
+        NEATPopulation.nodeCounter++;
         nodeIDs.set(NEATPopulation.nodeCounter, NEATPopulation.nodeCounter);
         node.id = NEATPopulation.nodeCounter;
-        NEATPopulation.nodeCounter++;
       });
     template.nodes
       .filter((node) => node.isOutputNode())
       .forEach((node) => {
+        NEATPopulation.nodeCounter++;
         nodeIDs.set(NEATPopulation.nodeCounter, NEATPopulation.nodeCounter);
         node.id = NEATPopulation.nodeCounter;
-        NEATPopulation.nodeCounter++;
       });
     template.nodes
       .filter((node) => node.isHiddenNode())
       .forEach((node) => {
+        NEATPopulation.nodeCounter++;
         nodeIDs.set(NEATPopulation.nodeCounter, NEATPopulation.nodeCounter);
         node.id = NEATPopulation.nodeCounter;
-        NEATPopulation.nodeCounter++;
       });
     return nodeIDs;
   }
@@ -195,9 +235,9 @@ export class NEATPopulation extends Population {
 
     const connIDs = new Map<number, number>();
     template.connections.forEach((connection) => {
+      NEATPopulation.connCounter++;
       connIDs.set(pairing(connection.from.id, connection.to.id), NEATPopulation.connCounter);
       connection.id = NEATPopulation.connCounter;
-      NEATPopulation.connCounter++;
     });
     return connIDs;
   }
@@ -276,9 +316,6 @@ export class NEATPopulation extends Population {
     const averageSum = this.sumOfAvgAdjustedFitnessScores();
     const newPopulation: Network[] = [];
     for (const species of this.species) {
-      // copy the champion
-      if (species.size() >= 5) newPopulation.push(species.bestNetwork);
-
       // calculate the number of children from this species
       const avgAdjustedScore = species.getAvgAdjustedScore();
       const numChildren: number = Math.floor((avgAdjustedScore / averageSum) * this.populationSize - 1);
@@ -287,8 +324,8 @@ export class NEATPopulation extends Population {
         newPopulation.push(species.breed(selection));
       }
     }
-    // fill up the population
-    while (newPopulation.length < this.populationSize) {
+    // fill up the population leave one free for the champions
+    while (newPopulation.length < this.populationSize - 1) {
       newPopulation.push(this.species[0].breed(selection));
     }
     // reset species
