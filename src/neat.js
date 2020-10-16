@@ -460,7 +460,7 @@ const Neat = function(inputs, outputs, dataset, options) {
 
     // Elitism, assumes population is sorted by fitness
     const elitists = []
-    for (let i = 0; i < self.elitism; i++) elitists.push(population[i].clone())
+    for (let i = 0; i < self.elitism; i++) elitists.unshift(population[i].clone())
 
     // Provenance
     const new_population = []
