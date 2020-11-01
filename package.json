@@ -15,17 +15,17 @@
   "scripts": {
     "deploy:src": "webpack",
     "deploy:docs": "typedoc --options typedoc.json",
+    "pretest": "tsc --build --clean && tsc",
     "test": "mocha --recursive build/test/",
-    "check": "npm run check:src && npm run check:test && npm run lint:check",
+    "posttest": "npm run check",
+    "check": "npm run check:src && npm run check:test && npm run lint",
     "check:src": "prettier --check \"./src/**/*.ts\"",
     "check:test": "prettier --check \"./test/**/*.ts\"",
     "fix": "npm run fix:src && npm run fix:test",
     "fix:src": "prettier --write \"./src/**/*.ts\"",
     "fix:test": "prettier --write \"./test/**/*.ts\"",
-    "lint:check": "tslint -c ./tslint.json 'src/**/*.ts'",
+    "lint": "tslint -c ./tslint.json 'src/**/*.ts'",
     "lint:fix": "tslint -c ./tslint.json 'src/**/*.ts' --fix",
-    "pretest": "tsc",
-    "posttest": "npm run check",
     "prepublish": "tsc"
   },
   "husky": {
@@ -34,7 +34,7 @@
     }
   },
   "lint-staged": {
-    "**/*": "npm run fix"
+    "src/**/*": "npm run fix"
   },
   "repository": {
     "type": "git",

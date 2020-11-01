@@ -76,6 +76,8 @@ export class Connection {
   public static fromJSON(json: ConnectionJSON, nodes: Node[]): Connection {
     const connection: Connection = nodes[json.fromIndex].connect(nodes[json.toIndex], json.weight);
 
+    connection.id = json.id;
+
     json.xTraces?.forEach((xTraceValue: number, xTraceNodeIndex: number) => {
       connection.xTrace.set(nodes[xTraceNodeIndex], xTraceValue);
     });
@@ -98,6 +100,7 @@ export class Connection {
       xTracesTransformed = null;
     }
     return {
+      id: this.id,
       fromIndex: this.from.index,
       toIndex: this.to.index,
       gateNodeIndex: this.gateNode === null ? null : this.gateNode.index,
@@ -111,5 +114,12 @@ export class Connection {
    */
   public getInnovationID(): number {
     return pairing(this.from.index, this.to.index);
+  }
+
+  /**
+   * Clones this connection.
+   */
+  public clone(nodes: Node[]): Connection {
+    return Connection.fromJSON(this.toJSON(), nodes);
   }
 }

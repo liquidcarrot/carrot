@@ -3,6 +3,7 @@
  */
 
 export interface ConnectionJSON {
+  readonly id: number;
   /**
    * The connection weight
    */

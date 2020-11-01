@@ -490,6 +490,7 @@ export class Node {
       squash: this.squash.name,
       mask: this.mask,
       index: this.index,
+      id: this.id,
       errorResponsibility: this.errorResponsibility,
       errorProjected: this.errorProjected,
       errorGated: this.errorGated,
@@ -541,5 +542,12 @@ export class Node {
   public setActivationType(activation: ActivationType): Node {
     this.squash = activation;
     return this;
+  }
+
+  /**
+   * Clones this node.
+   */
+  public clone(): Node {
+    return new Node().fromJSON(this.toJSON());
   }
 }

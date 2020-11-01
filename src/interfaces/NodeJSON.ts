@@ -24,6 +24,7 @@ export interface NodeJSON {
    * The index of this node
    */
   readonly index: number;
+  readonly id: number;
   readonly errorResponsibility: number;
   readonly errorProjected: number;
   readonly errorGated: number;
