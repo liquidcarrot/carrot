@@ -49,8 +49,12 @@ export class Species {
    */
   public isCompatible(network: Network): boolean {
     return (
-      network.distance(this.representative, NEATPopulation.c1, NEATPopulation.c2, NEATPopulation.c3) <
-      NEATPopulation.distanceThreshold
+      Network.distance(
+        network,
+        this.representative,
+        NEATPopulation.excessCoefficient,
+        NEATPopulation.weightDiffCoefficient
+      ) < NEATPopulation.distanceThreshold
     );
   }
 

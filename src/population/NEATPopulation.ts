@@ -14,9 +14,8 @@ export class NEATPopulation extends Population {
   public static connCounter: number = -1;
   public static nodeIDs: Map<number, number>;
   public static connIDs: Map<number, number>;
-  public static c1: number;
-  public static c2: number;
-  public static c3: number;
+  public static excessCoefficient: number;
+  public static weightDiffCoefficient: number;
   public static distanceThreshold: number;
   private static survivorRate: number;
   private static speciesStagnationLimit: number;
@@ -31,9 +30,8 @@ export class NEATPopulation extends Population {
       template?: Network | undefined;
       inputSize?: number;
       outputSize?: number;
-      c1?: number;
-      c2?: number;
-      c3?: number;
+      excessCoefficient?: number;
+      weightDiffCoefficient?: number;
       survivorRate?: number;
       speciesDistanceThreshold?: number;
       speciesStagnationLimit?: number;
@@ -44,9 +42,8 @@ export class NEATPopulation extends Population {
     this.stagnation = 0;
     this.species = [];
     this.highScore = -Infinity;
-    NEATPopulation.c1 = options.c1 ?? 1;
-    NEATPopulation.c2 = options.c1 ?? 1;
-    NEATPopulation.c3 = options.c1 ?? 1;
+    NEATPopulation.excessCoefficient = options.excessCoefficient ?? 1;
+    NEATPopulation.weightDiffCoefficient = options.weightDiffCoefficient ?? 1;
     NEATPopulation.survivorRate = options.survivorRate ?? 0.5;
     NEATPopulation.distanceThreshold = options.speciesDistanceThreshold ?? 2;
     NEATPopulation.speciesStagnationLimit = options.speciesStagnationLimit ?? 15;
@@ -63,6 +60,7 @@ export class NEATPopulation extends Population {
       newConnection.id = NEATPopulation.connCounter;
     }
   }
+
   public static addNode(node1ID: number, node2ID: number, newNode: Node): void {
     let cantorPair = pairing(node1ID, node2ID);
     if (NEATPopulation.nodeIDs.has(cantorPair)) {
