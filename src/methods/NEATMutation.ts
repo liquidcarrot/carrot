@@ -7,13 +7,19 @@ import { NodeType } from "../enums/NodeType";
 import { NEATPopulation } from "../population/NEATPopulation";
 
 export class AddNodeMutation extends Mutation {
-  mutate(
+  /**
+   * Mutates a given network.
+   *
+   * @param network the network to mutate
+   * @param options you can set the max amount of nodes, connections and gates
+   */
+  public mutate(
     network: Network,
     options?: { maxNodes?: number; maxConnections?: number; maxGates?: number; allowedActivations?: ActivationType[] }
   ): void {
-    let addingNodeToBackwardConnection = true;
-    let connections = addingNodeToBackwardConnection
-      ? Array.from(network.connections).filter((conn) => conn.from != conn.to)
+    const addingNodeToBackwardConnection = true; // TODO
+    const connections = addingNodeToBackwardConnection
+      ? Array.from(network.connections).filter((conn) => conn.from !== conn.to)
       : Array.from(network.connections).filter((conn) => conn.from.index < conn.to.index);
 
     if (connections.length === 0) return;
@@ -22,8 +28,8 @@ export class AddNodeMutation extends Mutation {
     const randomConnection = pickRandom(connections);
 
     // get from and to node
-    let node1 = randomConnection.from;
-    let node2 = randomConnection.to;
+    const node1 = randomConnection.from;
+    const node2 = randomConnection.to;
 
     // create new node and set id by pairing the from and to ids
     const newNode = new Node(NodeType.HIDDEN);
@@ -38,7 +44,13 @@ export class AddNodeMutation extends Mutation {
 }
 
 export class AddConnectionMutation extends Mutation {
-  mutate(
+  /**
+   * Mutates a given network.
+   *
+   * @param network the network to mutate
+   * @param options you can set the max amount of nodes, connections and gates
+   */
+  public mutate(
     network: Network,
     options?: { maxNodes?: number; maxConnections?: number; maxGates?: number; allowedActivations?: ActivationType[] }
   ): void {
@@ -53,12 +65,12 @@ export class AddConnectionMutation extends Mutation {
       });
     });
 
-    let nodes = pickRandom(possible);
+    const nodes = pickRandom(possible);
     if (nodes.length === 0) return;
 
     // get nodes
-    let node1 = nodes[0];
-    let node2 = nodes[1];
+    const node1 = nodes[0];
+    const node2 = nodes[1];
 
     // create new connection
     const newConnection = network.connect(node1, node2, randDouble(-1, 1));
@@ -67,7 +79,13 @@ export class AddConnectionMutation extends Mutation {
 }
 
 export class ModWeightMutation extends Mutation {
-  mutate(
+  /**
+   * Mutates a given network.
+   *
+   * @param network the network to mutate
+   * @param options you can set the max amount of nodes, connections and gates
+   */
+  public mutate(
     network: Network,
     options?: { maxNodes?: number; maxConnections?: number; maxGates?: number; allowedActivations?: ActivationType[] }
   ): void {
@@ -83,7 +101,13 @@ export class ModWeightMutation extends Mutation {
 }
 
 export class ModBiasMutation extends Mutation {
-  mutate(
+  /**
+   * Mutates a given network.
+   *
+   * @param network the network to mutate
+   * @param options you can set the max amount of nodes, connections and gates
+   */
+  public mutate(
     network: Network,
     options?: { maxNodes?: number; maxConnections?: number; maxGates?: number; allowedActivations?: ActivationType[] }
   ): void {

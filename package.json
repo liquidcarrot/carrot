@@ -16,7 +16,7 @@
     "deploy:src": "webpack",
     "deploy:docs": "typedoc --options typedoc.json",
     "pretest": "tsc --build --clean && tsc",
-    "test": "mocha --recursive build/test/",
+    "test": "mocha build/test/**/*",
     "posttest": "npm run check",
     "check": "npm run check:src && npm run check:test && npm run lint",
     "check:src": "prettier --check \"./src/**/*.ts\"",

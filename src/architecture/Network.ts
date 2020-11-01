@@ -1,6 +1,6 @@
 import { ActivationType } from "activations";
 import { lossType, MSELoss } from "../methods/Loss";
-import { pickRandom, randBoolean, removeFromArray, shuffle, randInt, pairing } from "../utils/Utils";
+import { pairing, pickRandom, randBoolean, randInt, removeFromArray, shuffle } from "../utils/Utils";
 import { Connection } from "./Connection";
 import { Node } from "./Node";
 import { NodeType } from "../enums/NodeType";
@@ -280,12 +280,12 @@ export class Network {
    * @returns {Network} New network created from mixing parent networks
    */
   public static crossover(genome1: Network, genome2: Network): Network {
-    let child = new Network(genome1.inputSize, genome1.outputSize, true);
+    const child = new Network(genome1.inputSize, genome1.outputSize, true);
     child.nodes = [];
     child.connections.clear();
-    let childConnections: Connection[] = [];
+    const childConnections: Connection[] = [];
     genome1.connections.forEach((conn1) => {
-      let conn2 = genome1.matchingGene(genome2, conn1.id);
+      const conn2 = genome1.matchingGene(genome2, conn1.id);
       if (conn2 != null) {
         if (randBoolean()) childConnections.push(conn1);
         else childConnections.push(conn2);
@@ -320,20 +320,25 @@ export class Network {
     excessCoefficient: number,
     weightDiffCoefficient: number
   ): number {
-    let excessAndDisjoint = this.getExcessDisjoint(genome1, genome2);
-    let averageWeightDiff = this.averageWeightDiff(genome1, genome2);
+    const excessAndDisjoint = this.getExcessDisjoint(genome1, genome2);
+    const averageWeightDiff = this.averageWeightDiff(genome1, genome2);
 
     let numNodes = genome1.connections.size - 20;
     if (numNodes < 1) numNodes = 1; // large genome normalisation
 
-    return (excessCoefficient * excessAndDisjoint) / numNodes + weightDiffCoefficient * averageWeightDiff; //compatibility formula
+    return (excessCoefficient * excessAndDisjoint) / numNodes + weightDiffCoefficient * averageWeightDiff;
   }
 
-  public static getExcessDisjoint(genome1: Network, genome2: Network) {
+  /**
+   * Get number of excess and disjoint genes
+   * @param genome1
+   * @param genome2
+   */
+  public static getExcessDisjoint(genome1: Network, genome2: Network): number {
     let matching = 0;
     genome1.connections.forEach((conn1: Connection) => {
       genome2.connections.forEach((conn2: Connection) => {
-        if (conn1.id == conn2.id) {
+        if (conn1.id === conn2.id) {
           matching++;
           return;
         }
@@ -342,15 +347,20 @@ export class Network {
     return genome1.connections.size + genome2.connections.size - 2 * matching;
   }
 
-  public static averageWeightDiff(genome1: Network, genome2: Network) {
-    if (genome1.connections.size == 0 || genome2.connections.size == 0) return 0;
+  /**
+   * Get weight diff of matching genes
+   * @param genome1
+   * @param genome2
+   */
+  public static averageWeightDiff(genome1: Network, genome2: Network): number {
+    if (genome1.connections.size === 0 || genome2.connections.size === 0) return 0;
 
     let matching = 0;
     let totalDiff = 0;
 
     genome1.connections.forEach((conn1: Connection) => {
       genome2.connections.forEach((conn2: Connection) => {
-        if (conn1.id == conn2.id) {
+        if (conn1.id === conn2.id) {
           matching++;
           totalDiff += Math.abs(conn1.weight - conn2.weight);
           return;
@@ -932,12 +942,12 @@ export class Network {
 
   private matchingGene(genome: Network, id: number): Connection | null {
     genome.connections.forEach((conn) => {
-      if (conn.id == id) return conn;
+      if (conn.id === id) return conn;
     });
     return null;
   }
 
-  private connectNodes() {
+  private connectNodes(): void {
     this.nodes.forEach((node) => {
       node.outgoing.clear();
       node.incoming.clear();

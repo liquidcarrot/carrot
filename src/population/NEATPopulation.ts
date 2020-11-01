@@ -50,6 +50,12 @@ export class NEATPopulation extends Population {
     NEATPopulation.populationStagnationLimit = options.populationStagnationLimit ?? 15;
   }
 
+  /**
+   * Add a connection
+   * @param node1ID
+   * @param node2ID
+   * @param newConnection
+   */
   public static addConnection(node1ID: number, node2ID: number, newConnection: Connection): void {
     const cantorPair = pairing(node1ID, node2ID);
     if (NEATPopulation.connIDs.has(cantorPair)) {
@@ -61,8 +67,14 @@ export class NEATPopulation extends Population {
     }
   }
 
+  /**
+   * Add a node
+   * @param node1ID
+   * @param node2ID
+   * @param newNode
+   */
   public static addNode(node1ID: number, node2ID: number, newNode: Node): void {
-    let cantorPair = pairing(node1ID, node2ID);
+    const cantorPair = pairing(node1ID, node2ID);
     if (NEATPopulation.nodeIDs.has(cantorPair)) {
       newNode.id = NEATPopulation.nodeIDs.get(cantorPair) ?? -1;
     } else {

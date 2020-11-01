@@ -1,10 +1,10 @@
-import { expect } from "chai";
-import { describe, it } from "mocha";
-import { Network } from "../../src/architecture/Network";
-import { TrainOptions } from "../../src/interfaces/TrainOptions";
-import { InstinctPopulation } from "../../src/population/InstinctPopulation";
-import { EvolveOptions } from "../../src/interfaces/EvolveOptions";
-import { NEATPopulation } from "../../src/population/NEATPopulation";
+import {expect} from "chai";
+import {describe, it} from "mocha";
+import {Network} from "../../src/architecture/Network";
+import {TrainOptions} from "../../src/interfaces/TrainOptions";
+import {InstinctPopulation} from "../../src/population/InstinctPopulation";
+import {EvolveOptions} from "../../src/interfaces/EvolveOptions";
+import {NEATPopulation} from "../../src/population/NEATPopulation";
 
 describe("Logic Gates", () => {
   const data: {
@@ -17,44 +17,44 @@ describe("Logic Gates", () => {
     NAND: { output: number[]; input: number[] }[];
   } = {
     NOT: [
-      { input: [0], output: [1] },
-      { input: [1], output: [0] },
+      {input: [0], output: [1]},
+      {input: [1], output: [0]},
     ],
     AND: [
-      { input: [0, 0], output: [0] },
-      { input: [0, 1], output: [0] },
-      { input: [1, 0], output: [0] },
-      { input: [1, 1], output: [1] },
+      {input: [0, 0], output: [0]},
+      {input: [0, 1], output: [0]},
+      {input: [1, 0], output: [0]},
+      {input: [1, 1], output: [1]},
     ],
     OR: [
-      { input: [0, 0], output: [0] },
-      { input: [0, 1], output: [1] },
-      { input: [1, 0], output: [1] },
-      { input: [1, 1], output: [1] },
+      {input: [0, 0], output: [0]},
+      {input: [0, 1], output: [1]},
+      {input: [1, 0], output: [1]},
+      {input: [1, 1], output: [1]},
     ],
     NAND: [
-      { input: [0, 0], output: [1] },
-      { input: [0, 1], output: [1] },
-      { input: [1, 0], output: [1] },
-      { input: [1, 1], output: [0] },
+      {input: [0, 0], output: [1]},
+      {input: [0, 1], output: [1]},
+      {input: [1, 0], output: [1]},
+      {input: [1, 1], output: [0]},
     ],
     NOR: [
-      { input: [0, 0], output: [1] },
-      { input: [0, 1], output: [0] },
-      { input: [1, 0], output: [0] },
-      { input: [1, 1], output: [0] },
+      {input: [0, 0], output: [1]},
+      {input: [0, 1], output: [0]},
+      {input: [1, 0], output: [0]},
+      {input: [1, 1], output: [0]},
     ],
     XOR: [
-      { input: [0, 0], output: [0] },
-      { input: [0, 1], output: [1] },
-      { input: [1, 0], output: [1] },
-      { input: [1, 1], output: [0] },
+      {input: [0, 0], output: [0]},
+      {input: [0, 1], output: [1]},
+      {input: [1, 0], output: [1]},
+      {input: [1, 1], output: [0]},
     ],
     XNOR: [
-      { input: [0, 0], output: [1] },
-      { input: [0, 1], output: [0] },
-      { input: [1, 0], output: [0] },
-      { input: [1, 1], output: [1] },
+      {input: [0, 0], output: [1]},
+      {input: [0, 1], output: [0]},
+      {input: [1, 0], output: [0]},
+      {input: [1, 1], output: [1]},
     ],
   };
 
@@ -88,7 +88,7 @@ describe("Logic Gates", () => {
     expect(final).to.be.at.most(initial);
   });
 
-  it.skip("[NOT] evolve neat population", function (): void {
+  it("[NOT] evolve neat population", function (): void {
     let population: NEATPopulation = new NEATPopulation(100, {
       inputSize: 1,
       outputSize: 1,
@@ -136,7 +136,7 @@ describe("Logic Gates", () => {
     expect(final).to.be.at.most(initial);
   });
 
-  it.skip("[AND] evolve neat population", function (): void {
+  it("[AND] evolve neat population", function (): void {
     let population: NEATPopulation = new NEATPopulation(100, {
       inputSize: 2,
       outputSize: 1,
@@ -184,7 +184,7 @@ describe("Logic Gates", () => {
     expect(final).to.be.at.most(initial);
   });
 
-  it.skip("[OR] evolve neat population", function (): void {
+  it("[OR] evolve neat population", function (): void {
     let population: NEATPopulation = new NEATPopulation(100, {
       inputSize: 2,
       outputSize: 1,
@@ -232,7 +232,7 @@ describe("Logic Gates", () => {
     expect(final).to.be.at.most(initial);
   });
 
-  it.skip("[NAND] evolve neat population", function (): void {
+  it("[NAND] evolve neat population", function (): void {
     let population: NEATPopulation = new NEATPopulation(100, {
       inputSize: 2,
       outputSize: 1,
@@ -280,7 +280,7 @@ describe("Logic Gates", () => {
     expect(final).to.be.at.most(initial);
   });
 
-  it.skip("[NOR] evolve neat population", function (): void {
+  it("[NOR] evolve neat population", function (): void {
     let population: NEATPopulation = new NEATPopulation(100, {
       inputSize: 2,
       outputSize: 1,
@@ -328,7 +328,7 @@ describe("Logic Gates", () => {
     expect(final).to.be.at.most(initial);
   });
 
-  it.skip("[XOR] evolve neat population", function (): void {
+  it("[XOR] evolve neat population", function (): void {
     let population: NEATPopulation = new NEATPopulation(100, {
       inputSize: 2,
       outputSize: 1,
@@ -376,7 +376,7 @@ describe("Logic Gates", () => {
     expect(final).to.be.at.most(initial);
   });
 
-  it.skip("[XNOR] evolve neat population", function (): void {
+  it("[XNOR] evolve neat population", function (): void {
     let population: NEATPopulation = new NEATPopulation(100, {
       inputSize: 2,
       outputSize: 1,
