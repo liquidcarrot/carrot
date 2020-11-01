@@ -1,6 +1,6 @@
 import { ActivationType } from "activations";
 import { lossType, MSELoss } from "../methods/Loss";
-import { pickRandom, randBoolean, removeFromArray, shuffle } from "../utils/Utils";
+import { pickRandom, randBoolean, removeFromArray, shuffle, randInt, pairing } from "../utils/Utils";
 import { Connection } from "./Connection";
 import { Node } from "./Node";
 import { NodeType } from "../enums/NodeType";
@@ -101,6 +101,170 @@ export class Network {
       }
     });
     return network;
+  }
+
+  /**
+   * Create an offspring from two parent networks.
+   *
+   * Networks are not required to have the same size, however input and output size should be the same!
+   *
+   * @todo Add custom [crossover](crossover) method customization
+   *
+   * @param {Network} network1 First parent network
+   * @param {Network} network2 Second parent network
+   *
+   * @returns {Network} New network created from mixing parent networks
+   */
+  public static crossoverInstinct(network1: Network, network2: Network): Network {
+    if (network1.inputSize !== network2.inputSize || network1.outputSize !== network2.outputSize) {
+      throw new Error("Networks don`t have the same input/output size!");
+    }
+
+    // Initialise offspring
+    const offspring: Network = new Network(network1.inputSize, network1.outputSize, true);
+    offspring.connections.clear(); // clear
+    offspring.nodes = []; // clear
+
+    // Save scores and create a copy
+    const score1: number = network1.score ?? 0;
+    const score2: number = network2.score ?? 0;
+
+    // Determine offspring node size
+    let offspringSize: number;
+    if (score1 === score2) {
+      const max: number = Math.max(network1.nodes.length, network2.nodes.length);
+      const min: number = Math.min(network1.nodes.length, network2.nodes.length);
+      offspringSize = randInt(min, max + 1); // [min,max]
+    } else if (score1 > score2) {
+      offspringSize = network1.nodes.length;
+    } else {
+      offspringSize = network2.nodes.length;
+    }
+
+    const inputSize: number = network1.inputSize;
+    const outputSize: number = network1.outputSize;
+
+    // set node indices
+    for (let i = 0; i < network1.nodes.length; i++) {
+      network1.nodes[i].index = i;
+    }
+
+    // set node indices
+    for (let i = 0; i < network2.nodes.length; i++) {
+      network2.nodes[i].index = i;
+    }
+
+    // Assign nodes from parents to offspring
+    for (let i = 0; i < offspringSize; i++) {
+      let chosenNode: Node;
+      let chosenNodeType: NodeType | null = null;
+
+      // decide what type of node is needed first check for input and output nodes and fill up with hidden nodes
+      if (i < inputSize) {
+        // pick input node
+        chosenNodeType = NodeType.INPUT;
+        const sourceNetwork: Network = randBoolean() ? network1 : network2;
+        let inputNumber = -1;
+        let j = -1;
+        while (inputNumber < i) {
+          if (j++ >= sourceNetwork.nodes.length) {
+            throw RangeError("something is wrong with the size of the input");
+          }
+          if (sourceNetwork.nodes[j].isInputNode()) {
+            inputNumber++;
+          }
+        }
+        chosenNode = sourceNetwork.nodes[j];
+      } else if (i < inputSize + outputSize) {
+        // pick output node
+        chosenNodeType = NodeType.OUTPUT;
+        const sourceNetwork: Network = randBoolean() ? network1 : network2;
+        let outputNumber = -1;
+        let j = -1;
+        while (outputNumber < i - inputSize) {
+          j++;
+          if (j >= sourceNetwork.nodes.length) {
+            throw RangeError("something is wrong with the size of the output");
+          }
+          if (sourceNetwork.nodes[j].isOutputNode()) {
+            outputNumber++;
+          }
+        }
+        chosenNode = sourceNetwork.nodes[j];
+      } else {
+        // pick hidden node
+        chosenNodeType = NodeType.HIDDEN;
+        let sourceNetwork: Network;
+        if (i >= network1.nodes.length) {
+          sourceNetwork = network2;
+        } else if (i >= network2.nodes.length) {
+          sourceNetwork = network1;
+        } else {
+          sourceNetwork = randBoolean() ? network1 : network2;
+        }
+        chosenNode = pickRandom(sourceNetwork.nodes);
+      }
+
+      const newNode: Node = new Node(chosenNodeType);
+      newNode.bias = chosenNode.bias;
+      newNode.squash = chosenNode.squash;
+      offspring.nodes.push(newNode);
+    }
+
+    // Create arrays of connection genes
+    const n1connections: (ConnectionJSON | undefined)[] = [];
+    const n2connections: (ConnectionJSON | undefined)[] = [];
+
+    // Add the connections of network 1
+    network1.connections.forEach((connection) => {
+      n1connections[pairing(connection.from.index, connection.to.index)] = connection.toJSON();
+    });
+    // Add the connections of network 2
+    network2.connections.forEach((connection) => {
+      n2connections[pairing(connection.from.index, connection.to.index)] = connection.toJSON();
+    });
+
+    // Split common conn genes from disjoint or excess conn genes
+    const connections: (ConnectionJSON | undefined)[] = [];
+    const keys1: string[] = Object.keys(n1connections);
+    const keys2: string[] = Object.keys(n2connections);
+    for (let i: number = keys1.length - 1; i >= 0; i--) {
+      if (n2connections[parseInt(keys1[i])] !== undefined) {
+        connections.push(randBoolean() ? n1connections[parseInt(keys1[i])] : n2connections[parseInt(keys1[i])]);
+
+        n2connections[parseInt(keys1[i])] = undefined;
+      } else if (score1 >= score2) {
+        connections.push(n1connections[parseInt(keys1[i])]);
+      }
+    }
+
+    // Excess/disjoint gene
+    if (score2 >= score1) {
+      keys2
+        .map((key) => parseInt(key)) // convert to numbers
+        .map((key) => n2connections[key]) // get the connection
+        .filter((conn) => conn !== undefined) // filter out undefined connections
+        .forEach((conn) => connections.push(conn)); // add the filtered connections
+    }
+
+    // Add common conn genes uniformly
+    connections.forEach((connectionJSON) => {
+      if (
+        connectionJSON !== undefined &&
+        connectionJSON.toIndex < offspringSize &&
+        connectionJSON.fromIndex < offspringSize
+      ) {
+        const from: Node = offspring.nodes[connectionJSON.fromIndex];
+        const to: Node = offspring.nodes[connectionJSON.toIndex];
+        const connection: Connection = offspring.connect(from, to, connectionJSON.weight);
+
+        if (connectionJSON.gateNodeIndex !== null && connectionJSON.gateNodeIndex < offspringSize) {
+          offspring.addGate(offspring.nodes[connectionJSON.gateNodeIndex], connection);
+        }
+      }
+    });
+
+    return offspring;
   }
 
   /**

@@ -74,6 +74,6 @@ export class InstinctPopulation extends Population {
   private getOffspring(selection: Selection): Network {
     const parent1 = selection.select(this.networks);
     const parent2 = selection.select(this.networks);
-    return Network.crossover(parent1, parent2);
+    return Network.crossoverInstinct(parent1, parent2);
   }
 }
