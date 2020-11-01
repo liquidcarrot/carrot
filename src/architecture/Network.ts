@@ -1,7 +1,6 @@
 import { ActivationType } from "activations";
-import * as TimSort from "timsort";
 import { lossType, MSELoss } from "../methods/Loss";
-import { pairing, pickRandom, randBoolean, randInt, removeFromArray, shuffle } from "../utils/Utils";
+import { pickRandom, randBoolean, removeFromArray, shuffle } from "../utils/Utils";
 import { Connection } from "./Connection";
 import { Node } from "./Node";
 import { NodeType } from "../enums/NodeType";
@@ -111,161 +110,91 @@ export class Network {
    *
    * @todo Add custom [crossover](crossover) method customization
    *
-   * @param {Network} network1 First parent network
-   * @param {Network} network2 Second parent network
+   * @param {Network} genome1 First parent network (should be the fitter one)
+   * @param {Network} genome2 Second parent network
    *
    * @returns {Network} New network created from mixing parent networks
    */
-  public static crossover(network1: Network, network2: Network): Network {
-    if (network1.inputSize !== network2.inputSize || network1.outputSize !== network2.outputSize) {
-      throw new Error("Networks don`t have the same input/output size!");
-    }
-
-    // Initialise offspring
-    const offspring: Network = new Network(network1.inputSize, network1.outputSize, true);
-    offspring.connections.clear(); // clear
-    offspring.nodes = []; // clear
-
-    // Save scores and create a copy
-    const score1: number = network1.score ?? 0;
-    const score2: number = network2.score ?? 0;
-
-    // Determine offspring node size
-    let offspringSize: number;
-    if (score1 === score2) {
-      const max: number = Math.max(network1.nodes.length, network2.nodes.length);
-      const min: number = Math.min(network1.nodes.length, network2.nodes.length);
-      offspringSize = randInt(min, max + 1); // [min,max]
-    } else if (score1 > score2) {
-      offspringSize = network1.nodes.length;
-    } else {
-      offspringSize = network2.nodes.length;
-    }
-
-    const inputSize: number = network1.inputSize;
-    const outputSize: number = network1.outputSize;
-
-    // set node indices
-    for (let i = 0; i < network1.nodes.length; i++) {
-      network1.nodes[i].index = i;
-    }
-
-    // set node indices
-    for (let i = 0; i < network2.nodes.length; i++) {
-      network2.nodes[i].index = i;
-    }
-
-    // Assign nodes from parents to offspring
-    for (let i = 0; i < offspringSize; i++) {
-      let chosenNode: Node;
-      let chosenNodeType: NodeType | null = null;
-
-      // decide what type of node is needed first check for input and output nodes and fill up with hidden nodes
-      if (i < inputSize) {
-        // pick input node
-        chosenNodeType = NodeType.INPUT;
-        const sourceNetwork: Network = randBoolean() ? network1 : network2;
-        let inputNumber = -1;
-        let j = -1;
-        while (inputNumber < i) {
-          if (j++ >= sourceNetwork.nodes.length) {
-            throw RangeError("something is wrong with the size of the input");
-          }
-          if (sourceNetwork.nodes[j].isInputNode()) {
-            inputNumber++;
-          }
-        }
-        chosenNode = sourceNetwork.nodes[j];
-      } else if (i < inputSize + outputSize) {
-        // pick output node
-        chosenNodeType = NodeType.OUTPUT;
-        const sourceNetwork: Network = randBoolean() ? network1 : network2;
-        let outputNumber = -1;
-        let j = -1;
-        while (outputNumber < i - inputSize) {
-          j++;
-          if (j >= sourceNetwork.nodes.length) {
-            throw RangeError("something is wrong with the size of the output");
-          }
-          if (sourceNetwork.nodes[j].isOutputNode()) {
-            outputNumber++;
-          }
-        }
-        chosenNode = sourceNetwork.nodes[j];
+  public static crossover(genome1: Network, genome2: Network): Network {
+    let child = new Network(genome1.inputSize, genome1.outputSize, true);
+    child.nodes = [];
+    child.connections.clear();
+    let childConnections: Connection[] = [];
+    genome1.connections.forEach((conn1) => {
+      let conn2 = genome1.matchingGene(genome2, conn1.id);
+      if (conn2 != null) {
+        if (randBoolean()) childConnections.push(conn1);
+        else childConnections.push(conn2);
       } else {
-        // pick hidden node
-        chosenNodeType = NodeType.HIDDEN;
-        let sourceNetwork: Network;
-        if (i >= network1.nodes.length) {
-          sourceNetwork = network2;
-        } else if (i >= network2.nodes.length) {
-          sourceNetwork = network1;
-        } else {
-          sourceNetwork = randBoolean() ? network1 : network2;
+        childConnections.push(conn1);
+      }
+    });
+
+    genome1.nodes.forEach((node1) => {
+      child.nodes.push(node1.clone());
+    });
+
+    childConnections.forEach((conn) => {
+      child.connections.add(conn.clone(child.nodes));
+    });
+
+    child.connectNodes();
+
+    return child;
+  }
+
+  /**
+   * Distance function
+   * @param genome1 first network
+   * @param genome2 second network
+   * @param excessCoefficient
+   * @param weightDiffCoefficient
+   */
+  public static distance(
+    genome1: Network,
+    genome2: Network,
+    excessCoefficient: number,
+    weightDiffCoefficient: number
+  ): number {
+    let excessAndDisjoint = this.getExcessDisjoint(genome1, genome2);
+    let averageWeightDiff = this.averageWeightDiff(genome1, genome2);
+
+    let numNodes = genome1.connections.size - 20;
+    if (numNodes < 1) numNodes = 1; // large genome normalisation
+
+    return (excessCoefficient * excessAndDisjoint) / numNodes + weightDiffCoefficient * averageWeightDiff; //compatibility formula
+  }
+
+  public static getExcessDisjoint(genome1: Network, genome2: Network) {
+    let matching = 0;
+    genome1.connections.forEach((conn1: Connection) => {
+      genome2.connections.forEach((conn2: Connection) => {
+        if (conn1.id == conn2.id) {
+          matching++;
+          return;
         }
-        chosenNode = pickRandom(sourceNetwork.nodes);
-      }
-
-      const newNode: Node = new Node(chosenNodeType);
-      newNode.bias = chosenNode.bias;
-      newNode.squash = chosenNode.squash;
-      offspring.nodes.push(newNode);
-    }
-
-    // Create arrays of connection genes
-    const n1connections: (ConnectionJSON | undefined)[] = [];
-    const n2connections: (ConnectionJSON | undefined)[] = [];
-
-    // Add the connections of network 1
-    network1.connections.forEach((connection) => {
-      n1connections[pairing(connection.from.index, connection.to.index)] = connection.toJSON();
+      });
     });
-    // Add the connections of network 2
-    network2.connections.forEach((connection) => {
-      n2connections[pairing(connection.from.index, connection.to.index)] = connection.toJSON();
-    });
+    return genome1.connections.size + genome2.connections.size - 2 * matching;
+  }
 
-    // Split common conn genes from disjoint or excess conn genes
-    const connections: (ConnectionJSON | undefined)[] = [];
-    const keys1: string[] = Object.keys(n1connections);
-    const keys2: string[] = Object.keys(n2connections);
-    for (let i: number = keys1.length - 1; i >= 0; i--) {
-      if (n2connections[parseInt(keys1[i])] !== undefined) {
-        connections.push(randBoolean() ? n1connections[parseInt(keys1[i])] : n2connections[parseInt(keys1[i])]);
+  public static averageWeightDiff(genome1: Network, genome2: Network) {
+    if (genome1.connections.size == 0 || genome2.connections.size == 0) return 0;
 
-        n2connections[parseInt(keys1[i])] = undefined;
-      } else if (score1 >= score2) {
-        connections.push(n1connections[parseInt(keys1[i])]);
-      }
-    }
+    let matching = 0;
+    let totalDiff = 0;
 
-    // Excess/disjoint gene
-    if (score2 >= score1) {
-      keys2
-        .map((key) => parseInt(key)) // convert to numbers
-        .map((key) => n2connections[key]) // get the connection
-        .filter((conn) => conn !== undefined) // filter out undefined connections
-        .forEach((conn) => connections.push(conn)); // add the filtered connections
-    }
-
-    // Add common conn genes uniformly
-    connections.forEach((connectionJSON) => {
-      if (
-        connectionJSON !== undefined &&
-        connectionJSON.toIndex < offspringSize &&
-        connectionJSON.fromIndex < offspringSize
-      ) {
-        const from: Node = offspring.nodes[connectionJSON.fromIndex];
-        const to: Node = offspring.nodes[connectionJSON.toIndex];
-        const connection: Connection = offspring.connect(from, to, connectionJSON.weight);
-
-        if (connectionJSON.gateNodeIndex !== null && connectionJSON.gateNodeIndex < offspringSize) {
-          offspring.addGate(offspring.nodes[connectionJSON.gateNodeIndex], connection);
+    genome1.connections.forEach((conn1: Connection) => {
+      genome2.connections.forEach((conn2: Connection) => {
+        if (conn1.id == conn2.id) {
+          matching++;
+          totalDiff += Math.abs(conn1.weight - conn2.weight);
+          return;
         }
-      }
+      });
     });
-
-    return offspring;
+    if (matching === 0) return 100; // Prevent division by zero TODO: Should return something else
+    return totalDiff / matching;
   }
 
   /**
@@ -775,86 +704,6 @@ export class Network {
   }
 
   /**
-   * Distance function
-   * @param genome2 other network
-   * @param c1
-   * @param c2
-   * @param c3
-   */
-  public distance(genome2: Network, c1: number, c2: number, c3: number): number {
-    // set node indices
-    for (let i = 0; i < this.nodes.length; i++) {
-      this.nodes[i].index = i;
-    }
-
-    // set node indices
-    for (let i = 0; i < genome2.nodes.length; i++) {
-      genome2.nodes[i].index = i;
-    }
-
-    let indexG1 = 0;
-    let indexG2 = 0;
-
-    const connections1: Connection[] = Array.from(this.connections).filter((conn) => conn !== undefined);
-    const connections2: Connection[] = Array.from(genome2.connections).filter((conn) => conn !== undefined);
-
-    TimSort.sort(connections1, (a: Connection, b: Connection) => {
-      return a.getInnovationID() - b.getInnovationID();
-    });
-
-    TimSort.sort(connections2, (a: Connection, b: Connection) => {
-      return a.getInnovationID() - b.getInnovationID();
-    });
-
-    const highestInnovationID1: number = connections1[connections1.length - 1].getInnovationID();
-    const highestInnovationID2: number = connections2[connections2.length - 1].getInnovationID();
-    if (highestInnovationID1 < highestInnovationID2) {
-      return genome2.distance(this, c1, c2, c3);
-    }
-
-    let disjointGenes = 0;
-    let totalWeightDiff = 0;
-    let similarGenes = 0;
-
-    while (indexG1 < connections1.length && indexG2 < connections2.length) {
-      const gene1: Connection = connections1[indexG1];
-      const gene2: Connection = connections2[indexG2];
-
-      if (gene1 === undefined || gene2 === undefined) {
-        throw Error("HERE");
-      }
-
-      const in1: number = gene1.getInnovationID();
-      const in2: number = gene2.getInnovationID();
-
-      if (in1 === in2) {
-        // similarGenes
-        indexG1++;
-        indexG2++;
-        totalWeightDiff += Math.abs(gene1.weight - gene2.weight);
-        similarGenes++;
-      } else if (indexG1 > indexG2) {
-        // disjoint of b
-        indexG2++;
-        disjointGenes++;
-      } else {
-        // disjoint of a
-        indexG1++;
-        disjointGenes++;
-      }
-    }
-    totalWeightDiff /= similarGenes;
-    const excessGenes: number = this.connections.size - indexG1;
-
-    let N: number = Math.max(this.connections.size, genome2.connections.size);
-    if (N < 20) {
-      N = 1;
-    }
-
-    return (c1 * excessGenes) / N + (c2 * disjointGenes) / N + c3 * totalWeightDiff;
-  }
-
-  /**
    * Performs one training epoch and returns the error - this is a private function used in `self.train`
    *
    * @private
@@ -915,5 +764,23 @@ export class Network {
       errorSum += options.loss(correctOutput, output);
     }
     return errorSum / options.dataset.length;
+  }
+
+  private matchingGene(genome: Network, id: number): Connection | null {
+    genome.connections.forEach((conn) => {
+      if (conn.id == id) return conn;
+    });
+    return null;
+  }
+
+  private connectNodes() {
+    this.nodes.forEach((node) => {
+      node.outgoing.clear();
+      node.incoming.clear();
+    });
+    this.connections.forEach((conn) => {
+      conn.from.outgoing.add(conn);
+      conn.to.incoming.add(conn);
+    });
   }
 }
