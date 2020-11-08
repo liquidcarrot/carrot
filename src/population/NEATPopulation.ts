@@ -146,7 +146,7 @@ export class NEATPopulation extends Population {
       if (Math.random() <= 0.4) {
         new AddConnectionMutation().mutate(network);
       }
-      if (Math.random() <= 0.4) {
+      if (Math.random() <= 0.4 && network.connections.size > 0) {
         new ModWeightMutation().mutate(network);
       }
       if (Math.random() <= 0.4) {
