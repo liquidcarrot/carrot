@@ -17,6 +17,7 @@
     "deploy:docs": "typedoc --options typedoc.json",
     "pretest": "tsc --build --clean && tsc",
     "test": "mocha build/test/**/*",
+    "test:ts": "mocha -r ts-node/register test/**/*",
     "posttest": "npm run check",
     "check": "npm run check:src && npm run check:test && npm run lint",
     "check:src": "prettier --check \"./src/**/*.ts\"",
