@@ -176,6 +176,14 @@ export class NEATPopulation extends Population {
       else if (inputSize && outputSize) networks.push(new Network(inputSize, outputSize, true));
       else throw new Error("You must provide either a template network or input and output size!");
     }
+    networks.forEach((network) => {
+      for (let i = 0; i < network.nodes.length; i++) {
+        network.nodes[i].id = i;
+      }
+    });
+    NEATPopulation.nodeIDs = this.createNodeIDsFromTemplate(networks[0]);
+    NEATPopulation.connIDs = this.createConnIDsFromTemplate(networks[0]);
+
     return networks;
   }
 
