@@ -40,6 +40,8 @@ export class AddNodeMutation extends Mutation {
     const connection2 = network.connect(newNode, node2, randomConnection.weight);
     NEATPopulation.addConnection(node1.id, newNode.id, connection1);
     NEATPopulation.addConnection(newNode.id, node2.id, connection2);
+
+    randomConnection.disable();
   }
 }
 
@@ -111,7 +113,7 @@ export class ModBiasMutation extends Mutation {
     network: Network,
     options?: { maxNodes?: number; maxConnections?: number; maxGates?: number; allowedActivations?: ActivationType[] }
   ): void {
-    const randomNode = pickRandom(network.nodes);
+    const randomNode = pickRandom(network.nodes.filter((node) => !node.isInputNode()));
     if (Math.random() < 0.1) {
       randomNode.bias = randDouble(-1, 1);
     } else {

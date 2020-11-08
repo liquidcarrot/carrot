@@ -48,6 +48,7 @@ export class Connection {
    * Connection id for NEAT
    */
   public id: number;
+  public enabled: boolean;
 
   constructor(from: Node, to: Node, weight?: number, gateNode?: Node) {
     this.from = from;
@@ -59,6 +60,7 @@ export class Connection {
     this.deltaWeightsPrevious = 0;
     this.deltaWeightsTotal = 0;
     this.xTrace = new Map<Node, number>();
+    this.enabled = true;
 
     if (gateNode) {
       this.gateNode = gateNode;
@@ -121,5 +123,12 @@ export class Connection {
    */
   public clone(nodes: Node[]): Connection {
     return Connection.fromJSON(this.toJSON(), nodes);
+  }
+
+  /**
+   * Disables a connection
+   */
+  public disable(): void {
+    this.enabled = false;
   }
 }

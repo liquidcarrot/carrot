@@ -130,6 +130,7 @@ export class Node {
     this.squash = ALL_ACTIVATIONS.filter((activation) => activation.name === json.squash)[0];
     this.mask = json.mask;
     this.index = json.index;
+    this.id = json.id;
     this.errorResponsibility = json.errorResponsibility;
     this.errorProjected = json.errorProjected;
     this.errorGated = json.errorGated;
@@ -336,43 +337,49 @@ export class Node {
       this.errorResponsibility = this.errorProjected = target - this.activation;
     } else {
       this.errorProjected = 0;
-      this.outgoing.forEach((connection) => {
-        this.errorProjected += connection.to.errorResponsibility * connection.weight * connection.gain;
-      });
+      Array.from(this.outgoing)
+        .filter((conn) => conn.enabled)
+        .forEach((connection) => {
+          this.errorProjected += connection.to.errorResponsibility * connection.weight * connection.gain;
+        });
       this.errorProjected *= this.derivativeState;
 
       this.errorGated = 0;
-      this.gated.forEach((connection) => {
-        let influence: number;
-        if (connection.to.selfConnection.gateNode === this) {
-          // self connection is gated with this node
-          influence = connection.to.prevState + connection.weight * connection.from.activation;
-        } else {
-          influence = connection.weight * connection.from.activation;
-        }
+      Array.from(this.gated)
+        .filter((conn) => conn.enabled)
+        .forEach((connection) => {
+          let influence: number;
+          if (connection.to.selfConnection.gateNode === this) {
+            // self connection is gated with this node
+            influence = connection.to.prevState + connection.weight * connection.from.activation;
+          } else {
+            influence = connection.weight * connection.from.activation;
+          }
 
-        this.errorGated += connection.to.errorResponsibility * influence;
-      });
+          this.errorGated += connection.to.errorResponsibility * influence;
+        });
       this.errorGated *= this.derivativeState;
 
       this.errorResponsibility = this.errorProjected + this.errorGated;
     }
 
-    this.incoming.forEach((connection) => {
-      // calculate gradient
-      let gradient: number = this.errorProjected * connection.eligibility;
-      connection.xTrace.forEach(
-        (xTraceValue, xTraceNode) => (gradient += xTraceNode.errorResponsibility * xTraceValue)
-      );
+    Array.from(this.incoming)
+      .filter((conn) => conn.enabled)
+      .forEach((connection) => {
+        // calculate gradient
+        let gradient: number = this.errorProjected * connection.eligibility;
+        connection.xTrace.forEach(
+          (xTraceValue, xTraceNode) => (gradient += xTraceNode.errorResponsibility * xTraceValue)
+        );
 
-      connection.deltaWeightsTotal += (options.rate ?? 0.3) * gradient * this.mask;
-      if (options.update) {
-        connection.deltaWeightsTotal += (options.momentum ?? 0) * connection.deltaWeightsPrevious;
-        connection.weight += connection.deltaWeightsTotal;
-        connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
-        connection.deltaWeightsTotal = 0;
-      }
-    });
+        connection.deltaWeightsTotal += (options.rate ?? 0.3) * gradient * this.mask;
+        if (options.update) {
+          connection.deltaWeightsTotal += (options.momentum ?? 0) * connection.deltaWeightsPrevious;
+          connection.weight += connection.deltaWeightsTotal;
+          connection.deltaWeightsPrevious = connection.deltaWeightsTotal;
+          connection.deltaWeightsTotal = 0;
+        }
+      });
 
     this.deltaBiasTotal += options.rate * this.errorResponsibility;
     if (options.update) {
@@ -407,9 +414,11 @@ export class Node {
 
       this.state = this.selfConnection.gain * this.selfConnection.weight * this.state + this.bias;
 
-      this.incoming.forEach((conn) => {
-        this.state += conn.from.activation * conn.weight * conn.gain;
-      });
+      Array.from(this.incoming)
+        .filter((conn) => conn.enabled)
+        .forEach((conn) => {
+          this.state += conn.from.activation * conn.weight * conn.gain;
+        });
 
       this.activation = this.squash(this.state, false) * this.mask;
       this.derivativeState = this.squash(this.state, true);
@@ -419,46 +428,50 @@ export class Node {
       const influences: number[] = [];
 
       // Adjust 'gain' (to gated connections) & Build traces
-      this.gated.forEach((connection) => {
-        connection.gain = this.activation;
+      Array.from(this.gated)
+        .filter((conn) => conn.enabled)
+        .forEach((connection) => {
+          connection.gain = this.activation;
 
-        // Build traces
-        const index: number = nodes.indexOf(connection.to);
-        if (index > -1) {
-          // Node & influence exist
-          influences[index] += connection.weight * connection.from.activation;
-        } else {
-          // Add node & corresponding influence
-          nodes.push(connection.to);
-          if (connection.to.selfConnection.gateNode === this) {
-            influences.push(connection.weight * connection.from.activation + connection.to.prevState);
+          // Build traces
+          const index: number = nodes.indexOf(connection.to);
+          if (index > -1) {
+            // Node & influence exist
+            influences[index] += connection.weight * connection.from.activation;
           } else {
-            influences.push(connection.weight * connection.from.activation);
+            // Add node & corresponding influence
+            nodes.push(connection.to);
+            if (connection.to.selfConnection.gateNode === this) {
+              influences.push(connection.weight * connection.from.activation + connection.to.prevState);
+            } else {
+              influences.push(connection.weight * connection.from.activation);
+            }
           }
-        }
-      });
+        });
 
       // Forwarding 'xTrace' (to incoming connections)
-      this.incoming.forEach((connection) => {
-        connection.eligibility =
-          this.selfConnection.gain * this.selfConnection.weight * connection.eligibility +
-          connection.from.activation * connection.gain;
+      Array.from(this.incoming)
+        .filter((conn) => conn.enabled)
+        .forEach((connection) => {
+          connection.eligibility =
+            this.selfConnection.gain * this.selfConnection.weight * connection.eligibility +
+            connection.from.activation * connection.gain;
 
-        for (let i = 0; i < nodes.length; i++) {
-          const node: Node = nodes[i];
-          const influence: number = influences[i];
+          for (let i = 0; i < nodes.length; i++) {
+            const node: Node = nodes[i];
+            const influence: number = influences[i];
 
-          if (connection.xTrace.has(node)) {
-            connection.xTrace.set(
-              node,
-              node.selfConnection.gain * node.selfConnection.weight * (connection.xTrace.get(node) ?? 0) +
-                this.derivativeState * connection.eligibility * influence
-            );
-          } else {
-            connection.xTrace.set(node, this.derivativeState * connection.eligibility * influence);
+            if (connection.xTrace.has(node)) {
+              connection.xTrace.set(
+                node,
+                node.selfConnection.gain * node.selfConnection.weight * (connection.xTrace.get(node) ?? 0) +
+                  this.derivativeState * connection.eligibility * influence
+              );
+            } else {
+              connection.xTrace.set(node, this.derivativeState * connection.eligibility * influence);
+            }
           }
-        }
-      });
+        });
 
       return this.activation;
     } else {
