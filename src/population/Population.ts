@@ -9,7 +9,7 @@ import { pickRandom } from "../utils/Utils";
 
 export abstract class Population {
   protected readonly populationSize: number;
-  protected networks: Network[];
+  public networks: Network[];
   protected generation: number;
 
   protected constructor(
