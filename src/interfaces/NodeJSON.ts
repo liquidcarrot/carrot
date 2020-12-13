@@ -2,6 +2,8 @@
  * An interface for representing a node with an json object
  */
 import { PoolNodeType } from "../enums/NodeType";
+import { Connection } from "../architecture/Connection";
+import { ConnectionJSON } from "./ConnectionJSON";
 
 export interface NodeJSON {
   /**
@@ -24,6 +26,8 @@ export interface NodeJSON {
    * The id of this node
    */
   readonly id: number;
+  readonly incoming: ConnectionJSON[];
+  readonly outgoing: ConnectionJSON[];
   readonly errorResponsibility: number;
   readonly errorProjected: number;
   readonly errorGated: number;

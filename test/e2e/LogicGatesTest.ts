@@ -2,7 +2,6 @@ import { expect } from "chai";
 import { describe, it } from "mocha";
 import { Network } from "../../src/architecture/Network";
 import { TrainOptions } from "../../src/interfaces/TrainOptions";
-import { InstinctPopulation } from "../../src/population/InstinctPopulation";
 import { EvolveOptions } from "../../src/interfaces/EvolveOptions";
 import { NEATPopulation } from "../../src/population/NEATPopulation";
 
@@ -70,24 +69,6 @@ describe("Logic Gates", () => {
     expect(final).to.be.at.most(initial);
   });
 
-  it("[NOT] evolve instinct population", function (): void {
-    let population: InstinctPopulation = new InstinctPopulation(100, {
-      inputSize: 1,
-      outputSize: 1,
-    });
-
-    let dataset = data.NOT;
-
-    const initial: number = population.getRandom().test(dataset);
-    const options: EvolveOptions = new EvolveOptions();
-    options.iterations = 20;
-    options.dataset = dataset;
-    const best: Network = population.evolve(options);
-    const final: number = best.test(dataset);
-
-    expect(final).to.be.at.most(initial);
-  });
-
   it("[NOT] evolve neat population", function (): void {
     let population: NEATPopulation = new NEATPopulation(100, {
       inputSize: 1,
@@ -114,24 +95,6 @@ describe("Logic Gates", () => {
     options.iterations = 20;
     network.train(options);
     const final: number = network.test(data.AND);
-
-    expect(final).to.be.at.most(initial);
-  });
-
-  it("[AND] evolve instinct population", function (): void {
-    let population: InstinctPopulation = new InstinctPopulation(100, {
-      inputSize: 2,
-      outputSize: 1,
-    });
-
-    let dataset = data.AND;
-
-    const initial: number = population.getRandom().test(dataset);
-    const options: EvolveOptions = new EvolveOptions();
-    options.iterations = 20;
-    options.dataset = dataset;
-    const best: Network = population.evolve(options);
-    const final: number = best.test(dataset);
 
     expect(final).to.be.at.most(initial);
   });
@@ -166,24 +129,6 @@ describe("Logic Gates", () => {
     expect(final).to.be.at.most(initial);
   });
 
-  it("[OR] evolve instinct population", function (): void {
-    let population: InstinctPopulation = new InstinctPopulation(100, {
-      inputSize: 2,
-      outputSize: 1,
-    });
-
-    let dataset = data.OR;
-
-    const initial: number = population.getRandom().test(dataset);
-    const options: EvolveOptions = new EvolveOptions();
-    options.iterations = 20;
-    options.dataset = dataset;
-    const best: Network = population.evolve(options);
-    const final: number = best.test(dataset);
-
-    expect(final).to.be.at.most(initial);
-  });
-
   it("[OR] evolve neat population", function (): void {
     let population: NEATPopulation = new NEATPopulation(100, {
       inputSize: 2,
@@ -210,24 +155,6 @@ describe("Logic Gates", () => {
     options.iterations = 20;
     network.train(options);
     const final: number = network.test(data.NAND);
-
-    expect(final).to.be.at.most(initial);
-  });
-
-  it("[NAND] evolve instinct population", function (): void {
-    let population: InstinctPopulation = new InstinctPopulation(100, {
-      inputSize: 2,
-      outputSize: 1,
-    });
-
-    let dataset = data.NAND;
-
-    const initial: number = population.getRandom().test(dataset);
-    const options: EvolveOptions = new EvolveOptions();
-    options.iterations = 20;
-    options.dataset = dataset;
-    const best: Network = population.evolve(options);
-    const final: number = best.test(dataset);
 
     expect(final).to.be.at.most(initial);
   });
@@ -262,24 +189,6 @@ describe("Logic Gates", () => {
     expect(final).to.be.at.most(initial);
   });
 
-  it("[NOR] evolve instinct population", function (): void {
-    let population: InstinctPopulation = new InstinctPopulation(100, {
-      inputSize: 2,
-      outputSize: 1,
-    });
-
-    let dataset = data.NOR;
-
-    const initial: number = population.getRandom().test(dataset);
-    const options: EvolveOptions = new EvolveOptions();
-    options.iterations = 20;
-    options.dataset = dataset;
-    const best: Network = population.evolve(options);
-    const final: number = best.test(dataset);
-
-    expect(final).to.be.at.most(initial);
-  });
-
   it("[NOR] evolve neat population", function (): void {
     let population: NEATPopulation = new NEATPopulation(100, {
       inputSize: 2,
@@ -310,24 +219,6 @@ describe("Logic Gates", () => {
     expect(final).to.be.at.most(initial);
   });
 
-  it("[XOR] evolve instinct population", function (): void {
-    let population: InstinctPopulation = new InstinctPopulation(100, {
-      inputSize: 2,
-      outputSize: 1,
-    });
-
-    let dataset = data.XOR;
-
-    const initial: number = population.getRandom().test(dataset);
-    const options: EvolveOptions = new EvolveOptions();
-    options.iterations = 20;
-    options.dataset = dataset;
-    const best: Network = population.evolve(options);
-    const final: number = best.test(dataset);
-
-    expect(final).to.be.at.most(initial);
-  });
-
   it("[XOR] evolve neat population", function (): void {
     let population: NEATPopulation = new NEATPopulation(100, {
       inputSize: 2,
@@ -354,24 +245,6 @@ describe("Logic Gates", () => {
     options.iterations = 20;
     network.train(options);
     const final: number = network.test(data.XNOR);
-
-    expect(final).to.be.at.most(initial);
-  });
-
-  it("[XNOR] evolve instinct population", function (): void {
-    let population: InstinctPopulation = new InstinctPopulation(100, {
-      inputSize: 2,
-      outputSize: 1,
-    });
-
-    let dataset = data.XNOR;
-
-    const initial: number = population.getRandom().test(dataset);
-    const options: EvolveOptions = new EvolveOptions();
-    options.iterations = 20;
-    options.dataset = dataset;
-    const best: Network = population.evolve(options);
-    const final: number = best.test(dataset);
 
     expect(final).to.be.at.most(initial);
   });

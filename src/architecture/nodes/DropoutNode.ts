@@ -2,6 +2,7 @@ import { Connection } from "../Connection";
 import { ConstantNode } from "./ConstantNode";
 import { randDouble, sum } from "../../utils/Utils";
 import { DropoutNodeJSON } from "../../interfaces/NodeJSON";
+import _ from "lodash";
 
 /**
  * Dropout node
@@ -132,9 +133,7 @@ export class DropoutNode extends ConstantNode {
    *
    * @returns the json object representing this node
    */
-  public toJSON(): DropoutNodeJSON {
-    return Object.assign(super.toJSON(), {
-      probability: this.probability,
-    });
+  public copy(): DropoutNode {
+    return _.cloneDeep(this);
   }
 }

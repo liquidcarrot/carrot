@@ -63,31 +63,31 @@ describe("Connection", () => {
       was.connected(connection, from, to);
     });
   });
-  describe("connection.clone()", () => {
-    it("test cloning", () => {
-      const population = new NEATPopulation(1, { inputSize: 1, outputSize: 1 });
-      const network = population.networks[0];
-      console.log(network.connections);
-      network.mutate(new AddConnectionMutation());
-      console.log(network.connections);
-      const connection: Connection = Array.from(network.connections)[0];
-      connection.eligibility = randDouble(-1, 1);
-      connection.gain = randDouble(-1, 1);
-      connection.weight = randDouble(-1, 1);
-      connection.enabled = randBoolean();
-
-      let json = connection.toJSON(network.nodes);
-
-      // Comparing properties of json connection and connection object
-      let connectionProperties = Object.getOwnPropertyNames(connection).sort();
-      let jsonProperties = Object.getOwnPropertyNames(json).sort();
-      removeFromArray(connectionProperties, ["from", "to", "gateNode"]);
-      removeFromArray(jsonProperties, ["fromIndex", "toIndex", "gateNodeIndex"]);
-      expect(connectionProperties).to.be.eql(jsonProperties);
-
-      // Comparing connection with it's clone
-      const clone = connection.clone(network.nodes);
-      expect(connection).to.be.eql(clone);
-    });
-  });
+  // describe("connection.clone()", () => {
+  //   it("test cloning", () => {
+  //     const population = new NEATPopulation(1, { inputSize: 1, outputSize: 1 });
+  //     const network = population.networks[0];
+  //     console.log(network.connections);
+  //     network.mutate(new AddConnectionMutation());
+  //     console.log(network.connections);
+  //     const connection: Connection = Array.from(network.connections)[0];
+  //     connection.eligibility = randDouble(-1, 1);
+  //     connection.gain = randDouble(-1, 1);
+  //     connection.weight = randDouble(-1, 1);
+  //     connection.enabled = randBoolean();
+  //
+  //     let json = connection.toJSON(network.nodes);
+  //
+  //     // Comparing properties of json connection and connection object
+  //     let connectionProperties = Object.getOwnPropertyNames(connection).sort();
+  //     let jsonProperties = Object.getOwnPropertyNames(json).sort();
+  //     removeFromArray(connectionProperties, ["from", "to", "gateNode"]);
+  //     removeFromArray(jsonProperties, ["fromIndex", "toIndex", "gateNodeIndex"]);
+  //     expect(connectionProperties).to.be.eql(jsonProperties);
+  //
+  //     // Comparing connection with it's clone
+  //     const clone = connection.clone(network.nodes);
+  //     expect(connection).to.be.eql(clone);
+  //   });
+  // });
 });

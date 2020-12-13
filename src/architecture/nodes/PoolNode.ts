@@ -4,6 +4,7 @@ import { ConstantNode } from "./ConstantNode";
 import { avg, maxValueIndex, minValueIndex, sum } from "../../utils/Utils";
 import { PoolNodeType } from "../../enums/NodeType";
 import { PoolNodeJSON } from "../../interfaces/NodeJSON";
+import _ from "lodash";
 
 /**
  * Pool node
@@ -141,9 +142,7 @@ export class PoolNode extends ConstantNode {
    *
    * @returns the json object representing this node
    */
-  public toJSON(): PoolNodeJSON {
-    return Object.assign(super.toJSON(), {
-      poolType: this.poolingType,
-    });
+  public copy(): PoolNode {
+    return _.cloneDeep(this);
   }
 }

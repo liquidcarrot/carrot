@@ -7,7 +7,6 @@
   "module": "dist/production/index.min.js",
   "unpkg": "dist/production/index.browser.min.js",
   "jsdelivr": "dist/production/index.browser.min.js",
-  "type": "types/src/population/Population.d.ts",
   "browser": {
     "fs": false,
     "child_process": false
@@ -88,7 +87,7 @@
   },
   "homepage": "https://liquidcarrot.io/",
   "dependencies": {
-    "activations": "^1.1.1",
+    "activations": "^1.1.2",
     "chai": "^4.2.0",
     "mnist": "^1.1.0",
     "mocha": "^8.1.1",
@@ -100,12 +99,14 @@
   "devDependencies": {
     "@types/chai": "^4.2.12",
     "@types/expect": "^24.3.0",
+    "@types/lodash": "^4.14.165",
     "@types/mocha": "^8.0.3",
     "@types/node": "^14.6.0",
     "@types/timsort": "^0.3.0",
     "awesome-typescript-loader": "^5.2.1",
     "husky": "^4.2.5",
     "lint-staged": "^10.2.11",
+    "lodash": "^4.17.20",
     "prettier": "2.0.5",
     "typedoc": "^0.18.0",
     "typescript": "^3.9.7",

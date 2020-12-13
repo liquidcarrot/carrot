@@ -4,6 +4,7 @@ import { NodeType } from "../enums/NodeType";
 import { NodeJSON } from "../interfaces/NodeJSON";
 import { ModBiasMutation } from "../methods/InstinctMutation";
 import { pickRandom, randDouble } from "../utils/Utils";
+import _ from "lodash";
 
 /**
  * Creates a new neuron/node
@@ -120,24 +121,24 @@ export class Node {
    *
    * @returns itself
    */
-  public static fromJSON(json: NodeJSON): Node {
-    const node = new Node();
-    node.bias = json.bias;
-    node.type = json.type as NodeType;
-    node.squash = ALL_ACTIVATIONS.filter((activation) => activation.name === json.squash)[0];
-    node.mask = json.mask;
-    node.id = json.id;
-    node.errorResponsibility = json.errorResponsibility;
-    node.errorProjected = json.errorProjected;
-    node.errorGated = json.errorGated;
-    node.deltaBiasPrevious = json.deltaBiasPrevious;
-    node.deltaBiasTotal = json.deltaBiasTotal;
-    node.derivativeState = json.derivativeState;
-    node.state = json.state;
-    node.prevState = json.prevState;
-    node.activation = json.activation;
-    return node;
-  }
+  // public static fromJSON(json: NodeJSON): Node {
+  //   const node = new Node();
+  //   node.bias = json.bias;
+  //   node.type = json.type as NodeType;
+  //   node.squash = ALL_ACTIVATIONS.filter((activation) => activation.name === json.squash)[0];
+  //   node.mask = json.mask;
+  //   node.id = json.id;
+  //   node.errorResponsibility = json.errorResponsibility;
+  //   node.errorProjected = json.errorProjected;
+  //   node.errorGated = json.errorGated;
+  //   node.deltaBiasPrevious = json.deltaBiasPrevious;
+  //   node.deltaBiasTotal = json.deltaBiasTotal;
+  //   node.derivativeState = json.derivativeState;
+  //   node.state = json.state;
+  //   node.prevState = json.prevState;
+  //   node.activation = json.activation;
+  //   return node;
+  // }
 
   /**
    * Clears this node's state information - _i.e. resets node and its connections to "factory settings"_
@@ -492,24 +493,26 @@ export class Node {
    *
    * @returns A node representing json object
    */
-  public toJSON(): NodeJSON {
-    return {
-      bias: this.bias,
-      type: this.type,
-      squash: this.squash.name,
-      mask: this.mask,
-      id: this.id,
-      errorResponsibility: this.errorResponsibility,
-      errorProjected: this.errorProjected,
-      errorGated: this.errorGated,
-      deltaBiasPrevious: this.deltaBiasPrevious,
-      deltaBiasTotal: this.deltaBiasTotal,
-      derivativeState: this.derivativeState,
-      state: this.state,
-      prevState: this.prevState,
-      activation: this.activation,
-    };
-  }
+  // public toJSON(): NodeJSON {
+  //   return {
+  //     bias: this.bias,
+  //     type: this.type,
+  //     squash: this.squash.name,
+  //     incoming: Array.from(this.incoming).map(conn => conn.toJSON()),
+  //     outgoing: Array.from(this.outgoing).map(conn => conn.toJSON()),
+  //     mask: this.mask,
+  //     id: this.id,
+  //     errorResponsibility: this.errorResponsibility,
+  //     errorProjected: this.errorProjected,
+  //     errorGated: this.errorGated,
+  //     deltaBiasPrevious: this.deltaBiasPrevious,
+  //     deltaBiasTotal: this.deltaBiasTotal,
+  //     derivativeState: this.derivativeState,
+  //     state: this.state,
+  //     prevState: this.prevState,
+  //     activation: this.activation,
+  //   };
+  // }
 
   /**
    * Is this a input Node?
@@ -556,6 +559,7 @@ export class Node {
    * Clones this node.
    */
   public clone(): Node {
-    return Node.fromJSON(this.toJSON());
+    // return Node.fromJSON(this.toJSON());
+    return _.cloneDeep(this);
   }
 }

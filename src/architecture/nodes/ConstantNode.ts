@@ -1,6 +1,7 @@
 import { Node } from "../Node";
 import { NodeType } from "../../enums/NodeType";
 import { NodeJSON } from "../../interfaces/NodeJSON";
+import _ from "lodash";
 
 /**
  * Constant node
@@ -67,8 +68,8 @@ export abstract class ConstantNode extends Node {
    *
    * @returns the json object representing this node
    */
-  public toJSON(): NodeJSON {
-    return super.toJSON();
+  public clone(): ConstantNode {
+    return _.cloneDeep(this);
   }
 
   /**

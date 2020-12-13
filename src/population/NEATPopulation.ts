@@ -42,12 +42,33 @@ export class NEATPopulation extends Population {
     this.stagnation = 0;
     this.species = [];
     this.highScore = -Infinity;
+    NEATPopulation.nodeCounter = -1;
+    NEATPopulation.connCounter = -1;
+    NEATPopulation.nodeIDs = new Map<number, number>();
+    NEATPopulation.connIDs = new Map<number, number>();
     NEATPopulation.excessCoefficient = options.excessCoefficient ?? 1;
     NEATPopulation.weightDiffCoefficient = options.weightDiffCoefficient ?? 1;
     NEATPopulation.survivorRate = options.survivorRate ?? 0.5;
     NEATPopulation.distanceThreshold = options.speciesDistanceThreshold ?? 2;
     NEATPopulation.speciesStagnationLimit = options.speciesStagnationLimit ?? 15;
     NEATPopulation.populationStagnationLimit = options.populationStagnationLimit ?? 15;
+  }
+
+  public static createPopulation(
+    populationSize: number,
+    options: {
+      template?: Network | undefined;
+      inputSize?: number;
+      outputSize?: number;
+      excessCoefficient?: number;
+      weightDiffCoefficient?: number;
+      survivorRate?: number;
+      speciesDistanceThreshold?: number;
+      speciesStagnationLimit?: number;
+      populationStagnationLimit?: number;
+    }
+  ): NEATPopulation {
+    return new NEATPopulation(populationSize, options);
   }
 
   /**
