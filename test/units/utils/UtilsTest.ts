@@ -125,7 +125,7 @@ describe("Utils", () => {
     arr.forEach((elem) => expect(elem).to.be.at.most(maxValue));
   });
 
-  it("max index", () => {
+  it("max id", () => {
     const arr: number[] = [
       randDouble(-50, 50),
       randDouble(-50, 50),
@@ -161,7 +161,7 @@ describe("Utils", () => {
     arr.forEach((elem) => expect(elem).to.be.at.least(minValue));
   });
 
-  it("min index", () => {
+  it("min id", () => {
     const arr: number[] = [
       randDouble(-50, 50),
       randDouble(-50, 50),

@@ -53,7 +53,12 @@ function randBoolean(): boolean {
  * @param elem the element which will be removed
  * @returns false -> element does not exists on array; true -> element removed from array
  */
-function removeFromArray<T>(arr: T[], elem: T): boolean {
+function removeFromArray<T>(arr: T[], elem: T | T[]): boolean {
+  if (Array.isArray(elem)) {
+    elem.forEach((singleElement) => removeFromArray(arr, singleElement));
+    return true;
+  }
+
   const index: number = arr.indexOf(elem);
   if (index === -1) {
     return false;
@@ -71,7 +76,7 @@ function removeFromArray<T>(arr: T[], elem: T): boolean {
 function shuffle<T>(array: T[]): void {
   // While there are elements in the array
   for (let counter: number = array.length - 1; counter > 0; counter--) {
-    // Pick a random index
+    // Pick a random id
     const index: number = randInt(0, counter);
 
     // And swap the last element with it
@@ -100,7 +105,7 @@ function max(array: number[]): number {
 }
 
 /**
- * Finds the maximum value index of an number array
+ * Finds the maximum value id of an number array
  *
  * @param array
  */
@@ -120,7 +125,7 @@ function maxValueIndex(array: number[]): number {
 }
 
 /**
- * Finds the minimum value index of an number array
+ * Finds the minimum value id of an number array
  *
  * @param array
  */

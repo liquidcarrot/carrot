@@ -88,16 +88,16 @@ export class Network {
 
     json.nodes
       .map((nodeJSON) => {
-        return new Node().fromJSON(nodeJSON);
+        return Node.fromJSON(nodeJSON);
       })
-      .forEach((node) => (network.nodes[node.index] = node));
+      .forEach((node) => (network.nodes[node.id] = node));
 
     json.connections.forEach((jsonConnection: ConnectionJSON) => {
       const connection = Connection.fromJSON(jsonConnection, network.nodes);
       network.connections.add(connection);
 
-      if (jsonConnection.gateNodeIndex !== null) {
-        network.addGate(network.nodes[jsonConnection.gateNodeIndex], connection);
+      if (connection.gateNode !== null) {
+        network.addGate(connection.gateNode, connection);
       }
     });
     return network;
@@ -146,12 +146,12 @@ export class Network {
 
     // set node indices
     for (let i = 0; i < network1.nodes.length; i++) {
-      network1.nodes[i].index = i;
+      network1.nodes[i].id = i;
     }
 
     // set node indices
     for (let i = 0; i < network2.nodes.length; i++) {
-      network2.nodes[i].index = i;
+      network2.nodes[i].id = i;
     }
 
     // Assign nodes from parents to offspring
@@ -217,11 +217,11 @@ export class Network {
 
     // Add the connections of network 1
     network1.connections.forEach((connection) => {
-      n1connections[pairing(connection.from.index, connection.to.index)] = connection.toJSON();
+      n1connections[pairing(connection.from.id, connection.to.id)] = connection.toJSON(network1.nodes);
     });
     // Add the connections of network 2
     network2.connections.forEach((connection) => {
-      n2connections[pairing(connection.from.index, connection.to.index)] = connection.toJSON();
+      n2connections[pairing(connection.from.id, connection.to.id)] = connection.toJSON(network2.nodes);
     });
 
     // Split common conn genes from disjoint or excess conn genes
@@ -297,6 +297,8 @@ export class Network {
     genome1.nodes.forEach((node1) => {
       child.nodes.push(node1.clone());
     });
+
+    console.log(child.nodes.length);
 
     childConnections.forEach((conn) => {
       child.connections.add(conn.clone(child.nodes));
@@ -857,7 +859,7 @@ export class Network {
 
     // set node indices
     for (let i = 0; i < this.nodes.length; i++) {
-      this.nodes[i].index = i;
+      this.nodes[i].id = i;
     }
 
     // convert all nodes to json and add the to the json object
@@ -867,12 +869,12 @@ export class Network {
       if (node.selfConnection.weight !== 0) {
         // if there is a self connection
         // add it to the json object
-        json.connections.push(node.selfConnection.toJSON());
+        json.connections.push(node.selfConnection.toJSON(this.nodes));
       }
     });
 
     this.connections.forEach((conn) => {
-      json.connections.push(conn.toJSON());
+      json.connections.push(conn.toJSON(this.nodes));
     });
     return json;
   }

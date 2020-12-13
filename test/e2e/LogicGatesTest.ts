@@ -1,10 +1,10 @@
-import {expect} from "chai";
-import {describe, it} from "mocha";
-import {Network} from "../../src/architecture/Network";
-import {TrainOptions} from "../../src/interfaces/TrainOptions";
-import {InstinctPopulation} from "../../src/population/InstinctPopulation";
-import {EvolveOptions} from "../../src/interfaces/EvolveOptions";
-import {NEATPopulation} from "../../src/population/NEATPopulation";
+import { expect } from "chai";
+import { describe, it } from "mocha";
+import { Network } from "../../src/architecture/Network";
+import { TrainOptions } from "../../src/interfaces/TrainOptions";
+import { InstinctPopulation } from "../../src/population/InstinctPopulation";
+import { EvolveOptions } from "../../src/interfaces/EvolveOptions";
+import { NEATPopulation } from "../../src/population/NEATPopulation";
 
 describe("Logic Gates", () => {
   const data: {
@@ -17,44 +17,44 @@ describe("Logic Gates", () => {
     NAND: { output: number[]; input: number[] }[];
   } = {
     NOT: [
-      {input: [0], output: [1]},
-      {input: [1], output: [0]},
+      { input: [0], output: [1] },
+      { input: [1], output: [0] },
     ],
     AND: [
-      {input: [0, 0], output: [0]},
-      {input: [0, 1], output: [0]},
-      {input: [1, 0], output: [0]},
-      {input: [1, 1], output: [1]},
+      { input: [0, 0], output: [0] },
+      { input: [0, 1], output: [0] },
+      { input: [1, 0], output: [0] },
+      { input: [1, 1], output: [1] },
     ],
     OR: [
-      {input: [0, 0], output: [0]},
-      {input: [0, 1], output: [1]},
-      {input: [1, 0], output: [1]},
-      {input: [1, 1], output: [1]},
+      { input: [0, 0], output: [0] },
+      { input: [0, 1], output: [1] },
+      { input: [1, 0], output: [1] },
+      { input: [1, 1], output: [1] },
     ],
     NAND: [
-      {input: [0, 0], output: [1]},
-      {input: [0, 1], output: [1]},
-      {input: [1, 0], output: [1]},
-      {input: [1, 1], output: [0]},
+      { input: [0, 0], output: [1] },
+      { input: [0, 1], output: [1] },
+      { input: [1, 0], output: [1] },
+      { input: [1, 1], output: [0] },
     ],
     NOR: [
-      {input: [0, 0], output: [1]},
-      {input: [0, 1], output: [0]},
-      {input: [1, 0], output: [0]},
-      {input: [1, 1], output: [0]},
+      { input: [0, 0], output: [1] },
+      { input: [0, 1], output: [0] },
+      { input: [1, 0], output: [0] },
+      { input: [1, 1], output: [0] },
     ],
     XOR: [
-      {input: [0, 0], output: [0]},
-      {input: [0, 1], output: [1]},
-      {input: [1, 0], output: [1]},
-      {input: [1, 1], output: [0]},
+      { input: [0, 0], output: [0] },
+      { input: [0, 1], output: [1] },
+      { input: [1, 0], output: [1] },
+      { input: [1, 1], output: [0] },
     ],
     XNOR: [
-      {input: [0, 0], output: [1]},
-      {input: [0, 1], output: [0]},
-      {input: [1, 0], output: [0]},
-      {input: [1, 1], output: [1]},
+      { input: [0, 0], output: [1] },
+      { input: [0, 1], output: [0] },
+      { input: [1, 0], output: [0] },
+      { input: [1, 1], output: [1] },
     ],
   };
 

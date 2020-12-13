@@ -19,7 +19,7 @@ export abstract class ConstantNode extends Node {
    * @returns the created node
    */
   public fromJSON(json: NodeJSON): Node {
-    this.index = json.index ?? -1;
+    this.id = json.id ?? -1;
     return this;
   }
 

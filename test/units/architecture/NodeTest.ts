@@ -2,7 +2,7 @@ import { ActivationType } from "activations";
 import { expect } from "chai";
 import { describe, it } from "mocha";
 import { Node } from "../../../src/architecture/Node";
-import { randDouble, randInt } from "../../../src/utils/Utils";
+import { randDouble, randInt, removeFromArray } from "../../../src/utils/Utils";
 import { Connection } from "../../../src/architecture/Connection";
 import { ModBiasMutation } from "../../../src/methods/InstinctMutation";
 import { NodeType } from "../../../src/enums/NodeType";
@@ -359,15 +359,24 @@ describe("Node", () => {
       });
     });
   });
-  describe("node.toJSON()", () => {
+  describe("json scheme", () => {
     it("node.toJSON() => {Object}", () => {
       const node: Node = new Node();
 
       const json: NodeJSON = node.toJSON();
 
-      expect(json).to.be.an("object");
-      expect(json.bias).to.not.be.NaN;
-      expect(json.squash).to.be.a("string");
+      let nodeProperties = Object.getOwnPropertyNames(node).sort();
+      let jsonProperties = Object.getOwnPropertyNames(json).sort();
+      removeFromArray(nodeProperties, ["incoming", "outgoing", "selfConnection", "gated"]);
+
+      expect(nodeProperties).to.be.eql(jsonProperties);
+    });
+    it("clone", () => {
+      const node: Node = new Node();
+      const clone: Node = node.clone();
+      console.log(node);
+      console.log(clone);
+      expect(node).to.be.eql(clone);
     });
   });
 });

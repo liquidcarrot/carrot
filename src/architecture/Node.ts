@@ -51,10 +51,6 @@ export class Node {
    */
   public squash: ActivationType;
   /**
-   * index
-   */
-  public index: number;
-  /**
    * derivative state
    */
   public derivativeState: number;
@@ -114,7 +110,7 @@ export class Node {
     this.errorResponsibility = 0;
     this.errorProjected = 0;
     this.errorGated = 0;
-    this.index = NaN;
+    this.id = NaN;
   }
 
   /**
@@ -124,23 +120,23 @@ export class Node {
    *
    * @returns itself
    */
-  public fromJSON(json: NodeJSON): Node {
-    this.bias = json.bias;
-    this.type = json.type as NodeType;
-    this.squash = ALL_ACTIVATIONS.filter((activation) => activation.name === json.squash)[0];
-    this.mask = json.mask;
-    this.index = json.index;
-    this.id = json.id;
-    this.errorResponsibility = json.errorResponsibility;
-    this.errorProjected = json.errorProjected;
-    this.errorGated = json.errorGated;
-    this.deltaBiasPrevious = json.deltaBiasPrevious;
-    this.deltaBiasTotal = json.deltaBiasTotal;
-    this.derivativeState = json.derivativeState;
-    this.state = json.state;
-    this.prevState = json.prevState;
-    this.activation = json.activation;
-    return this;
+  public static fromJSON(json: NodeJSON): Node {
+    const node = new Node();
+    node.bias = json.bias;
+    node.type = json.type as NodeType;
+    node.squash = ALL_ACTIVATIONS.filter((activation) => activation.name === json.squash)[0];
+    node.mask = json.mask;
+    node.id = json.id;
+    node.errorResponsibility = json.errorResponsibility;
+    node.errorProjected = json.errorProjected;
+    node.errorGated = json.errorGated;
+    node.deltaBiasPrevious = json.deltaBiasPrevious;
+    node.deltaBiasTotal = json.deltaBiasTotal;
+    node.derivativeState = json.derivativeState;
+    node.state = json.state;
+    node.prevState = json.prevState;
+    node.activation = json.activation;
+    return node;
   }
 
   /**
@@ -502,7 +498,6 @@ export class Node {
       type: this.type,
       squash: this.squash.name,
       mask: this.mask,
-      index: this.index,
       id: this.id,
       errorResponsibility: this.errorResponsibility,
       errorProjected: this.errorProjected,
@@ -561,6 +556,6 @@ export class Node {
    * Clones this node.
    */
   public clone(): Node {
-    return new Node().fromJSON(this.toJSON());
+    return Node.fromJSON(this.toJSON());
   }
 }

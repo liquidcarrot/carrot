@@ -21,9 +21,8 @@ export interface NodeJSON {
    */
   readonly mask: number;
   /**
-   * The index of this node
+   * The id of this node
    */
-  readonly index: number;
   readonly id: number;
   readonly errorResponsibility: number;
   readonly errorProjected: number;

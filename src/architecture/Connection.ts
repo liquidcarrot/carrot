@@ -75,12 +75,20 @@ export class Connection {
    * @param nodes the nodes in the network used to crate the connection
    * @returns the created connection
    */
-  public static fromJSON(json: ConnectionJSON, nodes: Node[]): Connection {
+  public static fromJSON(json: ConnectionJSON, nodes: Node[]) {
+    nodes = nodes.map((node) => node.clone()); // Deep copy all nodes to avoid reference errors
+
     const connection: Connection = nodes[json.fromIndex].connect(nodes[json.toIndex], json.weight);
 
     connection.id = json.id;
+    connection.eligibility = json.eligibility;
+    connection.gain = json.gain;
+    connection.enabled = json.enabled;
+    connection.deltaWeightsPrevious = json.deltaWeightsPrevious;
+    connection.deltaWeightsTotal = json.deltaWeightsTotal;
+    connection.gateNode = json.gateNodeIndex >= 0 ? nodes[json.gateNodeIndex] : null;
 
-    json.xTraces?.forEach((xTraceValue: number, xTraceNodeIndex: number) => {
+    json.xTrace?.forEach((xTraceValue: number, xTraceNodeIndex: number) => {
       connection.xTrace.set(nodes[xTraceNodeIndex], xTraceValue);
     });
     return connection;
@@ -91,23 +99,41 @@ export class Connection {
    *
    * @return Connection as a JSON
    */
-  public toJSON(): ConnectionJSON {
+  public toJSON(nodes: Node[]): ConnectionJSON {
     let xTracesTransformed: Map<number, number> | null;
     if (this.xTrace.size > 0) {
       xTracesTransformed = new Map<number, number>();
       this.xTrace.forEach((value, key) => {
-        xTracesTransformed?.set(key.index, value);
+        xTracesTransformed?.set(key.id, value);
       });
     } else {
       xTracesTransformed = null;
     }
+
+    // Search for the nodes in the array and get all indices for recreating the connection
+    let fromIndex = -1;
+    let toIndex = -1;
+    let gateNodeIndex = -1;
+    for (let i = 0; i < nodes.length; i++) {
+      if (nodes[i].id === this.from.id) fromIndex = i;
+      if (nodes[i].id === this.to.id) toIndex = i;
+      if (this.gateNode && nodes[i].id === this.gateNode.id) gateNodeIndex = i;
+    }
+
+    if (fromIndex < 0 || toIndex < 0) throw new ReferenceError("There should be a from node and a to node!");
+
     return {
       id: this.id,
-      fromIndex: this.from.index,
-      toIndex: this.to.index,
-      gateNodeIndex: this.gateNode === null ? null : this.gateNode.index,
+      fromIndex: fromIndex,
+      toIndex: toIndex,
+      eligibility: this.eligibility,
+      gain: this.gain,
+      enabled: this.enabled,
+      deltaWeightsPrevious: this.deltaWeightsPrevious,
+      deltaWeightsTotal: this.deltaWeightsTotal,
+      gateNodeIndex: gateNodeIndex,
       weight: this.weight,
-      xTraces: xTracesTransformed,
+      xTrace: xTracesTransformed,
     };
   }
 
@@ -115,14 +141,14 @@ export class Connection {
    * Get the innovation ID for this connection
    */
   public getInnovationID(): number {
-    return pairing(this.from.index, this.to.index);
+    return pairing(this.from.id, this.to.id);
   }
 
   /**
    * Clones this connection.
    */
   public clone(nodes: Node[]): Connection {
-    return Connection.fromJSON(this.toJSON(), nodes);
+    return Connection.fromJSON(this.toJSON(nodes), nodes);
   }
 
   /**

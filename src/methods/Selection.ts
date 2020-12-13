@@ -56,7 +56,7 @@ class FitnessProportionateSelection extends Selection {
 /**
  * Power selection
  *
- * A random decimal value between 0 and 1 will be generated (e.g. 0.5) then this value will get an exponential value (power, default is 4). So 0.5**4 = 0.0625. This is converted into an index for the array of the current population, sorted from fittest to worst.
+ * A random decimal value between 0 and 1 will be generated (e.g. 0.5) then this value will get an exponential value (power, default is 4). So 0.5**4 = 0.0625. This is converted into an id for the array of the current population, sorted from fittest to worst.
  */
 class PowerSelection extends Selection {
   /**

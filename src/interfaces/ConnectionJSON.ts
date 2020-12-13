@@ -7,21 +7,26 @@ export interface ConnectionJSON {
   /**
    * The connection weight
    */
+  readonly eligibility: number;
+  readonly gain: number;
   readonly weight: number;
+  readonly enabled: boolean;
+  readonly deltaWeightsTotal: number;
+  readonly deltaWeightsPrevious: number;
   /**
-   * The index of the origin node
+   * The id of the origin node
    */
   readonly fromIndex: number;
   /**
-   * The index of the destination node
+   * The id of the destination node
    */
   readonly toIndex: number;
   /**
-   * The index of the gate node, if connection is gated
+   * The id of the gate node, if connection is gated
    */
-  readonly gateNodeIndex: number | null;
+  readonly gateNodeIndex: number;
   /**
    * The xTrace values
    */
-  readonly xTraces: Map<number, number> | null;
+  readonly xTrace: Map<number, number> | null;
 }

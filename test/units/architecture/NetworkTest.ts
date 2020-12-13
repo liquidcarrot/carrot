@@ -292,7 +292,7 @@ describe("Network", () => {
       expect(out1).to.be.eql(out2);
       network.propagate(output);
       network2.propagate(output);
-      expect(network).to.be.deep.equal(network2); // checking for xTraces
+      expect(network).to.be.deep.equal(network2); // checking for xTrace
     });
 
     it("check activation", function () {

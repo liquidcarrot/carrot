@@ -20,7 +20,7 @@ export class AddNodeMutation extends Mutation {
     const addingNodeToBackwardConnection = true; // TODO
     const connections = addingNodeToBackwardConnection
       ? Array.from(network.connections).filter((conn) => conn.from !== conn.to)
-      : Array.from(network.connections).filter((conn) => conn.from.index < conn.to.index);
+      : Array.from(network.connections).filter((conn) => conn.from.id < conn.to.id);
 
     if (connections.length === 0) return;
 
