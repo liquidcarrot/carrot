@@ -14,11 +14,10 @@
     "last 1 Chrome version"
   ],
   "scripts": {
-    "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | coveralls && rm -rf ./src-cov",
     "build:src": "concurrently 'node scripts/src.build.node.js' 'node scripts/src.build.browser.js'",
     "build:src:webpack": "./node_modules/.bin/webpack",
     "deploy:docs": "node theme/deploy-docs.js",
-    "test": "./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha --recursive test/ --exclude test/unit.js",
+    "test": "./node_modules/.bin/nyc --reporter=lcov --reporter=text node ./node_modules/mocha/bin/mocha --recursive test/ --exclude test/unit.js",
     "lint": "./node_modules/.bin/eslint --ignore-path .eslintignore .",
     "test:debug": "./node_modules/.bin/nyc --reporter=html --reporter=text node ./node_modules/mocha/bin/mocha inspect --recursive test/ --exclude test/unit.js",
     "test:forever": "./node_modules/.bin/nodemon ./node_modules/.bin/mocha --reporter spec test/"
