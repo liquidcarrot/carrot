@@ -26,7 +26,7 @@
     "fix:test": "prettier --write \"./test/**/*.ts\"",
     "lint": "tslint -c ./tslint.json 'src/**/*.ts'",
     "lint:fix": "tslint -c ./tslint.json 'src/**/*.ts' --fix",
-    "prepublish": "tsc"
+    "prepare": "tsc"
   },
   "husky": {
     "hooks": {
