@@ -116,7 +116,7 @@ export class Species {
   public getSumAdjustedScores(): number {
     let sum: number = 0;
     this.members.forEach((network) => {
-      if (network.score) sum += network.adjustedFitness;
+      if (network.score && network.adjustedFitness) sum += network.adjustedFitness;
       else throw new ReferenceError("Network needs score for fitness evaluation!");
     });
     return sum;
@@ -146,9 +146,11 @@ export class Species {
    */
   public cull(percentage: number = 0.5, representativeIsBest: boolean = true): void {
     const arr: Network[] = this.sortedMembersArray(); // descending
+    if (percentage === 1) throw RangeError("We cannot kill all members!");
+    let amount: number = Math.floor(percentage * this.members.size);
 
-    const amount: number = Math.floor(percentage * this.members.size);
-    for (let i: number = amount; i < arr.length; i++) {
+    // always preserve one member in the species
+    for (let i: number = arr.length - 1; i > arr.length - amount; i--) {
       this.members.delete(arr[i]);
     }
 

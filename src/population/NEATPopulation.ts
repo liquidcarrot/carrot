@@ -364,7 +364,7 @@ export class NEATPopulation extends Population {
       }
     }
     // fill up the population leave one free for the champions
-    while (newPopulation.length < this.populationSize - 1) {
+    while (newPopulation.length < this.populationSize) {
       newPopulation.push(this.species[0].breed(selection));
     }
     // reset species
