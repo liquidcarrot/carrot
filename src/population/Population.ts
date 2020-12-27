@@ -47,7 +47,7 @@ export abstract class Population {
       this.calculateScores(options.fitnessFunction, options.dataset, options.loss);
 
       this.generation++;
-      if (options.log && options.log % this.generation === 0) this.log();
+      if (options.log && this.generation % options.log === 0) this.log();
     }
 
     const best = this.getBest();
