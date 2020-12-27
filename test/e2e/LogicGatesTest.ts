@@ -70,6 +70,7 @@ describe("Logic Gates", () => {
   });
 
   it("[NOT] evolve neat population", function (): void {
+    this.timeout(10000);
     let population: NEATPopulation = new NEATPopulation(100, {
       inputSize: 1,
       outputSize: 1,
@@ -100,6 +101,7 @@ describe("Logic Gates", () => {
   });
 
   it("[AND] evolve neat population", function (): void {
+    this.timeout(10000);
     let population: NEATPopulation = new NEATPopulation(100, {
       inputSize: 2,
       outputSize: 1,
@@ -130,6 +132,7 @@ describe("Logic Gates", () => {
   });
 
   it("[OR] evolve neat population", function (): void {
+    this.timeout(10000);
     let population: NEATPopulation = new NEATPopulation(100, {
       inputSize: 2,
       outputSize: 1,
@@ -160,6 +163,7 @@ describe("Logic Gates", () => {
   });
 
   it("[NAND] evolve neat population", function (): void {
+    this.timeout(10000);
     let population: NEATPopulation = new NEATPopulation(100, {
       inputSize: 2,
       outputSize: 1,
@@ -190,6 +194,7 @@ describe("Logic Gates", () => {
   });
 
   it("[NOR] evolve neat population", function (): void {
+    this.timeout(10000);
     let population: NEATPopulation = new NEATPopulation(100, {
       inputSize: 2,
       outputSize: 1,
@@ -220,6 +225,7 @@ describe("Logic Gates", () => {
   });
 
   it("[XOR] evolve neat population", function (): void {
+    this.timeout(10000);
     let population: NEATPopulation = new NEATPopulation(100, {
       inputSize: 2,
       outputSize: 1,
@@ -250,6 +256,7 @@ describe("Logic Gates", () => {
   });
 
   it("[XNOR] evolve neat population", function (): void {
+    this.timeout(10000);
     let population: NEATPopulation = new NEATPopulation(100, {
       inputSize: 2,
       outputSize: 1,
