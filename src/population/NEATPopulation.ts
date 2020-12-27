@@ -287,7 +287,9 @@ export class NEATPopulation extends Population {
    * @private
    */
   private speciate(): void {
+    // reset species
     this.species.forEach((species) => species.reset());
+    this.species = [];
     this.networks.forEach((genome) => {
       let found = false;
       for (const species of this.species) {
@@ -367,8 +369,6 @@ export class NEATPopulation extends Population {
     while (newPopulation.length < this.populationSize) {
       newPopulation.push(this.species[0].breed(selection));
     }
-    // reset species
-    this.species = [];
     return newPopulation;
   }
 
