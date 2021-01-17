@@ -16,10 +16,7 @@
              alt="Coverage Status">
     </a>
     <a href="https://discord.gg/P4FJG8rEYC">
-        <img src="https://img.shields.io/discord/800482235852914698"
-             alt="Join the chat on Discord at https://discord.gg/P4FJG8rEYC">
-     
-     
+        <img src="https://img.shields.io/discord/800482235852914698" alt="Join the chat on Discord at https://discord.gg/P4FJG8rEYC">
     </a>
     <a href="/LICENSE">
         <img src="https://img.shields.io/badge/License-MIT-blue.svg"
