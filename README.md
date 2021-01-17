@@ -15,9 +15,11 @@
         <img src="https://coveralls.io/repos/github/liquidcarrot/carrot/badge.svg?branch=master"
              alt="Coverage Status">
     </a>
-    <a href="https://gitter.im/carrot-ai/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badgee&utm_content=badge">
-        <img src="https://badges.gitter.im/Join%20Chat.svg"
-             alt="Join the chat at https://gitter.im/carrot-ai/community">
+    <a href="https://discord.gg/P4FJG8rEYC">
+        <img src="https://img.shields.io/discord/800482235852914698"
+             alt="Join the chat on Discord at https://discord.gg/P4FJG8rEYC">
+     
+     
     </a>
     <a href="/LICENSE">
         <img src="https://img.shields.io/badge/License-MIT-blue.svg"
