@@ -274,7 +274,7 @@ const architect = {
       layer_sizes = layer_sizes_and_options;
       options = {};
     } else {
-      layer_sizes = layer_sizes_and_options.slice(layer_sizes_and_options.length - 1);
+      layer_sizes = layer_sizes_and_options.pop();
       options = output_size_or_options;
     }
 
