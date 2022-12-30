@@ -85,7 +85,7 @@
     "eslint-config-google": "^0.14.0",
     "faker": "^4.1.0",
     "jsdoc": "^3.6.3",
-    "mocha": "^6.2.0",
+    "mocha": "^10.2.0",
     "nodemon": "^1.19.2",
     "nyc": "^14.1.1",
     "parallel-webpack": "^2.4.0",
